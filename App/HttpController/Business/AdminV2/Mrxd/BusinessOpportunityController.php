@@ -5,6 +5,7 @@ namespace App\HttpController\Business\AdminV2\Mrxd;
 use App\ElasticSearch\Service\ElasticSearchService;
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminNew\ConfigInfo;
+use App\HttpController\Models\AdminV2\AdminUserBussinessOpportunityUploadRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
@@ -34,21 +35,7 @@ class BusinessOpportunityController extends ControllerBase
 
     // 用户-上传客户名单
     public function uploadBussinessFile(){
-        $years = trim($this->getRequestData('years'));
-        if(empty($years) ){
-            return $this->writeJson(206, [] ,   [], '缺少年度参数('.$years.')', true, []);
-        }
-
-        //最多导出年限
-        if(
-            !AdminUserFinanceConfig::checkExportYearsNums(
-                $this->loginUserinfo['id'],
-                count(json_decode($years,true))
-            )
-        ){
-            return $this->writeJson(206, [] ,   [], '超出年限！', true, []);
-        }
-
+        //
         $requestData =  $this->getRequestData();
         $files = $this->request()->getUploadedFiles();
 
@@ -63,32 +50,24 @@ class BusinessOpportunityController extends ControllerBase
 
                 $res = $oneFile->moveTo($path);
                 if(!file_exists($path)){
-                    CommonService::getInstance()->log4PHP( json_encode(['uploadeCompanyLists   file_not_exists moveTo false ', 'params $path '=> $path,  ]) );
                     return $this->writeJson(203, [], [],'文件移动失败！');
                 }
-
-                $UploadRecordRes =  AdminUserFinanceUploadRecord::findByIdAndFileName(
-                    $this->loginUserinfo['id'],
-                    $fileName
-                );
-                if($UploadRecordRes){
-                    return $this->writeJson(203, [], [],'文件已存在！');
-                }
-
-                $addUploadRecordRes = AdminUserFinanceUploadRecord::addUploadRecord(
+                
+                $addUploadRecordRes = AdminUserBussinessOpportunityUploadRecord::addRecordV2(
                     [
                         'user_id' => $this->loginUserinfo['id'],
-                        'file_path' => $path,
-                        'years' => $requestData['years'],
-                        'file_name' => $fileName,
+                        'file_path' => TEMP_FILE_PATH,
                         'title' => $requestData['title']?:'',
+                        'size' => filesize($path),
+                        'pull_api' => intval($requestData['pull_api']),
+                        'split_mobile' => intval($requestData['split_mobile']),
+                        'del_empty' => intval($requestData['del_empty']),
+                        'match_by_weixin' => intval($requestData['match_by_weixin']),
+                        'get_all_field' => intval($requestData['get_all_field']),
+                        'fill_weixin' => intval($requestData['fill_weixin']),
+                        'batch' =>  'BO'.date('YmdHis'),
                         'reamrk' => $requestData['reamrk']?:'',
-                        'batch' => 'CWMD'.date('YmdHis'),
-                        'finance_config' => json_encode(
-                            AdminUserFinanceConfig::getConfigDataByUserId(
-                                $this->loginUserinfo['id']
-                            )
-                        ),
+                        'name' =>  $fileName,
                         'status' => AdminUserFinanceUploadRecord::$stateInit,
                     ]
                 );

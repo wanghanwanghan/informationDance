@@ -14,14 +14,24 @@ use App\HttpController\Service\LongXin\LongXinService;
 class AdminUserBussinessOpportunityUploadRecord extends ModelBase
 {
     protected $tableName = 'admin_user_bussiness_opportunity_upload_record';
-    static  $state_init = 1;
-    static  $state_init_cname =  '内容生成中';
 
     static $status_init = 1;
-    static $status_init_cname = '处理中';
+    static $status_init_cname = '初始';
 
-    static $status_succeed = 10;
-    static $status_succeed_cname = '处理中';
+    static $status_split_success = 5;
+    static $status_split_success_cname = '拆分为多sheet成功';
+
+    static $status_check_mobile_success = 10;
+    static $status_check_mobile_success_cname = '打空号标签成功';
+
+    static $status_match_weixin_success = 15;
+    static $status_match_weixin_success_cname = '打空号标签成功';
+
+    static $status_fill_api_contact_success = 20;
+    static $status_fill_api_contact_success_cname = '通过url取联系人成功';
+
+    static $status_match_contect_by_weixin_success = 30;
+    static $status_match_contect_by_weixin_success_cname = '通过微信匹配联系人职位成功';
 
     static $need_yes = 5 ;
     static $need_no = 10 ;
@@ -29,14 +39,14 @@ class AdminUserBussinessOpportunityUploadRecord extends ModelBase
     public static function getStatusMap(){
 
         return [
-            self::$state_init => self::$state_init_cname,
+
         ];
     }
 
     static  function  addRecordV2($info){
 
         if(
-            self::findByBatch($info['batch'])
+            self::findByName($info['name'],$info['user_id'])
         ){
             return  true;
         }
@@ -52,6 +62,7 @@ class AdminUserBussinessOpportunityUploadRecord extends ModelBase
                 'user_id' => $requestData['user_id'], //
                 'file_path' => $requestData['file_path'], //
                 'name' => $requestData['name'], //
+                'new_name' => $requestData['new_name']?:'', //
                 'title' => $requestData['title']?:'', //
                 'size' => $requestData['size']?:'', //
                 'type' => $requestData['type']?:'1', //
@@ -79,19 +90,6 @@ class AdminUserBussinessOpportunityUploadRecord extends ModelBase
             );
         }
         return $res;
-    }
-
-    public static function cost(){
-        $start = microtime(true);
-        $startMemory = memory_get_usage();
-
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'memory_use' => round((memory_get_usage()-$startMemory)/1024/1024,3).' M',
-                'costs_seconds '=> number_format(microtime(true) - $start,3)
-            ])
-        );
     }
 
     public static function findAllByCondition($whereArr){
@@ -154,6 +152,14 @@ class AdminUserBussinessOpportunityUploadRecord extends ModelBase
         $res =  AdminUserBussinessOpportunityUploadRecord::create()
             ->where('id',$id)            
             ->get();  
+        return $res;
+    }
+
+    public static function findByName($name,$user_id){
+        $res =  AdminUserBussinessOpportunityUploadRecord::create()
+            ->where('user_id',$user_id)
+            ->where('name',$name)
+            ->get();
         return $res;
     }
 
