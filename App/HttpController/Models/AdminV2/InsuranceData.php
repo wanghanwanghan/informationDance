@@ -200,7 +200,7 @@ class InsuranceData extends ModelBase
             $where,$page
         );
         $newData = [];
-        foreach ($res as &$dataItem){
+        foreach ($res['data'] as &$dataItem){
             $dataArr = json_decode(
                 $dataItem['post_params'],true
             );
