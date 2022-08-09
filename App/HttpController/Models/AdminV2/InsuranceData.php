@@ -209,6 +209,7 @@ class InsuranceData extends ModelBase
                     __CLASS__.__FUNCTION__ .__LINE__,
                     '$dataArr' => $dataArr,
                     '$dataItem'=>$dataItem,
+
                     'product_id'=>$dataArr['product_id'],
                     'post_params'=>$dataItem['post_params']
                 ])
@@ -219,6 +220,7 @@ class InsuranceData extends ModelBase
             );
 
             $tmp = [
+                'id'=>$dataItem['id'],
                 'title' =>$dataRes['data']['title'],
                 'description' =>$dataRes['data']['description'],
                 'logo' =>$dataRes['data']['logo'],
