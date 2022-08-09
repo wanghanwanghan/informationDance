@@ -216,34 +216,12 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
 //        ){
 //            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
 //        }
-
-        $res =   InsuranceData::findByConditionV2(
+        $res = InsuranceData::getDataLists(
             [
                 ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
-            ],$page
+            ],
+            $page
         );
-        $newData = [];
-        foreach ($res as &$dataItem){
-            $dataArr = json_decode(
-                $dataItem['post_params'],true
-            );
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$dataArr' => $dataArr
-                ])
-            );
-            $dataRes = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProductDetail
-            (
-                $dataArr['product_id']
-            );
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$dataRes' => $dataRes
-                ])
-            );
-        }
 
         return $this->writeJson(
             200,
