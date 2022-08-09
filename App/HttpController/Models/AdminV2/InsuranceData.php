@@ -208,6 +208,8 @@ class InsuranceData extends ModelBase
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     '$dataArr' => $dataArr,
+                    '$dataItem'=>$dataItem,
+                    'product_id'=>$dataArr['product_id'],
                     'post_params'=>$dataItem['post_params']
                 ])
             );
