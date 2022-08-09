@@ -326,6 +326,25 @@ class GuoPiaoController extends GuoPiaoBase
 
         $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration($code);
 
+        //正常
+        if ($res['code'] - 0 === 0 && !empty($res['data'])) {
+            $data = jsonDecode($res['data']);
+            $model = [];
+            foreach ($data as $row) {
+                $year_month = substr(str_replace(['-'], '', $row['beginDate']), 0, 6) . '';
+                if (!isset($model[$year_month])) {
+                    $model[$year_month] = [];
+                }
+                $row['sequence'] = $row['sequence'] - 0;
+                $model[$year_month][] = $row;
+            }
+            //排序
+            foreach ($model as $year => $val) {
+                $model[$year] = control::sortArrByKey($val, 'sequence', 'asc', true);
+            }
+            $res['data'] = jsonEncode($model);
+        }
+
         return $this->checkResponse($res, __FUNCTION__);
     }
 
