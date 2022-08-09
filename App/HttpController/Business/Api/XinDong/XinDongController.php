@@ -3602,7 +3602,30 @@ eof;
     }
     function testExport()
     {
+        //
         if(
+            $this->getRequestData('addRecordV3')
+        ){
+            $res = NewFinanceData::addRecordV3(
+                [
+                    'entName'=>'测试一下',
+                    'year'=>2000,
+                    'VENDINC'=>null,
+                    'C_ASSGROL'=>'',
+                    'A_ASSGROL'=>'0',
+                    'CA_ASSGRO'=>0,
+                ]
+            );
+            return $this->writeJson(
+                200,[  ] ,
+                //CommonService::ClearHtml($res['body']),
+                $res,
+                '成功',
+                true,
+                []
+            );
+        }
+            if(
             $this->getRequestData('gteLists22')
         ) {
             $res =  InsuranceDataHuiZhong::gteLists(
