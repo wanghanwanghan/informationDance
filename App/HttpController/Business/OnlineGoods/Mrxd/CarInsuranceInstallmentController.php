@@ -67,17 +67,17 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
             []
         );
     }
-        
+
     function authForCarInsurance(): bool
     {
         $requestData =  $this->getRequestData();
         $callback = $this->getRequestData('callback', 'https://pc.meirixindong.com/');
 
-
+        $orderNo = control::getUuid(20);
         $res_raw = (new GuoPiaoService())->getAuthentication($this->getRequestData('getAuthentication1'), $callback, $orderNo);
 
         $res = jsonDecode($res_raw);
-        $orderNo = control::getUuid(20);
+
         carInsuranceInstallment::addRecordV2(
             [
                 'user_id' => $this->loginUserinfo['id'],
