@@ -3601,6 +3601,41 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('testSheet')
+        ){
+            $excel = new \Vtiful\Kernel\Excel(['path' =>  TEMP_FILE_PATH]);
+
+            // 打开示例文件
+            $sheetList = $excel->openFile('测试多sheet.xlsx')
+                ->sheetList();
+            $datas = [];
+            foreach ($sheetList as $sheetName) {
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$sheetName' => $sheetName
+                    ])
+                );
+                // 通过工作表名称获取工作表数据
+                $sheetData = $excel
+                    ->openSheet($sheetName)
+                    ->getSheetData();
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$sheetData' => $sheetData
+                    ])
+                );
+            }
+            return $this->writeJson(
+                200,[ ] ,
+                $sheetName,
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
             $this->getRequestData('fixNewFinancdeData')
         ){
 
