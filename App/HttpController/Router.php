@@ -296,7 +296,7 @@ class Router extends AbstractRouter
         $routeCollector->addGroup('/online_goods', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/preAuthorization', $prefix . 'preAuthorization');//
             $routeCollector->addRoute(['GET', 'POST'], '/consultHuiZhongResult', $prefix . 'consultHuiZhongResult');//
-            $routeCollector->addRoute(['GET', 'POST'], '/huiZhongSendSms', $prefix . 'sendSms');//
+            $routeCollector->addRoute(['GET', 'POST'], '/huiZhongSendSms', $prefix . 'huiZhongSendSms');//
             $routeCollector->addRoute(['GET', 'POST'], '/huiZhongConsultResultList', $prefix . 'huiZhongConsultResultList');//
             $routeCollector->addRoute(['GET', 'POST'], '/huiZhongConsultResult', $prefix . 'huiZhongConsultResult');//
         });

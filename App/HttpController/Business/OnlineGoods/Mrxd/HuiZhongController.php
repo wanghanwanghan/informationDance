@@ -158,7 +158,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
 //        return $this->writeJson(200, [], $fileNames,'上传成功 文件数量:'.$succeedNums);
 //    }
 
-    function sendSms(): bool
+    function huiZhongSendSms(): bool
     {
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
