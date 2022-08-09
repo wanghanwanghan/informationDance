@@ -52,7 +52,7 @@ class BusinessOpportunityController extends ControllerBase
                 if(!file_exists($path)){
                     return $this->writeJson(203, [], [],'文件移动失败！');
                 }
-                
+
                 $addUploadRecordRes = AdminUserBussinessOpportunityUploadRecord::addRecordV2(
                     [
                         'user_id' => $this->loginUserinfo['id'],

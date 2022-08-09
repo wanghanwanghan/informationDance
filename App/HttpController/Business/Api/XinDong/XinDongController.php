@@ -3602,6 +3602,19 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('getBaoYaProducts')
+        ) {
+            $allProducts = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProducts();
+
+            return $this->writeJson(
+                200,[ ] ,$allProducts,
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
             $this->getRequestData('testSheet')
         ) {
             $res = InsuranceData::getDataLists(
