@@ -205,7 +205,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
         }
 
         //设置验证码
-        OnlineGoodsUser::setRandomDigit($phone,$digit,'online_sms_code_');
+        OnlineGoodsUser::setRandomDigit($phone,$digit,'huizhong_sms_code_');
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,

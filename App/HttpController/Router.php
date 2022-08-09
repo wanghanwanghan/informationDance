@@ -20,6 +20,7 @@ class Router extends AbstractRouter
             $this->OnlineUserRouterV1($routeCollector);//
             $this->DaiKuanRouterV1($routeCollector);//信动
             $this->HuiZhongRouterV1($routeCollector);//信动
+            $this->CarInsuranceRouterV1($routeCollector);//信动
             $this->LongDunRouterV1($routeCollector);//龙盾
             $this->TaoShuRouterV1($routeCollector);//淘数
             $this->FaYanYuanRouterV1($routeCollector);//法研院
@@ -290,6 +291,16 @@ class Router extends AbstractRouter
         return true;
     }
 
+    private function CarInsuranceRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/OnlineGoods/Mrxd/CarInsuranceInstallmentController/';
+        $routeCollector->addGroup('/online_goods', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/sendSmsForCarInsurance', $prefix . 'sendSmsForCarInsurance');//
+
+        });
+
+        return true;
+    }
     private function HuiZhongRouterV1(RouteCollector $routeCollector)
     {
         $prefix = '/Business/OnlineGoods/Mrxd/HuiZhongController/';
