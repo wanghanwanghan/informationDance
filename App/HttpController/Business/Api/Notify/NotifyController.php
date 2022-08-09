@@ -34,7 +34,7 @@ class NotifyController extends BusinessBase
     }
 
     //微信小程序通知 信动
-    function wxNotify()
+    function wxNotify(): bool
     {
         $pay = new Pay();
 
@@ -82,7 +82,7 @@ class NotifyController extends BusinessBase
     }
 
     //微信小程序通知 伟衡
-    function wxNotify_wh()
+    function wxNotify_wh(): bool
     {
         $pay = new Pay();
 
@@ -130,7 +130,7 @@ class NotifyController extends BusinessBase
     }
 
     //微信扫码通知 信动
-    function wxNotifyScan()
+    function wxNotifyScan(): bool
     {
         $pay = new Pay();
 
@@ -198,7 +198,7 @@ class NotifyController extends BusinessBase
     }
 
     //支付宝扫码通知 信动
-    function aliNotifyScan()
+    function aliNotifyScan(): bool
     {
         $aliConfig = (new aliPayService())->getConfig();
 
@@ -238,7 +238,7 @@ class NotifyController extends BusinessBase
     }
 
     //授权认证通知
-    function zwAuthNotify()
+    function zwAuthNotify(): bool
     {
         $entName = $this->getRequestData('name', '');
         $taxNo = $this->getRequestData('taxNumber', '');
@@ -248,6 +248,14 @@ class NotifyController extends BusinessBase
 
         $phone = substr($orderNo, 0, 11);
         $time = substr($orderNo, -10);
+
+        CommonService::getInstance()->log4PHP([
+            'entName' => $entName,
+            'taxNo' => $taxNo,
+            'state' => $state,
+            'message' => $message,
+            'orderNo' => $orderNo,
+        ]);
 
         try {
             $check = AuthBook::create()->where(['phone' => $phone, 'remark' => $orderNo])->get();
@@ -262,7 +270,7 @@ class NotifyController extends BusinessBase
     }
 
     //获取数据通知
-    function zwDataNotify()
+    function zwDataNotify(): bool
     {
         $entName = $this->getRequestData('name', '');
         $taxNo = $this->getRequestData('taxNumber', '');
@@ -273,6 +281,15 @@ class NotifyController extends BusinessBase
 
         $phone = substr($orderNo, 0, 11);
         $time = substr($orderNo, -10);
+
+        CommonService::getInstance()->log4PHP([
+            'entName' => $entName,
+            'taxNo' => $taxNo,
+            'state' => $state,
+            'type' => $type,
+            'message' => $message,
+            'orderNo' => $orderNo,
+        ]);
 
         try {
             $check = AuthBook::create()->where(['phone' => $phone, 'remark' => $orderNo])->get();
