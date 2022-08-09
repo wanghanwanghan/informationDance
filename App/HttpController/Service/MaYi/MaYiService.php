@@ -7,6 +7,7 @@ use App\HttpController\Models\Api\AntAuthSealDetail;
 use App\HttpController\Models\EntDb\EntDbAreaInfo;
 use App\HttpController\Service\BaiDu\BaiDuService;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\DianZiqian\DianZiQianService;
 use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use Carbon\Carbon;
@@ -5266,18 +5267,45 @@ class MaYiService extends ServiceBase
         //增加除授权书其他证书的表，并做关联
         if (!empty($data['fileData'])) {
             foreach ($data['fileData'] as $datum) {
+                $id='';
+                if($datum['isSeal'] === 'true'){
+                    $gaizhangParam = [
+                        'entName'      => $data['entName'],
+                        'legalPerson'  => $data['legalPerson'],
+                        'idCard'       => $data['idCard'],
+                        'socialCredit' => $data['socialCredit'],
+                        'file'         => $datum['fileAddress']
+                    ];
+                    $dianziqian_id = (new DianZiQianService())->gaiZhang($gaizhangParam);
+                }
+
                 AntAuthSealDetail::create()->data([
-                    'orderNo' => $data['orderNo'],
-                    //蚂蚁传过来的意思是 是否已经盖过章
-                    'isSeal' => $datum['isSeal'] === 'true' ? 'false' : 'true',
-                    'isReturn' => $datum['isReturn'],
-                    'fileAddress' => $datum['fileAddress'],
-                    'fileId' => $datum['fileId'],
-                    'antAuthId' => $id,
-                    'type' => $datum['type'],
-                    'fileSecret' => $datum['fileSecret'] ?? '',
-                ])->save();
+                      'orderNo'     => $data['orderNo'],
+                      //蚂蚁传过来的意思是 是否已经盖过章
+                      'isSeal'      => $datum['isSeal'] === 'true' ? 'false' : 'true',
+                      'isReturn'    => $datum['isReturn'],
+                      'fileAddress' => $datum['fileAddress'],
+                      'fileId'      => $datum['fileId'],
+                      'antAuthId'   => $id,
+                      'type'        => $datum['type'],
+                      'fileSecret'  => $datum['fileSecret'] ?? '',
+                      'dianZiQian_id' => $dianziqian_id
+                  ])->save();
+
             }
+        }else{
+            $gaizhangParam = [
+                'entName'      => $data['entName'],
+                'legalPerson'  => $data['legalPerson'],
+                'idCard'       => $data['idCard'],
+                'socialCredit' => $data['socialCredit'],
+                'file'         => 'dianziqian_jcsk_shouquanshu.pdf',
+                'phone' =>$data['phone'],
+                'regAddress' => $baiduApiRes['regAddress'] ?? '',
+                'city' => $baiduApiRes['city'] ?? '',
+            ];
+            $dianziqian_id = (new DianZiQianService())->getAuthFileId($gaizhangParam);
+            AntAuthList::create()->where('id='.$id)->update(['dianZiQian_id'=>$dianziqian_id]);
         }
 
         return $this->check(200, null, null, null);

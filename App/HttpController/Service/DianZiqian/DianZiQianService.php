@@ -242,7 +242,7 @@ class DianZiQianService extends ServiceBase
         $entContractSignUrl = $this->contractSignAuto(
             $signerCodeEnt, 
             $contractCode, 
-            '企业盖章处',
+            '#盖章处#',
             $entSealCode,
             $entTransactionCode
         );
@@ -254,7 +254,7 @@ class DianZiQianService extends ServiceBase
                         'post' => [
                             $signerCodeEnt, 
                             $contractCode, 
-                            '企业盖章处',
+                            '#盖章处#',
                             $entSealCode,
                             $entTransactionCode
                         ],
@@ -373,7 +373,60 @@ class DianZiQianService extends ServiceBase
         //请求盖章
 //        return $this->createReturn(200, null, $path, '成功');
     }
-    public function getAuthFile($postData)
+
+    public function gaiZhang($postData){
+        //创建个人签署人
+        $signerPersonres    = $this->signerPerson($postData);
+        $signerCodePersonal = $signerPersonres['result']['signerCode'] ?? "";
+        if ($signerPersonres['code'] != 200) return $signerPersonres;
+
+        //创建企业签署人
+        $signerEnterprise  = $this->signerEnterprise($postData);
+        $signerCodeEnt    = $signerEnterprise['result']['signerCode'] ?? "";
+        if ($signerEnterprise['code'] != 200) return $signerEnterprise;
+        //生成png
+        $getPng = $this->getPng($postData);
+        if ($getPng['code'] != 200) return $getPng;
+        //法人照片上传
+        list($personalSealCode, $errorData) = $this->personalSign($signerCodePersonal, $postData);
+        if (!empty($errorData)) return $errorData;
+
+        //企业上传印章
+        list($entSealCode, $errorData) = $this->entSign($signerCodeEnt, $postData);
+        if (!empty($errorData)) return $errorData;
+
+        //创建合同
+        $contractFile = $this->contractFile($postData['file']);
+        $contractCode = $contractFile['result']['contractCode'] ?? "";
+        if ($contractFile['code'] != 200) return $contractFile;
+
+        $entTransactionCode = control::getUuid();
+        //自动签署企业章  signUrl
+        $entContractSignUrl = $this->contractSignAuto($signerCodeEnt, $contractCode, '#盖章处#',$entSealCode,$entTransactionCode);
+        if ($entContractSignUrl['code'] != 200) return $entContractSignUrl;
+        $personalTransactionCode = control::getUuid();
+        //自动签署企业法人章
+        $personalContractSignUrl = $this->contractSignAuto($signerCodePersonal, $contractCode, '代表签字',$personalSealCode,$personalTransactionCode);
+        if ($personalContractSignUrl['code'] != 200) return $personalContractSignUrl;
+        $insertData = [
+            'entName' => $postData['entName'],
+            "personName"   => $postData['legalPerson'],
+            "personIdCard" => $postData['idCard'],
+            'socialCredit' => $postData['socialCredit'],
+            'signerCodePersonal' => $signerCodePersonal,
+            'signerCodeEnt' => $signerCodeEnt,
+            'contractTemplateCode' => '',
+            'contractCode' => $contractCode,
+            'entSealCode' => $entSealCode,
+            'personalSealCode' => $personalSealCode,
+            'entTransactionCode' => $entTransactionCode,
+            'personalTransactionCode' => $personalTransactionCode
+        ];
+        $id = DianZiQianAuth::create()->data($insertData)->save();
+        dingAlarm('gaiZhang',['$id'=>json_encode(['id'=>$id])]);
+        return $id;
+    }
+    public function getAuthFileId($postData)
     {
         //创建个人签署人
         $signerPersonres    = $this->signerPerson($postData);
@@ -418,11 +471,11 @@ class DianZiQianService extends ServiceBase
 
         $entTransactionCode = control::getUuid();
         //自动签署企业章  signUrl
-        $entContractSignUrl = $this->contractSignAuto($signerCodeEnt, $contractCode, '企业盖章处',$entSealCode,$entTransactionCode);
+        $entContractSignUrl = $this->contractSignAuto($signerCodeEnt, $contractCode, '#盖章处#',$entSealCode,$entTransactionCode);
         if ($entContractSignUrl['code'] != 200) return $entContractSignUrl;
         $personalTransactionCode = control::getUuid();
         //自动签署企业法人章
-        $personalContractSignUrl = $this->contractSignAuto($signerCodePersonal, $contractCode, '法人盖章处',$personalSealCode,$personalTransactionCode);
+        $personalContractSignUrl = $this->contractSignAuto($signerCodePersonal, $contractCode, '代表签字',$personalSealCode,$personalTransactionCode);
         if ($personalContractSignUrl['code'] != 200) return $personalContractSignUrl;
         $insertData = [
             'entName' => $postData['entName'],
@@ -438,8 +491,14 @@ class DianZiQianService extends ServiceBase
             'entTransactionCode' => $entTransactionCode,
             'personalTransactionCode' => $personalTransactionCode
         ];
-        DianZiQianAuth::create()->data($insertData)->save();
-        return $this->createReturn(200, null, [], '成功');
+        $id = DianZiQianAuth::create()->data($insertData)->save();
+        return $id;
+    }
+
+    public function getAuthFile($postData)
+    {
+        $id = $this->getAuthFileId($postData);
+        return $this->createReturn(200, null, ['id'=>$id], '成功');
     }
 
     public function getUrl(){
@@ -651,10 +710,10 @@ class DianZiQianService extends ServiceBase
     /**
      * 创建合同
      */
-    public function contractFile()
+    public function contractFile($file)
     {
         $path  = '/open-api-lite/contract/file';
-        $file  = STATIC_PATH . "AuthBookModel/dx_template.pdf";
+//        $file  = STATIC_PATH . "AuthBookModel/dx_template.pdf";
         $param = $this->buildParam([], $path, ['fileName' => $file, 'key' => 'contractFile']);
         $resp  = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
