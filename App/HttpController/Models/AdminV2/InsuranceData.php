@@ -222,6 +222,7 @@ class InsuranceData extends ModelBase
                 'title' =>$dataRes['data']['title'],
                 'description' =>$dataRes['data']['description'],
                 'logo' =>$dataRes['data']['logo'],
+                'created_at' => date('Y-m-d H:i:s',$dataItem['created_at']),
             ];
             $tmp = array_merge($tmp,$dataArr);
             $newData[] = $tmp;
