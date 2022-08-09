@@ -224,7 +224,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
     }
 
     //咨询结果
-    function consultResult(): bool
+    function consultHuiZhongResult(): bool
     {
         $requestData =  $this->getRequestData();
 //        $checkRes = DataModelExample::checkField(
