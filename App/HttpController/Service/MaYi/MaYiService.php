@@ -11,6 +11,7 @@ use App\HttpController\Service\DianZiqian\DianZiQianService;
 use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use Carbon\Carbon;
+use Throwable;
 use wanghanwanghan\someUtils\control;
 
 class MaYiService extends ServiceBase
@@ -5276,7 +5277,12 @@ class MaYiService extends ServiceBase
                         'socialCredit' => $data['socialCredit'],
                         'file'         => $datum['fileAddress']
                     ];
-                    $dianziqian_id = (new DianZiQianService())->gaiZhang($gaizhangParam);
+                    try{
+                        $dianziqian_id = (new DianZiQianService())->gaiZhang($gaizhangParam);
+                    } catch (\Throwable $e){
+                        dingAlarm('蚂蚁盖章异常',['蚂蚁盖章异常返回'=>json_encode($e)]);
+                        $dianziqian_id = '';
+                    }
                 }
 
                 AntAuthSealDetail::create()->data([
@@ -5294,18 +5300,22 @@ class MaYiService extends ServiceBase
 
             }
         }else{
-            $gaizhangParam = [
-                'entName'      => $data['entName'],
-                'legalPerson'  => $data['legalPerson'],
-                'idCard'       => $data['idCard'],
-                'socialCredit' => $data['socialCredit'],
-                'file'         => 'dianziqian_jcsk_shouquanshu.pdf',
-                'phone' =>$data['phone'],
-                'regAddress' => $baiduApiRes['regAddress'] ?? '',
-                'city' => $baiduApiRes['city'] ?? '',
-            ];
-            $dianziqian_id = (new DianZiQianService())->getAuthFileId($gaizhangParam);
-            AntAuthList::create()->where('id='.$id)->update(['dianZiQian_id'=>$dianziqian_id]);
+            try{
+                $gaizhangParam = [
+                    'entName'      => $data['entName'],
+                    'legalPerson'  => $data['legalPerson'],
+                    'idCard'       => $data['idCard'],
+                    'socialCredit' => $data['socialCredit'],
+                    'file'         => 'dianziqian_jcsk_shouquanshu.pdf',
+                    'phone' =>$data['phone'],
+                    'regAddress' => $baiduApiRes['regAddress'] ?? '',
+                    'city' => $baiduApiRes['city'] ?? '',
+                ];
+                $dianziqian_id = (new DianZiQianService())->getAuthFileId($gaizhangParam);
+                AntAuthList::create()->where('id='.$id)->update(['dianZiQian_id'=>$dianziqian_id]);
+            } catch (\Throwable $e){
+                dingAlarm('蚂蚁盖章异常',['蚂蚁盖章异常返回'=>json_encode($e)]);
+            }
         }
 
         return $this->check(200, null, null, null);
