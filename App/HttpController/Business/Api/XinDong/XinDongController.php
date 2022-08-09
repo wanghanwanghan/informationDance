@@ -15,6 +15,7 @@ use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminNewUser;
 use App\HttpController\Models\AdminV2\AdminUserFinanceData;
 use App\HttpController\Models\AdminV2\DataModelExample;
+use App\HttpController\Models\AdminV2\InsuranceData;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
@@ -3600,6 +3601,24 @@ eof;
     }
     function testExport()
     {
+        if(
+            $this->getRequestData('testSheet')
+        ) {
+            $res = InsuranceData::getDataLists(
+                [
+                    ['field'=>'user_id','value'=>1,'operate'=>'=']
+                ],
+                1
+            );
+
+            return $this->writeJson(
+                200,[ ] ,
+                $res,
+                '成功',
+                true,
+                []
+            );
+        }
         if(
             $this->getRequestData('testSheet')
         ){
