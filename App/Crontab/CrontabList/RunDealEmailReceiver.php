@@ -23,6 +23,7 @@ use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\MRXD\InsuranceDataHuiZhong;
+use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
@@ -136,8 +137,9 @@ class RunDealEmailReceiver extends AbstractCronTask
         ConfigInfo::setIsRunning(__CLASS__);
         //用户咨询后，将询价信息发送给保鸭
         self::sendEmail();
+        //用户咨询后，将询价信息发送给挥众
         self::sendEmailHuiZhong();
-        //拉取收件箱
+        //拉取收件箱 单纯拉取邮件
         self::pullEmail(2);
         //收到邮件询价结果后  短信通知
         self::dealMail(date('Y-m-d'));
@@ -203,15 +205,42 @@ class RunDealEmailReceiver extends AbstractCronTask
                 "
         );
         foreach ($emails as $email){
+
             CommonService::getInstance()->log4PHP(
                 "needs to send text msg now"
             );
 
+            if(
+               !in_array(
+                   $email['form'] ,
+                   ['tianyongshan@meirixindong.com','10000@exmail.weixin.qq.com']
+               )
+            ){
+               //其他人的文件  直接更新为其他状态
+                MailReceipt::updateById($email['id'],[
+                    'status'=>MailReceipt::$status_succeed
+                ]);
+                continue;
+            }
+
             //解析保险数据id
+            preg_match('/信动数据id01:<<<(.*?)>>>/',$email['body'],$match);
+            $huizhongId = $match[1];
             preg_match('/信动数据id:<<<(.*?)>>>/',$email['body'],$match);
+            $baoyaId = $match[1];
             MailReceipt::updateById($email['id'],[
-                'insurance_id'=>$match[1]
+                'insurance_id'=>intval($baoyaId),
+                'insurance_hui_zhong_id'=>intval($huizhongId),
             ]);
+
+            if($baoyaId){
+                $InsuranceData = InsuranceData::findById($baoyaId);
+            }
+            if($huizhongId){
+                $InsuranceData = InsuranceDataHuiZhong::findById($huizhongId);
+            }
+
+            $userData = OnlineGoodsUser::findById($InsuranceData->getAttr('user_id'));
 
             //需要发短信了
             $res = SmsService::getInstance()->sendByTemplete(
@@ -447,7 +476,7 @@ class RunDealEmailReceiver extends AbstractCronTask
         $html .=  ' 
                     <tr>
                         <td>ID</td>
-                        <td>信动数据id:<<<'.$data['id'].'>>></td>
+                        <td>信动数据id01:<<<'.$data['id'].'>>></td>
                     </tr>';
         $html .=  ' 
     </tbody>

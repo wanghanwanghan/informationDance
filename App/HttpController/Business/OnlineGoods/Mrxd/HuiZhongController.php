@@ -285,14 +285,10 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
 //        ){
 //            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
 //        }
-        $res =  InsuranceDataHuiZhong::findByConditionV2(
-            [
-                ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
-            ],$page
+        $res =  InsuranceDataHuiZhong::gteLists(
+            $this->loginUserinfo['id'],$page
         );
-        foreach ($res['data'] as &$dataItem){
-            $dataItem['status_cname'] = InsuranceDataHuiZhong::getStatusMap()[$dataItem['status']];
-        }
+
         return $this->writeJson(
             200,[
             'page' => $page,

@@ -24,6 +24,7 @@ use App\HttpController\Models\AdminV2\InvoiceTaskDetails;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
+use App\HttpController\Models\MRXD\InsuranceDataHuiZhong;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
@@ -3602,6 +3603,28 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('gteLists22')
+        ) {
+            $res =  InsuranceDataHuiZhong::gteLists(
+                11,1
+            );
+
+            return $this->writeJson(
+                200,[
+                'page' => 1,
+                'pageSize' => 10,
+                'total' => $res['total'],
+                'totalPage' => ceil($res['total']/$size) ,
+            ] ,
+                //CommonService::ClearHtml($res['body']),
+                $res['data'],
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
             $this->getRequestData('getBaoYaProducts')
         ) {
             $allProducts = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProducts();
@@ -3613,6 +3636,7 @@ eof;
                 []
             );
         }
+
 
         if(
             $this->getRequestData('testSheet')
