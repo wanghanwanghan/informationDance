@@ -41,6 +41,7 @@ use App\HttpController\Models\RDS3\HdSaicExtension\MostTorchHightechH;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Export\Excel\ExportExcelService;
+use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 //use App\HttpController\Service\LongDun\BaoYaService;
 use App\HttpController\Service\LongDun\LongDunService;
@@ -3602,6 +3603,27 @@ eof;
     }
     function testExport()
     {
+        if(
+            $this->getRequestData('getAuthentication1')
+        ){
+
+
+            $callback = $this->getRequestData('callback', 'https://pc.meirixindong.com/');
+
+            $orderNo = control::getUuid(20);
+
+            $res = (new GuoPiaoService())->getAuthentication($this->getRequestData('getAuthentication1'), $callback, $orderNo);
+
+            $res = jsonDecode($res);
+            return $this->writeJson(
+                200,[  ] ,
+                //CommonService::ClearHtml($res['body']),
+                $res,
+                '成功',
+                true,
+                []
+            );
+        }
         //
         if(
             $this->getRequestData('addRecordV3')
