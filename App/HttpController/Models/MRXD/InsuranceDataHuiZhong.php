@@ -21,6 +21,13 @@ class InsuranceDataHuiZhong extends ModelBase
     static $status_sended = 5;
     static $status_sended_cname =  '已发送';
 
+    static  function  getStatusMap(){
+        return [
+            self::$status_init=>self::$status_init_cname,
+            self::$status_sended=>self::$status_sended_cname,
+        ];
+    }
+
     static  function  addRecordV2($info){
         if(
             self::findByName($info['user_id'],$info['ent_name'],$info['product_id'])
