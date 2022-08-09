@@ -259,7 +259,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
             []
         );
     }
-    function consultResultList(): bool
+    function huiZhongConsultResultList(): bool
     {
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;

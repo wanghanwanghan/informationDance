@@ -297,7 +297,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/pre_auth', $prefix . 'preAuthorization');//
             $routeCollector->addRoute(['GET', 'POST'], '/consultHuiZhongResult', $prefix . 'consultResult');//
             $routeCollector->addRoute(['GET', 'POST'], '/huiZhongSendSms', $prefix . 'sendSms');//
-            $routeCollector->addRoute(['GET', 'POST'], '/huiZhongConsultResultList', $prefix . 'consultResultList');//
+            $routeCollector->addRoute(['GET', 'POST'], '/huiZhongConsultResultList', $prefix . 'huiZhongConsultResultList');//
             $routeCollector->addRoute(['GET', 'POST'], '/huiZhongConsultResult', $prefix . 'huiZhongConsultResult');//
         });
 
