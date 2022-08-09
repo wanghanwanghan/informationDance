@@ -28,7 +28,7 @@ class InsuranceDataHuiZhong extends ModelBase
             return  true;
         }
 
-        return OnlineGoodsUser::addRecord(
+        return InsuranceDataHuiZhong::addRecord(
             $info
         );
     }
