@@ -8,19 +8,23 @@ use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
+use App\HttpController\Models\AdminV2\carInsuranceInstallment;
 use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\InsuranceData;
 use App\HttpController\Models\AdminV2\MailReceipt;
+use App\HttpController\Models\Api\CarInsuranceInfo;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Sms\AliSms;
 use App\HttpController\Service\XinDong\XinDongService;
+use wanghanwanghan\someUtils\control;
 
 class CarInsuranceInstallmentController extends \App\HttpController\Business\OnlineGoods\Mrxd\ControllerBase
 {
@@ -63,38 +67,37 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
             []
         );
     }
-
-    //咨询结果
-    function consultResult(): bool
+        
+    function authForCarInsurance(): bool
     {
         $requestData =  $this->getRequestData();
-//        $checkRes = DataModelExample::checkField(
-//            [
-//
-//                'product_id' => [
-//                    'not_empty' => 1,
-//                    'field_name' => 'product_id',
-//                    'err_msg' => '参数缺失',
-//                ],
-//                'insured' => [
-//                    'not_empty' => 1,
-//                    'field_name' => 'insured',
-//                    'err_msg' => '参数缺失',
-//                ]
-//            ],
-//            $requestData
-//        );
-//        if(
-//            !$checkRes['res']
-//        ){
-//            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
-//        }
-        $res =  MailReceipt::findById( $this->loginUserinfo['id']);
-        $res = $res->toArray();
+        $callback = $this->getRequestData('callback', 'https://pc.meirixindong.com/');
+
+
+        $res_raw = (new GuoPiaoService())->getAuthentication($this->getRequestData('getAuthentication1'), $callback, $orderNo);
+
+        $res = jsonDecode($res_raw);
+        $orderNo = control::getUuid(20);
+        carInsuranceInstallment::addRecordV2(
+            [
+                'user_id' => $this->loginUserinfo['id'],
+                'product_id' => $this->loginUserinfo['id']?:0,
+                'ent_name' => $requestData['ent_name'],
+                'legal_phone' => $requestData['legal_phone'],
+                'legal_person' => $requestData['legal_person'],
+                'legal_person_id_card' => $requestData['legal_person_id_card'],
+                'order_no' => $orderNo,
+                'url' => $res['data']?:'',
+                'raw_return' => $res_raw,
+                'status' => $requestData['status']?:1,
+                'created_at' => time(),
+                'updated_at' => time(),
+            ]
+        );
         return $this->writeJson(
             200,[ ] ,
             //CommonService::ClearHtml($res['body']),
-            $res['body'],
+            $res['data'],
             '成功',
             true,
             []
