@@ -341,8 +341,8 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
         $resNew = MailReceipt::findByInsuranceHuiZhongId($res['id']);
         return $this->writeJson(
             200,
-            $resNew?end($resNew):[],
-            $res
+            [],
+            $resNew?end($resNew):[]
         );
     }
 }
