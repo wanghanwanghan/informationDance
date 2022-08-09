@@ -3614,7 +3614,7 @@ eof;
                 'page' => 1,
                 'pageSize' => 10,
                 'total' => $res['total'],
-                'totalPage' => ceil($res['total']/$size) ,
+                'totalPage' => ceil($res['total']/10) ,
             ] ,
                 //CommonService::ClearHtml($res['body']),
                 $res['data'],
