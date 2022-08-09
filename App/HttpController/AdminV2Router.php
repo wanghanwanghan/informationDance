@@ -26,6 +26,7 @@ class AdminV2Router
         $this->ApiUserRouterV1($routeCollector);
         $this->PApiRouterV1($routeCollector);
         $this->DocumentationRouterV1($routeCollector);
+        $this->BusinessOpportunityRouterV1($routeCollector);
         $this->PStaticsRouterV1($routeCollector);
     }
 
@@ -224,6 +225,19 @@ class AdminV2Router
         return true;
     }
 
+    //
+    private function BusinessOpportunityRouterV1(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/AdminV2/Mrxd/BusinessOpportunityController/';
+
+        $routeCollector->addGroup('/businessOpportunity ', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadBussinessFile', $prefix . 'uploadBussinessFile');
+            $routeCollector->addRoute(['GET', 'POST'], '/downloadBussinessFile', $prefix . 'downloadBussinessFile');
+            $routeCollector->addRoute(['GET', 'POST'], '/bussinessFilesList', $prefix . 'bussinessFilesList');
+        });
+
+        return true;
+    }
     private function DocumentationRouterV1(RouteCollector $routeCollector): bool
     {
         $prefix = '/Business/AdminV2/Mrxd/Documentation/DocumentationController/';
