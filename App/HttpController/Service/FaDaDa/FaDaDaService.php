@@ -836,7 +836,7 @@ class FaDaDaService extends ServiceBase
      * @param array $arr
      * @return array|mixed|string[]
      */
-    private function getExtsignAutoByWord(array $arr,$customer_id,$signature_id,$writing)
+    private function    getExtsignAutoByWord(array $arr,$customer_id,$signature_id,$writing)
     {
         $url_ext = 'extsign_auto.api';
         //交易号 每次请求视为一个交易。 只允许长度<=32 的英文或数字字符。 交易号为接入平台生成，必须保证唯一并自行记录
