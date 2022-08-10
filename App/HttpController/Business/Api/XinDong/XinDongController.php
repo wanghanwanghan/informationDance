@@ -24,6 +24,7 @@ use App\HttpController\Models\AdminV2\InvoiceTaskDetails;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
+use App\HttpController\Models\MRXD\InsuranceDataHuiZhong;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
@@ -40,6 +41,7 @@ use App\HttpController\Models\RDS3\HdSaicExtension\MostTorchHightechH;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Export\Excel\ExportExcelService;
+use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 //use App\HttpController\Service\LongDun\BaoYaService;
 use App\HttpController\Service\LongDun\LongDunService;
@@ -3602,6 +3604,74 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('getAuthentication1')
+        ){
+
+
+            $callback = $this->getRequestData('callback', 'https://pc.meirixindong.com/');
+
+            $orderNo = control::getUuid(20);
+
+            $res = (new GuoPiaoService())->getAuthentication($this->getRequestData('getAuthentication1'), $callback, $orderNo);
+
+            $res = jsonDecode($res);
+            return $this->writeJson(
+                200,[  ] ,
+                //CommonService::ClearHtml($res['body']),
+                $res,
+                '成功',
+                true,
+                []
+            );
+        }
+        //
+        if(
+            $this->getRequestData('addRecordV3')
+        ){
+            $res = NewFinanceData::addRecordV3(
+                [
+                    'entName'=>'测试一下',
+                    'year'=>2000,
+                    'VENDINC'=>null,
+                    'C_ASSGROL'=>'',
+                    'A_ASSGROL'=>'0',
+                    'CA_ASSGRO'=>0,
+                ]
+            );
+            return $this->writeJson(
+                200,[  ] ,
+                //CommonService::ClearHtml($res['body']),
+                $res,
+                '成功',
+                true,
+                []
+            );
+        }
+            if(
+            $this->getRequestData('gteLists22')
+        ) {
+            $res =  InsuranceDataHuiZhong::gteLists(
+                [
+                    ['field'=>'user_id','value'=>11,'operate'=>'=']
+                ],1
+            );
+
+            return $this->writeJson(
+                200,[
+                'page' => 1,
+                'pageSize' => 10,
+                'total' => $res['total'],
+                'totalPage' => ceil($res['total']/10) ,
+            ] ,
+                //CommonService::ClearHtml($res['body']),
+                $res['data'],
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
             $this->getRequestData('getBaoYaProducts')
         ) {
             $allProducts = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProducts();
@@ -3613,6 +3683,7 @@ eof;
                 []
             );
         }
+
 
         if(
             $this->getRequestData('testSheet')

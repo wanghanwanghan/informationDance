@@ -20,6 +20,7 @@ class Router extends AbstractRouter
             $this->OnlineUserRouterV1($routeCollector);//
             $this->DaiKuanRouterV1($routeCollector);//信动
             $this->HuiZhongRouterV1($routeCollector);//信动
+            $this->CarInsuranceRouterV1($routeCollector);//信动
             $this->LongDunRouterV1($routeCollector);//龙盾
             $this->TaoShuRouterV1($routeCollector);//淘数
             $this->FaYanYuanRouterV1($routeCollector);//法研院
@@ -290,14 +291,25 @@ class Router extends AbstractRouter
         return true;
     }
 
+    private function CarInsuranceRouterV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/OnlineGoods/Mrxd/CarInsuranceInstallmentController/';
+        $routeCollector->addGroup('/online_goods', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/sendSmsForCarInsurance', $prefix . 'sendSmsForCarInsurance');//
+            $routeCollector->addRoute(['GET', 'POST'], '/authForCarInsurance', $prefix . 'authForCarInsurance');//
+
+        });
+
+        return true;
+    }
     private function HuiZhongRouterV1(RouteCollector $routeCollector)
     {
         $prefix = '/Business/OnlineGoods/Mrxd/HuiZhongController/';
         $routeCollector->addGroup('/online_goods', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/pre_auth', $prefix . 'preAuthorization');//
-            $routeCollector->addRoute(['GET', 'POST'], '/consultHuiZhongResult', $prefix . 'consultResult');//
-            $routeCollector->addRoute(['GET', 'POST'], '/huiZhongSendSms', $prefix . 'sendSms');//
-            $routeCollector->addRoute(['GET', 'POST'], '/huiZhongConsultResultList', $prefix . 'consultResultList');//
+            $routeCollector->addRoute(['GET', 'POST'], '/preAuthorization', $prefix . 'preAuthorization');//
+            $routeCollector->addRoute(['GET', 'POST'], '/consultHuiZhongResult', $prefix . 'consultHuiZhongResult');//
+            $routeCollector->addRoute(['GET', 'POST'], '/huiZhongSendSms', $prefix . 'huiZhongSendSms');//
+            $routeCollector->addRoute(['GET', 'POST'], '/huiZhongConsultResultList', $prefix . 'huiZhongConsultResultList');//
             $routeCollector->addRoute(['GET', 'POST'], '/huiZhongConsultResult', $prefix . 'huiZhongConsultResult');//
         });
 

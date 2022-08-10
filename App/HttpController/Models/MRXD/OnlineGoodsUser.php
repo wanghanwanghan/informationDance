@@ -8,6 +8,7 @@ use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\Sms\AliSms;
 use EasySwoole\RedisPool\Redis;
 
 // use App\HttpController\Models\AdminRole;
@@ -146,8 +147,9 @@ class OnlineGoodsUser extends ModelBase
         return ConfigInfo::setRedisBykey($prx.$phone,$digit,600);
     }
 
-    static function  getRandomDigit($phone){
-        return ConfigInfo::getRedisBykey('online_sms_code_'.$phone);
+    static function  getRandomDigit($phone,$prx="online_sms_code_"){
+        $key = $prx.$phone;
+        return ConfigInfo::getRedisBykey($key);
     }
 
     static  function  createRandomDigit(){
@@ -314,5 +316,61 @@ class OnlineGoodsUser extends ModelBase
         return $data;
     }
 
+    public static function sendMsg($phone,$key){
+
+        //记录今天发了多少次
+        $prex = 'daily_'.$key.'_sendSms_';
+        OnlineGoodsUser::addDailySmsNumsV2($phone,'daily_'.$key.'_sendSms_');
+
+        //每日发送次数限制
+        $res = OnlineGoodsUser::getDailySmsNumsV2($phone,'daily_'.$key.'_sendSms_');
+        if(
+            $res >= 15
+        ){
+            return [
+                'failed'=>true,
+                'msg'=> '今日发送次数过多，请明天再试',
+            ];
+        }
+
+        $digit = OnlineGoodsUser::createRandomDigit();
+
+        //发短信
+        $res = (new AliSms())->sendByTempleteV2($phone, 'SMS_218160347',[
+            'code' => $digit,
+        ]);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sendByTemplete' => [
+                    'sendByTemplete'=>$res,
+                    '$digit'=>$digit
+                ],
+            ])
+        );
+        if(!$res){
+            return [
+                'failed'=>true,
+                'msg'=> '短信发送失败',
+            ];
+
+        }
+
+        //设置验证码
+        OnlineGoodsUser::setRandomDigit($phone,$digit,$key.'_sms_code_');
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'setRandomDigit' => [
+                    'getRandomDigit'=>OnlineGoodsUser::getRandomDigit($phone,$key.'_sms_code_'),
+                ],
+            ])
+        );
+        return [
+            'success'=>true,
+            'msg'=> '成功',
+        ];
+
+    }
 
 }

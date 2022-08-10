@@ -158,7 +158,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
 //        return $this->writeJson(200, [], $fileNames,'上传成功 文件数量:'.$succeedNums);
 //    }
 
-    function sendSms(): bool
+    function huiZhongSendSms(): bool
     {
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
@@ -205,7 +205,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
         }
 
         //设置验证码
-        OnlineGoodsUser::setRandomDigit($phone,$digit,'online_sms_code_');
+        OnlineGoodsUser::setRandomDigit($phone,$digit,'huizhong_sms_code_');
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
@@ -224,7 +224,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
     }
 
     //咨询结果
-    function consultResult(): bool
+    function consultHuiZhongResult(): bool
     {
         $requestData =  $this->getRequestData();
 //        $checkRes = DataModelExample::checkField(
@@ -259,7 +259,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
             []
         );
     }
-    function consultResultList(): bool
+    function huiZhongConsultResultList(): bool
     {
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
@@ -285,14 +285,12 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
 //        ){
 //            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
 //        }
-        $res =  InsuranceDataHuiZhong::findByConditionV2(
+        $res =  InsuranceDataHuiZhong::gteLists(
             [
                 ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
             ],$page
         );
-        foreach ($res['data'] as &$dataItem){
-            $dataItem['status_cname'] = InsuranceDataHuiZhong::getStatusMap()[$dataItem['status']];
-        }
+
         return $this->writeJson(
             200,[
             'page' => $page,

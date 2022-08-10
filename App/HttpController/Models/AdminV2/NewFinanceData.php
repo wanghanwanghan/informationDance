@@ -33,63 +33,63 @@ class NewFinanceData extends ModelBase
     ){
         try {
            $res =  NewFinanceData::create()->data([
-                'entName' => $postData['entName'],
-                'year' => $postData['year'],   
-                'VENDINC' => $postData['VENDINC']?:'',//
-                'C_ASSGROL' => $postData['C_ASSGROL']?:'',//
-                'A_ASSGROL' => $postData['A_ASSGROL']?:'',//
-                'CA_ASSGRO' => $postData['CA_ASSGRO']?:'',//
-                'C_INTRATESL' => $postData['C_INTRATESL']?:'',//
-                'ASSGRO_C_INTRATESL' => $postData['ASSGRO_C_INTRATESL']?:'',//
-                'A_VENDINCL' => $postData['A_VENDINCL']?:'',//
-                'EQUITYL' => $postData['EQUITYL']?:'',//
-                'ATOL' => $postData['ATOL']?:'',//
-                'A_PROGROL' => $postData['A_PROGROL']?:'',//
-                'DEBTL' => $postData['DEBTL']?:'',//
-                'ROA' => $postData['ROA']?:'',//
-                'ROAL' => $postData['ROAL']?:'',//
-                'ROE_AL' => $postData['ROE_AL']?:'',//
-                'ROE' => $postData['ROE_AL']?:'',//
-                'ROEA' => $postData['ROEA']?:'',//
-                'ROEB' => $postData['ROEB']?:'',//
-               'NOR' => $postData['NOR']?:'',//
-                'MAIBUSINC_RATIOL' => $postData['MAIBUSINC_RATIOL']?:'',//
-               'NALR' => $postData['NALR']?:'',//
-               'OPM' => $postData['OPM']?:'',//
-               'ROCA' => $postData['ROCA']?:'',//
-               'PMOTA' => $postData['PMOTA']?:'',//
-               'TBR' => $postData['TBR']?:'',//
-               'EQUITYL_new' => $postData['EQUITYL_new']?:'',//
-               'LIAGRO_yoy' => $postData['LIAGRO_yoy']?:'',//
-               'VENDINC_yoy' => $postData['VENDINC_yoy']?:'',//
-               'MAIBUSINC_yoy' => $postData['VENDINC_yoy']?:'',//
-               'PROGRO_yoy' => $postData['PROGRO_yoy']?:'',//
-               'NETINC_yoy' => $postData['NETINC_yoy']?:'',//
-               'RATGRO_yoy' => $postData['RATGRO_yoy']?:'',//
-               'TOTEQU_yoy' => $postData['TOTEQU_yoy']?:'',//
-               'SOCNUM_yoy' => $postData['SOCNUM_yoy']?:'',//
-               'TBR_new' => $postData['TBR_new']?:'',//
-               'C_ASSGROL_yoy' => $postData['C_ASSGROL_yoy']?:'',//
-               'A_ASSGROL_yoy' => $postData['A_ASSGROL_yoy']?:'',//
-               'CA_ASSGROL_yoy' => $postData['CA_ASSGROL_yoy']?:'',//
-               'A_VENDINCL_yoy' => $postData['A_VENDINCL_yoy']?:'',//
-               'A_PROGROL_yoy' => $postData['A_PROGROL_yoy']?:'',//
-               'VENDINC_CGR' => $postData['VENDINC_CGR']?:'',//
-               'VENDINC_yoy_ave_2' => $postData['VENDINC_yoy_ave_2']?:'',//
-               'NETINC_yoy_ave_2' => $postData['NETINC_yoy_ave_2']?:'',//
-               'NPMOMB' => $postData['NPMOMB']?:'',//
-               'LIAGRO' => $postData['LIAGRO']?:'',
-                'ASSGRO' => $postData['ASSGRO']?:'',
-                'MAIBUSINC' => $postData['MAIBUSINC']?:'',
-                'TOTEQU' => $postData['TOTEQU']?:'',
-                'RATGRO' => $postData['RATGRO']?:'',
-                'PROGRO' => $postData['PROGRO']?:'',
-                'NETINC' => $postData['NETINC']?:'',
-                'SOCNUM' => $postData['SOCNUM']?:'',
-                'EMPNUM' => $postData['EMPNUM']?:'',//
+               'entName' => $postData['entName'],
+               'year' => $postData['year'],
+               'VENDINC' => $postData['VENDINC'],//
+               'C_ASSGROL' => $postData['C_ASSGROL'],//
+               'A_ASSGROL' => $postData['A_ASSGROL'],//
+               'CA_ASSGRO' => $postData['CA_ASSGRO'],//
+               'C_INTRATESL' => $postData['C_INTRATESL'],//
+               'ASSGRO_C_INTRATESL' => $postData['ASSGRO_C_INTRATESL'],//
+               'A_VENDINCL' => $postData['A_VENDINCL'],//
+               'EQUITYL' => $postData['EQUITYL'],//
+               'ATOL' => $postData['ATOL'],//
+               'A_PROGROL' => $postData['A_PROGROL'],//
+               'DEBTL' => $postData['DEBTL'],//
+               'ROA' => $postData['ROA'],//
+               'ROAL' => $postData['ROAL'],//
+               'ROE_AL' => $postData['ROE_AL'],//
+               'ROE' => $postData['ROE_AL'],//
+               'ROEA' => $postData['ROEA'],//
+               'ROEB' => $postData['ROEB'],//
+               'NOR' => $postData['NOR'],//
+               'MAIBUSINC_RATIOL' => $postData['MAIBUSINC_RATIOL'],//
+               'NALR' => $postData['NALR'],//
+               'OPM' => $postData['OPM'],//
+               'ROCA' => $postData['ROCA'],//
+               'PMOTA' => $postData['PMOTA'],//
+               'TBR' => $postData['TBR'],//
+               'EQUITYL_new' => $postData['EQUITYL_new'],//
+               'LIAGRO_yoy' => $postData['LIAGRO_yoy'],//
+               'VENDINC_yoy' => $postData['VENDINC_yoy'],//
+               'MAIBUSINC_yoy' => $postData['VENDINC_yoy'],//
+               'PROGRO_yoy' => $postData['PROGRO_yoy'],//
+               'NETINC_yoy' => $postData['NETINC_yoy'],//
+               'RATGRO_yoy' => $postData['RATGRO_yoy'],//
+               'TOTEQU_yoy' => $postData['TOTEQU_yoy'],//
+               'SOCNUM_yoy' => $postData['SOCNUM_yoy'],//
+               'TBR_new' => $postData['TBR_new'],//
+               'C_ASSGROL_yoy' => $postData['C_ASSGROL_yoy'],//
+               'A_ASSGROL_yoy' => $postData['A_ASSGROL_yoy'],//
+               'CA_ASSGROL_yoy' => $postData['CA_ASSGROL_yoy'],//
+               'A_VENDINCL_yoy' => $postData['A_VENDINCL_yoy'],//
+               'A_PROGROL_yoy' => $postData['A_PROGROL_yoy'],//
+               'VENDINC_CGR' => $postData['VENDINC_CGR'],//
+               'VENDINC_yoy_ave_2' => $postData['VENDINC_yoy_ave_2'],//
+               'NETINC_yoy_ave_2' => $postData['NETINC_yoy_ave_2'],//
+               'NPMOMB' => $postData['NPMOMB'],//
+               'LIAGRO' => $postData['LIAGRO'],
+               'ASSGRO' => $postData['ASSGRO'],
+               'MAIBUSINC' => $postData['MAIBUSINC'],
+               'TOTEQU' => $postData['TOTEQU'],
+               'RATGRO' => $postData['RATGRO'],
+               'PROGRO' => $postData['PROGRO'],
+               'NETINC' => $postData['NETINC'],
+               'SOCNUM' => $postData['SOCNUM'],
+               'EMPNUM' => $postData['EMPNUM'],//
                'raw_return' => $postData['raw_return']?:'',//
-                'status' => $postData['status']?:1,
-                'last_pull_api_time' => $postData['last_pull_api_time']?:date('Y-m-d H:i:s'),
+               'status' => $postData['status']?:1,
+               'last_pull_api_time' => $postData['last_pull_api_time']?:date('Y-m-d H:i:s'),
             ])->save();
 
         } catch (\Throwable $e) {
@@ -100,6 +100,82 @@ class NewFinanceData extends ModelBase
                 ])
             );  
         }  
+
+        return $res;
+    }
+
+    public static function addRecordV3(
+        $postData
+    ){
+        try {
+            $res =  NewFinanceData::create()->data([
+                'entName' => $postData['entName'],
+                'year' => $postData['year'],
+                'VENDINC' => $postData['VENDINC'],//
+                'C_ASSGROL' => $postData['C_ASSGROL'],//
+                'A_ASSGROL' => $postData['A_ASSGROL'],//
+                'CA_ASSGRO' => $postData['CA_ASSGRO'],//
+                'C_INTRATESL' => $postData['C_INTRATESL'],//
+                'ASSGRO_C_INTRATESL' => $postData['ASSGRO_C_INTRATESL'],//
+                'A_VENDINCL' => $postData['A_VENDINCL'],//
+                'EQUITYL' => $postData['EQUITYL'],//
+                'ATOL' => $postData['ATOL'],//
+                'A_PROGROL' => $postData['A_PROGROL'],//
+                'DEBTL' => $postData['DEBTL'],//
+                'ROA' => $postData['ROA'],//
+                'ROAL' => $postData['ROAL'],//
+                'ROE_AL' => $postData['ROE_AL'],//
+                'ROE' => $postData['ROE_AL'],//
+                'ROEA' => $postData['ROEA'],//
+                'ROEB' => $postData['ROEB'],//
+                'NOR' => $postData['NOR'],//
+                'MAIBUSINC_RATIOL' => $postData['MAIBUSINC_RATIOL'],//
+                'NALR' => $postData['NALR'],//
+                'OPM' => $postData['OPM'],//
+                'ROCA' => $postData['ROCA'],//
+                'PMOTA' => $postData['PMOTA'],//
+                'TBR' => $postData['TBR'],//
+                'EQUITYL_new' => $postData['EQUITYL_new'],//
+                'LIAGRO_yoy' => $postData['LIAGRO_yoy'],//
+                'VENDINC_yoy' => $postData['VENDINC_yoy'],//
+                'MAIBUSINC_yoy' => $postData['VENDINC_yoy'],//
+                'PROGRO_yoy' => $postData['PROGRO_yoy'],//
+                'NETINC_yoy' => $postData['NETINC_yoy'],//
+                'RATGRO_yoy' => $postData['RATGRO_yoy'],//
+                'TOTEQU_yoy' => $postData['TOTEQU_yoy'],//
+                'SOCNUM_yoy' => $postData['SOCNUM_yoy'],//
+                'TBR_new' => $postData['TBR_new'],//
+                'C_ASSGROL_yoy' => $postData['C_ASSGROL_yoy'],//
+                'A_ASSGROL_yoy' => $postData['A_ASSGROL_yoy'],//
+                'CA_ASSGROL_yoy' => $postData['CA_ASSGROL_yoy'],//
+                'A_VENDINCL_yoy' => $postData['A_VENDINCL_yoy'],//
+                'A_PROGROL_yoy' => $postData['A_PROGROL_yoy'],//
+                'VENDINC_CGR' => $postData['VENDINC_CGR'],//
+                'VENDINC_yoy_ave_2' => $postData['VENDINC_yoy_ave_2'],//
+                'NETINC_yoy_ave_2' => $postData['NETINC_yoy_ave_2'],//
+                'NPMOMB' => $postData['NPMOMB'],//
+                'LIAGRO' => $postData['LIAGRO'],
+                'ASSGRO' => $postData['ASSGRO'],
+                'MAIBUSINC' => $postData['MAIBUSINC'],
+                'TOTEQU' => $postData['TOTEQU'],
+                'RATGRO' => $postData['RATGRO'],
+                'PROGRO' => $postData['PROGRO'],
+                'NETINC' => $postData['NETINC'],
+                'SOCNUM' => $postData['SOCNUM'],
+                'EMPNUM' => $postData['EMPNUM'],//
+                'raw_return' => $postData['raw_return']?:'',//
+                'status' => $postData['status']?:1,
+                'last_pull_api_time' => $postData['last_pull_api_time']?:date('Y-m-d H:i:s'),
+            ])->save();
+
+        } catch (\Throwable $e) {
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    'addCarInsuranceInfo Throwable continue',
+                    $e->getMessage(),
+                ])
+            );
+        }
 
         return $res;
     }

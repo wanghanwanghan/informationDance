@@ -165,4 +165,24 @@ class InsuranceDataHuiZhong extends ModelBase
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }
+
+    public static function  gteLists($where,$page){
+        CommonService::getInstance()->log4PHP(
+            json_encode(['gteLists$where '=>$where, '$page'=> $page,  ])
+        );
+        $res =  InsuranceDataHuiZhong::findByConditionV2(
+            $where,$page
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode(['gteLists$$res '=>$res ])
+        );
+        foreach ($res['data'] as &$dataItem){
+            $dataItem['status_cname'] = InsuranceDataHuiZhong::getStatusMap()[$dataItem['status']];
+        }
+        return [
+            'data' => $res['data'],
+            'total'=>$res['total'],
+        ];
+    }
+
 }
