@@ -302,7 +302,7 @@ class DianZiQianService extends ServiceBase
 //            }
 //        }
         //获取数据
-        $list = AntAuthList::create()->where('id>359')->all();
+        $list = AntAuthList::create()->where('id>188')->all();
         $emptyAddressArr = [];
         $data = [];
         $arr = [];
