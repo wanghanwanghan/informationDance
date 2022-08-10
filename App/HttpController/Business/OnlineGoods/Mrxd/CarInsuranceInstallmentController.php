@@ -78,6 +78,54 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
 
         $res = jsonDecode($res_raw);
 
+        $checkRes = DataModelExample::checkField(
+            [
+                'ent_name' => [
+                    'not_empty' => 1,
+                    'field_name' => 'ent_name',
+                    'err_msg' => '企业名必填',
+                ],
+                'code' => [
+                    'not_empty' => 1,
+                    'field_name' => 'code',
+                    'err_msg' => '验证码必填',
+                ],
+                'legal_phone' => [
+                    'not_empty' => 1,
+                    'field_name' => 'legal_phone',
+                    'err_msg' => '法人手机号必填',
+                ],
+                'legal_person' => [
+                    'not_empty' => 1,
+                    'field_name' => 'legal_person',
+                    'err_msg' => '法人必填',
+                ],
+                'legal_person_id_card' => [
+                    'not_empty' => 1,
+                    'field_name' => 'legal_person_id_card',
+                    'err_msg' => '法人身份证必填',
+                ],
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        $redis_code = OnlineGoodsUser::getRandomDigit($requestData['legal_phone'],'CarInsurance_sms_code_');
+        if($redis_code != $requestData['code']){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'redis code not equal'=> [
+                        '$redis_code'=>$redis_code,
+                        'code'=>$requestData['code'],
+                    ]
+                ])
+            );
+        }
         CarInsuranceInstallment::addRecordV2(
             [
                 'user_id' => $this->loginUserinfo['id'],
