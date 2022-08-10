@@ -3601,6 +3601,14 @@ eof;
             ];
         }
     }
+
+// Comparison function
+     function date_compare($element1, $element2) {
+        $datetime1 = strtotime($element1['datetime']);
+        $datetime2 = strtotime($element2['datetime']);
+        return $datetime1 - $datetime2;
+    }
+
     function testExport()
     {
         if(
@@ -3616,6 +3624,11 @@ eof;
                     $tmpData[] = $dataItem;
                 }
             }
+
+
+            // Sort the array
+            usort($tmpData, 'beginDate');
+
             return $this->writeJson(
                 200,[] ,
                 //CommonService::ClearHtml($res['body']),
