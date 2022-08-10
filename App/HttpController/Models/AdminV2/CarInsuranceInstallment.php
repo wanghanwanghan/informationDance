@@ -4,6 +4,8 @@ namespace App\HttpController\Models\AdminV2;
 
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\ModelBase;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongXin\LongXinService;
@@ -236,4 +238,83 @@ class CarInsuranceInstallment extends ModelBase
             'total' => $res['total'],
         ];
     }
+
+    /**
+    苏宁银行-微商贷
+    公司成立2年以上，不能是分公司
+    申请人：贷款年龄：22-59周岁；申请人为法人（对占股无要求）、近6个月法人或最大股东变更满6个月
+    法人手机在网时长大于1年
+    正常纳税满18个月
+    年纳税金额1.5万以上（PS：不做强要求，但不能为0）
+    纳税等级A/B//M（个体工商户可准入）
+    无连续6个月不纳税情况
+    近3个月有纳税申报记录
+    纳税系统内录入最近一季资产负债表、利润表，必须有三期以上财务报表
+    企业当前无欠税
+    近半年销售波动较小
+
+
+    注意 ❗❗❗
+
+    上文所有“所得税”指的是：所得税接口里，16栏的本期金额
+    上文所有“增值税”指的是：增值税接口里，34,39,40,41项金额的总和
+
+     */
+    static  function  runMatch($carInsuranceData){
+        $retrunData = [];
+
+        //企业信息
+        $companyRes = CompanyBasic::findByCode($carInsuranceData['social_credit_code']);
+        $retrunData['social_credit_code'] = $carInsuranceData['social_credit_code'];
+        $retrunData['companyBasic'] = $companyRes;
+        if(empty($companyRes)){
+            return $retrunData;
+        }
+
+        //成立日期
+        $retrunData['company_ESDATE'] = $companyRes['ESDATE'];
+
+        //身份证年龄
+        $retrunData['legal_person_id_card'] = $carInsuranceData['legal_person_id_card'];
+        $retrunData['legal_person_age'] =  self::ageVerification($carInsuranceData['legal_person_id_card']);
+
+        //法人手机在网状态
+        $res = (new ChuangLanService())->getCheckPhoneStatus([
+            'mobiles' => $carInsuranceData['legal_phone'],
+        ]);
+        $retrunData['legal_phone_check_res'] = $res;
+        if (!empty($res['data'])){
+            foreach($res['data'] as $dataItem){
+                if($dataItem['mobile'] == $carInsuranceData['legal_phone']){
+                    $retrunData['legal_phone_check_resV2'] = $dataItem;
+                }
+            }
+        }
+
+        // 正常纳税满18个月 正常缴纳？每月有同时缴纳所得税或增值税即算正常缴纳。
+
+
+        return  $retrunData;
+    }
+
+    //根据身份证获取年龄
+    static function  ageVerification($code)
+
+    {
+        $age_time = strtotime(substr($code, 6, 8));
+        if($age_time === false){
+            return false;
+        }
+        list($y1,$m1,$d1) = explode("-",date("Y-m-d",$age_time));
+
+        $now_time = strtotime("now");
+
+        list($y2,$m2,$d2) = explode("-",date("Y-m-d",$now_time));
+        $age = $y2 - $y1;
+        if((int)($m2.$d2) < (int)($m1.$d1)){
+            $age -= 1;
+        }
+        return $age;
+    }
+
 }
