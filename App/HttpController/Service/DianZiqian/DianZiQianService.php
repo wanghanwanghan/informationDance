@@ -379,7 +379,7 @@ class DianZiQianService extends ServiceBase
 //        }
         $AuthData = DianZiQianAuth::create()->where('id >231')->all();
         foreach ($AuthData as $val){
-            AntAuthList::create()->where('dianZiQian_id="'.$val->getAttr('id'))->update([
+            AntAuthList::create()->where('dianZiQian_id='.$val->getAttr('id'))->update([
                                                                 'filePath' => $val->getAttr('personalUrl')]);
 //            break;
         }
