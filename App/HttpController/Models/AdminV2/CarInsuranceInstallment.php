@@ -56,6 +56,8 @@ class CarInsuranceInstallment extends ModelBase
                 'order_no' => $requestData['order_no'],
                'legal_person' => $requestData['legal_person'],
                'legal_person_id_card' => $requestData['legal_person_id_card'],
+               'social_credit_code' => $requestData['social_credit_code'],
+               'auth_id' => $requestData['auth_id'],
                 'url' => $requestData['url']?:'',
                 'raw_return' => $requestData['raw_return']?:'',
                 'status' => $requestData['status']?:1,

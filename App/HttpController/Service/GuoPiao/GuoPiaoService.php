@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\GuoPiao;
 
+use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Models\Api\InvoiceIn;
 use App\HttpController\Models\Api\InvoiceOut;
 use App\HttpController\Service\Common\CommonService;
@@ -435,5 +436,68 @@ class GuoPiaoService extends ServiceBase
         } else {
             return (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
         }
+    }
+
+    function getAuthenticationManage(
+        $entName,
+        $phone
+    ): bool
+    {
+
+        if (empty($callback)) {
+            $callback = "https://api.meirixindong.com/api/v1/user/addAuthEntName?entName={$entName}&phone={$phone}";
+        }
+
+        $orderNo = $phone . time();
+
+        $res = (new GuoPiaoService())->getAuthentication($entName, $callback, $orderNo);
+        CommonService::getInstance()->log4PHP(json_encode(
+            [
+                'getAuthentication_res'=>$res,
+                'getAuthentication_param'=>[
+                    '$entName'=>$entName,
+                    '$callback'=>$callback,
+                    '$orderNo'=>$orderNo
+                ],
+            ]
+        ));
+        $res = jsonDecode($res);
+
+        !(isset($res['code']) && $res['code'] == 0) ?: $res['code'] = 200;
+
+        //添加授权信息
+        try {
+            $check = AuthBook::create()->where([
+                'phone' => $phone, 'entName' => $entName, 'code' => $code, 'type' => 2
+            ])->get();
+            if (empty($check)) {
+                AuthBook::create()->data([
+                    'phone' => $phone,
+                    'entName' => $entName,
+                    'code' => $code,
+                    'status' => 1,
+                    'type' => 2,//深度报告，发票数据
+                    'remark' => $orderNo
+                ])->save();
+            } else {
+                $check->update([
+                    'phone' => $phone,
+                    'entName' => $entName,
+                    'code' => $code,
+                    'status' => 1,
+                    'type' => 2,
+                    'remark' => $orderNo
+                ]);
+            }
+        } catch (\Throwable $e) {
+            return $this->writeErr($e, __FUNCTION__);
+        }
+
+        if (strpos($res['data'], '?url=')) {
+            $arr = explode('?url=', $res['data']);
+            $res['data'] = 'https://api.meirixindong.com/Static/vertify.html?url=' . $arr[1];
+        }
+
+        return $this->writeJson($res['code'], null, $res['data'], $res['message']);
     }
 }

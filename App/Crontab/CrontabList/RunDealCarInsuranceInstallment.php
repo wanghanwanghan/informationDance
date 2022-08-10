@@ -17,6 +17,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecordV3;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
+use App\HttpController\Models\AdminV2\CarInsuranceInstallment;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
@@ -165,7 +166,9 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
         return true ;   
     }
 
-//    static function run
+    static function runMatch(){
+        CarInsuranceInstallment::findBySql();
+    }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
