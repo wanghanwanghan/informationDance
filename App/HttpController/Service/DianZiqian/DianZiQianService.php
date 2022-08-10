@@ -375,7 +375,7 @@ class DianZiQianService extends ServiceBase
 //
             $id = $this->getAuthFileId($param);
             AntAuthList::create()->get($item->getAttr('id'))->update(['dianZiQian_id'=>$id]);
-            break;
+//            break;
         }
 //        $AuthData = DianZiQianAuth::create()->where('id >50')->all();
 //        foreach ($AuthData as $val){
