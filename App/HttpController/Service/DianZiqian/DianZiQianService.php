@@ -727,7 +727,7 @@ class DianZiQianService extends ServiceBase
     public function contractFile($file)
     {
         $path  = '/open-api-lite/contract/file';
-//        $file  = STATIC_PATH . "AuthBookModel/dx_template.pdf";
+        $file  = INV_AUTH_PATH . $file;
         $param = $this->buildParam([], $path, ['fileName' => $file, 'key' => 'contractFile']);
         $resp  = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
