@@ -356,45 +356,36 @@ class DianZiQianService extends ServiceBase
 
 //            break;
 //        }
-        $id='';
-        $list = AntAuthList::create()->where('id>188')->all();
-        foreach ($list as $item) {
-            if(empty($item->getAttr('regAddress'))){
-                continue;
-            }
-            $param = [
-                'entName' => $item->getAttr('entName'),
-                'socialCredit' => $item->getAttr('socialCredit'),
-                'legalPerson' => $item->getAttr('legalPerson'),
-                'idCard' => $item->getAttr('idCard'),
-                'phone' => $item->getAttr('phone'),
-                'city' => $item->getAttr('city'),
-                'regAddress' => $item->getAttr('regAddress'),
-                'file' => 'dianziqian_jcsk_shouquanshu.pdf'
-            ];
-//
-            $id = $this->getAuthFileId($param);
-            AntAuthList::create()->get($item->getAttr('id'))->update(['dianZiQian_id'=>$id]);
-//            break;
-        }
-//        $AuthData = DianZiQianAuth::create()->where('id >50')->all();
-//        foreach ($AuthData as $val){
-//            $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
-//            is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
-//            $filename = $val->getAttr('contractCode');
-//            $path = $path . $filename.'-'.Carbon::now()->format('Ymd').'.pdf';
-//            //储存pdf
-//            file_put_contents( INV_AUTH_PATH .$path,file_get_contents($val->getAttr('personalDownloadUrl')),FILE_APPEND | LOCK_EX);
+//        $id='';
+//        $list = AntAuthList::create()->where('id>188')->all();
+//        foreach ($list as $item) {
+//            if(empty($item->getAttr('regAddress'))){
+//                continue;
+//            }
+//            $param = [
+//                'entName' => $item->getAttr('entName'),
+//                'socialCredit' => $item->getAttr('socialCredit'),
+//                'legalPerson' => $item->getAttr('legalPerson'),
+//                'idCard' => $item->getAttr('idCard'),
+//                'phone' => $item->getAttr('phone'),
+//                'city' => $item->getAttr('city'),
+//                'regAddress' => $item->getAttr('regAddress'),
+//                'file' => 'dianziqian_jcsk_shouquanshu.pdf'
+//            ];
 ////
-//            AntAuthList::create()->where('entName="'.$val->getAttr('entName').'" and legalPerson="'.$val->getAttr('personName').'"')->update([
-//                                                                'filePath' => $path,
-//                                                            ]);
-//
+//            $id = $this->getAuthFileId($param);
+//            AntAuthList::create()->get($item->getAttr('id'))->update(['dianZiQian_id'=>$id]);
 ////            break;
 //        }
+        $AuthData = DianZiQianAuth::create()->where('id >231')->all();
+        foreach ($AuthData as $val){
+            AntAuthList::create()->where('dianZiQian_id="'.$val->getAttr('id'))->update([
+                                                                'filePath' => $val->getAttr('personalUrl')]);
+//            break;
+        }
 //
         //请求盖章
-        return $this->createReturn(200, null, $id, '成功');
+        return $this->createReturn(200, null, [], '成功');
     }
 
     public function gaiZhang($postData){
