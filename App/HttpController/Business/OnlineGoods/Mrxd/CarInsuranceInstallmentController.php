@@ -8,7 +8,7 @@ use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
-use App\HttpController\Models\AdminV2\carInsuranceInstallment;
+use App\HttpController\Models\AdminV2\CarInsuranceInstallment;
 use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
@@ -78,10 +78,10 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
 
         $res = jsonDecode($res_raw);
 
-        carInsuranceInstallment::addRecordV2(
+        CarInsuranceInstallment::addRecordV2(
             [
                 'user_id' => $this->loginUserinfo['id'],
-                'product_id' => $this->loginUserinfo['id']?:0,
+                'product_id' => $requestData['product_id']?:0,
                 'ent_name' => $requestData['ent_name'],
                 'legal_phone' => $requestData['legal_phone'],
                 'legal_person' => $requestData['legal_person'],

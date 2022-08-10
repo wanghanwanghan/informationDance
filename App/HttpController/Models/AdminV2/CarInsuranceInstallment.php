@@ -11,7 +11,7 @@ use App\HttpController\Service\LongXin\LongXinService;
 
 // use App\HttpController\Models\AdminRole;
 
-class carInsuranceInstallment extends ModelBase
+class CarInsuranceInstallment extends ModelBase
 {
 
     protected $tableName = 'car_insurance_installment';
@@ -31,14 +31,14 @@ class carInsuranceInstallment extends ModelBase
             return  true;
         }
 
-        return carInsuranceInstallment::addRecord(
+        return CarInsuranceInstallment::addRecord(
             $info
         );
     }
 
     public static function addRecord($requestData){
         try {
-           $res =  carInsuranceInstallment::create()->data([
+           $res =  CarInsuranceInstallment::create()->data([
                 'user_id' => $requestData['user_id'],
                 'product_id' => $requestData['product_id']?:0,
                 'ent_name' => $requestData['ent_name'],
@@ -79,14 +79,14 @@ class carInsuranceInstallment extends ModelBase
     }
 
     public static function findAllByCondition($whereArr){
-        $res =  carInsuranceInstallment::create()
+        $res =  CarInsuranceInstallment::create()
             ->where($whereArr)
             ->all();
         return $res;
     }
 
     public static function setTouchTime($id,$touchTime){
-        $info = carInsuranceInstallment::findById($id);
+        $info = CarInsuranceInstallment::findById($id);
 
         return $info->update([
             'touch_time' => $touchTime,
@@ -101,7 +101,7 @@ class carInsuranceInstallment extends ModelBase
     }
 
     public static function findByConditionWithCountInfo($whereArr,$page){
-        $model = carInsuranceInstallment::create()
+        $model = CarInsuranceInstallment::create()
                 ->where($whereArr)
                 ->page($page)
                 ->order('id', 'DESC')
@@ -117,7 +117,7 @@ class carInsuranceInstallment extends ModelBase
     }
 
     public static function findByConditionV2($whereArr,$page){
-        $model = carInsuranceInstallment::create();
+        $model = CarInsuranceInstallment::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -135,14 +135,14 @@ class carInsuranceInstallment extends ModelBase
     }
 
     public static function findById($id){
-        $res =  carInsuranceInstallment::create()
+        $res =  CarInsuranceInstallment::create()
             ->where('id',$id)            
             ->get();  
         return $res;
     }
 
     public static function findByUserIdAndEntName($ent_name,$user_id){
-        $res =  carInsuranceInstallment::create()
+        $res =  CarInsuranceInstallment::create()
             ->where('ent_name',$ent_name)
             ->where('user_id',$user_id)
             ->get();
@@ -151,7 +151,7 @@ class carInsuranceInstallment extends ModelBase
 
 
     public static function findByName($user_id,$name,$product_id){
-        $res =  carInsuranceInstallment::create()
+        $res =  CarInsuranceInstallment::create()
             ->where('name',$name)
             ->where('product_id',$product_id)
             ->where('user_id',$user_id)
@@ -160,7 +160,7 @@ class carInsuranceInstallment extends ModelBase
     }
 
     public static function setData($id,$field,$value){
-        $info = carInsuranceInstallment::findById($id);
+        $info = CarInsuranceInstallment::findById($id);
         return $info->update([
             "$field" => $value,
         ]);
@@ -179,7 +179,7 @@ class carInsuranceInstallment extends ModelBase
 
 
     public static function getDataLists($where,$page){
-        $res =   carInsuranceInstallment::findByConditionV2(
+        $res =   CarInsuranceInstallment::findByConditionV2(
             $where,$page
         );
         $newData = [];
