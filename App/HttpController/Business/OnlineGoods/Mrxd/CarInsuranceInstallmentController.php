@@ -74,7 +74,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         $callback = $this->getRequestData('callback', 'https://pc.meirixindong.com/');
 
         $orderNo = control::getUuid(20);
-        $res_raw = (new GuoPiaoService())->getAuthentication($this->getRequestData('getAuthentication1'), $callback, $orderNo);
+        $res_raw = (new GuoPiaoService())->getAuthentication($requestData['ent_name'], $callback, $orderNo);
 
         $res = jsonDecode($res_raw);
 
