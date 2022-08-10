@@ -3624,37 +3624,47 @@ eof;
                     $tmpData[] = $dataItem;
                 }
             }
+            // Sort the array
+            usort($tmpData, 'beginDate');
 
             //最长连续
             $lastDate = '';
             $i = 1;
             $length = 1;
-            foreach ($tmpData as $tmpDataItem){
-                $beginDate = date('Y-m-d',strtotime($tmpDataItem['beginDate'])) ;
-                 // 第一次
-                 if($i == 1 ){
-                     $lastDate = $beginDate ;
-                     continue;
-                 }
+            foreach ($tmpData as $tmpDataItem) {
 
-                $nextDate = date("Y-m", strtotime("-3 months",strtotime($lastDate)));
-                 //如果连续了
-                 if(
-                     $beginDate == $nextDate
-                 ){
-                     //连续长度加1
-                     $length ++;
-                 }else{
-                     $length  =1;
-                 }
+                $beginDate = date('Y-m-d', strtotime($tmpDataItem['beginDate']));
+                // 第一次
+                if ($i == 1) {
+                    $lastDate = $beginDate;
+                    continue;
+                }
+
+                $nextDate = date("Y-m", strtotime("-3 months", strtotime($lastDate)));
+
+                //如果连续了
+                if (
+                    $beginDate == $nextDate
+                ) {
+                    //连续长度加1
+                    $length++;
+
+                } else {
+                    var_dump(
+                        [
+                            $beginDate,
+                            $nextDate,
+                            $lastDate,
+                        ]
+                    );
+                    $length = 1;
+
+                }
 
                 //重置上次连续时间
-                $lastDate = $beginDate ;
-                 $i  ++;
-             }
-
-            // Sort the array
-            usort($tmpData, 'beginDate');
+                $lastDate = $beginDate;
+                $i++;
+            }
 
             return $this->writeJson(
                 200,[] ,
