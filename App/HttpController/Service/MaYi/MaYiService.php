@@ -5279,8 +5279,9 @@ class MaYiService extends ServiceBase
                     ];
                     try{
                         $dianziqian_id = (new DianZiQianService())->gaiZhang($gaizhangParam);
+                        CommonService::getInstance()->log4PHP([$dianziqian_id], 'gaiZhang_res', 'mayilog');
                     } catch (\Throwable $e){
-                        CommonService::getInstance()->log4PHP([$e], 'info', 'mayilog');
+                        CommonService::getInstance()->log4PHP([$e], 'gaiZhang$e', 'mayilog');
                         $dianziqian_id = '';
                     }
                 }
