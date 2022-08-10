@@ -5269,7 +5269,7 @@ class MaYiService extends ServiceBase
         if (!empty($data['fileData'])) {
             foreach ($data['fileData'] as $datum) {
                 $id='';
-                if($datum['isSeal'] === 'true'){
+                if($datum['isSeal'] === 'true' && $data['test']){
                     $gaizhangParam = [
                         'entName'      => $data['entName'],
                         'legalPerson'  => $data['legalPerson'],
@@ -5310,21 +5310,23 @@ class MaYiService extends ServiceBase
 
             }
         }else{
-            try{
-                $gaizhangParam = [
-                    'entName'      => $data['entName'],
-                    'legalPerson'  => $data['legalPerson'],
-                    'idCard'       => $data['idCard'],
-                    'socialCredit' => $data['socialCredit'],
-                    'file'         => 'dianziqian_jcsk_shouquanshu.pdf',
-                    'phone' =>$data['phone'],
-                    'regAddress' => $baiduApiRes['regAddress'] ?? '',
-                    'city' => $baiduApiRes['city'] ?? '',
-                ];
-                $dianziqian_id = (new DianZiQianService())->getAuthFileId($gaizhangParam);
-                AntAuthList::create()->where('id='.$id)->update(['dianZiQian_id'=>$dianziqian_id]);
-            } catch (\Throwable $e){
-                CommonService::getInstance()->log4PHP([$e], 'info', 'mayilog');
+            if($data['test']) {
+                try {
+                    $gaizhangParam = [
+                        'entName'      => $data['entName'],
+                        'legalPerson'  => $data['legalPerson'],
+                        'idCard'       => $data['idCard'],
+                        'socialCredit' => $data['socialCredit'],
+                        'file'         => 'dianziqian_jcsk_shouquanshu.pdf',
+                        'phone'        => $data['phone'],
+                        'regAddress'   => $baiduApiRes['regAddress'] ?? '',
+                        'city'         => $baiduApiRes['city'] ?? '',
+                    ];
+                    $dianziqian_id = (new DianZiQianService())->getAuthFileId($gaizhangParam);
+                    AntAuthList::create()->where('id=' . $id)->update(['dianZiQian_id' => $dianziqian_id]);
+                } catch (\Throwable $e) {
+                    CommonService::getInstance()->log4PHP([$e], 'info', 'mayilog');
+                }
             }
         }
 
