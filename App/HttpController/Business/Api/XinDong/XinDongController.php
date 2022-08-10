@@ -3645,6 +3645,7 @@ eof;
                             'last cal date'=>$lastDate,
                         ]
                     ));
+                    $i ++;
                     continue;
                 }
 
