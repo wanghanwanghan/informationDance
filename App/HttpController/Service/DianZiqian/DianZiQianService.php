@@ -356,7 +356,7 @@ class DianZiQianService extends ServiceBase
 
 //            break;
 //        }
-
+        $id='';
         $list = AntAuthList::create()->where('id>188')->all();
         foreach ($list as $item) {
             if(empty($item->getAttr('regAddress'))){
@@ -374,7 +374,7 @@ class DianZiQianService extends ServiceBase
             ];
 //
             $id = $this->getAuthFileId($param);
-            AntAuthList::create()->get($id)->update(['dianZiQian_id'=>$id]);
+            AntAuthList::create()->get($item->getAttr('id'))->update(['dianZiQian_id'=>$id]);
             break;
         }
 //        $AuthData = DianZiQianAuth::create()->where('id >50')->all();
@@ -394,7 +394,7 @@ class DianZiQianService extends ServiceBase
 //        }
 //
         //请求盖章
-        return $this->createReturn(200, null, [], '成功');
+        return $this->createReturn(200, null, $id, '成功');
     }
 
     public function gaiZhang($postData){
