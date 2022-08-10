@@ -5284,19 +5284,22 @@ class MaYiService extends ServiceBase
                         $dianziqian_id = '';
                     }
                 }
-
-                AntAuthSealDetail::create()->data([
-                      'orderNo'     => $data['orderNo'],
-                      //蚂蚁传过来的意思是 是否已经盖过章
-                      'isSeal'      => $datum['isSeal'] === 'true' ? 'false' : 'true',
-                      'isReturn'    => $datum['isReturn'],
-                      'fileAddress' => $datum['fileAddress'],
-                      'fileId'      => $datum['fileId'],
-                      'antAuthId'   => $id,
-                      'type'        => $datum['type'],
-                      'fileSecret'  => $datum['fileSecret'] ?? '',
-                      'dianZiQian_id' => $dianziqian_id
-                  ])->save();
+                try {
+                    AntAuthSealDetail::create()->data([
+                          'orderNo'       => $data['orderNo'],
+                          //蚂蚁传过来的意思是 是否已经盖过章
+                          'isSeal'        => $datum['isSeal'] === 'true' ? 'false' : 'true',
+                          'isReturn'      => $datum['isReturn'],
+                          'fileAddress'   => $datum['fileAddress'],
+                          'fileId'        => $datum['fileId'],
+                          'antAuthId'     => $id,
+                          'type'          => $datum['type'],
+                          'fileSecret'    => $datum['fileSecret'] ?? '',
+                          'dianZiQian_id' => $dianziqian_id ?? ''
+                      ])->save();
+                }catch (\Throwable $e){
+                    dingAlarm('蚂蚁盖章异常2',['蚂蚁盖章异常返回'=>json_encode($e)]);
+                }
 
             }
         }else{
@@ -5314,7 +5317,7 @@ class MaYiService extends ServiceBase
                 $dianziqian_id = (new DianZiQianService())->getAuthFileId($gaizhangParam);
                 AntAuthList::create()->where('id='.$id)->update(['dianZiQian_id'=>$dianziqian_id]);
             } catch (\Throwable $e){
-                dingAlarm('蚂蚁盖章异常',['蚂蚁盖章异常返回'=>json_encode($e)]);
+                dingAlarm('蚂蚁盖章异常3',['蚂蚁盖章异常返回'=>json_encode($e)]);
             }
         }
 
