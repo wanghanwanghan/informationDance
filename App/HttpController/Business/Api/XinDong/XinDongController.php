@@ -3610,9 +3610,9 @@ eof;
                 $this->getRequestData('getIncometaxMonthlyDeclaration')
             );
             return $this->writeJson(
-                200,[  ] ,
+                200,json_decode($res,true) ,
                 //CommonService::ClearHtml($res['body']),
-                json_decode($res,true),
+                $res,
                 '成功',
                 true,
                 []
