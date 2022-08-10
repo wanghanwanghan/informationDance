@@ -28,6 +28,16 @@ class CarInsuranceInstallment extends ModelBase
         if(
             self::findByUserIdAndEntName($info['ent_name'],$info['user_id'])
         ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'CarInsuranceInstallment has old  record'=>[
+                        'ent_name'=>$info['ent_name'],
+                        'user_id'=>$info['user_id'],
+                    ],
+
+                ])
+            );
             return  true;
         }
 
