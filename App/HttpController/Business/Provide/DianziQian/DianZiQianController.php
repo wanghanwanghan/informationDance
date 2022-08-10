@@ -116,6 +116,7 @@ class DianZiQianController extends ProvideBase
     function testInvEntList():bool
     {
         $tmp = $this->getRequestData('data');
+        dingAlarm('testInvEntList',['$tmp'=>json_encode($tmp)]);
         $data['entName'] = $tmp['body']['companyName'] ?? '';
         $data['socialCredit'] = $tmp['body']['nsrsbh'] ?? '';
         $data['legalPerson'] = $tmp['body']['legalName'] ?? '';
