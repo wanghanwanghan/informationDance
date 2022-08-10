@@ -302,12 +302,12 @@ class DianZiQianService extends ServiceBase
 //            }
 //        }
         //获取数据
-        $list = AntAuthList::create()->where('id>188')->all();
-        $emptyAddressArr = [];
-        $data = [];
-        $arr = [];
-        foreach ($list as $k=>$val){
-            if(!empty($val->getAttr('regAddress'))){
+//        $list = AntAuthList::create()->where('id>188')->all();
+//        $emptyAddressArr = [];
+//        $data = [];
+//        $arr = [];
+//        foreach ($list as $k=>$val){
+//            if(!empty($val->getAttr('regAddress'))){
 //                $emptyAddressArr[$k]['id'] = $val->getAttr('id');
 //                $emptyAddressArr[$k]['entName'] = $val->getAttr('entName');
 //                $registerData = (new TaoShuService())
@@ -329,30 +329,53 @@ class DianZiQianService extends ServiceBase
 //                                                            ]);
 //                }
 //            }else{
-                $data['1'][$k]['id'] = $val->getAttr('id');
-                $data['1'][$k]['entName'] = $val->getAttr('entName');
-                $data['1'][$k]['socialCredit'] = $val->getAttr('socialCredit');
-                $data['1'][$k]['legalPerson'] = $val->getAttr('legalPerson');
-                $data['1'][$k]['idCard'] = $val->getAttr('idCard');
-                $data['1'][$k]['phone'] = $val->getAttr('phone');
-                $data['1'][$k]['city'] = $val->getAttr('city');
-                $data['1'][$k]['regAddress'] = $val->getAttr('regAddress');
-            }
-        }
-        $res = [];
-        foreach ($data['1'] as $v){
-            $param = [
-            'entName' => $v['entName'],
-            'socialCredit' => $v['socialCredit'],
-            'legalPerson' => $v['legalPerson'],
-            'idCard' => $v['idCard'],
-            'phone' => $v['phone'],
-            'city' => $v['city'],
-            'regAddress' => $v['regAddress'],
-            'file' => 'dianziqian_jcsk_shouquanshu.pdf'
-            ];
-            $res[] = $this->getAuthFile($param);
+//                $data['1'][$k]['id'] = $val->getAttr('id');
+//                $data['1'][$k]['entName'] = $val->getAttr('entName');
+//                $data['1'][$k]['socialCredit'] = $val->getAttr('socialCredit');
+//                $data['1'][$k]['legalPerson'] = $val->getAttr('legalPerson');
+//                $data['1'][$k]['idCard'] = $val->getAttr('idCard');
+//                $data['1'][$k]['phone'] = $val->getAttr('phone');
+//                $data['1'][$k]['city'] = $val->getAttr('city');
+//                $data['1'][$k]['regAddress'] = $val->getAttr('regAddress');
+//            }
+//        }
+//        $res = [];
+//        foreach ($data['1'] as $v){
+//            $param = [
+//            'entName' => $v['entName'],
+//            'socialCredit' => $v['socialCredit'],
+//            'legalPerson' => $v['legalPerson'],
+//            'idCard' => $v['idCard'],
+//            'phone' => $v['phone'],
+//            'city' => $v['city'],
+//            'regAddress' => $v['regAddress'],
+//            'file' => 'dianziqian_jcsk_shouquanshu.pdf'
+//            ];
+//            $res[] = $this->getAuthFile($param);
+//            $id = $this->getAuthFileId($param);
+
 //            break;
+//        }
+
+        $list = AntAuthList::create()->where('id>188')->all();
+        foreach ($list as $item) {
+            if(empty($item->getAttr('regAddress'))){
+                continue;
+            }
+            $param = [
+                'entName' => $item->getAttr('entName'),
+                'socialCredit' => $item->getAttr('socialCredit'),
+                'legalPerson' => $item->getAttr('legalPerson'),
+                'idCard' => $item->getAttr('idCard'),
+                'phone' => $item->getAttr('phone'),
+                'city' => $item->getAttr('city'),
+                'regAddress' => $item->getAttr('regAddress'),
+                'file' => 'dianziqian_jcsk_shouquanshu.pdf'
+            ];
+//
+            $id = $this->getAuthFileId($param);
+            AntAuthList::create()->get($id)->update(['dianZiQian_id'=>$id]);
+            break;
         }
 //        $AuthData = DianZiQianAuth::create()->where('id >50')->all();
 //        foreach ($AuthData as $val){
@@ -371,7 +394,7 @@ class DianZiQianService extends ServiceBase
 //        }
 //
         //请求盖章
-        return $this->createReturn(200, null, $res, '成功');
+        return $this->createReturn(200, null, [], '成功');
     }
 
     public function gaiZhang($postData){
