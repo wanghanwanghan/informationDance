@@ -8,6 +8,7 @@ use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\LongXin\LongXinService;
 
 
@@ -292,7 +293,11 @@ class CarInsuranceInstallment extends ModelBase
         }
 
         // 正常纳税满18个月 正常缴纳？每月有同时缴纳所得税或增值税即算正常缴纳。
-
+        // 企业所得税
+        $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
+            $retrunData['social_credit_code']
+        );
+        $data = jsonDecode($res['data']);
 
         return  $retrunData;
     }

@@ -3610,6 +3610,18 @@ eof;
                 $this->getRequestData('getIncometaxMonthlyDeclaration')
             );
             $data = jsonDecode($res['data']);
+            foreach ($data as $dataItem){
+                if($dataItem['columnSequence'] == 16){
+                    return $this->writeJson(
+                        200,[] ,
+                        //CommonService::ClearHtml($res['body']),
+                        $dataItem,
+                        '成功',
+                        true,
+                        []
+                    );
+                }
+            }
             return $this->writeJson(
                 200,[] ,
                 //CommonService::ClearHtml($res['body']),
