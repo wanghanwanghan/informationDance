@@ -3649,7 +3649,7 @@ eof;
                     continue;
                 }
 
-                $nextDate = date("Y-m", strtotime("-3 months", strtotime($lastDate)));
+                $nextDate = date("Y-m-d", strtotime("-3 months", strtotime($lastDate)));
                 CommonService::getInstance()->log4PHP(json_encode(
                     [
                         __CLASS__ ,
