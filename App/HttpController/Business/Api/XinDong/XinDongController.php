@@ -3625,6 +3625,33 @@ eof;
                 }
             }
 
+            //最长连续
+            $lastDate = '';
+            $i = 1;
+            $length = 1;
+            foreach ($tmpData as $tmpDataItem){
+                $beginDate = date('Y-m-d',strtotime($tmpDataItem['beginDate'])) ;
+                 // 第一次
+                 if($i == 1 ){
+                     $lastDate = $beginDate ;
+                     continue;
+                 }
+
+                $nextDate = date("Y-m", strtotime("-3 months",strtotime($lastDate)));
+                 //如果连续了
+                 if(
+                     $beginDate == $nextDate
+                 ){
+                     //连续长度加1
+                     $length ++;
+                 }else{
+                     $length  =1;
+                 }
+
+                //重置上次连续时间
+                $lastDate = $beginDate ;
+                 $i  ++;
+             }
 
             // Sort the array
             usort($tmpData, 'beginDate');
@@ -3632,7 +3659,7 @@ eof;
             return $this->writeJson(
                 200,[] ,
                 //CommonService::ClearHtml($res['body']),
-                $tmpData,
+                $length,
                 '成功',
                 true,
                 []
