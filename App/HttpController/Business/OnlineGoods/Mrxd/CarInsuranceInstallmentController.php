@@ -15,6 +15,7 @@ use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\InsuranceData;
 use App\HttpController\Models\AdminV2\MailReceipt;
+use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Models\Api\CarInsuranceInfo;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\RDS3\Company;
@@ -71,13 +72,6 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
     function authForCarInsurance(): bool
     {
         $requestData =  $this->getRequestData();
-        $callback = $this->getRequestData('callback', 'https://pc.meirixindong.com/');
-
-        $orderNo = control::getUuid(20);
-        $res_raw = (new GuoPiaoService())->getAuthentication($requestData['ent_name'], $callback, $orderNo);
-
-        $res = jsonDecode($res_raw);
-
         $checkRes = DataModelExample::checkField(
             [
                 'ent_name' => [
@@ -105,6 +99,11 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                     'field_name' => 'legal_person_id_card',
                     'err_msg' => '法人身份证必填',
                 ],
+                'social_credit_code' => [
+                    'not_empty' => 1,
+                    'field_name' => 'social_credit_code',
+                    'err_msg' => '企业信用代码必填必填',
+                ],
             ],
             $requestData
         );
@@ -114,6 +113,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
             return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
         }
 
+        //法人手机验证码验证
         $redis_code = OnlineGoodsUser::getRandomDigit($requestData['legal_phone'],'CarInsurance_sms_code_');
         if($redis_code != $requestData['code']){
             CommonService::getInstance()->log4PHP(
@@ -126,6 +126,31 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                 ])
             );
         }
+
+        //请求微风起 获取授权地址
+        $callback = "https://api.meirixindong.com/api/v1/user/addAuthEntName?entName=".$requestData['ent_name']
+            ."&phone=".$requestData['legal_phone'];
+        $orderNo = control::getUuid(20);
+        $res_raw = (new GuoPiaoService())->getAuthentication($requestData['ent_name'], $callback, $orderNo);
+        $res = jsonDecode($res_raw);
+        !(isset($res['code']) && $res['code'] == 0) ?: $res['code'] = 200;
+
+        //保存到授权表
+        $authId = AuthBook::addRecordV2(
+            [
+                'phone' =>  $requestData['legal_phone'],
+                'entName' => $requestData['ent_name'],
+                'code' => $requestData['social_credit_code'],
+                'status' => 1,
+                'type' => 2,//深度报告，发票数据
+                'remark' => $orderNo
+            ]
+        );
+
+//        if (strpos($res['data'], '?url=')) {
+//            $arr = explode('?url=', $res['data']);
+//            $res['data'] = 'https://api.meirixindong.com/Static/vertify.html?url=' . $arr[1];
+//        }
         CarInsuranceInstallment::addRecordV2(
             [
                 'user_id' => $this->loginUserinfo['id'],
@@ -134,6 +159,8 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                 'legal_phone' => $requestData['legal_phone'],
                 'legal_person' => $requestData['legal_person'],
                 'legal_person_id_card' => $requestData['legal_person_id_card'],
+                'social_credit_code' => $requestData['social_credit_code'],
+                'auth_id' => $authId,
                 'order_no' => $orderNo,
                 'url' => $res['data']?:'',
                 'raw_return' => $res_raw,
