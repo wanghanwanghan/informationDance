@@ -117,15 +117,15 @@ class DianZiQianController extends ProvideBase
     {
         $tmp = $this->getRequestData('data');
         dingAlarm('testInvEntList',['$tmp'=>json_encode($tmp)]);
-        $data['entName'] = $tmp['body']['companyName'] ?? '';
-        $data['socialCredit'] = $tmp['body']['nsrsbh'] ?? '';
-        $data['legalPerson'] = $tmp['body']['legalName'] ?? '';
-        $data['idCard'] = $tmp['body']['idCard'] ?? '';
-        $data['phone'] = $tmp['body']['mobile'] ?? '';
+        $data['entName'] = $tmp['companyName'] ?? '';
+        $data['socialCredit'] = $tmp['nsrsbh'] ?? '';
+        $data['legalPerson'] = $tmp['legalName'] ?? '';
+        $data['idCard'] = $tmp['idCard'] ?? '';
+        $data['phone'] = $tmp['mobile'] ?? '';
         $data['requestId'] = control::getUuid();
         $data['belong'] = '1';
-        $data['fileData'] = $tmp['body']['fileData'] ?? '';
-        $data['orderNo'] = $tmp['body']['orderNo'] ?? '';
+        $data['fileData'] = $tmp['fileData'] ?? '';
+        $data['orderNo'] = $tmp['orderNo'] ?? '';
 
         $res = (new MaYiService())->authEnt($data);
 
