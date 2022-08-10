@@ -150,6 +150,6 @@ class DianZiQianController extends ProvideBase
                 $res['result']['authResultCode'] = '1';
                 $res['result']['authResultMsg'] = '认证授权通过';
         }
-        return $this->checkResponse($res);
+        return $this->writeJson($res['code'], null, $res, '成功');
     }
 }
