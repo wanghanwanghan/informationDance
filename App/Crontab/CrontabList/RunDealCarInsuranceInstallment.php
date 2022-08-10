@@ -21,6 +21,7 @@ use App\HttpController\Models\AdminV2\CarInsuranceInstallment;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
@@ -167,7 +168,57 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
     }
 
     static function runMatch(){
-        CarInsuranceInstallment::findBySql();
+        // 车险分期
+        $rawDatas = CarInsuranceInstallment::findBySql(
+            " WHERE status =  ".CarInsuranceInstallment::$status_init
+        );
+        foreach ($rawDatas as $rawDataItem){
+
+        }
+
+        /**
+
+        匹配产品
+
+        苏宁银行-微商贷
+        公司成立2年以上，不能是分公司
+        申请人：贷款年龄：22-59周岁；申请人为法人（对占股无要求）、近6个月法人或最大股东变更满6个月
+        法人手机在网时长大于1年
+        正常纳税满18个月
+        年纳税金额1.5万以上（PS：不做强要求，但不能为0）
+        纳税等级A/B//M（个体工商户可准入）
+        无连续6个月不纳税情况
+        近3个月有纳税申报记录
+        纳税系统内录入最近一季资产负债表、利润表，必须有三期以上财务报表
+        企业当前无欠税
+        近半年销售波动较小
+
+
+        注意 ❗❗❗
+
+        上文所有“所得税”指的是：所得税接口里，16栏的本期金额
+        上文所有“增值税”指的是：增值税接口里，34,39,40,41项金额的总和
+
+
+        hdsaic库 company basic库 成立日期ESDATE
+
+        身份证匹配年龄
+        创蓝接口：新加返回字段：在网时间
+        满18个月？最近两年的纳税数据中，有连续交纳18个月，如从2020年10月-2022-05没间断
+        正常缴纳？每月有同时缴纳所得税或增值税即算正常缴纳。
+        哪年？去年1-12月
+        滞纳金额？所得税和增值税
+        企业税务基本信息查询接口：纳税等级字段
+        连续6个月？任意连续6个月
+        不纳税？不缴纳所得税和增值税
+        近3个月?从当前月份往前推3个月
+        纳税申报记录？增值税
+        数据来源？季资产负债表、利润表
+        必须有三期以上?最近两年数据里，有三期以上即可
+        企业税务基本信息查询接口：欠税字段
+        ??
+         */
+
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)

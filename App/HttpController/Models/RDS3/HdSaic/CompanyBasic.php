@@ -35,6 +35,8 @@ class CompanyBasic extends ModelBase
         return $res;
     }
 
+
+
     public static function findCancelDateByCode($UNISCID){
         $res =  self::findByCode($UNISCID);
         return $res?$res->getAttr('CANDATE'):'';

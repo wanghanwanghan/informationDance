@@ -3604,6 +3604,21 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('getIncometaxMonthlyDeclaration')
+        ){
+            $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
+                $this->getRequestData('getIncometaxMonthlyDeclaration')
+            );
+            return $this->writeJson(
+                200,[  ] ,
+                //CommonService::ClearHtml($res['body']),
+                json_decode($res,true),
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
             $this->getRequestData('getAuthentication1')
         ){
 
