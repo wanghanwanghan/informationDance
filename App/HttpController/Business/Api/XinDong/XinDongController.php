@@ -3637,28 +3637,57 @@ eof;
                 // 第一次
                 if ($i == 1) {
                     $lastDate = $beginDate;
+                    CommonService::getInstance()->log4PHP(json_encode(
+                        [
+                            __CLASS__ ,
+                            'times'=>$i,
+                            'item date'=>$beginDate,
+                            'last cal date'=>$lastDate,
+                        ]
+                    ));
                     continue;
                 }
 
                 $nextDate = date("Y-m", strtotime("-3 months", strtotime($lastDate)));
-
+                CommonService::getInstance()->log4PHP(json_encode(
+                    [
+                        __CLASS__ ,
+                        'times'=>$i,
+                        'item date'=>$beginDate,
+                        'last cal date'=>$lastDate,
+                        'next cal date'=>$nextDate,
+                    ]
+                ));
                 //如果连续了
                 if (
                     $beginDate == $nextDate
                 ) {
                     //连续长度加1
                     $length++;
-
-                } else {
-                    var_dump(
+                    CommonService::getInstance()->log4PHP(json_encode(
                         [
-                            $beginDate,
-                            $nextDate,
-                            $lastDate,
+                            __CLASS__ ,
+                            'times'=>$i,
+                            'item date'=>$beginDate,
+                            'last cal date'=>$lastDate,
+                            'next cal date'=>$nextDate,
+                            'ok'=>1,
+                            '$length'=>$length,
                         ]
-                    );
+                    ));
+                } else {
                     $length = 1;
-
+                    CommonService::getInstance()->log4PHP(json_encode(
+                        [
+                            __CLASS__ ,
+                            'times'=>$i,
+                            'item date'=>$beginDate,
+                            'last cal date'=>$lastDate,
+                            'next cal date'=>$nextDate,
+                            'ok'=>0,
+                            '$length'=>$length,
+                        ]
+                    ));
                 }
 
                 //重置上次连续时间
