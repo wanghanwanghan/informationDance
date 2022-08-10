@@ -298,7 +298,11 @@ class CarInsuranceInstallment extends ModelBase
             $retrunData['social_credit_code']
         );
         $data = jsonDecode($res['data']);
-
+        foreach ($data as $dataItem){
+            if($dataItem['columnSequence'] == 16){
+                $retrunData['所得税'] =  $dataItem;
+            }
+        }
         return  $retrunData;
     }
 
