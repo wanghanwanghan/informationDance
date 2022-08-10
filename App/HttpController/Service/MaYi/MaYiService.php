@@ -5275,28 +5275,38 @@ class MaYiService extends ServiceBase
                         'legalPerson'  => $data['legalPerson'],
                         'idCard'       => $data['idCard'],
                         'socialCredit' => $data['socialCredit'],
-                        'file'         => $datum['fileAddress']
                     ];
+                    $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
+                    is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
+                    $path = $path .$data['orderNo'].Carbon::now()->format('YmdHis').'.pdf';
+                    //储存pdf
+                    file_put_contents( INV_AUTH_PATH .$path,file_get_contents($datum['fileAddress']),FILE_APPEND | LOCK_EX);
+                    $gaizhangParam['file'] = $path;
+
                     try{
                         $dianziqian_id = (new DianZiQianService())->gaiZhang($gaizhangParam);
+                        CommonService::getInstance()->log4PHP([$dianziqian_id], 'gaiZhang_res', 'mayilog');
                     } catch (\Throwable $e){
-                        dingAlarm('蚂蚁盖章异常',['蚂蚁盖章异常返回'=>json_encode($e)]);
+                        CommonService::getInstance()->log4PHP([$e], 'gaiZhang$e', 'mayilog');
                         $dianziqian_id = '';
                     }
                 }
-
-                AntAuthSealDetail::create()->data([
-                      'orderNo'     => $data['orderNo'],
-                      //蚂蚁传过来的意思是 是否已经盖过章
-                      'isSeal'      => $datum['isSeal'] === 'true' ? 'false' : 'true',
-                      'isReturn'    => $datum['isReturn'],
-                      'fileAddress' => $datum['fileAddress'],
-                      'fileId'      => $datum['fileId'],
-                      'antAuthId'   => $id,
-                      'type'        => $datum['type'],
-                      'fileSecret'  => $datum['fileSecret'] ?? '',
-                      'dianZiQian_id' => $dianziqian_id
-                  ])->save();
+                try {
+                    AntAuthSealDetail::create()->data([
+                          'orderNo'       => $data['orderNo'],
+                          //蚂蚁传过来的意思是 是否已经盖过章
+                          'isSeal'        => $datum['isSeal'] === 'true' ? 'false' : 'true',
+                          'isReturn'      => $datum['isReturn'],
+                          'fileAddress'   => $datum['fileAddress'],
+                          'fileId'        => $datum['fileId'],
+                          'antAuthId'     => $id,
+                          'type'          => $datum['type'],
+                          'fileSecret'    => $datum['fileSecret'] ?? '',
+                          'dianZiQian_id' => $dianziqian_id ?? ''
+                      ])->save();
+                }catch (\Throwable $e){
+                    CommonService::getInstance()->log4PHP([$e], 'info', 'mayilog');
+                }
 
             }
         }else{
@@ -5314,7 +5324,7 @@ class MaYiService extends ServiceBase
                 $dianziqian_id = (new DianZiQianService())->getAuthFileId($gaizhangParam);
                 AntAuthList::create()->where('id='.$id)->update(['dianZiQian_id'=>$dianziqian_id]);
             } catch (\Throwable $e){
-                dingAlarm('蚂蚁盖章异常',['蚂蚁盖章异常返回'=>json_encode($e)]);
+                CommonService::getInstance()->log4PHP([$e], 'info', 'mayilog');
             }
         }
 

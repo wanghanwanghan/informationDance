@@ -6,6 +6,9 @@ use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\DianZiqian\DianZiQianService;
+use App\HttpController\Service\MaYi\MaYiService;
+use Carbon\Carbon;
+use wanghanwanghan\someUtils\control;
 
 class DianZiQianController extends ProvideBase
 {
@@ -107,6 +110,49 @@ class DianZiQianController extends ProvideBase
     }
     public function doTemporaryAction(){
         $res = (new DianZiQianService())->doTemporaryAction();
+        return $this->writeJson($res['code'], null, $res, '成功');
+    }
+
+    function testInvEntList():bool
+    {
+        $tmp = $this->getRequestData('data');
+        $tmp = json_decode($tmp,true);
+        dingAlarm('testInvEntList',['$tmp'=>json_encode($tmp)]);
+        dingAlarm('testInvEntList',['companyName'=>$tmp['companyName']]);
+        $data['entName'] = $tmp['companyName'] ?? '';
+        $data['socialCredit'] = $tmp['nsrsbh'] ?? '';
+        $data['legalPerson'] = $tmp['legalName'] ?? '';
+        $data['idCard'] = $tmp['idCard'] ?? '';
+        $data['phone'] = $tmp['mobile'] ?? '';
+        $data['requestId'] = control::getUuid();
+        $data['belong'] = '1';
+        $data['fileData'] = $tmp['fileData'] ?? '';
+        $data['orderNo'] = $tmp['orderNo'] ?? '';
+
+        $res = (new MaYiService())->authEnt($data);
+
+        $res['result']['nsrsbh'] = $data['socialCredit'];
+        $res['result']['authId'] = $data['requestId'];
+        $res['result']['authTime'] = Carbon::now()->format('Y-m-d H:i:s');
+
+        switch ($res['code']) {
+            case 600:
+            case 605:
+                $res['code'] = '0001';
+                $res['result']['authResultCode'] = '0';
+                $res['result']['authResultMsg'] = '缺少参数';
+                break;
+            case 606:
+            case 615:
+                $res['code'] = '9999';
+                $res['result']['authResultCode'] = '0';
+                $res['result']['authResultMsg'] = '系统异常';
+                break;
+            default:
+                $res['code'] = '0000';
+                $res['result']['authResultCode'] = '1';
+                $res['result']['authResultMsg'] = '认证授权通过';
+        }
         return $this->writeJson($res['code'], null, $res, '成功');
     }
 }

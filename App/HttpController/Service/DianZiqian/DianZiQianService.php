@@ -302,12 +302,12 @@ class DianZiQianService extends ServiceBase
 //            }
 //        }
         //获取数据
-        $list = AntAuthList::create()->where('id>359')->all();
-        $emptyAddressArr = [];
-        $data = [];
-        $arr = [];
-        foreach ($list as $k=>$val){
-            if(!empty($val->getAttr('regAddress'))){
+//        $list = AntAuthList::create()->where('id>188')->all();
+//        $emptyAddressArr = [];
+//        $data = [];
+//        $arr = [];
+//        foreach ($list as $k=>$val){
+//            if(!empty($val->getAttr('regAddress'))){
 //                $emptyAddressArr[$k]['id'] = $val->getAttr('id');
 //                $emptyAddressArr[$k]['entName'] = $val->getAttr('entName');
 //                $registerData = (new TaoShuService())
@@ -329,49 +329,63 @@ class DianZiQianService extends ServiceBase
 //                                                            ]);
 //                }
 //            }else{
-                $data['1'][$k]['id'] = $val->getAttr('id');
-                $data['1'][$k]['entName'] = $val->getAttr('entName');
-                $data['1'][$k]['socialCredit'] = $val->getAttr('socialCredit');
-                $data['1'][$k]['legalPerson'] = $val->getAttr('legalPerson');
-                $data['1'][$k]['idCard'] = $val->getAttr('idCard');
-                $data['1'][$k]['phone'] = $val->getAttr('phone');
-                $data['1'][$k]['city'] = $val->getAttr('city');
-                $data['1'][$k]['regAddress'] = $val->getAttr('regAddress');
-            }
-        }
-        $res = [];
-        foreach ($data['1'] as $v){
-            $param = [
-            'entName' => $v['entName'],
-            'socialCredit' => $v['socialCredit'],
-            'legalPerson' => $v['legalPerson'],
-            'idCard' => $v['idCard'],
-            'phone' => $v['phone'],
-            'city' => $v['city'],
-            'regAddress' => $v['regAddress'],
-            'file' => 'dianziqian_jcsk_shouquanshu.pdf'
-            ];
-            $res[] = $this->getAuthFile($param);
+//                $data['1'][$k]['id'] = $val->getAttr('id');
+//                $data['1'][$k]['entName'] = $val->getAttr('entName');
+//                $data['1'][$k]['socialCredit'] = $val->getAttr('socialCredit');
+//                $data['1'][$k]['legalPerson'] = $val->getAttr('legalPerson');
+//                $data['1'][$k]['idCard'] = $val->getAttr('idCard');
+//                $data['1'][$k]['phone'] = $val->getAttr('phone');
+//                $data['1'][$k]['city'] = $val->getAttr('city');
+//                $data['1'][$k]['regAddress'] = $val->getAttr('regAddress');
+//            }
+//        }
+//        $res = [];
+//        foreach ($data['1'] as $v){
+//            $param = [
+//            'entName' => $v['entName'],
+//            'socialCredit' => $v['socialCredit'],
+//            'legalPerson' => $v['legalPerson'],
+//            'idCard' => $v['idCard'],
+//            'phone' => $v['phone'],
+//            'city' => $v['city'],
+//            'regAddress' => $v['regAddress'],
+//            'file' => 'dianziqian_jcsk_shouquanshu.pdf'
+//            ];
+//            $res[] = $this->getAuthFile($param);
+//            $id = $this->getAuthFileId($param);
+
 //            break;
-        }
-//        $AuthData = DianZiQianAuth::create()->where('id >50')->all();
-//        foreach ($AuthData as $val){
-//            $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
-//            is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
-//            $filename = $val->getAttr('contractCode');
-//            $path = $path . $filename.'-'.Carbon::now()->format('Ymd').'.pdf';
-//            //储存pdf
-//            file_put_contents( INV_AUTH_PATH .$path,file_get_contents($val->getAttr('personalDownloadUrl')),FILE_APPEND | LOCK_EX);
+//        }
+//        $id='';
+//        $list = AntAuthList::create()->where('id>188')->all();
+//        foreach ($list as $item) {
+//            if(empty($item->getAttr('regAddress'))){
+//                continue;
+//            }
+//            $param = [
+//                'entName' => $item->getAttr('entName'),
+//                'socialCredit' => $item->getAttr('socialCredit'),
+//                'legalPerson' => $item->getAttr('legalPerson'),
+//                'idCard' => $item->getAttr('idCard'),
+//                'phone' => $item->getAttr('phone'),
+//                'city' => $item->getAttr('city'),
+//                'regAddress' => $item->getAttr('regAddress'),
+//                'file' => 'dianziqian_jcsk_shouquanshu.pdf'
+//            ];
 ////
-//            AntAuthList::create()->where('entName="'.$val->getAttr('entName').'" and legalPerson="'.$val->getAttr('personName').'"')->update([
-//                                                                'filePath' => $path,
-//                                                            ]);
-//
+//            $id = $this->getAuthFileId($param);
+//            AntAuthList::create()->get($item->getAttr('id'))->update(['dianZiQian_id'=>$id]);
 ////            break;
 //        }
+        $AuthData = DianZiQianAuth::create()->where('id >231')->all();
+        foreach ($AuthData as $val){
+            AntAuthList::create()->where('dianZiQian_id='.$val->getAttr('id'))->update([
+                                                                'filePath' => $val->getAttr('personalUrl')]);
+//            break;
+        }
 //
         //请求盖章
-        return $this->createReturn(200, null, $res, '成功');
+        return $this->createReturn(200, null, [], '成功');
     }
 
     public function gaiZhang($postData){
@@ -423,7 +437,7 @@ class DianZiQianService extends ServiceBase
             'personalTransactionCode' => $personalTransactionCode
         ];
         $id = DianZiQianAuth::create()->data($insertData)->save();
-        dingAlarm('gaiZhang',['$id'=>json_encode(['id'=>$id])]);
+        CommonService::getInstance()->log4PHP([$id], 'info', 'mayilog');
         return $id;
     }
     public function getAuthFileId($postData)
@@ -713,7 +727,7 @@ class DianZiQianService extends ServiceBase
     public function contractFile($file)
     {
         $path  = '/open-api-lite/contract/file';
-//        $file  = STATIC_PATH . "AuthBookModel/dx_template.pdf";
+        $file  = INV_AUTH_PATH . $file;
         $param = $this->buildParam([], $path, ['fileName' => $file, 'key' => 'contractFile']);
         $resp  = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
