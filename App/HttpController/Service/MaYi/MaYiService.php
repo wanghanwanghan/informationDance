@@ -5320,6 +5320,4 @@ class MaYiService extends ServiceBase
 
         return $this->check(200, null, null, null);
     }
-
-
 }

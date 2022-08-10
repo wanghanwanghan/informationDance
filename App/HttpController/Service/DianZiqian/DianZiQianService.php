@@ -282,32 +282,32 @@ class DianZiQianService extends ServiceBase
         ], '成功'); 
     }
     public function doTemporaryAction(){
-        $list = AntAuthList::create()->where('id>188')->all();
-        foreach ($list as $val) {
-            if(!empty($val->getAttr('regAddress')) && empty($val->getAttr('provinceCode'))) {
-                $baiduApi = BaiDuService::getInstance()->addressToStructured(trim($val->getAttr('regAddress')));
-//                CommonService::getInstance()->log4PHP($baiduApi, 'baidu');
-                $baiduApiRes = [];
-                if ($baiduApi['status'] === 0) {
-                    $baiduApiRes['province']     = $baiduApi['result']['province'] ?? '';
-                    $baiduApiRes['provinceCode'] = $baiduApi['result']['province_code'] ?? '';
-                    $baiduApiRes['city']         = $baiduApi['result']['city'] ?? '';
-                    $baiduApiRes['cityCode']     = $baiduApi['result']['city_code'] ?? '';
-                    $baiduApiRes['county']       = $baiduApi['result']['county'] ?? '';
-                    $baiduApiRes['countyCode']   = $baiduApi['result']['county_code'] ?? '';
-                    $baiduApiRes['town']         = $baiduApi['result']['town'] ?? '';
-                    $baiduApiRes['townCode']     = $baiduApi['result']['town_code'] ?? '';
-                }
-                AntAuthList::create()->get($val->getAttr('id'))->update($baiduApiRes);
-            }
-        }
-        //获取数据
 //        $list = AntAuthList::create()->where('id>188')->all();
-//        $emptyAddressArr = [];
-//        $data = [];
-//        $arr = [];
-//        foreach ($list as $k=>$val){
-//            if(empty($val->getAttr('regAddress'))){
+//        foreach ($list as $val) {
+//            if(!empty($val->getAttr('regAddress')) && empty($val->getAttr('provinceCode'))) {
+//                $baiduApi = BaiDuService::getInstance()->addressToStructured(trim($val->getAttr('regAddress')));
+////                CommonService::getInstance()->log4PHP($baiduApi, 'baidu');
+//                $baiduApiRes = [];
+//                if ($baiduApi['status'] === 0) {
+//                    $baiduApiRes['province']     = $baiduApi['result']['province'] ?? '';
+//                    $baiduApiRes['provinceCode'] = $baiduApi['result']['province_code'] ?? '';
+//                    $baiduApiRes['city']         = $baiduApi['result']['city'] ?? '';
+//                    $baiduApiRes['cityCode']     = $baiduApi['result']['city_code'] ?? '';
+//                    $baiduApiRes['county']       = $baiduApi['result']['county'] ?? '';
+//                    $baiduApiRes['countyCode']   = $baiduApi['result']['county_code'] ?? '';
+//                    $baiduApiRes['town']         = $baiduApi['result']['town'] ?? '';
+//                    $baiduApiRes['townCode']     = $baiduApi['result']['town_code'] ?? '';
+//                }
+//                AntAuthList::create()->get($val->getAttr('id'))->update($baiduApiRes);
+//            }
+//        }
+        //获取数据
+        $list = AntAuthList::create()->where('id>359')->all();
+        $emptyAddressArr = [];
+        $data = [];
+        $arr = [];
+        foreach ($list as $k=>$val){
+            if(!empty($val->getAttr('regAddress'))){
 //                $emptyAddressArr[$k]['id'] = $val->getAttr('id');
 //                $emptyAddressArr[$k]['entName'] = $val->getAttr('entName');
 //                $registerData = (new TaoShuService())
@@ -329,31 +329,31 @@ class DianZiQianService extends ServiceBase
 //                                                            ]);
 //                }
 //            }else{
-//                $data['1'][$k]['id'] = $val->getAttr('id');
-//                $data['1'][$k]['entName'] = $val->getAttr('entName');
-//                $data['1'][$k]['socialCredit'] = $val->getAttr('socialCredit');
-//                $data['1'][$k]['legalPerson'] = $val->getAttr('legalPerson');
-//                $data['1'][$k]['idCard'] = $val->getAttr('idCard');
-//                $data['1'][$k]['phone'] = $val->getAttr('phone');
-//                $data['1'][$k]['city'] = $val->getAttr('city');
-//                $data['1'][$k]['regAddress'] = $val->getAttr('regAddress');
-//            }
-//        }
-//        $res = [];
-//        foreach ($data['1'] as $v){
-//            $param = [
-//            'entName' => $v['entName'],
-//            'socialCredit' => $v['socialCredit'],
-//            'legalPerson' => $v['legalPerson'],
-//            'idCard' => $v['idCard'],
-//            'phone' => $v['phone'],
-//            'city' => $v['city'],
-//            'regAddress' => $v['regAddress'],
-//            'file' => 'dianziqian_jcsk_shouquanshu.pdf'
-//            ];
-//            $res[] = $this->getAuthFile($param);
-////            break;
-//        }
+                $data['1'][$k]['id'] = $val->getAttr('id');
+                $data['1'][$k]['entName'] = $val->getAttr('entName');
+                $data['1'][$k]['socialCredit'] = $val->getAttr('socialCredit');
+                $data['1'][$k]['legalPerson'] = $val->getAttr('legalPerson');
+                $data['1'][$k]['idCard'] = $val->getAttr('idCard');
+                $data['1'][$k]['phone'] = $val->getAttr('phone');
+                $data['1'][$k]['city'] = $val->getAttr('city');
+                $data['1'][$k]['regAddress'] = $val->getAttr('regAddress');
+            }
+        }
+        $res = [];
+        foreach ($data['1'] as $v){
+            $param = [
+            'entName' => $v['entName'],
+            'socialCredit' => $v['socialCredit'],
+            'legalPerson' => $v['legalPerson'],
+            'idCard' => $v['idCard'],
+            'phone' => $v['phone'],
+            'city' => $v['city'],
+            'regAddress' => $v['regAddress'],
+            'file' => 'dianziqian_jcsk_shouquanshu.pdf'
+            ];
+            $res[] = $this->getAuthFile($param);
+//            break;
+        }
 //        $AuthData = DianZiQianAuth::create()->where('id >50')->all();
 //        foreach ($AuthData as $val){
 //            $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
@@ -371,7 +371,7 @@ class DianZiQianService extends ServiceBase
 //        }
 //
         //请求盖章
-//        return $this->createReturn(200, null, $path, '成功');
+        return $this->createReturn(200, null, $res, '成功');
     }
 
     public function gaiZhang($postData){
