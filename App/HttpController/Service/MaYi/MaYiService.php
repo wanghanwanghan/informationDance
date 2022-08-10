@@ -5280,7 +5280,7 @@ class MaYiService extends ServiceBase
                     try{
                         $dianziqian_id = (new DianZiQianService())->gaiZhang($gaizhangParam);
                     } catch (\Throwable $e){
-                        dingAlarm('蚂蚁盖章异常',['蚂蚁盖章异常返回'=>json_encode($e)]);
+                        CommonService::getInstance()->log4PHP([$e], 'info', 'mayilog');
                         $dianziqian_id = '';
                     }
                 }
@@ -5298,7 +5298,7 @@ class MaYiService extends ServiceBase
                           'dianZiQian_id' => $dianziqian_id ?? ''
                       ])->save();
                 }catch (\Throwable $e){
-                    dingAlarm('蚂蚁盖章异常2',['蚂蚁盖章异常返回'=>json_encode($e)]);
+                    CommonService::getInstance()->log4PHP([$e], 'info', 'mayilog');
                 }
 
             }
@@ -5317,7 +5317,7 @@ class MaYiService extends ServiceBase
                 $dianziqian_id = (new DianZiQianService())->getAuthFileId($gaizhangParam);
                 AntAuthList::create()->where('id='.$id)->update(['dianZiQian_id'=>$dianziqian_id]);
             } catch (\Throwable $e){
-                dingAlarm('蚂蚁盖章异常3',['蚂蚁盖章异常返回'=>json_encode($e)]);
+                CommonService::getInstance()->log4PHP([$e], 'info', 'mayilog');
             }
         }
 

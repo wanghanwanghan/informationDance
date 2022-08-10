@@ -437,7 +437,7 @@ class DianZiQianService extends ServiceBase
             'personalTransactionCode' => $personalTransactionCode
         ];
         $id = DianZiQianAuth::create()->data($insertData)->save();
-        dingAlarm('gaiZhang',['$id'=>json_encode(['id'=>$id])]);
+        CommonService::getInstance()->log4PHP([$id], 'info', 'mayilog');
         return $id;
     }
     public function getAuthFileId($postData)
