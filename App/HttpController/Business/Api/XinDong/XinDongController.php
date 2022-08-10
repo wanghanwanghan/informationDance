@@ -3609,10 +3609,11 @@ eof;
             $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
                 $this->getRequestData('getIncometaxMonthlyDeclaration')
             );
+            $data = jsonDecode($res['data']);
             return $this->writeJson(
-                200,json_decode($res,true) ,
+                200,[] ,
                 //CommonService::ClearHtml($res['body']),
-                $res,
+                $data,
                 '成功',
                 true,
                 []
