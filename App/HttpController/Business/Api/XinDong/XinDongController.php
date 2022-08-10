@@ -3612,7 +3612,7 @@ eof;
             return $this->writeJson(
                 200,[  ] ,
                 //CommonService::ClearHtml($res['body']),
-                $res,
+                json_decode($res,true),
                 '成功',
                 true,
                 []
