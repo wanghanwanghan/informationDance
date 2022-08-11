@@ -316,8 +316,14 @@ class CarInsuranceInstallment extends ModelBase
         $retrunData['企业税务基本信息'] = (new GuoPiaoService())->getEssential($carInsuranceData['social_credit_code']);
 
         //增值税信息
-        $retrunData['增值税信息'] = (new GuoPiaoService())->getVatReturn($carInsuranceData['social_credit_code']);
-
+        $res = (new GuoPiaoService())->getVatReturn($carInsuranceData['social_credit_code']);
+        $data = jsonDecode($res['data']);
+        foreach ($data as $dataItem){
+            if($dataItem['columnSequence'] == 16){
+                $retrunData['所得税'][] =  $dataItem;
+            }
+        }
+        $retrunData['增值税信息'] ;
         //年度资产负债
         $retrunData['年度资产负债'] = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheetAnnual($carInsuranceData['social_credit_code']);
 
@@ -325,6 +331,53 @@ class CarInsuranceInstallment extends ModelBase
         $retrunData['年度利润表'] =  (new GuoPiaoService())->getFinanceIncomeStatementAnnualReport($carInsuranceData['social_credit_code']);
 
         return  $retrunData;
+    }
+
+    /**
+    获取企业季度纳税信息:
+    1：企业所得税+增值税
+    2：按季度
+     */
+      function  getQuarterTaxInfo($social_credit_code){
+        //纳税数据取得是两年的数据 取下开始结束时间
+        $lastMonth = date("Y-m-01",strtotime("-1 month"));
+        $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+
+        // 企业所得税是按照季度返回的
+        $suoDeShui = [];
+        $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
+            $social_credit_code
+        );
+        $data = jsonDecode($res['data']);
+        foreach ($data as $dataItem){
+            if($dataItem['columnSequence'] == 16){
+                $suoDeShui[] =  $dataItem;
+            }
+        }
+        // Sort the array
+          usort($suoDeShui, function($a, $b) {
+              return new \DateTime($a['beginDate']) <=> new \DateTime($b['beginDate']);
+          });
+
+        // 企业所得税是按照季度返回的  以企业所得税的季度为准
+      $begainQuarter = "";
+      foreach ($suoDeShui as $dateItem){
+          $day1 =  date('Y-m-d',strtotime($dateItem['beginDate']));
+          $day2 = date('Y-m-d',strtotime('+3 months',strtotime($day1)));
+          if(
+              $day1 <= $last2YearStart &&
+              $day2 >= $last2YearStart
+          ){
+              $begainQuarter = $day1 ;
+              break;
+          }
+      }
+
+        return [
+            $begainQuarter,
+            $last2YearStart,
+            $lastMonth
+        ];
     }
 
     //获取最长连续时间
