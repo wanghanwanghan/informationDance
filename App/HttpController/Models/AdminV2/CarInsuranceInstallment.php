@@ -351,7 +351,7 @@ class CarInsuranceInstallment extends ModelBase
         $data = jsonDecode($res['data']);
         foreach ($data as $dataItem){
             if($dataItem['columnSequence'] == 16){
-                $suoDeShui[] =  [$dataItem['beginDate']];
+                $suoDeShui[] =  ['beginDate'=>$dataItem['beginDate']];
             }
         }
         // Sort the array
