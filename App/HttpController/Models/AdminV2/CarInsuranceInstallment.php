@@ -333,6 +333,38 @@ class CarInsuranceInstallment extends ModelBase
         return  $retrunData;
     }
 
+    /**
+    获取企业季度纳税信息:
+    1：企业所得税+增值税
+    2：按季度
+     */
+    static  function  getQuarterTaxInfo($social_credit_code){
+        //纳税数据取得是两年的数据 取下开始结束时间
+        $endDay = date("Y-m-d",strtotime("-1 month"));
+        $startDay = date("Y-m-d",strtotime("-2 years"));
+
+        // 企业所得税是按照季度返回的
+        $suoDeShui = [];
+        $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
+            $social_credit_code
+        );
+        $data = jsonDecode($res['data']);
+        foreach ($data as $dataItem){
+            if($dataItem['columnSequence'] == 16){
+                $suoDeShui[] =  $dataItem;
+            }
+        }
+        // Sort the array
+        usort($suoDeShui, 'date_compare');
+        // 企业所得税是按照季度返回的  以企业所得税的季度为准
+
+        return $suoDeShui;
+    }
+    function date_compare($element1, $element2) {
+        $datetime1 = strtotime($element1['beginDate']);
+        $datetime2 = strtotime($element2['beginDate']);
+        return $datetime1 - $datetime2;
+    }
     //获取最长连续时间
     static  function getMaxContinuousDateLength($tmpData,$field,$calStr){
         //最近一次的比较时间

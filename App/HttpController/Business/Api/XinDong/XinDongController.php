@@ -3613,6 +3613,19 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('getQuarterTaxInfo')
+        ){
+            $res = CarInsuranceInstallment::getQuarterTaxInfo($this->getRequestData('getQuarterTaxInfo'));
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                $res,
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
             $this->getRequestData('getVatReturn')
         ){
             $res = (new GuoPiaoService())->getVatReturn(
