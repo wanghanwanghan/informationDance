@@ -9,6 +9,7 @@ use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
+use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\LongXin\LongXinService;
 
 
@@ -622,4 +623,41 @@ class CarInsuranceInstallment extends ModelBase
         return $age;
     }
 
+    static function getYieldData($social_credit_code,$Start,$end){
+        $datas = [];
+        $page = 1;
+        $size = 10;
+
+        while (true) {
+            $jinXiaoXiangFaPiaoRes = (new GuoPiaoService())->getInvoiceMain(
+                $social_credit_code,
+                1,
+                $Start,
+                $end,
+                1
+            );
+
+            $res = (new JinCaiShuKeService())
+                ->setCheckRespFlag(false)
+                ->S000523($code, $rwh, $page, $size);
+            $contentJson =  base64_decode($res['content']);
+            $contentArr = json_decode($contentJson,true);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'content' => $res['content'],
+                    '$contentJson'=>$contentJson,
+                    '$contentArr'=>$contentArr,
+                    'page'=>$page
+                ])
+            );
+            $contentArr['page'] = $page;
+            yield $datas[] = $contentArr;
+            if (empty($contentArr['fpxxs']['data'])) {
+                break;
+            }
+            $page ++;
+
+        }
+    }
 }
