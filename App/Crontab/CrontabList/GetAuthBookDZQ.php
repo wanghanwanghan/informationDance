@@ -72,6 +72,7 @@ WHERE
 Eof;
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         if (!empty($list)) {
+            CommonService::getInstance()->log4PHP([$list], 'info', 'DZQemptyAntAuthSealDetailDZQ');
             foreach ($list as $oneEntInfo) {
                 $data = [
                     'entName' => $oneEntInfo['entName'],// entName companyname
@@ -89,7 +90,7 @@ Eof;
                 $fileData = [];
                 $flieDetail = [];
                 if (empty($DetailList)) {
-                    CommonService::getInstance()->log4PHP([$data], 'info', 'emptyAntAuthSealDetail');
+                    CommonService::getInstance()->log4PHP([$data], 'info', 'DZQemptyAntAuthSealDetail');
                     $u = $this->getDataSealUrl($oneEntInfo['dianZiQian_id']);
                     if(empty($u)){
                         continue;
@@ -152,7 +153,7 @@ Eof;
                             ksort($fileData[$type]);
                         }
                     }
-
+                    CommonService::getInstance()->log4PHP([$urlD], 'info', 'DZQ$url');
                 }
 
                 //更新数据库
@@ -211,7 +212,7 @@ Eof;
                     ],
                 ];
 
-                CommonService::getInstance()->log4PHP($collectNotify, 'info', 'notify_auth');
+                CommonService::getInstance()->log4PHP($collectNotify, 'info', 'DZQnotify_auth');
 
                 $url = $url_arr[$id];
 
@@ -237,7 +238,7 @@ Eof;
             ->needJsonDecode(true)
             ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
 
-        CommonService::getInstance()->log4PHP($ret, 'info', 'notify_auth');
+        CommonService::getInstance()->log4PHP($ret, 'info', 'DZQnotify_auth');
     }
 
     /*
