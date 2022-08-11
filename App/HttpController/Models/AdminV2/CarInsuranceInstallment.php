@@ -434,11 +434,7 @@ class CarInsuranceInstallment extends ModelBase
               $QuarterBegainRaw = $day1;
           }
         }
-          return [
-              $lastMonth,
-              $last2YearStart,
-              $QuarterBegainRaw
-          ];
+
         //计算全部纳税 所得税+增值税  按照季度计算
         $QuarterTaxInfo = [];
         while (true){
@@ -463,6 +459,13 @@ class CarInsuranceInstallment extends ModelBase
             $QuarterTaxInfo[] = $tmp;
             $QuarterBegain = date('Y-m-d',strtotime('+3 months',strtotime($QuarterBegain)));
         }
+
+          return [
+              $lastMonth,
+              $last2YearStart,
+              $QuarterBegainRaw,
+              $QuarterTaxInfo
+          ];
 
         //增值税
         $res = (new GuoPiaoService())->getVatReturn(
