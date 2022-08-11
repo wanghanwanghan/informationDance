@@ -658,6 +658,20 @@ class DianZiQianService extends ServiceBase
         CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'signerPerson');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
+    /**
+     * 创建合同
+     */
+    public function contractFile($file)
+    {
+        $path  = '/open-api-lite/contract/file';
+        $file  = INV_AUTH_PATH . $file;
+        $param = $this->buildParam([], $path, ['fileName' => $file, 'key' => 'contractFile']);
+        $resp  = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $path, $param, $this->getHeader('file'));
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'contractFile');
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
 
     /**
      * 使用模板创建合同
@@ -721,20 +735,7 @@ class DianZiQianService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
-    /**
-     * 创建合同
-     */
-    public function contractFile($file)
-    {
-        $path  = '/open-api-lite/contract/file';
-        $file  = INV_AUTH_PATH . $file;
-        $param = $this->buildParam([], $path, ['fileName' => $file, 'key' => 'contractFile']);
-        $resp  = (new CoHttpClient())
-            ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'contractFile');
-        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
-    }
+
 
     /**
      * 企业上传印章

@@ -1913,7 +1913,7 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    public function get24Month()
+    function get24Month(): bool
     {
         $nsrsbh = $this->getRequestData('nsrsbh');
         $postData = [
