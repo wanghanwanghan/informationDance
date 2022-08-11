@@ -85,7 +85,7 @@ Eof;
                 ];
 
                 $DetailList = AntAuthSealDetail::create()->where(['antAuthId' => $oneEntInfo['id'],
-                                                                     'status' => 0,'fileUrl' => ''])->all();
+                                                                     'dianZiQian_status' => 0])->all();
                 $url = [];
                 $fileData = [];
                 $flieDetail = [];
