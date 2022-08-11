@@ -305,7 +305,6 @@ Eof;
         $list = AntAuthSealDetail::create()->where([
                                                        'dianZiQian_status' => 0,
                                                        'isSeal' => 'true',
-                                                       'fileUrl' => ''
                                                    ])->all();
         $ids = [0];
         $idMap = [];
