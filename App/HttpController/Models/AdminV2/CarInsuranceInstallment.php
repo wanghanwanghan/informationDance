@@ -355,7 +355,7 @@ class CarInsuranceInstallment extends ModelBase
             }
         }
         // Sort the array
-        usort($suoDeShui, 'date_compare');
+//        usort($suoDeShui, 'date_compare');
         // 企业所得税是按照季度返回的  以企业所得税的季度为准
 
         return $suoDeShui;
