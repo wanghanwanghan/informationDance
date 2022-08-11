@@ -5269,7 +5269,7 @@ class MaYiService extends ServiceBase
         if (!empty($data['fileData'])) {
             foreach ($data['fileData'] as $datum) {
 //                $id='';
-                if($datum['isSeal'] === 'true' && $data['test']){
+                if($datum['isSeal'] && $data['test']){
                     $gaizhangParam = [
                         'entName'      => $data['entName'],
                         'legalPerson'  => $data['legalPerson'],
