@@ -355,21 +355,14 @@ class CarInsuranceInstallment extends ModelBase
             }
         }
         // Sort the array
-//        usort($suoDeShui, 'date_compare');
+          usort($suoDeShui, function($a, $b) {
+              return new DateTime($a['beginDate']) <=> new DateTime($b['beginDate']);
+          });
         // 企业所得税是按照季度返回的  以企业所得税的季度为准
 
         return $suoDeShui;
     }
-    function date_compare($element1, $element2) {
-        $datetime1 = strtotime($element1['beginDate']);
-        $datetime2 = strtotime($element2['beginDate']);
-        return $datetime1 - $datetime2;
-    }
-    function date_compare2($element1, $element2) {
-        $datetime1 = strtotime($element1['beginDate']);
-        $datetime2 = strtotime($element2['beginDate']);
-        return $datetime2 - $datetime1;
-    }
+     
     //获取最长连续时间
     static  function getMaxContinuousDateLength($tmpData,$field,$calStr){
         //最近一次的比较时间
