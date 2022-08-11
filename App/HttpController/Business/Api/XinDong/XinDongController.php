@@ -3613,6 +3613,28 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('getVatReturn')
+        ){
+            $res = (new GuoPiaoService())->getVatReturn(
+                $this->getRequestData('getVatReturn')
+            );
+            $data = jsonDecode($res['data']);
+            $returnArr = [];
+            foreach ($data as $dataItem){
+                if(in_array($dataItem['columnSequence'],[34,39,40,41]) ){
+                    $retrunData['所得税'][] =  $dataItem;
+                }
+            }
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                $retrunData,
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
             $this->getRequestData('runMatch')
         ){
 

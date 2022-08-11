@@ -316,8 +316,14 @@ class CarInsuranceInstallment extends ModelBase
         $retrunData['企业税务基本信息'] = (new GuoPiaoService())->getEssential($carInsuranceData['social_credit_code']);
 
         //增值税信息
-        $retrunData['增值税信息'] = (new GuoPiaoService())->getVatReturn($carInsuranceData['social_credit_code']);
-
+        $res = (new GuoPiaoService())->getVatReturn($carInsuranceData['social_credit_code']);
+        $data = jsonDecode($res['data']);
+        foreach ($data as $dataItem){
+            if($dataItem['columnSequence'] == 16){
+                $retrunData['所得税'][] =  $dataItem;
+            }
+        }
+        $retrunData['增值税信息'] ;
         //年度资产负债
         $retrunData['年度资产负债'] = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheetAnnual($carInsuranceData['social_credit_code']);
 
