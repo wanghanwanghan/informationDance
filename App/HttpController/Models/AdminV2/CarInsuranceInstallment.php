@@ -459,10 +459,7 @@ class CarInsuranceInstallment extends ModelBase
 
             $QuarterTaxInfo[] = $tmp;
             $QuarterBegain = date('Y-m-d',strtotime('+3 months',strtotime($QuarterBegain)));
-            return [
-                $QuarterBegain,
-                $QuarterTaxInfo
-            ];
+            
         }
 
           return [
