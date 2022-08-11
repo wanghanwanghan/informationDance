@@ -5327,7 +5327,7 @@ class MaYiService extends ServiceBase
                         'city'         => $check2->getAttr('city'),
                     ];
                     $dianziqian_id = (new DianZiQianService())->getAuthFileId($gaizhangParam);
-                    AntAuthList::create()->where('id=' . $id)->update(['dianZiQian_id' => $dianziqian_id]);
+                    AntAuthList::create()->where('id=' . $id)->update(['dianZiQian_id' => $dianziqian_id,'dianZiQian_status'=>0]);
                 } catch (\Throwable $e) {
                     CommonService::getInstance()->log4PHP([$e], 'info', 'mayilog');
                 }
