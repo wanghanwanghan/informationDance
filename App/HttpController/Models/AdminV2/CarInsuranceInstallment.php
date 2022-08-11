@@ -340,8 +340,8 @@ class CarInsuranceInstallment extends ModelBase
      */
       function  getQuarterTaxInfo($social_credit_code){
         //纳税数据取得是两年的数据 取下开始结束时间
-        $endDay = date("Y-m-d",strtotime("-1 month"));
-        $startDay = date("Y-m-d",strtotime("-2 years"));
+        $lastMonth = date("Y-m-01",strtotime("-1 month"));
+        $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
 
         // 企业所得税是按照季度返回的
         $suoDeShui = [];
@@ -351,22 +351,32 @@ class CarInsuranceInstallment extends ModelBase
         $data = jsonDecode($res['data']);
         foreach ($data as $dataItem){
             if($dataItem['columnSequence'] == 16){
-                $suoDeShui[] =  ['beginDate'=>$dataItem['beginDate']];
+                $suoDeShui[] =  $dataItem;
             }
         }
         // Sort the array
-          $suoDeShui2 = $suoDeShui;
           usort($suoDeShui, function($a, $b) {
               return new \DateTime($a['beginDate']) <=> new \DateTime($b['beginDate']);
           });
-          usort($suoDeShui2, function($a, $b) {
-              return new \DateTime($b['beginDate']) <=> new \DateTime($a['beginDate']);
-          });
+
         // 企业所得税是按照季度返回的  以企业所得税的季度为准
+      $begainQuarter = "";
+      foreach ($suoDeShui as $dateItem){
+          $day1 =  date('Y-m-d',strtotime($dateItem['beginDate']));
+          $day2 = date('Y-m-d',strtotime('+3 months',strtotime($day1)));
+          if(
+              $day1 <= $last2YearStart &&
+              $day2 >= $last2YearStart
+          ){
+              $begainQuarter = $day1 ;
+              break;
+          }
+      }
 
         return [
-            $suoDeShui,
-            $suoDeShui2
+            $begainQuarter,
+            $last2YearStart,
+            $lastMonth
         ];
     }
 
