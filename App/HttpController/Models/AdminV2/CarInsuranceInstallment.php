@@ -363,7 +363,7 @@ class CarInsuranceInstallment extends ModelBase
     function date_compare($element1, $element2) {
         $datetime1 = strtotime($element1['beginDate']);
         $datetime2 = strtotime($element2['beginDate']);
-        return $datetime2 - $datetime1;
+        return $datetime1 - $datetime2;
     }
     function date_compare2($element1, $element2) {
         $datetime1 = strtotime($element1['beginDate']);
