@@ -229,15 +229,49 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         //两年前的开始月
         $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
         //进销项发票信息 信动专用
-        $jinXiaoXiangFaPiaoRes = (new GuoPiaoService())->getInvoiceMain(
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
             $res['social_credit_code'],
-            1,
             $last2YearStart,
-            $lastMonth,
-            1
+            $lastMonth
         );
 
-
+        //按日期格式化
+        $year1 = date('Y',strtotime("-2 years"));
+        $year2 = date('Y',strtotime("-1 years"));
+        $mapedByDateAmountRes = [
+            '01' => [],
+            '02' => [],
+            '03' => [],
+            '04' => [],
+            '05' => [],
+            '06' => [],
+            '07' => [],
+            '08' => [],
+            '09' => [],
+            '10' => [],
+            '11' => [],
+            '12' => [],
+        ];
+        $mapedByDateNumsRes = [
+            '01' => [],
+            '02' => [],
+            '03' => [],
+            '04' => [],
+            '05' => [],
+            '06' => [],
+            '07' => [],
+            '08' => [],
+            '09' => [],
+            '10' => [],
+            '11' => [],
+            '12' => [],
+        ];
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $month = date('Y-m',strtotime($InvoiceData['billingDate']));
+            $year = date('Y',strtotime($InvoiceData['billingDate']));
+            $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
+            $mapedByDateNumsRes[$month][$year] ++;
+        }
 
         return $this->writeJson(
             200,
@@ -250,7 +284,9 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
             [
                'companyInfo' => $companyRes,
                'essentialFinanceInfo' => $mapedEssentialRes,
-//               'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
+               'mapedByDateNumsRes' => $mapedByDateNumsRes,
+               'mapedByDateAmountRes' => $mapedByDateAmountRes,
+               //'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
             ]
         );
     }

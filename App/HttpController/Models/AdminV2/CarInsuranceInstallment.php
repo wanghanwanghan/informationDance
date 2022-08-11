@@ -623,7 +623,7 @@ class CarInsuranceInstallment extends ModelBase
         return $age;
     }
 
-    static function getYieldData($social_credit_code,$Start,$end){
+    static function getYieldInvoiceMainData($social_credit_code,$Start,$end,$type =1 ){
         $datas = [];
         $page = 1;
         $size = 10;
@@ -631,33 +631,29 @@ class CarInsuranceInstallment extends ModelBase
         while (true) {
             $jinXiaoXiangFaPiaoRes = (new GuoPiaoService())->getInvoiceMain(
                 $social_credit_code,
-                1,
+                $type,
                 $Start,
                 $end,
-                1
+                $page
             );
-
-            $res = (new JinCaiShuKeService())
-                ->setCheckRespFlag(false)
-                ->S000523($code, $rwh, $page, $size);
-            $contentJson =  base64_decode($res['content']);
-            $contentArr = json_decode($contentJson,true);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'content' => $res['content'],
-                    '$contentJson'=>$contentJson,
-                    '$contentArr'=>$contentArr,
-                    'page'=>$page
-                ])
-            );
-            $contentArr['page'] = $page;
-            yield $datas[] = $contentArr;
-            if (empty($contentArr['fpxxs']['data'])) {
+            $invoices = $jinXiaoXiangFaPiaoRes['data']['invoices'];
+            if(empty($invoices)){
                 break;
             }
-            $page ++;
+            else{
+                foreach ($invoices as $invoiceItem){
+                    yield $datas[] = [
 
+                        'totalAmount' => $invoiceItem['totalAmount'],
+                        'billingDate' => $invoiceItem['billingDate'],
+                        // $type = 1 时 本公司|进项|买方
+                        'purchaserName' => $invoiceItem['purchaserName'],
+                        //卖方
+                        'salesTaxName' => $invoiceItem['salesTaxName'],
+                    ];
+                }
+            }
+            $page ++;
         }
     }
 }
