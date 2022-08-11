@@ -414,6 +414,7 @@ class CarInsuranceInstallment extends ModelBase
             //$QuarterBegain,
             //$last2YearStart,
             //$lastMonth,
+            $suoDeShui,
             $QuarterTaxInfo
         ];
     }
