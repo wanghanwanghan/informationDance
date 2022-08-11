@@ -731,7 +731,7 @@ class DianZiQianService extends ServiceBase
         $param = $this->buildParam([], $path, ['fileName' => $file, 'key' => 'contractFile']);
         $resp  = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
+            ->send($this->url . $path, $param, $this->getHeader('file'), ['enableSSL' => true], 'postjson');
         CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'contractFile');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
