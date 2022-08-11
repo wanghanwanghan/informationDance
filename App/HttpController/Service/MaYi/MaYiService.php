@@ -5312,6 +5312,10 @@ class MaYiService extends ServiceBase
         }else{
             if($data['test']) {
                 try {
+                    $check2 = AntAuthList::create()->where([
+                                  'entName' => $data['entName'],
+                                  'socialCredit' => $data['socialCredit'],
+                              ])->get();
                     $gaizhangParam = [
                         'entName'      => $data['entName'],
                         'legalPerson'  => $data['legalPerson'],
@@ -5319,8 +5323,8 @@ class MaYiService extends ServiceBase
                         'socialCredit' => $data['socialCredit'],
                         'file'         => 'dianziqian_jcsk_shouquanshu.pdf',
                         'phone'        => $data['phone'],
-                        'regAddress'   => $baiduApiRes['regAddress'] ?? '',
-                        'city'         => $baiduApiRes['city'] ?? '',
+                        'regAddress'   => $check2->getAttr('regAddress'),
+                        'city'         => $check2->getAttr('city'),
                     ];
                     $dianziqian_id = (new DianZiQianService())->getAuthFileId($gaizhangParam);
                     AntAuthList::create()->where('id=' . $id)->update(['dianZiQian_id' => $dianziqian_id]);

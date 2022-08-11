@@ -533,6 +533,10 @@ class DianZiQianService extends ServiceBase
                     dingAlarm('企业章签署状态查询异常', ['$contractSignStatus' => json_encode($contractSignStatus)]);
                     continue;
                 }
+                if($contractSignStatus['result']['resultCode'] < 1){
+                    //当企业章没有盖好的时候，不查询法人章，不让会影响盖章顺序，导致获取不到完整正确的授权书
+                    continue;
+                }
                 $this->updateDianZiQianEntResultCode($v['id'], $contractSignStatus,$contractCode);
                 if($contractSignStatus['result']['resultCode'] < 1) $flag = false;
             }
