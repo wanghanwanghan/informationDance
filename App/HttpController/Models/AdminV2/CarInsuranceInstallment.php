@@ -352,13 +352,19 @@ class CarInsuranceInstallment extends ModelBase
         $data = jsonDecode($res['data']);
         foreach ($data as $dataItem){
             if($dataItem['columnSequence'] == 16){
-                $suoDeShui[] =  $dataItem;
+                //$suoDeShui[] =  $dataItem;
+                $suoDeShui[] =  [
+                    'beginDate'=>$dataItem['beginDate'],
+                    'currentAmount'=>$dataItem['currentAmount'],
+                ];
             }
         }
         //按时间顺序排列
         usort($suoDeShui, function($a, $b) {
               return new \DateTime($a['beginDate']) <=> new \DateTime($b['beginDate']);
         });
+
+        //
 
         //两年内的所得税
         $validSuoDeShui = [];
@@ -395,8 +401,9 @@ class CarInsuranceInstallment extends ModelBase
             ];
             //匹配所得税
             foreach ($validSuoDeShui as $suoDeShuiItem){
+                $tmpBeginDate = date('Y-m-d',strtotime($suoDeShuiItem['beginDate']));
                 if(
-                    $suoDeShuiItem['beginDate'] == $QuarterBegain
+                    $tmpBeginDate == $QuarterBegain
                 ){
                     $tmp['suoDeShui_currentAmount'] = $suoDeShuiItem['currentAmount'];
                     break;
@@ -413,6 +420,7 @@ class CarInsuranceInstallment extends ModelBase
             //$QuarterBegain,
             //$last2YearStart,
             //$lastMonth,
+            $suoDeShui,
             $QuarterTaxInfo
         ];
     }
