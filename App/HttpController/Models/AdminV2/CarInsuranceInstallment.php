@@ -395,8 +395,9 @@ class CarInsuranceInstallment extends ModelBase
             ];
             //匹配所得税
             foreach ($validSuoDeShui as $suoDeShuiItem){
+                $tmpBeginDate = date('Y-m-d',strtotime($suoDeShuiItem['beginDate']));
                 if(
-                    $suoDeShuiItem['beginDate'] == $QuarterBegain
+                    $tmpBeginDate == $QuarterBegain
                 ){
                     $tmp['suoDeShui_currentAmount'] = $suoDeShuiItem['currentAmount'];
                     break;
