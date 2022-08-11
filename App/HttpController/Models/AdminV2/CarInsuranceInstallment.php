@@ -263,7 +263,7 @@ class CarInsuranceInstallment extends ModelBase
      */
     static  function  runMatch($carInsuranceDataId){
         $carInsuranceData = CarInsuranceInstallment::findById($carInsuranceDataId);
-        $carInsuranceData = $carInsuranceData->toArr();
+        $carInsuranceData = $carInsuranceData->toArray();
 
         $retrunData = [];
 
