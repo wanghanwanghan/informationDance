@@ -207,7 +207,23 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
 //        }
         $res =  CarInsuranceInstallment::findOneByUserId(1);
         $res = $res->toArray();
-        $companyRes = XinDongService::getEsBasicInfoV3($res['ent_name']);
+        $companyRes = (new XinDongService())->getEsBasicInfoV3($res['ent_name']);
+
+        //税务信息(今年)
+        $essentialRes = (new GuoPiaoService())->getEssential($res['social_credit_code']);
+
+        //近两年发票开票金额 需要分页拉取后计算结果
+        // ['01', '08', '03', '04', '10', '11', '14', '15'] 分开拉取全部
+        // $startDate 往前推一个月  推两年
+        //纳税数据取得是两年的数据 取下开始结束时间
+        $lastMonth = date("Y-m-01",strtotime("-1 month"));
+        //两年前的开始月
+        $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+        //进销项发票信息 信动专用
+        $jinXiaoXiangFaPiaoRes = (new GuoPiaoService())->getInvoiceMain($res['social_credit_code'],
+            '01', $last2YearStart, $lastMonth, 1);
+
+
         return $this->writeJson(
             200,
             [
@@ -216,7 +232,11 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                 'total' => $res['total'],
                 'totalPage' => ceil($res['total']/$size) ,
             ],
-            $res['data']
+            [
+               'companyInfo' => $companyRes,
+               'essentialFinanceInfo' => $essentialRes,
+               'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
+            ]
         );
     }
 
