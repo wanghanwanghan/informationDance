@@ -338,7 +338,7 @@ class CarInsuranceInstallment extends ModelBase
     1：企业所得税+增值税
     2：按季度
      */
-    static  function  getQuarterTaxInfo($social_credit_code){
+      function  getQuarterTaxInfo($social_credit_code){
         //纳税数据取得是两年的数据 取下开始结束时间
         $endDay = date("Y-m-d",strtotime("-1 month"));
         $startDay = date("Y-m-d",strtotime("-2 years"));
@@ -355,7 +355,7 @@ class CarInsuranceInstallment extends ModelBase
             }
         }
         // Sort the array
-        usort($suoDeShui, 'date_compare2');
+        usort($suoDeShui, 'date_compare');
         // 企业所得税是按照季度返回的  以企业所得税的季度为准
 
         return $suoDeShui;

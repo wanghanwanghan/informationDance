@@ -3615,7 +3615,8 @@ eof;
         if(
             $this->getRequestData('getQuarterTaxInfo')
         ){
-            $res = CarInsuranceInstallment::getQuarterTaxInfo($this->getRequestData('getQuarterTaxInfo'));
+            $res = (new CarInsuranceInstallment())
+                    ->getQuarterTaxInfo($this->getRequestData('getQuarterTaxInfo'));
             return $this->writeJson(
                 200,[] ,
                 //CommonService::ClearHtml($res['body']),
