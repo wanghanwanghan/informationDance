@@ -14,6 +14,7 @@ use App\Csp\Service\CspService;
 use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminNewUser;
 use App\HttpController\Models\AdminV2\AdminUserFinanceData;
+use App\HttpController\Models\AdminV2\CarInsuranceInstallment;
 use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\InsuranceData;
 use App\HttpController\Models\AdminV2\MailReceipt;
@@ -3611,6 +3612,19 @@ eof;
 
     function testExport()
     {
+        if(
+            $this->getRequestData('runMatch')
+        ){
+
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                CarInsuranceInstallment::runMatch( $this->getRequestData('runMatch')),
+                '成功',
+                true,
+                []
+            );
+        }
         if(
             $this->getRequestData('getIncometaxMonthlyDeclaration')
         ){
