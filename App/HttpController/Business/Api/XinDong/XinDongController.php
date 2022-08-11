@@ -3601,6 +3601,14 @@ eof;
             ];
         }
     }
+
+// Comparison function
+     function date_compare($element1, $element2) {
+        $datetime1 = strtotime($element1['datetime']);
+        $datetime2 = strtotime($element2['datetime']);
+        return $datetime1 - $datetime2;
+    }
+
     function testExport()
     {
         if(
@@ -3609,10 +3617,89 @@ eof;
             $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
                 $this->getRequestData('getIncometaxMonthlyDeclaration')
             );
+            $data = jsonDecode($res['data']);
+            $tmpData =[];
+            foreach ($data as $dataItem){
+                if($dataItem['columnSequence'] == 16){
+                    $tmpData[] = $dataItem;
+                }
+            }
+            // Sort the array
+            usort($tmpData, 'beginDate');
+
+            //最长连续
+            $lastDate = '';
+            $i = 1;
+            $length = 1;
+            foreach ($tmpData as $tmpDataItem) {
+
+                $beginDate = date('Y-m-d', strtotime($tmpDataItem['beginDate']));
+                // 第一次
+                if ($i == 1) {
+                    $lastDate = $beginDate;
+                    CommonService::getInstance()->log4PHP(json_encode(
+                        [
+                            __CLASS__ ,
+                            'times'=>$i,
+                            'item date'=>$beginDate,
+                            'last cal date'=>$lastDate,
+                        ]
+                    ));
+                    $i ++;
+                    continue;
+                }
+
+                $nextDate = date("Y-m-d", strtotime("-3 months", strtotime($lastDate)));
+                CommonService::getInstance()->log4PHP(json_encode(
+                    [
+                        __CLASS__ ,
+                        'times'=>$i,
+                        'item date'=>$beginDate,
+                        'last cal date'=>$lastDate,
+                        'next cal date'=>$nextDate,
+                    ]
+                ));
+                //如果连续了
+                if (
+                    $beginDate == $nextDate
+                ) {
+                    //连续长度加1
+                    $length++;
+                    CommonService::getInstance()->log4PHP(json_encode(
+                        [
+                            __CLASS__ ,
+                            'times'=>$i,
+                            'item date'=>$beginDate,
+                            'last cal date'=>$lastDate,
+                            'next cal date'=>$nextDate,
+                            'ok'=>1,
+                            '$length'=>$length,
+                        ]
+                    ));
+                } else {
+                    $length = 1;
+                    CommonService::getInstance()->log4PHP(json_encode(
+                        [
+                            __CLASS__ ,
+                            'times'=>$i,
+                            'item date'=>$beginDate,
+                            'last cal date'=>$lastDate,
+                            'next cal date'=>$nextDate,
+                            'ok'=>0,
+                            '$length'=>$length,
+                        ]
+                    ));
+                }
+
+                //重置上次连续时间
+                $lastDate = $beginDate;
+                $i++;
+            }
+
             return $this->writeJson(
-                200,[  ] ,
+                200,[] ,
                 //CommonService::ClearHtml($res['body']),
-                json_decode($res,true),
+                $length,
                 '成功',
                 true,
                 []
