@@ -128,7 +128,7 @@ class DianZiQianController extends ProvideBase
         $data['belong'] = '1';
         $data['fileData'] = $tmp['fileData'] ?? '';
         $data['orderNo'] = $tmp['orderNo'] ?? '';
-        $data['test'] = false;
+        $data['test'] = true;
         $res = (new MaYiService())->authEnt($data);
 
         $res['result']['nsrsbh'] = $data['socialCredit'];
