@@ -112,6 +112,10 @@ class ChuangLanService extends ServiceBase
     {
         $url = 'https://api.253.com/open/yysnl/yhzwsc';
 
+        // 还支持加密手机号判断
+        // encrypt md5/sha256
+        // encryptFields 加密数据mobile
+
         $data = [
             'appId' => $this->appId,
             'appKey' => $this->appKey,
