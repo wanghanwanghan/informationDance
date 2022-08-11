@@ -340,7 +340,6 @@ class CarInsuranceInstallment extends ModelBase
      */
       function  getQuarterTaxInfo($social_credit_code){
         //纳税数据取得是两年的数据 取下开始结束时间
-
         $lastMonth = date("Y-m-01",strtotime("-1 month"));
         //两年前的开始月
         $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
@@ -361,24 +360,46 @@ class CarInsuranceInstallment extends ModelBase
               return new \DateTime($a['beginDate']) <=> new \DateTime($b['beginDate']);
         });
 
-        //季度开始时间
+        //两年内的所得税
         $validSuoDeShui = [];
         foreach ($suoDeShui as $dateItem){
           $day1 =  date('Y-m-d',strtotime($dateItem['beginDate']));
           $day2 = date('Y-m-d',strtotime('+3 months',strtotime($day1)));
+
+        //if(
+          //  $day1 >= $last2YearStart
+        //)
           if(
-              $day1 >= $last2YearStart
-          ){
-              //$begainQuarter = $day1 ;
-              //break;
+              $day1 <= $last2YearStart &&
+              $day2 >= $last2YearStart
+          )
+          {
               $validSuoDeShui[] = $dateItem;
           }
         }
 
-        return [
+        //计算全部纳税 所得税+增值税  按照季度计算
+        $QuarterBegain = $validSuoDeShui[0]['beginDate'];
+        if( $QuarterBegain <= 0 ){
+            $QuarterBegain = $last2YearStart;
+        }
+
+        $QuarterTaxInfo = [];
+        while (true){
+            if($QuarterBegain >=$lastMonth ){
+                break;
+            }
+            $QuarterTaxInfo[] = ['QuarterBegain'=>$QuarterBegain];
+            $QuarterBegain = date('Y-m-d',strtotime('+3 months',strtotime($QuarterBegain)));
+        }
+
+
+          return [
             $validSuoDeShui,
+            $QuarterBegain,
             $last2YearStart,
-            $lastMonth
+            $lastMonth,
+            $QuarterTaxInfo
         ];
     }
 
