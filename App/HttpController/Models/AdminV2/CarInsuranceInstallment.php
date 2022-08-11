@@ -397,6 +397,11 @@ class CarInsuranceInstallment extends ModelBase
         //两年前的开始月
         $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
 
+          return [
+              $lastMonth,
+              $last2YearStart
+          ];
+
         // 企业所得税是按照季度返回的
         $suoDeShui = [];
         $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
