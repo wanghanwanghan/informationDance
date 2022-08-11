@@ -379,9 +379,9 @@ class CarInsuranceInstallment extends ModelBase
         }
 
         //计算全部纳税 所得税+增值税  按照季度计算
-        $QuarterBegain = $validSuoDeShui[0]['beginDate'];
-        if( $QuarterBegain <= 0 ){
-            $QuarterBegain = $last2YearStart;
+        $QuarterBegain = $last2YearStart;
+        if( $validSuoDeShui[0]['beginDate']>0 ){
+           $QuarterBegain = date('Y-m-d',strtotime($validSuoDeShui[0]['beginDate'])) ;
         }
 
         $QuarterTaxInfo = [];
@@ -389,16 +389,30 @@ class CarInsuranceInstallment extends ModelBase
             if($QuarterBegain >=$lastMonth ){
                 break;
             }
-            $QuarterTaxInfo[] = ['QuarterBegain'=>$QuarterBegain];
+
+            $tmp = [
+                'QuarterBegain' => $QuarterBegain,
+            ];
+            //匹配所得税
+            foreach ($validSuoDeShui as $suoDeShuiItem){
+                if(
+                    $suoDeShuiItem['beginDate'] == $QuarterBegain
+                ){
+                    $tmp['suoDeShui_currentAmount'] = $suoDeShuiItem['currentAmount'];
+                    break;
+                }
+            }
+
+            $QuarterTaxInfo[] = $tmp;
             $QuarterBegain = date('Y-m-d',strtotime('+3 months',strtotime($QuarterBegain)));
         }
 
 
           return [
-            $validSuoDeShui,
-            $QuarterBegain,
-            $last2YearStart,
-            $lastMonth,
+            //$validSuoDeShui,
+            //$QuarterBegain,
+            //$last2YearStart,
+            //$lastMonth,
             $QuarterTaxInfo
         ];
     }
