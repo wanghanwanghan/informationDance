@@ -270,6 +270,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
             $month = date('m',strtotime($InvoiceData['billingDate']));
             $year = date('Y',strtotime($InvoiceData['billingDate']));
             $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
+            $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2);
             $mapedByDateNumsRes[$month][$year] ++;
         }
 
