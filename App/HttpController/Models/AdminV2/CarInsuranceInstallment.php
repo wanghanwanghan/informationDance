@@ -397,10 +397,7 @@ class CarInsuranceInstallment extends ModelBase
         //两年前的开始月
         $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
 
-          return [
-              $lastMonth,
-              $last2YearStart
-          ];
+
 
         // 企业所得税是按照季度返回的
         $suoDeShui = [];
@@ -437,7 +434,11 @@ class CarInsuranceInstallment extends ModelBase
               $QuarterBegainRaw = $day1;
           }
         }
-
+          return [
+              $lastMonth,
+              $last2YearStart,
+              $QuarterBegainRaw
+          ];
         //计算全部纳税 所得税+增值税  按照季度计算
         $QuarterTaxInfo = [];
         while (true){
