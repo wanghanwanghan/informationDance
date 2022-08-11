@@ -506,12 +506,12 @@ class CarInsuranceInstallment extends ModelBase
                     $zengZhiShuiRes += $zengZhiShuiItem['total'];
                 }
             }
-            $QuarterTaxItem['zengZhiShui_currentAmount'] = number_format($zengZhiShuiRes,2) ;
-            $QuarterTaxItem['suoDeShui_currentAmount'] = number_format($QuarterTaxItem['suoDeShui_currentAmount'],2) ;
+            $QuarterTaxItem['zengZhiShui_currentAmount'] = $zengZhiShuiRes;
             $QuarterTaxItem['totalAmount'] = (
                 $QuarterTaxItem['zengZhiShui_currentAmount'] + $QuarterTaxItem['suoDeShui_currentAmount']
-            )   ;
-        } 
+            )  ;
+            $QuarterTaxItem['totalAmount'] = number_format( $QuarterTaxItem['totalAmount'],2);
+        }
 
         return [
             //$validSuoDeShui,
