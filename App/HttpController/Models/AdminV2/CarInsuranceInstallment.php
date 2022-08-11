@@ -360,13 +360,15 @@ class CarInsuranceInstallment extends ModelBase
           });
 
         // 企业所得税是按照季度返回的  以企业所得税的季度为准
+//          2021 01
+//          2022-2
+//          2021 04
       $begainQuarter = "";
       foreach ($suoDeShui as $dateItem){
           $day1 =  date('Y-m-d',strtotime($dateItem['beginDate']));
           $day2 = date('Y-m-d',strtotime('+3 months',strtotime($day1)));
           if(
-              $day1 <= $last2YearStart &&
-              $day2 >= $last2YearStart
+              $day1 >= $last2YearStart  
           ){
               $begainQuarter = $day1 ;
               break;
