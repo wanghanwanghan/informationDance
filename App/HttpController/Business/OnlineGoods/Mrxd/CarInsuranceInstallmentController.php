@@ -230,7 +230,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
         //进销项发票信息 信动专用
         $jinXiaoXiangFaPiaoRes = (new GuoPiaoService())->getInvoiceMain($res['social_credit_code'],
-            '01', $last2YearStart, $lastMonth, 1);
+            1, $last2YearStart, $lastMonth, 1);
 
 
         return $this->writeJson(
@@ -242,8 +242,8 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                 'totalPage' => ceil($res['total']/$size) ,
             ],
             [
-               'companyInfo' => $companyRes,
-               'essentialFinanceInfo' => $mapedEssentialRes,
+//               'companyInfo' => $companyRes,
+//               'essentialFinanceInfo' => $mapedEssentialRes,
                'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
             ]
         );
