@@ -6,6 +6,7 @@ use App\Crontab\CrontabList\CreateDeepReport;
 use App\Crontab\CrontabList\DeleteTimeoutOrder;
 use App\Crontab\CrontabList\FillEntAllField;
 use App\Crontab\CrontabList\GetAuthBook;
+use App\Crontab\CrontabList\GetAuthBookDZQ;
 use App\Crontab\CrontabList\GetInvData;
 use App\Crontab\CrontabList\MoveOut;
 use App\Crontab\CrontabList\RunDianZiQianGetPdf;
@@ -38,6 +39,7 @@ class CrontabService
         $this->runSupervisor();
         $this->runMoveOut();
         $this->getAuthBook();
+        $this->getAuthBookDZQ();
         $this->RunDianZiQianGetPdf();
         $this->getInvData();//123123123
         $this->RunSaiMengHuiZhiCaiWu();
@@ -88,6 +90,10 @@ class CrontabService
     private function getAuthBook(): Crontab
     {
         return Crontab::getInstance()->addTask(GetAuthBook::class);
+    }
+    private function getAuthBookDZQ(): Crontab
+    {
+        return Crontab::getInstance()->addTask(GetAuthBookDZQ::class);
     }
 
     private function getInvData(): Crontab
