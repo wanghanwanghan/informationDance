@@ -341,6 +341,7 @@ class CarInsuranceInstallment extends ModelBase
       function  getQuarterTaxInfo($social_credit_code){
         //纳税数据取得是两年的数据 取下开始结束时间
         $lastMonth = date("Y-m-01",strtotime("-1 month"));
+        $lastMonth = '2022-08-01';
         $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
 
         // 企业所得税是按照季度返回的
@@ -368,7 +369,7 @@ class CarInsuranceInstallment extends ModelBase
           $day1 =  date('Y-m-d',strtotime($dateItem['beginDate']));
           $day2 = date('Y-m-d',strtotime('+3 months',strtotime($day1)));
           if(
-              $day1 >= $last2YearStart  
+              $day1 >= $last2YearStart
           ){
               $begainQuarter = $day1 ;
               break;
