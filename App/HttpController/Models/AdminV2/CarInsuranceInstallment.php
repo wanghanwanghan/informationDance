@@ -263,7 +263,7 @@ class CarInsuranceInstallment extends ModelBase
      */
     static  function  runMatch($carInsuranceDataId){
         $carInsuranceData = CarInsuranceInstallment::findById($carInsuranceDataId);
-        $carInsuranceData = $carInsuranceData->toArr();
+        $carInsuranceData = $carInsuranceData->toArray();
 
         $retrunData = [];
 
@@ -350,7 +350,7 @@ class CarInsuranceInstallment extends ModelBase
                         'last cal date'=>$lastDate,
                     ]
                 ));
-                $ContinuousDateArr = $tmpDataItem;
+                $ContinuousDateArr = [$tmpDataItem];
                 $i ++;
                 continue;
             }
@@ -396,7 +396,7 @@ class CarInsuranceInstallment extends ModelBase
                         '$length'=>$length,
                     ]
                 ));
-                $ContinuousDateArr = $tmpDataItem;
+                $ContinuousDateArr = [$tmpDataItem];
             }
 
             //重置上次连续时间
