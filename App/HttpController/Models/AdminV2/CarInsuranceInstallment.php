@@ -459,20 +459,14 @@ class CarInsuranceInstallment extends ModelBase
 
             $QuarterTaxInfo[] = $tmp;
             $QuarterBegain = date('Y-m-d',strtotime('+3 months',strtotime($QuarterBegain)));
-            
-        }
 
-          return [
-              $lastMonth,
-              $last2YearStart,
-              $QuarterBegainRaw,
-              $QuarterTaxInfo
-          ];
+        }
 
         //增值税
         $res = (new GuoPiaoService())->getVatReturn(
             $social_credit_code
         );
+
           $data = jsonDecode($res['data']);
           $zengZhiShuiRes = [];
           foreach ($data as $dataItem){
@@ -517,8 +511,7 @@ class CarInsuranceInstallment extends ModelBase
             $QuarterTaxItem['totalAmount'] = (
                 $QuarterTaxItem['zengZhiShui_currentAmount'] + $QuarterTaxItem['suoDeShui_currentAmount']
             )   ;
-        }
-
+        } 
 
         return [
             //$validSuoDeShui,
