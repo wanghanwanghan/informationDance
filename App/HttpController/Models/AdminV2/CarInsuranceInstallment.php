@@ -351,7 +351,7 @@ class CarInsuranceInstallment extends ModelBase
         $data = jsonDecode($res['data']);
         foreach ($data as $dataItem){
             if($dataItem['columnSequence'] == 16){
-                $suoDeShui[] =  $dataItem;
+                $suoDeShui[] =  [$dataItem['beginDate']];
             }
         }
         // Sort the array
@@ -363,7 +363,7 @@ class CarInsuranceInstallment extends ModelBase
     function date_compare($element1, $element2) {
         $datetime1 = strtotime($element1['beginDate']);
         $datetime2 = strtotime($element2['beginDate']);
-        return $datetime1 - $datetime2;
+        return $datetime2 - $datetime1;
     }
     function date_compare2($element1, $element2) {
         $datetime1 = strtotime($element1['beginDate']);
