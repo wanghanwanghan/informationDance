@@ -5268,7 +5268,7 @@ class MaYiService extends ServiceBase
         //增加除授权书其他证书的表，并做关联
         if (!empty($data['fileData'])) {
             foreach ($data['fileData'] as $datum) {
-                $id='';
+//                $id='';
                 if($datum['isSeal'] === 'true' && $data['test']){
                     $gaizhangParam = [
                         'entName'      => $data['entName'],
