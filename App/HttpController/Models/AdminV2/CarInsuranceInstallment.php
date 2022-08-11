@@ -437,6 +437,7 @@ class CarInsuranceInstallment extends ModelBase
 
         //计算全部纳税 所得税+增值税  按照季度计算
         $QuarterTaxInfo = [];
+        $QuarterBegain  = $QuarterBegainRaw;
         while (true){
             if($QuarterBegain >=$lastMonth ){
                 break;
