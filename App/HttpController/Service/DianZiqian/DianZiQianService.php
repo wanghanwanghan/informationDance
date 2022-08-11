@@ -421,7 +421,7 @@ class DianZiQianService extends ServiceBase
         $personalTransactionCode = control::getUuid();
         //自动签署企业法人章
         $personalContractSignUrl = $this->contractSignAuto($signerCodePersonal, $contractCode, '代表签字',$personalSealCode,$personalTransactionCode);
-        if ($personalContractSignUrl['code'] != 200) return $personalContractSignUrl;
+//        if ($personalContractSignUrl['code'] != 200) return $personalContractSignUrl;
         $insertData = [
             'entName' => $postData['entName'],
             "personName"   => $postData['legalPerson'],
