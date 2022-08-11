@@ -115,7 +115,7 @@ Eof;
                         continue;
                     }
                     $urlD = [];
-
+                    CommonService::getInstance()->log4PHP([$detailArr], 'info', 'DZ$detailArr');
                     foreach ($detailArr as $v) {
                         foreach ($v as $value) {
                             $orderNo = $value->getAttr('orderNo');
@@ -123,6 +123,7 @@ Eof;
                             if(empty($ur)){
                                 continue 3;
                             }
+                            CommonService::getInstance()->log4PHP([$ur], 'info', 'DZQ$ur');
                             $urlD[$orderNo][$value->getAttr('type')] = $ur;
                             $fileData[$value->getAttr('type')] = [
                                 'fileAddress' => '',
