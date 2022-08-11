@@ -261,7 +261,10 @@ class CarInsuranceInstallment extends ModelBase
     上文所有“增值税”指的是：增值税接口里，34,39,40,41项金额的总和
 
      */
-    static  function  runMatch($carInsuranceData){
+    static  function  runMatch($carInsuranceDataId){
+        $carInsuranceData = CarInsuranceInstallment::findById($carInsuranceDataId);
+        $carInsuranceData = $carInsuranceData->toArr();
+
         $retrunData = [];
 
         //企业信息
@@ -295,15 +298,115 @@ class CarInsuranceInstallment extends ModelBase
         // 正常纳税满18个月 正常缴纳？每月有同时缴纳所得税或增值税即算正常缴纳。
         // 企业所得税
         $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
-            $retrunData['social_credit_code']
+            $carInsuranceData['social_credit_code']
         );
         $data = jsonDecode($res['data']);
         foreach ($data as $dataItem){
             if($dataItem['columnSequence'] == 16){
-                $retrunData['所得税'] =  $dataItem;
+                $retrunData['所得税'][] =  $dataItem;
             }
         }
+
+        //所得税最长连续缴纳情况
+        $retrunData['所得税-连续缴纳'] = self::getMaxContinuousDateLength(
+            $retrunData['所得税'],'beginDate',"-3 months"
+        );
+
+        //企业税务基本信息查询
+        $retrunData['企业税务基本信息'] = (new GuoPiaoService())->getEssential($carInsuranceData['social_credit_code']);
+
+        //增值税信息
+        $retrunData['增值税信息'] = (new GuoPiaoService())->getVatReturn($carInsuranceData['social_credit_code']);
+
+        //年度资产负债
+        $retrunData['年度资产负债'] = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheetAnnual($carInsuranceData['social_credit_code']);
+
+        //年度利润表
+        $retrunData['年度利润表'] =  (new GuoPiaoService())->getFinanceIncomeStatementAnnualReport($carInsuranceData['social_credit_code']);
+
         return  $retrunData;
+    }
+
+    //获取最长连续时间
+    static  function getMaxContinuousDateLength($tmpData,$field,$calStr){
+        //最近一次的比较时间
+        $lastDate = '';
+        //运行次数
+        $i = 1;
+        //最大连续长度
+        $length = 1;
+        $ContinuousDateArr = [];
+        foreach ($tmpData as $tmpDataItem) {
+
+            $beginDate = date('Y-m-d', strtotime($tmpDataItem[$field]));
+            // 第一次
+            if ($i == 1) {
+                $lastDate = $beginDate;
+                CommonService::getInstance()->log4PHP(json_encode(
+                    [
+                        __CLASS__ ,
+                        'times'=>$i,
+                        'item date'=>$beginDate,
+                        'last cal date'=>$lastDate,
+                    ]
+                ));
+                $ContinuousDateArr = $tmpDataItem;
+                $i ++;
+                continue;
+            }
+
+            $nextDate = date("Y-m-d", strtotime("$calStr", strtotime($lastDate)));
+            CommonService::getInstance()->log4PHP(json_encode(
+                [
+                    __CLASS__ ,
+                    'times'=>$i,
+                    'item date'=>$beginDate,
+                    'last cal date'=>$lastDate,
+                    'next cal date'=>$nextDate,
+                ]
+            ));
+            //如果连续了
+            if (
+                $beginDate == $nextDate
+            ) {
+                //连续长度加1
+                $length++;
+                $ContinuousDateArr[] = $tmpDataItem;
+                CommonService::getInstance()->log4PHP(json_encode(
+                    [
+                        __CLASS__ ,
+                        'times'=>$i,
+                        'item date'=>$beginDate,
+                        'last cal date'=>$lastDate,
+                        'next cal date'=>$nextDate,
+                        'ok'=>1,
+                        '$length'=>$length,
+                    ]
+                ));
+            } else {
+                $length = 1;
+                CommonService::getInstance()->log4PHP(json_encode(
+                    [
+                        __CLASS__ ,
+                        'times'=>$i,
+                        'item date'=>$beginDate,
+                        'last cal date'=>$lastDate,
+                        'next cal date'=>$nextDate,
+                        'ok'=>0,
+                        '$length'=>$length,
+                    ]
+                ));
+                $ContinuousDateArr = $tmpDataItem;
+            }
+
+            //重置上次连续时间
+            $lastDate = $beginDate;
+            $i++;
+        }
+        return [
+            'ContinuousDate'=>$ContinuousDateArr,
+            'length'=>$length,
+        ];
     }
 
     //根据身份证获取年龄
