@@ -179,7 +179,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         );
     }
 
-    function baoYaConsultResultList(): bool
+    function getMatchedRes(): bool
     {
         $requestData =  $this->getRequestData();
         $page= $requestData['page']?:1;
@@ -205,13 +205,9 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
 //        ){
 //            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
 //        }
-        $res = InsuranceData::getDataLists(
-            [
-                ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
-            ],
-            $page
-        );
-
+        $res =  CarInsuranceInstallment::findOneByUserId(1);
+        $res = $res->toArray();
+        $companyRes = XinDongService::getEsBasicInfoV3($res['ent_name']);
         return $this->writeJson(
             200,
             [

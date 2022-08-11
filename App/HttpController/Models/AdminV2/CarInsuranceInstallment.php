@@ -156,6 +156,15 @@ class CarInsuranceInstallment extends ModelBase
         return $res;
     }
 
+    public static function findOneByUserId($userId){
+        $res =  CarInsuranceInstallment::create()
+            ->where('user_id',$userId)
+            ->order('id', 'DESC')
+            ->get();
+        return $res;
+    }
+
+
     public static function findByUserIdAndEntName($ent_name,$user_id){
         $res =  CarInsuranceInstallment::create()
             ->where('ent_name',$ent_name)
@@ -241,26 +250,86 @@ class CarInsuranceInstallment extends ModelBase
     }
 
     /**
-    苏宁银行-微商贷
-    公司成立2年以上，不能是分公司
-    申请人：贷款年龄：22-59周岁；申请人为法人（对占股无要求）、近6个月法人或最大股东变更满6个月
-    法人手机在网时长大于1年
-    正常纳税满18个月
-    年纳税金额1.5万以上（PS：不做强要求，但不能为0）
-    纳税等级A/B//M（个体工商户可准入）
-    无连续6个月不纳税情况
-    近3个月有纳税申报记录
-    纳税系统内录入最近一季资产负债表、利润表，必须有三期以上财务报表
-    企业当前无欠税
-    近半年销售波动较小
-
-
-    注意 ❗❗❗
-
-    上文所有“所得税”指的是：所得税接口里，16栏的本期金额
-    上文所有“增值税”指的是：增值税接口里，34,39,40,41项金额的总和
-
-     */
+ *
+*
+* 苏宁银行-微商贷
+    * //es 能放的
+ * 税务信息table  今年(first one)
+    * 税务信息
+    * 纳税状态
+    * 纳税信用等级
+    * 纳税人种类
+    * 历史有无欠税记录
+    * 滞纳金
+    * 评价分数
+     *
+    * //发票开票金额 ==    近两年
+     *
+     *      2021  2022
+     * 01
+     * 02
+     *
+     * 发票开票数量== //    近两年
+     *      2021  2022
+    * 01
+    * 02
+     *
+    近两年十大客户  name code num money
+    2021
+    2022
+    2023
+    *
+    *
+    * 近两年十大供应商
+ *
+* //苏宁
+ *
+* 公司成立2年以上，不能是分公司 -- h库
+    * 申请人：贷款年龄：22-59周岁；申请人为法人（对占股无要求）、近6个月法人或最大股东变更满6个月 -- h库，用户输入
+    * 法人手机在网时长大于1年 -- 创蓝接口
+    * 正常纳税满18个月 -- 财务三表
+    * 年纳税金额1.5万以上（PS：不做强要求，但不能为0） -- 财务三表
+    * 纳税等级A/B//M（个体工商户可准入） -- 国票接口
+    * 无连续6个月不纳税情况 -- 财务三表
+    * 近3个月有纳税申报记录 -- 增值税申报表
+    * 纳税系统内录入最近一季资产负债表、利润表，必须有三期以上财务报表 -- 财务三表
+    * 企业当前无欠税 -- 国票接口
+    * 近半年销售波动较小 -- 发票
+ *
+*
+*
+* 金城银行-金企贷
+ *
+* 企业成立时间：满两年，纳税满1年 -- h库和财务三表
+    * 纳税评级要求：ABCM （浙江C级不可做，其他地区可做） -- 国票接口
+    * 企业类型：个人独资企业、有限责任公司准入；普通合伙人禁入 -- h库
+    * 近两年任意一年纳税总额不得为0 -- 财务三表
+    * ??? 无经营异常，近6个月无主营业务方向变更 -- 经营异常在h库
+    * ??? 关联企业/法人无重大负面信息 -- 关联企业可以用企查查接口
+    * 申请人：企业法人，无占股要求 -- h库
+    * 年龄：18-60周岁 -- 用户输入
+    * 变更要求：近6个月法人无变更 -- h库
+ *
+*
+*
+* 浦发银行-浦慧贷
+ *
+* 申请人年龄：20-65周岁，具有中国国籍（不含港、澳、台） -- 用户输入
+    * 申请人：企业法定代表人，持股5%以上 -- h库
+    * 法人变更要求：企业法人变更满6个月 -- h库
+    * 实际经营时长不少于1年。 -- 发票
+    * 年开票金额100万以上，近1年开票10月及以上 -- 发票
+    * 连续未开票天数≤45天（2、3、4月除外） -- 发票
+    * 近12个月累计开票张数≥35 -- 发票
+ *
+*
+*
+* 企业名称
+    * 统一代码
+    * 法人名称
+    * 法人手机
+    * 法人身份证
+ */
     static  function  runMatch($carInsuranceDataId){
         $carInsuranceData = CarInsuranceInstallment::findById($carInsuranceDataId);
         $carInsuranceData = $carInsuranceData->toArray();
@@ -295,35 +364,18 @@ class CarInsuranceInstallment extends ModelBase
             }
         }
 
-        // 正常纳税满18个月 正常缴纳？每月有同时缴纳所得税或增值税即算正常缴纳。
-        // 企业所得税
-        $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
-            $carInsuranceData['social_credit_code']
-        );
-        $data = jsonDecode($res['data']);
-        foreach ($data as $dataItem){
-            if($dataItem['columnSequence'] == 16){
-                $retrunData['所得税'][] =  $dataItem;
-            }
-        }
-
+        //所得税信息
+        //增值税信息
+        $taxInfo = self::getQuarterTaxInfo($carInsuranceData['social_credit_code']);
         //所得税最长连续缴纳情况
-        $retrunData['所得税-连续缴纳'] = self::getMaxContinuousDateLength(
-            $retrunData['所得税'],'beginDate',"-3 months"
+        $retrunData['连续缴纳所得税增值税'] = self::getMaxContinuousDateLength(
+            $taxInfo['QuarterTaxInfo'],'QuarterBegain',"+3 months"
         );
 
         //企业税务基本信息查询
         $retrunData['企业税务基本信息'] = (new GuoPiaoService())->getEssential($carInsuranceData['social_credit_code']);
 
-        //增值税信息
-        $res = (new GuoPiaoService())->getVatReturn($carInsuranceData['social_credit_code']);
-        $data = jsonDecode($res['data']);
-        foreach ($data as $dataItem){
-            if($dataItem['columnSequence'] == 16){
-                $retrunData['所得税'][] =  $dataItem;
-            }
-        }
-        $retrunData['增值税信息'] ;
+
         //年度资产负债
         $retrunData['年度资产负债'] = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheetAnnual($carInsuranceData['social_credit_code']);
 
@@ -382,7 +434,6 @@ class CarInsuranceInstallment extends ModelBase
 
         //计算全部纳税 所得税+增值税  按照季度计算
         $QuarterTaxInfo = [];
-        $QuarterBegain =  $QuarterBegainRaw;
         while (true){
             if($QuarterBegain >=$lastMonth ){
                 break;
@@ -406,15 +457,66 @@ class CarInsuranceInstallment extends ModelBase
             $QuarterBegain = date('Y-m-d',strtotime('+3 months',strtotime($QuarterBegain)));
         }
 
+        //增值税
+        $res = (new GuoPiaoService())->getVatReturn(
+            $social_credit_code
+        );
+          $data = jsonDecode($res['data']);
+          $zengZhiShuiRes = [];
+          foreach ($data as $dataItem){
+              if(in_array($dataItem['columnSequence'],[34,39,40,41]) ){
+                  $zengZhiShuiRes[] =  $dataItem;
+              }
+          }
+          $zengZhiShuiMapedRes = [];
+          foreach ($zengZhiShuiRes as $zengZhiShuiItem){
+              $beginDate = date('Y-m-d',strtotime($zengZhiShuiItem['beginDate'])) ;
+              $zengZhiShuiMapedRes[$beginDate][$zengZhiShuiItem['columnSequence']] = $zengZhiShuiItem['generalMonthAmount'];
+          }
+          $zengZhiShuiResV2 = [];
+          foreach ($zengZhiShuiMapedRes as $dateKey => $zengZhiShuiItem){
+                $tmpRes = 0;
+                foreach($zengZhiShuiItem as  $amount){
+                    $tmpRes += $amount;
+                }
+              $zengZhiShuiResV2[$dateKey] = [
+                  'date' => $dateKey,
+                  'total' => $tmpRes,
+                  'datails' => $zengZhiShuiItem
+              ];
+          }
 
-          return [
+        foreach ($QuarterTaxInfo as &$QuarterTaxItem){
+            // 'QuarterBegain' => $QuarterBegain,
+            // suoDeShui_currentAmount
+            $zengZhiShuiRes = 0;
+            $tmpDate1 =  $QuarterTaxItem['QuarterBegain'];
+            $tmpDate2 =  date('Y-m-d',strtotime('+1 month',strtotime($QuarterTaxItem['QuarterBegain'])));
+            $tmpDate3 =  date('Y-m-d',strtotime('+2 month',strtotime($QuarterTaxItem['QuarterBegain'])));
+            foreach ($zengZhiShuiResV2 as $zengZhiShuiItem){
+                if(
+                    in_array($zengZhiShuiItem['date'],[ $tmpDate1, $tmpDate2, $tmpDate3])
+                ){
+                    $zengZhiShuiRes += $zengZhiShuiItem['total'];
+                }
+            }
+            $QuarterTaxItem['zengZhiShui_currentAmount'] = number_format($zengZhiShuiRes,2) ;
+            $QuarterTaxItem['suoDeShui_currentAmount'] = number_format($QuarterTaxItem['suoDeShui_currentAmount'],2) ;
+            $QuarterTaxItem['totalAmount'] = (
+                $QuarterTaxItem['zengZhiShui_currentAmount'] + $QuarterTaxItem['suoDeShui_currentAmount']
+            )   ;
+        }
+
+
+        return [
             //$validSuoDeShui,
             //$QuarterBegain,
             //$last2YearStart,
             //$lastMonth,
-            $suoDeShui,
-            $QuarterBegainRaw,
-            $QuarterTaxInfo
+            'suoDeShui' => $suoDeShui,
+            'zengZhiShui' => $zengZhiShuiResV2,
+            'quarterBeganDay' =>$QuarterBegainRaw,
+            'QuarterTaxInfo' => $QuarterTaxInfo
         ];
     }
 

@@ -3613,6 +3613,20 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('getEssential')
+        ) {
+            $res = (new GuoPiaoService())->getEssential($this->getRequestData('getEssential'));
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                $res,
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
             $this->getRequestData('getQuarterTaxInfo')
         ){
             $res = (new CarInsuranceInstallment())
