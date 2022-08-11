@@ -57,9 +57,9 @@ class GetAuthBookDZQ extends AbstractCronTask
         $ids = $this->getNeedSealID();//123123
 
         $ids = implode(',', $ids);
-        $idSql = 'dianZiQian_status = 0';
+        $idSql = 'dianZiQian_status = 0  and dianZiQian_id>0';
         if (!empty($ids)) {
-            $idSql = "id IN ( {$ids} ) OR dianZiQian_status = 0 ";
+            $idSql = "id IN ( {$ids} ) OR dianZiQian_status = 0 and dianZiQian_id>0";
         }
 
         $sql = <<<Eof
@@ -115,14 +115,16 @@ Eof;
                         continue;
                     }
                     $urlD = [];
-
+                    CommonService::getInstance()->log4PHP([$detailArr], 'info', 'DZ$detailArr');
                     foreach ($detailArr as $v) {
                         foreach ($v as $value) {
                             $orderNo = $value->getAttr('orderNo');
+                            CommonService::getInstance()->log4PHP([$detailArr], 'info', 'DZ$detailArr');
                             $ur = $this->getSealUrl($value->getAttr('dianZiQian_id'));
                             if(empty($ur)){
                                 continue 3;
                             }
+                            CommonService::getInstance()->log4PHP([$ur], 'info', 'DZQ$ur');
                             $urlD[$orderNo][$value->getAttr('type')] = $ur;
                             $fileData[$value->getAttr('type')] = [
                                 'fileAddress' => '',
@@ -303,10 +305,7 @@ Eof;
 
     public function getNeedSealID()
     {
-        $list = AntAuthSealDetail::create()->where([
-                                                       'dianZiQian_status' => 0,
-                                                       'isSeal' => 'true',
-                                                   ])->all();
+        $list = AntAuthSealDetail::create()->where("dianZiQian_status =0 and isSeal='true' and dianZiQian_id>0")->all();
         $ids = [0];
         $idMap = [];
         foreach ($list as $item) {
