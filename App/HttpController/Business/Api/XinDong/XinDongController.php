@@ -3645,11 +3645,6 @@ eof;
         ){
             $res = (new CarInsuranceInstallment())
                     ->getQuarterTaxInfo($this->getRequestData('getQuarterTaxInfo'));
-
-            $length = CarInsuranceInstallment::getMaxContinuousDateLength(
-                $res['QuarterTaxInfo'],'QuarterBegain',"+3 months"
-            );
-
             return $this->writeJson(
                 200,[] ,
                 //CommonService::ClearHtml($res['body']),

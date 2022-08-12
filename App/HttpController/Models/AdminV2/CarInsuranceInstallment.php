@@ -587,11 +587,7 @@ class CarInsuranceInstallment extends ModelBase
                   'datails' => $zengZhiShuiItem
               ];
           }
-          return [
-              $zengZhiShuiRes,
-              $zengZhiShuiMapedRes,
-              $zengZhiShuiResV2
-          ];
+          ;
         foreach ($QuarterTaxInfo as &$QuarterTaxItem){
             // 'QuarterBegain' => $QuarterBegain,
             // suoDeShui_currentAmount
@@ -624,17 +620,16 @@ class CarInsuranceInstallment extends ModelBase
               return new \DateTime($a['QuarterBegain']) <=> new \DateTime($b['QuarterBegain']);
           });
 
-
+          $length = CarInsuranceInstallment::getMaxContinuousDateLength(
+              $validQuarterTaxInfo,'QuarterBegain',"+3 months"
+          );
           return [
-            //$validSuoDeShui,
-            //$QuarterBegain,
-            //$last2YearStart,
-            //$lastMonth,
             'suoDeShui' => $suoDeShui,
             'zengZhiShui' => $zengZhiShuiResV2,
             'quarterBeganDay' =>$QuarterBegainRaw,
             'QuarterTaxInfo' => $QuarterTaxInfo,
-            'validQuarterTaxInfo'=>$validQuarterTaxInfo
+            'validQuarterTaxInfo'=>$validQuarterTaxInfo,
+            'validQuarterLength'=>$length,
         ];
     }
 
