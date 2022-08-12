@@ -384,8 +384,8 @@ class DianZiQianService extends ServiceBase
 //            break;
 //        }
 //
+
         //请求盖章
-        
         //35家企业各盖三个pdf
         $AuthData = DianZiQianAuth::create()->where('id < 36')->all();
         $res = [];
@@ -400,7 +400,7 @@ class DianZiQianService extends ServiceBase
                 'regAddress' => $authDatum->getAttr('regAddress'),
                 'file' => 'dianziqian_jcsk_shouquanshu.pdf'
             ];
-            $id = $this->getAuthFileId($param);
+            $id = $this->getAuthFileId($authDatum);
             $res[$k]['id1'] = $id;
             $gaizhangParam1 = [
                 'entName'      => $authDatum->getAttr('entName'),
