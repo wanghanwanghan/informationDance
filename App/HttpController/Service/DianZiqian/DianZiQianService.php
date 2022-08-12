@@ -388,7 +388,8 @@ class DianZiQianService extends ServiceBase
         
         //35家企业各盖三个pdf
         $AuthData = DianZiQianAuth::create()->where('id < 36')->all();
-        foreach ($AuthData as $authDatum) {
+        $res = [];
+        foreach ($AuthData as $k=>$authDatum) {
             $param = [
                 'entName' => $authDatum->getAttr('entName'),
                 'socialCredit' => $authDatum->getAttr('socialCredit'),
@@ -400,6 +401,7 @@ class DianZiQianService extends ServiceBase
                 'file' => 'dianziqian_jcsk_shouquanshu.pdf'
             ];
             $id = $this->getAuthFileId($param);
+            $res[$k]['id1'] = $id;
             $gaizhangParam1 = [
                 'entName'      => $authDatum->getAttr('entName'),
                 'legalPerson'  => $authDatum->getAttr('legalPerson'),
@@ -408,6 +410,7 @@ class DianZiQianService extends ServiceBase
                 'file' => 'test/file1.pdf'
             ];
             $dianziqian_id = (new DianZiQianService())->gaiZhang($gaizhangParam1);
+            $res[$k]['id2'] = $dianziqian_id;
             $gaizhangParam2 = [
                 'entName'      => $authDatum->getAttr('entName'),
                 'legalPerson'  => $authDatum->getAttr('legalPerson'),
@@ -416,6 +419,7 @@ class DianZiQianService extends ServiceBase
                 'file' => 'test/file2.pdf'
             ];
             $dianziqian_id2 = (new DianZiQianService())->gaiZhang($gaizhangParam2);
+            $res[$k]['id3'] = $dianziqian_id;
         }
         return $this->createReturn(200, null, [], '成功');
     }
