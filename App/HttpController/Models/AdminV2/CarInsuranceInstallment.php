@@ -686,7 +686,7 @@ class CarInsuranceInstallment extends ModelBase
 
       $zengZhiShuiResV3 = $zengZhiShuiResV2;
       usort($zengZhiShuiResV3, function($a, $b) {
-          return new \DateTime($b['QuarterBegain']) <=> new \DateTime($a['QuarterBegain']);
+          return new \DateTime($b['date']) <=> new \DateTime($a['date']);
       });
 
         return [
