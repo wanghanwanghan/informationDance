@@ -346,7 +346,15 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                 'totalPage' => ceil($res['total']/$size) ,
             ],
             [
-               'companyInfo' => $companyRes,
+               'companyInfo' => [
+                   'ENTNAME' => $companyRes['ENTNAME'],
+                   'NAME' => $companyRes['NAME'],
+                   'ESDATE' => $companyRes['ESDATE'],
+                   'REGCAP' => $companyRes['REGCAP'],
+                   'UNISCID' => $companyRes['UNISCID'],
+                   'DOM' => $companyRes['DOM'],
+                   'OPSCOPE' => $companyRes['OPSCOPE'],
+               ],
                'essentialFinanceInfo' => $mapedEssentialRes,
                'mapedByDateNumsRes' => $mapedByDateNumsRes,
                'mapedByDateAmountRes' => $mapedByDateAmountRes,
