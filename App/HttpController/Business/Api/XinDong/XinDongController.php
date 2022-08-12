@@ -39,6 +39,7 @@ use App\HttpController\Models\RDS3\HdSaicExtension\CncaRzGltxH;
 use App\HttpController\Models\RDS3\HdSaicExtension\DataplusAppAndroidH;
 use App\HttpController\Models\RDS3\HdSaicExtension\DataplusAppIosH;
 use App\HttpController\Models\RDS3\HdSaicExtension\MostTorchHightechH;
+use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Export\Excel\ExportExcelService;
@@ -3612,6 +3613,19 @@ eof;
 
     function testExport()
     {
+        if(
+            $this->getRequestData('yhzwsc')
+        ){
+            $res = (new ChuangLanService())->yhzwsc($this->getRequestData('yhzwsc'));
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                $res,
+                '成功',
+                true,
+                []
+            );
+        }
         if(
             $this->getRequestData('getEssential')
         ) {
