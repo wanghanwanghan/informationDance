@@ -390,18 +390,18 @@ class DianZiQianService extends ServiceBase
         $AuthData = AntAuthList::create()->where('id < 36')->all();
         $res = [];
         foreach ($AuthData as $k=>$authDatum) {
-//            $param = [
-//                'entName' => $authDatum->getAttr('entName'),
-//                'socialCredit' => $authDatum->getAttr('socialCredit'),
-//                'legalPerson' => $authDatum->getAttr('legalPerson'),
-//                'idCard' => empty($authDatum->getAttr('idCard'))?'142329197803221928':$authDatum->getAttr('idCard'),
-//                'phone' => $authDatum->getAttr('phone'),
-//                'city' => $authDatum->getAttr('city'),
-//                'regAddress' => $authDatum->getAttr('regAddress'),
-//                'file' => 'dianziqian_jcsk_shouquanshu.pdf'
-//            ];
-//            $id = $this->getAuthFileId($param);
-//            $res[$k]['id1'] = $id;
+            $param = [
+                'entName' => $authDatum->getAttr('entName'),
+                'socialCredit' => $authDatum->getAttr('socialCredit'),
+                'legalPerson' => $authDatum->getAttr('legalPerson'),
+                'idCard' => empty($authDatum->getAttr('idCard'))?'142329197803221928':$authDatum->getAttr('idCard'),
+                'phone' => $authDatum->getAttr('phone'),
+                'city' => $authDatum->getAttr('city'),
+                'regAddress' => $authDatum->getAttr('regAddress'),
+                'file' => 'dianziqian_jcsk_shouquanshu.pdf'
+            ];
+            $id = $this->getAuthFile2Id($param);
+            $res[$k]['id1'] = $id;
 //            $gaizhangParam1 = [
 //                'entName'      => $authDatum->getAttr('entName'),
 //                'legalPerson'  => $authDatum->getAttr('legalPerson'),
@@ -411,16 +411,16 @@ class DianZiQianService extends ServiceBase
 //            ];
 //            $dianziqian_id = $this->gaiZhang($gaizhangParam1);
 //            $res[$k]['id2'] = $dianziqian_id;
-            $gaizhangParam2 = [
-                'entName'      => $authDatum->getAttr('entName'),
-                'legalPerson'  => $authDatum->getAttr('legalPerson'),
-                'idCard'       => empty($authDatum->getAttr('idCard'))?'142329197803221928':$authDatum->getAttr('idCard'),
-                'socialCredit' => $authDatum->getAttr('socialCredit'),
-                'file' => 'test/file2.pdf'
-            ];
-            $dianziqian_id2 = $this->getAuthFile2Id($gaizhangParam2);
-            $res[$k]['id3'] = $dianziqian_id2;
-//            break;
+//            $gaizhangParam2 = [
+//                'entName'      => $authDatum->getAttr('entName'),
+//                'legalPerson'  => $authDatum->getAttr('legalPerson'),
+//                'idCard'       => empty($authDatum->getAttr('idCard'))?'142329197803221928':$authDatum->getAttr('idCard'),
+//                'socialCredit' => $authDatum->getAttr('socialCredit'),
+//                'file' => 'test/file2.pdf'
+//            ];
+//            $dianziqian_id2 = $this->getAuthFile2Id($gaizhangParam2);
+//            $res[$k]['id3'] = $dianziqian_id2;
+            break;
         }
         return $this->createReturn(200, null, $res, '成功');
     }
@@ -462,7 +462,7 @@ class DianZiQianService extends ServiceBase
             'phoneNo'     => $postData['phone'] ?? '',
             'region'      => $postData['city'] ?? '',
             'address'     => $postData['regAddress'] ?? '',
-            'date'        => date('Y年m月d日', time())
+            'date'        => '2021年09月01日'
         ];
         $contractFileTemplateFilling = $this->contractFileTemplateFilling( $contractTemplateCode,$params);
         $contractCode                = $contractFileTemplateFilling['result']['contractCode'] ?? "";
@@ -475,7 +475,7 @@ class DianZiQianService extends ServiceBase
         $personalTransactionCode = control::getUuid();
         //自动签署企业法人章
         $personalContractSignUrl = $this->contractSignAuto($signerCodePersonal, $contractCode, '代表签字',$personalSealCode,$personalTransactionCode);
-//        if ($personalContractSignUrl['code'] != 200) return $personalContractSignUrl;
+        if ($personalContractSignUrl['code'] != 200) return $personalContractSignUrl;
         $insertData = [
             'entName' => $postData['entName'],
             "personName"   => $postData['legalPerson'],
