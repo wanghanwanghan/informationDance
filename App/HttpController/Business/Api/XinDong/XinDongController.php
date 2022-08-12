@@ -3614,6 +3614,21 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('getFinanceBalanceSheetAnnual')
+        ){
+            $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheetAnnual(
+                $this->getRequestData('getFinanceBalanceSheetAnnual')
+            );
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                $res,
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
             $this->getRequestData('yhzwsc')
         ){
             $res = (new ChuangLanService())->yhzwsc($this->getRequestData('yhzwsc'));

@@ -383,6 +383,10 @@ class CarInsuranceInstallment extends ModelBase
     }
 
     static  function  runMatch($carInsuranceDataId){
+        $oneMonthsAgo = date("Y-m-01",strtotime("-1 month"));
+        $twoMonthsAgo = date("Y-m-01",strtotime("-2 month"));
+        $threeMonthsAgo = date("Y-m-01",strtotime("-3 month"));
+
          // 苏宁银行-微商贷
         $suNingWeiShangDai = true;
         $suNingWeiShangDaiErrMsg = [];
@@ -498,7 +502,7 @@ class CarInsuranceInstallment extends ModelBase
         };
 
     /*
-    * 苏宁银行-微商贷：近3个月有纳税申报记录 -- 增值税申报表
+    * 苏宁银行-微商贷
     * 纳税系统内录入最近一季资产负债表、利润表，必须有三期以上财务报表 -- 财务三表
     * 企业当前无欠税 -- 国票接口
     * 近半年销售波动较小 -- 发票
@@ -512,7 +516,39 @@ class CarInsuranceInstallment extends ModelBase
         }
 
         // 苏宁银行-微商贷：近3个月都有纳税申报记录 -- 增值税申报表
-        $taxInfo['zengZhiShui'];
+        $oneMonthsAgoHasNoTax = true;
+        $twoMonthsAgoHasNoTax = true;
+        $threeMonthsAgoHasNoTax = true;
+        foreach ($taxInfo['zengZhiShuiReverseOrder'] as $dataItem){
+            if(
+                $dataItem['date'] == $oneMonthsAgo &&
+                $dataItem['total'] > 0
+            ){
+                $oneMonthsAgoHasNoTax = false;
+            }
+            if(
+                $dataItem['date'] == $twoMonthsAgo &&
+                $dataItem['total'] > 0
+            ){
+                $twoMonthsAgoHasNoTax = false;
+            }
+            if(
+                $dataItem['date'] == $threeMonthsAgo &&
+                $dataItem['total'] > 0
+            ){
+                $threeMonthsAgoHasNoTax = true;
+            }
+        }
+
+        if(
+            $oneMonthsAgoHasNoTax ||
+            $twoMonthsAgoHasNoTax ||
+            $threeMonthsAgoHasNoTax
+        ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '近3个月有未纳税申报记录 ';
+        }
+
         //年度资产负债
         $retrunData['年度资产负债'] = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheetAnnual($carInsuranceData['social_credit_code']);
 
