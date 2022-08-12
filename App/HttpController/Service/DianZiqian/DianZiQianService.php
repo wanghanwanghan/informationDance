@@ -387,14 +387,14 @@ class DianZiQianService extends ServiceBase
 
         //请求盖章
         //35家企业各盖三个pdf
-        $AuthData = DianZiQianAuth::create()->where('id < 36')->all();
+        $AuthData = AntAuthList::create()->where('id < 36')->all();
         $res = [];
         foreach ($AuthData as $k=>$authDatum) {
             $param = [
                 'entName' => $authDatum->getAttr('entName'),
                 'socialCredit' => $authDatum->getAttr('socialCredit'),
                 'legalPerson' => $authDatum->getAttr('legalPerson'),
-                'idCard' => $authDatum->getAttr('idCard'),
+                'idCard' => empty($authDatum->getAttr('idCard'))?'142329197803221928':$authDatum->getAttr('idCard'),
                 'phone' => $authDatum->getAttr('phone'),
                 'city' => $authDatum->getAttr('city'),
                 'regAddress' => $authDatum->getAttr('regAddress'),
@@ -405,7 +405,7 @@ class DianZiQianService extends ServiceBase
             $gaizhangParam1 = [
                 'entName'      => $authDatum->getAttr('entName'),
                 'legalPerson'  => $authDatum->getAttr('legalPerson'),
-                'idCard'       => $authDatum->getAttr('idCard'),
+                'idCard'       => empty($authDatum->getAttr('idCard'))?'142329197803221928':$authDatum->getAttr('idCard'),
                 'socialCredit' => $authDatum->getAttr('socialCredit'),
                 'file' => 'test/file1.pdf'
             ];
@@ -414,7 +414,7 @@ class DianZiQianService extends ServiceBase
             $gaizhangParam2 = [
                 'entName'      => $authDatum->getAttr('entName'),
                 'legalPerson'  => $authDatum->getAttr('legalPerson'),
-                'idCard'       => $authDatum->getAttr('idCard'),
+                'idCard'       => empty($authDatum->getAttr('idCard'))?'142329197803221928':$authDatum->getAttr('idCard'),
                 'socialCredit' => $authDatum->getAttr('socialCredit'),
                 'file' => 'test/file2.pdf'
             ];
