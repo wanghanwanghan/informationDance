@@ -5260,6 +5260,7 @@ class MaYiService extends ServiceBase
                 'town' => $baiduApiRes['town'] ?? '',
                 'townCode' => $baiduApiRes['townCode'] ?? '',
                 'orderNo' => $data['orderNo'] ?? '',
+                'getDataSource' => 2,
             ])->save();
         } else {
             $id = $check->getAttr('id');
@@ -5269,7 +5270,7 @@ class MaYiService extends ServiceBase
         if (!empty($data['fileData'])) {
             foreach ($data['fileData'] as $datum) {
 //                $id='';
-                if($datum['isSeal'] && $data['test']){
+                if($datum['isSeal']){
                     $gaizhangParam = [
                         'entName'      => $data['entName'],
                         'legalPerson'  => $data['legalPerson'],
@@ -5310,7 +5311,7 @@ class MaYiService extends ServiceBase
 
             }
         }else{
-            if($data['test']) {
+//            if($data['test']) {
                 try {
                     $check2 = AntAuthList::create()->where([
                                   'entName' => $data['entName'],
@@ -5331,7 +5332,7 @@ class MaYiService extends ServiceBase
                 } catch (\Throwable $e) {
                     CommonService::getInstance()->log4PHP([$e], 'info', 'mayilog');
                 }
-            }
+//            }
         }
 
         return $this->check(200, null, null, null);

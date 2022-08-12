@@ -281,18 +281,6 @@ Eof;
 
         $fileName = $socialCredit . '_' . $flieDetail['fileId'] . '_' . control::getUuid(8);
 
-        //$content = file_get_contents(INV_AUTH_PATH . $path);
-
-        //$content = base64_encode(openssl_encrypt(
-        //    $content,
-        //    'AES-128-CTR',
-        //    $this->currentAesKey,
-        //    OPENSSL_RAW_DATA,
-        //    $this->iv
-        //));
-
-        //file_put_contents(INV_AUTH_PATH . $path . '.aes', $content);
-
         $oss = new OSSService();
 
         return [$oss->doUploadFile(
