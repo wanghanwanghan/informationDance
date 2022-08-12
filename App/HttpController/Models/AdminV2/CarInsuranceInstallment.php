@@ -285,8 +285,7 @@ class CarInsuranceInstallment extends ModelBase
     * 近两年十大供应商
     *
     * //苏宁
-    * 法人手机在网时长大于1年 -- 创蓝接口
-    * 正常纳税满18个月 -- 财务三表
+
     * 年纳税金额1.5万以上（PS：不做强要求，但不能为0） -- 财务三表
     * 纳税等级A/B//M（个体工商户可准入） -- 国票接口
     * 无连续6个月不纳税情况 -- 财务三表
@@ -400,28 +399,41 @@ class CarInsuranceInstallment extends ModelBase
 
         //企业成立年限
         $EstablishRes = self::getEstablishmentYear($carInsuranceData['social_credit_code']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'EstablishYears ' => $EstablishRes,
+                '$suNingWeiShangDai' => $suNingWeiShangDai
+            ])
+        );
         // 苏宁银行-微商贷：公司成立2年以上
         if($EstablishRes['EstablishYears'] <= 2){
             $suNingWeiShangDai = false;
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'EstablishYears<=2 ' => true,
-                    '$suNingWeiShangDai' => false
-                ])
-            );
         }
 
         //是分公司  // 苏宁银行-微商贷： 不能是分公司
-        if(
-            self::checkIfIsBrsanchCompany($carInsuranceData['social_credit_code'])
-        ){
+        $isBranchCompanyRes =  self::checkIfIsBrsanchCompany($carInsuranceData['social_credit_code']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$isBranchCompanyRes ' => $isBranchCompanyRes,
+                '$suNingWeiShangDai' => $suNingWeiShangDai
+            ])
+        );
+        if( $isBranchCompanyRes ){
             $suNingWeiShangDai = false;
         }
 
         // 苏宁银行-微商贷：  申请人：贷款年龄：22-59周岁；申请人为法人（对占股无要求）、近6个月法人或最大股东变更满6个月 -- h库，用户输入
         //身份证年龄
         $legal_person_age =  self::ageVerification($carInsuranceData['legal_person_id_card']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$legal_person_age ' => $legal_person_age,
+                '$suNingWeiShangDai' => $suNingWeiShangDai
+            ])
+        );
         if(
             $legal_person_age <22 ||
             $legal_person_age >59
@@ -429,31 +441,38 @@ class CarInsuranceInstallment extends ModelBase
             $suNingWeiShangDai = false;
         }
 
-        // 法人手机在网时长大于1年 -- 创蓝接口
+        // 苏宁银行-微商贷：   法人手机在网时长大于1年 -- 创蓝接口
+        $phoneOnlineTimeRes = (new ChuangLanService())->yhzwsc($carInsuranceData['legal_phone']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$phoneOnlineTimeRes ' => $phoneOnlineTimeRes,
+                '$suNingWeiShangDai' => $suNingWeiShangDai
+            ])
+        );
+        if(
+            $phoneOnlineTimeRes['data']['result']['rangeStart'] < 12
+        ){
+            $suNingWeiShangDai = false;
+        };
 
-        //成立日期
-        $retrunData['company_ESDATE'] = $companyRes['ESDATE'];
-
-        //身份证年龄
-        $retrunData['legal_person_id_card'] = $carInsuranceData['legal_person_id_card'];
-        $retrunData['legal_person_age'] =  self::ageVerification($carInsuranceData['legal_person_id_card']);
-
-        //法人手机在网状态
-        $res = (new ChuangLanService())->getCheckPhoneStatus([
-            'mobiles' => $carInsuranceData['legal_phone'],
-        ]);
-        $retrunData['legal_phone_check_res'] = $res;
-        if (!empty($res['data'])){
-            foreach($res['data'] as $dataItem){
-                if($dataItem['mobile'] == $carInsuranceData['legal_phone']){
-                    $retrunData['legal_phone_check_resV2'] = $dataItem;
-                }
-            }
+        // 苏宁银行-微商贷：   正常纳税满18个月 -- 财务三表
+        $taxInfo = self::getQuarterTaxInfo($carInsuranceData['social_credit_code']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$taxInfo ' => $taxInfo
+            ])
+        );
+        if(
+            $taxInfo['validQuarterLength'] <6
+        ){
+            $suNingWeiShangDai = false;
         }
-
+        // 苏宁银行-微商贷：年纳税金额1.5万以上（PS：不做强要求，但不能为0） -- 财务三表
         //所得税信息
         //增值税信息
-        $taxInfo = self::getQuarterTaxInfo($carInsuranceData['social_credit_code']);
+
         //所得税最长连续缴纳情况
         $retrunData['连续缴纳所得税增值税'] = self::getMaxContinuousDateLength(
             $taxInfo['QuarterTaxInfo'],'QuarterBegain',"+3 months"
@@ -488,10 +507,16 @@ class CarInsuranceInstallment extends ModelBase
         $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
             $social_credit_code
         );
+          CommonService::getInstance()->log4PHP(
+              json_encode([
+                  __CLASS__.__FUNCTION__ .__LINE__,
+                  'getIncometaxMonthlyDeclaration$res' => $res
+              ])
+          );
         $data = jsonDecode($res['data']);
         foreach ($data as $dataItem){
             if($dataItem['columnSequence'] == 16){
-                //$suoDeShui[] =  $dataItem;
+                // $suoDeShui[] =  $dataItem;
                 $suoDeShui[] =  [
                     'beginDate'=>$dataItem['beginDate'],
                     'currentAmount'=>$dataItem['currentAmount'],
@@ -503,9 +528,7 @@ class CarInsuranceInstallment extends ModelBase
               return new \DateTime($a['beginDate']) <=> new \DateTime($b['beginDate']);
         });
 
-        //
-
-        //两年内的所得税
+        //最早的季度开始月份
         $QuarterBegainRaw = $last2YearStart;
         foreach ($suoDeShui as $dateItem){
           $day1 =  date('Y-m-d',strtotime($dateItem['beginDate']));
@@ -519,7 +542,7 @@ class CarInsuranceInstallment extends ModelBase
           }
         }
 
-        //计算全部纳税 所得税+增值税  按照季度计算
+        //从开始季度开始 到上个月
         $QuarterTaxInfo = [];
         $QuarterBegain  = $QuarterBegainRaw;
         while (true){
@@ -558,6 +581,7 @@ class CarInsuranceInstallment extends ModelBase
                   $zengZhiShuiRes[] =  $dataItem;
               }
           }
+
           $zengZhiShuiMapedRes = [];
           foreach ($zengZhiShuiRes as $zengZhiShuiItem){
               $beginDate = date('Y-m-d',strtotime($zengZhiShuiItem['beginDate'])) ;
@@ -575,7 +599,7 @@ class CarInsuranceInstallment extends ModelBase
                   'datails' => $zengZhiShuiItem
               ];
           }
-
+          ;
         foreach ($QuarterTaxInfo as &$QuarterTaxItem){
             // 'QuarterBegain' => $QuarterBegain,
             // suoDeShui_currentAmount
@@ -596,16 +620,38 @@ class CarInsuranceInstallment extends ModelBase
             )  ;
             $QuarterTaxItem['totalAmount'] = number_format( $QuarterTaxItem['totalAmount'],2);
         }
+        $validQuarterTaxInfo = [];
+        foreach ($QuarterTaxInfo as  $dataItem){
+            if($dataItem['totalAmount']<=0){
+                continue;
+            }
+            $validQuarterTaxInfo[]= $dataItem;
+        }
+          //按时间顺序排列
+          usort($validQuarterTaxInfo, function($a, $b) {
+              return new \DateTime($a['QuarterBegain']) <=> new \DateTime($b['QuarterBegain']);
+          });
+
+          $length = CarInsuranceInstallment::getMaxContinuousDateLength(
+              $validQuarterTaxInfo,'QuarterBegain',"+3 months"
+          );
+
+        $validyearTaxInfo = [];
+
+        foreach ($validQuarterTaxInfo as $dataItem){
+            $tmpYear =  date('Y',strtotime($dataItem['QuarterBegain']));
+            $validyearTaxInfo[$tmpYear]['totalAmount'] += $dataItem['totalAmount'];
+            $validyearTaxInfo[$tmpYear]['totalAmount'] = number_format($validyearTaxInfo[$tmpYear]['totalAmount'],2);
+        }
 
         return [
-            //$validSuoDeShui,
-            //$QuarterBegain,
-            //$last2YearStart,
-            //$lastMonth,
             'suoDeShui' => $suoDeShui,
             'zengZhiShui' => $zengZhiShuiResV2,
             'quarterBeganDay' =>$QuarterBegainRaw,
-            'QuarterTaxInfo' => $QuarterTaxInfo
+            'QuarterTaxInfo' => $QuarterTaxInfo,
+            'validQuarterTaxInfo'=>$validQuarterTaxInfo,
+            'validQuarterLength'=>$length,
+            'validyearTaxInfo'=>$validyearTaxInfo,
         ];
     }
 
