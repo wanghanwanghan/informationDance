@@ -285,14 +285,8 @@ class CarInsuranceInstallment extends ModelBase
     * 近两年十大供应商
     *
     * //苏宁
-
-    * 年纳税金额1.5万以上（PS：不做强要求，但不能为0） -- 财务三表
-    * 纳税等级A/B//M（个体工商户可准入） -- 国票接口
-    * 无连续6个月不纳税情况 -- 财务三表
-    * 近3个月有纳税申报记录 -- 增值税申报表
-    * 纳税系统内录入最近一季资产负债表、利润表，必须有三期以上财务报表 -- 财务三表
-    * 企业当前无欠税 -- 国票接口
-    * 近半年销售波动较小 -- 发票
+    *
+    *
  *
 *
 *
@@ -391,6 +385,7 @@ class CarInsuranceInstallment extends ModelBase
     static  function  runMatch($carInsuranceDataId){
          // 苏宁银行-微商贷
         $suNingWeiShangDai = true;
+        $suNingWeiShangDaiErrMsg = [];
 
         $carInsuranceData = CarInsuranceInstallment::findById($carInsuranceDataId);
         $carInsuranceData = $carInsuranceData->toArray();
@@ -409,6 +404,7 @@ class CarInsuranceInstallment extends ModelBase
         // 苏宁银行-微商贷：公司成立2年以上
         if($EstablishRes['EstablishYears'] <= 2){
             $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '公司成立不到2年以上';
         }
 
         //是分公司  // 苏宁银行-微商贷： 不能是分公司
@@ -422,6 +418,7 @@ class CarInsuranceInstallment extends ModelBase
         );
         if( $isBranchCompanyRes ){
             $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '是分公司';
         }
 
         // 苏宁银行-微商贷：  申请人：贷款年龄：22-59周岁；申请人为法人（对占股无要求）、近6个月法人或最大股东变更满6个月 -- h库，用户输入
@@ -439,6 +436,7 @@ class CarInsuranceInstallment extends ModelBase
             $legal_person_age >59
         ){
             $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '贷款年龄小于22或大于59';
         }
 
         // 苏宁银行-微商贷：   法人手机在网时长大于1年 -- 创蓝接口
@@ -454,6 +452,7 @@ class CarInsuranceInstallment extends ModelBase
             $phoneOnlineTimeRes['data']['result']['rangeStart'] < 12
         ){
             $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '在网时长小于一年';
         };
 
         // 苏宁银行-微商贷：   正常纳税满18个月 -- 财务三表
@@ -468,20 +467,52 @@ class CarInsuranceInstallment extends ModelBase
             $taxInfo['validQuarterLength'] <6
         ){
             $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '正常纳税不满18个月';
         }
         // 苏宁银行-微商贷：年纳税金额1.5万以上（PS：不做强要求，但不能为0） -- 财务三表
-        //所得税信息
-        //增值税信息
-
-        //所得税最长连续缴纳情况
-        $retrunData['连续缴纳所得税增值税'] = self::getMaxContinuousDateLength(
-            $taxInfo['QuarterTaxInfo'],'QuarterBegain',"+3 months"
-        );
+        $yearsTotal = 0;
+        foreach ($taxInfo['validyearTaxInfo'] as $year=>$total){
+            $yearsTotal += $total;
+        };
+        if($yearsTotal <= 0 ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '年纳税金额为0';
+        }
 
         //企业税务基本信息查询
-        $retrunData['企业税务基本信息'] = (new GuoPiaoService())->getEssential($carInsuranceData['social_credit_code']);
+        $taxBasicInfo = (new GuoPiaoService())->getEssential($carInsuranceData['social_credit_code']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$taxBasicInfo ' => $taxBasicInfo
+            ])
+        );
+        //苏宁银行-微商贷：纳税等级A/B//M（个体工商户可准入） -- 国票接口
+        if(
+            !in_array($taxBasicInfo['data']['essential'][0]['creditLevel'],[
+                'A','B','M'
+            ])
+        ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '纳税等级不属于A/B/M';
+        };
 
+    /*
+    * 苏宁银行-微商贷：近3个月有纳税申报记录 -- 增值税申报表
+    * 纳税系统内录入最近一季资产负债表、利润表，必须有三期以上财务报表 -- 财务三表
+    * 企业当前无欠税 -- 国票接口
+    * 近半年销售波动较小 -- 发票
+         * */
+        // 苏宁银行-微商贷： 无连续6个月不纳税情况 -- 财务三表
+        if(
+            $taxInfo['inValidQuarterLength'] >2
+        ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '有连续6个月不纳税情况 ';
+        }
 
+        // 苏宁银行-微商贷：近3个月都有纳税申报记录 -- 增值税申报表
+        $taxInfo['zengZhiShui'];
         //年度资产负债
         $retrunData['年度资产负债'] = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheetAnnual($carInsuranceData['social_credit_code']);
 
@@ -587,6 +618,7 @@ class CarInsuranceInstallment extends ModelBase
               $beginDate = date('Y-m-d',strtotime($zengZhiShuiItem['beginDate'])) ;
               $zengZhiShuiMapedRes[$beginDate][$zengZhiShuiItem['columnSequence']] = $zengZhiShuiItem['generalMonthAmount'];
           }
+
           $zengZhiShuiResV2 = [];
           foreach ($zengZhiShuiMapedRes as $dateKey => $zengZhiShuiItem){
                 $tmpRes = 0;
@@ -599,7 +631,7 @@ class CarInsuranceInstallment extends ModelBase
                   'datails' => $zengZhiShuiItem
               ];
           }
-          ;
+
         foreach ($QuarterTaxInfo as &$QuarterTaxItem){
             // 'QuarterBegain' => $QuarterBegain,
             // suoDeShui_currentAmount
@@ -621,8 +653,10 @@ class CarInsuranceInstallment extends ModelBase
             $QuarterTaxItem['totalAmount'] = number_format( $QuarterTaxItem['totalAmount'],2);
         }
         $validQuarterTaxInfo = [];
+        $inValidQuarterTaxInfo = [];
         foreach ($QuarterTaxInfo as  $dataItem){
             if($dataItem['totalAmount']<=0){
+                $inValidQuarterTaxInfo[]= $dataItem;
                 continue;
             }
             $validQuarterTaxInfo[]= $dataItem;
@@ -631,9 +665,15 @@ class CarInsuranceInstallment extends ModelBase
           usort($validQuarterTaxInfo, function($a, $b) {
               return new \DateTime($a['QuarterBegain']) <=> new \DateTime($b['QuarterBegain']);
           });
+          usort($inValidQuarterTaxInfo, function($a, $b) {
+              return new \DateTime($a['QuarterBegain']) <=> new \DateTime($b['QuarterBegain']);
+          });
 
-          $length = CarInsuranceInstallment::getMaxContinuousDateLength(
+          $validLength = CarInsuranceInstallment::getMaxContinuousDateLength(
               $validQuarterTaxInfo,'QuarterBegain',"+3 months"
+          );
+          $inValidLength = CarInsuranceInstallment::getMaxContinuousDateLength(
+              $inValidQuarterTaxInfo,'QuarterBegain',"+3 months"
           );
 
         $validyearTaxInfo = [];
@@ -644,13 +684,20 @@ class CarInsuranceInstallment extends ModelBase
             $validyearTaxInfo[$tmpYear]['totalAmount'] = number_format($validyearTaxInfo[$tmpYear]['totalAmount'],2);
         }
 
+      $zengZhiShuiResV3 = $zengZhiShuiResV2;
+      usort($zengZhiShuiResV3, function($a, $b) {
+          return new \DateTime($b['QuarterBegain']) <=> new \DateTime($a['QuarterBegain']);
+      });
+
         return [
             'suoDeShui' => $suoDeShui,
             'zengZhiShui' => $zengZhiShuiResV2,
+            'zengZhiShuiReverseOrder' => $zengZhiShuiResV3,
             'quarterBeganDay' =>$QuarterBegainRaw,
             'QuarterTaxInfo' => $QuarterTaxInfo,
             'validQuarterTaxInfo'=>$validQuarterTaxInfo,
-            'validQuarterLength'=>$length,
+            'validQuarterLength'=>$validLength,
+            'inValidQuarterLength'=>$inValidLength,
             'validyearTaxInfo'=>$validyearTaxInfo,
         ];
     }
