@@ -390,18 +390,18 @@ class DianZiQianService extends ServiceBase
         $AuthData = AntAuthList::create()->where('id < 36')->all();
         $res = [];
         foreach ($AuthData as $k=>$authDatum) {
-            $param = [
-                'entName' => $authDatum->getAttr('entName'),
-                'socialCredit' => $authDatum->getAttr('socialCredit'),
-                'legalPerson' => $authDatum->getAttr('legalPerson'),
-                'idCard' => empty($authDatum->getAttr('idCard'))?'142329197803221928':$authDatum->getAttr('idCard'),
-                'phone' => $authDatum->getAttr('phone'),
-                'city' => $authDatum->getAttr('city'),
-                'regAddress' => $authDatum->getAttr('regAddress'),
-                'file' => 'dianziqian_jcsk_shouquanshu.pdf'
-            ];
-            $id = $this->getAuthFileId($param);
-            $res[$k]['id1'] = $id;
+//            $param = [
+//                'entName' => $authDatum->getAttr('entName'),
+//                'socialCredit' => $authDatum->getAttr('socialCredit'),
+//                'legalPerson' => $authDatum->getAttr('legalPerson'),
+//                'idCard' => empty($authDatum->getAttr('idCard'))?'142329197803221928':$authDatum->getAttr('idCard'),
+//                'phone' => $authDatum->getAttr('phone'),
+//                'city' => $authDatum->getAttr('city'),
+//                'regAddress' => $authDatum->getAttr('regAddress'),
+//                'file' => 'dianziqian_jcsk_shouquanshu.pdf'
+//            ];
+//            $id = $this->getAuthFileId($param);
+//            $res[$k]['id1'] = $id;
             $gaizhangParam1 = [
                 'entName'      => $authDatum->getAttr('entName'),
                 'legalPerson'  => $authDatum->getAttr('legalPerson'),
@@ -409,7 +409,7 @@ class DianZiQianService extends ServiceBase
                 'socialCredit' => $authDatum->getAttr('socialCredit'),
                 'file' => 'test/file1.pdf'
             ];
-            $dianziqian_id = (new DianZiQianService())->gaiZhang($gaizhangParam1);
+            $dianziqian_id = $this->gaiZhang($gaizhangParam1);
             $res[$k]['id2'] = $dianziqian_id;
             $gaizhangParam2 = [
                 'entName'      => $authDatum->getAttr('entName'),
@@ -418,7 +418,7 @@ class DianZiQianService extends ServiceBase
                 'socialCredit' => $authDatum->getAttr('socialCredit'),
                 'file' => 'test/file2.pdf'
             ];
-            $dianziqian_id2 = (new DianZiQianService())->gaiZhang($gaizhangParam2);
+            $dianziqian_id2 = $this->gaiZhang($gaizhangParam2);
             $res[$k]['id3'] = $dianziqian_id2;
         }
         return $this->createReturn(200, null, $res, '成功');
