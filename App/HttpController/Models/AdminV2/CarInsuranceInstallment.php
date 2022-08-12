@@ -552,8 +552,21 @@ class CarInsuranceInstallment extends ModelBase
             $suNingWeiShangDaiErrMsg[] = '近3个月有未纳税申报记录 ';
         }
 
-        //年度资产负债
-        $retrunData['年度资产负债'] = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheetAnnual($carInsuranceData['social_credit_code']);
+        //季度资产负债
+        // 苏宁银行-微商贷： 纳税系统内录入最近一季资产负债表（53）、利润表（19 ），必须有三期以上财务报表 -- 财务三表
+        $quarterDebt = (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getFinanceBalanceSheet($carInsuranceData['social_credit_code']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$quarterDebt ' => $quarterDebt
+            ])
+        );
+        if($quarterDebt['result']<3){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '季度资产负债表不到三期';
+        };
 
         //年度利润表
         $retrunData['年度利润表'] =  (new GuoPiaoService())->getFinanceIncomeStatementAnnualReport($carInsuranceData['social_credit_code']);

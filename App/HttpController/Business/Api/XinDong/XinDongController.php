@@ -3613,7 +3613,21 @@ eof;
 
     function testExport()
     {
-
+        if(
+            $this->getRequestData('getFinanceIncomeStatement')
+        ) {
+            $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceIncomeStatement(
+                $this->getRequestData('getFinanceIncomeStatement')
+            );
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                $res,
+                '成功',
+                true,
+                []
+            );
+        }
         if(
             $this->getRequestData('getFinanceBalanceSheet')
         ) {
