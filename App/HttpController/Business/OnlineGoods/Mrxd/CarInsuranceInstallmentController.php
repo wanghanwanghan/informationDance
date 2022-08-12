@@ -274,6 +274,33 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
             $mapedByDateNumsRes[$month][$year] ++;
         }
 
+        //进销项发票信息 信动专用
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $res['social_credit_code'],
+            $last2YearStart,
+            $lastMonth
+        );
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $month = date('m',strtotime($InvoiceData['billingDate']));
+            $year = date('Y',strtotime($InvoiceData['billingDate']));
+            $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
+            $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2);
+            $mapedByDateNumsRes[$month][$year] ++;
+        }
+        //销项
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $res['social_credit_code'],
+            $last2YearStart,
+            $lastMonth,
+            2
+        );
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $month = date('m',strtotime($InvoiceData['billingDate']));
+            $year = date('Y',strtotime($InvoiceData['billingDate']));
+            $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
+            $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2);
+            $mapedByDateNumsRes[$month][$year] ++;
+        }
         return $this->writeJson(
             200,
             [
