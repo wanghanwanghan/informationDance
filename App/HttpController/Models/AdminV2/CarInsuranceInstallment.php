@@ -504,11 +504,11 @@ class CarInsuranceInstallment extends ModelBase
         $data = jsonDecode($res['data']);
         foreach ($data as $dataItem){
             if($dataItem['columnSequence'] == 16){
-                $suoDeShui[] =  $dataItem;
-//                $suoDeShui[] =  [
-//                    'beginDate'=>$dataItem['beginDate'],
-//                    'currentAmount'=>$dataItem['currentAmount'],
-//                ];
+                // $suoDeShui[] =  $dataItem;
+                $suoDeShui[] =  [
+                    'beginDate'=>$dataItem['beginDate'],
+                    'currentAmount'=>$dataItem['currentAmount'],
+                ];
             }
         }
         //按时间顺序排列
@@ -516,11 +516,7 @@ class CarInsuranceInstallment extends ModelBase
               return new \DateTime($a['beginDate']) <=> new \DateTime($b['beginDate']);
         });
 
-        return [
-            $suoDeShui
-        ];
-
-        //两年内的所得税
+        //最早的季度开始月份
         $QuarterBegainRaw = $last2YearStart;
         foreach ($suoDeShui as $dateItem){
           $day1 =  date('Y-m-d',strtotime($dateItem['beginDate']));
@@ -534,7 +530,7 @@ class CarInsuranceInstallment extends ModelBase
           }
         }
 
-        //计算全部纳税 所得税+增值税  按照季度计算
+        //从开始季度开始 到上个月
         $QuarterTaxInfo = [];
         $QuarterBegain  = $QuarterBegainRaw;
         while (true){
@@ -560,6 +556,9 @@ class CarInsuranceInstallment extends ModelBase
             $QuarterBegain = date('Y-m-d',strtotime('+3 months',strtotime($QuarterBegain)));
 
         }
+      return [
+          $QuarterTaxInfo
+      ];
 
         //增值税
         $res = (new GuoPiaoService())->getVatReturn(
