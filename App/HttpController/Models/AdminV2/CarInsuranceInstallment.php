@@ -383,6 +383,10 @@ class CarInsuranceInstallment extends ModelBase
     }
 
     static  function  runMatch($carInsuranceDataId){
+        $oneMonthsAgo = date("Y-m-01",strtotime("-1 month"));
+        $twoMonthsAgo = date("Y-m-01",strtotime("-2 month"));
+        $threeMonthsAgo = date("Y-m-01",strtotime("-3 month"));
+
          // 苏宁银行-微商贷
         $suNingWeiShangDai = true;
         $suNingWeiShangDaiErrMsg = [];
@@ -497,9 +501,12 @@ class CarInsuranceInstallment extends ModelBase
             $suNingWeiShangDaiErrMsg[] = '纳税等级不属于A/B/M';
         };
 
+        // 企业当前无欠税 -- 国票接口
+
+
     /*
-    * 苏宁银行-微商贷：近3个月有纳税申报记录 -- 增值税申报表
-    * 纳税系统内录入最近一季资产负债表、利润表，必须有三期以上财务报表 -- 财务三表
+    * 苏宁银行-微商贷
+    * 纳税系统内录入最近一季资产负债表（53）、利润表（19 ），必须有三期以上财务报表 -- 财务三表
     * 企业当前无欠税 -- 国票接口
     * 近半年销售波动较小 -- 发票
          * */
@@ -512,9 +519,54 @@ class CarInsuranceInstallment extends ModelBase
         }
 
         // 苏宁银行-微商贷：近3个月都有纳税申报记录 -- 增值税申报表
-        $taxInfo['zengZhiShui'];
-        //年度资产负债
-        $retrunData['年度资产负债'] = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheetAnnual($carInsuranceData['social_credit_code']);
+        $oneMonthsAgoHasNoTax = true;
+        $twoMonthsAgoHasNoTax = true;
+        $threeMonthsAgoHasNoTax = true;
+        foreach ($taxInfo['zengZhiShuiReverseOrder'] as $dataItem){
+            if(
+                $dataItem['date'] == $oneMonthsAgo &&
+                $dataItem['total'] > 0
+            ){
+                $oneMonthsAgoHasNoTax = false;
+            }
+            if(
+                $dataItem['date'] == $twoMonthsAgo &&
+                $dataItem['total'] > 0
+            ){
+                $twoMonthsAgoHasNoTax = false;
+            }
+            if(
+                $dataItem['date'] == $threeMonthsAgo &&
+                $dataItem['total'] > 0
+            ){
+                $threeMonthsAgoHasNoTax = true;
+            }
+        }
+
+        if(
+            $oneMonthsAgoHasNoTax ||
+            $twoMonthsAgoHasNoTax ||
+            $threeMonthsAgoHasNoTax
+        ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '近3个月有未纳税申报记录 ';
+        }
+
+        //季度资产负债
+        // 苏宁银行-微商贷： 纳税系统内录入最近一季资产负债表（53）、利润表（19 ），必须有三期以上财务报表 -- 财务三表
+        $quarterDebt = (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getFinanceBalanceSheet($carInsuranceData['social_credit_code']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$quarterDebt ' => $quarterDebt
+            ])
+        );
+        if($quarterDebt['result']<3){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '季度资产负债表不到三期';
+        };
 
         //年度利润表
         $retrunData['年度利润表'] =  (new GuoPiaoService())->getFinanceIncomeStatementAnnualReport($carInsuranceData['social_credit_code']);

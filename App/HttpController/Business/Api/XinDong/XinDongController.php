@@ -3614,6 +3614,51 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('getFinanceIncomeStatement')
+        ) {
+            $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceIncomeStatement(
+                $this->getRequestData('getFinanceIncomeStatement')
+            );
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                $res,
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
+            $this->getRequestData('getFinanceBalanceSheet')
+        ) {
+            $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheet(
+                $this->getRequestData('getFinanceBalanceSheet')
+            );
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                $res,
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
+            $this->getRequestData('getFinanceBalanceSheetAnnual')
+        ){
+            $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheetAnnual(
+                $this->getRequestData('getFinanceBalanceSheetAnnual')
+            );
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                $res,
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
             $this->getRequestData('yhzwsc')
         ){
             $res = (new ChuangLanService())->yhzwsc($this->getRequestData('yhzwsc'));
