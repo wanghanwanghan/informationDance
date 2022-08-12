@@ -5260,6 +5260,7 @@ class MaYiService extends ServiceBase
                 'town' => $baiduApiRes['town'] ?? '',
                 'townCode' => $baiduApiRes['townCode'] ?? '',
                 'orderNo' => $data['orderNo'] ?? '',
+                'getDataSource' => 2,
             ])->save();
         } else {
             $id = $check->getAttr('id');
