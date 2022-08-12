@@ -311,6 +311,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         );
         $supplier = [];
         foreach ($allInvoiceDatas as $InvoiceData){
+            $supplier[$InvoiceData['salesTaxName']]['entName'] = $InvoiceData['salesTaxName'] ;
             $supplier[$InvoiceData['salesTaxName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
         }
         //按时间倒叙排列
@@ -330,7 +331,8 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         );
         $customers = [];
         foreach ($allInvoiceDatas as $InvoiceData){
-            $customers[$InvoiceData['salesTaxName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
+            $customers[$InvoiceData['purchaserName']]['entName'] = $InvoiceData['purchaserName'] ;
+            $customers[$InvoiceData['purchaserName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
         }
         //按时间倒叙排列
         usort($customers, function($a, $b) {

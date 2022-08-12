@@ -546,6 +546,23 @@ class CarInsuranceInstallment extends ModelBase
     变更要求：近6个月法人无变更 -- h库
      */
     //
+    static function checkIfArrayHasValue($DataArray,$field,$value,$type='date',$fmt= "Y-m-d"){
+        $hasValue = false;
+        foreach ($DataArray as $ArrayItem){
+            if(
+                $type == 'date'
+            ){
+                if(
+                    date($fmt,strtotime($ArrayItem[$field])) == date($fmt,strtotime($value))
+                ){
+                    $hasValue = true;
+                    break;
+                }
+            }
+
+        }
+        return $hasValue ;
+    }
     static  function  runMatchJinCheng($carInsuranceDataId){
         $oneMonthsAgo = date("Y-m-01",strtotime("-1 month"));
         $twoMonthsAgo = date("Y-m-01",strtotime("-2 month"));
@@ -593,7 +610,7 @@ class CarInsuranceInstallment extends ModelBase
             $DaiKuanResErrMsg[] = '贷款年龄小于18或大于60';
         }
 
-        //  纳税满1年 -- h库和财务三表  XXXXXXXX
+        //  纳税满1年 -- h库和财务三表
         $taxInfo = self::getQuarterTaxInfo($carInsuranceData['social_credit_code']);
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -601,6 +618,36 @@ class CarInsuranceInstallment extends ModelBase
                 '$taxInfo ' => $taxInfo
             ])
         );
+        //上个月必须有
+       $lastMonthRes =  self::checkIfArrayHasValue(
+            $taxInfo['suoDeShui'],
+            'beginDate',
+            $oneMonthsAgo
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$lastMonthRes ' => $lastMonthRes
+            ])
+        );
+        if(!$lastMonthRes){
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '上个月没有纳税';
+        }
+
+        for ($i=12;$i<=20;$i++){
+            //
+            $newDate = date('Y-m-d',strtotime("-$i month",strtotime($oneMonthsAgo)));
+            $newDateTaxRes = self::checkIfArrayHasValue(
+                $taxInfo['suoDeShui'],
+                'beginDate',
+                $newDate
+            );
+            if($newDateTaxRes){
+
+            }
+        }
+
 
 
         if(
