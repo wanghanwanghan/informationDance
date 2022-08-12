@@ -179,6 +179,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         );
     }
 
+    //匹配结果
     function getMatchedRes(): bool
     {
         $requestData =  $this->getRequestData();
@@ -301,6 +302,41 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
             $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2);
             $mapedByDateNumsRes[$month][$year] ++;
         }
+        //十大供应商
+        //进销项发票信息 信动专用
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $res['social_credit_code'],
+            $last2YearStart,
+            $lastMonth
+        );
+        $supplier = [];
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $supplier[$InvoiceData['salesTaxName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
+        }
+        //按时间倒叙排列
+        usort($supplier, function($a, $b) {
+            return new \DateTime($b['totalAmount']) <=> new \DateTime($a['totalAmount']);
+        });
+        $newSupplier = $sliced_array = array_slice($supplier, 0, 10);
+
+
+        //十大客户
+        //销项项发票信息 信动专用
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $res['social_credit_code'],
+            $last2YearStart,
+            $lastMonth,
+            2
+        );
+        $customers = [];
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $customers[$InvoiceData['salesTaxName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
+        }
+        //按时间倒叙排列
+        usort($customers, function($a, $b) {
+            return new \DateTime($b['totalAmount']) <=> new \DateTime($a['totalAmount']);
+        });
+        $newCustomers = $sliced_array = array_slice($customers, 0, 10);
         return $this->writeJson(
             200,
             [
@@ -314,6 +350,8 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                'essentialFinanceInfo' => $mapedEssentialRes,
                'mapedByDateNumsRes' => $mapedByDateNumsRes,
                'mapedByDateAmountRes' => $mapedByDateAmountRes,
+               'topSupplier' => $newSupplier,
+               'topCustomer' => $newCustomers,
                //'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
             ]
         );

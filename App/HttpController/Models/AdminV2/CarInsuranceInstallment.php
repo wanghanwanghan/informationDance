@@ -4,6 +4,7 @@ namespace App\HttpController\Models\AdminV2;
 
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\ModelBase;
+use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
@@ -282,11 +283,8 @@ class CarInsuranceInstallment extends ModelBase
     *
     *
     * 近两年十大供应商
- *
-* //苏宁
- *
-* 公司成立2年以上，不能是分公司 -- h库
-    * 申请人：贷款年龄：22-59周岁；申请人为法人（对占股无要求）、近6个月法人或最大股东变更满6个月 -- h库，用户输入
+    *
+    * //苏宁
     * 法人手机在网时长大于1年 -- 创蓝接口
     * 正常纳税满18个月 -- 财务三表
     * 年纳税金额1.5万以上（PS：不做强要求，但不能为0） -- 财务三表
@@ -331,19 +329,107 @@ class CarInsuranceInstallment extends ModelBase
     * 法人手机
     * 法人身份证
  */
+    static  function  getEstablishmentYear($social_credit_code){
+        $companyRes = CompanyBasic::findByCode($social_credit_code);
+        $companyRes = $companyRes->toArray();
+        //成立日期
+        if($companyRes['ESDATE'] <= 0){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'getEstablishmentYear_$social_credit_code' => $social_credit_code,
+                    'getEstablishmentYear_retrun_EstablishDate' => $companyRes['ESDATE'],
+                    'getEstablishmentYear_retrun_EstablishYears' => 0,
+                ])
+            );
+            return [
+                'EstablishDate' => $companyRes['ESDATE'],
+                'EstablishYears' => 0,
+            ];
+        };
+
+        $d1 = new \DateTime(date('Y-m-d'));
+        $d2 = new \DateTime('2008-03-09');
+
+        $diff = $d2->diff($d1);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'getEstablishmentYear_$social_credit_code' => $social_credit_code,
+                'getEstablishmentYear_retrun_EstablishDate' => $companyRes['ESDATE'],
+                'getEstablishmentYear_retrun_EstablishYears' => $diff->y,
+            ])
+        );
+     return [
+         'EstablishDate' => $companyRes['ESDATE'],
+         'EstablishYears' => $diff->y,
+     ];
+    }
+
+    static  function  checkIfIsBrsanchCompany($social_credit_code) {
+        $companyRes = CompanyBasic::findByCode($social_credit_code);
+        $companyRes = $companyRes->toArray();
+        $codeRes = CodeCa16::findByCode($companyRes['ENTTYPE']);
+        $codeRes = $codeRes->toArray();
+        if(strpos($codeRes['name'],'分公司') !== false){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'is_branch_company' => $codeRes['name'],
+                ])
+            );
+            return true;
+        }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'not_branch_company' => $codeRes['name'],
+            ])
+        );
+        return  false;
+    }
+
     static  function  runMatch($carInsuranceDataId){
+         // 苏宁银行-微商贷
+        $suNingWeiShangDai = true;
+
         $carInsuranceData = CarInsuranceInstallment::findById($carInsuranceDataId);
         $carInsuranceData = $carInsuranceData->toArray();
 
         $retrunData = [];
 
-        //企业信息
-        $companyRes = CompanyBasic::findByCode($carInsuranceData['social_credit_code']);
-        $retrunData['social_credit_code'] = $carInsuranceData['social_credit_code'];
-        $retrunData['companyBasic'] = $companyRes;
-        if(empty($companyRes)){
-            return $retrunData;
+        //企业成立年限
+        $EstablishRes = self::getEstablishmentYear($carInsuranceData['social_credit_code']);
+        // 苏宁银行-微商贷：公司成立2年以上
+        if($EstablishRes['EstablishYears'] <= 2){
+            $suNingWeiShangDai = false;
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'EstablishYears<=2 ' => true,
+                    '$suNingWeiShangDai' => false
+                ])
+            );
         }
+
+        //是分公司  // 苏宁银行-微商贷： 不能是分公司
+        if(
+            self::checkIfIsBrsanchCompany($carInsuranceData['social_credit_code'])
+        ){
+            $suNingWeiShangDai = false;
+        }
+
+        // 苏宁银行-微商贷：  申请人：贷款年龄：22-59周岁；申请人为法人（对占股无要求）、近6个月法人或最大股东变更满6个月 -- h库，用户输入
+        //身份证年龄
+        $legal_person_age =  self::ageVerification($carInsuranceData['legal_person_id_card']);
+        if(
+            $legal_person_age <22 ||
+            $legal_person_age >59
+        ){
+            $suNingWeiShangDai = false;
+        }
+
+        // 法人手机在网时长大于1年 -- 创蓝接口
 
         //成立日期
         $retrunData['company_ESDATE'] = $companyRes['ESDATE'];
