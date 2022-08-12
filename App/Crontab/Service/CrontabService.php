@@ -38,7 +38,7 @@ class CrontabService
         $this->deleteTimeoutOrder();
         $this->runSupervisor();
         $this->runMoveOut();
-        $this->getAuthBook();
+//        $this->getAuthBook();
         $this->getAuthBookDZQ();
         $this->RunDianZiQianGetPdf();
         $this->getInvData();//123123123
