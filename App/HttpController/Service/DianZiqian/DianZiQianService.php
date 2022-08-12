@@ -377,15 +377,51 @@ class DianZiQianService extends ServiceBase
 //            AntAuthList::create()->get($item->getAttr('id'))->update(['dianZiQian_id'=>$id]);
 ////            break;
 //        }
-        $AuthData = DianZiQianAuth::create()->where('id >231')->all();
-        foreach ($AuthData as $val){
-            AntAuthList::create()->where('dianZiQian_id='.$val->getAttr('id'))->update([
-                                                                'filePath' => $val->getAttr('personalUrl')]);
+//        $AuthData = DianZiQianAuth::create()->where('id >231')->all();
+//        foreach ($AuthData as $val){
+//            AntAuthList::create()->where('dianZiQian_id='.$val->getAttr('id'))->update([
+//                                                                'filePath' => $val->getAttr('personalUrl')]);
 //            break;
-        }
+//        }
 //
+
         //请求盖章
-        return $this->createReturn(200, null, [], '成功');
+        //35家企业各盖三个pdf
+        $AuthData = DianZiQianAuth::create()->where('id < 36')->all();
+        $res = [];
+        foreach ($AuthData as $k=>$authDatum) {
+            $param = [
+                'entName' => $authDatum->getAttr('entName'),
+                'socialCredit' => $authDatum->getAttr('socialCredit'),
+                'legalPerson' => $authDatum->getAttr('legalPerson'),
+                'idCard' => $authDatum->getAttr('idCard'),
+                'phone' => $authDatum->getAttr('phone'),
+                'city' => $authDatum->getAttr('city'),
+                'regAddress' => $authDatum->getAttr('regAddress'),
+                'file' => 'dianziqian_jcsk_shouquanshu.pdf'
+            ];
+            $id = $this->getAuthFileId($authDatum);
+            $res[$k]['id1'] = $id;
+            $gaizhangParam1 = [
+                'entName'      => $authDatum->getAttr('entName'),
+                'legalPerson'  => $authDatum->getAttr('legalPerson'),
+                'idCard'       => $authDatum->getAttr('idCard'),
+                'socialCredit' => $authDatum->getAttr('socialCredit'),
+                'file' => 'test/file1.pdf'
+            ];
+            $dianziqian_id = (new DianZiQianService())->gaiZhang($gaizhangParam1);
+            $res[$k]['id2'] = $dianziqian_id;
+            $gaizhangParam2 = [
+                'entName'      => $authDatum->getAttr('entName'),
+                'legalPerson'  => $authDatum->getAttr('legalPerson'),
+                'idCard'       => $authDatum->getAttr('idCard'),
+                'socialCredit' => $authDatum->getAttr('socialCredit'),
+                'file' => 'test/file2.pdf'
+            ];
+            $dianziqian_id2 = (new DianZiQianService())->gaiZhang($gaizhangParam2);
+            $res[$k]['id3'] = $dianziqian_id2;
+        }
+        return $this->createReturn(200, null, $res, '成功');
     }
 
     public function gaiZhang($postData){

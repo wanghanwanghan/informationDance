@@ -207,7 +207,100 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
 //        }
         $res =  CarInsuranceInstallment::findOneByUserId(1);
         $res = $res->toArray();
-        $companyRes = XinDongService::getEsBasicInfoV3($res['ent_name']);
+        $companyRes = (new XinDongService())->getEsBasicInfoV3($res['ent_name']);
+
+        //税务信息(今年)
+        $essentialRes = (new GuoPiaoService())->getEssential($res['social_credit_code']);
+        $mapedEssentialRes = [
+            "owingType" => $essentialRes['data']['owingType'],
+            "payTaxes" => $essentialRes['data']['payTaxes'],
+            "regulations" => $essentialRes['data']['regulations'],
+            "nature" => $essentialRes['data']['nature'],
+            "creditPoint" => $essentialRes['data']['essential'][0]['creditPoint'],
+            "creditLevel" => $essentialRes['data']['essential'][0]['creditLevel'],
+            "year" => $essentialRes['data']['essential'][0]['year'],
+            "taxpayerId" => $essentialRes['data']['essential'][0]['taxpayerId'],
+        ];
+        //近两年发票开票金额 需要分页拉取后计算结果
+        // ['01', '08', '03', '04', '10', '11', '14', '15'] 分开拉取全部
+        // $startDate 往前推一个月  推两年
+        //纳税数据取得是两年的数据 取下开始结束时间
+        $lastMonth = date("Y-m-01",strtotime("-1 month"));
+        //两年前的开始月
+        $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+        //进销项发票信息 信动专用
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $res['social_credit_code'],
+            $last2YearStart,
+            $lastMonth
+        );
+
+        //按日期格式化
+        $year1 = date('Y',strtotime("-2 years"));
+        $year2 = date('Y',strtotime("-1 years"));
+        $mapedByDateAmountRes = [
+            '01' => [],
+            '02' => [],
+            '03' => [],
+            '04' => [],
+            '05' => [],
+            '06' => [],
+            '07' => [],
+            '08' => [],
+            '09' => [],
+            '10' => [],
+            '11' => [],
+            '12' => [],
+        ];
+        $mapedByDateNumsRes = [
+            '01' => [],
+            '02' => [],
+            '03' => [],
+            '04' => [],
+            '05' => [],
+            '06' => [],
+            '07' => [],
+            '08' => [],
+            '09' => [],
+            '10' => [],
+            '11' => [],
+            '12' => [],
+        ];
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $month = date('m',strtotime($InvoiceData['billingDate']));
+            $year = date('Y',strtotime($InvoiceData['billingDate']));
+            $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
+            $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2);
+            $mapedByDateNumsRes[$month][$year] ++;
+        }
+
+        //进销项发票信息 信动专用
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $res['social_credit_code'],
+            $last2YearStart,
+            $lastMonth
+        );
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $month = date('m',strtotime($InvoiceData['billingDate']));
+            $year = date('Y',strtotime($InvoiceData['billingDate']));
+            $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
+            $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2);
+            $mapedByDateNumsRes[$month][$year] ++;
+        }
+        //销项
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $res['social_credit_code'],
+            $last2YearStart,
+            $lastMonth,
+            2
+        );
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $month = date('m',strtotime($InvoiceData['billingDate']));
+            $year = date('Y',strtotime($InvoiceData['billingDate']));
+            $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
+            $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2);
+            $mapedByDateNumsRes[$month][$year] ++;
+        }
         return $this->writeJson(
             200,
             [
@@ -216,7 +309,13 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                 'total' => $res['total'],
                 'totalPage' => ceil($res['total']/$size) ,
             ],
-            $res['data']
+            [
+               'companyInfo' => $companyRes,
+               'essentialFinanceInfo' => $mapedEssentialRes,
+               'mapedByDateNumsRes' => $mapedByDateNumsRes,
+               'mapedByDateAmountRes' => $mapedByDateAmountRes,
+               //'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
+            ]
         );
     }
 

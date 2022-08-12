@@ -9,6 +9,7 @@ use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
+use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\LongXin\LongXinService;
 
 
@@ -434,6 +435,7 @@ class CarInsuranceInstallment extends ModelBase
 
         //计算全部纳税 所得税+增值税  按照季度计算
         $QuarterTaxInfo = [];
+        $QuarterBegain  = $QuarterBegainRaw;
         while (true){
             if($QuarterBegain >=$lastMonth ){
                 break;
@@ -455,12 +457,14 @@ class CarInsuranceInstallment extends ModelBase
 
             $QuarterTaxInfo[] = $tmp;
             $QuarterBegain = date('Y-m-d',strtotime('+3 months',strtotime($QuarterBegain)));
+
         }
 
         //增值税
         $res = (new GuoPiaoService())->getVatReturn(
             $social_credit_code
         );
+
           $data = jsonDecode($res['data']);
           $zengZhiShuiRes = [];
           foreach ($data as $dataItem){
@@ -500,13 +504,12 @@ class CarInsuranceInstallment extends ModelBase
                     $zengZhiShuiRes += $zengZhiShuiItem['total'];
                 }
             }
-            $QuarterTaxItem['zengZhiShui_currentAmount'] = number_format($zengZhiShuiRes,2) ;
-            $QuarterTaxItem['suoDeShui_currentAmount'] = number_format($QuarterTaxItem['suoDeShui_currentAmount'],2) ;
+            $QuarterTaxItem['zengZhiShui_currentAmount'] = $zengZhiShuiRes;
             $QuarterTaxItem['totalAmount'] = (
                 $QuarterTaxItem['zengZhiShui_currentAmount'] + $QuarterTaxItem['suoDeShui_currentAmount']
-            )   ;
+            )  ;
+            $QuarterTaxItem['totalAmount'] = number_format( $QuarterTaxItem['totalAmount'],2);
         }
-
 
         return [
             //$validSuoDeShui,
@@ -622,4 +625,37 @@ class CarInsuranceInstallment extends ModelBase
         return $age;
     }
 
+    static function getYieldInvoiceMainData($social_credit_code,$Start,$end,$type =1 ){
+        $datas = [];
+        $page = 1;
+        $size = 10;
+
+        while (true) {
+            $jinXiaoXiangFaPiaoRes = (new GuoPiaoService())->getInvoiceMain(
+                $social_credit_code,
+                $type,
+                $Start,
+                $end,
+                $page
+            );
+            $invoices = $jinXiaoXiangFaPiaoRes['data']['invoices'];
+            if(empty($invoices)){
+                break;
+            }
+            else{
+                foreach ($invoices as $invoiceItem){
+                    yield $datas[] = [
+
+                        'totalAmount' => $invoiceItem['totalAmount'],
+                        'billingDate' => $invoiceItem['billingDate'],
+                        // $type = 1 时 本公司|进项|买方
+                        'purchaserName' => $invoiceItem['purchaserName'],
+                        //卖方
+                        'salesTaxName' => $invoiceItem['salesTaxName'],
+                    ];
+                }
+            }
+            $page ++;
+        }
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Command\CommandList;
 
 use App\Command\CommandBase;
+use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\ElasticSearch\Service\ElasticSearchService;
 use App\HttpController\Service\Common\CommonService;
@@ -37,20 +38,20 @@ class TestCommand extends CommandBase
     function help(array $args): ?string
     { 
         
-        go(function() {
+       $res =  go(function() {
             /* 调用协程API */
             // 用户可以在这里调用上述协程 API
-            // $res = (new XinDongService())->getCompanyBasicInfo();
-            $list = sqlRaw("select * form company limit 1");
+           $essentialRes = (new GuoPiaoService())->getEssential('91110105MA01AHQE9C');
+           $res = (new GuoPiaoService())->getInvoiceMain(
+               '91110105MA01AHQE9C','01', '2020-01', '2020-12', 1
+           );
 
-            // $res = Company::create()->where('id', 1)->get();
-            CommonService::getInstance()->log4PHP(json_encode($list), 'info', 'souke.log');
-        
+            var_dump($res);
         });
 
         
  
-        return 'this is exec' . PHP_EOL;
+        return 'this is exec'.$res . PHP_EOL;
     } 
  
 }
