@@ -498,11 +498,11 @@ class CarInsuranceInstallment extends ModelBase
         $data = jsonDecode($res['data']);
         foreach ($data as $dataItem){
             if($dataItem['columnSequence'] == 16){
-                //$suoDeShui[] =  $dataItem;
-                $suoDeShui[] =  [
-                    'beginDate'=>$dataItem['beginDate'],
-                    'currentAmount'=>$dataItem['currentAmount'],
-                ];
+                $suoDeShui[] =  $dataItem;
+//                $suoDeShui[] =  [
+//                    'beginDate'=>$dataItem['beginDate'],
+//                    'currentAmount'=>$dataItem['currentAmount'],
+//                ];
             }
         }
         //按时间顺序排列
