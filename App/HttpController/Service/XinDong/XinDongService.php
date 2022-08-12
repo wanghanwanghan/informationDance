@@ -2560,6 +2560,65 @@ class XinDongService extends ServiceBase
         $res = $hits[0]['_source'];
         return !empty($res)? $res:[];
     }
+
+    function getEsBasicInfoV3($companyName): array
+    {
+
+        $ElasticSearchService = new ElasticSearchService();
+
+        $ElasticSearchService->addMustMatchPhraseQuery( 'ENTNAME' , $companyName) ;
+
+        $size = 1;
+        $page = 1;
+        $offset  =  ($page-1)*$size;
+        $ElasticSearchService->addSize($size) ;
+        $ElasticSearchService->addFrom($offset) ;
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202208');
+        $responseArr = @json_decode($responseJson,true);
+        // CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
+        //     [
+        //         'es_query' => $ElasticSearchService->query,
+        //         'post_data' => $this->request()->getRequestParam(),
+        //     ]
+        // ));
+
+        // 格式化下日期和时间
+        $hits = $responseArr['hits']['hits'];
+
+        foreach($hits as &$dataItem){
+            $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
+            $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
+            $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
+            $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntIdV2($dataItem['_source']['companyid']);
+
+            // 添加tag
+            $dataItem['_source']['tags'] = array_values(
+                (new XinDongService())::getAllTagesByData(
+                    $dataItem['_source']
+                )
+            );
+
+            // 公司简介
+            $tmpArr = explode('&&&', trim($dataItem['_source']['gong_si_jian_jie']));
+            array_pop($tmpArr);
+            $dataItem['_source']['gong_si_jian_jie_data_arr'] = [];
+            foreach($tmpArr as $tmpItem_){
+                // $dataItem['_source']['gong_si_jian_jie_data_arr'][] = [$tmpItem_];
+                $dataItem['_source']['gong_si_jian_jie_data_arr'][] = $tmpItem_;
+            }
+
+
+            // 官网
+            $webStr = trim($dataItem['_source']['web']);
+            if(!$webStr){
+                continue;
+            }
+            $webArr = explode('&&&', $webStr);
+            !empty($webArr) && $dataItem['_source']['web'] = end($webArr);
+        }
+        $res = $hits[0]['_source'];
+        return !empty($res)? $res:[];
+    }
     function getEsBasicInfo($companyId): array
     {
         

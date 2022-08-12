@@ -3613,14 +3613,33 @@ eof;
     function testExport()
     {
         if(
-            $this->getRequestData('getQuarterTaxInfo')
-        ){
-            $res = (new CarInsuranceInstallment())
-                    ->getQuarterTaxInfo($this->getRequestData('getQuarterTaxInfo'));
+            $this->getRequestData('getEssential')
+        ) {
+            $res = (new GuoPiaoService())->getEssential($this->getRequestData('getEssential'));
             return $this->writeJson(
                 200,[] ,
                 //CommonService::ClearHtml($res['body']),
                 $res,
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
+            $this->getRequestData('getQuarterTaxInfo')
+        ){
+            $res = (new CarInsuranceInstallment())
+                    ->getQuarterTaxInfo($this->getRequestData('getQuarterTaxInfo'));
+
+            $length = CarInsuranceInstallment::getMaxContinuousDateLength(
+                $res['QuarterTaxInfo'],'QuarterBegain',"+3 months"
+            );
+
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                [$res,$length],
                 '成功',
                 true,
                 []

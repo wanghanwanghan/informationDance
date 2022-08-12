@@ -106,4 +106,29 @@ class ChuangLanService extends ServiceBase
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
+
+    //在网时长
+    function yhzwsc(string $mobile)
+    {
+        $url = 'https://api.253.com/open/yysnl/yhzwsc';
+
+        // 还支持加密手机号判断
+        // encrypt md5/sha256
+        // encryptFields 加密数据mobile
+
+        $data = [
+            'appId' => $this->appId,
+            'appKey' => $this->appKey,
+            'mobile' => trim($mobile)
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data);
+
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
+    }
+
+
 }
