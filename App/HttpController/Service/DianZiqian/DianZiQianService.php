@@ -420,7 +420,7 @@ class DianZiQianService extends ServiceBase
 //            ];
 //            $dianziqian_id2 = $this->getAuthFile2Id($gaizhangParam2);
 //            $res[$k]['id3'] = $dianziqian_id2;
-            break;
+//            break;
         }
         return $this->createReturn(200, null, $res, '成功');
     }
