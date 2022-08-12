@@ -495,6 +495,12 @@ class CarInsuranceInstallment extends ModelBase
         $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
             $social_credit_code
         );
+          CommonService::getInstance()->log4PHP(
+              json_encode([
+                  __CLASS__.__FUNCTION__ .__LINE__,
+                  'getIncometaxMonthlyDeclaration$res' => $res
+              ])
+          );
         $data = jsonDecode($res['data']);
         foreach ($data as $dataItem){
             if($dataItem['columnSequence'] == 16){
