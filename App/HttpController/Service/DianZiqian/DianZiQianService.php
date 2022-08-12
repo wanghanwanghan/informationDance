@@ -673,6 +673,16 @@ class DianZiQianService extends ServiceBase
                 $downloadUrl = $contractFileDownload['result']['downloadUrl']??'';
                 if ($contractFileDownload['code'] != 200) {
                     dingAlarm('合同文件下载',['$contractFileDownload'=>json_encode($contractFileDownload)]);
+                }else{
+                    $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
+                    is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
+                    $filename = $contractCode.'h';
+                    $path = $path . $filename.'-'.Carbon::now()->format('Ymd').'.pdf';
+                    //储存pdf
+                    file_put_contents( INV_AUTH_PATH .$path,file_get_contents($contractFileDownload['result']['downloadUrl']),FILE_APPEND | LOCK_EX);
+                    DianZiQianAuth::create()->where("id={$v['id']}")->update([
+                        'downloadUrl'=>$contractFileDownload['result']['downloadUrl'],
+                        'url'=>$path]);
                 }
             }
         }
