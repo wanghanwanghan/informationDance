@@ -402,15 +402,15 @@ class DianZiQianService extends ServiceBase
 //            ];
 //            $id = $this->getAuthFileId($param);
 //            $res[$k]['id1'] = $id;
-            $gaizhangParam1 = [
-                'entName'      => $authDatum->getAttr('entName'),
-                'legalPerson'  => $authDatum->getAttr('legalPerson'),
-                'idCard'       => empty($authDatum->getAttr('idCard'))?'142329197803221928':$authDatum->getAttr('idCard'),
-                'socialCredit' => $authDatum->getAttr('socialCredit'),
-                'file' => 'test/file1.pdf'
-            ];
-            $dianziqian_id = $this->gaiZhang($gaizhangParam1);
-            $res[$k]['id2'] = $dianziqian_id;
+//            $gaizhangParam1 = [
+//                'entName'      => $authDatum->getAttr('entName'),
+//                'legalPerson'  => $authDatum->getAttr('legalPerson'),
+//                'idCard'       => empty($authDatum->getAttr('idCard'))?'142329197803221928':$authDatum->getAttr('idCard'),
+//                'socialCredit' => $authDatum->getAttr('socialCredit'),
+//                'file' => 'test/file1.pdf'
+//            ];
+//            $dianziqian_id = $this->gaiZhang($gaizhangParam1);
+//            $res[$k]['id2'] = $dianziqian_id;
             $gaizhangParam2 = [
                 'entName'      => $authDatum->getAttr('entName'),
                 'legalPerson'  => $authDatum->getAttr('legalPerson'),
@@ -418,10 +418,80 @@ class DianZiQianService extends ServiceBase
                 'socialCredit' => $authDatum->getAttr('socialCredit'),
                 'file' => 'test/file2.pdf'
             ];
-            $dianziqian_id2 = $this->gaiZhang($gaizhangParam2);
+            $dianziqian_id2 = $this->getAuthFile2Id($gaizhangParam2);
             $res[$k]['id3'] = $dianziqian_id2;
+//            break;
         }
         return $this->createReturn(200, null, $res, '成功');
+    }
+
+    public function getAuthFile2Id($postData)
+    {
+        //创建个人签署人
+        $signerPersonres    = $this->signerPerson($postData);
+        $signerCodePersonal = $signerPersonres['result']['signerCode'] ?? "";
+        if ($signerPersonres['code'] != 200) return $signerPersonres;
+
+        //创建企业签署人
+        $signerEnterprise  = $this->signerEnterprise($postData);
+        $signerCodeEnt    = $signerEnterprise['result']['signerCode'] ?? "";
+        if ($signerEnterprise['code'] != 200) return $signerEnterprise;
+        //生成png
+        $getPng = $this->getPng($postData);
+        if ($getPng['code'] != 200) return $getPng;
+        //法人照片上传
+        list($personalSealCode, $errorData) = $this->personalSign($signerCodePersonal, $postData);
+        if (!empty($errorData)) return $errorData;
+
+        //企业上传印章
+        list($entSealCode, $errorData) = $this->entSign($signerCodeEnt, $postData);
+        if (!empty($errorData)) return $errorData;
+
+        //上传adobe模版
+        $contractFileTemplate = $this->contractFileTemplate($postData['file']);
+        $contractTemplateCode = $contractFileTemplate['result']['contractTemplateCode'] ?? "";
+        if ($contractFileTemplate['code'] != 200) return $contractFileTemplate;
+
+        //使用模板创建合同
+        $params    = [
+            'entName'     => $postData['entName'] ?? '',
+            'companyName' => $postData['entName'] ?? '',
+            'taxNo'       => $postData['socialCredit'] ?? '',
+            'newTaxNo'    => $postData['socialCredit'] ?? '',
+            'signName'    => '',
+            'phoneNo'     => $postData['phone'] ?? '',
+            'region'      => $postData['city'] ?? '',
+            'address'     => $postData['regAddress'] ?? '',
+            'date'        => date('Y年m月d日', time())
+        ];
+        $contractFileTemplateFilling = $this->contractFileTemplateFilling( $contractTemplateCode,$params);
+        $contractCode                = $contractFileTemplateFilling['result']['contractCode'] ?? "";
+        if ($contractFileTemplateFilling['code'] != 200) return $contractFileTemplateFilling;
+
+        $entTransactionCode = control::getUuid();
+        //自动签署企业章  signUrl
+        $entContractSignUrl = $this->contractSignAuto($signerCodeEnt, $contractCode, '#盖章处#',$entSealCode,$entTransactionCode);
+        if ($entContractSignUrl['code'] != 200) return $entContractSignUrl;
+        $personalTransactionCode = control::getUuid();
+        //自动签署企业法人章
+        $personalContractSignUrl = $this->contractSignAuto($signerCodePersonal, $contractCode, '代表签字',$personalSealCode,$personalTransactionCode);
+//        if ($personalContractSignUrl['code'] != 200) return $personalContractSignUrl;
+        $insertData = [
+            'entName' => $postData['entName'],
+            "personName"   => $postData['legalPerson'],
+            "personIdCard" => $postData['idCard'],
+            'socialCredit' => $postData['socialCredit'],
+            'signerCodePersonal' => $signerCodePersonal,
+            'signerCodeEnt' => $signerCodeEnt,
+            'contractTemplateCode' => $contractTemplateCode,
+            'contractCode' => $contractCode,
+            'entSealCode' => $entSealCode,
+            'personalSealCode' => $personalSealCode,
+            'entTransactionCode' => $entTransactionCode,
+            'personalTransactionCode' => $personalTransactionCode
+        ];
+        $id = DianZiQianAuth::create()->data($insertData)->save();
+        return $id;
     }
 
     public function gaiZhang($postData){
@@ -577,7 +647,8 @@ class DianZiQianService extends ServiceBase
                 if($contractSignStatus['result']['resultCode'] < 1) $flag = false;
             }
             //法人章签署状态查询
-            if($v['personalUrlResultCode'] < 1) {
+            $nowData = DianZiQianAuth::create()->get($v['id']);
+            if($v['personalUrlResultCode'] < 1 && ($nowData->getAttr('entUrlResultCode') == 1|| $nowData->getAttr('entUrlResultCode') == 2)) {
                 $contractSignStatus = $this->contractSignStatus($personalTransactionCode);
                 if ($contractSignStatus['code'] != 200) {
                     dingAlarm('法人章签署状态查询异常', ['$contractSignStatus' => json_encode($contractSignStatus)]);
