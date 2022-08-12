@@ -400,7 +400,7 @@ class DianZiQianService extends ServiceBase
                 'regAddress' => $authDatum->getAttr('regAddress'),
                 'file' => 'dianziqian_jcsk_shouquanshu.pdf'
             ];
-            $id = $this->getAuthFileId($authDatum);
+            $id = $this->getAuthFileId($param);
             $res[$k]['id1'] = $id;
             $gaizhangParam1 = [
                 'entName'      => $authDatum->getAttr('entName'),
