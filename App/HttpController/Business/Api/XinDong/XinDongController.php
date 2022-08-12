@@ -3723,13 +3723,13 @@ eof;
             );
         }
         if(
-            $this->getRequestData('runMatch')
+            $this->getRequestData('runMatchSuNing')
         ){
 
             return $this->writeJson(
                 200,[] ,
                 //CommonService::ClearHtml($res['body']),
-                CarInsuranceInstallment::runMatch( $this->getRequestData('runMatch')),
+                CarInsuranceInstallment::runMatchSuNing( $this->getRequestData('runMatchSuNing')),
                 '成功',
                 true,
                 []

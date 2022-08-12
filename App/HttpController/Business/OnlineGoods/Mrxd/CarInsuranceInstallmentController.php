@@ -334,7 +334,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         }
         //按时间倒叙排列
         usort($customers, function($a, $b) {
-            return new \DateTime($b['totalAmount']) <=> new \DateTime($a['totalAmount']);
+            return $b['totalAmount'] <=> $a['totalAmount'];
         });
         $newCustomers = $sliced_array = array_slice($customers, 0, 10);
         return $this->writeJson(
