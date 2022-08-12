@@ -419,9 +419,9 @@ class DianZiQianService extends ServiceBase
                 'file' => 'test/file2.pdf'
             ];
             $dianziqian_id2 = (new DianZiQianService())->gaiZhang($gaizhangParam2);
-            $res[$k]['id3'] = $dianziqian_id;
+            $res[$k]['id3'] = $dianziqian_id2;
         }
-        return $this->createReturn(200, null, [], '成功');
+        return $this->createReturn(200, null, $res, '成功');
     }
 
     public function gaiZhang($postData){
