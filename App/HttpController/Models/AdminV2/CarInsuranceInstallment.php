@@ -510,7 +510,9 @@ class CarInsuranceInstallment extends ModelBase
               return new \DateTime($a['beginDate']) <=> new \DateTime($b['beginDate']);
         });
 
-        //
+        return [
+            $suoDeShui
+        ];
 
         //两年内的所得税
         $QuarterBegainRaw = $last2YearStart;

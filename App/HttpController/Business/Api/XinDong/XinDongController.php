@@ -3653,7 +3653,8 @@ eof;
             return $this->writeJson(
                 200,[] ,
                 //CommonService::ClearHtml($res['body']),
-                [$res,$length],
+               // [$res,$length],
+                $res,
                 '成功',
                 true,
                 []
