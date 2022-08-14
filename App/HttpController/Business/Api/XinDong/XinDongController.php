@@ -3619,7 +3619,7 @@ eof;
             return $this->writeJson(
                 200,[] ,
                 //CommonService::ClearHtml($res['body']),
-                InsuranceData::findBySql(),
+                InsuranceData::findBySql(" ORDER BY id  desc  limit 5"),
                 '成功',
                 true,
                 []
