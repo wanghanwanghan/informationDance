@@ -169,8 +169,9 @@ class RunDealEmailReceiver extends AbstractCronTask
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    '$attachs' =>  $attachs,
-                    'subject'=>$emailDataItem['mailHeader']['subject']
+//                    '$attachs' =>  $attachs,
+                    'mailHeader'=>$emailDataItem['mailHeader'] ,
+//                    'subject'=>$emailDataItem['mailHeader']['subject']
                 ])
             );
             MailReceipt::addRecordV2(
