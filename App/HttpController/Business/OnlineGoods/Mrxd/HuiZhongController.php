@@ -107,7 +107,11 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
         $phone = $requestData['legal_person_phone'];
         $code = $requestData['code'];
         $redisCode = OnlineGoodsUser::getRandomDigit($phone,'huizhong_sms_code_');
-
+        if(
+            $redisCode!=$code
+        ){
+            return $this->writeJson(203,[ ] , [], '验证码错误', true, []);
+        }
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
