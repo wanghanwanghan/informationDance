@@ -176,6 +176,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             );
             MailReceipt::addRecordV2(
                 [
+                    'user_id' => 0,
                     'email_id' => $emailDataItem['Uid'],
                     'to' => $emailAddress,
                     'to_other' => $emailDataItem['mailHeader']['toOther']?:'',
