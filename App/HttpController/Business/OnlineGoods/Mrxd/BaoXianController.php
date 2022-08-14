@@ -218,7 +218,11 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
 //        }
         $res = InsuranceData::getDataLists(
             [
-                ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
+                [
+                    'field'=>'user_id',
+                    'value'=>$this->loginUserinfo['id']?:1,
+                    'operate'=>'='
+                ]
             ],
             $page
         );
