@@ -209,12 +209,12 @@ class RunDealEmailReceiver extends AbstractCronTask
         foreach ($emails as $email){
 
             CommonService::getInstance()->log4PHP(
-                "needs to send text msg now 11".$email['form']
+                "needs to send text msg now 11".$email['from']
             );
 
             if(
                !in_array(
-                   $email['form'] ,
+                   $email['from'] ,
                    ['tianyongshan@meirixindong.com','10000@exmail.weixin.qq.com']
                )
             ){
