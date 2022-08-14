@@ -226,12 +226,18 @@ class RunDealEmailReceiver extends AbstractCronTask
             //解析保险数据id
             preg_match('/信动数据id01:<<<(.*?)>>>/',$email['body'],$match);
             $huizhongId = $match[1];
+            if($huizhongId){
+                MailReceipt::updateById($email['id'],[
+                    'insurance_hui_zhong_id'=>intval($huizhongId),
+                ]);
+            }
             preg_match('/信动数据id:<<<(.*?)>>>/',$email['body'],$match);
             $baoyaId = $match[1];
-            MailReceipt::updateById($email['id'],[
-                'insurance_id'=>intval($baoyaId),
-                'insurance_hui_zhong_id'=>intval($huizhongId),
-            ]);
+            if($baoyaId){
+                MailReceipt::updateById($email['id'],[
+                    'insurance_id'=>intval($baoyaId),
+                ]);
+            } 
 
             if($baoyaId){
                 $InsuranceData = InsuranceData::findById($baoyaId);
