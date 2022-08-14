@@ -133,7 +133,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
                 'public_account' => $requestData['public_account'], //
                 'legal_person_phone' => $requestData['legal_person_phone'], //
                 'business_license' => $requestData['business_license'], //
-                'user_id' => $this->loginUserinfo['id'],
+                'user_id' => $this->loginUserinfo['id']?:1,
                 'status' =>  1,
             ]
         );
