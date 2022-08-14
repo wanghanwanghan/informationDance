@@ -3614,6 +3614,18 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('insurance_datas')
+        ){
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                InsuranceData::findBySql(),
+                '成功',
+                true,
+                []
+            );
+        }
+            if(
             $this->getRequestData('getFinanceIncomeStatement')
         ) {
             $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceIncomeStatement(
