@@ -209,7 +209,7 @@ class RunDealEmailReceiver extends AbstractCronTask
         foreach ($emails as $email){
 
             CommonService::getInstance()->log4PHP(
-                "needs to send text msg now"
+                "needs to send text msg now".$email['form']
             );
 
             if(
@@ -228,6 +228,10 @@ class RunDealEmailReceiver extends AbstractCronTask
             //解析保险数据id
             preg_match('/信动数据id01:<<<(.*?)>>>/',$email['body'],$match);
             $huizhongId = $match[1];
+            CommonService::getInstance()->log4PHP(
+                '$huizhongId'.$huizhongId
+            );
+
             if($huizhongId){
                 MailReceipt::updateById($email['id'],[
                     'insurance_hui_zhong_id'=>intval($huizhongId),
@@ -235,6 +239,9 @@ class RunDealEmailReceiver extends AbstractCronTask
             }
             preg_match('/信动数据id:<<<(.*?)>>>/',$email['body'],$match);
             $baoyaId = $match[1];
+            CommonService::getInstance()->log4PHP(
+                '$baoyaId'.$baoyaId
+            );
             if($baoyaId){
                 MailReceipt::updateById($email['id'],[
                     'insurance_id'=>intval($baoyaId),
@@ -247,7 +254,9 @@ class RunDealEmailReceiver extends AbstractCronTask
             if($huizhongId){
                 $InsuranceData = InsuranceDataHuiZhong::findById($huizhongId);
             }
-
+            CommonService::getInstance()->log4PHP(
+                '$InsuranceData'.$InsuranceData
+            );
             if(empty($InsuranceData)){
                 MailReceipt::updateById($email['id'],['status' => MailReceipt::$status_failed]);
                 continue;
@@ -260,7 +269,9 @@ class RunDealEmailReceiver extends AbstractCronTask
                 'name' => '有询价的结果了',
                 'money' => '多钱'
             ]);
-
+            CommonService::getInstance()->log4PHP(
+                'sendByTemplete'.$userData['phone']
+            );
             OperatorLog::addRecord(
                 [
                     'user_id' => $userData['id'],
