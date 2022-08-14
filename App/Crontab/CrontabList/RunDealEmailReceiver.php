@@ -251,7 +251,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             //需要发短信了
             $res = SmsService::getInstance()->sendByTemplete(
                 $userData['phone'], 'SMS_244025473',[
-                'name' => '有询价的了',
+                'name' => '有询价的结果了',
                 'money' => '多钱'
             ]);
 
