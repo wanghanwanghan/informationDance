@@ -180,12 +180,12 @@ class RunDealEmailReceiver extends AbstractCronTask
                     'to' => $emailAddress,
                     'to_other' => $emailDataItem['mailHeader']['toOther']?:'',
                     'from' => $emailDataItem['mailHeader']['from']?:'',
-                    'subject' => $emailDataItem['mailHeader']['subject']?:'',
+                    'subject' => $emailDataItem['mailHeader']['subject']?stripslashes($emailDataItem['mailHeader']['subject']):'',
                     'body' => $emailDataItem['body']?:'',
                     'status' => '1',
                     'type' => '1',
                     'reamrk' => '',
-                    'raw_return' => json_encode($emailDataItem),
+                    'raw_return' => stripslashes(json_encode($emailDataItem)),
                     'date' => date('Y-m-d H:i:s',strtotime($emailDataItem['mailHeader']['date'])) ,
                 ]
             );
