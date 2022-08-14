@@ -305,7 +305,11 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
 //        }
         $res =  InsuranceDataHuiZhong::gteLists(
             [
-                ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
+                [
+                    'field'=>'user_id',
+                    'value'=>$this->loginUserinfo['id']?:1,
+                    'operate'=>'='
+                ]
             ],$page
         );
 
