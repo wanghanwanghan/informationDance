@@ -72,7 +72,8 @@ class MailReceipt extends ModelBase
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'failed',
-                    '$requestData' => $requestData
+                    '$requestData' => $requestData,
+                    '$e'=>$e->getMessage()
                 ])
             );
         }
