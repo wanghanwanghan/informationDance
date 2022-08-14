@@ -226,7 +226,8 @@ class RunDealEmailReceiver extends AbstractCronTask
             }
 
             //解析保险数据id
-            preg_match('/信动数据id01:<<<(.*?)>>>/',$email['body'],$match);
+            //preg_match('/信动数据id01:<<<(.*?)>>>/',$email['body'],$match);
+            preg_match('/信动数据id01:&lt;&lt;&lt;(.*?)&gt;&gt;&gt;/',$email['body'],$match);
             $huizhongId = $match[1];
             CommonService::getInstance()->log4PHP(
                 '$huizhongId'.$huizhongId
@@ -237,7 +238,7 @@ class RunDealEmailReceiver extends AbstractCronTask
                     'insurance_hui_zhong_id'=>intval($huizhongId),
                 ]);
             }
-            preg_match('/信动数据id:<<<(.*?)>>>/',$email['body'],$match);
+            preg_match('/信动数据id:&lt;&lt;&lt;(.*?)&gt;&gt;&gt;/',$email['body'],$match);
             $baoyaId = $match[1];
             CommonService::getInstance()->log4PHP(
                 '$baoyaId'.$baoyaId
