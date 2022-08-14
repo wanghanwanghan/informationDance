@@ -102,6 +102,20 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
             return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
         }
 
+
+        //设置验证码
+        $phone = $requestData['legal_person_phone'];
+        $code = $requestData['code'];
+        $redisCode = OnlineGoodsUser::getRandomDigit($phone,'huizhong_sms_code_');
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$code' => $code,
+                '$redisCode' => $redisCode,
+            ])
+        );
+
         $res = InsuranceDataHuiZhong::addRecordV2(
             [
                 'post_params' => json_encode(
@@ -210,7 +224,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 'setRandomDigit' => [
-                    'getRandomDigit'=>OnlineGoodsUser::getRandomDigit($phone),
+                    'getRandomDigit'=>OnlineGoodsUser::getRandomDigit($phone,'huizhong_sms_code_'),
                 ],
             ])
         );
