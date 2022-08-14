@@ -108,7 +108,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
                 ),
                 'product_id' => $requestData['product_id']?:'',
                 'name' => $requestData['name']?:'',
-                'user_id' => $this->loginUserinfo['id'],
+                'user_id' => $this->loginUserinfo['id']?:1,
                 'status' =>  InsuranceData::$status_init,
             ]
         );
