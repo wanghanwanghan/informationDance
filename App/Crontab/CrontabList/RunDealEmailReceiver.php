@@ -246,6 +246,10 @@ class RunDealEmailReceiver extends AbstractCronTask
                 $InsuranceData = InsuranceDataHuiZhong::findById($huizhongId);
             }
 
+            if(empty($InsuranceData)){
+                MailReceipt::updateById($email['id'],['status' => MailReceipt::$status_failed]);
+                continue;
+            }
             $userData = OnlineGoodsUser::findById($InsuranceData->getAttr('user_id'));
             $userData = $userData->toArray();
             //需要发短信了
