@@ -35,6 +35,13 @@ class CompanyBasic extends ModelBase
         return $res;
     }
 
+    public static function findByName($name){
+        $res =  CompanyBasic::create()
+            ->where('ENTNAME',$name)
+            ->get();
+        return $res;
+    }
+
 
 
     public static function findCancelDateByCode($UNISCID){

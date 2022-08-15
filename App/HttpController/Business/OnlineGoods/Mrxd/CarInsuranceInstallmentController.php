@@ -21,6 +21,7 @@ use App\HttpController\Models\Api\CarInsuranceInfo;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\LongXin\LongXinService;
@@ -68,6 +69,32 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
             true,
             []
         );
+    }
+
+    function getCodeByName(): bool
+    {
+        $requestData = $this->getRequestData();
+        $checkRes = DataModelExample::checkField(
+            [
+                'ent_name' => [
+                    'not_empty' => 1,
+                    'field_name' => 'ent_name',
+                    'err_msg' => '企业名必填',
+                ],
+            ],
+            $requestData
+        );
+
+        if (
+            !$checkRes['res']
+        ) {
+            return $this->writeJson(203, [], [], $checkRes['msgs'], true, []);
+        }
+
+        $res = CompanyBasic::findByName($requestData['ent_name']);
+        $res = $res?$res->toArray():[];
+
+        return $this->writeJson(203, [], [], $res['UNISCID'], true, []);
     }
 
     function authForCarInsurance(): bool

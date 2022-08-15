@@ -298,6 +298,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/sendSmsForCarInsurance', $prefix . 'sendSmsForCarInsurance');//
             $routeCollector->addRoute(['GET', 'POST'], '/authForCarInsurance', $prefix . 'authForCarInsurance');//
             $routeCollector->addRoute(['GET', 'POST'], '/getMatchedRes', $prefix . 'getMatchedRes');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getCodeByName', $prefix . 'getCodeByName');//
         });
 
         return true;
