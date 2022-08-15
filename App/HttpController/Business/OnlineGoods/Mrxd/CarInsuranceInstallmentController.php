@@ -126,6 +126,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                     ]
                 ])
             );
+            return $this->writeJson(203,[ ] , [], '验证码已过期', true, []);
         }
 
         //请求微风起 获取授权地址
@@ -173,7 +174,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'authForCarInsurance data'=> $res['data'] 
+                'authForCarInsurance data'=> $res['data']
 
             ])
         );
