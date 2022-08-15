@@ -35,6 +35,15 @@ class CompanyInv extends ModelBase
         return $res;
     }
 
+    public static function findByCompanyIdAndInv($id,$inv){
+        $res =  CompanyInv::create()
+            ->where('companyid',$id)
+            ->where('INV',$inv)
+            ->get();
+        return $res;
+    }
+
+
     public static function findByName($name){
         $res =  CompanyInv::create()
             ->where('ENTNAME',$name)

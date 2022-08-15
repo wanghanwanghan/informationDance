@@ -6,6 +6,7 @@ use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Models\RDS3\HdSaic\CompanyInv;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -319,6 +320,7 @@ class CarInsuranceInstallment extends ModelBase
         return  false;
     }
 
+
     /**
     苏宁银行-微商贷
     公司成立2年以上，不能是分公司 -- h库
@@ -541,18 +543,228 @@ class CarInsuranceInstallment extends ModelBase
     }
 
     /**
-    金城银行-金企贷
+    浦发银行
+    浦发银行-浦慧贷
 
-
-
-
-    ??? 无经营异常，近6个月无主营业务方向变更 -- 经营异常在h库
-    ??? 关联企业/法人无重大负面信息 -- 关联企业可以用企查查接口
-    申请人：企业法人，无占股要求 -- h库
-
-    变更要求：近6个月法人无变更 -- h库
+    实际经营时长不少于1年。 -- 发票
+    年开票金额100万以上，近1年开票10月及以上 -- 发票
+    连续未开票天数≤45天（2、3、4月除外） -- 发票
+    近12个月累计开票张数≥35 -- 发票
      */
-    //
+    static  function  runMatchPuFa($carInsuranceDataId){
+        $oneMonthsAgo = date("Y-m-01",strtotime("-1 month"));
+        $twoMonthsAgo = date("Y-m-01",strtotime("-2 month"));
+        $threeMonthsAgo = date("Y-m-01",strtotime("-3 month"));
+
+        $suNingWeiShangDai = true;
+        $suNingWeiShangDaiErrMsg = [];
+
+        $carInsuranceData = CarInsuranceInstallment::findById($carInsuranceDataId);
+        $carInsuranceData = $carInsuranceData->toArray();
+
+        $companyRes = CompanyBasic::findByCode($carInsuranceData['social_credit_code']);
+        if(empty($companyRes)){
+            return  [];
+        }
+
+        $companyRes = $companyRes->toArray();
+
+        //申请人必须是法人
+        if(
+            $companyRes['NAME'] != $carInsuranceData['legal_person']
+        ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '申请人不是法人';
+        }
+        // 申请人：企业法定代表人，持股5%以上 -- h库
+        $companyInv = CompanyInv::findByCompanyIdAndInv($companyRes['id'],$carInsuranceData['legal_person']);
+        if(empty($companyInv)){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '申请人持股不到5%';
+        }
+
+        if($companyInv){
+            $companyInvData = $companyInv->toArray();
+        }
+        if($companyInvData['CONPROP']<5){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '申请人持股不到5%';
+        }
+
+        // 企业法定代表人
+
+
+        //  申请人年龄：20-65周岁，具有中国国籍（不含港、澳、台） -- 用户输入
+        //身份证年龄
+        $legal_person_age =  self::ageVerification($carInsuranceData['legal_person_id_card']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$legal_person_age ' => $legal_person_age,
+                '$suNingWeiShangDai' => $suNingWeiShangDai
+            ])
+        );
+        if(
+            $legal_person_age <20 ||
+            $legal_person_age >65
+        ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '贷款年龄小于22或大于59';
+        }
+
+        //实际经营时长不少于1年。 -- 发票
+
+
+        // 苏宁银行-微商贷：   法人手机在网时长大于1年 -- 创蓝接口
+        $phoneOnlineTimeRes = (new ChuangLanService())->yhzwsc($carInsuranceData['legal_phone']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$phoneOnlineTimeRes ' => $phoneOnlineTimeRes,
+                '$suNingWeiShangDai' => $suNingWeiShangDai
+            ])
+        );
+        if(
+            $phoneOnlineTimeRes['data']['result']['rangeStart'] < 12
+        ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '在网时长小于一年';
+        };
+
+        // 苏宁银行-微商贷：   正常纳税满18个月 -- 财务三表
+        $taxInfo = self::getQuarterTaxInfo($carInsuranceData['social_credit_code']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$taxInfo ' => $taxInfo
+            ])
+        );
+        if(
+            $taxInfo['validQuarterLength'] <6
+        ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '正常纳税不满18个月';
+        }
+        // 苏宁银行-微商贷：年纳税金额1.5万以上（PS：不做强要求，但不能为0） -- 财务三表
+        $yearsTotal = 0;
+        foreach ($taxInfo['validyearTaxInfo'] as $year=>$total){
+            $yearsTotal += $total;
+        };
+        if($yearsTotal <= 0 ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '年纳税金额为0';
+        }
+
+        //企业税务基本信息查询
+        $taxBasicInfo = (new GuoPiaoService())->getEssential($carInsuranceData['social_credit_code']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$taxBasicInfo ' => $taxBasicInfo
+            ])
+        );
+        //苏宁银行-微商贷：纳税等级A/B//M（个体工商户可准入） -- 国票接口
+        if(
+            !in_array($taxBasicInfo['data']['essential'][0]['creditLevel'],[
+                'A','B','M'
+            ])
+        ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '纳税等级不属于A/B/M';
+        };
+
+        // 企业当前无欠税 -- 国票接口
+        if(
+            $taxBasicInfo['data']['owingType'] !=  "否"
+        ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '企业当前有欠税';
+        };
+
+        // 苏宁银行-微商贷： 无连续6个月不纳税情况 -- 财务三表
+        if(
+            $taxInfo['inValidQuarterLength'] >2
+        ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '有连续6个月不纳税情况 ';
+        }
+
+        // 苏宁银行-微商贷：近3个月都有纳税申报记录 -- 增值税申报表
+        $oneMonthsAgoHasNoTax = true;
+        $twoMonthsAgoHasNoTax = true;
+        $threeMonthsAgoHasNoTax = true;
+        foreach ($taxInfo['zengZhiShuiReverseOrder'] as $dataItem){
+            if(
+                $dataItem['date'] == $oneMonthsAgo &&
+                $dataItem['total'] > 0
+            ){
+                $oneMonthsAgoHasNoTax = false;
+            }
+            if(
+                $dataItem['date'] == $twoMonthsAgo &&
+                $dataItem['total'] > 0
+            ){
+                $twoMonthsAgoHasNoTax = false;
+            }
+            if(
+                $dataItem['date'] == $threeMonthsAgo &&
+                $dataItem['total'] > 0
+            ){
+                $threeMonthsAgoHasNoTax = true;
+            }
+        }
+
+        if(
+            $oneMonthsAgoHasNoTax ||
+            $twoMonthsAgoHasNoTax ||
+            $threeMonthsAgoHasNoTax
+        ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '近3个月有未纳税申报记录 ';
+        }
+
+        //季度资产负债
+        // 苏宁银行-微商贷： 纳税系统内录入最近一季资产负债表（53）、利润表（19 ），必须有三期以上财务报表 -- 财务三表
+        $quarterDebt = (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getFinanceBalanceSheet($carInsuranceData['social_credit_code']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$quarterDebt ' => $quarterDebt
+            ])
+        );
+        if($quarterDebt['result']<3){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '季度资产负债表不到三期';
+        };
+
+        //季度利润表
+        $quarterProfit=  (new GuoPiaoService())
+                            ->setCheckRespFlag(true)
+                            ->getFinanceIncomeStatement($carInsuranceData['social_credit_code']);
+        if($quarterProfit['result']<3){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '季度利润表不到三期';
+        };
+        if(
+            $suNingWeiShangDai
+        ){
+            return [
+                'res'=>true,
+            ];
+        }
+        else{
+            return [
+                'res'=>false,
+                'msg'=>$suNingWeiShangDaiErrMsg,
+            ];
+        }
+    }
+
+    /**
+    金城银行-金企贷
+     */
     static function checkIfArrayHasValue($DataArray,$field,$value,$type='date',$fmt= "Y-m-d"){
         $hasValue = false;
         foreach ($DataArray as $ArrayItem){
@@ -570,6 +782,20 @@ class CarInsuranceInstallment extends ModelBase
         }
         return $hasValue ;
     }
+
+    /**
+    金城银行-金企贷
+
+    企业成立时间：满两年，纳税满1年 -- h库和财务三表
+    纳税评级要求：ABCM （浙江C级不可做，其他地区可做） -- 国票接口
+    企业类型：个人独资企业、有限责任公司准入；普通合伙人禁入 -- h库
+    近两年任意一年纳税总额不得为0 -- 财务三表
+    ??? 无经营异常，近6个月无主营业务方向变更 -- 经营异常在h库
+    ??? 关联企业/法人无重大负面信息 -- 关联企业可以用企查查接口
+    申请人：企业法人，无占股要求 -- h库
+    年龄：18-60周岁 -- 用户输入
+    变更要求：近6个月法人无变更 -- h库
+     */
     static  function  runMatchJinCheng($carInsuranceDataId){
         $oneMonthsAgo = date("Y-m-01",strtotime("-1 month"));
         $twoMonthsAgo = date("Y-m-01",strtotime("-2 month"));
@@ -580,6 +806,12 @@ class CarInsuranceInstallment extends ModelBase
 
         $carInsuranceData = CarInsuranceInstallment::findById($carInsuranceDataId);
         $carInsuranceData = $carInsuranceData->toArray();
+
+        $companyRes = CompanyBasic::findByCode($carInsuranceData['social_credit_code']);
+        if(empty($companyRes)){
+            return  [];
+        }
+        $companyRes = $companyRes->toArray();
 
         $retrunData = [];
 
@@ -592,7 +824,7 @@ class CarInsuranceInstallment extends ModelBase
                 '$DaiKuanRes' => $DaiKuanRes
             ])
         );
-        // 企业成立时间：满两年，
+        // 企业成立时间：满两年，纳税满1年 -- h库和财务三表
         if($EstablishRes['EstablishYears'] <= 2){
             $DaiKuanRes = false;
             $DaiKuanResErrMsg[] = '公司成立不到2年以上';
@@ -607,21 +839,6 @@ class CarInsuranceInstallment extends ModelBase
         ){
             $DaiKuanRes = false;
             $DaiKuanResErrMsg[] = '只有个人独资企业、有限责任公司才准入';
-        }
-
-
-
-
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '$isBranchCompanyRes ' => $isBranchCompanyRes,
-                '$suNingWeiShangDai' => $suNingWeiShangDai
-            ])
-        );
-        if( $isBranchCompanyRes ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '是分公司';
         }
 
 
@@ -644,7 +861,7 @@ class CarInsuranceInstallment extends ModelBase
             $DaiKuanResErrMsg[] = '贷款年龄小于18或大于60';
         }
 
-        //  纳税满1年 -- h库和财务三表 XXXXXXX
+        //  纳税满1年 -- h库和财务三表
         $taxInfo = self::getQuarterTaxInfo($carInsuranceData['social_credit_code']);
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -687,24 +904,47 @@ class CarInsuranceInstallment extends ModelBase
             $DaiKuanResErrMsg[] = '上个月没有纳税';
         }
 
-        // 近两年任意一年纳税总额不得为0 -- 财务三表
-
-
+        // 申请人：企业法人 -- h库
         if(
-            $taxInfo['validQuarterLength'] <6
+            $companyRes['NAME'] != $carInsuranceData['legal_person']
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '正常纳税不满18个月';
+            $DaiKuanResErrMsg[] = '不是企业法人';
         }
-        // 苏宁银行-微商贷：年纳税金额1.5万以上（PS：不做强要求，但不能为0） -- 财务三表
-        $yearsTotal = 0;
-        foreach ($taxInfo['validyearTaxInfo'] as $year=>$total){
-            $yearsTotal += $total;
-        };
-        if($yearsTotal <= 0 ){
+
+
+
+        // 近两年任意一年纳税总额不得为0 -- 财务三表
+        $thisYearsSuoDeShui = 0;
+        $LastYearsSuoDeShui = 0;
+        foreach ($taxInfo['suoDeShuiByYear'] as $suoDeShuiByYearItem){
+           if(
+               $suoDeShuiByYearItem['year'] == date('Y')
+           ){
+               $thisYearsSuoDeShui = $suoDeShuiByYearItem['currentAmount'];
+           }
+            if(
+                $suoDeShuiByYearItem['year'] == (date('Y')-1)
+            ){
+                $LastYearsSuoDeShui = $suoDeShuiByYearItem['currentAmount'];
+            }
+        }
+
+        if(
+            $thisYearsSuoDeShui<0
+        ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '年纳税金额为0';
+            $DaiKuanResErrMsg[] = '今年纳税总额为0';
         }
+        if(
+            $LastYearsSuoDeShui<0
+        ){
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '去年纳税总额为0';
+        }
+
+        //  暂时做不了 变更要求：近6个月法人无变更 -- h库
+
 
         //企业税务基本信息查询
         $taxBasicInfo = (new GuoPiaoService())->getEssential($carInsuranceData['social_credit_code']);
@@ -721,83 +961,10 @@ class CarInsuranceInstallment extends ModelBase
             ])
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '纳税等级不属于A/B/M';
+            $DaiKuanResErrMsg[] = '纳税等级不属于A/B/C/M';
         };
 
-        // 企业当前无欠税 -- 国票接口
-        if(
-            $taxBasicInfo['data']['owingType'] !=  "否"
-        ){
-            $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '企业当前有欠税';
-        };
 
-        // 苏宁银行-微商贷： 无连续6个月不纳税情况 -- 财务三表
-        if(
-            $taxInfo['inValidQuarterLength'] >2
-        ){
-            $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '有连续6个月不纳税情况 ';
-        }
-
-        // 苏宁银行-微商贷：近3个月都有纳税申报记录 -- 增值税申报表
-        $oneMonthsAgoHasNoTax = true;
-        $twoMonthsAgoHasNoTax = true;
-        $threeMonthsAgoHasNoTax = true;
-        foreach ($taxInfo['zengZhiShuiReverseOrder'] as $dataItem){
-            if(
-                $dataItem['date'] == $oneMonthsAgo &&
-                $dataItem['total'] > 0
-            ){
-                $oneMonthsAgoHasNoTax = false;
-            }
-            if(
-                $dataItem['date'] == $twoMonthsAgo &&
-                $dataItem['total'] > 0
-            ){
-                $twoMonthsAgoHasNoTax = false;
-            }
-            if(
-                $dataItem['date'] == $threeMonthsAgo &&
-                $dataItem['total'] > 0
-            ){
-                $threeMonthsAgoHasNoTax = true;
-            }
-        }
-
-        if(
-            $oneMonthsAgoHasNoTax ||
-            $twoMonthsAgoHasNoTax ||
-            $threeMonthsAgoHasNoTax
-        ){
-            $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '近3个月有未纳税申报记录 ';
-        }
-
-        //季度资产负债
-        // 苏宁银行-微商贷： 纳税系统内录入最近一季资产负债表（53）、利润表（19 ），必须有三期以上财务报表 -- 财务三表
-        $quarterDebt = (new GuoPiaoService())
-            ->setCheckRespFlag(true)
-            ->getFinanceBalanceSheet($carInsuranceData['social_credit_code']);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '$quarterDebt ' => $quarterDebt
-            ])
-        );
-        if($quarterDebt['result']<3){
-            $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '季度资产负债表不到三期';
-        };
-
-        //季度利润表
-        $quarterProfit=  (new GuoPiaoService())
-            ->setCheckRespFlag(true)
-            ->getFinanceIncomeStatement($carInsuranceData['social_credit_code']);
-        if($quarterProfit['result']<3){
-            $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '季度利润表不到三期';
-        };
         if(
             $DaiKuanRes
         ){
@@ -812,6 +979,8 @@ class CarInsuranceInstallment extends ModelBase
             ];
         }
     }
+
+
     /**
     获取企业季度纳税信息:
     1：企业所得税+增值税
