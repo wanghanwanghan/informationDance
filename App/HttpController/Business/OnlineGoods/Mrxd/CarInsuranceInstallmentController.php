@@ -9,6 +9,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\CarInsuranceInstallment;
+use App\HttpController\Models\AdminV2\CarInsuranceInstallmentMatchedRes;
 use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
@@ -206,7 +207,8 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
 //        ){
 //            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
 //        }
-        $res =  CarInsuranceInstallment::findOneByUserId(1);
+
+        $res =  CarInsuranceInstallment::findOneByUserId($this->loginUserinfo['id']);
         $res = $res->toArray();
         $companyRes = (new XinDongService())->getEsBasicInfoV3($res['ent_name']);
 
@@ -339,6 +341,15 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
             return $b['totalAmount'] <=> $a['totalAmount'];
         });
         $newCustomers = $sliced_array = array_slice($customers, 0, 10);
+
+
+        //匹配结果
+        $matchedRes = CarInsuranceInstallmentMatchedRes::findAllByCondition(
+            [
+               'car_insurance_id'=>$res['id']
+            ]
+        );
+
         return $this->writeJson(
             200,
             [
@@ -362,6 +373,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                'mapedByDateAmountRes' => $mapedByDateAmountRes,
                'topSupplier' => $newSupplier,
                'topCustomer' => $newCustomers,
+               'matchedRes' => $matchedRes,
                //'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
             ]
         );

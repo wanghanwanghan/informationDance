@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Api\XinDong;
 
 use App\Crontab\CrontabList\RunCompleteCompanyData;
 use App\Crontab\CrontabList\RunDealApiSouKe;
+use App\Crontab\CrontabList\RunDealCarInsuranceInstallment;
 use App\Crontab\CrontabList\RunDealEmailReceiver;
 //use App\Crontab\CrontabList\RunDealFinanceCompanyData;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
@@ -3614,6 +3615,19 @@ eof;
 
     function testExport()
     {
+        if(
+            $this->getRequestData('runMatchXXX')
+        ){
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+               RunDealCarInsuranceInstallment::runMatch(),
+                '成功',
+                true,
+                []
+            );
+        }
+
         if(
             $this->getRequestData('online_goods_user')
         ){

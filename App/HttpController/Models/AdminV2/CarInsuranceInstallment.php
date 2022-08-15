@@ -25,8 +25,12 @@ class CarInsuranceInstallment extends ModelBase
     static $status_init = 1;
     static $status_init_cname = '初始化';
 
-    static $status_email_succeed = 5;
-    static $status_email_succeed_cname = '发邮件成功';
+    static $status_matched_succeed = 5;
+    static $status_matched_succeed_cname = '匹配成功';
+
+    static $status_matched_failed = 10;
+    static $status_matched_failed_cname = '匹配失败';
+
 
 
     static  function  addRecordV2($info){
@@ -550,6 +554,8 @@ class CarInsuranceInstallment extends ModelBase
     年开票金额100万以上，近1年开票10月及以上 -- 发票
     连续未开票天数≤45天（2、3、4月除外） -- 发票
     近12个月累计开票张数≥35 -- 发票
+
+
      */
     static  function  runMatchPuFa($carInsuranceDataId){
         $oneMonthsAgo = date("Y-m-01",strtotime("-1 month"));
@@ -613,46 +619,136 @@ class CarInsuranceInstallment extends ModelBase
         }
 
         //实际经营时长不少于1年。 -- 发票
+        $oneYearAgoRes = false;
+        //纳税数据取得是两年的数据 取下开始结束时间
+        $lastMonth = date("Y-m-01",strtotime("-1 month"));
+        //两年前的开始月
+        $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
 
-
-        // 苏宁银行-微商贷：   法人手机在网时长大于1年 -- 创蓝接口
-        $phoneOnlineTimeRes = (new ChuangLanService())->yhzwsc($carInsuranceData['legal_phone']);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '$phoneOnlineTimeRes ' => $phoneOnlineTimeRes,
-                '$suNingWeiShangDai' => $suNingWeiShangDai
-            ])
+        //进项发票信息 信动专用
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $carInsuranceData['social_credit_code'],
+            $last2YearStart,
+            $lastMonth
         );
-        if(
-            $phoneOnlineTimeRes['data']['result']['rangeStart'] < 12
-        ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '在网时长小于一年';
-        };
+        $lastYear = date('Y') -1;
+        $thisYear = date('Y');
+        $thisYearAmout_jin = 0;
+        $thisYearAmout_xiao = 0;
+        $lastYearAmout_jin = 0;
+        $lastYearAmout_xiao = 0;
+        //近12个月累计开票张数≥35 -- 发票
+        $last12MonthRes = [];
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $year = date('Y',strtotime($InvoiceData['billingDate']));
 
-        // 苏宁银行-微商贷：   正常纳税满18个月 -- 财务三表
-        $taxInfo = self::getQuarterTaxInfo($carInsuranceData['social_credit_code']);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '$taxInfo ' => $taxInfo
-            ])
-        );
-        if(
-            $taxInfo['validQuarterLength'] <6
-        ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '正常纳税不满18个月';
+            if($year == $lastYear){
+                $oneYearAgoRes = true;
+                $lastYearAmout_jin += $InvoiceData['totalAmount'];
+            }
+            if($year == $thisYear){
+
+                $thisYearAmout_jin += $InvoiceData['totalAmount'];
+            }
         }
-        // 苏宁银行-微商贷：年纳税金额1.5万以上（PS：不做强要求，但不能为0） -- 财务三表
-        $yearsTotal = 0;
-        foreach ($taxInfo['validyearTaxInfo'] as $year=>$total){
-            $yearsTotal += $total;
-        };
-        if($yearsTotal <= 0 ){
+
+        //销项
+        //没有销项的日子
+        $ValidDates_xiao = [];
+        $thisYearAmout_xiao_by_month = [];
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $carInsuranceData['social_credit_code'],
+            $last2YearStart,
+            $lastMonth,
+            2
+        );
+        $last12MonthRes = [];
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $year = date('Y',strtotime($InvoiceData['billingDate']));
+            $month = date('Y-m',strtotime($InvoiceData['billingDate']));
+            $day = date('Y-m-d',strtotime($InvoiceData['billingDate']));
+            //一年内的
+            if(
+                strtotime($InvoiceData['billingDate'])<strtotime('-1 year')
+            ){
+                $last12MonthRes[] = $InvoiceData;
+            }
+
+            $ValidDates_xiao[$day] = $day;
+            if($year == $lastYear){
+                $oneYearAgoRes = true;
+                $lastYearAmout_xiao += $InvoiceData['totalAmount'];
+            }
+            if($year == $thisYear){
+                //今年销项金额
+                $thisYearAmout_xiao += $InvoiceData['totalAmount'];
+                //今年月度销项金额
+                $thisYearAmout_xiao_by_month[$month]['month'] = $month;
+                $thisYearAmout_xiao_by_month[$month]['totalAmount'] += $InvoiceData['totalAmount'];
+            }
+        }
+
+        if(!$oneYearAgoRes){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '年纳税金额为0';
+            $suNingWeiShangDaiErrMsg[] = '实际经营时长少于1年';
+        }
+
+        //近1年开票10月及以上 -- 发票
+        if(
+            count($thisYearAmout_xiao_by_month) < 10
+        ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '近1年开票不到10个月';
+        }
+        //年开票金额100万以上，近1年开票10月及以上 -- 发票
+        if(
+            $lastYearAmout_xiao < 1000000 &&
+            $thisYearAmout_xiao < 1000000
+        ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '年开票金额不到100万';
+        }
+
+        // 连续未开票天数≤45天（2、3、4月除外） -- 发票
+        $inValidDays = [];
+        $i = $last2YearStart ;
+        while ($i<=$lastMonth){
+            $i = date('Y-m-d',strtotime('+1 day',strtotime($i)));
+            if(
+               in_array($i,$ValidDates_xiao)
+            ){
+                continue ;
+            }
+            $inValidDays[] = ['date'=>$i] ;
+        }
+
+        $length  =  CarInsuranceInstallment::getMaxContinuousDateLengthV2(
+            $inValidDays,'date'," -1 day ",[
+                '2030-05-01'=>'2030-02-01',
+                '2029-05-01'=>'2029-02-01',
+                '2028-05-01'=>'2028-02-01',
+                '2027-05-01'=>'2027-02-01',
+                '2026-05-01'=>'2026-02-01',
+                '2025-05-01'=>'2025-02-01',
+                '2024-05-01'=>'2024-02-01',
+                '2023-05-01'=>'2023-02-01',
+                '2022-05-01'=>'2022-02-01',
+                '2021-05-01'=>'2021-02-01',
+                '2020-05-01'=>'2020-02-01',
+                '2019-05-01'=>'2019-02-01',
+                '2018-05-01'=>'2018-02-01',
+            ]
+        );
+
+        if($length>=45){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '连续未开票天数大于45天';
+        }
+        if(
+            count($last12MonthRes) < 35
+        ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '近12个月累计开票张数小于35 ';
         }
 
         //企业税务基本信息查询
@@ -663,90 +759,7 @@ class CarInsuranceInstallment extends ModelBase
                 '$taxBasicInfo ' => $taxBasicInfo
             ])
         );
-        //苏宁银行-微商贷：纳税等级A/B//M（个体工商户可准入） -- 国票接口
-        if(
-            !in_array($taxBasicInfo['data']['essential'][0]['creditLevel'],[
-                'A','B','M'
-            ])
-        ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '纳税等级不属于A/B/M';
-        };
 
-        // 企业当前无欠税 -- 国票接口
-        if(
-            $taxBasicInfo['data']['owingType'] !=  "否"
-        ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '企业当前有欠税';
-        };
-
-        // 苏宁银行-微商贷： 无连续6个月不纳税情况 -- 财务三表
-        if(
-            $taxInfo['inValidQuarterLength'] >2
-        ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '有连续6个月不纳税情况 ';
-        }
-
-        // 苏宁银行-微商贷：近3个月都有纳税申报记录 -- 增值税申报表
-        $oneMonthsAgoHasNoTax = true;
-        $twoMonthsAgoHasNoTax = true;
-        $threeMonthsAgoHasNoTax = true;
-        foreach ($taxInfo['zengZhiShuiReverseOrder'] as $dataItem){
-            if(
-                $dataItem['date'] == $oneMonthsAgo &&
-                $dataItem['total'] > 0
-            ){
-                $oneMonthsAgoHasNoTax = false;
-            }
-            if(
-                $dataItem['date'] == $twoMonthsAgo &&
-                $dataItem['total'] > 0
-            ){
-                $twoMonthsAgoHasNoTax = false;
-            }
-            if(
-                $dataItem['date'] == $threeMonthsAgo &&
-                $dataItem['total'] > 0
-            ){
-                $threeMonthsAgoHasNoTax = true;
-            }
-        }
-
-        if(
-            $oneMonthsAgoHasNoTax ||
-            $twoMonthsAgoHasNoTax ||
-            $threeMonthsAgoHasNoTax
-        ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '近3个月有未纳税申报记录 ';
-        }
-
-        //季度资产负债
-        // 苏宁银行-微商贷： 纳税系统内录入最近一季资产负债表（53）、利润表（19 ），必须有三期以上财务报表 -- 财务三表
-        $quarterDebt = (new GuoPiaoService())
-                ->setCheckRespFlag(true)
-                ->getFinanceBalanceSheet($carInsuranceData['social_credit_code']);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '$quarterDebt ' => $quarterDebt
-            ])
-        );
-        if($quarterDebt['result']<3){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '季度资产负债表不到三期';
-        };
-
-        //季度利润表
-        $quarterProfit=  (new GuoPiaoService())
-                            ->setCheckRespFlag(true)
-                            ->getFinanceIncomeStatement($carInsuranceData['social_credit_code']);
-        if($quarterProfit['result']<3){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '季度利润表不到三期';
-        };
         if(
             $suNingWeiShangDai
         ){
@@ -1139,11 +1152,11 @@ class CarInsuranceInstallment extends ModelBase
               return new \DateTime($a['QuarterBegain']) <=> new \DateTime($b['QuarterBegain']);
           });
 
-          $validLength = CarInsuranceInstallment::getMaxContinuousDateLength(
-              $validQuarterTaxInfo,'QuarterBegain',"+3 months"
+          $validLength = CarInsuranceInstallment::getMaxContinuousDateLengthV2(
+              $validQuarterTaxInfo,'QuarterBegain',"+3 months",[]
           );
-          $inValidLength = CarInsuranceInstallment::getMaxContinuousDateLength(
-              $inValidQuarterTaxInfo,'QuarterBegain',"+3 months"
+          $inValidLength = CarInsuranceInstallment::getMaxContinuousDateLengthV2(
+              $inValidQuarterTaxInfo,'QuarterBegain',"+3 months",[]
           );
 
         $validyearTaxInfo = [];
@@ -1253,6 +1266,62 @@ class CarInsuranceInstallment extends ModelBase
             'ContinuousDate'=>$ContinuousDateArr,
             'length'=>$length,
         ];
+    }
+
+    static   function getMaxContinuousDateLengthV2($tmpData, $field, $calStr,$exceptArray){
+        //最近一次的比较时间
+        $lastDate = '';
+        //运行次数
+        $i = 1;
+        //最大连续长度
+        $length = 1;
+        $ContinuousDateArr = [];
+        $length_arr = [];
+        foreach ($tmpData as $tmpDataItem) {
+
+            $beginDate = date('Y-m-d', strtotime($tmpDataItem[$field]));
+            // 第一次
+            if ($i == 1) {
+                $lastDate = $beginDate;
+                $ContinuousDateArr = [$tmpDataItem];
+                $i ++;
+                continue;
+            }
+
+            $nextDate = date("Y-m-d", strtotime("$calStr", strtotime($lastDate)));
+            //如果连续了
+            if (
+                $beginDate == $nextDate
+            ) {
+                //连续长度加1
+                $length++;
+                $ContinuousDateArr[] = $tmpDataItem;
+            } else {
+                $length_arr[$length]['length'] = $length;
+                $length_arr[$length]['dates'] = $ContinuousDateArr;
+                $length = 1;
+                $ContinuousDateArr = [$tmpDataItem];
+
+            }
+
+            //重置上次连续时间
+            $lastDate = $beginDate;
+            if(
+                $exceptArray[$lastDate]
+            ){
+                $lastDateRaw = $lastDate;
+                $lastDate = $exceptArray[$lastDate];
+            }
+            if(
+                $i==count($tmpData)
+            ){
+                $length_arr[$length]['length'] = $length;
+                $length_arr[$length]['dates'] = $ContinuousDateArr;
+            }
+            $i++;
+        }
+        krsort($length_arr);
+        return array_keys($length_arr)[0];
     }
 
     //根据身份证获取年龄
