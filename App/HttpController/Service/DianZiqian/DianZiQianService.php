@@ -398,7 +398,7 @@ class DianZiQianService extends ServiceBase
                 'phone' => $authDatum->getAttr('phone'),
                 'city' => $authDatum->getAttr('city'),
                 'regAddress' => $authDatum->getAttr('regAddress'),
-                'file' => 'dianziqian_jcsk_shouquanshu.pdf'
+                'file' => 'dianziqian_daxiang_shouquanshu.pdf'
             ];
             $id = $this->getAuthFile2Id($param);
             $res[$k]['id1'] = $id;
@@ -474,7 +474,7 @@ class DianZiQianService extends ServiceBase
         if ($entContractSignUrl['code'] != 200) return $entContractSignUrl;
         $personalTransactionCode = control::getUuid();
         //自动签署企业法人章
-        $personalContractSignUrl = $this->contractSignAuto($signerCodePersonal, $contractCode, '代表签字',$personalSealCode,$personalTransactionCode);
+        $personalContractSignUrl = $this->contractSignAuto($signerCodePersonal, $contractCode, '法人盖章处',$personalSealCode,$personalTransactionCode);
         if ($personalContractSignUrl['code'] != 200) return $personalContractSignUrl;
         $insertData = [
             'entName' => $postData['entName'],

@@ -251,9 +251,9 @@ Eof;
         $data = DianZiQianAuth::create()->where(' id='.$dianZiQian_id)->get();
         if($data->getAttr('entUrlResultCode') == 1){
             if($data->getAttr('personalUrlResultCode')==1){
-                return $data->getAttr('personalUrl');
+                return $data->getAttr('url');
             }elseif ($data->getAttr('personalUrlResultCode')==-1){
-                return $data->getAttr('entUrl');
+                return $data->getAttr('url');
             }
         }
         return '';
@@ -267,9 +267,9 @@ Eof;
         $data = DianZiQianAuth::create()->where(' id='.$dianZiQian_id)->get();
         if($data->getAttr('entUrlResultCode') == 1){
             if($data->getAttr('personalUrlResultCode')==1){
-                return $data->getAttr('personalUrl');
+                return $data->getAttr('url');
             }elseif ($data->getAttr('personalUrlResultCode')==-1){
-                return $data->getAttr('entUrl');
+                return $data->getAttr('url');
             }
         }
         return '';
