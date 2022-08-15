@@ -170,6 +170,13 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                 'updated_at' => time(),
             ]
         );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'authForCarInsurance data'=> $res['data'] 
+
+            ])
+        );
         return $this->writeJson(
             200,[ ] ,
             //CommonService::ClearHtml($res['body']),
@@ -240,7 +247,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                 ]
             );
         }
-        
+
         $companyRes = (new XinDongService())->getEsBasicInfoV3($res['ent_name']);
 
         //税务信息(今年)
