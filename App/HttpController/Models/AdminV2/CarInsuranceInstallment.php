@@ -290,28 +290,9 @@ class CarInsuranceInstallment extends ModelBase
     }
 
     static  function  checkIfIsBrsanchCompany($social_credit_code) {
-        $companyRes = CompanyBasic::findByCode($social_credit_code);
-        $companyRes = $companyRes->toArray();
-        $codeRes = CodeCa16::findByCode($companyRes['ENTTYPE']);
-        $codeRes = $codeRes->toArray();
-        if(strpos($codeRes['name'],'分公司') !== false){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'is_branch_company' => $codeRes['name'],
-                ])
-            );
-            return true;
-        }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'not_branch_company' => $codeRes['name'],
-            ])
-        );
-        return  false;
+        return  self::checkCompanyType($social_credit_code,"分公司");
     }
-    static  function  checkCompanyType($social_credit_code,$str="分公司") {
+    static  function  checkCompanyType($social_credit_code, $str="分公司") {
         $companyRes = CompanyBasic::findByCode($social_credit_code);
         $companyRes = $companyRes->toArray();
         $codeRes = CodeCa16::findByCode($companyRes['ENTTYPE']);
@@ -320,7 +301,9 @@ class CarInsuranceInstallment extends ModelBase
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'is_branch_company' => $codeRes['name'],
+                    'checkCompanyType' => $codeRes['name'],
+                    '$str' => $str,
+                    'matched' => true,
                 ])
             );
             return true;
@@ -328,7 +311,9 @@ class CarInsuranceInstallment extends ModelBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'not_branch_company' => $codeRes['name'],
+                'checkCompanyType' => $codeRes['name'],
+                '$str' => $str,
+                'matched' => false,
             ])
         );
         return  false;
@@ -560,7 +545,7 @@ class CarInsuranceInstallment extends ModelBase
 
 
 
-    近两年任意一年纳税总额不得为0 -- 财务三表
+
     ??? 无经营异常，近6个月无主营业务方向变更 -- 经营异常在h库
     ??? 关联企业/法人无重大负面信息 -- 关联企业可以用企查查接口
     申请人：企业法人，无占股要求 -- h库
@@ -613,8 +598,20 @@ class CarInsuranceInstallment extends ModelBase
             $DaiKuanResErrMsg[] = '公司成立不到2年以上';
         }
 
-        // 企业类型：个人独资企业、有限责任公司准入；普通合伙人禁入    XXXXX
-        $isBranchCompanyRes =  self::checkIfIsBrsanchCompany($carInsuranceData['social_credit_code']);
+        // 企业类型：个人独资企业、有限责任公司准入；普通合伙人禁入
+        $CompanyTypeRes1 =  self::checkCompanyType($carInsuranceData['social_credit_code'],'个人独资企业');
+        $CompanyTypeRes2 =  self::checkCompanyType($carInsuranceData['social_credit_code'],'有限责任公司');
+        if(
+            !$CompanyTypeRes1 &&
+            !$CompanyTypeRes2
+        ){
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '只有个人独资企业、有限责任公司才准入';
+        }
+
+
+
+
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
@@ -647,7 +644,7 @@ class CarInsuranceInstallment extends ModelBase
             $DaiKuanResErrMsg[] = '贷款年龄小于18或大于60';
         }
 
-        //  纳税满1年 -- h库和财务三表
+        //  纳税满1年 -- h库和财务三表 XXXXXXX
         $taxInfo = self::getQuarterTaxInfo($carInsuranceData['social_credit_code']);
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -689,6 +686,8 @@ class CarInsuranceInstallment extends ModelBase
             $DaiKuanRes = false;
             $DaiKuanResErrMsg[] = '上个月没有纳税';
         }
+
+        // 近两年任意一年纳税总额不得为0 -- 财务三表
 
 
         if(
@@ -891,6 +890,15 @@ class CarInsuranceInstallment extends ModelBase
 
         }
 
+        // 年度所得税信息
+        $QuarterTaxInfo;
+        $SuoDeShuiByYear = [];
+        foreach ($QuarterTaxInfo as $suoDeShuiItem){
+            $year = date('Y',strtotime($suoDeShuiItem['beginDate']));
+            $SuoDeShuiByYear[$year]['year'] = $year;
+            $SuoDeShuiByYear[$year]['currentAmount'] += $suoDeShuiItem['currentAmount'];
+        }
+
         //增值税
         $res = (new GuoPiaoService())->getVatReturn(
             $social_credit_code
@@ -982,6 +990,7 @@ class CarInsuranceInstallment extends ModelBase
 
         return [
             'suoDeShui' => $suoDeShui,
+            'suoDeShuiByYear' => $SuoDeShuiByYear,
             'zengZhiShui' => $zengZhiShuiResV2,
             'zengZhiShuiReverseOrder' => $zengZhiShuiResV3,
             'quarterBeganDay' =>$QuarterBegainRaw,
