@@ -891,9 +891,11 @@ class CarInsuranceInstallment extends ModelBase
         }
 
         // 年度所得税信息
-        $QuarterTaxInfo;
         $SuoDeShuiByYear = [];
-        foreach ($QuarterTaxInfo as $suoDeShuiItem){
+        foreach ($suoDeShui as $suoDeShuiItem){
+            if( $QuarterBegain  >= $suoDeShuiItem['beginDate'] ){
+                continue;
+            }
             $year = date('Y',strtotime($suoDeShuiItem['beginDate']));
             $SuoDeShuiByYear[$year]['year'] = $year;
             $SuoDeShuiByYear[$year]['currentAmount'] += $suoDeShuiItem['currentAmount'];
