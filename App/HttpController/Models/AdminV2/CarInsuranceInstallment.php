@@ -311,6 +311,28 @@ class CarInsuranceInstallment extends ModelBase
         );
         return  false;
     }
+    static  function  checkCompanyType($social_credit_code,$str="分公司") {
+        $companyRes = CompanyBasic::findByCode($social_credit_code);
+        $companyRes = $companyRes->toArray();
+        $codeRes = CodeCa16::findByCode($companyRes['ENTTYPE']);
+        $codeRes = $codeRes->toArray();
+        if(strpos($codeRes['name'],$str) !== false){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'is_branch_company' => $codeRes['name'],
+                ])
+            );
+            return true;
+        }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'not_branch_company' => $codeRes['name'],
+            ])
+        );
+        return  false;
+    }
 
     /**
     苏宁银行-微商贷
@@ -537,7 +559,7 @@ class CarInsuranceInstallment extends ModelBase
     金城银行-金企贷
 
 
-    企业类型：个人独资企业、有限责任公司准入；普通合伙人禁入 -- h库
+
     近两年任意一年纳税总额不得为0 -- 财务三表
     ??? 无经营异常，近6个月无主营业务方向变更 -- 经营异常在h库
     ??? 关联企业/法人无重大负面信息 -- 关联企业可以用企查查接口
@@ -591,6 +613,21 @@ class CarInsuranceInstallment extends ModelBase
             $DaiKuanResErrMsg[] = '公司成立不到2年以上';
         }
 
+        // 企业类型：个人独资企业、有限责任公司准入；普通合伙人禁入    XXXXX
+        $isBranchCompanyRes =  self::checkIfIsBrsanchCompany($carInsuranceData['social_credit_code']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$isBranchCompanyRes ' => $isBranchCompanyRes,
+                '$suNingWeiShangDai' => $suNingWeiShangDai
+            ])
+        );
+        if( $isBranchCompanyRes ){
+            $suNingWeiShangDai = false;
+            $suNingWeiShangDaiErrMsg[] = '是分公司';
+        }
+
+
 
         // 年龄：18-60周岁 -- 用户输入
         //身份证年龄
@@ -635,8 +672,8 @@ class CarInsuranceInstallment extends ModelBase
             $DaiKuanResErrMsg[] = '上个月没有纳税';
         }
 
+        $hasEndRes = false;
         for ($i=12;$i<=20;$i++){
-            //
             $newDate = date('Y-m-d',strtotime("-$i month",strtotime($oneMonthsAgo)));
             $newDateTaxRes = self::checkIfArrayHasValue(
                 $taxInfo['suoDeShui'],
@@ -644,10 +681,14 @@ class CarInsuranceInstallment extends ModelBase
                 $newDate
             );
             if($newDateTaxRes){
-
+                $hasEndRes = true;
             }
         }
-
+        //结束日期没有纳税的 不符合
+        if(!$hasEndRes){
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '上个月没有纳税';
+        }
 
 
         if(

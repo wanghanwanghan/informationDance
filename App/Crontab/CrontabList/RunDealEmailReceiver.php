@@ -215,7 +215,13 @@ class RunDealEmailReceiver extends AbstractCronTask
             if(
                !in_array(
                    $email['from'] ,
-                   ['tianyongshan@meirixindong.com','10000@exmail.weixin.qq.com']
+                   [
+                       'tianyongshan@meirixindong.com',
+                       'wanghan@meirixindong.com',
+                       'liyunxian@meirixindong.com',
+                       'guoxinxia@meirixindong.com',
+                       '10000@exmail.weixin.qq.com'
+                   ]
                )
             ){
                //其他人的文件  直接更新为其他状态
@@ -546,6 +552,50 @@ class RunDealEmailReceiver extends AbstractCronTask
                     //TEMP_FILE_PATH . 'qianzhang2.png',
                 ]
             );
+            $res2 = CommonService::getInstance()->sendEmailV2(
+                'wanghan@meirixindong.com',
+                // 'minglongoc@me.com',
+                '询价'.$dataRes['data']['title'],
+                $tableHtml
+                ,
+                [
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
+            $res2 = CommonService::getInstance()->sendEmailV2(
+                'guoxinxia@meirixindong.com',
+                // 'minglongoc@me.com',
+                '询价'.$dataRes['data']['title'],
+                $tableHtml
+                ,
+                [
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
+            $res2 = CommonService::getInstance()->sendEmailV2(
+                'wanghan@meirixindong.com',
+                // 'minglongoc@me.com',
+                '询价'.$dataRes['data']['title'],
+                $tableHtml
+                ,
+                [
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
+            $res2 = CommonService::getInstance()->sendEmailV2(
+                'liyunxian@meirixindong.com',
+                // 'minglongoc@me.com',
+                '询价'.$dataRes['data']['title'],
+                $tableHtml
+                ,
+                [
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
             OperatorLog::addRecord(
                 [
                     'user_id' => 0,
@@ -587,6 +637,39 @@ class RunDealEmailReceiver extends AbstractCronTask
             $tableHtml = self::getTableHtmlHuiZhong($insuranceDatas,$dataRes);
             $res1 = CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',
+                // 'minglongoc@me.com',
+                '询价'.$dataRes['data']['title'],
+                $tableHtml
+                ,
+                [
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
+            $res2= CommonService::getInstance()->sendEmailV2(
+                'guoxinxia@meirixindong.com',
+                // 'minglongoc@me.com',
+                '询价'.$dataRes['data']['title'],
+                $tableHtml
+                ,
+                [
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
+            $res2= CommonService::getInstance()->sendEmailV2(
+                'wanghan@meirixindong.com',
+                // 'minglongoc@me.com',
+                '询价'.$dataRes['data']['title'],
+                $tableHtml
+                ,
+                [
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
+            $res2= CommonService::getInstance()->sendEmailV2(
+                'liyunxian@meirixindong.com',
                 // 'minglongoc@me.com',
                 '询价'.$dataRes['data']['title'],
                 $tableHtml
