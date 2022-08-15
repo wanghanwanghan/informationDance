@@ -44,6 +44,7 @@ class InsuranceDataHuiZhong extends ModelBase
         try {
            $res =  InsuranceDataHuiZhong::create()->data([
                 'product_id' => $requestData['product_id']?:0,
+                'post_params' => $requestData['post_params']?:'',
                 'ent_name' => $requestData['ent_name']?:'',
                 'business_license_file' => $requestData['business_license_file']?:'',
                 'id_card_front_file' => $requestData['id_card_front_file']?:'',

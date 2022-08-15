@@ -182,11 +182,11 @@ class OnlineGoodsUser extends ModelBase
     }
 
     static  function  addRecordV2($info){
-
+        $oldRes = self::findByPhone($info['phone']);
         if(
-            self::findByPhone($info['phone'])
+            $oldRes
         ){
-            return  true;
+            return  $oldRes->getAttr('id');
         }
 
         return OnlineGoodsUser::addRecord(

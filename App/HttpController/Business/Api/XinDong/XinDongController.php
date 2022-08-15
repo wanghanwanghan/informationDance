@@ -26,6 +26,7 @@ use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\MRXD\InsuranceDataHuiZhong;
+use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
@@ -3614,6 +3615,31 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('online_goods_user')
+        ){
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                OnlineGoodsUser::findBySql(""),
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
+            $this->getRequestData('insurance_datas')
+        ){
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                InsuranceData::findBySql(" ORDER BY id  desc  limit 5"),
+                '成功',
+                true,
+                []
+            );
+        }
+            if(
             $this->getRequestData('getFinanceIncomeStatement')
         ) {
             $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceIncomeStatement(
@@ -3723,13 +3749,13 @@ eof;
             );
         }
         if(
-            $this->getRequestData('runMatch')
+            $this->getRequestData('runMatchSuNing')
         ){
 
             return $this->writeJson(
                 200,[] ,
                 //CommonService::ClearHtml($res['body']),
-                CarInsuranceInstallment::runMatch( $this->getRequestData('runMatch')),
+                CarInsuranceInstallment::runMatchSuNing( $this->getRequestData('runMatchSuNing')),
                 '成功',
                 true,
                 []

@@ -102,6 +102,24 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
             return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
         }
 
+
+        //设置验证码
+        $phone = $requestData['legal_person_phone'];
+        $code = $requestData['code'];
+        $redisCode = OnlineGoodsUser::getRandomDigit($phone,'huizhong_sms_code_');
+        if(
+            $redisCode!=$code
+        ){
+            return $this->writeJson(203,[ ] , [], '验证码错误', true, []);
+        }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$code' => $code,
+                '$redisCode' => $redisCode,
+            ])
+        );
+
         $res = InsuranceDataHuiZhong::addRecordV2(
             [
                 'post_params' => json_encode(
@@ -115,7 +133,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
                 'public_account' => $requestData['public_account'], //
                 'legal_person_phone' => $requestData['legal_person_phone'], //
                 'business_license' => $requestData['business_license'], //
-                'user_id' => $this->loginUserinfo['id'],
+                'user_id' => $this->loginUserinfo['id']?:1,
                 'status' =>  1,
             ]
         );
@@ -210,7 +228,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 'setRandomDigit' => [
-                    'getRandomDigit'=>OnlineGoodsUser::getRandomDigit($phone),
+                    'getRandomDigit'=>OnlineGoodsUser::getRandomDigit($phone,'huizhong_sms_code_'),
                 ],
             ])
         );
@@ -287,7 +305,11 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
 //        }
         $res =  InsuranceDataHuiZhong::gteLists(
             [
-                ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
+                [
+                    'field'=>'user_id',
+                    'value'=>$this->loginUserinfo['id']?:1,
+                    'operate'=>'='
+                ]
             ],$page
         );
 

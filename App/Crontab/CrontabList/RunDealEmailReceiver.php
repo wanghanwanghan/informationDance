@@ -169,22 +169,24 @@ class RunDealEmailReceiver extends AbstractCronTask
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    '$attachs' =>  $attachs,
-                    'subject'=>$emailDataItem['mailHeader']['subject']
+//                    '$attachs' =>  $attachs,
+                    'mailHeader'=>$emailDataItem['mailHeader'] ,
+//                    'subject'=>$emailDataItem['mailHeader']['subject']
                 ])
             );
             MailReceipt::addRecordV2(
                 [
+                    'user_id' => 0,
                     'email_id' => $emailDataItem['Uid'],
                     'to' => $emailAddress,
                     'to_other' => $emailDataItem['mailHeader']['toOther']?:'',
                     'from' => $emailDataItem['mailHeader']['from']?:'',
-                    'subject' => $emailDataItem['mailHeader']['subject']?:'',
+                    'subject' => $emailDataItem['mailHeader']['subject']?stripslashes($emailDataItem['mailHeader']['subject']):'',
                     'body' => $emailDataItem['body']?:'',
                     'status' => '1',
                     'type' => '1',
                     'reamrk' => '',
-                    'raw_return' => json_encode($emailDataItem),
+                    'raw_return' => stripslashes(json_encode($emailDataItem)),
                     'date' => date('Y-m-d H:i:s',strtotime($emailDataItem['mailHeader']['date'])) ,
                 ]
             );
@@ -207,13 +209,19 @@ class RunDealEmailReceiver extends AbstractCronTask
         foreach ($emails as $email){
 
             CommonService::getInstance()->log4PHP(
-                "needs to send text msg now"
+                "needs to send text msg now 11".$email['from']
             );
 
             if(
                !in_array(
-                   $email['form'] ,
-                   ['tianyongshan@meirixindong.com','10000@exmail.weixin.qq.com']
+                   $email['from'] ,
+                   [
+                       'tianyongshan@meirixindong.com',
+                       'wanghan@meirixindong.com',
+                       'liyunxian@meirixindong.com',
+                       'guoxinxia@meirixindong.com',
+                       '10000@exmail.weixin.qq.com'
+                   ]
                )
             ){
                //其他人的文件  直接更新为其他状态
@@ -224,14 +232,28 @@ class RunDealEmailReceiver extends AbstractCronTask
             }
 
             //解析保险数据id
-            preg_match('/信动数据id01:<<<(.*?)>>>/',$email['body'],$match);
+            //preg_match('/信动数据id01:<<<(.*?)>>>/',$email['body'],$match);
+            preg_match('/信动数据id01:&lt;&lt;&lt;(.*?)&gt;&gt;&gt;/',$email['body'],$match);
             $huizhongId = $match[1];
-            preg_match('/信动数据id:<<<(.*?)>>>/',$email['body'],$match);
+            CommonService::getInstance()->log4PHP(
+                '$huizhongId'.$huizhongId
+            );
+
+            if($huizhongId){
+                MailReceipt::updateById($email['id'],[
+                    'insurance_hui_zhong_id'=>intval($huizhongId),
+                ]);
+            }
+            preg_match('/信动数据id:&lt;&lt;&lt;(.*?)&gt;&gt;&gt;/',$email['body'],$match);
             $baoyaId = $match[1];
-            MailReceipt::updateById($email['id'],[
-                'insurance_id'=>intval($baoyaId),
-                'insurance_hui_zhong_id'=>intval($huizhongId),
-            ]);
+            CommonService::getInstance()->log4PHP(
+                '$baoyaId'.$baoyaId
+            );
+            if($baoyaId){
+                MailReceipt::updateById($email['id'],[
+                    'insurance_id'=>intval($baoyaId),
+                ]);
+            } 
 
             if($baoyaId){
                 $InsuranceData = InsuranceData::findById($baoyaId);
@@ -239,22 +261,30 @@ class RunDealEmailReceiver extends AbstractCronTask
             if($huizhongId){
                 $InsuranceData = InsuranceDataHuiZhong::findById($huizhongId);
             }
-
+            CommonService::getInstance()->log4PHP(
+                '$InsuranceData'.$InsuranceData
+            );
+            if(empty($InsuranceData)){
+                MailReceipt::updateById($email['id'],['status' => MailReceipt::$status_failed]);
+                continue;
+            }
             $userData = OnlineGoodsUser::findById($InsuranceData->getAttr('user_id'));
-
+            $userData = $userData->toArray();
             //需要发短信了
             $res = SmsService::getInstance()->sendByTemplete(
-                13269706193, 'SMS_244025473',[
-                'name' => '有询价的了',
+                $userData['phone'], 'SMS_244025473',[
+                'name' => '有询价的结果了',
                 'money' => '多钱'
             ]);
-
+            CommonService::getInstance()->log4PHP(
+                'sendByTemplete'.$userData['phone']
+            );
             OperatorLog::addRecord(
                 [
-                    'user_id' => $userInfo['id'],
-                    'msg' =>   '用户余额：'.$balance." 配置的余额下限：".$Config['sms_notice_value']." 上次发送时间：".$chargeConfigs['send_sms_notice_date']." ",
+                    'user_id' => $userData['id'],
+                    'msg' =>   " 有询价的了",
                     'details' =>json_encode( XinDongService::trace()),
-                    'type_cname' => '新后台导出财务数据-发送短信提醒余额不足',
+                    'type_cname' => '有询价的了',
                 ]
             );
             MailReceipt::updateById($email['id'],['status' => MailReceipt::$status_succeed]);
@@ -522,6 +552,50 @@ class RunDealEmailReceiver extends AbstractCronTask
                     //TEMP_FILE_PATH . 'qianzhang2.png',
                 ]
             );
+            $res2 = CommonService::getInstance()->sendEmailV2(
+                'wanghan@meirixindong.com',
+                // 'minglongoc@me.com',
+                '询价'.$dataRes['data']['title'],
+                $tableHtml
+                ,
+                [
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
+            $res2 = CommonService::getInstance()->sendEmailV2(
+                'guoxinxia@meirixindong.com',
+                // 'minglongoc@me.com',
+                '询价'.$dataRes['data']['title'],
+                $tableHtml
+                ,
+                [
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
+            $res2 = CommonService::getInstance()->sendEmailV2(
+                'wanghan@meirixindong.com',
+                // 'minglongoc@me.com',
+                '询价'.$dataRes['data']['title'],
+                $tableHtml
+                ,
+                [
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
+            $res2 = CommonService::getInstance()->sendEmailV2(
+                'liyunxian@meirixindong.com',
+                // 'minglongoc@me.com',
+                '询价'.$dataRes['data']['title'],
+                $tableHtml
+                ,
+                [
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
             OperatorLog::addRecord(
                 [
                     'user_id' => 0,
@@ -563,6 +637,39 @@ class RunDealEmailReceiver extends AbstractCronTask
             $tableHtml = self::getTableHtmlHuiZhong($insuranceDatas,$dataRes);
             $res1 = CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',
+                // 'minglongoc@me.com',
+                '询价'.$dataRes['data']['title'],
+                $tableHtml
+                ,
+                [
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
+            $res2= CommonService::getInstance()->sendEmailV2(
+                'guoxinxia@meirixindong.com',
+                // 'minglongoc@me.com',
+                '询价'.$dataRes['data']['title'],
+                $tableHtml
+                ,
+                [
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
+            $res2= CommonService::getInstance()->sendEmailV2(
+                'wanghan@meirixindong.com',
+                // 'minglongoc@me.com',
+                '询价'.$dataRes['data']['title'],
+                $tableHtml
+                ,
+                [
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
+            $res2= CommonService::getInstance()->sendEmailV2(
+                'liyunxian@meirixindong.com',
                 // 'minglongoc@me.com',
                 '询价'.$dataRes['data']['title'],
                 $tableHtml

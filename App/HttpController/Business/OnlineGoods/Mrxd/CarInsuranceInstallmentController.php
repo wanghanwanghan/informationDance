@@ -311,11 +311,12 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         );
         $supplier = [];
         foreach ($allInvoiceDatas as $InvoiceData){
+            $supplier[$InvoiceData['salesTaxName']]['entName'] = $InvoiceData['salesTaxName'] ;
             $supplier[$InvoiceData['salesTaxName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
         }
         //按时间倒叙排列
         usort($supplier, function($a, $b) {
-            return new \DateTime($b['totalAmount']) <=> new \DateTime($a['totalAmount']);
+            return $b['totalAmount'] <=> $a['totalAmount'];
         });
         $newSupplier = $sliced_array = array_slice($supplier, 0, 10);
 
@@ -330,11 +331,12 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         );
         $customers = [];
         foreach ($allInvoiceDatas as $InvoiceData){
-            $customers[$InvoiceData['salesTaxName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
+            $customers[$InvoiceData['purchaserName']]['entName'] = $InvoiceData['purchaserName'] ;
+            $customers[$InvoiceData['purchaserName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
         }
         //按时间倒叙排列
         usort($customers, function($a, $b) {
-            return new \DateTime($b['totalAmount']) <=> new \DateTime($a['totalAmount']);
+            return $b['totalAmount'] <=> $a['totalAmount'];
         });
         $newCustomers = $sliced_array = array_slice($customers, 0, 10);
         return $this->writeJson(
@@ -346,7 +348,15 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                 'totalPage' => ceil($res['total']/$size) ,
             ],
             [
-               'companyInfo' => $companyRes,
+               'companyInfo' => [
+                   'ENTNAME' => $companyRes['ENTNAME'],
+                   'NAME' => $companyRes['NAME'],
+                   'ESDATE' => $companyRes['ESDATE'],
+                   'REGCAP' => $companyRes['REGCAP'],
+                   'UNISCID' => $companyRes['UNISCID'],
+                   'DOM' => $companyRes['DOM'],
+                   'OPSCOPE' => $companyRes['OPSCOPE'],
+               ],
                'essentialFinanceInfo' => $mapedEssentialRes,
                'mapedByDateNumsRes' => $mapedByDateNumsRes,
                'mapedByDateAmountRes' => $mapedByDateAmountRes,

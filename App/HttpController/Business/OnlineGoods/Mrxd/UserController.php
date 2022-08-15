@@ -186,10 +186,22 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'token' => '',
             ]
         );
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'OnlineGoodsUser $id' => $id,
+                'OnlineGoodsUser $phone' => $phone,
+            ])
+        );
         $newToken = UserService::getInstance()->createAccessToken(
             $phone,
             $phone
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'OnlineGoodsUser $newToken' => $newToken
+            ])
         );
         OnlineGoodsUser::updateById(
             $id,
