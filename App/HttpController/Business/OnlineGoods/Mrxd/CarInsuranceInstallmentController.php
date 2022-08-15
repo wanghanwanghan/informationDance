@@ -209,7 +209,38 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
 //        }
 
         $res =  CarInsuranceInstallment::findOneByUserId($this->loginUserinfo['id']);
-        $res = $res->toArray();
+        if($res){
+            $res = $res->toArray();
+        }
+        else{
+            $res = [];
+        }
+        if(
+            empty($res)
+        ){
+            return $this->writeJson(
+                200,
+                [
+                    'page' => $page,
+                    'pageSize' => $size,
+                    'total' => 0,
+                    'totalPage' => 1 ,
+                ],
+                [
+                    'companyInfo' => [
+
+                    ],
+                    'essentialFinanceInfo' => [],
+                    'mapedByDateNumsRes' => [],
+                    'mapedByDateAmountRes' => [],
+                    'topSupplier' => [],
+                    'topCustomer' => [],
+                    'matchedRes' => [],
+                    //'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
+                ]
+            );
+        }
+        
         $companyRes = (new XinDongService())->getEsBasicInfoV3($res['ent_name']);
 
         //税务信息(今年)
