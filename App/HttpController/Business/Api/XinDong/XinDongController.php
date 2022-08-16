@@ -3618,6 +3618,11 @@ eof;
         if(
             $this->getRequestData('runMatchXXX')
         ){
+            CarInsuranceInstallment::runMatchSuNing();
+        }
+        if(
+            $this->getRequestData('runMatchXXX')
+        ){
             return $this->writeJson(
                 200,[] ,
                 //CommonService::ClearHtml($res['body']),
