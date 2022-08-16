@@ -94,7 +94,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         $res = CompanyBasic::findByName($requestData['ent_name']);
         $res = $res?$res->toArray():[];
 
-        return $this->writeJson(203, [], [], $res['UNISCID'], true, []);
+        return $this->writeJson(203, [],  $res['UNISCID'],[], true, []);
     }
 
     function authForCarInsurance(): bool
