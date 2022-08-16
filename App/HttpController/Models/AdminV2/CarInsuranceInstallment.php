@@ -414,10 +414,6 @@ class CarInsuranceInstallment extends ModelBase
             $suNingWeiShangDaiErrMsg[] = '在网时长小于一年';
         };
 
-        return [
-            $suNingWeiShangDaiErrMsg,
-            $suNingWeiShangDai
-        ];
 
         // 苏宁银行-微商贷：   正常纳税满18个月 -- 财务三表
         $taxInfo = self::getQuarterTaxInfo($carInsuranceData['social_credit_code']);
@@ -460,6 +456,11 @@ class CarInsuranceInstallment extends ModelBase
             $suNingWeiShangDai = false;
             $suNingWeiShangDaiErrMsg[] = '纳税等级不属于A/B/M';
         };
+
+        return  [
+            $suNingWeiShangDai ,
+            $suNingWeiShangDaiErrMsg
+        ];
 
         // 企业当前无欠税 -- 国票接口
         if(
