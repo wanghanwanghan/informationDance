@@ -447,6 +447,10 @@ class CarInsuranceInstallment extends ModelBase
                 '$taxBasicInfo ' => $taxBasicInfo
             ])
         );
+        return  [
+            $taxBasicInfo ,
+            $taxBasicInfo['data']['essential'][0]['creditLevel']
+        ];
         //苏宁银行-微商贷：纳税等级A/B//M（个体工商户可准入） -- 国票接口
         if(
             !in_array($taxBasicInfo['data']['essential'][0]['creditLevel'],[
