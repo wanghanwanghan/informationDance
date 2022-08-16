@@ -514,14 +514,8 @@ class CarInsuranceInstallment extends ModelBase
         $quarterDebt = (new GuoPiaoService())
                 ->setCheckRespFlag(true)
                 ->getFinanceBalanceSheet($carInsuranceData['social_credit_code']);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '$quarterDebt ' => $quarterDebt
-            ])
-        );
-        return $quarterDebt;
-        if($quarterDebt['result']<3){
+
+        if(count($quarterDebt['result']) < 3){
             $suNingWeiShangDai = false;
             $suNingWeiShangDaiErrMsg[] = '季度资产负债表不到三期';
         };
@@ -530,7 +524,7 @@ class CarInsuranceInstallment extends ModelBase
         $quarterProfit=  (new GuoPiaoService())
                             ->setCheckRespFlag(true)
                             ->getFinanceIncomeStatement($carInsuranceData['social_credit_code']);
-        if($quarterProfit['result']<3){
+        if(count($quarterProfit['result']) < 3){
             $suNingWeiShangDai = false;
             $suNingWeiShangDaiErrMsg[] = '季度利润表不到三期';
         };
