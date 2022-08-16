@@ -225,8 +225,8 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
             CarInsuranceInstallmentMatchedRes::addRecordV2(
                 [
                     'user_id' => $rawDataItem['user_id'],
-                    'product_id' => CarInsuranceInstallmentMatchedRes::$pid_jin_qi_dai,
-                    'name' => CarInsuranceInstallmentMatchedRes::$pid_jin_qi_dai_cname,
+                    'product_id' => CarInsuranceInstallmentMatchedRes::$pid_pu_hui_dai,
+                    'name' => CarInsuranceInstallmentMatchedRes::$pid_pu_hui_dai_cname,
                     'car_insurance_id' => $rawDataItem['id'],
                     'status' => $status,
                     'msg' => empty($res1['msg'])?'':json_encode($res1['msg']),
