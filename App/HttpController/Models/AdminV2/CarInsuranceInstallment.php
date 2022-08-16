@@ -277,7 +277,7 @@ class CarInsuranceInstallment extends ModelBase
         };
 
         $d1 = new \DateTime(date('Y-m-d'));
-        $d2 = new \DateTime('2008-03-09');
+        $d2 = new \DateTime($companyRes['ESDATE']);
 
         $diff = $d2->diff($d1);
         CommonService::getInstance()->log4PHP(
