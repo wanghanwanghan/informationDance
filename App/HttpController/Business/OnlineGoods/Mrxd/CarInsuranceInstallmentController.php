@@ -275,8 +275,32 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                 ]
             );
         }
+        $companyBasic = CompanyBasic::findByCode($res['social_credit_code']);
+        if(empty($companyBasic)){
+            return $this->writeJson(
+                200,
+                [
+                    'page' => $page,
+                    'pageSize' => $size,
+                    'total' => 0,
+                    'totalPage' => 1 ,
+                ],
+                [
+                    'companyInfo' => [
 
-        $companyRes = (new XinDongService())->getEsBasicInfoV3($res['ent_name']);
+                    ],
+                    'essentialFinanceInfo' => [],
+                    'mapedByDateNumsRes' => [],
+                    'mapedByDateAmountRes' => [],
+                    'topSupplier' => [],
+                    'topCustomer' => [],
+                    'matchedRes' => [],
+                    //'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
+                ]
+            );
+        }
+        $companyBasic = $companyBasic->toArray();
+        $companyRes = (new XinDongService())->getEsBasicInfoV2($companyBasic['companyid']);
 
         //税务信息(今年)
         $essentialRes = (new GuoPiaoService())->getEssential($res['social_credit_code']);
