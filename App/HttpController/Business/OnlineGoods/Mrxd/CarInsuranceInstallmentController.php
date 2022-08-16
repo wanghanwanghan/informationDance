@@ -415,7 +415,10 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                'car_insurance_id'=>$res['id']
             ]
         );
-
+        foreach ($matchedRes as &$matchedResItem){
+            $matchedResItem['status_cname'] =  CarInsuranceInstallmentMatchedRes::getStatusMap()[$matchedResItem['status']];
+            $matchedResItem['msg_arr'] =  $matchedResItem['msg']? json_decode($matchedResItem['msg'],true):[];
+        }
         return $this->writeJson(
             200,
             [

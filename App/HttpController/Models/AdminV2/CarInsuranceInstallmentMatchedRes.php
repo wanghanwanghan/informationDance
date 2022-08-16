@@ -38,7 +38,13 @@ class CarInsuranceInstallmentMatchedRes extends ModelBase
     static $pid_pu_hui_dai  = 3;
     static $pid_pu_hui_dai_cname  = '浦慧贷'  ;
 
-    //
+     static function  getStatusMap(){
+         return [
+             self::$status_init=>self::$status_init_cname,
+             self::$status_matched_succeed=>self::$status_matched_succeed_cname,
+             self::$status_matched_failed=>self::$status_matched_failed_cname,
+         ];
+     }
 
     static  function  addRecordV2($info){
 
@@ -68,6 +74,7 @@ class CarInsuranceInstallmentMatchedRes extends ModelBase
            $res =  CarInsuranceInstallmentMatchedRes::create()->data([
                 'user_id' => $requestData['user_id'],
                 'product_id' => $requestData['product_id']?:0,
+                'msg' => $requestData['msg'],
                 'name' => $requestData['name'],
                'car_insurance_id' => $requestData['car_insurance_id'],
                 'status' => $requestData['status']?:1,

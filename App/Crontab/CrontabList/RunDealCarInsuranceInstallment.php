@@ -180,49 +180,60 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
         foreach ($rawDatas as $rawDataItem){
               //微商贷
               $res1 =  CarInsuranceInstallment::runMatchSuNing($rawDataItem['id']);
+              $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
               if( $res1['res']){
-                  CarInsuranceInstallmentMatchedRes::addRecordV2(
-                      [
-                          'user_id' => $rawDataItem['user_id'],
-                          'product_id' => CarInsuranceInstallmentMatchedRes::$pid_wei_shang_dai,
-                          'name' => CarInsuranceInstallmentMatchedRes::$pid_wei_shang_dai_cname,
-                          'car_insurance_id' => $rawDataItem['id'],
-                          'status' => 1,
-                          'created_at' => time(),
-                          'updated_at' => time(),
-                      ]
-                  );
+                  $status = CarInsuranceInstallmentMatchedRes::$status_matched_succeed;
               }
+            CarInsuranceInstallmentMatchedRes::addRecordV2(
+                [
+                    'user_id' => $rawDataItem['user_id'],
+                    'product_id' => CarInsuranceInstallmentMatchedRes::$pid_wei_shang_dai,
+                    'name' => CarInsuranceInstallmentMatchedRes::$pid_wei_shang_dai_cname,
+                    'car_insurance_id' => $rawDataItem['id'],
+                    'status' => $status,
+                    'msg' => empty($res1['msg'])?json_encode($res1['msg']):'',
+                    'created_at' => time(),
+                    'updated_at' => time(),
+                ]
+            );
+
               //金企贷
               $res2 =  CarInsuranceInstallment::runMatchJinCheng($rawDataItem['id']);
-            if($res2['res']){
-                CarInsuranceInstallmentMatchedRes::addRecordV2(
-                    [
-                        'user_id' => $rawDataItem['user_id'],
-                        'product_id' => CarInsuranceInstallmentMatchedRes::$pid_jin_qi_dai,
-                        'name' => CarInsuranceInstallmentMatchedRes::$pid_jin_qi_dai_cname,
-                        'car_insurance_id' => $rawDataItem['id'],
-                        'status' => 1,
-                        'created_at' => time(),
-                        'updated_at' => time(),
-                    ]
-                );
-            }
+                $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
+                if( $res2['res']){
+                    $status = CarInsuranceInstallmentMatchedRes::$status_matched_succeed;
+                }
+            CarInsuranceInstallmentMatchedRes::addRecordV2(
+                [
+                    'user_id' => $rawDataItem['user_id'],
+                    'product_id' => CarInsuranceInstallmentMatchedRes::$pid_jin_qi_dai,
+                    'name' => CarInsuranceInstallmentMatchedRes::$pid_jin_qi_dai_cname,
+                    'car_insurance_id' => $rawDataItem['id'],
+                    'status' => $status,
+                    'msg' => empty($res1['msg'])?json_encode($res1['msg']):'',
+                    'created_at' => time(),
+                    'updated_at' => time(),
+                ]
+            );
+
               //浦慧贷
               $res3 =  CarInsuranceInstallment::runMatchPuFa($rawDataItem['id']);
-            if($res3['res'] ){
-                CarInsuranceInstallmentMatchedRes::addRecordV2(
-                    [
-                        'user_id' => $rawDataItem['user_id'],
-                        'product_id' => CarInsuranceInstallmentMatchedRes::$pid_jin_qi_dai,
-                        'name' => CarInsuranceInstallmentMatchedRes::$pid_jin_qi_dai_cname,
-                        'car_insurance_id' => $rawDataItem['id'],
-                        'status' => 1,
-                        'created_at' => time(),
-                        'updated_at' => time(),
-                    ]
-                );
-            }
+                $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
+                if( $res3['res']){
+                    $status = CarInsuranceInstallmentMatchedRes::$status_matched_succeed;
+                }
+            CarInsuranceInstallmentMatchedRes::addRecordV2(
+                [
+                    'user_id' => $rawDataItem['user_id'],
+                    'product_id' => CarInsuranceInstallmentMatchedRes::$pid_jin_qi_dai,
+                    'name' => CarInsuranceInstallmentMatchedRes::$pid_jin_qi_dai_cname,
+                    'car_insurance_id' => $rawDataItem['id'],
+                    'status' => $status,
+                    'msg' => empty($res1['msg'])?json_encode($res1['msg']):'',
+                    'created_at' => time(),
+                    'updated_at' => time(),
+                ]
+            );
 
             if(
                 $res1['res'] ||
