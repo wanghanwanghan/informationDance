@@ -454,9 +454,17 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                'car_insurance_id'=>$res['id']
             ]
         );
+        $mathedResData = [];
+        $unmathedResData = [];
         foreach ($matchedRes as &$matchedResItem){
             $matchedResItem['status_cname'] =  CarInsuranceInstallmentMatchedRes::getStatusMap()[$matchedResItem['status']];
             $matchedResItem['msg_arr'] =  $matchedResItem['msg']? json_decode($matchedResItem['msg'],true):[];
+            if($matchedResItem['status']== CarInsuranceInstallmentMatchedRes::$status_matched_succeed){
+                $mathedResData[] =  $matchedResItem;
+            }
+            if($matchedResItem['status']== CarInsuranceInstallmentMatchedRes::$status_matched_failed){
+                $unmathedResData[] =  $matchedResItem;
+            }
         }
         return $this->writeJson(
             200,
@@ -481,7 +489,8 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                'mapedByDateAmountRes' => $mapedByDateAmountRes,
                'topSupplier' => $newSupplier,
                'topCustomer' => $newCustomers,
-               'matchedRes' => $matchedRes,
+               'matchedRes' => $mathedResData,
+               'unmatchedRes' => $unmathedResData,
                //'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
             ]
         );
