@@ -349,7 +349,10 @@ class CarInsuranceInstallment extends ModelBase
 
         $carInsuranceData = CarInsuranceInstallment::findById($carInsuranceDataId);
         $carInsuranceData = $carInsuranceData->toArray();
-
+        $companyRes = CompanyBasic::findByCode($carInsuranceData['social_credit_code']);
+        if(empty($companyRes)){
+            return  [];
+        }
 
         //企业成立年限
         $EstablishRes = self::getEstablishmentYear($carInsuranceData['social_credit_code']);
@@ -554,13 +557,11 @@ class CarInsuranceInstallment extends ModelBase
 
 
      */
-    static  function  runMatchPuFa($carInsuranceDataId){
-        $oneMonthsAgo = date("Y-m-01",strtotime("-1 month"));
-        $twoMonthsAgo = date("Y-m-01",strtotime("-2 month"));
-        $threeMonthsAgo = date("Y-m-01",strtotime("-3 month"));
 
-        $suNingWeiShangDai = true;
-        $suNingWeiShangDaiErrMsg = [];
+    static  function  runMatchPuFa($carInsuranceDataId){
+
+        $DaiKuanRes = true;
+        $DaiKuanResErrMsg = [];
 
         $carInsuranceData = CarInsuranceInstallment::findById($carInsuranceDataId);
         $carInsuranceData = $carInsuranceData->toArray();
@@ -576,22 +577,22 @@ class CarInsuranceInstallment extends ModelBase
         if(
             $companyRes['NAME'] != $carInsuranceData['legal_person']
         ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '申请人不是法人';
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '申请人不是法人';
         }
         // 申请人：企业法定代表人，持股5%以上 -- h库
         $companyInv = CompanyInv::findByCompanyIdAndInv($companyRes['id'],$carInsuranceData['legal_person']);
         if(empty($companyInv)){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '申请人持股不到5%';
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '申请人持股不到5%';
         }
 
         if($companyInv){
             $companyInvData = $companyInv->toArray();
         }
         if($companyInvData['CONPROP']<5){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '申请人持股不到5%';
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '申请人持股不到5%';
         }
 
         // 企业法定代表人
@@ -604,15 +605,15 @@ class CarInsuranceInstallment extends ModelBase
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 '$legal_person_age ' => $legal_person_age,
-                '$suNingWeiShangDai' => $suNingWeiShangDai
+                '$DaiKuanRes' => $DaiKuanRes
             ])
         );
         if(
             $legal_person_age <20 ||
             $legal_person_age >65
         ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '贷款年龄小于22或大于59';
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '贷款年龄小于22或大于59';
         }
 
         //实际经营时长不少于1年。 -- 发票
@@ -686,24 +687,24 @@ class CarInsuranceInstallment extends ModelBase
         }
 
         if(!$oneYearAgoRes){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '实际经营时长少于1年';
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '实际经营时长少于1年';
         }
 
         //近1年开票10月及以上 -- 发票
         if(
             count($thisYearAmout_xiao_by_month) < 10
         ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '近1年开票不到10个月';
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '近1年开票不到10个月';
         }
         //年开票金额100万以上，近1年开票10月及以上 -- 发票
         if(
             $lastYearAmout_xiao < 1000000 &&
             $thisYearAmout_xiao < 1000000
         ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '年开票金额不到100万';
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '年开票金额不到100万';
         }
 
         // 连续未开票天数≤45天（2、3、4月除外） -- 发票
@@ -712,7 +713,7 @@ class CarInsuranceInstallment extends ModelBase
         while ($i<=$lastMonth){
             $i = date('Y-m-d',strtotime('+1 day',strtotime($i)));
             if(
-               in_array($i,$ValidDates_xiao)
+                in_array($i,$ValidDates_xiao)
             ){
                 continue ;
             }
@@ -738,14 +739,14 @@ class CarInsuranceInstallment extends ModelBase
         );
 
         if($length>=45){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '连续未开票天数大于45天';
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '连续未开票天数大于45天';
         }
         if(
             count($last12MonthRes) < 35
         ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '近12个月累计开票张数小于35 ';
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '近12个月累计开票张数小于35 ';
         }
 
         //企业税务基本信息查询
@@ -758,7 +759,7 @@ class CarInsuranceInstallment extends ModelBase
         );
 
         if(
-            $suNingWeiShangDai
+            $DaiKuanRes
         ){
             return [
                 'res'=>true,
@@ -767,7 +768,7 @@ class CarInsuranceInstallment extends ModelBase
         else{
             return [
                 'res'=>false,
-                'msg'=>$suNingWeiShangDaiErrMsg,
+                'msg'=>$DaiKuanResErrMsg,
             ];
         }
     }

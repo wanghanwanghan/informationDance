@@ -3781,6 +3781,19 @@ eof;
             );
         }
         if(
+            $this->getRequestData('runMatchPuFa')
+        ){
+
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                CarInsuranceInstallment::runMatchPuFa( $this->getRequestData('runMatchPuFa')),
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
             $this->getRequestData('getIncometaxMonthlyDeclaration')
         ){
             $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
