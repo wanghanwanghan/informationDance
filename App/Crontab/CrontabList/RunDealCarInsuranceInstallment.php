@@ -179,7 +179,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
         );
         foreach ($rawDatas as $rawDataItem){
               //微商贷
-              $res1 =  CarInsuranceInstallment::runMatchSuNing($rawDataItem['id']);
+              $res1 =  CarInsuranceInstallment::runMatchSuNing(intval($rawDataItem['id']));
               $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
               if( $res1['res']){
                   $status = CarInsuranceInstallmentMatchedRes::$status_matched_succeed;
