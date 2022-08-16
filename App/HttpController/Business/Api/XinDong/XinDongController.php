@@ -3615,11 +3615,7 @@ eof;
 
     function testExport()
     {
-        if(
-            $this->getRequestData('runMatchXXX')
-        ){
-            CarInsuranceInstallment::runMatchSuNing();
-        }
+        
         if(
             $this->getRequestData('runMatchXXX')
         ){
