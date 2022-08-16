@@ -257,7 +257,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                 );
             }
 
-
+            //匹配结果
             $companyBasic = CompanyBasic::findByCode($rawDataItem['social_credit_code']);
             if(empty($companyBasic)){
                 CommonService::getInstance()->log4PHP(

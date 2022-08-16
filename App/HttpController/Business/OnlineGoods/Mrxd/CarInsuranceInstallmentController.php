@@ -251,7 +251,21 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         else{
             $res = [];
         }
+        $returnArr =   json_decode($res['math_res'],true);
+        if(empty($returnArr)){
+            $returnArr = [
+                'companyInfo' => [
 
+                ],
+                'essentialFinanceInfo' => [],
+                'mapedByDateNumsRes' => [],
+                'mapedByDateAmountRes' => [],
+                'topSupplier' => [],
+                'topCustomer' => [],
+                'matchedRes' => [],
+                //'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
+            ];
+        }
         return $this->writeJson(
             200,
             [
@@ -260,7 +274,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                 'total' => 0,
                 'totalPage' => 1 ,
             ],
-             json_decode($res['math_res'],true)
+            $returnArr
         );
     }
     function getMatchedResV2(): bool
