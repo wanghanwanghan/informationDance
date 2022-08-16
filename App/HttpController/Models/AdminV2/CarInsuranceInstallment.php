@@ -439,7 +439,7 @@ class CarInsuranceInstallment extends ModelBase
             $suNingWeiShangDai = false;
             $suNingWeiShangDaiErrMsg[] = '年纳税金额为0';
         }
-        
+
         //企业税务基本信息查询
         $taxBasicInfo = (new GuoPiaoService())->getEssential($carInsuranceData['social_credit_code']);
         CommonService::getInstance()->log4PHP(
@@ -458,11 +458,6 @@ class CarInsuranceInstallment extends ModelBase
             $suNingWeiShangDai = false;
             $suNingWeiShangDaiErrMsg[] = '纳税等级不属于A/B/M';
         };
-
-        return  [
-            $suNingWeiShangDai ,
-            $suNingWeiShangDaiErrMsg
-        ];
 
         // 企业当前无欠税 -- 国票接口
         if(
@@ -525,6 +520,7 @@ class CarInsuranceInstallment extends ModelBase
                 '$quarterDebt ' => $quarterDebt
             ])
         );
+        return $quarterDebt;
         if($quarterDebt['result']<3){
             $suNingWeiShangDai = false;
             $suNingWeiShangDaiErrMsg[] = '季度资产负债表不到三期';
