@@ -413,7 +413,9 @@ class RunDealEmailReceiver extends AbstractCronTask
             'id_card_back_file' =>  '身份证照文件',
         ];
         $fileMap = [
-            'business_license_file'
+            'business_license_file',
+            'id_card_front_file',
+            'id_card_back_file',
         ];
         $html = "
 <style>
