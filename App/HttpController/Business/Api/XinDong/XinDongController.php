@@ -3794,6 +3794,19 @@ eof;
             );
         }
         if(
+            $this->getRequestData('runMatchJinCheng')
+        ){
+
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                CarInsuranceInstallment::runMatchJinCheng( $this->getRequestData('runMatchJinCheng')),
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
             $this->getRequestData('getIncometaxMonthlyDeclaration')
         ){
             $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
