@@ -168,7 +168,7 @@ class CarInsuranceInstallmentMatchedRes extends ModelBase
 
 
     public static function findByProductId($product_id,$car_insurance_id){
-        $res =  CarInsuranceInstallment::create()
+        $res =  CarInsuranceInstallmentMatchedRes::create()
             ->where('car_insurance_id',$car_insurance_id)
             ->where('product_id',$product_id)
             ->get();
