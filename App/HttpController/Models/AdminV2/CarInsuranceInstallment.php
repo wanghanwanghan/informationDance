@@ -429,14 +429,11 @@ class CarInsuranceInstallment extends ModelBase
             $suNingWeiShangDai = false;
             $suNingWeiShangDaiErrMsg[] = '正常纳税不满18个月';
         }
-        return  [
-            $suNingWeiShangDai ,
-            $suNingWeiShangDaiErrMsg
-        ];
+
         // 苏宁银行-微商贷：年纳税金额1.5万以上（PS：不做强要求，但不能为0） -- 财务三表
         $yearsTotal = 0;
         foreach ($taxInfo['validyearTaxInfo'] as $year=>$total){
-            $yearsTotal += $total;
+            $yearsTotal += $total['totalAmount'];
         };
         if($yearsTotal <= 0 ){
             $suNingWeiShangDai = false;
