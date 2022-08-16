@@ -163,7 +163,8 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
 
         //设置为正在执行中
         ConfigInfo::setIsRunning(__CLASS__);
-
+        self::runMatch();
+        ConfigInfo::setIsDone(__CLASS__);
 
         return true ;   
     }
