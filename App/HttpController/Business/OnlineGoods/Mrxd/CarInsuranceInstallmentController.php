@@ -244,6 +244,53 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
 //        }
 
         $res =  CarInsuranceInstallment::findOneByUserId($this->loginUserinfo['id']);
+
+        if($res){
+            $res = $res->toArray();
+        }
+        else{
+            $res = [];
+        }
+
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' => $size,
+                'total' => 0,
+                'totalPage' => 1 ,
+            ],
+             json_decode($res['math_res'],true)
+        );
+    }
+    function getMatchedResV2(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page= $requestData['page']?:1;
+        $size= $requestData['size']?:10;
+//        $checkRes = DataModelExample::checkField(
+//            [
+//
+//                'product_id' => [
+//                    'not_empty' => 1,
+//                    'field_name' => 'product_id',
+//                    'err_msg' => '参数缺失',
+//                ],
+//                'insured' => [
+//                    'not_empty' => 1,
+//                    'field_name' => 'insured',
+//                    'err_msg' => '参数缺失',
+//                ]
+//            ],
+//            $requestData
+//        );
+//        if(
+//            !$checkRes['res']
+//        ){
+//            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+//        }
+
+        $res =  CarInsuranceInstallment::findOneByUserId($this->loginUserinfo['id']);
         if($res){
             $res = $res->toArray();
         }
@@ -314,6 +361,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                 ]
             );
         }
+
         $companyBasic = $companyBasic->toArray();
         $companyRes = (new XinDongService())->getEsBasicInfoV2($companyBasic['companyid']);
 
@@ -445,7 +493,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         usort($customers, function($a, $b) {
             return $b['totalAmount'] <=> $a['totalAmount'];
         });
-        $newCustomers = $sliced_array = array_slice($customers, 0, 10);
+        $newCustomers =  array_slice($customers, 0, 10);
 
 
         //匹配结果

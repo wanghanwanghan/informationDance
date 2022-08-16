@@ -24,6 +24,7 @@ use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\Sms\SmsService;
@@ -178,7 +179,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
             "
         );
         foreach ($rawDatas as $rawDataItem){
-              //微商贷
+              //  微商贷
               $res1 =  CarInsuranceInstallment::runMatchSuNing(intval($rawDataItem['id']));
               $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
               if( $res1['res']){
@@ -256,6 +257,220 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                 );
             }
 
+
+            $companyBasic = CompanyBasic::findByCode($rawDataItem['social_credit_code']);
+            if(empty($companyBasic)){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'CarInsuranceInstallment-findOneByUserId-empty $companyBasic'=>$companyBasic,
+                        'social_credit_code'=>$rawDataItem['social_credit_code'],
+                    ])
+                );
+                CarInsuranceInstallment::updateById(
+                    $rawDataItem['id'],
+                    [
+                        'math_res' =>  json_encode(
+                            [
+                                'companyInfo' => [
+
+                                ],
+                                'essentialFinanceInfo' => [],
+                                'mapedByDateNumsRes' => [],
+                                'mapedByDateAmountRes' => [],
+                                'topSupplier' => [],
+                                'topCustomer' => [],
+                                'matchedRes' => [],
+                                //'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
+                            ]
+                        )
+                    ]
+                );
+                continue;
+            }
+
+            //=======================================
+            $companyBasic = $companyBasic->toArray();
+            $companyRes = (new XinDongService())->getEsBasicInfoV2($companyBasic['companyid']);
+
+            //税务信息(今年)
+            $essentialRes = (new GuoPiaoService())->getEssential($rawDataItem['social_credit_code']);
+            $mapedEssentialRes = [
+                "owingType" => $essentialRes['data']['owingType'],
+                "payTaxes" => $essentialRes['data']['payTaxes'],
+                "regulations" => $essentialRes['data']['regulations'],
+                "nature" => $essentialRes['data']['nature'],
+                "creditPoint" => $essentialRes['data']['essential'][0]['creditPoint'],
+                "creditLevel" => $essentialRes['data']['essential'][0]['creditLevel'],
+                "year" => $essentialRes['data']['essential'][0]['year'],
+                "taxpayerId" => $essentialRes['data']['essential'][0]['taxpayerId'],
+            ];
+            //近两年发票开票金额 需要分页拉取后计算结果
+            // ['01', '08', '03', '04', '10', '11', '14', '15'] 分开拉取全部
+            // $startDate 往前推一个月  推两年
+            //纳税数据取得是两年的数据 取下开始结束时间
+            $lastMonth = date("Y-m-01",strtotime("-1 month"));
+            //两年前的开始月
+            $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+            //进销项发票信息 信动专用
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+                $rawDataItem['social_credit_code'],
+                $last2YearStart,
+                $lastMonth
+            );
+
+            //按日期格式化
+            $year1 = date('Y',strtotime("-2 years"));
+            $year2 = date('Y',strtotime("-1 years"));
+            $mapedByDateAmountRes = [
+                '01' => [],
+                '02' => [],
+                '03' => [],
+                '04' => [],
+                '05' => [],
+                '06' => [],
+                '07' => [],
+                '08' => [],
+                '09' => [],
+                '10' => [],
+                '11' => [],
+                '12' => [],
+            ];
+            $mapedByDateNumsRes = [
+                '01' => [],
+                '02' => [],
+                '03' => [],
+                '04' => [],
+                '05' => [],
+                '06' => [],
+                '07' => [],
+                '08' => [],
+                '09' => [],
+                '10' => [],
+                '11' => [],
+                '12' => [],
+            ];
+            foreach ($allInvoiceDatas as $InvoiceData){
+                $month = date('m',strtotime($InvoiceData['billingDate']));
+                $year = date('Y',strtotime($InvoiceData['billingDate']));
+                $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
+                $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2);
+                $mapedByDateNumsRes[$month][$year] ++;
+            }
+
+            //进销项发票信息 信动专用
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+                $rawDataItem['social_credit_code'],
+                $last2YearStart,
+                $lastMonth
+            );
+            foreach ($allInvoiceDatas as $InvoiceData){
+                $month = date('m',strtotime($InvoiceData['billingDate']));
+                $year = date('Y',strtotime($InvoiceData['billingDate']));
+                $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
+                $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2);
+                $mapedByDateNumsRes[$month][$year] ++;
+            }
+            //销项
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+                $rawDataItem['social_credit_code'],
+                $last2YearStart,
+                $lastMonth,
+                2
+            );
+            foreach ($allInvoiceDatas as $InvoiceData){
+                $month = date('m',strtotime($InvoiceData['billingDate']));
+                $year = date('Y',strtotime($InvoiceData['billingDate']));
+                $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
+                $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2);
+                $mapedByDateNumsRes[$month][$year] ++;
+            }
+            //十大供应商
+            //进销项发票信息 信动专用
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+                $rawDataItem['social_credit_code'],
+                $last2YearStart,
+                $lastMonth
+            );
+            $supplier = [];
+            foreach ($allInvoiceDatas as $InvoiceData){
+                $supplier[$InvoiceData['salesTaxName']]['entName'] = $InvoiceData['salesTaxName'] ;
+                $supplier[$InvoiceData['salesTaxName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
+            }
+            //按时间倒叙排列
+            usort($supplier, function($a, $b) {
+                return $b['totalAmount'] <=> $a['totalAmount'];
+            });
+            $newSupplier = array_slice($supplier, 0, 10);
+
+
+            //十大客户
+            //销项项发票信息 信动专用
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+                $rawDataItem['social_credit_code'],
+                $last2YearStart,
+                $lastMonth,
+                2
+            );
+            $customers = [];
+            foreach ($allInvoiceDatas as $InvoiceData){
+                $customers[$InvoiceData['purchaserName']]['entName'] = $InvoiceData['purchaserName'] ;
+                $customers[$InvoiceData['purchaserName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
+            }
+            //按时间倒叙排列
+            usort($customers, function($a, $b) {
+                return $b['totalAmount'] <=> $a['totalAmount'];
+            });
+            $newCustomers =  array_slice($customers, 0, 10);
+
+
+            //匹配结果
+            $matchedRes = CarInsuranceInstallmentMatchedRes::findAllByCondition(
+                [
+                    'car_insurance_id'=>$rawDataItem['id']
+                ]
+            );
+            $mathedResData = [];
+            $unmathedResData = [];
+            foreach ($matchedRes as &$matchedResItem){
+                $matchedResItem['status_cname'] =  CarInsuranceInstallmentMatchedRes::getStatusMap()[$matchedResItem['status']];
+                $matchedResItem['msg_arr'] =  $matchedResItem['msg']? json_decode($matchedResItem['msg'],true):[];
+                if($matchedResItem['status']== CarInsuranceInstallmentMatchedRes::$status_matched_succeed){
+                    $mathedResData[] =  $matchedResItem;
+                }
+                if($matchedResItem['status']== CarInsuranceInstallmentMatchedRes::$status_matched_failed){
+                    $unmathedResData[] =  $matchedResItem;
+                }
+            }
+
+
+            CarInsuranceInstallment::updateById(
+                $rawDataItem['id'],
+                [
+                    'math_res' =>  json_encode(
+                        [
+                            'companyInfo' => [
+                                'ENTNAME' => $companyRes['ENTNAME'],
+                                'NAME' => $companyRes['NAME'],
+                                'ESDATE' => $companyRes['ESDATE'],
+                                'REGCAP' => $companyRes['REGCAP'],
+                                'UNISCID' => $companyRes['UNISCID'],
+                                'DOM' => $companyRes['DOM'],
+                                'OPSCOPE' => $companyRes['OPSCOPE'],
+                            ],
+                            'essentialFinanceInfo' => $mapedEssentialRes,
+                            'mapedByDateNumsRes' => $mapedByDateNumsRes,
+                            'mapedByDateAmountRes' => $mapedByDateAmountRes,
+                            'topSupplier' => $newSupplier,
+                            'topCustomer' => $newCustomers,
+                            'matchedRes' => $mathedResData,
+                            'unmatchedRes' => $unmathedResData,
+                            //'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
+                        ]
+                    )
+                ]
+            );
+            //=======================================
         }
         return true;
     }
