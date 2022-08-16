@@ -210,7 +210,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                     'name' => CarInsuranceInstallmentMatchedRes::$pid_jin_qi_dai_cname,
                     'car_insurance_id' => $rawDataItem['id'],
                     'status' => $status,
-                    'msg' => empty($res1['msg'])?json_encode($res1['msg']):'',
+                    'msg' => empty($res1['msg'])?'':json_encode($res1['msg']),
                     'created_at' => time(),
                     'updated_at' => time(),
                 ]
@@ -229,7 +229,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                     'name' => CarInsuranceInstallmentMatchedRes::$pid_jin_qi_dai_cname,
                     'car_insurance_id' => $rawDataItem['id'],
                     'status' => $status,
-                    'msg' => empty($res1['msg'])?json_encode($res1['msg']):'',
+                    'msg' => empty($res1['msg'])?'':json_encode($res1['msg']),
                     'created_at' => time(),
                     'updated_at' => time(),
                 ]
