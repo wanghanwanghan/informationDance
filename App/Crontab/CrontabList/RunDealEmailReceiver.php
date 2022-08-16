@@ -383,7 +383,7 @@ class RunDealEmailReceiver extends AbstractCronTask
                         
                         <td>
                             <a  
-                                href="'.$data[$fieldItem['name']].'">
+                                href="https://api.meirixindong.com/'.$data[$fieldItem['name']].'">
                                 点击查看
                             </a>
                         </td>
@@ -489,7 +489,7 @@ class RunDealEmailReceiver extends AbstractCronTask
                         
                         <td>
                             <a  
-                                href="'.$data[$fieldItem].'">
+                                href="https://api.meirixindong.com/'.$data[$fieldItem].'">
                                 点击查看
                             </a>
                         </td>
