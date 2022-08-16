@@ -131,7 +131,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
         foreach ($files as $key => $oneFile) {
             try {
                 $fileName = $oneFile->getClientFilename();
-                $path = OTHER_FILE_PATH . $fileName;
+                $path = OTHER_FILE_PATH .   'zhi_jin_'.rand(10000,90000). rand(10000,90000). rand(10000,90000). rand(10000,90000).basename($fileName);;
 //                if(file_exists($path)){
 //                    return $this->writeJson(203, [], [],'文件已存在！');;
 //                }
