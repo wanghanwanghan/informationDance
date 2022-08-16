@@ -131,7 +131,8 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
         foreach ($files as $key => $oneFile) {
             try {
                 $fileName = $oneFile->getClientFilename();
-                $path = OTHER_FILE_PATH .   'zhi_jin_'.rand(10000,90000). rand(10000,90000). rand(10000,90000). rand(10000,90000).basename($fileName);;
+                $newName =  'zhi_jin_'.rand(10000,90000). rand(10000,90000). rand(10000,90000). rand(10000,90000).basename($fileName);
+                $path = OTHER_FILE_PATH . $newName ;
 //                if(file_exists($path)){
 //                    return $this->writeJson(203, [], [],'文件已存在！');;
 //                }
@@ -144,7 +145,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
                     return $this->writeJson(203, [], [],'文件移动失败！');
                 }
                 $succeedNums ++;
-                $fileNames[] = '/Static/OtherFile/'.$fileName;
+                $fileNames[] = '/Static/OtherFile/'.$newName;
             } catch (\Throwable $e) {
                 return $this->writeJson(202, [], $fileNames,'上传失败'.$e->getMessage());
             }
