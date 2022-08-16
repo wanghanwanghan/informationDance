@@ -253,6 +253,13 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         if(
             empty($res)
         ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'CarInsuranceInstallment-findOneByUserId-empty'=>$res,
+                    'uid'=>$this->loginUserinfo['id']
+                ])
+            );
             return $this->writeJson(
                 200,
                 [
@@ -277,6 +284,14 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         }
         $companyBasic = CompanyBasic::findByCode($res['social_credit_code']);
         if(empty($companyBasic)){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'CarInsuranceInstallment-findOneByUserId-empty $companyBasic'=>$companyBasic,
+                    'uid'=>$this->loginUserinfo['id'],
+                    'social_credit_code'=>$res['social_credit_code'],
+                ])
+            );
             return $this->writeJson(
                 200,
                 [
