@@ -297,16 +297,16 @@ class GuoPiaoService extends ServiceBase
         $api_path = 'invoice/' . __FUNCTION__;
 
         $res = $this->readyToSend($api_path, $body);
-        CommonService::getInstance()->log4PHP(json_encode(
-            [
-                __CLASS__ ,
-                'getIncometaxMonthlyDeclaration'=>[
-                    '$api_path'=>$api_path,
-                    '$body'=>$body,
-                    '$res'=>$res
-                ],
-            ]
-        ));
+//        CommonService::getInstance()->log4PHP(json_encode(
+//            [
+//                __CLASS__ ,
+//                'getIncometaxMonthlyDeclaration'=>[
+//                    '$api_path'=>$api_path,
+//                    '$body'=>$body,
+//                    '$res'=>$res
+//                ],
+//            ]
+//        ));
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
