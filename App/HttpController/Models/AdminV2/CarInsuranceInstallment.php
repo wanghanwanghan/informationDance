@@ -439,10 +439,7 @@ class CarInsuranceInstallment extends ModelBase
             $suNingWeiShangDai = false;
             $suNingWeiShangDaiErrMsg[] = '年纳税金额为0';
         }
-        return  [
-            $suNingWeiShangDai ,
-            $suNingWeiShangDaiErrMsg
-        ];
+        
         //企业税务基本信息查询
         $taxBasicInfo = (new GuoPiaoService())->getEssential($carInsuranceData['social_credit_code']);
         CommonService::getInstance()->log4PHP(
