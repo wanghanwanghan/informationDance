@@ -64,6 +64,12 @@ class SouKeController extends ControllerBase
                     'getCompanyInvestor_data_item'=>$data
                 ])
             );
+            // investor_type
+            if(
+                $data['companyid_inv']>0
+            ){
+                $data['investor_type'] =  2;
+            }
         }
         return $this->writeJson(200, null, $res, '成功', false, []);
 
