@@ -60,17 +60,17 @@ class SouKeController extends ControllerBase
          );
         foreach ($res as &$data){
             // investor_type
-            if(
-                $data['companyid_inv']>0
-            ){
-                $data['investor_type'] =  2;
-            }else{
-                $data['investor_type'] =  1;
-            }
+//            if(
+//                $data['companyid_inv']>0
+//            ){
+//                $data['investor_type'] =  2;
+//            }else{
+//                $data['investor_type'] =  1;
+//            }
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'getCompanyInvestor_data_item'=>$data,
-                    'investor_type'=>$data['investor_type']
+                    'getCompanyInvestor_data_itemxx'=>$data,
+                    'investor_typexx'=>$data['investor_type']
                 ])
             );
         }
