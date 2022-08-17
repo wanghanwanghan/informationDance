@@ -19,7 +19,7 @@ use App\HttpController\Service\LongXin\LongXinService;
 
 class CarInsuranceInstallment extends ModelBase
 {
-
+    // 额 这个有问题 不应该是车险分期  而是贷款数据
     protected $tableName = 'car_insurance_installment';
 
     static $status_init = 1;

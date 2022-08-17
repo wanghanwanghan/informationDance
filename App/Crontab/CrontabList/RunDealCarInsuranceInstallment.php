@@ -170,21 +170,28 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
         return true ;   
     }
 
+    /**
+        实际跑匹配
+     */
     static function runMatch(){
-        // 车险分期
+        // 贷款产品
         $rawDatas = CarInsuranceInstallment::findBySql(
-            " WHERE status =  ".CarInsuranceInstallment::$status_init ."
-                        AND   created_at <= ".strtotime("-30 minutes",time()) ."
-            
-            "
+            " WHERE 
+                        status =  ".CarInsuranceInstallment::$status_init ."
+                        AND   created_at <= ".strtotime("-30 minutes",time()) ."           
+                   "
         );
+
         foreach ($rawDatas as $rawDataItem){
-              //  微商贷
+              //  匹配微商贷
               $res1 =  CarInsuranceInstallment::runMatchSuNing(intval($rawDataItem['id']));
+              //匹配结果
               $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
               if( $res1['res']){
                   $status = CarInsuranceInstallmentMatchedRes::$status_matched_succeed;
               }
+
+            //保存匹配结果
             CarInsuranceInstallmentMatchedRes::addRecordV2(
                 [
                     'user_id' => $rawDataItem['user_id'],
@@ -198,12 +205,12 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                 ]
             );
 
-              //金企贷
-              $res2 =  CarInsuranceInstallment::runMatchJinCheng($rawDataItem['id']);
-                $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
-                if( $res2['res']){
-                    $status = CarInsuranceInstallmentMatchedRes::$status_matched_succeed;
-                }
+              //匹配金企贷
+            $res2 =  CarInsuranceInstallment::runMatchJinCheng($rawDataItem['id']);
+            $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
+            if($res2['res']){
+                $status = CarInsuranceInstallmentMatchedRes::$status_matched_succeed;
+            }
             CarInsuranceInstallmentMatchedRes::addRecordV2(
                 [
                     'user_id' => $rawDataItem['user_id'],
@@ -217,12 +224,13 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                 ]
             );
 
-              //浦慧贷
+              //匹配浦慧贷
               $res3 =  CarInsuranceInstallment::runMatchPuFa($rawDataItem['id']);
                 $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
                 if( $res3['res']){
                     $status = CarInsuranceInstallmentMatchedRes::$status_matched_succeed;
                 }
+
             CarInsuranceInstallmentMatchedRes::addRecordV2(
                 [
                     'user_id' => $rawDataItem['user_id'],

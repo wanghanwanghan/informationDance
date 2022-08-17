@@ -215,42 +215,25 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         );
     }
 
-    //匹配结果
+    /**
+    获取匹配结果：根据企业税务，财务，发票等基础数据，匹配满足的贷款产品
+     */
     function getMatchedRes(): bool
     {
         $requestData =  $this->getRequestData();
         $page= $requestData['page']?:1;
         $size= $requestData['size']?:10;
-//        $checkRes = DataModelExample::checkField(
-//            [
-//
-//                'product_id' => [
-//                    'not_empty' => 1,
-//                    'field_name' => 'product_id',
-//                    'err_msg' => '参数缺失',
-//                ],
-//                'insured' => [
-//                    'not_empty' => 1,
-//                    'field_name' => 'insured',
-//                    'err_msg' => '参数缺失',
-//                ]
-//            ],
-//            $requestData
-//        );
-//        if(
-//            !$checkRes['res']
-//        ){
-//            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
-//        }
 
+        //只取最新的一个匹配结果
         $res =  CarInsuranceInstallment::findOneByUserId($this->loginUserinfo['id']);
-
         if($res){
             $res = $res->toArray();
         }
         else{
             $res = [];
         }
+
+        //异步定时任务计算的结果
         $returnArr =   json_decode($res['math_res'],true);
         if(empty($returnArr)){
             $returnArr = [
@@ -277,7 +260,11 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
             $returnArr
         );
     }
-    function getMatchedResV2(): bool
+
+    /*
+    获取匹配结果 旧版
+     * */
+    function getMatchedResBak(): bool
     {
         $requestData =  $this->getRequestData();
         $page= $requestData['page']?:1;

@@ -500,6 +500,7 @@ class Company extends ServiceBase
         return $this;
     }
 
+    //
     function SetQueryByEstiblishTime($searchOptionArr){
         $estiblish_time_values = [];  // 成立年限
         foreach($searchOptionArr as $item){
@@ -527,6 +528,37 @@ class Company extends ServiceBase
             $item && $matchedCnames[] = $map[$item];
         }
         (!empty($matchedCnames)) && $this->es->addMustShouldRangeQuery( 'estiblish_time' , $matchedCnames) ;
+
+        return $this;
+    }
+
+    function SetQueryByEstiblishTimeV2($searchOptionArr){
+        $estiblish_time_values = [];  // 成立年限
+        foreach($searchOptionArr as $item){
+            if($item['pid'] == 20){
+                $estiblish_time_values = $item['value'];
+            }
+
+        }
+        $matchedCnames = [];
+        $map = [
+            // 2年以内
+            2 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -2 year')), 'max' => date('Y-m-d')  ],
+            // 2-5年
+            5 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -5 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -2 year'))  ],
+            // 5-10年
+            10 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -10 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -5 year'))  ],
+            // 10-15年
+            15 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -15 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -10 year'))  ],
+            // 15-20年
+            20 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -20 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -15 year'))  ],
+            // 20年以上
+            25 => ['min'=>date('Y-m-d', strtotime(date('Y-m-01') . ' -100 year')), 'max' => date('Y-m-d', strtotime(date('Y-m-01') . ' -20 year'))  ],
+        ];
+        foreach($estiblish_time_values as $item){
+            $item && $matchedCnames[] = $map[$item];
+        }
+        (!empty($matchedCnames)) && $this->es->addMustShouldRangeQuery( 'ESDATE' , $matchedCnames) ;
 
         return $this;
     }
@@ -599,6 +631,40 @@ class Company extends ServiceBase
 
         return $this;
     }
+
+    function SetQueryByRegCaptialV2($searchOptionArr){
+
+        $reg_capital_values = [];  // 注册资本
+
+        foreach($searchOptionArr as $item){
+
+            if($item['pid'] == 40){
+                $reg_capital_values = $item['value'];
+            }
+
+        }
+        $map = XinDongService::getZhuCeZiBenMap();
+        foreach($reg_capital_values as $item){
+            $tmp = $map[$item]['epreg'];
+            foreach($tmp as $tmp_item){
+                $matchedCnames[] = $tmp_item;
+            }
+        }
+        $map = XinDongService::getZhuCeZiBenMapV2();
+        foreach($reg_capital_values as $item){
+            $tmp = $map[$item]['epreg'];
+            foreach($tmp as $tmp_item){
+                $matchedCnames[] = $tmp_item;
+            }
+        }
+
+        (!empty($matchedCnames)) && $this->es->addMustShouldRegexpQuery(
+            'REGCAP' , $matchedCnames
+        ) ;
+
+        return $this;
+    }
+
     function SetQueryByTuanDuiRenShu($searchOptionArr){
 
         $tuan_dui_ren_shu_values = [];  // 团队人数
