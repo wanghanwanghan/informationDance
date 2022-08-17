@@ -101,7 +101,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
             return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
         }
 
-        $res = InsuranceData::addRecordV2(
+        $res = InsuranceData::addRecord(
             [
                 'post_params' => json_encode(
                     $requestData

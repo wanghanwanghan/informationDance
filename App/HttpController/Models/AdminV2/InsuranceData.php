@@ -29,7 +29,7 @@ class InsuranceData extends ModelBase
         if(
             self::findByName($info['user_id'],$info['name'],$info['product_id'])
         ){
-//            return  true;
+            return  true;
         }
 
         return InsuranceData::addRecord(

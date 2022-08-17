@@ -180,7 +180,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
 //            $arr = explode('?url=', $res['data']);
 //            $res['data'] = 'https://api.meirixindong.com/Static/vertify.html?url=' . $arr[1];
 //        }
-        CarInsuranceInstallment::addRecordV2(
+        CarInsuranceInstallment::addRecord(
             [
                 'user_id' => $this->loginUserinfo['id'],
                 'product_id' => $requestData['product_id']?:0,

@@ -32,7 +32,7 @@ class InsuranceDataHuiZhong extends ModelBase
         if(
             self::findByName($info['user_id'],$info['ent_name'],$info['product_id'])
         ){
-//            return  true;
+            return  true;
         }
 
         return InsuranceDataHuiZhong::addRecord(

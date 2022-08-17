@@ -120,7 +120,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
             ])
         );
 
-        $res = InsuranceDataHuiZhong::addRecordV2(
+        $res = InsuranceDataHuiZhong::addRecord(
             [
                 'post_params' => json_encode(
                     $requestData
