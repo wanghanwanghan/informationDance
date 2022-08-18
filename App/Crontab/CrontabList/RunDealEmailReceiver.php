@@ -471,12 +471,12 @@ class RunDealEmailReceiver extends AbstractCronTask
     static  function  getTableHtmlHuiZhong($data){
         $maps = [
             'ent_name' =>  '企业名称',
-            'business_license_file' =>  '营业执照文件',
+            'business_license_file' =>  '营业执照照片',
             'public_account' =>  '公共账户',
             'legal_person_phone' =>  '手机号',
-            'business_license' =>  '营业执照',
-            'id_card_front_file' =>  '身份证照文件',
-            'id_card_back_file' =>  '身份证照文件',
+            //'business_license' =>  '营业执照',
+            'id_card_front_file' =>  '身份证照片正面',
+            'id_card_back_file' =>  '身份证照片反面',
         ];
         $fileMap = [
             'business_license_file',
@@ -540,7 +540,7 @@ class RunDealEmailReceiver extends AbstractCronTask
         $html .=  ' 
         <tr>
             <td>产品</td>
-            <td>麾众产品</td>
+            <td>车险分期</td>
         </tr>';
         $html .=  ' 
         <tr>
@@ -708,7 +708,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             $tableHtml = self::getTableHtmlHuiZhong($insuranceDatas);
             $res1 = CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',
-                '用户询价',
+                '用户询价车险分期',
                 $tableHtml
                 ,
                 [
@@ -719,7 +719,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             $res2= CommonService::getInstance()->sendEmailV2(
                 'guoxinxia@meirixindong.com',
                 // 'minglongoc@me.com',
-                '用户询价',
+                '用户询价车险分期',
                 $tableHtml
                 ,
                 [
@@ -730,7 +730,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             $res3= CommonService::getInstance()->sendEmailV2(
                 'wanghan@meirixindong.com',
                 // 'minglongoc@me.com',
-                '用户询价',
+                '用户询价车险分期',
                 $tableHtml
                 ,
                 [
@@ -741,7 +741,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             $res4= CommonService::getInstance()->sendEmailV2(
                 'liyunxian@meirixindong.com',
                 // 'minglongoc@me.com',
-                '用户询价',
+                '用户询价车险分期',
                 $tableHtml
                 ,
                 [
