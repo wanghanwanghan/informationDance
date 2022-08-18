@@ -506,7 +506,7 @@ class CarInsuranceInstallment extends ModelBase
                 $dataItem['date'] == $threeMonthsAgo &&
                 $dataItem['total'] > 0
             ){
-                $threeMonthsAgoHasNoTax = true;
+                $threeMonthsAgoHasNoTax = false;
             }
         }
 
