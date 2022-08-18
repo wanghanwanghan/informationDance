@@ -60,7 +60,7 @@ class ZhongRuiYinTongService extends ServiceBase
         return $token;
     }
 
-    //车辆年检信息验证 没开权限
+    //车辆年检信息验证
     function vehicleInspectionCheck(string $vehicleNo, int $plateColor, string $vehicleVIN)
     {
         //对道路运输车辆检测信息进行的核验，有效避免货物运输风险
@@ -68,9 +68,9 @@ class ZhongRuiYinTongService extends ServiceBase
         $url = $this->urlBase . 'api/system/vehicleInspection/check';
 
         $postData = [
-            'vehicleNo' => trim($vehicleNo),//车牌号码
+            'plateNumber' => trim($vehicleNo),//车牌号码
             'plateColor' => $plateColor,//车牌颜色
-            'vehicleVIN' => trim($vehicleVIN),//车辆识别代号
+            'VIN' => trim($vehicleVIN),//车辆识别代号
         ];
 
         $header = ['token' => $this->getToken()];
