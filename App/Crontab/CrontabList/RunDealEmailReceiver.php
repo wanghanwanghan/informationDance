@@ -473,7 +473,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             'ent_name' =>  '企业名称',
             'business_license_file' =>  '营业执照照片',
             'public_account' =>  '公户账号',
-            'legal_person_phone' =>  '手机号',
+            'legal_person_phone' =>  '法人手机号',
             //'business_license' =>  '营业执照',
             'id_card_front_file' =>  '身份证照片正面',
             'id_card_back_file' =>  '身份证照片反面',
