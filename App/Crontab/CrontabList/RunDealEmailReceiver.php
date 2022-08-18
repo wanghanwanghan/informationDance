@@ -472,7 +472,7 @@ class RunDealEmailReceiver extends AbstractCronTask
         $maps = [
             'ent_name' =>  '企业名称',
             'business_license_file' =>  '营业执照照片',
-            'public_account' =>  '公共账户',
+            'public_account' =>  '公户账号',
             'legal_person_phone' =>  '手机号',
             //'business_license' =>  '营业执照',
             'id_card_front_file' =>  '身份证照片正面',
@@ -531,7 +531,7 @@ class RunDealEmailReceiver extends AbstractCronTask
 <table class="styled-table">
     <thead>
         <tr>
-            <th colspan="2" style="text-align: center; font-size:20px">保险询价单</th> 
+            <th colspan="2" style="text-align: center; font-size:20px">车险分期预授信</th> 
         </tr>
     </thead>
     <tbody> 
@@ -708,7 +708,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             $tableHtml = self::getTableHtmlHuiZhong($insuranceDatas);
             $res1 = CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',
-                '用户询价车险分期',
+                '用户车险分期预授信',
                 $tableHtml
                 ,
                 [
@@ -719,7 +719,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             $res2= CommonService::getInstance()->sendEmailV2(
                 'guoxinxia@meirixindong.com',
                 // 'minglongoc@me.com',
-                '用户询价车险分期',
+                '用户车险分期预授信',
                 $tableHtml
                 ,
                 [
@@ -730,7 +730,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             $res3= CommonService::getInstance()->sendEmailV2(
                 'wanghan@meirixindong.com',
                 // 'minglongoc@me.com',
-                '用户询价车险分期',
+                '用户车险分期预授信',
                 $tableHtml
                 ,
                 [
@@ -741,7 +741,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             $res4= CommonService::getInstance()->sendEmailV2(
                 'liyunxian@meirixindong.com',
                 // 'minglongoc@me.com',
-                '用户询价车险分期',
+                '用户车险分期预授信',
                 $tableHtml
                 ,
                 [
