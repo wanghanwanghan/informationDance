@@ -177,8 +177,7 @@ class RunDealEmailReceiver extends AbstractCronTask
 
         //单纯加数据
         foreach ($emailData as $emailDataItem){
-            $attachs = $mail->getAttach($msgcount,OTHER_FILE_PATH.'MailAttach/');
-
+            $attachs = $mail->getAttach($msgcount,OTHER_FILE_PATH.'MailAttach/'); 
             $datas =[
                 'user_id' => 0,
                 'email_id' => $emailDataItem['Uid'],
@@ -197,10 +196,11 @@ class RunDealEmailReceiver extends AbstractCronTask
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'pull_Email_lists'=>[
+                    'pull_Email_lists_attachs'=>[
                         'msg'=>'add_to_db',
                         '$attachs'=>$attachs,
-                        '$datas'=>$datas,
+                        'email_id'=>$emailDataItem['Uid'],
+                        'subject'=>stripslashes($emailDataItem['mailHeader']['subject']),
                     ]
                 ])
             );
