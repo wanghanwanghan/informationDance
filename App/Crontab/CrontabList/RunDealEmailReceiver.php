@@ -182,7 +182,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             $attachs = $mail->getAttach($msgcount,OTHER_FILE_PATH.'MailAttach/');
             $newFileArr = [];
             foreach ($attachs as $file){
-                $newFileArr[]=   OTHER_FILE_PATH.'MailAttach/'.$file;
+                $newFileArr[]=   '/Static/OtherFile/MailAttach/'.$file;
             }
             $datas =[
                 'user_id' => 0,
