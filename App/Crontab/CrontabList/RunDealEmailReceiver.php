@@ -180,12 +180,16 @@ class RunDealEmailReceiver extends AbstractCronTask
             $mailHeader = $mail->mailHeader($msgcount);
             $emailBody = $mail->getBody($msgcount);
             $attachs = $mail->getAttach($msgcount,OTHER_FILE_PATH.'MailAttach/');
+            $newFileArr = [];
+            foreach ($attachs as $file){
+                $newFileArr[]=   OTHER_FILE_PATH.'MailAttach/'.$file;
+            }
             $datas =[
                 'user_id' => 0,
                 'email_id' => $emailDataItem['Uid'],
                 'to' => $emailAddress,
                 'to_other' => $mailHeader['toOther']?:'',
-                'attachs' => empty($attachs)?'':json_encode($attachs),
+                'attachs' => empty($newFileArr)?'':json_encode($newFileArr),
                 'from' => $mailHeader['from']?:'',
                 'subject' => $mailHeader['subject']?stripslashes($mailHeader['subject']):'',
                 'body' => $emailBody?:'',
