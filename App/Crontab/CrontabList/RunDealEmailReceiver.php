@@ -184,16 +184,16 @@ class RunDealEmailReceiver extends AbstractCronTask
                 'user_id' => 0,
                 'email_id' => $emailDataItem['Uid'],
                 'to' => $emailAddress,
-                'to_other' => $emailDataItem['mailHeader']['toOther']?:'',
+                'to_other' => $mailHeader['toOther']?:'',
                 'attachs' => empty($attachs)?'':json_encode($attachs),
-                'from' => $emailDataItem['mailHeader']['from']?:'',
-                'subject' => $emailDataItem['mailHeader']['subject']?stripslashes($emailDataItem['mailHeader']['subject']):'',
-                'body' => $emailDataItem['body']?:'',
+                'from' => $mailHeader['from']?:'',
+                'subject' => $mailHeader['subject']?stripslashes($mailHeader['subject']):'',
+                'body' => $emailBody?:'',
                 'status' => '1',
                 'type' => '1',
                 'reamrk' => '',
-                'raw_return' => stripslashes(json_encode($emailDataItem)),
-                'date' => date('Y-m-d H:i:s',strtotime($emailDataItem['mailHeader']['date'])) ,
+                'raw_return' => stripslashes(json_encode($mail)),
+                'date' => date('Y-m-d H:i:s',strtotime($mailHeader['date'])) ,
             ];
             CommonService::getInstance()->log4PHP(
                 json_encode([

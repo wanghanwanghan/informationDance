@@ -36,7 +36,7 @@ class MailReceipt extends ModelBase
     static  function  addRecordV2($info){
 
         if(
-            self::findByEmailId($info['email_id'],$info['to'])
+            self::findBySubjectAndDate($info['date'],$info['subject'])
         ){
             CommonService::getInstance()->log4PHP(
                 json_encode([
@@ -168,6 +168,14 @@ class MailReceipt extends ModelBase
         $res =  MailReceipt::create()
             ->where('email_id',$email_id)
             ->where('to',$to)
+            ->get();
+        return $res;
+    }
+
+    public static function findBySubjectAndDate($date,$subject){
+        $res =  MailReceipt::create()
+            ->where('date',$date)
+            ->where('subject',$subject)
             ->get();
         return $res;
     }
