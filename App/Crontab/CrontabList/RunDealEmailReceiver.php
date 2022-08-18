@@ -537,16 +537,18 @@ class RunDealEmailReceiver extends AbstractCronTask
     <tbody> 
 ';
 
+//        <tr>
+//            <td>描述</td>
+//            <td>这一款产品</td>
+//        </tr>
         $html .=  ' 
         <tr>
             <td>产品</td>
             <td>车险分期</td>
         </tr>';
         $html .=  ' 
-        <tr>
-            <td>描述</td>
-            <td>这一款产品</td>
-        </tr>';
+        
+        ';
 
         foreach ($maps as $fieldItem=>$cname){
 
