@@ -228,7 +228,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
             ],
             $page
         );
-        foreach ($res as &$dataItem){
+        foreach ($res['data'] as &$dataItem){
             //暂时去取最新的一个
             $resNew = MailReceipt::findByInsuranceId($dataItem['id']);
             $resNew = $resNew?end($resNew):[];
