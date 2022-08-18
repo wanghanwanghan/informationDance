@@ -178,31 +178,34 @@ class RunDealEmailReceiver extends AbstractCronTask
         //单纯加数据
         foreach ($emailData as $emailDataItem){
             $attachs = $mail->getAttach($msgcount,OTHER_FILE_PATH.'MailAttach/');
+
+            $datas =[
+                'user_id' => 0,
+                'email_id' => $emailDataItem['Uid'],
+                'to' => $emailAddress,
+                'to_other' => $emailDataItem['mailHeader']['toOther']?:'',
+                'attachs' => empty($attachs)?'':json_encode($attachs),
+                'from' => $emailDataItem['mailHeader']['from']?:'',
+                'subject' => $emailDataItem['mailHeader']['subject']?stripslashes($emailDataItem['mailHeader']['subject']):'',
+                'body' => $emailDataItem['body']?:'',
+                'status' => '1',
+                'type' => '1',
+                'reamrk' => '',
+                'raw_return' => stripslashes(json_encode($emailDataItem)),
+                'date' => date('Y-m-d H:i:s',strtotime($emailDataItem['mailHeader']['date'])) ,
+            ];
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'pull_Email_lists'=>[
-                        'msg'=>'$attachs',
-                        '$attachs'=>$attachs
+                        'msg'=>'add_to_db',
+                        '$attachs'=>$attachs,
+                        '$datas'=>$datas,
                     ]
                 ])
             );
             MailReceipt::addRecordV2(
-                [
-                    'user_id' => 0,
-                    'email_id' => $emailDataItem['Uid'],
-                    'to' => $emailAddress,
-                    'to_other' => $emailDataItem['mailHeader']['toOther']?:'',
-                    'attachs' => empty($attachs)?'':json_encode($attachs),
-                    'from' => $emailDataItem['mailHeader']['from']?:'',
-                    'subject' => $emailDataItem['mailHeader']['subject']?stripslashes($emailDataItem['mailHeader']['subject']):'',
-                    'body' => $emailDataItem['body']?:'',
-                    'status' => '1',
-                    'type' => '1',
-                    'reamrk' => '',
-                    'raw_return' => stripslashes(json_encode($emailDataItem)),
-                    'date' => date('Y-m-d H:i:s',strtotime($emailDataItem['mailHeader']['date'])) ,
-                ]
+                $datas
             );
             $msgcount  --;
         }
