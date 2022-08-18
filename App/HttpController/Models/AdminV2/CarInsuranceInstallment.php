@@ -482,7 +482,7 @@ class CarInsuranceInstallment extends ModelBase
             $taxInfo['inValidQuarterLength'] >2
         ){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '有连续6个月不纳税情况 ';
+            $suNingWeiShangDaiErrMsg[] = '有连续6个月不纳税情况(最长连续'.($taxInfo['inValidQuarterLength']*3).'月不纳税)';
         }
 
         // 苏宁银行-微商贷：近3个月都有纳税申报记录 -- 增值税申报表
@@ -516,7 +516,11 @@ class CarInsuranceInstallment extends ModelBase
             $threeMonthsAgoHasNoTax
         ){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '近3个月有未纳税申报记录 ';
+            $suNingWeiShangDaiErrMsg[] = '近3个月有未纳税申报记录('.
+                ($oneMonthsAgoHasNoTax?$oneMonthsAgo.'未纳税':'').
+                ($twoMonthsAgoHasNoTax?$twoMonthsAgo.'未纳税':'').
+                ($threeMonthsAgoHasNoTax?$threeMonthsAgo.'未纳税':'')
+                .') ';
         }
 
         //季度资产负债
