@@ -346,7 +346,7 @@ class Email extends ServiceBase
                             } else if ($encoding == 4) {
                                 $message = quoted_printable_decode($message);
                             }
-                            $newName = mb_decode_mimeheader($name);
+                            $newName = date('YmdHis').'_'.mb_decode_mimeheader($name);
                             $this->downAttach($path, $newName, $message);
                             $attach[] = $newName;
                         }
