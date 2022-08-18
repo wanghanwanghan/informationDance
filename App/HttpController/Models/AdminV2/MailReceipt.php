@@ -38,6 +38,17 @@ class MailReceipt extends ModelBase
         if(
             self::findByEmailId($info['email_id'],$info['to'])
         ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'add_email_to_db'=>[
+                        'msg'=>'has_old_record.excape.',
+                        'param_email_id'=>$info['email_id'],
+                        'param_to'=>$info['to'],
+                        'param_mailHeader'=>$info['mailHeader'] ,
+                    ]
+                ])
+            );
             return  true;
         }
 
