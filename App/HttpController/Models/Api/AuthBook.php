@@ -25,6 +25,7 @@ class AuthBook extends ModelBase
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'AuthBook' => [
                         'msg'=>'addRecordV2_has_old_record',
+                        'old_id'=>$oldRecord->getAttr('id'),
                         'params_phone'=>$info['phone'],
                         'params_entName'=>$info['entName'],
                         'params_code'=>$info['code'],
@@ -63,7 +64,8 @@ class AuthBook extends ModelBase
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'failed',
-                    '$requestData' => $requestData
+                    '$requestData' => $requestData,
+                    'msg' => $e->getMessage()
                 ])
             );
         }
