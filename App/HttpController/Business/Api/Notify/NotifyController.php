@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Api\Notify;
 
 use App\HttpController\Business\BusinessBase;
+use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
@@ -10,6 +11,7 @@ use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\Pay\ali\aliPayService;
 use App\HttpController\Service\Pay\wx\wxPayService;
+use App\HttpController\Service\XinDong\XinDongService;
 use EasySwoole\Pay\AliPay\AliPay;
 use EasySwoole\Pay\AliPay\RequestBean\NotifyRequest;
 use EasySwoole\Pay\Pay;
@@ -249,7 +251,19 @@ class NotifyController extends BusinessBase
 
         $phone = substr($orderNo, 0, 11);
         $time = substr($orderNo, -10);
-
+        OperatorLog::addRecord(
+            [
+                'user_id' => 0,
+                'msg' => json_encode(
+                    [
+                        '$phone'=>$phone,
+                        '$RequestData'=>$RequestData,
+                    ]
+                ),
+                'details' => json_encode(XinDongService::trace()),
+                'type_cname' => '获取数据通知_'.$entName,
+            ]
+        );
         CommonService::getInstance()->log4PHP([
             'entName' => $entName,
             'taxNo' => $taxNo,
@@ -296,7 +310,19 @@ class NotifyController extends BusinessBase
 
         $phone = substr($orderNo, 0, 11);
         $time = substr($orderNo, -10);
-
+        OperatorLog::addRecord(
+            [
+                'user_id' => 0,
+                'msg' => json_encode(
+                    [
+                        '$phone'=>$phone,
+                        '$RequestData'=>$RequestData,
+                    ]
+                ),
+                'details' => json_encode(XinDongService::trace()),
+                'type_cname' => '获取数据通知_'.$entName,
+            ]
+        );
         CommonService::getInstance()->log4PHP([
             'entName' => $entName,
             'taxNo' => $taxNo,

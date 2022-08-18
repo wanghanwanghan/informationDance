@@ -195,6 +195,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
             if(
                 $rawDataItem['auth_id'] <= 0
             ){
+
                 CarInsuranceInstallment::updateById(
                     $rawDataItem['id'],
                     [
