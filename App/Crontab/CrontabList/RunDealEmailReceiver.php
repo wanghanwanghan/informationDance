@@ -178,6 +178,15 @@ class RunDealEmailReceiver extends AbstractCronTask
         //单纯加数据
         foreach ($emailData as $emailDataItem){
             $attachs = $mail->getAttach($msgcount,OTHER_FILE_PATH.'MailAttach/');
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'pull_Email_lists'=>[
+                        'msg'=>'$attachs',
+                        '$attachs'=>$attachs
+                    ]
+                ])
+            );
             MailReceipt::addRecordV2(
                 [
                     'user_id' => 0,
