@@ -356,19 +356,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             <td>'.$dataRes['data']['description'].'</td>
         </tr>';
         $templetesArr = $dataRes['data']['template'];
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'sendEmail-$templetesArr'=> $templetesArr
-            ])
-        );
         foreach ($templetesArr['fields'] as $fieldItem){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'sendEmail-$fieldItem'=> $fieldItem
-                ])
-            );
             if($fieldItem['type'] == 'text'){
                  $html .=  ' 
                     <tr>
@@ -527,19 +515,21 @@ class RunDealEmailReceiver extends AbstractCronTask
                     `status` =  ".InsuranceData::$status_init." 
                 "
         );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'send_consloe_data_to_bao_ya'=> [
+                    'msg'=>'start',
+                    'data_count'=>count($datas),
+                ],
+            ])
+        );
 
         foreach ($datas as $data){
             $insuranceDatas  = json_decode($data['post_params'],true);
             $dataRes = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProductDetail
             (
                 $insuranceDatas['product_id']
-            );
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'sendEmail-getProductDetail'=>$dataRes,
-                    'sendEmail-productId'=>$insuranceDatas['product_id']
-                ])
             );
             $insuranceDatas['id'] = $data['id'];
             $tableHtml = self::getTableHtml($insuranceDatas,$dataRes);
@@ -565,7 +555,7 @@ class RunDealEmailReceiver extends AbstractCronTask
                     //TEMP_FILE_PATH . 'qianzhang2.png',
                 ]
             );
-            $res2 = CommonService::getInstance()->sendEmailV2(
+            $res3 = CommonService::getInstance()->sendEmailV2(
                 'guoxinxia@meirixindong.com',
                 // 'minglongoc@me.com',
                 '询价'.$dataRes['data']['title'],
@@ -576,10 +566,11 @@ class RunDealEmailReceiver extends AbstractCronTask
                     //TEMP_FILE_PATH . 'qianzhang2.png',
                 ]
             );
-            $res2 = CommonService::getInstance()->sendEmailV2(
-                'wanghan@meirixindong.com',
+
+            $res4 = CommonService::getInstance()->sendEmailV2(
+                'liyunxian@meirixindong.com',
                 // 'minglongoc@me.com',
-                '询价'.$dataRes['data']['title'],
+                '用户询价'.$dataRes['data']['title'],
                 $tableHtml
                 ,
                 [
@@ -587,16 +578,19 @@ class RunDealEmailReceiver extends AbstractCronTask
                     //TEMP_FILE_PATH . 'qianzhang2.png',
                 ]
             );
-            $res2 = CommonService::getInstance()->sendEmailV2(
-                'liyunxian@meirixindong.com',
-                // 'minglongoc@me.com',
-                '询价'.$dataRes['data']['title'],
-                $tableHtml
-                ,
-                [
-                    // TEMP_FILE_PATH . 'personal.png',
-                    //TEMP_FILE_PATH . 'qianzhang2.png',
-                ]
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'send_consloe_data_to_bao_ya'=> [
+                        'msg'=>'send_email',
+                        'res'=>[
+                            '$res4'=>$res4,
+                            '$res3'=>$res3,
+                            '$res2'=>$res2,
+                            '$res1'=>$res1,
+                        ],
+                    ],
+                ])
             );
             OperatorLog::addRecord(
                 [
@@ -621,26 +615,22 @@ class RunDealEmailReceiver extends AbstractCronTask
                     `status` =  ".InsuranceDataHuiZhong::$status_init." 
                 "
         );
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'send_consloe_data_to_hui_zhong'=> [
+                    'msg'=>'start',
+                    'data_count'=>count($datas),
+                ],
+            ])
+        );
         foreach ($datas as $data){
             $insuranceDatas  = json_decode($data['post_params'],true);
-            $dataRes = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProductDetail
-            (
-                $insuranceDatas['product_id']
-            );
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'sendEmail-getProductDetail'=>$dataRes,
-                    'sendEmail-productId'=>$insuranceDatas['product_id']
-                ])
-            );
             $insuranceDatas['id'] = $data['id'];
-            $tableHtml = self::getTableHtmlHuiZhong($insuranceDatas,$dataRes);
+            $tableHtml = self::getTableHtmlHuiZhong($insuranceDatas);
             $res1 = CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',
-                // 'minglongoc@me.com',
-                '询价'.$dataRes['data']['title'],
+                '用户询价',
                 $tableHtml
                 ,
                 [
@@ -651,7 +641,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             $res2= CommonService::getInstance()->sendEmailV2(
                 'guoxinxia@meirixindong.com',
                 // 'minglongoc@me.com',
-                '询价'.$dataRes['data']['title'],
+                '用户询价',
                 $tableHtml
                 ,
                 [
@@ -659,10 +649,10 @@ class RunDealEmailReceiver extends AbstractCronTask
                     //TEMP_FILE_PATH . 'qianzhang2.png',
                 ]
             );
-            $res2= CommonService::getInstance()->sendEmailV2(
+            $res3= CommonService::getInstance()->sendEmailV2(
                 'wanghan@meirixindong.com',
                 // 'minglongoc@me.com',
-                '询价'.$dataRes['data']['title'],
+                '用户询价',
                 $tableHtml
                 ,
                 [
@@ -670,16 +660,30 @@ class RunDealEmailReceiver extends AbstractCronTask
                     //TEMP_FILE_PATH . 'qianzhang2.png',
                 ]
             );
-            $res2= CommonService::getInstance()->sendEmailV2(
+            $res4= CommonService::getInstance()->sendEmailV2(
                 'liyunxian@meirixindong.com',
                 // 'minglongoc@me.com',
-                '询价'.$dataRes['data']['title'],
+                '用户询价',
                 $tableHtml
                 ,
                 [
                     // TEMP_FILE_PATH . 'personal.png',
                     //TEMP_FILE_PATH . 'qianzhang2.png',
                 ]
+            );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'send_consloe_data_to_hui_zhong'=> [
+                        'msg'=>'send_email',
+                        'res'=>[
+                            '$res4'=>$res4,
+                            '$res3'=>$res3,
+                            '$res2'=>$res2,
+                            '$res1'=>$res1,
+                        ],
+                    ],
+                ])
             );
             OperatorLog::addRecord(
                 [
