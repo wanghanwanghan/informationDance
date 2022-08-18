@@ -102,23 +102,41 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
             return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
         }
 
-
         //设置验证码
         $phone = $requestData['legal_person_phone'];
         $code = $requestData['code'];
         $redisCode = OnlineGoodsUser::getRandomDigit($phone,'huizhong_sms_code_');
+
         if(
             $redisCode!=$code
         ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'preAuthorization_check_sms' => [
+                        'msg'=>'falied',
+                        '$phone'=>$phone,
+                        'request_$code'=>$code,
+                        'redis_$code'=>$redisCode,
+                    ],
+                ])
+            );
             return $this->writeJson(203,[ ] , [], '验证码错误', true, []);
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '$code' => $code,
-                '$redisCode' => $redisCode,
-            ])
-        );
+        else{
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'preAuthorization_check_sms' => [
+                        'msg'=>'succeed',
+                        '$phone'=>$phone,
+                        'request_$code'=>$code,
+                        'redis_$code'=>$redisCode,
+                    ],
+                ])
+            );
+        }
+        
 
         $res = InsuranceDataHuiZhong::addRecord(
             [
@@ -187,9 +205,9 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
 
         //重复提交校验
         if(
-            !ConfigInfo::setRedisNx('huizhong_sendSms',3)
+            !ConfigInfo::setRedisNx('huizhong_sendSms',60)
         ){
-            return $this->writeJson(201, null, [],  '请勿重复提交');
+            return $this->writeJson(201, null, [],  '还在有效期，稍后重试');
         }
 
         //记录今天发了多少次
@@ -200,11 +218,32 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
         if(
             $res >= 15
         ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'check_daily_send_nums'=>[
+                        'msg'=>'failed',
+                        'daily_send_nums'=>$res,
+                        'limit'=>15,
+                    ]
+                ])
+            );
             return $this->writeJson(201, null, [],  '超出每日发送次数限制');
+        }
+        else{
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'check_daily_send_nums'=>[
+                        'msg'=>'succeed',
+                        'daily_send_nums'=>$res,
+                        'limit'=>15,
+                    ]
+                ])
+            );
         }
 
         $digit = OnlineGoodsUser::createRandomDigit();
-
         //发短信
         $res = (new AliSms())->sendByTempleteV2($phone, 'SMS_218160347',[
             'code' => $digit,
@@ -212,12 +251,14 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'sendByTemplete' => [
-                    'sendByTemplete'=>$res,
-                    '$digit'=>$digit
-                ],
+                'huiZhongSendSms_sendByTemplete'=>
+                    [
+                        'sendByTemplete'=>$res,
+                        '$digit'=>$digit
+                    ],
             ])
         );
+
         if(!$res){
             return $this->writeJson(201, null, [],  '短信发送失败');
         }
