@@ -43,6 +43,28 @@ class AuthBook extends ModelBase
 
 
 
+    public static function findById($id){
+        $res =  AuthBook::create()
+            ->where('id',$id)
+            ->get();
+        return $res;
+    }
+
+    public static function findByIdV2($id){
+        $res =  AuthBook::create()
+            ->where('id',$id)
+            ->get();
+        return $res->toArray();
+    }
+
+    public static function updateById(
+        $id,$data
+    ){
+        $info = self::findById($id);
+        return $info->update($data);
+    }
+
+
     public static function addRecord($requestData){
         try {
             $res =  AuthBook::create()->data([
@@ -54,6 +76,7 @@ class AuthBook extends ModelBase
                 'type' => $requestData['type'],
                 'url' => $requestData['url']?:'',
                 'remark' => $requestData['remark']?:'',
+                'raw_return_json' => $requestData['raw_return_json']?:'',
                 'created_at' => time(),
                 'updated_at' => time(),
             ])->save();

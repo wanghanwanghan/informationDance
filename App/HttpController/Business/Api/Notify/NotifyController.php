@@ -240,6 +240,7 @@ class NotifyController extends BusinessBase
     //授权认证通知
     function zwAuthNotify(): bool
     {
+        $RequestData = $this->getRequestData();
         $entName = $this->getRequestData('name', '');
         $taxNo = $this->getRequestData('taxNumber', '');
         $state = $this->getRequestData('state', '');
@@ -260,7 +261,20 @@ class NotifyController extends BusinessBase
         try {
             $check = AuthBook::create()->where(['phone' => $phone, 'remark' => $orderNo])->get();
             if (!empty($check)) {
-                $check->update(['status' => 3, 'remark' => $state . $message . __FUNCTION__]);
+                $oldAuthBookData = $check->toArray();
+
+                //状态更新为3  //把推送数据保存下来
+                AuthBook::updateById(
+                    $oldAuthBookData['id'],
+                    [
+                        'status'=>3,
+                        'raw_return_json'=> @json_encode(
+                            [
+                                $RequestData
+                            ]
+                        )
+                    ]
+                );
             }
         } catch (\Throwable $e) {
             $this->writeErr($e, __FUNCTION__);
@@ -272,6 +286,7 @@ class NotifyController extends BusinessBase
     //获取数据通知
     function zwDataNotify(): bool
     {
+        $RequestData = $this->getRequestData();
         $entName = $this->getRequestData('name', '');
         $taxNo = $this->getRequestData('taxNumber', '');
         $state = $this->getRequestData('state', '');
@@ -294,7 +309,25 @@ class NotifyController extends BusinessBase
         try {
             $check = AuthBook::create()->where(['phone' => $phone, 'remark' => $orderNo])->get();
             if (!empty($check)) {
-                $check->update(['status' => 3, 'remark' => $state . $message . __FUNCTION__]);
+                $oldAuthBookData = $check->toArray();
+
+                //把新的推送数据 塞进数组里  保存下来
+                $old_raw_return = json_decode($oldAuthBookData['raw_return_json'],true);
+                if(empty($old_raw_return)){
+                    $old_raw_return = [];
+                }
+                $old_raw_return[] = $RequestData;
+
+                AuthBook::updateById(
+                    $oldAuthBookData['id'],
+                    [
+                        //把状态更新为新的
+                        'status'=> $oldAuthBookData['status']+1,
+                        //把新的推送结果也保存下来
+                        'raw_return_json'=> @json_encode( $old_raw_return )
+                    ]
+                );
+
             }
         } catch (\Throwable $e) {
             $this->writeErr($e, __FUNCTION__);
