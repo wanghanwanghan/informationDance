@@ -52,7 +52,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
 
         //重复提交校验
         if(
-            !ConfigInfo::setRedisNx('CarInsurance_sendSms',3)
+            !ConfigInfo::setRedisNx('CarInsurance_sendSms',120)
         ){
             return $this->writeJson(201, null, [],  '请勿重复提交');
         }
@@ -147,13 +147,30 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'redis code not equal'=> [
+                    'authForCarInsurance' => [
+                        'msg'=>'check_sms_code_failed',
+                        'params_phone'=>$requestData['legal_phone'],
+                        'params_prx'=>'CarInsurance_sms_code_',
                         '$redis_code'=>$redis_code,
-                        'code'=>$requestData['code'],
-                    ]
+                        'request_code'=>$requestData['code'],
+                    ],
                 ])
             );
             return $this->writeJson(203,[ ] , [], '验证码已过期', true, []);
+        }
+        else{
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'authForCarInsurance' => [
+                        'msg'=>'check_sms_code_succeed',
+                        'params_phone'=>$requestData['legal_phone'],
+                        'params_prx'=>'CarInsurance_sms_code_',
+                        '$redis_code'=>$redis_code,
+                        'request_code'=>$requestData['code'],
+                    ],
+                ])
+            );
         }
 
         //请求微风起 获取授权地址
@@ -198,13 +215,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                 'updated_at' => time(),
             ]
         );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'authForCarInsurance data'=> $res['data']
-
-            ])
-        );
+         
         return $this->writeJson(
             200,[ ] ,
             //CommonService::ClearHtml($res['body']),

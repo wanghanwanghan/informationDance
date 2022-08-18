@@ -80,7 +80,8 @@ class CarInsuranceInstallment extends ModelBase
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'failed',
-                    '$requestData' => $requestData
+                    '$requestData' => $requestData,
+                    'msg' => $e->getMessage(),
                 ])
             );
         }
@@ -359,8 +360,11 @@ class CarInsuranceInstallment extends ModelBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'EstablishYears ' => $EstablishRes,
-                '$suNingWeiShangDai' => $suNingWeiShangDai
+                'runMatchSuNing ' => [
+                    'msg'=>'cal_company_establish_years',
+                    'param_social_credit_code'=>$carInsuranceData['social_credit_code'],
+                    'res'=>$EstablishRes,
+                ]
             ])
         );
         // 苏宁银行-微商贷：公司成立2年以上
@@ -374,8 +378,11 @@ class CarInsuranceInstallment extends ModelBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                '$isBranchCompanyRes ' => $isBranchCompanyRes,
-                '$suNingWeiShangDai' => $suNingWeiShangDai
+                'runMatchSuNing ' => [
+                    'msg'=>'check_if_is_branch_company',
+                    'param_social_credit_code'=>$carInsuranceData['social_credit_code'],
+                    'res'=>$isBranchCompanyRes,
+                ]
             ])
         );
         if( $isBranchCompanyRes ){

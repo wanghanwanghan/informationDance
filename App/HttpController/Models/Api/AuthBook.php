@@ -23,11 +23,13 @@ class AuthBook extends ModelBase
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'information_dance_auth_book has old  record'=>[
-                        'ent_name'=>$info['ent_name'],
-                        'user_id'=>$info['user_id'],
+                    'AuthBook' => [
+                        'msg'=>'addRecordV2_has_old_record',
+                        'params_phone'=>$info['phone'],
+                        'params_entName'=>$info['entName'],
+                        'params_code'=>$info['code'],
+                        'params_type'=>$info['type'],
                     ],
-
                 ])
             );
             return  $oldRecord->getAttr('id');

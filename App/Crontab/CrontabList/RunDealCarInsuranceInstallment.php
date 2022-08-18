@@ -181,15 +181,33 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                         AND   created_at <= ".strtotime("-30 minutes",time()) ."           
                    "
         );
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'runMatch'=>[
+                    'msg'=>'start',
+                    'data_count'=>count($rawDatas),
+                ]
+            ])
+        );
         foreach ($rawDatas as $rawDataItem){
               //  匹配微商贷
-              $res1 =  CarInsuranceInstallment::runMatchSuNing(intval($rawDataItem['id']));
-              //匹配结果
-              $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
-              if( $res1['res']){
-                  $status = CarInsuranceInstallmentMatchedRes::$status_matched_succeed;
-              }
+            $res1 =  CarInsuranceInstallment::runMatchSuNing(intval($rawDataItem['id']));
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'runMatch'=>[
+                        'msg'=>'run_match_su_ning',
+                        'param_id'=>$rawDataItem['id'],
+                        'res'=>$res1,
+                    ]
+                ])
+            );
+            //匹配结果
+            $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
+            if( $res1['res']){
+                $status = CarInsuranceInstallmentMatchedRes::$status_matched_succeed;
+            }
 
             //保存匹配结果
             CarInsuranceInstallmentMatchedRes::addRecordV2(
@@ -205,8 +223,18 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                 ]
             );
 
-              //匹配金企贷
+            //匹配金企贷
             $res2 =  CarInsuranceInstallment::runMatchJinCheng($rawDataItem['id']);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'runMatch'=>[
+                        'msg'=>'run_match_jin_cheng',
+                        'param_id'=>$rawDataItem['id'],
+                        'res'=>$res2,
+                    ]
+                ])
+            );
             $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
             if($res2['res']){
                 $status = CarInsuranceInstallmentMatchedRes::$status_matched_succeed;
@@ -225,11 +253,21 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
             );
 
               //匹配浦慧贷
-              $res3 =  CarInsuranceInstallment::runMatchPuFa($rawDataItem['id']);
-                $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
-                if( $res3['res']){
-                    $status = CarInsuranceInstallmentMatchedRes::$status_matched_succeed;
-                }
+            $res3 =  CarInsuranceInstallment::runMatchPuFa($rawDataItem['id']);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'runMatch'=>[
+                        'msg'=>'run_match_pu_fa',
+                        'param_id'=>$rawDataItem['id'],
+                        'res'=>$res3,
+                    ]
+                ])
+            );
+            $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
+            if( $res3['res']){
+                $status = CarInsuranceInstallmentMatchedRes::$status_matched_succeed;
+            }
 
             CarInsuranceInstallmentMatchedRes::addRecordV2(
                 [
@@ -268,13 +306,6 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
             //匹配结果
             $companyBasic = CompanyBasic::findByCode($rawDataItem['social_credit_code']);
             if(empty($companyBasic)){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'CarInsuranceInstallment-findOneByUserId-empty $companyBasic'=>$companyBasic,
-                        'social_credit_code'=>$rawDataItem['social_credit_code'],
-                    ])
-                );
                 CarInsuranceInstallment::updateById(
                     $rawDataItem['id'],
                     [
@@ -289,7 +320,11 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                                 'topSupplier' => [],
                                 'topCustomer' => [],
                                 'matchedRes' => [],
-                                //'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
+                                'remark'=>[
+                                    'match_company_failed'=>[
+                                        'social_credit_code'=>$rawDataItem['social_credit_code']
+                                    ]
+                                ],
                             ]
                         )
                     ]
@@ -314,7 +349,6 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                 "taxpayerId" => $essentialRes['data']['essential'][0]['taxpayerId'],
             ];
             //近两年发票开票金额 需要分页拉取后计算结果
-            // ['01', '08', '03', '04', '10', '11', '14', '15'] 分开拉取全部
             // $startDate 往前推一个月  推两年
             //纳税数据取得是两年的数据 取下开始结束时间
             $lastMonth = date("Y-m-01",strtotime("-1 month"));
@@ -328,8 +362,6 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
             );
 
             //按日期格式化
-            $year1 = date('Y',strtotime("-2 years"));
-            $year2 = date('Y',strtotime("-1 years"));
             $mapedByDateAmountRes = [
                 '01' => [],
                 '02' => [],
@@ -451,7 +483,6 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                 }
             }
 
-
             CarInsuranceInstallment::updateById(
                 $rawDataItem['id'],
                 [
@@ -473,7 +504,6 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                             'topCustomer' => $newCustomers,
                             'matchedRes' => $mathedResData,
                             'unmatchedRes' => $unmathedResData,
-                            //'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
                         ]
                     )
                 ]

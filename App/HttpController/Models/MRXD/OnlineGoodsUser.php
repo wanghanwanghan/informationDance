@@ -395,7 +395,6 @@ class OnlineGoodsUser extends ModelBase
     public static function sendMsg($phone,$key){
 
         //记录今天发了多少次
-        $prex = 'daily_'.$key.'_sendSms_';
         OnlineGoodsUser::addDailySmsNumsV2($phone,'daily_'.$key.'_sendSms_');
 
         //每日发送次数限制
@@ -403,14 +402,39 @@ class OnlineGoodsUser extends ModelBase
         if(
             $res >= 15
         ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'sendMsg' => [
+                        'msg'=>'check_daily_send_nums_failed',
+                        'params_phone'=>$phone,
+                        'params_pre'=>'daily_'.$key.'_sendSms_',
+                        'daily_send_nums'=>$res,
+                        'daily_send_nums_limit'=>15,
+                    ],
+                ])
+            );
             return [
                 'failed'=>true,
                 'msg'=> '今日发送次数过多，请明天再试',
             ];
         }
+        else{
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'sendMsg' => [
+                        'msg'=>'check_daily_send_nums_succeed',
+                        'params_phone'=>$phone,
+                        'params_pre'=>'daily_'.$key.'_sendSms_',
+                        'daily_send_nums'=>$res,
+                        'daily_send_nums_limit'=>15,
+                    ],
+                ])
+            );
+        }
 
         $digit = OnlineGoodsUser::createRandomDigit();
-
         //发短信
         $res = (new AliSms())->sendByTempleteV2($phone, 'SMS_218160347',[
             'code' => $digit,
@@ -418,9 +442,11 @@ class OnlineGoodsUser extends ModelBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'sendByTemplete' => [
-                    'sendByTemplete'=>$res,
-                    '$digit'=>$digit
+                'sendMsg' => [
+                    'msg'=>'send_sms',
+                    'params_phone'=>$phone,
+                    'params_code'=>$digit,
+                    'send_sms_res'=>$res,
                 ],
             ])
         );
@@ -437,8 +463,12 @@ class OnlineGoodsUser extends ModelBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'setRandomDigit' => [
-                    'getRandomDigit'=>OnlineGoodsUser::getRandomDigit($phone,$key.'_sms_code_'),
+                'sendMsg' => [
+                    'msg'=>'setRandomDigit',
+                    'params_phone'=>$phone,
+                    'params_code'=>$digit,
+                    'params_prx'=>$key.'_sms_code_',
+                    'redis_res_getRandomDigit'=>OnlineGoodsUser::getRandomDigit($phone,$key.'_sms_code_'),
                 ],
             ])
         );
