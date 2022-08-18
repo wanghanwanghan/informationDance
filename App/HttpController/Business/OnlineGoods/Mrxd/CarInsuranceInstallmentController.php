@@ -248,7 +248,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 'getMatchedRes'=>[
-                    'data_count'=>count($res),
+                    '$res'=>$res, 
                     'user_id'=>count($this->loginUserinfo['id']),
                 ]
             ])
