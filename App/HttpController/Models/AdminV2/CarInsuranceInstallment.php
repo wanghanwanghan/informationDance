@@ -603,7 +603,7 @@ class CarInsuranceInstallment extends ModelBase
         }
         if($companyInvData['CONPROP']<5){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '申请人持股不到5%';
+            $DaiKuanResErrMsg[] = '申请人持股不到5%(实际持股'.$companyInvData['CONPROP'].')';
         }
 
         // 企业法定代表人
@@ -624,7 +624,7 @@ class CarInsuranceInstallment extends ModelBase
             $legal_person_age >65
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '贷款年龄小于22或大于59';
+            $DaiKuanResErrMsg[] = '贷款年龄('.$legal_person_age.')小于22或大于59';
         }
 
         //实际经营时长不少于1年。 -- 发票
@@ -707,7 +707,7 @@ class CarInsuranceInstallment extends ModelBase
             count($thisYearAmout_xiao_by_month) < 10
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '近1年开票不到10个月';
+            $DaiKuanResErrMsg[] = '近1年只开票'.count($thisYearAmout_xiao_by_month).'个月,不到10个月';
         }
         //年开票金额100万以上，近1年开票10月及以上 -- 发票
         if(
@@ -715,7 +715,7 @@ class CarInsuranceInstallment extends ModelBase
             $thisYearAmout_xiao < 1000000
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '年开票金额不到100万';
+            $DaiKuanResErrMsg[] = '年开票金额'.$lastYearAmout_xiao.',不到100万';
         }
 
         // 连续未开票天数≤45天（2、3、4月除外） -- 发票
@@ -751,13 +751,13 @@ class CarInsuranceInstallment extends ModelBase
 
         if($length>=45){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '连续未开票天数大于45天';
+            $DaiKuanResErrMsg[] = '连续未开票天数'.$length.',大于45天';
         }
         if(
             count($last12MonthRes) < 35
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '近12个月累计开票张数小于35 ';
+            $DaiKuanResErrMsg[] = '近12个月累计开票张数'.count($last12MonthRes).',小于35 ';
         }
 
         //企业税务基本信息查询
