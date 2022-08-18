@@ -312,7 +312,10 @@ class CarInsuranceInstallment extends ModelBase
                     'matched' => true,
                 ])
             );
-            return true;
+            return [
+                'has'=>true,
+                'type_cname'=>$codeRes['name'],
+            ];
         }
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -322,7 +325,10 @@ class CarInsuranceInstallment extends ModelBase
                 'matched' => false,
             ])
         );
-        return  false;
+        return [
+            'has'=>false,
+            'type_cname'=>$codeRes['name'],
+        ];
     }
 
 
@@ -370,7 +376,7 @@ class CarInsuranceInstallment extends ModelBase
         // 苏宁银行-微商贷：公司成立2年以上
         if($EstablishRes['EstablishYears'] <= 2){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '公司成立不到2年以上';
+            $suNingWeiShangDaiErrMsg[] = '公司成立'.$EstablishRes['EstablishYears'].'年,不到2年以上';
         }
 
         //是分公司  // 苏宁银行-微商贷： 不能是分公司
@@ -385,9 +391,9 @@ class CarInsuranceInstallment extends ModelBase
                 ]
             ])
         );
-        if( $isBranchCompanyRes ){
+        if( $isBranchCompanyRes['has'] ){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '是分公司';
+            $suNingWeiShangDaiErrMsg[] = '公司类型是分公司('.$isBranchCompanyRes['type_cname'].'),不能申请';
         }
 
         // 苏宁银行-微商贷：  申请人：贷款年龄：22-59周岁；申请人为法人（对占股无要求）、近6个月法人或最大股东变更满6个月 -- h库，用户输入
@@ -405,7 +411,7 @@ class CarInsuranceInstallment extends ModelBase
             $legal_person_age >59
         ){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '贷款年龄小于22或大于59';
+            $suNingWeiShangDaiErrMsg[] = '贷款年龄'.$legal_person_age.',小于22或大于59';
         }
 
         // 苏宁银行-微商贷：   法人手机在网时长大于1年 -- 创蓝接口
@@ -421,7 +427,7 @@ class CarInsuranceInstallment extends ModelBase
             $phoneOnlineTimeRes['data']['result']['rangeStart'] < 12
         ){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '在网时长小于一年';
+            $suNingWeiShangDaiErrMsg[] = '在网时长'.$phoneOnlineTimeRes['data']['result']['rangeStart'].',小于一年';
         };
 
 
@@ -466,7 +472,7 @@ class CarInsuranceInstallment extends ModelBase
             ])
         ){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '纳税等级不属于A/B/M';
+            $suNingWeiShangDaiErrMsg[] = '纳税等级'.$taxBasicInfo['data']['essential'][0]['creditLevel'].'不属于A/B/M';
         };
 
         // 企业当前无欠税 -- 国票接口
@@ -474,7 +480,7 @@ class CarInsuranceInstallment extends ModelBase
             $taxBasicInfo['data']['owingType'] !=  "否"
         ){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '企业当前有欠税';
+            $suNingWeiShangDaiErrMsg[] = '企业当前有欠税(欠税:'.$taxBasicInfo['data']['owingType'].')';
         };
 
         // 苏宁银行-微商贷： 无连续6个月不纳税情况 -- 财务三表
@@ -531,7 +537,7 @@ class CarInsuranceInstallment extends ModelBase
 
         if(count($quarterDebt['result']) < 3){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '季度资产负债表不到三期';
+            $suNingWeiShangDaiErrMsg[] = '季度资产负债表只有'.count($quarterDebt['result']).'期,不到三期';
         };
 
         //季度利润表
@@ -540,7 +546,7 @@ class CarInsuranceInstallment extends ModelBase
                             ->getFinanceIncomeStatement($carInsuranceData['social_credit_code']);
         if(count($quarterProfit['result']) < 3){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '季度利润表不到三期';
+            $suNingWeiShangDaiErrMsg[] = '季度利润表只有'.count($quarterProfit['result']).'期,不到三期';
         };
         if(
             $suNingWeiShangDai
@@ -820,8 +826,6 @@ class CarInsuranceInstallment extends ModelBase
      */
     static  function  runMatchJinCheng($carInsuranceDataId){
         $oneMonthsAgo = date("Y-m-01",strtotime("-1 month"));
-        $twoMonthsAgo = date("Y-m-01",strtotime("-2 month"));
-        $threeMonthsAgo = date("Y-m-01",strtotime("-3 month"));
 
         $DaiKuanRes = true;
         $DaiKuanResErrMsg = [];
@@ -835,8 +839,6 @@ class CarInsuranceInstallment extends ModelBase
         }
         $companyRes = $companyRes->toArray();
 
-        $retrunData = [];
-
         //企业成立年限
         $EstablishRes = self::getEstablishmentYear($carInsuranceData['social_credit_code']);
         CommonService::getInstance()->log4PHP(
@@ -849,21 +851,19 @@ class CarInsuranceInstallment extends ModelBase
         // 企业成立时间：满两年，纳税满1年 -- h库和财务三表
         if($EstablishRes['EstablishYears'] <= 2){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '公司成立不到2年以上';
+            $DaiKuanResErrMsg[] = '公司成立'.$EstablishRes['EstablishYears'].'年,不到2年以上';
         }
 
         // 企业类型：个人独资企业、有限责任公司准入；普通合伙人禁入
         $CompanyTypeRes1 =  self::checkCompanyType($carInsuranceData['social_credit_code'],'个人独资企业');
         $CompanyTypeRes2 =  self::checkCompanyType($carInsuranceData['social_credit_code'],'有限责任公司');
         if(
-            !$CompanyTypeRes1 &&
-            !$CompanyTypeRes2
+            !$CompanyTypeRes1['has'] &&
+            !$CompanyTypeRes2['has']
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '只有个人独资企业、有限责任公司才准入';
+            $DaiKuanResErrMsg[] = '公司类型不是个人独资企业、有限责任公司（'.$CompanyTypeRes1['type_cname'].'）';
         }
-
-
 
         // 年龄：18-60周岁 -- 用户输入
         //身份证年龄
@@ -880,7 +880,7 @@ class CarInsuranceInstallment extends ModelBase
             $legal_person_age >60
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '贷款年龄小于18或大于60';
+            $DaiKuanResErrMsg[] = '贷款年龄'.$legal_person_age.',小于18或大于60';
         }
 
         //  纳税满1年 -- h库和财务三表
@@ -923,7 +923,7 @@ class CarInsuranceInstallment extends ModelBase
         //结束日期没有纳税的 不符合
         if(!$hasEndRes){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '上个月没有纳税';
+            $DaiKuanResErrMsg[] = '纳税不满1年';
         }
 
         // 申请人：企业法人 -- h库
@@ -931,10 +931,8 @@ class CarInsuranceInstallment extends ModelBase
             $companyRes['NAME'] != $carInsuranceData['legal_person']
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '不是企业法人';
+            $DaiKuanResErrMsg[] = '申请人'.$carInsuranceData['legal_person'].'不是企业法人';
         }
-
-
 
         // 近两年任意一年纳税总额不得为0 -- 财务三表
         $thisYearsSuoDeShui = 0;
@@ -983,7 +981,7 @@ class CarInsuranceInstallment extends ModelBase
             ])
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '纳税等级不属于A/B/C/M';
+            $DaiKuanResErrMsg[] = '纳税等级'.$taxBasicInfo['data']['essential'][0]['creditLevel'].',不属于A/B/C/M';
         };
 
 

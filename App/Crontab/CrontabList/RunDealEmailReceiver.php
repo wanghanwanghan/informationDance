@@ -540,7 +540,7 @@ class RunDealEmailReceiver extends AbstractCronTask
         $html .=  ' 
         <tr>
             <td>产品</td>
-            <td>挥众产品</td>
+            <td>麾众产品</td>
         </tr>';
         $html .=  ' 
         <tr>
@@ -768,7 +768,7 @@ class RunDealEmailReceiver extends AbstractCronTask
                     'user_id' => 0,
                     'msg' =>  "邮件内容:".$tableHtml .' 邮件结果:'.$res1,
                     'details' =>json_encode( XinDongService::trace()),
-                    'type_cname' => '挥众发邮件',
+                    'type_cname' => '麾众发邮件',
                 ]
             );
             InsuranceDataHuiZhong::updateById($data['id'],[
