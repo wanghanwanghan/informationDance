@@ -276,10 +276,12 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
         $res = $res->toArray();
         //暂时去取最新的一个
         $resNew = MailReceipt::findByInsuranceId($res['id']);
+        $resNew = $resNew?end($resNew):[];
+        $attachs  = json_decode($resNew['attachs'],true);
         return $this->writeJson(
             200,
             [],
-            $resNew?end($resNew):[]
+            $attachs
         );
     }
 }
