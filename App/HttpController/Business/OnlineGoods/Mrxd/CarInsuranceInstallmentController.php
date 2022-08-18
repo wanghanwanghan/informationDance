@@ -244,9 +244,26 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         else{
             $res = [];
         }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'getMatchedRes'=>[
+                    'data_count'=>count($res),
+                    'user_id'=>count($this->loginUserinfo['id']),
+                ]
+            ])
+        );
 
         //异步定时任务计算的结果
         $returnArr =   json_decode($res['math_res'],true);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'getMatchedRes'=>[
+                    '$returnArr'=>$returnArr
+                ]
+            ])
+        );
         if(empty($returnArr)){
             $returnArr = [
                 'companyInfo' => [
