@@ -589,7 +589,7 @@ class CarInsuranceInstallment extends ModelBase
             $companyRes['NAME'] != $carInsuranceData['legal_person']
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '申请人'.$carInsuranceData['legal_person'].'不是法人'.$companyRes['NAME'];
+            $DaiKuanResErrMsg[] = '申请人('.$carInsuranceData['legal_person'].')不是法人';
         }
         // 申请人：企业法定代表人，持股5%以上 -- h库
         $companyInv = CompanyInv::findByCompanyIdAndInv($companyRes['id'],$carInsuranceData['legal_person']);
@@ -757,7 +757,7 @@ class CarInsuranceInstallment extends ModelBase
             count($last12MonthRes) < 35
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '近12个月累计开票张数'.count($last12MonthRes).',小于35 ';
+            $DaiKuanResErrMsg[] = '近12个月累计开票张数'.count($last12MonthRes).',小于35张 ';
         }
 
         //企业税务基本信息查询
