@@ -589,13 +589,13 @@ class CarInsuranceInstallment extends ModelBase
             $companyRes['NAME'] != $carInsuranceData['legal_person']
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '申请人不是法人';
+            $DaiKuanResErrMsg[] = '申请人'.$carInsuranceData['legal_person'].'不是法人'.$companyRes['NAME'];
         }
         // 申请人：企业法定代表人，持股5%以上 -- h库
         $companyInv = CompanyInv::findByCompanyIdAndInv($companyRes['id'],$carInsuranceData['legal_person']);
         if(empty($companyInv)){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '申请人持股不到5%';
+            $DaiKuanResErrMsg[] = '申请人持股不到5%('.$carInsuranceData['legal_person'].'没有持股信息)';
         }
 
         if($companyInv){
@@ -603,7 +603,7 @@ class CarInsuranceInstallment extends ModelBase
         }
         if($companyInvData['CONPROP']<5){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '申请人持股不到5%(实际持股'.$companyInvData['CONPROP'].')';
+            $DaiKuanResErrMsg[] = '申请人持股不到5%('.$carInsuranceData['legal_person'].'实际持股'.number_format($companyInvData['CONPROP'],2).')';
         }
 
         // 企业法定代表人
