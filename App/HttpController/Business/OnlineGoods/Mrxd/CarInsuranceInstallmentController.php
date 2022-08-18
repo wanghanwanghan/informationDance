@@ -186,6 +186,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
             [
                 'phone' =>  $requestData['legal_phone'],
                 'entName' => $requestData['ent_name'],
+                'name' => '',
                 'code' => $requestData['social_credit_code'],
                 'status' => 1,
                 'type' => 2,//深度报告，发票数据
@@ -215,7 +216,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                 'updated_at' => time(),
             ]
         );
-         
+
         return $this->writeJson(
             200,[ ] ,
             //CommonService::ClearHtml($res['body']),

@@ -48,7 +48,6 @@ class AuthBook extends ModelBase
             $res =  AuthBook::create()->data([
                 'phone' => $requestData['phone'],
                 'entName' => $requestData['entName'],
-                'ent_name' => $requestData['ent_name'],
                 'code' => $requestData['code'],
                 'name' => $requestData['name'],
                 'status' => $requestData['status'],
