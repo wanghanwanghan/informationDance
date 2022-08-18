@@ -22,6 +22,7 @@ use App\HttpController\Models\AdminV2\CarInsuranceInstallmentMatchedRes;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
+use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
@@ -175,11 +176,11 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
      */
     static function runMatch(){
         // 贷款产品
+        //  AND   created_at <= ".strtotime("-30 minutes",time()) ."
         $rawDatas = CarInsuranceInstallment::findBySql(
             " WHERE 
-                        status =  ".CarInsuranceInstallment::$status_init ."
-                        AND   created_at <= ".strtotime("-30 minutes",time()) ."           
-                   "
+                        status =  ".CarInsuranceInstallment::$status_init ."        
+                  "
         );
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -191,6 +192,25 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
             ])
         );
         foreach ($rawDatas as $rawDataItem){
+            if(
+                $rawDataItem['auth_id'] <= 0
+            ){
+                CarInsuranceInstallment::updateById(
+                    $rawDataItem['id'],
+                    [
+                        'status'=>CarInsuranceInstallment::$status_matched_failed,
+                    ]
+                );
+                continue ;
+            }
+
+            $authBook = AuthBook::findByIdV2($rawDataItem['auth_id']);
+            if(
+                $authBook['status'] != 5
+            ){
+                continue ;
+            }
+
               //  匹配微商贷
             $res1 =  CarInsuranceInstallment::runMatchSuNing(intval($rawDataItem['id']));
             CommonService::getInstance()->log4PHP(

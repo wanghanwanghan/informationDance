@@ -184,6 +184,7 @@ class RunDealEmailReceiver extends AbstractCronTask
                     'email_id' => $emailDataItem['Uid'],
                     'to' => $emailAddress,
                     'to_other' => $emailDataItem['mailHeader']['toOther']?:'',
+                    'attachs' => empty($attachs)?'':json_encode($attachs),
                     'from' => $emailDataItem['mailHeader']['from']?:'',
                     'subject' => $emailDataItem['mailHeader']['subject']?stripslashes($emailDataItem['mailHeader']['subject']):'',
                     'body' => $emailDataItem['body']?:'',

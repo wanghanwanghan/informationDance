@@ -68,6 +68,7 @@ class MailReceipt extends ModelBase
                 'user_id' => $requestData['user_id'],
                 'from' => $requestData['from'],
                 'subject' => $requestData['subject']?:'',
+                'attachs' => $requestData['attachs']?:'',
                  'body' => $requestData['body']?:'',
                  'status' => $requestData['status']?:'1',
                 'type' => $requestData['type']?:'1',
