@@ -517,9 +517,9 @@ class CarInsuranceInstallment extends ModelBase
         ){
             $suNingWeiShangDai = false;
             $suNingWeiShangDaiErrMsg[] = '近3个月有未纳税申报记录('.
-                ($oneMonthsAgoHasNoTax?'':$oneMonthsAgo.'未纳税').
-                ($twoMonthsAgoHasNoTax?'':$twoMonthsAgo.'未纳税').
-                ($threeMonthsAgoHasNoTax?'':$threeMonthsAgo.'未纳税')
+                ($oneMonthsAgoHasNoTax?$oneMonthsAgo.'未纳税':'').
+                ($twoMonthsAgoHasNoTax? $twoMonthsAgo.'未纳税':'').
+                ($threeMonthsAgoHasNoTax? $threeMonthsAgo.'未纳税':'')
                 .') ';
         }
 
