@@ -23,6 +23,7 @@ use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\Api\AuthBook;
+use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
@@ -504,6 +505,16 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                 }
             }
 
+            $userData = OnlineGoodsUser::findById($rawDataItem['user_id']);
+            $userData = $userData->toArray();
+            ;
+
+            $res = SmsService::getInstance()->sendByTemplete(
+                $userData['phone'], 'SMS_244025473',[
+                'name' => '有询价的结果了',
+                'money' => '多钱'
+            ]);
+
             CarInsuranceInstallment::updateById(
                 $rawDataItem['id'],
                 [
@@ -529,7 +540,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                     )
                 ]
             );
-            //=======================================
+
         }
         return true;
     }
