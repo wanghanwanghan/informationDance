@@ -326,321 +326,120 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
             }
 
             //匹配结果
-            $companyBasic = CompanyBasic::findByCode($rawDataItem['social_credit_code']);
-            if(empty($companyBasic)){
-                CarInsuranceInstallment::updateById(
-                    $rawDataItem['id'],
-                    [
-                        'math_res' =>  json_encode(
-                            [
-                                'companyInfo' => [
-
-                                ],
-                                'essentialFinanceInfo' => [],
-                                'mapedByDateNumsRes' => [],
-                                'mapedByDateAmountRes' => [],
-                                'topSupplier' => [],
-                                'topCustomer' => [],
-                                'matchedRes' => [],
-                                'remark'=>[
-                                    'match_company_failed'=>[
-                                        'social_credit_code'=>$rawDataItem['social_credit_code']
-                                    ]
-                                ],
-                            ]
-                        )
-                    ]
-                );
+            $pullDataRes = self::resetMatchRes($rawDataItem['id']);
+            if(!$pullDataRes){
                 continue;
-            }
-
-            //=======================================
-            $companyBasic = $companyBasic->toArray();
-            $companyRes = (new XinDongService())->getEsBasicInfoV2($companyBasic['companyid']);
-
-            //税务信息(今年)
-            $essentialRes = (new GuoPiaoService())->getEssential($rawDataItem['social_credit_code']);
-            $mapedEssentialRes = [
-                "owingType" => $essentialRes['data']['owingType'],
-                "payTaxes" => $essentialRes['data']['payTaxes'],
-                "regulations" => $essentialRes['data']['regulations'],
-                "nature" => $essentialRes['data']['nature'],
-                "creditPoint" => $essentialRes['data']['essential'][0]['creditPoint'],
-                "creditLevel" => $essentialRes['data']['essential'][0]['creditLevel'],
-                "year" => $essentialRes['data']['essential'][0]['year'],
-                "taxpayerId" => $essentialRes['data']['essential'][0]['taxpayerId'],
-            ];
-            //近两年发票开票金额 需要分页拉取后计算结果
-            // $startDate 往前推一个月  推两年
-            //纳税数据取得是两年的数据 取下开始结束时间
-            $lastMonth = date("Y-m-01",strtotime("-1 month"));
-            //两年前的开始月
-            $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
-            //进销项发票信息 信动专用
-            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
-                $rawDataItem['social_credit_code'],
-                $last2YearStart,
-                $lastMonth
-            );
-
-            //按日期格式化
-            $mapedByDateAmountRes = [
-                '01' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '02' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '03' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '04' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '05' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '06' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '07' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '08' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '09' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '10' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '11' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '12' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-            ];
-            $mapedByDateNumsRes = [
-                '01' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '02' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '03' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '04' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '05' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '06' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '07' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '08' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '09' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '10' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '11' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-                '12' => [
-                    '2020'=>'',
-                    '2021'=>'',
-                    '2022'=>'',
-                ],
-            ];
-            foreach ($allInvoiceDatas as $InvoiceData){
-                $month = date('m',strtotime($InvoiceData['billingDate']));
-                $year = date('Y',strtotime($InvoiceData['billingDate']));
-                $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
-                $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2,".","");
-                $mapedByDateNumsRes[$month][$year] ++;
-            }
-
-            //进销项发票信息 信动专用
-            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
-                $rawDataItem['social_credit_code'],
-                $last2YearStart,
-                $lastMonth
-            );
-            foreach ($allInvoiceDatas as $InvoiceData){
-                $month = date('m',strtotime($InvoiceData['billingDate']));
-                $year = date('Y',strtotime($InvoiceData['billingDate']));
-                $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
-                $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2,".","");
-                $mapedByDateNumsRes[$month][$year] ++;
-            }
-            //销项
-            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
-                $rawDataItem['social_credit_code'],
-                $last2YearStart,
-                $lastMonth,
-                2
-            );
-            foreach ($allInvoiceDatas as $InvoiceData){
-                $month = date('m',strtotime($InvoiceData['billingDate']));
-                $year = date('Y',strtotime($InvoiceData['billingDate']));
-                $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
-                $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2,".","");
-                $mapedByDateNumsRes[$month][$year] ++;
-            }
-            //十大供应商
-            //进销项发票信息 信动专用
-            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
-                $rawDataItem['social_credit_code'],
-                $last2YearStart,
-                $lastMonth
-            );
-            $supplier = [];
-            foreach ($allInvoiceDatas as $InvoiceData){
-                $supplier[$InvoiceData['salesTaxName']]['entName'] = $InvoiceData['salesTaxName'] ;
-                $supplier[$InvoiceData['salesTaxName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
-                $supplier[$InvoiceData['salesTaxName']]['totalAmount'] = number_format($supplier[$InvoiceData['salesTaxName']]['totalAmount'],2,".","");
-            }
-            //按时间倒叙排列
-            usort($supplier, function($a, $b) {
-                return $b['totalAmount'] <=> $a['totalAmount'];
-            });
-            $newSupplier = array_slice($supplier, 0, 10);
-
-
-            //十大客户
-            //销项项发票信息 信动专用
-            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
-                $rawDataItem['social_credit_code'],
-                $last2YearStart,
-                $lastMonth,
-                2
-            );
-            $customers = [];
-            foreach ($allInvoiceDatas as $InvoiceData){
-                $customers[$InvoiceData['purchaserName']]['entName'] = $InvoiceData['purchaserName'] ;
-                $customers[$InvoiceData['purchaserName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
-                $customers[$InvoiceData['purchaserName']]['totalAmount'] = number_format($customers[$InvoiceData['purchaserName']]['totalAmount'],2,".","");
-            }
-            //按时间倒叙排列
-            usort($customers, function($a, $b) {
-                return $b['totalAmount'] <=> $a['totalAmount'];
-            });
-            $newCustomers =  array_slice($customers, 0, 10);
-
-
-            //匹配结果
-            $matchedRes = CarInsuranceInstallmentMatchedRes::findAllByCondition(
-                [
-                    'car_insurance_id'=>$rawDataItem['id']
-                ]
-            );
-            $mathedResData = [];
-            $unmathedResData = [];
-            foreach ($matchedRes as &$matchedResItem){
-                $matchedResItem['status_cname'] =  CarInsuranceInstallmentMatchedRes::getStatusMap()[$matchedResItem['status']];
-                $matchedResItem['msg_arr'] =  $matchedResItem['msg']? json_decode($matchedResItem['msg'],true):[];
-                if($matchedResItem['status']== CarInsuranceInstallmentMatchedRes::$status_matched_succeed){
-                    $mathedResData[] =  $matchedResItem;
-                }
-                if($matchedResItem['status']== CarInsuranceInstallmentMatchedRes::$status_matched_failed){
-                    $unmathedResData[] =  $matchedResItem;
-                }
             }
 
             $userData = OnlineGoodsUser::findById($rawDataItem['user_id']);
             $userData = $userData->toArray();
-            ;
 
-            $res = SmsService::getInstance()->sendByTemplete(
+            SmsService::getInstance()->sendByTemplete(
                 $userData['phone'], 'SMS_244025473',[
                 'name' => '有询价的结果了',
                 'money' => '多钱'
             ]);
+        }
 
+        return true;
+    }
+
+    static function  resetMatchRes($id){
+        $rawDataItem = CarInsuranceInstallment::findById($id);
+        $rawDataItem = $rawDataItem->toArray();
+
+        //匹配结果
+        $companyBasic = CompanyBasic::findByCode($rawDataItem['social_credit_code']);
+        if(empty($companyBasic)){
             CarInsuranceInstallment::updateById(
                 $rawDataItem['id'],
                 [
                     'math_res' =>  json_encode(
                         [
                             'companyInfo' => [
-                                'ENTNAME' => $companyRes['ENTNAME'],
-                                'NAME' => $companyRes['NAME'],
-                                'ESDATE' => $companyRes['ESDATE'],
-                                'REGCAP' => $companyRes['REGCAP'],
-                                'UNISCID' => $companyRes['UNISCID'],
-                                'DOM' => $companyRes['DOM'],
-                                'OPSCOPE' => $companyRes['OPSCOPE'],
+
                             ],
-                            'essentialFinanceInfo' => $mapedEssentialRes,
-                            'mapedByDateNumsRes' => $mapedByDateNumsRes,
-                            'mapedByDateAmountRes' => $mapedByDateAmountRes,
-                            'topSupplier' => $newSupplier,
-                            'topCustomer' => $newCustomers,
-                            'matchedRes' => $mathedResData,
-                            'unmatchedRes' => $unmathedResData,
+                            'essentialFinanceInfo' => [],
+                            'mapedByDateNumsRes' => [],
+                            'mapedByDateAmountRes' => [],
+                            'topSupplier' => [],
+                            'topCustomer' => [],
+                            'matchedRes' => [],
+                            'remark'=>[
+                                'match_company_failed'=>[
+                                    'social_credit_code'=>$rawDataItem['social_credit_code']
+                                ]
+                            ],
                         ]
                     )
                 ]
             );
-
+            return  false ;
         }
-        return true;
+
+        //=======================================
+        $companyBasic = $companyBasic->toArray();
+        $companyRes = (new XinDongService())->getEsBasicInfoV2($companyBasic['companyid']);
+
+        //税务信息(今年)
+        $essentialRes = (new GuoPiaoService())->getEssential($rawDataItem['social_credit_code']);
+        $mapedEssentialRes = [
+            "owingType" => $essentialRes['data']['owingType'],
+            "payTaxes" => $essentialRes['data']['payTaxes'],
+            "regulations" => $essentialRes['data']['regulations'],
+            "nature" => $essentialRes['data']['nature'],
+            "creditPoint" => $essentialRes['data']['essential'][0]['creditPoint'],
+            "creditLevel" => $essentialRes['data']['essential'][0]['creditLevel'],
+            "year" => $essentialRes['data']['essential'][0]['year'],
+            "taxpayerId" => $essentialRes['data']['essential'][0]['taxpayerId'],
+        ];
+
+        //匹配结果
+        $matchedRes = CarInsuranceInstallmentMatchedRes::findAllByCondition(
+            [
+                'car_insurance_id'=>$rawDataItem['id']
+            ]
+        );
+        $mathedResData = [];
+        $unmathedResData = [];
+        foreach ($matchedRes as &$matchedResItem){
+            $matchedResItem['status_cname'] =  CarInsuranceInstallmentMatchedRes::getStatusMap()[$matchedResItem['status']];
+            $matchedResItem['msg_arr'] =  $matchedResItem['msg']? json_decode($matchedResItem['msg'],true):[];
+            if($matchedResItem['status']== CarInsuranceInstallmentMatchedRes::$status_matched_succeed){
+                $mathedResData[] =  $matchedResItem;
+            }
+            if($matchedResItem['status']== CarInsuranceInstallmentMatchedRes::$status_matched_failed){
+                $unmathedResData[] =  $matchedResItem;
+            }
+        }
+
+        $AnalyzeData = CarInsuranceInstallment::getLastTwoYearAnalyzeData();
+        CarInsuranceInstallment::updateById(
+            $rawDataItem['id'],
+            [
+                'math_res' =>  json_encode(
+                    [
+                        'companyInfo' => [
+                            'ENTNAME' => $companyRes['ENTNAME'],
+                            'NAME' => $companyRes['NAME'],
+                            'ESDATE' => $companyRes['ESDATE'],
+                            'REGCAP' => $companyRes['REGCAP'],
+                            'UNISCID' => $companyRes['UNISCID'],
+                            'DOM' => $companyRes['DOM'],
+                            'OPSCOPE' => $companyRes['OPSCOPE'],
+                        ],
+                        'essentialFinanceInfo' => $mapedEssentialRes,
+                        'mapedByDateNumsRes' => $AnalyzeData['mapedByDateNumsRes'],
+                        'mapedByDateAmountRes' =>  $AnalyzeData['mapedByDateAmountRes'],
+                        'topSupplier' => $AnalyzeData['topSupplier'],
+                        'topCustomer' => $AnalyzeData['topCustomer'],
+                        'matchedRes' => $mathedResData,
+                        'unmatchedRes' => $unmathedResData,
+                    ]
+                )
+            ]
+        );
+        return  true;
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)

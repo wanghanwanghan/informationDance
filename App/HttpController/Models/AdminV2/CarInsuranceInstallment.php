@@ -4,6 +4,7 @@ namespace App\HttpController\Models\AdminV2;
 
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\ModelBase;
+use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyInv;
@@ -13,6 +14,7 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\Sms\SmsService;
 
 
 // use App\HttpController\Models\AdminRole;
@@ -411,7 +413,7 @@ class CarInsuranceInstallment extends ModelBase
             $legal_person_age >59
         ){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '贷款年龄'.$legal_person_age.',小于22或大于59';
+            $suNingWeiShangDaiErrMsg[] = '贷款年龄'.intval($legal_person_age).',小于22或大于59';
         }
 
         // 苏宁银行-微商贷：   法人手机在网时长大于1年 -- 创蓝接口
@@ -630,7 +632,7 @@ class CarInsuranceInstallment extends ModelBase
             $legal_person_age >65
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '贷款年龄('.$legal_person_age.')小于22或大于59';
+            $DaiKuanResErrMsg[] = '贷款年龄('.intval($legal_person_age).')小于22或大于59';
         }
 
         //实际经营时长不少于1年。 -- 发票
@@ -880,7 +882,7 @@ class CarInsuranceInstallment extends ModelBase
             $legal_person_age >60
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '贷款年龄'.$legal_person_age.',小于18或大于60';
+            $DaiKuanResErrMsg[] = '贷款年龄'.intval($legal_person_age).',小于18或大于60';
         }
 
         //  纳税满1年 -- h库和财务三表
@@ -1384,4 +1386,227 @@ class CarInsuranceInstallment extends ModelBase
             $page ++;
         }
     }
+
+    static function  getLastTwoYearAnalyzeData($social_credit_code){
+        //近两年发票开票金额 需要分页拉取后计算结果
+        // $startDate 往前推一个月  推两年
+        //纳税数据取得是两年的数据 取下开始结束时间
+        $lastMonth = date("Y-m-01",strtotime("-1 month"));
+        //两年前的开始月
+        $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+        //进销项发票信息 信动专用
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $social_credit_code,
+            $last2YearStart,
+            $lastMonth
+        );
+
+        //按日期格式化
+        $mapedByDateAmountRes = [
+            '01' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '02' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '03' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '04' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '05' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '06' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '07' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '08' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '09' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '10' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '11' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '12' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+        ];
+        $mapedByDateNumsRes = [
+            '01' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '02' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '03' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '04' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '05' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '06' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '07' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '08' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '09' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '10' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '11' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '12' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+        ];
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $month = date('m',strtotime($InvoiceData['billingDate']));
+            $year = date('Y',strtotime($InvoiceData['billingDate']));
+            $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
+            $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2,".","");
+            $mapedByDateNumsRes[$month][$year] ++;
+        }
+
+        //进销项发票信息 信动专用
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $social_credit_code,
+            $last2YearStart,
+            $lastMonth
+        );
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $month = date('m',strtotime($InvoiceData['billingDate']));
+            $year = date('Y',strtotime($InvoiceData['billingDate']));
+            $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
+            $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2,".","");
+            $mapedByDateNumsRes[$month][$year] ++;
+        }
+        //销项
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $social_credit_code,
+            $last2YearStart,
+            $lastMonth,
+            2
+        );
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $month = date('m',strtotime($InvoiceData['billingDate']));
+            $year = date('Y',strtotime($InvoiceData['billingDate']));
+            $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
+            $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2,".","");
+            $mapedByDateNumsRes[$month][$year] ++;
+        }
+        //十大供应商
+        //进销项发票信息 信动专用
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $social_credit_code,
+            $last2YearStart,
+            $lastMonth
+        );
+        $supplier = [];
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $supplier[$InvoiceData['salesTaxName']]['entName'] = $InvoiceData['salesTaxName'] ;
+            $supplier[$InvoiceData['salesTaxName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
+            $supplier[$InvoiceData['salesTaxName']]['totalAmount'] = number_format($supplier[$InvoiceData['salesTaxName']]['totalAmount'],2,".","");
+        }
+        //按时间倒叙排列
+        usort($supplier, function($a, $b) {
+            return $b['totalAmount'] <=> $a['totalAmount'];
+        });
+        $newSupplier = array_slice($supplier, 0, 10);
+
+
+        //十大客户
+        //销项项发票信息 信动专用
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $social_credit_code,
+            $last2YearStart,
+            $lastMonth,
+            2
+        );
+        $customers = [];
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $customers[$InvoiceData['purchaserName']]['entName'] = $InvoiceData['purchaserName'] ;
+            $customers[$InvoiceData['purchaserName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
+            $customers[$InvoiceData['purchaserName']]['totalAmount'] = number_format($customers[$InvoiceData['purchaserName']]['totalAmount'],2,".","");
+        }
+        //按时间倒叙排列
+        usort($customers, function($a, $b) {
+            return $b['totalAmount'] <=> $a['totalAmount'];
+        });
+        $newCustomers =  array_slice($customers, 0, 10);
+
+        return [
+            'mapedByDateNumsRes' => $mapedByDateNumsRes,
+            'mapedByDateAmountRes' => $mapedByDateAmountRes,
+            'topSupplier' => $newSupplier,
+            'topCustomer' => $newCustomers,
+        ];
+    }
+
 }

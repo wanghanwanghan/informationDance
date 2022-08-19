@@ -3617,6 +3617,19 @@ eof;
     {
 
         if(
+            $this->getRequestData('resetMatchRes')
+        ){
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                RunDealCarInsuranceInstallment::resetMatchRes($this->getRequestData('resetMatchRes')),
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
             $this->getRequestData('runMatchXXX')
         ){
             return $this->writeJson(
