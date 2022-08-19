@@ -217,7 +217,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                             'msg'=>'has_not_received_data_yet_continue',
                             'param_id'=>$rawDataItem['id'],
                             'param_auth_id'=>$rawDataItem['auth_id'],
-                            'param_status'=>$rawDataItem['status'], 
+                            'param_status'=>$rawDataItem['status'],
                         ]
                     ])
                 );

@@ -153,7 +153,7 @@ class RunDealEmailReceiver extends AbstractCronTask
     static function  pullEmail($dayNums = 1 ){
         $mail = new Email();
         $emailAddress = CreateConf::getInstance()->getConf('mail.user_receiver');
-        $mail->mailConnect(
+        $source = $mail->mailConnect(
             CreateConf::getInstance()->getConf('mail.host_receiver'),//'imap.exmail.qq.com',
             CreateConf::getInstance()->getConf('mail.port_receiver'),//'143',
             $emailAddress,//'mail@meirixindong.com',
@@ -176,7 +176,15 @@ class RunDealEmailReceiver extends AbstractCronTask
         );
 
         //单纯加数据
-        foreach ($emailData as $emailDataItem){
+        for ($msgcount = $totalCount; $msgcount > 0; $msgcount--) {
+
+            //$mailHeader = $mail->mailHeader($msgcount);
+            // $mailHeader['from'] == '***@***.com'
+            // $mailHeader['seen'] == "U" 未读
+            // $mail->getBody($i)
+            // $subject = $mailHeader['subject']; //邮件标题
+            // $status = $mail->mailRead($i);
+            // $mail->mailDelete($i);//删除已读
             $mailHeader = $mail->mailHeader($msgcount);
             $emailBody = $mail->getBody($msgcount);
             $attachs = $mail->getAttach($msgcount,OTHER_FILE_PATH.'MailAttach/');
@@ -186,7 +194,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             }
             $datas =[
                 'user_id' => 0,
-                'email_id' => $emailDataItem['Uid'],
+                'email_id' => intval(@imap_uid($source, $msgcount)),
                 'to' => $emailAddress,
                 'to_other' => $mailHeader['toOther']?:'',
                 'attachs' => empty($newFileArr)?'':json_encode($newFileArr),
@@ -206,15 +214,14 @@ class RunDealEmailReceiver extends AbstractCronTask
                         'msg'=>'add_to_db',
                         '$attachs'=>$attachs,
                         '$mailHeader'=>$mailHeader,
-                        'email_id'=>$emailDataItem['Uid'],
-                        'subject'=>stripslashes($emailDataItem['mailHeader']['subject']),
+                        'email_id'=>intval(@imap_uid($source, $msgcount)),
+                        'subject'=>stripslashes($mailHeader['subject']),
                     ]
                 ])
             );
             MailReceipt::addRecordV2(
                 $datas
             );
-            $msgcount  --;
         }
 
         //单纯发短信|状态控制下 防止强制触发
@@ -634,6 +641,17 @@ class RunDealEmailReceiver extends AbstractCronTask
             $insuranceDatas['id'] = $data['id'];
             $tableHtml = self::getTableHtml($insuranceDatas,$dataRes);
             $res1 = CommonService::getInstance()->sendEmailV2(
+                '1270331569@qq.com',
+                // 'minglongoc@me.com',
+                '询价'.$dataRes['data']['title'],
+                $tableHtml
+                ,
+                [
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
+            $res1 = CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',
                 // 'minglongoc@me.com',
                 '询价'.$dataRes['data']['title'],
@@ -728,6 +746,17 @@ class RunDealEmailReceiver extends AbstractCronTask
             $insuranceDatas  = json_decode($data['post_params'],true);
             $insuranceDatas['id'] = $data['id'];
             $tableHtml = self::getTableHtmlHuiZhong($insuranceDatas);
+            $res1 = CommonService::getInstance()->sendEmailV2(
+                '1270331569@qq.com',
+                // 'minglongoc@me.com',
+                '用户车险分期预授信',
+                $tableHtml
+                ,
+                [
+                    // TEMP_FILE_PATH . 'personal.png',
+                    //TEMP_FILE_PATH . 'qianzhang2.png',
+                ]
+            );
             $res1 = CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',
                 '用户车险分期预授信',
