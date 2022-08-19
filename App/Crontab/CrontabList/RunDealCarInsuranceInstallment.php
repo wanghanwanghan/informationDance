@@ -554,6 +554,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
             foreach ($allInvoiceDatas as $InvoiceData){
                 $supplier[$InvoiceData['salesTaxName']]['entName'] = $InvoiceData['salesTaxName'] ;
                 $supplier[$InvoiceData['salesTaxName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
+                $supplier[$InvoiceData['salesTaxName']]['totalAmount'] = number_format($supplier[$InvoiceData['salesTaxName']]['totalAmount'],2);
             }
             //按时间倒叙排列
             usort($supplier, function($a, $b) {
@@ -574,6 +575,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
             foreach ($allInvoiceDatas as $InvoiceData){
                 $customers[$InvoiceData['purchaserName']]['entName'] = $InvoiceData['purchaserName'] ;
                 $customers[$InvoiceData['purchaserName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
+                $customers[$InvoiceData['purchaserName']]['totalAmount'] = number_format($customers[$InvoiceData['purchaserName']]['totalAmount'],2);
             }
             //按时间倒叙排列
             usort($customers, function($a, $b) {
