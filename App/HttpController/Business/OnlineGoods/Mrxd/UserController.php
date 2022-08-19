@@ -218,7 +218,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
     }
 
 
-    function signOut(): bool
+    function OnlineSignOut(): bool
     {
         $requestData =  $this->getRequestData();
         OnlineGoodsUser::updateById(
@@ -236,7 +236,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
     }
 
-    function logOut(): bool
+    function OnlineLogOut(): bool
     {
         $requestData =  $this->getRequestData();
 
