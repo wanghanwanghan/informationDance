@@ -512,7 +512,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                 $month = date('m',strtotime($InvoiceData['billingDate']));
                 $year = date('Y',strtotime($InvoiceData['billingDate']));
                 $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
-                //$mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2);
+                $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2,".","");
                 $mapedByDateNumsRes[$month][$year] ++;
             }
 
@@ -526,7 +526,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                 $month = date('m',strtotime($InvoiceData['billingDate']));
                 $year = date('Y',strtotime($InvoiceData['billingDate']));
                 $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
-                //$mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2);
+                $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2,".","");
                 $mapedByDateNumsRes[$month][$year] ++;
             }
             //销项
@@ -540,7 +540,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                 $month = date('m',strtotime($InvoiceData['billingDate']));
                 $year = date('Y',strtotime($InvoiceData['billingDate']));
                 $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
-                //$mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2);
+                $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2,".","");
                 $mapedByDateNumsRes[$month][$year] ++;
             }
             //十大供应商
@@ -554,7 +554,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
             foreach ($allInvoiceDatas as $InvoiceData){
                 $supplier[$InvoiceData['salesTaxName']]['entName'] = $InvoiceData['salesTaxName'] ;
                 $supplier[$InvoiceData['salesTaxName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
-                //$supplier[$InvoiceData['salesTaxName']]['totalAmount'] = number_format($supplier[$InvoiceData['salesTaxName']]['totalAmount'],2);
+                $supplier[$InvoiceData['salesTaxName']]['totalAmount'] = number_format($supplier[$InvoiceData['salesTaxName']]['totalAmount'],2,".","");
             }
             //按时间倒叙排列
             usort($supplier, function($a, $b) {
@@ -575,7 +575,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
             foreach ($allInvoiceDatas as $InvoiceData){
                 $customers[$InvoiceData['purchaserName']]['entName'] = $InvoiceData['purchaserName'] ;
                 $customers[$InvoiceData['purchaserName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
-                //$customers[$InvoiceData['purchaserName']]['totalAmount'] = number_format($customers[$InvoiceData['purchaserName']]['totalAmount'],2);
+                $customers[$InvoiceData['purchaserName']]['totalAmount'] = number_format($customers[$InvoiceData['purchaserName']]['totalAmount'],2,".","");
             }
             //按时间倒叙排列
             usort($customers, function($a, $b) {
@@ -612,24 +612,6 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
                 'name' => '有询价的结果了',
                 'money' => '多钱'
             ]);
-
-            //只保留两位小鼠
-            foreach ($mapedByDateNumsRes as $dataitem){
-                foreach ($dataitem as &$subDataItem){
-                    $subDataItem = number_format($subDataItem,2,".","");
-                }
-            }
-            foreach ($mapedByDateAmountRes as $dataItem){
-                foreach ($dataItem as &$subDataItem){
-                    $subDataItem = number_format($subDataItem,2,".","");
-                }
-            }
-            foreach ($newSupplier as &$dataItem){
-                $dataItem['totalAmount'] = number_format($dataItem['totalAmount'],2,".","");
-            }
-            foreach ($newCustomers as &$dataItem){
-                $dataItem['totalAmount'] = number_format($dataItem['totalAmount'],2,".","");
-            }
 
             CarInsuranceInstallment::updateById(
                 $rawDataItem['id'],
