@@ -541,6 +541,7 @@ class XinDongController extends ProvideBase
                             unset($res[$this->cspKey]['result'][$year][$field]);
                             continue;
                         }
+                        is_numeric($num) ?: $num = round($num, 2);
                         $res[$this->cspKey]['result'][$year][$field] = strtr($num, $indexTable);
                     }
                 } else {
