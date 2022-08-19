@@ -210,6 +210,17 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
             if(
                 $authBook['status'] != 5
             ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'runMatch'=>[
+                            'msg'=>'has_not_received_data_yet_continue',
+                            'param_id'=>$rawDataItem['id'],
+                            'param_auth_id'=>$rawDataItem['auth_id'],
+                            'param_status'=>$rawDataItem['status'], 
+                        ]
+                    ])
+                );
                 continue ;
             }
 
