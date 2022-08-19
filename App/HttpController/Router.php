@@ -277,6 +277,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/sendSms', $prefix . 'sendSms');// sendSms
             $routeCollector->addRoute(['GET', 'POST'], '/login', $prefix . 'login');// login
             $routeCollector->addRoute(['GET', 'POST'], '/signOut', $prefix . 'signOut');// login
+            $routeCollector->addRoute(['GET', 'POST'], '/logOut', $prefix . 'logOut');// login
         });
 
         return true;

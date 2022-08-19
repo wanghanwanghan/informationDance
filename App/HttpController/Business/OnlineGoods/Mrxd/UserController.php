@@ -242,4 +242,34 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             []
         );
     }
+
+    function logOut(): bool
+    {
+        $requestData =  $this->getRequestData();
+        if(
+            $requestData['id'] <=  0
+        ){
+            return $this->writeJson(201, null, [],  '参数缺失');
+
+        }
+
+        $userData = OnlineGoodsUser::findById($requestData['id']);
+        $userData = $userData->toArray();
+
+        OnlineGoodsUser::updateById(
+            $requestData['id'],
+            [
+                'token' => '',
+                'phone' => 'del_'.$userData['phone'],
+            ]
+        );
+
+        return $this->writeJson(
+            200,[ ] ,[],
+            '成功',
+            true,
+            []
+        );
+    }
+
 }
