@@ -221,15 +221,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
     function signOut(): bool
     {
         $requestData =  $this->getRequestData();
-        if(
-            $requestData['id'] <=  0
-        ){
-            return $this->writeJson(201, null, [],  '参数缺失');
-
-        }
-
         OnlineGoodsUser::updateById(
-            $requestData['id'],
+            $this->loginUserinfo,
             [
                 'token' => '',
             ]
@@ -246,21 +239,13 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
     function logOut(): bool
     {
         $requestData =  $this->getRequestData();
-        if(
-            $requestData['id'] <=  0
-        ){
-            return $this->writeJson(201, null, [],  '参数缺失');
 
-        }
-
-        $userData = OnlineGoodsUser::findById($requestData['id']);
-        $userData = $userData->toArray();
 
         OnlineGoodsUser::updateById(
-            $requestData['id'],
+            $this->loginUserinfo['id'],
             [
                 'token' => '',
-                'phone' => 'del_'.$userData['phone'],
+                'phone' => 'del_'.$this->loginUserinfo['phone'],
             ]
         );
 

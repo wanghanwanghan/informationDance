@@ -746,6 +746,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             $insuranceDatas  = json_decode($data['post_params'],true);
             $insuranceDatas['id'] = $data['id'];
             $tableHtml = self::getTableHtmlHuiZhong($insuranceDatas);
+            //810304146@qq.com
             $res1 = CommonService::getInstance()->sendEmailV2(
                 '1270331569@qq.com',
                 // 'minglongoc@me.com',
