@@ -413,7 +413,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
             }
         }
 
-        $AnalyzeData = CarInsuranceInstallment::getLastTwoYearAnalyzeData();
+        $AnalyzeData = CarInsuranceInstallment::getLastTwoYearAnalyzeData($rawDataItem['social_credit_code']);
         CarInsuranceInstallment::updateById(
             $rawDataItem['id'],
             [
