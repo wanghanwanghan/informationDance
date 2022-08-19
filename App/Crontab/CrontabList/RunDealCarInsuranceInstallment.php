@@ -616,19 +616,19 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
             //只保留两位小鼠
             foreach ($mapedByDateNumsRes as $dataitem){
                 foreach ($dataitem as &$subDataItem){
-                    $subDataItem = number_format($subDataItem,2);
+                    $subDataItem = number_format($subDataItem,2,".","");
                 }
             }
             foreach ($mapedByDateAmountRes as $dataItem){
                 foreach ($dataItem as &$subDataItem){
-                    $subDataItem = number_format($subDataItem,2);
+                    $subDataItem = number_format($subDataItem,2,".","");
                 }
             }
             foreach ($newSupplier as &$dataItem){
-                $dataItem['totalAmount'] = number_format($dataItem['totalAmount'],2);
+                $dataItem['totalAmount'] = number_format($dataItem['totalAmount'],2,".","");
             }
             foreach ($newCustomers as &$dataItem){
-                $dataItem['totalAmount'] = number_format($dataItem['totalAmount'],2);
+                $dataItem['totalAmount'] = number_format($dataItem['totalAmount'],2,".","");
             }
 
             CarInsuranceInstallment::updateById(
