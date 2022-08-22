@@ -83,4 +83,19 @@ class BusinessOpportunityController extends ControllerBase
 
         return $this->writeJson(200, [], [],'导入成功 入库文件数量:'.$succeedNums);
     }
+
+    //用户-上传客户列表
+    public function bussinessFilesList(){
+        $requestData =  $this->getRequestData();
+
+        return $this->writeJson(200, [], [
+            [
+                'name' => 'xxx',
+                'created_at' => '1661139789',
+                'size' => '11M',
+                'status' => '1',
+                'status_cnam' => '待处理',
+            ]
+        ],'成功 ');
+    }
 }
