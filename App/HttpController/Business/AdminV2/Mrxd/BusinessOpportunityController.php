@@ -98,4 +98,11 @@ class BusinessOpportunityController extends ControllerBase
             ]
         ],'成功 ');
     }
+
+    public function downloadBussinessFile(){
+        $requestData =  $this->getRequestData();
+
+        return $this->writeJson(200, [], '/Static/Temp/dianziqian_ent.png','成功 ');
+    }
+
 }
