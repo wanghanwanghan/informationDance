@@ -3626,7 +3626,7 @@ eof;
             ];
 
             $excel = new \Vtiful\Kernel\Excel($config);
-            $fileObject = $excel->fileName('file.xlsx', 'p1');
+            $fileObject = $excel->fileName('file.xlsx');
             $fileHandle = $fileObject->getHandle();
             //==============================================
 
@@ -3642,7 +3642,7 @@ eof;
                 //->defaultFormat($alignStyle)
             ;
             $financeDatas2 = [
-                ['11'=>'xxx','22'=>'xxx','33'=>'xxx',]
+                ['xxx','xxx','xxx',]
             ];
             foreach ($financeDatas2 as $dataItem){
 
