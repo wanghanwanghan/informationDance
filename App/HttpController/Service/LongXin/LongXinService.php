@@ -506,6 +506,41 @@ class LongXinService extends ServiceBase
             $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => ['data' => $readyReturn, 'otherData' => $readyOtherReturn]]);
     }
 
+    function getFinanceDataXD($postData): array
+    {
+        $cond = !empty($postData['code']) && strlen(trim($postData['code'])) > 15 ?
+            trim($postData['code']) :
+            $postData['entName'];
+
+        $entId = $this->getEntid($cond);
+
+        if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
+
+        $ANCHEYEAR = '';
+
+        for ($i = 2013; $i <= date('Y'); $i++) {
+            $ANCHEYEAR .= $i . ',';
+        }
+
+        $arr = [
+            'entid' => $entId,
+            'ANCHEYEAR' => trim($ANCHEYEAR, ','),
+            'usercode' => $this->usercode
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(true)
+            ->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
+
+        $social = $this->getSocialNum($entId);
+
+        $readyReturn = ['F' => $res, 'S' => $social];
+
+        return $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn]);
+    }
+
     function formatFinanceReturnData($data)
     {
         $newData = [];
