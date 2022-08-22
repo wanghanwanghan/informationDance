@@ -245,7 +245,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $this->loginUserinfo['id'],
             [
                 'token' => '',
-                'phone' => 'del_'.$this->loginUserinfo['phone'],
+                'phone' => 'del_'.$this->loginUserinfo['phone'].'_'.rand(100,999),
             ]
         );
 
