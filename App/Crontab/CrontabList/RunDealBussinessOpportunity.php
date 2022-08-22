@@ -104,6 +104,11 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         return true;
     }  
 
+
+    /**
+    sheet1：企业名称，税号，手机号（多个的话逗号隔开）
+
+     */
     static function getYieldData($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
@@ -121,15 +126,16 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 break;
             }
 
-            $value0 = self::strtr_func($one[0]);  
-            $value1 = self::strtr_func($one[1]);  
-            $value2 = self::strtr_func($one[2]);  
-            $value3 = self::strtr_func($one[3]);
+            //company name
+            $value0 = self::strtr_func($one[0]);
+            //social code
+            $value1 = self::strtr_func($one[1]);
+            //phones | splite by ,
+            $value2 = self::strtr_func($one[2]);
             $tmpData = [
                 $value0,
-                $value1, 
-                $value2, 
-                $value3, 
+                $value1,
+                $value2,
             ] ;
             yield $datas[] = $tmpData;
         }
@@ -188,9 +194,38 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(
             " WHERE statsus =  ".AdminUserBussinessOpportunityUploadRecord::$status_init
         );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'splitByMobile'=>[
+                        'msg' => 'start',
+                    ]
+                ]
+            ])
+        );
         foreach ($rawDatas as $rawDataItem){
-            $rawDataItem['split_mobile'];
-            $status =AdminUserBussinessOpportunityUploadRecord::$status_split_success;
+            //如果不需要拆分
+            if(!$rawDataItem['split_mobile']){
+                AdminUserBussinessOpportunityUploadRecord::updateById(
+                    $rawDataItem['id'],
+                    [
+                        'status' => AdminUserBussinessOpportunityUploadRecord::$status_split_success
+                    ]
+                );
+                continue ;
+            }
+
+            //需要拆分的
+
+            // 找到上传的文件路径
+            //$dirPath =  dirname($rawDataItem['file_path']).DIRECTORY_SEPARATOR;
+            self::setworkPath( $rawDataItem['file_path'] );
+
+            //按行读取数据
+            $companyDatas = self::getYieldData($rawDataItem['name']);
+
+            //
         }
 
         return true;

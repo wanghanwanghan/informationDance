@@ -402,10 +402,14 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
         $res = $res->toArray();
         //暂时去取最新的一个
         $resNew = MailReceipt::findByInsuranceHuiZhongId($res['id']);
+        if($resNew){
+            $resNew = end($resNew);
+        }
+
         return $this->writeJson(
             200,
             [],
-            $resNew?end($resNew):[]
+            $resNew['body']?:['body'=>'请稍等，数据生成后，我们会短信通知您']
         );
     }
 }
