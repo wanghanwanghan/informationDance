@@ -205,14 +205,21 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
         $res = OnlineGoodsUser::findByPhone($phone);
         $res = $res->toArray();
-        if(!$res['token']){
-            OnlineGoodsUser::updateById(
-                $id,
-                [
-                    'token'=>$newToken
-                ]
-            );
-        } 
+        if($res['token']){
+            return $this->writeJson(
+                200,[ ] ,$res['token'],
+                '成功',
+                true,
+                []
+            ); 
+        }
+
+        OnlineGoodsUser::updateById(
+            $id,
+            [
+                'token'=>$newToken
+            ]
+        );
         return $this->writeJson(
             200,[ ] ,$newToken,
             '成功',
