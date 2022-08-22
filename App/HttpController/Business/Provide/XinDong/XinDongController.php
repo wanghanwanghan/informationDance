@@ -112,6 +112,27 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //单年基础数区间 信动用 zai把公司ip屏蔽了
+    function getFinanceData(): bool
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName', ''),
+            'code' => $this->getRequestData('code', ''),
+            'beginYear' => $this->getRequestData('year', 2019),
+            'dataCount' => $this->getRequestData('dataCount', 1),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getFinanceDataXD($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     //单年基础数区间
     function getFinanceBaseData(): bool
     {
