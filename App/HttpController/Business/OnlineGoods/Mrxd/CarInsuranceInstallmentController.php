@@ -612,7 +612,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         return $this->writeJson(
             200,
             [],
-            $resNew?end($resNew):[]
+            $resNew?end($resNew):['body'=>'请稍等，数据生成后，我们会短信通知您']
         );
     }
 }

@@ -189,7 +189,8 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             " WHERE statsus =  ".AdminUserBussinessOpportunityUploadRecord::$status_init
         );
         foreach ($rawDatas as $rawDataItem){
-            $rawDataItem[''];
+            $rawDataItem['split_mobile'];
+            $status =AdminUserBussinessOpportunityUploadRecord::$status_split_success;
         }
 
         return true;

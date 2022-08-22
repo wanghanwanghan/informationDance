@@ -35,7 +35,6 @@ class BusinessOpportunityController extends ControllerBase
 
     // 用户-上传客户名单
     public function uploadBussinessFile(){
-        //
         $requestData =  $this->getRequestData();
         $files = $this->request()->getUploadedFiles();
 
@@ -59,11 +58,17 @@ class BusinessOpportunityController extends ControllerBase
                         'file_path' => TEMP_FILE_PATH,
                         'title' => $requestData['title']?:'',
                         'size' => filesize($path),
+                        //是否拉取url联系人
                         'pull_api' => intval($requestData['pull_api']),
+                        //按手机号拆分成多行
                         'split_mobile' => intval($requestData['split_mobile']),
+                        //删除空号
                         'del_empty' => intval($requestData['del_empty']),
+                        //匹配微信
                         'match_by_weixin' => intval($requestData['match_by_weixin']),
+                        //取全字段
                         'get_all_field' => intval($requestData['get_all_field']),
+                        //填充旧的微信
                         'fill_weixin' => intval($requestData['fill_weixin']),
                         'batch' =>  'BO'.date('YmdHis'),
                         'reamrk' => $requestData['reamrk']?:'',
@@ -101,7 +106,6 @@ class BusinessOpportunityController extends ControllerBase
 
     public function downloadBussinessFile(){
         $requestData =  $this->getRequestData();
-
         return $this->writeJson(200, [], '/Static/Temp/dianziqian_ent.png','成功 ');
     }
 

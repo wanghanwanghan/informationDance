@@ -312,7 +312,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
         return $this->writeJson(
             200,[ ] ,
             //CommonService::ClearHtml($res['body']),
-            $res['body'],
+            $res['body']?:'请稍等，数据生成后，我们会短信通知您',
             '成功',
             true,
             []
