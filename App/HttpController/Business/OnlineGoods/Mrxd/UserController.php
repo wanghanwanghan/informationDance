@@ -122,7 +122,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         if(
             OnlineGoodsUser::getDailySmsNumsV2($phone) >= 15
         ){
-            return $this->writeJson(201, null, [],  '请勿重复提交');
+            return $this->writeJson(201, null, [],  '今天已发送'.OnlineGoodsUser::getDailySmsNumsV2($phone).'次，超出每天最多发送次数');
         }
 
         $digit = OnlineGoodsUser::createRandomDigit();
