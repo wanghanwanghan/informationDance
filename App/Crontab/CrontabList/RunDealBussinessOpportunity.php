@@ -226,6 +226,8 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             $companyDatas = self::getYieldData($rawDataItem['name']);
 
             //
+
+
         }
 
         return true;
