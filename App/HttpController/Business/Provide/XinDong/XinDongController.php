@@ -113,7 +113,7 @@ class XinDongController extends ProvideBase
     }
 
     //单年基础数区间 信动用 zai把公司ip屏蔽了
-    function getFinanceData(): bool
+    function getFinanceDataXD(): bool
     {
         $postData = [
             'entName' => $this->getRequestData('entName', ''),
