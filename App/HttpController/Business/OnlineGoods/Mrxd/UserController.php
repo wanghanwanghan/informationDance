@@ -120,7 +120,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
         //每日发送次数限制
         if(
-            OnlineGoodsUser::getDailySmsNumsV2($phone) >= 15
+            OnlineGoodsUser::getDailySmsNumsV2($phone) >= 20
         ){
             return $this->writeJson(201, null, [],  '今天已发送'.OnlineGoodsUser::getDailySmsNumsV2($phone).'次，超出每天最多发送次数');
         }
