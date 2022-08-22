@@ -502,8 +502,8 @@ class RunDealEmailReceiver extends AbstractCronTask
             'public_account' =>  '公户账号',
             'legal_person_phone' =>  '法人手机号',
             //'business_license' =>  '营业执照',
-            'id_card_front_file' =>  '身份证照片正面',
-            'id_card_back_file' =>  '身份证照片反面',
+            'id_card_front_file' =>  '法人身份证照片正面',
+            'id_card_back_file' =>  '法人身份证照片反面',
         ];
         $fileMap = [
             'business_license_file',
