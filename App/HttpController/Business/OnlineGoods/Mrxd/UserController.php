@@ -222,7 +222,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
     {
         $requestData =  $this->getRequestData();
         OnlineGoodsUser::updateById(
-            $this->loginUserinfo,
+            $this->loginUserinfo['id'],
             [
                 'token' => '',
             ]
