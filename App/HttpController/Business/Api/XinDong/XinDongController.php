@@ -3629,61 +3629,27 @@ eof;
             $fileObject = $excel->fileName('file.xlsx', 'p1');
             $fileHandle = $fileObject->getHandle();
             //==============================================
-            //p2
 
-            $financeDatas2 = self::getZhaoTouBiaoData(
-                $dateStart,$dateEnd,'p2'
-            );
-            $file->addSheet('p2')
+
+
+            $fileObject->addSheet('p2')
                 //->defaultFormat($colorStyle)
                 ->header([
                     '标题' , //
                     '项目名称' , //
                     '项目编号' , //
-                    '项目简介' , //
-                    '采购方式' , //
-                    '公告类型2' , //
-                    '公告日期' , //
-                    '行政区域_省' , //
-                    '行政区域_市' , //
-                    '行政区域_县' , //
-                    '采购单位名称' , //
-                    '采购单位地址' , //
-                    '采购单位联系人' , //
-                    '采购单位联系电话' , //
-                    '名次' , //
-                    '中标供应商' , //
-                    '中标金额' , //
-                    '代理机构名称' , //
-                    '代理机构地址' , //
-                    '代理机构联系人' , //
-                    '代理机构联系电话' , //
-                    '评标专家' , //
-                    'DLSM_UUID' , //
-                    'url' , //
-                    'corexml' , //
                 ])
                 //->defaultFormat($alignStyle)
             ;
-            $p2Nums = 0;
+            $financeDatas2 = [
+                ['11'=>'xxx','22'=>'xxx','33'=>'xxx',]
+            ];
             foreach ($financeDatas2 as $dataItem){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$dataItem2' => $dataItem
-                    ])
-                );
-                $file->data([$dataItem]);
+
+                $fileObject->data([$dataItem]);
                 $p2Nums ++;
             }
             //==============================================
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
-                ])
-            );
-
             $format = new Format($fileHandle);
             //单元格有\n解析成换行
             $wrapStyle = $format
@@ -3692,6 +3658,7 @@ eof;
                 ->toResource();
 
             $fileObject->output();
+            //===============================
             // =======================================================================
             return $this->writeJson(
                 200,[] ,

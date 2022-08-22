@@ -211,7 +211,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 '成功',
                 true,
                 []
-            ); 
+            );
         }
 
         OnlineGoodsUser::updateById(

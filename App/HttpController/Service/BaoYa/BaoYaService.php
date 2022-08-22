@@ -36,7 +36,7 @@ class BaoYaService extends ServiceBase
         if($this->debug){
             $url =  CreateConf::getInstance()->getConf('baoya.products_url_test');
         }
-        return$this->get($url,'');
+        return $this->get($url,'');
     }
 
     function getProductDetail($id){
@@ -44,7 +44,7 @@ class BaoYaService extends ServiceBase
         if($this->debug){
             $url =  CreateConf::getInstance()->getConf('baoya.products_detail_url_test').'/'.$id;
         }
-        return$this->get($url,'');
+        return $this->get($url,'');
     }
 
     //龙盾全羁绊是get请求
