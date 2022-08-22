@@ -8,6 +8,7 @@ use App\Crontab\CrontabList\FillEntAllField;
 use App\Crontab\CrontabList\GetAuthBook;
 use App\Crontab\CrontabList\GetAuthBookDZQ;
 use App\Crontab\CrontabList\GetInvData;
+use App\Crontab\CrontabList\GetInvDataJinCai;
 use App\Crontab\CrontabList\MoveOut;
 use App\Crontab\CrontabList\RunDianZiQianGetPdf;
 use App\Crontab\CrontabList\RunJinCaiShuKeRWH;
@@ -43,6 +44,7 @@ class CrontabService
         $this->getAuthBookDZQ();
         $this->RunDianZiQianGetPdf();
         $this->getInvData();//123123123
+        $this->GetInvDataJinCai();//金财取数
         $this->RunSaiMengHuiZhiCaiWu();
         $this->RunSouKeUploadFiles();
         $this->RunCompleteCompanyData();
@@ -101,6 +103,11 @@ class CrontabService
     private function getInvData(): Crontab
     {
         return Crontab::getInstance()->addTask(GetInvData::class);
+    }
+
+    private function GetInvDataJinCai(): Crontab
+    {
+        return Crontab::getInstance()->addTask(GetInvDataJinCai::class);
     }
 
     private function RunDianZiQianGetPdf(): Crontab
