@@ -23,11 +23,14 @@ class AuthBook extends ModelBase
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'information_dance_auth_book has old  record'=>[
-                        'ent_name'=>$info['ent_name'],
-                        'user_id'=>$info['user_id'],
+                    'AuthBook' => [
+                        'msg'=>'addRecordV2_has_old_record',
+                        'old_id'=>$oldRecord->getAttr('id'),
+                        'params_phone'=>$info['phone'],
+                        'params_entName'=>$info['entName'],
+                        'params_code'=>$info['code'],
+                        'params_type'=>$info['type'],
                     ],
-
                 ])
             );
             return  $oldRecord->getAttr('id');
@@ -40,18 +43,40 @@ class AuthBook extends ModelBase
 
 
 
+    public static function findById($id){
+        $res =  AuthBook::create()
+            ->where('id',$id)
+            ->get();
+        return $res;
+    }
+
+    public static function findByIdV2($id){
+        $res =  AuthBook::create()
+            ->where('id',$id)
+            ->get();
+        return $res->toArray();
+    }
+
+    public static function updateById(
+        $id,$data
+    ){
+        $info = self::findById($id);
+        return $info->update($data);
+    }
+
+
     public static function addRecord($requestData){
         try {
             $res =  AuthBook::create()->data([
                 'phone' => $requestData['phone'],
                 'entName' => $requestData['entName'],
-                'ent_name' => $requestData['ent_name'],
                 'code' => $requestData['code'],
                 'name' => $requestData['name'],
                 'status' => $requestData['status'],
                 'type' => $requestData['type'],
                 'url' => $requestData['url']?:'',
                 'remark' => $requestData['remark']?:'',
+                'raw_return_json' => $requestData['raw_return_json']?:'',
                 'created_at' => time(),
                 'updated_at' => time(),
             ])->save();
@@ -61,7 +86,8 @@ class AuthBook extends ModelBase
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'failed',
-                    '$requestData' => $requestData
+                    '$requestData' => $requestData,
+                    'msg' => $e->getMessage()
                 ])
             );
         }

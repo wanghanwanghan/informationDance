@@ -101,7 +101,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
             return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
         }
 
-        $res = InsuranceData::addRecordV2(
+        $res = InsuranceData::addRecord(
             [
                 'post_params' => json_encode(
                     $requestData
@@ -131,7 +131,9 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
         foreach ($files as $key => $oneFile) {
             try {
                 $fileName = $oneFile->getClientFilename();
-                $path = OTHER_FILE_PATH . $fileName;
+                $infoRes = pathinfo($fileName);
+                $newName =  'zhi_jin_'.rand(10000,90000). rand(10000,90000). rand(10000,90000). rand(10000,90000).'.'.$infoRes['extension'];
+                $path = OTHER_FILE_PATH . $newName ;
 //                if(file_exists($path)){
 //                    return $this->writeJson(203, [], [],'文件已存在！');;
 //                }
@@ -144,7 +146,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
                     return $this->writeJson(203, [], [],'文件移动失败！');
                 }
                 $succeedNums ++;
-                $fileNames[] = '/Static/OtherFile/'.$fileName;
+                $fileNames[] = '/Static/OtherFile/'.$newName;
             } catch (\Throwable $e) {
                 return $this->writeJson(202, [], $fileNames,'上传失败'.$e->getMessage());
             }
@@ -226,7 +228,13 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
             ],
             $page
         );
-
+        foreach ($res['data'] as &$dataItem){
+            //暂时去取最新的一个
+            $resNew = MailReceipt::findByInsuranceId($dataItem['id']);
+            $resNew = $resNew?end($resNew):[];
+            $attachs  = json_decode($resNew['attachs'],true);
+            $dataItem['attachs'] = $attachs ;
+        }
         return $this->writeJson(
             200,
             [
@@ -274,10 +282,12 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
         $res = $res->toArray();
         //暂时去取最新的一个
         $resNew = MailReceipt::findByInsuranceId($res['id']);
+        $resNew = $resNew?end($resNew):[];
+        $attachs  = json_decode($resNew['attachs'],true);
         return $this->writeJson(
             200,
             [],
-            $resNew?end($resNew):[]
+            $attachs
         );
     }
 }

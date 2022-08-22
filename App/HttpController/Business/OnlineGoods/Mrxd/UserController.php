@@ -218,4 +218,43 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
     }
 
 
+    function OnlineSignOut(): bool
+    {
+        $requestData =  $this->getRequestData();
+        OnlineGoodsUser::updateById(
+            $this->loginUserinfo,
+            [
+                'token' => '',
+            ]
+        );
+
+        return $this->writeJson(
+            200,[ ] ,[],
+            '成功',
+            true,
+            []
+        );
+    }
+
+    function OnlineLogOut(): bool
+    {
+        $requestData =  $this->getRequestData();
+
+
+        OnlineGoodsUser::updateById(
+            $this->loginUserinfo['id'],
+            [
+                'token' => '',
+                'phone' => 'del_'.$this->loginUserinfo['phone'].'_'.rand(100,999),
+            ]
+        );
+
+        return $this->writeJson(
+            200,[ ] ,[],
+            '成功',
+            true,
+            []
+        );
+    }
+
 }

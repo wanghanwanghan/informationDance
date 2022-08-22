@@ -59,9 +59,18 @@ class SouKeController extends ControllerBase
             $requestData['company_id']
          );
         foreach ($res as &$data){
+            // investor_type
+//            if(
+//                $data['companyid_inv']>0
+//            ){
+//                $data['investor_type'] =  2;
+//            }else{
+//                $data['investor_type'] =  1;
+//            }
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'getCompanyInvestor_data_item'=>$data
+                    'getCompanyInvestor_data_itemxx'=>$data,
+                    'investor_typexx'=>$data['investor_type']
                 ])
             );
         }
@@ -276,11 +285,11 @@ class SouKeController extends ControllerBase
             // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
             ->SetQueryByCompanyOrgType($searchOptionArr)
             // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
-            ->SetQueryByEstiblishTime($searchOptionArr)
+            ->SetQueryByEstiblishTimeV2($searchOptionArr)
             // 营业状态   传过来的是 10  20  转换成文案后 去匹配
             ->SetQueryByRegStatusV2($searchOptionArr)
             // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
-            ->SetQueryByRegCaptial($searchOptionArr)
+            ->SetQueryByRegCaptialV2($searchOptionArr)
             // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
             ->SetQueryByTuanDuiRenShu($searchOptionArr)
             // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配

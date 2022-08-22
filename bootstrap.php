@@ -137,7 +137,7 @@ function microTimeNew(): string
 //发票状态 大象值转蚂蚁需要的值
 function changeFPZT($FPZT): string
 {
-    //大象 : 1-正常 2-作废 3-冲红 8-失控 9-异常
+    //大象 : 1-正常 2-作废 3-红冲 8-失控 9-异常
     //蚂蚁 : 0-正常 2-作废 3-红字 1-失控 4-异常
 
     switch (trim($FPZT)) {

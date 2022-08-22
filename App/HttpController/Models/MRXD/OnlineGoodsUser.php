@@ -69,6 +69,21 @@ class OnlineGoodsUser extends ModelBase
 
         $nums = $redis->get($daily_limit_key);
         $dates = $redis->get($daily_limit_key2);
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sms_daily_send_nums'=>[
+                    'param_phone'=>$phone,
+                    'param_$prx'=>$prx,
+                    'daliy_send_nums_key'=>$daily_limit_key,
+                    'daliy_send_nums_value'=>$nums,
+                    'daliy_send_nums_date_key'=>$daily_limit_key2,
+                    'daliy_send_nums_date_value'=>$dates,
+                ]
+            ])
+        );
+
         //之前没有过
         if($nums <= 0){
             //设置KEY
@@ -78,9 +93,15 @@ class OnlineGoodsUser extends ModelBase
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'addDailySmsNumsV2_$nums'=>$nums,
-                    'addDailySmsNumsV2_dates' => $dates,
-                    'first_time'
+                    'sms_daily_send_nums'=>[
+                        'param_phone'=>$phone,
+                        'param_$prx'=>$prx,
+                        'msg'=>'daliy_send_nums_value_is_zero_._rest',
+                        '$daily_limit_key'=>$daily_limit_key,
+                        '$daily_limit_value'=>1,
+                        '$daily_limit_key_date_key'=>$daily_limit_key2,
+                        '$daily_limit_key_date_value'=>date('Ymd'),
+                    ]
                 ])
             );
         }
@@ -96,9 +117,15 @@ class OnlineGoodsUser extends ModelBase
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'addDailySmsNumsV2_$nums'=>$nums,
-                    'addDailySmsNumsV2_dates' => $dates,
-                    'out_of_date'
+                    'sms_daily_send_nums'=>[
+                        'param_phone'=>$phone,
+                        'param_$prx'=>$prx,
+                        'msg'=>'daliy_send_nums_value_is_expuired_._rest',
+                        '$daily_limit_key'=>$daily_limit_key,
+                        '$daily_limit_value'=>1,
+                        '$daily_limit_key_date_key'=>$daily_limit_key2,
+                        '$daily_limit_key_date_value'=>date('Ymd'),
+                    ]
                 ])
             );
         }
@@ -111,9 +138,15 @@ class OnlineGoodsUser extends ModelBase
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'addDailySmsNumsV2_$nums'=>$nums,
-                    'addDailySmsNumsV2_dates' => $dates,
-                    'out_of_date2'
+                    'sms_daily_send_nums'=>[
+                        'param_phone'=>$phone,
+                        'param_$prx'=>$prx,
+                        'msg'=>'daliy_send_nums_value_is_expuired_2._rest',
+                        '$daily_limit_key'=>$daily_limit_key,
+                        '$daily_limit_value'=>1,
+                        '$daily_limit_date_key'=>$daily_limit_key2,
+                        '$daily_limit_date_value'=>date('Ymd'),
+                    ]
                 ])
             );
         }
@@ -121,6 +154,18 @@ class OnlineGoodsUser extends ModelBase
         //更新KEY
         $nums = $redis->get($daily_limit_key);
         $redis->set($daily_limit_key,$nums+1);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sms_daily_send_nums'=>[
+                    'param_phone'=>$phone,
+                    'param_$prx'=>$prx,
+                    'msg'=>'rest_daily_send_nums',
+                    '$daily_limit_key'=>$daily_limit_key,
+                    '$daily_limit_value'=>$nums,
+                ]
+            ])
+        );
     }
     static function  getDailySmsNumsV2($phone,$prx = "daily_online_sendSms_"){
         $redis = Redis::defer('redis');
@@ -136,20 +181,51 @@ class OnlineGoodsUser extends ModelBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'checkDailySmsNumsV2_$nums'=>$nums,
-                'checkDailySmsNumsV2_dates' => $dates,
+                'getDailySmsNumsV2'=>[
+                    'param_$phone'=>$phone,
+                    'daily_send_nums_key'=>$daily_limit_key,
+                    'daily_send_nums_value'=>$nums,
+                    'daily_send_nums_date_key'=>$daily_limit_key2,
+                    'daily_send_nums_date_value'=>$dates,
+                ]
             ])
         );
         return $nums;
     }
 
     static function  setRandomDigit($phone,$digit,$prx="online_sms_code_"){
-        return ConfigInfo::setRedisBykey($prx.$phone,$digit,600);
+        $res = ConfigInfo::setRedisBykey($prx.$phone,$digit,600);;
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'setRandomDigit' => [
+                    'params_$phone'=>$phone,
+                    'params_$digit'=>$digit,
+                    'params_$prx'=>$prx,
+                    'redis_set_key'=>$prx.$phone,
+                    'redis_set_$res'=>$res,
+                ],
+            ])
+        );
+
+        return $res;
     }
 
     static function  getRandomDigit($phone,$prx="online_sms_code_"){
         $key = $prx.$phone;
-        return ConfigInfo::getRedisBykey($key);
+        $res =  ConfigInfo::getRedisBykey($key);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'getRandomDigit' => [
+                    'param_$phone'=>$phone,
+                    'param_$prx'=>$prx,
+                    'redis_key'=>$key,
+                    'redis_$res'=>$res,
+                ],
+            ])
+        );
+        return $res;
     }
 
     static  function  createRandomDigit(){
@@ -319,7 +395,6 @@ class OnlineGoodsUser extends ModelBase
     public static function sendMsg($phone,$key){
 
         //记录今天发了多少次
-        $prex = 'daily_'.$key.'_sendSms_';
         OnlineGoodsUser::addDailySmsNumsV2($phone,'daily_'.$key.'_sendSms_');
 
         //每日发送次数限制
@@ -327,14 +402,39 @@ class OnlineGoodsUser extends ModelBase
         if(
             $res >= 15
         ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'sendMsg' => [
+                        'msg'=>'check_daily_send_nums_failed',
+                        'params_phone'=>$phone,
+                        'params_pre'=>'daily_'.$key.'_sendSms_',
+                        'daily_send_nums'=>$res,
+                        'daily_send_nums_limit'=>15,
+                    ],
+                ])
+            );
             return [
                 'failed'=>true,
                 'msg'=> '今日发送次数过多，请明天再试',
             ];
         }
+        else{
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'sendMsg' => [
+                        'msg'=>'check_daily_send_nums_succeed',
+                        'params_phone'=>$phone,
+                        'params_pre'=>'daily_'.$key.'_sendSms_',
+                        'daily_send_nums'=>$res,
+                        'daily_send_nums_limit'=>15,
+                    ],
+                ])
+            );
+        }
 
         $digit = OnlineGoodsUser::createRandomDigit();
-
         //发短信
         $res = (new AliSms())->sendByTempleteV2($phone, 'SMS_218160347',[
             'code' => $digit,
@@ -342,9 +442,11 @@ class OnlineGoodsUser extends ModelBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'sendByTemplete' => [
-                    'sendByTemplete'=>$res,
-                    '$digit'=>$digit
+                'sendMsg' => [
+                    'msg'=>'send_sms',
+                    'params_phone'=>$phone,
+                    'params_code'=>$digit,
+                    'send_sms_res'=>$res,
                 ],
             ])
         );
@@ -361,8 +463,12 @@ class OnlineGoodsUser extends ModelBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'setRandomDigit' => [
-                    'getRandomDigit'=>OnlineGoodsUser::getRandomDigit($phone,$key.'_sms_code_'),
+                'sendMsg' => [
+                    'msg'=>'setRandomDigit',
+                    'params_phone'=>$phone,
+                    'params_code'=>$digit,
+                    'params_prx'=>$key.'_sms_code_',
+                    'redis_res_getRandomDigit'=>OnlineGoodsUser::getRandomDigit($phone,$key.'_sms_code_'),
                 ],
             ])
         );

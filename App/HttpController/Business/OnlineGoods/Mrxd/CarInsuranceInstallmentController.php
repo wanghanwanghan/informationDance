@@ -9,6 +9,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\CarInsuranceInstallment;
+use App\HttpController\Models\AdminV2\CarInsuranceInstallmentMatchedRes;
 use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
@@ -20,6 +21,7 @@ use App\HttpController\Models\Api\CarInsuranceInfo;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\LongXin\LongXinService;
@@ -50,7 +52,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
 
         //重复提交校验
         if(
-            !ConfigInfo::setRedisNx('CarInsurance_sendSms',3)
+            !ConfigInfo::setRedisNx('CarInsurance_sendSms',120)
         ){
             return $this->writeJson(201, null, [],  '请勿重复提交');
         }
@@ -67,6 +69,32 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
             true,
             []
         );
+    }
+
+    function getCodeByName(): bool
+    {
+        $requestData = $this->getRequestData();
+        $checkRes = DataModelExample::checkField(
+            [
+                'ent_name' => [
+                    'not_empty' => 1,
+                    'field_name' => 'ent_name',
+                    'err_msg' => '企业名必填',
+                ],
+            ],
+            $requestData
+        );
+
+        if (
+            !$checkRes['res']
+        ) {
+            return $this->writeJson(203, [], [], $checkRes['msgs'], true, []);
+        }
+
+        $res = CompanyBasic::findByName($requestData['ent_name']);
+        $res = $res?$res->toArray():[];
+
+        return $this->writeJson(200, [],  $res['UNISCID'],[], true, []);
     }
 
     function authForCarInsurance(): bool
@@ -119,10 +147,28 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'redis code not equal'=> [
+                    'authForCarInsurance' => [
+                        'msg'=>'check_sms_code_failed',
+                        'params_phone'=>$requestData['legal_phone'],
+                        'params_prx'=>'CarInsurance_sms_code_',
                         '$redis_code'=>$redis_code,
-                        'code'=>$requestData['code'],
-                    ]
+                        'request_code'=>$requestData['code'],
+                    ],
+                ])
+            );
+            return $this->writeJson(203,[ ] , [], '验证码已过期', true, []);
+        }
+        else{
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'authForCarInsurance' => [
+                        'msg'=>'check_sms_code_succeed',
+                        'params_phone'=>$requestData['legal_phone'],
+                        'params_prx'=>'CarInsurance_sms_code_',
+                        '$redis_code'=>$redis_code,
+                        'request_code'=>$requestData['code'],
+                    ],
                 ])
             );
         }
@@ -140,6 +186,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
             [
                 'phone' =>  $requestData['legal_phone'],
                 'entName' => $requestData['ent_name'],
+                'name' => '',
                 'code' => $requestData['social_credit_code'],
                 'status' => 1,
                 'type' => 2,//深度报告，发票数据
@@ -151,7 +198,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
 //            $arr = explode('?url=', $res['data']);
 //            $res['data'] = 'https://api.meirixindong.com/Static/vertify.html?url=' . $arr[1];
 //        }
-        CarInsuranceInstallment::addRecordV2(
+        CarInsuranceInstallment::addRecord(
             [
                 'user_id' => $this->loginUserinfo['id'],
                 'product_id' => $requestData['product_id']?:0,
@@ -169,6 +216,7 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                 'updated_at' => time(),
             ]
         );
+
         return $this->writeJson(
             200,[ ] ,
             //CommonService::ClearHtml($res['body']),
@@ -179,8 +227,73 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         );
     }
 
-    //匹配结果
+    /**
+    获取匹配结果：根据企业税务，财务，发票等基础数据，匹配满足的贷款产品
+     */
     function getMatchedRes(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page= $requestData['page']?:1;
+        $size= $requestData['size']?:10;
+
+        //只取最新的一个匹配结果
+        $res =  CarInsuranceInstallment::findOneByUserId($this->loginUserinfo['id']);
+        if($res){
+            $res = $res->toArray();
+        }
+        else{
+            $res = [];
+        }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'getMatchedRes'=>[
+                    '$res'=>$res,
+                    'user_id'=>count($this->loginUserinfo['id']),
+                ]
+            ])
+        );
+
+        //异步定时任务计算的结果
+        $returnArr =   json_decode($res['math_res'],true);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'getMatchedRes'=>[
+                    '$returnArr'=>$returnArr
+                ]
+            ])
+        );
+        if(empty($returnArr)){
+            $returnArr = [
+                'companyInfo' => [
+
+                ],
+                'essentialFinanceInfo' => [],
+                'mapedByDateNumsRes' => [],
+                'mapedByDateAmountRes' => [],
+                'topSupplier' => [],
+                'topCustomer' => [],
+                'matchedRes' => [],
+                //'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
+            ];
+        }
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' => $size,
+                'total' => 0,
+                'totalPage' => 1 ,
+            ],
+            $returnArr
+        );
+    }
+
+    /*
+    获取匹配结果 旧版
+     * */
+    function getMatchedResBak(): bool
     {
         $requestData =  $this->getRequestData();
         $page= $requestData['page']?:1;
@@ -206,9 +319,81 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
 //        ){
 //            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
 //        }
-        $res =  CarInsuranceInstallment::findOneByUserId(1);
-        $res = $res->toArray();
-        $companyRes = (new XinDongService())->getEsBasicInfoV3($res['ent_name']);
+
+        $res =  CarInsuranceInstallment::findOneByUserId($this->loginUserinfo['id']);
+        if($res){
+            $res = $res->toArray();
+        }
+        else{
+            $res = [];
+        }
+        if(
+            empty($res)
+        ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'CarInsuranceInstallment-findOneByUserId-empty'=>$res,
+                    'uid'=>$this->loginUserinfo['id']
+                ])
+            );
+            return $this->writeJson(
+                200,
+                [
+                    'page' => $page,
+                    'pageSize' => $size,
+                    'total' => 0,
+                    'totalPage' => 1 ,
+                ],
+                [
+                    'companyInfo' => [
+
+                    ],
+                    'essentialFinanceInfo' => [],
+                    'mapedByDateNumsRes' => [],
+                    'mapedByDateAmountRes' => [],
+                    'topSupplier' => [],
+                    'topCustomer' => [],
+                    'matchedRes' => [],
+                    //'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
+                ]
+            );
+        }
+        $companyBasic = CompanyBasic::findByCode($res['social_credit_code']);
+        if(empty($companyBasic)){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'CarInsuranceInstallment-findOneByUserId-empty $companyBasic'=>$companyBasic,
+                    'uid'=>$this->loginUserinfo['id'],
+                    'social_credit_code'=>$res['social_credit_code'],
+                ])
+            );
+            return $this->writeJson(
+                200,
+                [
+                    'page' => $page,
+                    'pageSize' => $size,
+                    'total' => 0,
+                    'totalPage' => 1 ,
+                ],
+                [
+                    'companyInfo' => [
+
+                    ],
+                    'essentialFinanceInfo' => [],
+                    'mapedByDateNumsRes' => [],
+                    'mapedByDateAmountRes' => [],
+                    'topSupplier' => [],
+                    'topCustomer' => [],
+                    'matchedRes' => [],
+                    //'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
+                ]
+            );
+        }
+
+        $companyBasic = $companyBasic->toArray();
+        $companyRes = (new XinDongService())->getEsBasicInfoV2($companyBasic['companyid']);
 
         //税务信息(今年)
         $essentialRes = (new GuoPiaoService())->getEssential($res['social_credit_code']);
@@ -338,7 +523,27 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         usort($customers, function($a, $b) {
             return $b['totalAmount'] <=> $a['totalAmount'];
         });
-        $newCustomers = $sliced_array = array_slice($customers, 0, 10);
+        $newCustomers =  array_slice($customers, 0, 10);
+
+
+        //匹配结果
+        $matchedRes = CarInsuranceInstallmentMatchedRes::findAllByCondition(
+            [
+               'car_insurance_id'=>$res['id']
+            ]
+        );
+        $mathedResData = [];
+        $unmathedResData = [];
+        foreach ($matchedRes as &$matchedResItem){
+            $matchedResItem['status_cname'] =  CarInsuranceInstallmentMatchedRes::getStatusMap()[$matchedResItem['status']];
+            $matchedResItem['msg_arr'] =  $matchedResItem['msg']? json_decode($matchedResItem['msg'],true):[];
+            if($matchedResItem['status']== CarInsuranceInstallmentMatchedRes::$status_matched_succeed){
+                $mathedResData[] =  $matchedResItem;
+            }
+            if($matchedResItem['status']== CarInsuranceInstallmentMatchedRes::$status_matched_failed){
+                $unmathedResData[] =  $matchedResItem;
+            }
+        }
         return $this->writeJson(
             200,
             [
@@ -362,6 +567,8 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
                'mapedByDateAmountRes' => $mapedByDateAmountRes,
                'topSupplier' => $newSupplier,
                'topCustomer' => $newCustomers,
+               'matchedRes' => $mathedResData,
+               'unmatchedRes' => $unmathedResData,
                //'jinXiaoXiangFaPiaoRes' => $jinXiaoXiangFaPiaoRes,
             ]
         );

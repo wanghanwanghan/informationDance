@@ -4,6 +4,7 @@ namespace App\HttpController\Models\AdminV2;
 
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\ModelBase;
+use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyInv;
@@ -13,20 +14,25 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\Sms\SmsService;
 
 
 // use App\HttpController\Models\AdminRole;
 
 class CarInsuranceInstallment extends ModelBase
 {
-
+    // 额 这个有问题 不应该是车险分期  而是贷款数据
     protected $tableName = 'car_insurance_installment';
 
     static $status_init = 1;
     static $status_init_cname = '初始化';
 
-    static $status_email_succeed = 5;
-    static $status_email_succeed_cname = '发邮件成功';
+    static $status_matched_succeed = 5;
+    static $status_matched_succeed_cname = '匹配成功';
+
+    static $status_matched_failed = 10;
+    static $status_matched_failed_cname = '匹配失败';
+
 
 
     static  function  addRecordV2($info){
@@ -76,7 +82,8 @@ class CarInsuranceInstallment extends ModelBase
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'failed',
-                    '$requestData' => $requestData
+                    '$requestData' => $requestData,
+                    'msg' => $e->getMessage(),
                 ])
             );
         }
@@ -273,7 +280,7 @@ class CarInsuranceInstallment extends ModelBase
         };
 
         $d1 = new \DateTime(date('Y-m-d'));
-        $d2 = new \DateTime('2008-03-09');
+        $d2 = new \DateTime($companyRes['ESDATE']);
 
         $diff = $d2->diff($d1);
         CommonService::getInstance()->log4PHP(
@@ -307,7 +314,10 @@ class CarInsuranceInstallment extends ModelBase
                     'matched' => true,
                 ])
             );
-            return true;
+            return [
+                'has'=>true,
+                'type_cname'=>$codeRes['name'],
+            ];
         }
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -317,7 +327,10 @@ class CarInsuranceInstallment extends ModelBase
                 'matched' => false,
             ])
         );
-        return  false;
+        return [
+            'has'=>false,
+            'type_cname'=>$codeRes['name'],
+        ];
     }
 
 
@@ -345,22 +358,27 @@ class CarInsuranceInstallment extends ModelBase
 
         $carInsuranceData = CarInsuranceInstallment::findById($carInsuranceDataId);
         $carInsuranceData = $carInsuranceData->toArray();
-
-        $retrunData = [];
+        $companyRes = CompanyBasic::findByCode($carInsuranceData['social_credit_code']);
+        if(empty($companyRes)){
+            return  [];
+        }
 
         //企业成立年限
         $EstablishRes = self::getEstablishmentYear($carInsuranceData['social_credit_code']);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'EstablishYears ' => $EstablishRes,
-                '$suNingWeiShangDai' => $suNingWeiShangDai
+                'runMatchSuNing ' => [
+                    'msg'=>'cal_company_establish_years',
+                    'param_social_credit_code'=>$carInsuranceData['social_credit_code'],
+                    'res'=>$EstablishRes,
+                ]
             ])
         );
         // 苏宁银行-微商贷：公司成立2年以上
         if($EstablishRes['EstablishYears'] <= 2){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '公司成立不到2年以上';
+            $suNingWeiShangDaiErrMsg[] = '公司成立'.$EstablishRes['EstablishYears'].'年,不到2年以上';
         }
 
         //是分公司  // 苏宁银行-微商贷： 不能是分公司
@@ -368,13 +386,16 @@ class CarInsuranceInstallment extends ModelBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                '$isBranchCompanyRes ' => $isBranchCompanyRes,
-                '$suNingWeiShangDai' => $suNingWeiShangDai
+                'runMatchSuNing ' => [
+                    'msg'=>'check_if_is_branch_company',
+                    'param_social_credit_code'=>$carInsuranceData['social_credit_code'],
+                    'res'=>$isBranchCompanyRes,
+                ]
             ])
         );
-        if( $isBranchCompanyRes ){
+        if( $isBranchCompanyRes['has'] ){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '是分公司';
+            $suNingWeiShangDaiErrMsg[] = '公司类型是分公司('.$isBranchCompanyRes['type_cname'].'),不能申请';
         }
 
         // 苏宁银行-微商贷：  申请人：贷款年龄：22-59周岁；申请人为法人（对占股无要求）、近6个月法人或最大股东变更满6个月 -- h库，用户输入
@@ -392,7 +413,7 @@ class CarInsuranceInstallment extends ModelBase
             $legal_person_age >59
         ){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '贷款年龄小于22或大于59';
+            $suNingWeiShangDaiErrMsg[] = '贷款年龄'.intval($legal_person_age).',小于22或大于59';
         }
 
         // 苏宁银行-微商贷：   法人手机在网时长大于1年 -- 创蓝接口
@@ -408,8 +429,9 @@ class CarInsuranceInstallment extends ModelBase
             $phoneOnlineTimeRes['data']['result']['rangeStart'] < 12
         ){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '在网时长小于一年';
+            $suNingWeiShangDaiErrMsg[] = '在网时长'.$phoneOnlineTimeRes['data']['result']['rangeStart'].',小于一年';
         };
+
 
         // 苏宁银行-微商贷：   正常纳税满18个月 -- 财务三表
         $taxInfo = self::getQuarterTaxInfo($carInsuranceData['social_credit_code']);
@@ -423,12 +445,13 @@ class CarInsuranceInstallment extends ModelBase
             $taxInfo['validQuarterLength'] <6
         ){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '正常纳税不满18个月';
+            $suNingWeiShangDaiErrMsg[] = '正常纳税不满18个月(最长连续纳税'.($taxInfo['validQuarterLength']*3).'个月)';
         }
+
         // 苏宁银行-微商贷：年纳税金额1.5万以上（PS：不做强要求，但不能为0） -- 财务三表
         $yearsTotal = 0;
         foreach ($taxInfo['validyearTaxInfo'] as $year=>$total){
-            $yearsTotal += $total;
+            $yearsTotal += $total['totalAmount'];
         };
         if($yearsTotal <= 0 ){
             $suNingWeiShangDai = false;
@@ -443,6 +466,7 @@ class CarInsuranceInstallment extends ModelBase
                 '$taxBasicInfo ' => $taxBasicInfo
             ])
         );
+
         //苏宁银行-微商贷：纳税等级A/B//M（个体工商户可准入） -- 国票接口
         if(
             !in_array($taxBasicInfo['data']['essential'][0]['creditLevel'],[
@@ -450,7 +474,7 @@ class CarInsuranceInstallment extends ModelBase
             ])
         ){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '纳税等级不属于A/B/M';
+            $suNingWeiShangDaiErrMsg[] = '纳税等级'.$taxBasicInfo['data']['essential'][0]['creditLevel'].'不属于A/B/M';
         };
 
         // 企业当前无欠税 -- 国票接口
@@ -458,7 +482,7 @@ class CarInsuranceInstallment extends ModelBase
             $taxBasicInfo['data']['owingType'] !=  "否"
         ){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '企业当前有欠税';
+            $suNingWeiShangDaiErrMsg[] = '企业当前有欠税(欠税:'.$taxBasicInfo['data']['owingType'].')';
         };
 
         // 苏宁银行-微商贷： 无连续6个月不纳税情况 -- 财务三表
@@ -466,7 +490,7 @@ class CarInsuranceInstallment extends ModelBase
             $taxInfo['inValidQuarterLength'] >2
         ){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '有连续6个月不纳税情况 ';
+            $suNingWeiShangDaiErrMsg[] = '有连续6个月不纳税情况(最长连续'.($taxInfo['inValidQuarterLength']*3).'月不纳税)';
         }
 
         // 苏宁银行-微商贷：近3个月都有纳税申报记录 -- 增值税申报表
@@ -490,7 +514,7 @@ class CarInsuranceInstallment extends ModelBase
                 $dataItem['date'] == $threeMonthsAgo &&
                 $dataItem['total'] > 0
             ){
-                $threeMonthsAgoHasNoTax = true;
+                $threeMonthsAgoHasNoTax = false;
             }
         }
 
@@ -500,7 +524,11 @@ class CarInsuranceInstallment extends ModelBase
             $threeMonthsAgoHasNoTax
         ){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '近3个月有未纳税申报记录 ';
+            $suNingWeiShangDaiErrMsg[] = '近3个月有未纳税申报记录('.
+                ($oneMonthsAgoHasNoTax?$oneMonthsAgo.'未纳税':'').
+                ($twoMonthsAgoHasNoTax? $twoMonthsAgo.'未纳税':'').
+                ($threeMonthsAgoHasNoTax? $threeMonthsAgo.'未纳税':'')
+                .') ';
         }
 
         //季度资产负债
@@ -508,24 +536,19 @@ class CarInsuranceInstallment extends ModelBase
         $quarterDebt = (new GuoPiaoService())
                 ->setCheckRespFlag(true)
                 ->getFinanceBalanceSheet($carInsuranceData['social_credit_code']);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '$quarterDebt ' => $quarterDebt
-            ])
-        );
-        if($quarterDebt['result']<3){
+
+        if(count($quarterDebt['result']) < 3){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '季度资产负债表不到三期';
+            $suNingWeiShangDaiErrMsg[] = '季度资产负债表只有'.count($quarterDebt['result']).'期,不到三期';
         };
 
         //季度利润表
         $quarterProfit=  (new GuoPiaoService())
                             ->setCheckRespFlag(true)
                             ->getFinanceIncomeStatement($carInsuranceData['social_credit_code']);
-        if($quarterProfit['result']<3){
+        if(count($quarterProfit['result']) < 3){
             $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '季度利润表不到三期';
+            $suNingWeiShangDaiErrMsg[] = '季度利润表只有'.count($quarterProfit['result']).'期,不到三期';
         };
         if(
             $suNingWeiShangDai
@@ -550,14 +573,14 @@ class CarInsuranceInstallment extends ModelBase
     年开票金额100万以上，近1年开票10月及以上 -- 发票
     连续未开票天数≤45天（2、3、4月除外） -- 发票
     近12个月累计开票张数≥35 -- 发票
-     */
-    static  function  runMatchPuFa($carInsuranceDataId){
-        $oneMonthsAgo = date("Y-m-01",strtotime("-1 month"));
-        $twoMonthsAgo = date("Y-m-01",strtotime("-2 month"));
-        $threeMonthsAgo = date("Y-m-01",strtotime("-3 month"));
 
-        $suNingWeiShangDai = true;
-        $suNingWeiShangDaiErrMsg = [];
+
+     */
+
+    static  function  runMatchPuFa($carInsuranceDataId){
+
+        $DaiKuanRes = true;
+        $DaiKuanResErrMsg = [];
 
         $carInsuranceData = CarInsuranceInstallment::findById($carInsuranceDataId);
         $carInsuranceData = $carInsuranceData->toArray();
@@ -573,22 +596,22 @@ class CarInsuranceInstallment extends ModelBase
         if(
             $companyRes['NAME'] != $carInsuranceData['legal_person']
         ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '申请人不是法人';
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '申请人('.$carInsuranceData['legal_person'].')不是法人';
         }
         // 申请人：企业法定代表人，持股5%以上 -- h库
         $companyInv = CompanyInv::findByCompanyIdAndInv($companyRes['id'],$carInsuranceData['legal_person']);
         if(empty($companyInv)){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '申请人持股不到5%';
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '申请人持股不到5%('.$carInsuranceData['legal_person'].'没有持股信息)';
         }
 
         if($companyInv){
             $companyInvData = $companyInv->toArray();
         }
         if($companyInvData['CONPROP']<5){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '申请人持股不到5%';
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '申请人持股不到5%('.$carInsuranceData['legal_person'].'实际持股'.number_format($companyInvData['CONPROP'],2).')';
         }
 
         // 企业法定代表人
@@ -601,58 +624,148 @@ class CarInsuranceInstallment extends ModelBase
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 '$legal_person_age ' => $legal_person_age,
-                '$suNingWeiShangDai' => $suNingWeiShangDai
+                '$DaiKuanRes' => $DaiKuanRes
             ])
         );
         if(
             $legal_person_age <20 ||
             $legal_person_age >65
         ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '贷款年龄小于22或大于59';
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '贷款年龄('.intval($legal_person_age).')小于22或大于59';
         }
 
         //实际经营时长不少于1年。 -- 发票
+        $oneYearAgoRes = false;
+        //纳税数据取得是两年的数据 取下开始结束时间
+        $lastMonth = date("Y-m-01",strtotime("-1 month"));
+        //两年前的开始月
+        $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
 
-
-        // 苏宁银行-微商贷：   法人手机在网时长大于1年 -- 创蓝接口
-        $phoneOnlineTimeRes = (new ChuangLanService())->yhzwsc($carInsuranceData['legal_phone']);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '$phoneOnlineTimeRes ' => $phoneOnlineTimeRes,
-                '$suNingWeiShangDai' => $suNingWeiShangDai
-            ])
+        //进项发票信息 信动专用
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $carInsuranceData['social_credit_code'],
+            $last2YearStart,
+            $lastMonth
         );
-        if(
-            $phoneOnlineTimeRes['data']['result']['rangeStart'] < 12
-        ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '在网时长小于一年';
-        };
+        $lastYear = date('Y') -1;
+        $thisYear = date('Y');
+        $thisYearAmout_jin = 0;
+        $thisYearAmout_xiao = 0;
+        $lastYearAmout_jin = 0;
+        $lastYearAmout_xiao = 0;
+        //近12个月累计开票张数≥35 -- 发票
+        $last12MonthRes = [];
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $year = date('Y',strtotime($InvoiceData['billingDate']));
 
-        // 苏宁银行-微商贷：   正常纳税满18个月 -- 财务三表
-        $taxInfo = self::getQuarterTaxInfo($carInsuranceData['social_credit_code']);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '$taxInfo ' => $taxInfo
-            ])
-        );
-        if(
-            $taxInfo['validQuarterLength'] <6
-        ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '正常纳税不满18个月';
+            if($year == $lastYear){
+                $oneYearAgoRes = true;
+                $lastYearAmout_jin += $InvoiceData['totalAmount'];
+            }
+            if($year == $thisYear){
+
+                $thisYearAmout_jin += $InvoiceData['totalAmount'];
+            }
         }
-        // 苏宁银行-微商贷：年纳税金额1.5万以上（PS：不做强要求，但不能为0） -- 财务三表
-        $yearsTotal = 0;
-        foreach ($taxInfo['validyearTaxInfo'] as $year=>$total){
-            $yearsTotal += $total;
-        };
-        if($yearsTotal <= 0 ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '年纳税金额为0';
+
+        //销项
+        //没有销项的日子
+        $ValidDates_xiao = [];
+        $thisYearAmout_xiao_by_month = [];
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $carInsuranceData['social_credit_code'],
+            $last2YearStart,
+            $lastMonth,
+            2
+        );
+        $last12MonthRes = [];
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $year = date('Y',strtotime($InvoiceData['billingDate']));
+            $month = date('Y-m',strtotime($InvoiceData['billingDate']));
+            $day = date('Y-m-d',strtotime($InvoiceData['billingDate']));
+            //一年内的
+            if(
+                strtotime($InvoiceData['billingDate'])<strtotime('-1 year')
+            ){
+                $last12MonthRes[] = $InvoiceData;
+            }
+
+            $ValidDates_xiao[$day] = $day;
+            if($year == $lastYear){
+                $oneYearAgoRes = true;
+                $lastYearAmout_xiao += $InvoiceData['totalAmount'];
+            }
+            if($year == $thisYear){
+                //今年销项金额
+                $thisYearAmout_xiao += $InvoiceData['totalAmount'];
+                //今年月度销项金额
+                $thisYearAmout_xiao_by_month[$month]['month'] = $month;
+                $thisYearAmout_xiao_by_month[$month]['totalAmount'] += $InvoiceData['totalAmount'];
+            }
+        }
+
+        if(!$oneYearAgoRes){
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '实际经营时长少于1年';
+        }
+
+        //近1年开票10月及以上 -- 发票
+        if(
+            count($thisYearAmout_xiao_by_month) < 10
+        ){
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '近1年只开票'.count($thisYearAmout_xiao_by_month).'个月,不到10个月';
+        }
+        //年开票金额100万以上，近1年开票10月及以上 -- 发票
+        if(
+            $lastYearAmout_xiao < 1000000 &&
+            $thisYearAmout_xiao < 1000000
+        ){
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '年开票金额'.$lastYearAmout_xiao.',不到100万';
+        }
+
+        // 连续未开票天数≤45天（2、3、4月除外） -- 发票
+        $inValidDays = [];
+        $i = $last2YearStart ;
+        while ($i<=$lastMonth){
+            $i = date('Y-m-d',strtotime('+1 day',strtotime($i)));
+            if(
+                in_array($i,$ValidDates_xiao)
+            ){
+                continue ;
+            }
+            $inValidDays[] = ['date'=>$i] ;
+        }
+
+        $length  =  CarInsuranceInstallment::getMaxContinuousDateLengthV2(
+            $inValidDays,'date'," -1 day ",[
+                '2030-05-01'=>'2030-02-01',
+                '2029-05-01'=>'2029-02-01',
+                '2028-05-01'=>'2028-02-01',
+                '2027-05-01'=>'2027-02-01',
+                '2026-05-01'=>'2026-02-01',
+                '2025-05-01'=>'2025-02-01',
+                '2024-05-01'=>'2024-02-01',
+                '2023-05-01'=>'2023-02-01',
+                '2022-05-01'=>'2022-02-01',
+                '2021-05-01'=>'2021-02-01',
+                '2020-05-01'=>'2020-02-01',
+                '2019-05-01'=>'2019-02-01',
+                '2018-05-01'=>'2018-02-01',
+            ]
+        );
+
+        if($length>=45){
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '连续未开票天数'.$length.',大于45天';
+        }
+        if(
+            count($last12MonthRes) < 35
+        ){
+            $DaiKuanRes = false;
+            $DaiKuanResErrMsg[] = '近12个月累计开票张数'.count($last12MonthRes).',小于35张 ';
         }
 
         //企业税务基本信息查询
@@ -663,92 +776,9 @@ class CarInsuranceInstallment extends ModelBase
                 '$taxBasicInfo ' => $taxBasicInfo
             ])
         );
-        //苏宁银行-微商贷：纳税等级A/B//M（个体工商户可准入） -- 国票接口
-        if(
-            !in_array($taxBasicInfo['data']['essential'][0]['creditLevel'],[
-                'A','B','M'
-            ])
-        ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '纳税等级不属于A/B/M';
-        };
-
-        // 企业当前无欠税 -- 国票接口
-        if(
-            $taxBasicInfo['data']['owingType'] !=  "否"
-        ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '企业当前有欠税';
-        };
-
-        // 苏宁银行-微商贷： 无连续6个月不纳税情况 -- 财务三表
-        if(
-            $taxInfo['inValidQuarterLength'] >2
-        ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '有连续6个月不纳税情况 ';
-        }
-
-        // 苏宁银行-微商贷：近3个月都有纳税申报记录 -- 增值税申报表
-        $oneMonthsAgoHasNoTax = true;
-        $twoMonthsAgoHasNoTax = true;
-        $threeMonthsAgoHasNoTax = true;
-        foreach ($taxInfo['zengZhiShuiReverseOrder'] as $dataItem){
-            if(
-                $dataItem['date'] == $oneMonthsAgo &&
-                $dataItem['total'] > 0
-            ){
-                $oneMonthsAgoHasNoTax = false;
-            }
-            if(
-                $dataItem['date'] == $twoMonthsAgo &&
-                $dataItem['total'] > 0
-            ){
-                $twoMonthsAgoHasNoTax = false;
-            }
-            if(
-                $dataItem['date'] == $threeMonthsAgo &&
-                $dataItem['total'] > 0
-            ){
-                $threeMonthsAgoHasNoTax = true;
-            }
-        }
 
         if(
-            $oneMonthsAgoHasNoTax ||
-            $twoMonthsAgoHasNoTax ||
-            $threeMonthsAgoHasNoTax
-        ){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '近3个月有未纳税申报记录 ';
-        }
-
-        //季度资产负债
-        // 苏宁银行-微商贷： 纳税系统内录入最近一季资产负债表（53）、利润表（19 ），必须有三期以上财务报表 -- 财务三表
-        $quarterDebt = (new GuoPiaoService())
-                ->setCheckRespFlag(true)
-                ->getFinanceBalanceSheet($carInsuranceData['social_credit_code']);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '$quarterDebt ' => $quarterDebt
-            ])
-        );
-        if($quarterDebt['result']<3){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '季度资产负债表不到三期';
-        };
-
-        //季度利润表
-        $quarterProfit=  (new GuoPiaoService())
-                            ->setCheckRespFlag(true)
-                            ->getFinanceIncomeStatement($carInsuranceData['social_credit_code']);
-        if($quarterProfit['result']<3){
-            $suNingWeiShangDai = false;
-            $suNingWeiShangDaiErrMsg[] = '季度利润表不到三期';
-        };
-        if(
-            $suNingWeiShangDai
+            $DaiKuanRes
         ){
             return [
                 'res'=>true,
@@ -757,7 +787,7 @@ class CarInsuranceInstallment extends ModelBase
         else{
             return [
                 'res'=>false,
-                'msg'=>$suNingWeiShangDaiErrMsg,
+                'msg'=>$DaiKuanResErrMsg,
             ];
         }
     }
@@ -798,8 +828,6 @@ class CarInsuranceInstallment extends ModelBase
      */
     static  function  runMatchJinCheng($carInsuranceDataId){
         $oneMonthsAgo = date("Y-m-01",strtotime("-1 month"));
-        $twoMonthsAgo = date("Y-m-01",strtotime("-2 month"));
-        $threeMonthsAgo = date("Y-m-01",strtotime("-3 month"));
 
         $DaiKuanRes = true;
         $DaiKuanResErrMsg = [];
@@ -813,8 +841,6 @@ class CarInsuranceInstallment extends ModelBase
         }
         $companyRes = $companyRes->toArray();
 
-        $retrunData = [];
-
         //企业成立年限
         $EstablishRes = self::getEstablishmentYear($carInsuranceData['social_credit_code']);
         CommonService::getInstance()->log4PHP(
@@ -827,21 +853,19 @@ class CarInsuranceInstallment extends ModelBase
         // 企业成立时间：满两年，纳税满1年 -- h库和财务三表
         if($EstablishRes['EstablishYears'] <= 2){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '公司成立不到2年以上';
+            $DaiKuanResErrMsg[] = '公司成立'.$EstablishRes['EstablishYears'].'年,不到2年以上';
         }
 
         // 企业类型：个人独资企业、有限责任公司准入；普通合伙人禁入
         $CompanyTypeRes1 =  self::checkCompanyType($carInsuranceData['social_credit_code'],'个人独资企业');
         $CompanyTypeRes2 =  self::checkCompanyType($carInsuranceData['social_credit_code'],'有限责任公司');
         if(
-            !$CompanyTypeRes1 &&
-            !$CompanyTypeRes2
+            !$CompanyTypeRes1['has'] &&
+            !$CompanyTypeRes2['has']
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '只有个人独资企业、有限责任公司才准入';
+            $DaiKuanResErrMsg[] = '公司类型不是个人独资企业、有限责任公司（'.$CompanyTypeRes1['type_cname'].'）';
         }
-
-
 
         // 年龄：18-60周岁 -- 用户输入
         //身份证年龄
@@ -858,7 +882,7 @@ class CarInsuranceInstallment extends ModelBase
             $legal_person_age >60
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '贷款年龄小于18或大于60';
+            $DaiKuanResErrMsg[] = '贷款年龄'.intval($legal_person_age).',小于18或大于60';
         }
 
         //  纳税满1年 -- h库和财务三表
@@ -901,7 +925,7 @@ class CarInsuranceInstallment extends ModelBase
         //结束日期没有纳税的 不符合
         if(!$hasEndRes){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '上个月没有纳税';
+            $DaiKuanResErrMsg[] = '纳税不满1年';
         }
 
         // 申请人：企业法人 -- h库
@@ -909,10 +933,8 @@ class CarInsuranceInstallment extends ModelBase
             $companyRes['NAME'] != $carInsuranceData['legal_person']
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '不是企业法人';
+            $DaiKuanResErrMsg[] = '申请人'.$carInsuranceData['legal_person'].'不是企业法人';
         }
-
-
 
         // 近两年任意一年纳税总额不得为0 -- 财务三表
         $thisYearsSuoDeShui = 0;
@@ -961,7 +983,7 @@ class CarInsuranceInstallment extends ModelBase
             ])
         ){
             $DaiKuanRes = false;
-            $DaiKuanResErrMsg[] = '纳税等级不属于A/B/C/M';
+            $DaiKuanResErrMsg[] = '纳税等级'.$taxBasicInfo['data']['essential'][0]['creditLevel'].',不属于A/B/C/M';
         };
 
 
@@ -997,12 +1019,12 @@ class CarInsuranceInstallment extends ModelBase
         $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
             $social_credit_code
         );
-          CommonService::getInstance()->log4PHP(
-              json_encode([
-                  __CLASS__.__FUNCTION__ .__LINE__,
-                  'getIncometaxMonthlyDeclaration$res' => $res
-              ])
-          );
+//          CommonService::getInstance()->log4PHP(
+//              json_encode([
+//                  __CLASS__.__FUNCTION__ .__LINE__,
+//                  'getIncometaxMonthlyDeclaration$res' => $res
+//              ])
+//          );
         $data = jsonDecode($res['data']);
         foreach ($data as $dataItem){
             if($dataItem['columnSequence'] == 16){
@@ -1139,11 +1161,11 @@ class CarInsuranceInstallment extends ModelBase
               return new \DateTime($a['QuarterBegain']) <=> new \DateTime($b['QuarterBegain']);
           });
 
-          $validLength = CarInsuranceInstallment::getMaxContinuousDateLength(
-              $validQuarterTaxInfo,'QuarterBegain',"+3 months"
+          $validLength = CarInsuranceInstallment::getMaxContinuousDateLengthV2(
+              $validQuarterTaxInfo,'QuarterBegain',"+3 months",[]
           );
-          $inValidLength = CarInsuranceInstallment::getMaxContinuousDateLength(
-              $inValidQuarterTaxInfo,'QuarterBegain',"+3 months"
+          $inValidLength = CarInsuranceInstallment::getMaxContinuousDateLengthV2(
+              $inValidQuarterTaxInfo,'QuarterBegain',"+3 months",[]
           );
 
         $validyearTaxInfo = [];
@@ -1255,6 +1277,62 @@ class CarInsuranceInstallment extends ModelBase
         ];
     }
 
+    static   function getMaxContinuousDateLengthV2($tmpData, $field, $calStr,$exceptArray){
+        //最近一次的比较时间
+        $lastDate = '';
+        //运行次数
+        $i = 1;
+        //最大连续长度
+        $length = 1;
+        $ContinuousDateArr = [];
+        $length_arr = [];
+        foreach ($tmpData as $tmpDataItem) {
+
+            $beginDate = date('Y-m-d', strtotime($tmpDataItem[$field]));
+            // 第一次
+            if ($i == 1) {
+                $lastDate = $beginDate;
+                $ContinuousDateArr = [$tmpDataItem];
+                $i ++;
+                continue;
+            }
+
+            $nextDate = date("Y-m-d", strtotime("$calStr", strtotime($lastDate)));
+            //如果连续了
+            if (
+                $beginDate == $nextDate
+            ) {
+                //连续长度加1
+                $length++;
+                $ContinuousDateArr[] = $tmpDataItem;
+            } else {
+                $length_arr[$length]['length'] = $length;
+                $length_arr[$length]['dates'] = $ContinuousDateArr;
+                $length = 1;
+                $ContinuousDateArr = [$tmpDataItem];
+
+            }
+
+            //重置上次连续时间
+            $lastDate = $beginDate;
+            if(
+                $exceptArray[$lastDate]
+            ){
+                $lastDateRaw = $lastDate;
+                $lastDate = $exceptArray[$lastDate];
+            }
+            if(
+                $i==count($tmpData)
+            ){
+                $length_arr[$length]['length'] = $length;
+                $length_arr[$length]['dates'] = $ContinuousDateArr;
+            }
+            $i++;
+        }
+        krsort($length_arr);
+        return array_keys($length_arr)[0];
+    }
+
     //根据身份证获取年龄
     static function  ageVerification($code)
 
@@ -1308,4 +1386,227 @@ class CarInsuranceInstallment extends ModelBase
             $page ++;
         }
     }
+
+    static function  getLastTwoYearAnalyzeData($social_credit_code){
+        //近两年发票开票金额 需要分页拉取后计算结果
+        // $startDate 往前推一个月  推两年
+        //纳税数据取得是两年的数据 取下开始结束时间
+        $lastMonth = date("Y-m-01",strtotime("-1 month"));
+        //两年前的开始月
+        $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+        //进销项发票信息 信动专用
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $social_credit_code,
+            $last2YearStart,
+            $lastMonth
+        );
+
+        //按日期格式化
+        $mapedByDateAmountRes = [
+            '01' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '02' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '03' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '04' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '05' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '06' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '07' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '08' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '09' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '10' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '11' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '12' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+        ];
+        $mapedByDateNumsRes = [
+            '01' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '02' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '03' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '04' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '05' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '06' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '07' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '08' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '09' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '10' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '11' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+            '12' => [
+                '2020'=>'',
+                '2021'=>'',
+                '2022'=>'',
+            ],
+        ];
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $month = date('m',strtotime($InvoiceData['billingDate']));
+            $year = date('Y',strtotime($InvoiceData['billingDate']));
+            $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
+            $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2,".","");
+            $mapedByDateNumsRes[$month][$year] ++;
+        }
+
+        //进销项发票信息 信动专用
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $social_credit_code,
+            $last2YearStart,
+            $lastMonth
+        );
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $month = date('m',strtotime($InvoiceData['billingDate']));
+            $year = date('Y',strtotime($InvoiceData['billingDate']));
+            $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
+            $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2,".","");
+            $mapedByDateNumsRes[$month][$year] ++;
+        }
+        //销项
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $social_credit_code,
+            $last2YearStart,
+            $lastMonth,
+            2
+        );
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $month = date('m',strtotime($InvoiceData['billingDate']));
+            $year = date('Y',strtotime($InvoiceData['billingDate']));
+            $mapedByDateAmountRes[$month][$year] += $InvoiceData['totalAmount'];
+            $mapedByDateAmountRes[$month][$year] = number_format($mapedByDateAmountRes[$month][$year],2,".","");
+            $mapedByDateNumsRes[$month][$year] ++;
+        }
+        //十大供应商
+        //进销项发票信息 信动专用
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $social_credit_code,
+            $last2YearStart,
+            $lastMonth
+        );
+        $supplier = [];
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $supplier[$InvoiceData['salesTaxName']]['entName'] = $InvoiceData['salesTaxName'] ;
+            $supplier[$InvoiceData['salesTaxName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
+            $supplier[$InvoiceData['salesTaxName']]['totalAmount'] = number_format($supplier[$InvoiceData['salesTaxName']]['totalAmount'],2,".","");
+        }
+        //按时间倒叙排列
+        usort($supplier, function($a, $b) {
+            return $b['totalAmount'] <=> $a['totalAmount'];
+        });
+        $newSupplier = array_slice($supplier, 0, 10);
+
+
+        //十大客户
+        //销项项发票信息 信动专用
+        $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+            $social_credit_code,
+            $last2YearStart,
+            $lastMonth,
+            2
+        );
+        $customers = [];
+        foreach ($allInvoiceDatas as $InvoiceData){
+            $customers[$InvoiceData['purchaserName']]['entName'] = $InvoiceData['purchaserName'] ;
+            $customers[$InvoiceData['purchaserName']]['totalAmount'] += $InvoiceData['totalAmount'] ;
+            $customers[$InvoiceData['purchaserName']]['totalAmount'] = number_format($customers[$InvoiceData['purchaserName']]['totalAmount'],2,".","");
+        }
+        //按时间倒叙排列
+        usort($customers, function($a, $b) {
+            return $b['totalAmount'] <=> $a['totalAmount'];
+        });
+        $newCustomers =  array_slice($customers, 0, 10);
+
+        return [
+            'mapedByDateNumsRes' => $mapedByDateNumsRes,
+            'mapedByDateAmountRes' => $mapedByDateAmountRes,
+            'topSupplier' => $newSupplier,
+            'topCustomer' => $newCustomers,
+        ];
+    }
+
 }

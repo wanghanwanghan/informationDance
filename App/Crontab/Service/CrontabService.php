@@ -23,6 +23,7 @@ use App\Crontab\CrontabList\RunSupervisor;
 use App\Crontab\CrontabList\RunShouQuanCheXian;
 use App\Crontab\CrontabList\RunDealZhaoTouBiao;
 use App\Crontab\CrontabList\RunDealEmailReceiver;
+use App\Crontab\CrontabList\RunDealCarInsuranceInstallment;
 
 use EasySwoole\Component\Singleton;
 use EasySwoole\EasySwoole\Crontab\Crontab;
@@ -55,6 +56,7 @@ class CrontabService
         $this->RunDealToolsFile();//新APi-搜客模块相关的定时
         $this->RunDealZhaoTouBiao();//新APi-搜客模块相关的定时
         $this->RunDealEmailReceiver();//
+        $this->RunDealCarInsuranceInstallment();//
         return true;
     }
 
@@ -167,6 +169,10 @@ class CrontabService
     private function RunDealEmailReceiver(): Crontab
     {
         return Crontab::getInstance()->addTask(RunDealEmailReceiver::class);
+    }
+    private function RunDealCarInsuranceInstallment(): Crontab
+    {
+        return Crontab::getInstance()->addTask(RunDealCarInsuranceInstallment::class);
     }
 
 }

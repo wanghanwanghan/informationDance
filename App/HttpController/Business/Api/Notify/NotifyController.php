@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Api\Notify;
 
 use App\HttpController\Business\BusinessBase;
+use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
@@ -10,6 +11,7 @@ use App\HttpController\Models\Api\Wallet;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\Pay\ali\aliPayService;
 use App\HttpController\Service\Pay\wx\wxPayService;
+use App\HttpController\Service\XinDong\XinDongService;
 use EasySwoole\Pay\AliPay\AliPay;
 use EasySwoole\Pay\AliPay\RequestBean\NotifyRequest;
 use EasySwoole\Pay\Pay;
@@ -240,6 +242,7 @@ class NotifyController extends BusinessBase
     //授权认证通知
     function zwAuthNotify(): bool
     {
+        $RequestData = $this->getRequestData();
         $entName = $this->getRequestData('name', '');
         $taxNo = $this->getRequestData('taxNumber', '');
         $state = $this->getRequestData('state', '');
@@ -248,7 +251,19 @@ class NotifyController extends BusinessBase
 
         $phone = substr($orderNo, 0, 11);
         $time = substr($orderNo, -10);
-
+        OperatorLog::addRecord(
+            [
+                'user_id' => 0,
+                'msg' => json_encode(
+                    [
+                        '$phone'=>$phone,
+                        '$RequestData'=>$RequestData,
+                    ]
+                ),
+                'details' => json_encode(XinDongService::trace()),
+                'type_cname' => '获取数据通知_'.$entName,
+            ]
+        );
         CommonService::getInstance()->log4PHP([
             'entName' => $entName,
             'taxNo' => $taxNo,
@@ -260,7 +275,20 @@ class NotifyController extends BusinessBase
         try {
             $check = AuthBook::create()->where(['phone' => $phone, 'remark' => $orderNo])->get();
             if (!empty($check)) {
-                $check->update(['status' => 3, 'remark' => $state . $message . __FUNCTION__]);
+                $oldAuthBookData = $check->toArray();
+
+                //状态更新为3  //把推送数据保存下来
+                AuthBook::updateById(
+                    $oldAuthBookData['id'],
+                    [
+                        'status'=>3,
+                        'raw_return_json'=> @json_encode(
+                            [
+                                $RequestData
+                            ]
+                        )
+                    ]
+                );
             }
         } catch (\Throwable $e) {
             $this->writeErr($e, __FUNCTION__);
@@ -272,6 +300,7 @@ class NotifyController extends BusinessBase
     //获取数据通知
     function zwDataNotify(): bool
     {
+        $RequestData = $this->getRequestData();
         $entName = $this->getRequestData('name', '');
         $taxNo = $this->getRequestData('taxNumber', '');
         $state = $this->getRequestData('state', '');
@@ -281,7 +310,19 @@ class NotifyController extends BusinessBase
 
         $phone = substr($orderNo, 0, 11);
         $time = substr($orderNo, -10);
-
+        OperatorLog::addRecord(
+            [
+                'user_id' => 0,
+                'msg' => json_encode(
+                    [
+                        '$phone'=>$phone,
+                        '$RequestData'=>$RequestData,
+                    ]
+                ),
+                'details' => json_encode(XinDongService::trace()),
+                'type_cname' => '获取数据通知_'.$entName,
+            ]
+        );
         CommonService::getInstance()->log4PHP([
             'entName' => $entName,
             'taxNo' => $taxNo,
@@ -294,7 +335,25 @@ class NotifyController extends BusinessBase
         try {
             $check = AuthBook::create()->where(['phone' => $phone, 'remark' => $orderNo])->get();
             if (!empty($check)) {
-                $check->update(['status' => 3, 'remark' => $state . $message . __FUNCTION__]);
+                $oldAuthBookData = $check->toArray();
+
+                //把新的推送数据 塞进数组里  保存下来
+                $old_raw_return = json_decode($oldAuthBookData['raw_return_json'],true);
+                if(empty($old_raw_return)){
+                    $old_raw_return = [];
+                }
+                $old_raw_return[] = $RequestData;
+
+                AuthBook::updateById(
+                    $oldAuthBookData['id'],
+                    [
+                        //把状态更新为新的
+                        'status'=> $oldAuthBookData['status']+1,
+                        //把新的推送结果也保存下来
+                        'raw_return_json'=> @json_encode( $old_raw_return )
+                    ]
+                );
+
             }
         } catch (\Throwable $e) {
             $this->writeErr($e, __FUNCTION__);

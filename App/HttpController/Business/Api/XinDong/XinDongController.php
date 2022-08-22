@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Api\XinDong;
 
 use App\Crontab\CrontabList\RunCompleteCompanyData;
 use App\Crontab\CrontabList\RunDealApiSouKe;
+use App\Crontab\CrontabList\RunDealCarInsuranceInstallment;
 use App\Crontab\CrontabList\RunDealEmailReceiver;
 //use App\Crontab\CrontabList\RunDealFinanceCompanyData;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
@@ -3614,6 +3615,33 @@ eof;
 
     function testExport()
     {
+
+        if(
+            $this->getRequestData('resetMatchRes')
+        ){
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                RunDealCarInsuranceInstallment::resetMatchRes($this->getRequestData('resetMatchRes')),
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
+            $this->getRequestData('runMatchXXX')
+        ){
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+               RunDealCarInsuranceInstallment::runMatch(),
+                '成功',
+                true,
+                []
+            );
+        }
+
         if(
             $this->getRequestData('online_goods_user')
         ){
@@ -3756,6 +3784,32 @@ eof;
                 200,[] ,
                 //CommonService::ClearHtml($res['body']),
                 CarInsuranceInstallment::runMatchSuNing( $this->getRequestData('runMatchSuNing')),
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
+            $this->getRequestData('runMatchPuFa')
+        ){
+
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                CarInsuranceInstallment::runMatchPuFa( $this->getRequestData('runMatchPuFa')),
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
+            $this->getRequestData('runMatchJinCheng')
+        ){
+
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                CarInsuranceInstallment::runMatchJinCheng( $this->getRequestData('runMatchJinCheng')),
                 '成功',
                 true,
                 []

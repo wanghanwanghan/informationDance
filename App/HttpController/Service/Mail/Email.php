@@ -325,6 +325,7 @@ class Email extends ServiceBase
                         $message = quoted_printable_decode($message);
                     }
                     $newName = mb_decode_mimeheader($name);
+                    $newName = date('YmdHis').'_'.$newName;
                     $this->downAttach($path, $newName, $message);
                     $attach[] = $newName;
                 }
@@ -347,6 +348,7 @@ class Email extends ServiceBase
                                 $message = quoted_printable_decode($message);
                             }
                             $newName = mb_decode_mimeheader($name);
+                            $newName = date('YmdHis').'_'.$newName;
                             $this->downAttach($path, $newName, $message);
                             $attach[] = $newName;
                         }

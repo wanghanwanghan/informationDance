@@ -18,11 +18,15 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecordV3;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\CarInsuranceInstallment;
+use App\HttpController\Models\AdminV2\CarInsuranceInstallmentMatchedRes;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
+use App\HttpController\Models\Api\AuthBook;
+use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\Sms\SmsService;
@@ -162,63 +166,291 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
 
         //设置为正在执行中
         ConfigInfo::setIsRunning(__CLASS__);
-
+        self::runMatch();
+        ConfigInfo::setIsDone(__CLASS__);
 
         return true ;   
     }
 
+    /**
+        实际跑匹配
+     */
     static function runMatch(){
-        // 车险分期
+        // 贷款产品
+        //  AND   created_at <= ".strtotime("-30 minutes",time()) ."
         $rawDatas = CarInsuranceInstallment::findBySql(
-            " WHERE status =  ".CarInsuranceInstallment::$status_init
+            " WHERE 
+                        status =  ".CarInsuranceInstallment::$status_init ."        
+                  "
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'runMatch'=>[
+                    'msg'=>'start',
+                    'data_count'=>count($rawDatas),
+                ]
+            ])
         );
         foreach ($rawDatas as $rawDataItem){
+            if(
+                $rawDataItem['auth_id'] <= 0
+            ){
 
+                CarInsuranceInstallment::updateById(
+                    $rawDataItem['id'],
+                    [
+                        'status'=>CarInsuranceInstallment::$status_matched_failed,
+                    ]
+                );
+                continue ;
+            }
+
+            $authBook = AuthBook::findByIdV2($rawDataItem['auth_id']);
+            if(
+                $authBook['status'] != 5
+            ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'runMatch'=>[
+                            'msg'=>'has_not_received_data_yet_continue',
+                            'param_id'=>$rawDataItem['id'],
+                            'param_auth_id'=>$rawDataItem['auth_id'],
+                            'param_status'=>$rawDataItem['status'],
+                        ]
+                    ])
+                );
+                continue ;
+            }
+
+              //  匹配微商贷
+            $res1 =  CarInsuranceInstallment::runMatchSuNing(intval($rawDataItem['id']));
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'runMatch'=>[
+                        'msg'=>'run_match_su_ning',
+                        'param_id'=>$rawDataItem['id'],
+                        'res'=>$res1,
+                    ]
+                ])
+            );
+            //匹配结果
+            $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
+            if( $res1['res']){
+                $status = CarInsuranceInstallmentMatchedRes::$status_matched_succeed;
+            }
+
+            //保存匹配结果
+            CarInsuranceInstallmentMatchedRes::addRecordV2(
+                [
+                    'user_id' => $rawDataItem['user_id'],
+                    'product_id' => CarInsuranceInstallmentMatchedRes::$pid_wei_shang_dai,
+                    'name' => CarInsuranceInstallmentMatchedRes::$pid_wei_shang_dai_cname,
+                    'car_insurance_id' => $rawDataItem['id'],
+                    'status' => $status,
+                    'msg' => empty($res1['msg'])?'':json_encode($res1['msg']),
+                    'created_at' => time(),
+                    'updated_at' => time(),
+                ]
+            );
+
+            //匹配金企贷
+            $res2 =  CarInsuranceInstallment::runMatchJinCheng($rawDataItem['id']);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'runMatch'=>[
+                        'msg'=>'run_match_jin_cheng',
+                        'param_id'=>$rawDataItem['id'],
+                        'res'=>$res2,
+                    ]
+                ])
+            );
+            $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
+            if($res2['res']){
+                $status = CarInsuranceInstallmentMatchedRes::$status_matched_succeed;
+            }
+            CarInsuranceInstallmentMatchedRes::addRecordV2(
+                [
+                    'user_id' => $rawDataItem['user_id'],
+                    'product_id' => CarInsuranceInstallmentMatchedRes::$pid_jin_qi_dai,
+                    'name' => CarInsuranceInstallmentMatchedRes::$pid_jin_qi_dai_cname,
+                    'car_insurance_id' => $rawDataItem['id'],
+                    'status' => $status,
+                    'msg' => empty($res2['msg'])?'':json_encode($res2['msg']),
+                    'created_at' => time(),
+                    'updated_at' => time(),
+                ]
+            );
+
+              //匹配浦慧贷
+            $res3 =  CarInsuranceInstallment::runMatchPuFa($rawDataItem['id']);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'runMatch'=>[
+                        'msg'=>'run_match_pu_fa',
+                        'param_id'=>$rawDataItem['id'],
+                        'res'=>$res3,
+                    ]
+                ])
+            );
+            $status = CarInsuranceInstallmentMatchedRes::$status_matched_failed;
+            if( $res3['res']){
+                $status = CarInsuranceInstallmentMatchedRes::$status_matched_succeed;
+            }
+
+            CarInsuranceInstallmentMatchedRes::addRecordV2(
+                [
+                    'user_id' => $rawDataItem['user_id'],
+                    'product_id' => CarInsuranceInstallmentMatchedRes::$pid_pu_hui_dai,
+                    'name' => CarInsuranceInstallmentMatchedRes::$pid_pu_hui_dai_cname,
+                    'car_insurance_id' => $rawDataItem['id'],
+                    'status' => $status,
+                    'msg' => empty($res3['msg'])?'':json_encode($res3['msg']),
+                    'created_at' => time(),
+                    'updated_at' => time(),
+                ]
+            );
+
+            if(
+                $res1['res'] ||
+                $res2['res'] ||
+                $res3['res']
+            ){
+                CarInsuranceInstallment::updateById(
+                    $rawDataItem['id'],
+                    [
+                        'status'=>CarInsuranceInstallment::$status_matched_succeed
+                    ]
+                );
+            }
+            else{
+                CarInsuranceInstallment::updateById(
+                    $rawDataItem['id'],
+                    [
+                        'status'=>CarInsuranceInstallment::$status_matched_failed
+                    ]
+                );
+            }
+
+            //匹配结果
+            $pullDataRes = self::resetMatchRes($rawDataItem['id']);
+            if(!$pullDataRes){
+                continue;
+            }
+
+            $userData = OnlineGoodsUser::findById($rawDataItem['user_id']);
+            $userData = $userData->toArray();
+
+            SmsService::getInstance()->sendByTemplete(
+                $userData['phone'], 'SMS_244025473',[
+                'name' => '有询价的结果了',
+                'money' => '多钱'
+            ]);
         }
 
-        /**
+        return true;
+    }
 
-        匹配产品
+    static function  resetMatchRes($id){
+        $rawDataItem = CarInsuranceInstallment::findById($id);
+        $rawDataItem = $rawDataItem->toArray();
 
-        苏宁银行-微商贷
-        公司成立2年以上，不能是分公司
-        申请人：贷款年龄：22-59周岁；申请人为法人（对占股无要求）、近6个月法人或最大股东变更满6个月
-        法人手机在网时长大于1年
-        正常纳税满18个月
-        年纳税金额1.5万以上（PS：不做强要求，但不能为0）
-        纳税等级A/B//M（个体工商户可准入）
-        无连续6个月不纳税情况
-        近3个月有纳税申报记录
-        纳税系统内录入最近一季资产负债表、利润表，必须有三期以上财务报表
-        企业当前无欠税
-        近半年销售波动较小
+        //匹配结果
+        $companyBasic = CompanyBasic::findByCode($rawDataItem['social_credit_code']);
+        if(empty($companyBasic)){
+            CarInsuranceInstallment::updateById(
+                $rawDataItem['id'],
+                [
+                    'math_res' =>  json_encode(
+                        [
+                            'companyInfo' => [
 
+                            ],
+                            'essentialFinanceInfo' => [],
+                            'mapedByDateNumsRes' => [],
+                            'mapedByDateAmountRes' => [],
+                            'topSupplier' => [],
+                            'topCustomer' => [],
+                            'matchedRes' => [],
+                            'remark'=>[
+                                'match_company_failed'=>[
+                                    'social_credit_code'=>$rawDataItem['social_credit_code']
+                                ]
+                            ],
+                        ]
+                    )
+                ]
+            );
+            return  false ;
+        }
 
-        注意 ❗❗❗
+        //=======================================
+        $companyBasic = $companyBasic->toArray();
+        $companyRes = (new XinDongService())->getEsBasicInfoV2($companyBasic['companyid']);
 
-        上文所有“所得税”指的是：所得税接口里，16栏的本期金额
-        上文所有“增值税”指的是：增值税接口里，34,39,40,41项金额的总和
+        //税务信息(今年)
+        $essentialRes = (new GuoPiaoService())->getEssential($rawDataItem['social_credit_code']);
+        $mapedEssentialRes = [
+            "owingType" => $essentialRes['data']['owingType'],
+            "payTaxes" => $essentialRes['data']['payTaxes'],
+            "regulations" => $essentialRes['data']['regulations'],
+            "nature" => $essentialRes['data']['nature'],
+            "creditPoint" => $essentialRes['data']['essential'][0]['creditPoint'],
+            "creditLevel" => $essentialRes['data']['essential'][0]['creditLevel'],
+            "year" => $essentialRes['data']['essential'][0]['year'],
+            "taxpayerId" => $essentialRes['data']['essential'][0]['taxpayerId'],
+        ];
 
+        //匹配结果
+        $matchedRes = CarInsuranceInstallmentMatchedRes::findAllByCondition(
+            [
+                'car_insurance_id'=>$rawDataItem['id']
+            ]
+        );
+        $mathedResData = [];
+        $unmathedResData = [];
+        foreach ($matchedRes as &$matchedResItem){
+            $matchedResItem['status_cname'] =  CarInsuranceInstallmentMatchedRes::getStatusMap()[$matchedResItem['status']];
+            $matchedResItem['msg_arr'] =  $matchedResItem['msg']? json_decode($matchedResItem['msg'],true):[];
+            if($matchedResItem['status']== CarInsuranceInstallmentMatchedRes::$status_matched_succeed){
+                $mathedResData[] =  $matchedResItem;
+            }
+            if($matchedResItem['status']== CarInsuranceInstallmentMatchedRes::$status_matched_failed){
+                $unmathedResData[] =  $matchedResItem;
+            }
+        }
 
-        hdsaic库 company basic库 成立日期ESDATE
-
-        身份证匹配年龄
-        创蓝接口：新加返回字段：在网时间
-        满18个月？最近两年的纳税数据中，有连续交纳18个月，如从2020年10月-2022-05没间断
-        正常缴纳？每月有同时缴纳所得税或增值税即算正常缴纳。
-        哪年？去年1-12月
-        滞纳金额？所得税和增值税
-        企业税务基本信息查询接口：纳税等级字段
-        连续6个月？任意连续6个月
-        不纳税？不缴纳所得税和增值税
-        近3个月?从当前月份往前推3个月
-        纳税申报记录？增值税
-        数据来源？季资产负债表、利润表
-        必须有三期以上?最近两年数据里，有三期以上即可
-        企业税务基本信息查询接口：欠税字段
-        ??
-         */
-
+        $AnalyzeData = CarInsuranceInstallment::getLastTwoYearAnalyzeData($rawDataItem['social_credit_code']);
+        CarInsuranceInstallment::updateById(
+            $rawDataItem['id'],
+            [
+                'math_res' =>  json_encode(
+                    [
+                        'companyInfo' => [
+                            'ENTNAME' => $companyRes['ENTNAME'],
+                            'NAME' => $companyRes['NAME'],
+                            'ESDATE' => $companyRes['ESDATE'],
+                            'REGCAP' => $companyRes['REGCAP'],
+                            'UNISCID' => $companyRes['UNISCID'],
+                            'DOM' => $companyRes['DOM'],
+                            'OPSCOPE' => $companyRes['OPSCOPE'],
+                        ],
+                        'essentialFinanceInfo' => $mapedEssentialRes,
+                        'mapedByDateNumsRes' => $AnalyzeData['mapedByDateNumsRes'],
+                        'mapedByDateAmountRes' =>  $AnalyzeData['mapedByDateAmountRes'],
+                        'topSupplier' => $AnalyzeData['topSupplier'],
+                        'topCustomer' => $AnalyzeData['topCustomer'],
+                        'matchedRes' => $mathedResData,
+                        'unmatchedRes' => $unmathedResData,
+                    ]
+                )
+            ]
+        );
+        return  true;
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)

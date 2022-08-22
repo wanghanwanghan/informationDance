@@ -36,8 +36,19 @@ class MailReceipt extends ModelBase
     static  function  addRecordV2($info){
 
         if(
-            self::findByEmailId($info['email_id'],$info['to'])
+            self::findBySubjectAndDate($info['date'],$info['subject'])
         ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'add_email_to_db'=>[
+                        'msg'=>'has_old_record.excape.',
+                        'param_email_id'=>$info['email_id'],
+                        'param_to'=>$info['to'],
+                        'param_mailHeader'=>$info['mailHeader'] ,
+                    ]
+                ])
+            );
             return  true;
         }
 
@@ -57,6 +68,7 @@ class MailReceipt extends ModelBase
                 'user_id' => $requestData['user_id'],
                 'from' => $requestData['from'],
                 'subject' => $requestData['subject']?:'',
+                'attachs' => $requestData['attachs']?:'',
                  'body' => $requestData['body']?:'',
                  'status' => $requestData['status']?:'1',
                 'type' => $requestData['type']?:'1',
@@ -156,6 +168,14 @@ class MailReceipt extends ModelBase
         $res =  MailReceipt::create()
             ->where('email_id',$email_id)
             ->where('to',$to)
+            ->get();
+        return $res;
+    }
+
+    public static function findBySubjectAndDate($date,$subject){
+        $res =  MailReceipt::create()
+            ->where('date',$date)
+            ->where('subject',$subject)
             ->get();
         return $res;
     }
