@@ -233,7 +233,7 @@ class BaoXianController extends \App\HttpController\Business\OnlineGoods\Mrxd\Co
             $resNew = MailReceipt::findByInsuranceId($dataItem['id']);
             $resNew = $resNew?end($resNew):[];
             $attachs  = json_decode($resNew['attachs'],true);
-            $dataItem['attachs'] = $attachs ;
+            $dataItem['attachs'] = $attachs[0]?:'' ;
         }
         return $this->writeJson(
             200,
