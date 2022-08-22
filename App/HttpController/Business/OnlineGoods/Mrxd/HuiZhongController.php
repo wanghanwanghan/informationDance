@@ -409,7 +409,7 @@ class HuiZhongController extends \App\HttpController\Business\OnlineGoods\Mrxd\C
         return $this->writeJson(
             200,
             [],
-            $resNew['body']?:['body'=>'请稍等，数据生成后，我们会短信通知您']
+            $resNew['body']?:'请稍等，数据生成后，我们会短信通知您'
         );
     }
 }

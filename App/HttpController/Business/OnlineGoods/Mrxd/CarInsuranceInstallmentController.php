@@ -609,13 +609,10 @@ class CarInsuranceInstallmentController extends \App\HttpController\Business\Onl
         $res = $res->toArray();
         //暂时去取最新的一个
         $resNew = MailReceipt::findByInsuranceId($res['id']);
-        if($resNew){
-            $resNew = end($resNew);
-        }
         return $this->writeJson(
             200,
             [],
-            $resNew['body']?:'请稍等，数据生成后，我们会短信通知您'
+            $resNew?end($resNew):[]
         );
     }
 }
