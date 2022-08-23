@@ -207,7 +207,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
         return true ;   
     }
-    function getYieldDataBySheet($excel_read){
+    static  function getYieldDataBySheet($excel_read){
         $datas = [];
         while (true) {
 
@@ -222,12 +222,12 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             }
 
             //企业名称
-            $value0 = $this->strtr_func($one[0]);
+            $value0 = self::strtr_func($one[0]);
             //手机号
-            $value1 = $this->strtr_func($one[1]);
+            $value1 = self::strtr_func($one[1]);
             //微信名
-            $value2 = $this->strtr_func($one[2]);
-            $value3 = $this->strtr_func($one[3]);
+            $value2 = self::strtr_func($one[2]);
+            $value3 = self::strtr_func($one[3]);
 
             yield $datas[] = [
                 $value0,
