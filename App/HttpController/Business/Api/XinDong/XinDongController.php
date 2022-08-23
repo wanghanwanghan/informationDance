@@ -4044,10 +4044,9 @@ eof;
             );
         }
         if(
-            $this->getRequestData('testSheet')
+            $this->getRequestData('testReadMultiSheet')
         ){
             $excel = new \Vtiful\Kernel\Excel(['path' =>  TEMP_FILE_PATH]);
-
             // 打开示例文件
             $sheetList = $excel->openFile('测试多sheet.xlsx')
                 ->sheetList();

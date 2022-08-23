@@ -199,6 +199,9 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         //将客户名单解析到db
         self::splitByMobile(10);
 
+        //去空号
+
+
         //设置为已执行完毕
         ConfigInfo::setIsDone(__CLASS__);
 
@@ -264,7 +267,9 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 ->defaultFormat($colorStyle)
                 ->header(
                     [
-                        '标题', //
+                        '公司名称', //
+                        '信用代码', //
+                        '手机号', //
                     ]
                 )
                  ->defaultFormat($alignStyle)
@@ -280,7 +285,9 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             $file->addSheet('Sheet2')
                 ->defaultFormat($colorStyle)
                 ->header([
-                    '标题' , //
+                    '公司名称' , //
+                    '信用代码' , //
+                    '手机号' , //
                 ])
                 ->defaultFormat($alignStyle)
             ;
@@ -334,10 +341,10 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             AdminUserBussinessOpportunityUploadRecord::updateById(
                 $rawDataItem['id'],
                 [
-                    'new_name' => $filename
+                    'new_name' => $filename,
+                    'status' => AdminUserBussinessOpportunityUploadRecord::$status_split_success,
                 ]
             );
-
         }
         return true;
     }
