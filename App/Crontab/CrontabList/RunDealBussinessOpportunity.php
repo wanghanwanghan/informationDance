@@ -205,6 +205,49 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             ])
         );
         foreach ($rawDatas as $rawDataItem){
+            //按行读取企业数据
+            $companyDatas = self::getYieldData($rawDataItem['name']);
+            foreach ($companyDatas as $dataItem){
+               // $fileObject ->data([$dataItem]);
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        [
+                            'splitByMobile'=>[
+                                'msg' => 'add_sheet1',
+                                '$dataItem'=>$dataItem,
+                            ]
+                        ]
+                    ])
+                );
+            }
+
+            $companyDatas = self::getYieldData($rawDataItem['name']);
+            foreach ($companyDatas as $dataItem){
+                $mobilesArr = explode(',',$dataItem[2]);
+                foreach ($mobilesArr as $mobiles){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            [
+                                'splitByMobile'=>[
+                                    'msg' => 'add_sheet2',
+                                    '$dataItem'=>$dataItem,
+                                ]
+                            ]
+                        ])
+                    );
+//                    $file->data([
+//                        $dataItem[0],
+//                        $dataItem[1],
+//                        $mobiles,
+//                    ]);
+                }
+            }
+
+            continue ;
+            //========================================================
+            //========================================================
             //如果不需要拆分
             if(!$rawDataItem['split_mobile']){
                 AdminUserBussinessOpportunityUploadRecord::updateById(
