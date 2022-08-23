@@ -207,7 +207,35 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
         return true ;   
     }
+    function getYieldDataBySheet($excel_read){
+        $datas = [];
+        while (true) {
 
+            $one = $excel_read->nextRow([
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+            ]);
+
+            if (empty($one)) {
+                break;
+            }
+
+            //企业名称
+            $value0 = $this->strtr_func($one[0]);
+            //手机号
+            $value1 = $this->strtr_func($one[1]);
+            //微信名
+            $value2 = $this->strtr_func($one[2]);
+            $value3 = $this->strtr_func($one[3]);
+
+            yield $datas[] = [
+                $value0,
+                $value1,
+                $value2,
+            ];
+        }
+    }
     //单行拆解成多行
     static function  splitByMobile(){
         $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(

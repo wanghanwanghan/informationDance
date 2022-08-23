@@ -4052,22 +4052,21 @@ eof;
                 ->sheetList();
             $datas = [];
             foreach ($sheetList as $sheetName) {
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$sheetName' => $sheetName
-                    ])
-                );
                 // 通过工作表名称获取工作表数据
-                $sheetData = $excel
-                    ->openSheet($sheetName)
-                    ->getSheetData();
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$sheetData' => $sheetData
-                    ])
-                );
+                $excel = $excel
+                    ->openSheet($sheetName);// ->getSheetData();
+
+                $tmpRes = RunDealBussinessOpportunity::getYieldDataBySheet($excel);
+                foreach ($tmpRes as $tmp){
+                    $datas[$sheetName][] = $tmp;
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            '$sheetName' => $sheetName,
+                            '$tmp' => $tmp,
+                        ])
+                    );
+                }
             }
             return $this->writeJson(
                 200,[ ] ,
