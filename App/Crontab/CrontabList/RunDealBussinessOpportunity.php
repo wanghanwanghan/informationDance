@@ -308,11 +308,15 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                             ]
                         ])
                     );
-                    $file->data([
-                        $dataItem[0],
-                        $dataItem[1],
-                        $mobiles,
-                    ]);
+                    $file->data(
+                        [
+                            [
+                                $dataItem[0],
+                                $dataItem[1],
+                                $mobiles,
+                            ]
+                        ]
+                    );
                 }
             }
             //==============================================
