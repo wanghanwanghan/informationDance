@@ -216,7 +216,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                         [
                             'splitByMobile'=>[
                                 'msg' => 'add_sheet1',
-                                '$dataItem'=>$dataItem,
+                                '$dataItem1'=>$dataItem,
                             ]
                         ]
                     ])
@@ -233,7 +233,11 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                             [
                                 'splitByMobile'=>[
                                     'msg' => 'add_sheet2',
-                                    '$dataItem'=>$dataItem,
+                                    '$dataItem2'=>[
+                                        $dataItem[0],
+                                        $dataItem[1],
+                                        $mobiles,
+                                    ]
                                 ]
                             ]
                         ])
