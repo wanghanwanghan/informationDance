@@ -131,7 +131,8 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             //social code
             $value1 = self::strtr_func($one[1]);
             //phones | splite by ,
-            $value2 = self::strtr_func($one[2]);
+            //$value2 = self::strtr_func($one[2]);
+            $value2 = trim($one[2]);
             $tmpData = [
                 $value0,
                 $value1,
