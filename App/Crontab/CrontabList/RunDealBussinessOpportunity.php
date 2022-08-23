@@ -192,7 +192,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
     //单行拆解成多行
     static function  splitByMobile(){
         $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(
-            " WHERE statsus =  ".AdminUserBussinessOpportunityUploadRecord::$status_init
+            " WHERE status =  ".AdminUserBussinessOpportunityUploadRecord::$status_init
         );
         CommonService::getInstance()->log4PHP(
             json_encode([
