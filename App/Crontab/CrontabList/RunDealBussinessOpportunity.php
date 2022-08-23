@@ -190,7 +190,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
     }
 
     //单行拆解成多行
-    static function  splitByMobile($limit){
+    static function  splitByMobile(){
         $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(
             " WHERE statsus =  ".AdminUserBussinessOpportunityUploadRecord::$status_init
         );
@@ -222,14 +222,81 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             //$dirPath =  dirname($rawDataItem['file_path']).DIRECTORY_SEPARATOR;
             self::setworkPath( $rawDataItem['file_path'] );
 
-            //按行读取数据
+            //先生成第一个sheet
+            $config=  [
+                'path' => TEMP_FILE_PATH // xlsx文件保存路径
+            ];
+
+
+            $excel = new \Vtiful\Kernel\Excel($config);
+            $filename = '1_'.$rawDataItem['name'];
+            $fileObject = $excel->fileName($filename, 'Sheet1');
+            $fileHandle = $fileObject->getHandle();
+            $format = new Format($fileHandle);
+            $colorStyle = $format
+                ->fontColor(Format::COLOR_ORANGE)
+                ->border(Format::BORDER_DASH_DOT)
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+            $format = new Format($fileHandle);
+            $alignStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+            $file = $fileObject
+                ->defaultFormat($colorStyle)
+                ->header(
+                    [
+                        '标题', //
+                    ]
+                )
+                 ->defaultFormat($alignStyle)
+            ;
+
+            //按行读取企业数据
             $companyDatas = self::getYieldData($rawDataItem['name']);
+            foreach ($companyDatas as $dataItem){
+                $fileObject ->data([$dataItem]);
+            }
 
-            //
+            //生成第二个sheet
+            $file->addSheet('Sheet2')
+                ->defaultFormat($colorStyle)
+                ->header([
+                    '标题' , //
+                ])
+                ->defaultFormat($alignStyle)
+            ;
+            $companyDatas = self::getYieldData($rawDataItem['name']);
+            foreach ($companyDatas as $dataItem){
+                $mobilesArr = explode(',',$dataItem[2]);
+                foreach ($mobilesArr as $mobiles){
+                    $file->data([
+                        $dataItem[0],
+                        $dataItem[1],
+                        $mobiles,
+                    ]);
+                }
+            }
+            //==============================================
 
+            $format = new Format($fileHandle);
+            //单元格有\n解析成换行
+            $wrapStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->wrap()
+                ->toResource();
+
+            $fileObject->output();
+
+            //新文件
+            AdminUserBussinessOpportunityUploadRecord::updateById(
+                $rawDataItem['id'],
+                [
+                    'new_name' => $filename
+                ]
+            );
 
         }
-
         return true;
     }
 

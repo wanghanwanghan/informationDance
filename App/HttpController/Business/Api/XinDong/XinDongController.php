@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Api\XinDong;
 
 use App\Crontab\CrontabList\RunCompleteCompanyData;
 use App\Crontab\CrontabList\RunDealApiSouKe;
+use App\Crontab\CrontabList\RunDealBussinessOpportunity;
 use App\Crontab\CrontabList\RunDealCarInsuranceInstallment;
 use App\Crontab\CrontabList\RunDealEmailReceiver;
 //use App\Crontab\CrontabList\RunDealFinanceCompanyData;
@@ -3607,7 +3608,7 @@ eof;
     }
 
 // Comparison function
-     function date_compare($element1, $element2) {
+    function date_compare($element1, $element2) {
         $datetime1 = strtotime($element1['datetime']);
         $datetime2 = strtotime($element2['datetime']);
         return $datetime1 - $datetime2;
@@ -3615,50 +3616,12 @@ eof;
 
     function testExport()
     {
+
         // 测试添加sheet
         if(
             $this->getRequestData('addNewSheet2')
         ){
-
-            // =======================================================================
-            $config=  [
-                'path' => TEMP_FILE_PATH // xlsx文件保存路径
-            ];
-
-            $excel = new \Vtiful\Kernel\Excel($config);
-            $fileObject = $excel->fileName('file.xlsx');
-            $fileHandle = $fileObject->getHandle();
-            //==============================================
-
-
-            $fileObject->addSheet('p2')
-                //->defaultFormat($colorStyle)
-                ->header([
-                    '标题' , //
-                    '项目名称' , //
-                    '项目编号' , //
-                ])
-                //->defaultFormat($alignStyle)
-            ;
-            $financeDatas2 = [
-                ['xxx','xxx','xxx',]
-            ];
-            foreach ($financeDatas2 as $dataItem){
-
-                $fileObject->data([$dataItem]);
-                $p2Nums ++;
-            }
-            //==============================================
-            $format = new Format($fileHandle);
-            //单元格有\n解析成换行
-            $wrapStyle = $format
-                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-                ->wrap()
-                ->toResource();
-
-            $fileObject->output();
-            //===============================
-            // =======================================================================
+           RunDealBussinessOpportunity::splitByMobile();
             return $this->writeJson(
                 200,[] ,
                 //CommonService::ClearHtml($res['body']),
