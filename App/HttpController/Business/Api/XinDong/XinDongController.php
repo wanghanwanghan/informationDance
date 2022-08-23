@@ -53,6 +53,7 @@ use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Mail\Email;
 use App\HttpController\Service\Pay\ChargeService;
+use App\HttpController\Service\Sms\SmsService;
 use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
 // use App\HttpController\Models\RDS3\Company;
@@ -3616,6 +3617,22 @@ eof;
 
     function testExport()
     {
+        if(
+            $this->getRequestData('testNewSms')
+        ){
+            SmsService::getInstance()->sendByTemplete(
+                $this->getRequestData('testNewSms'), 'SMS_249280572',[]);
+
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                [],
+                '成功',
+                true,
+                []
+            );
+        }
+
 
         // 测试添加sheet
         if(

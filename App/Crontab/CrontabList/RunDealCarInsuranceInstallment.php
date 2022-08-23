@@ -346,10 +346,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
             $userData = $userData->toArray();
 
             SmsService::getInstance()->sendByTemplete(
-                $userData['phone'], 'SMS_244025473',[
-                'name' => '有询价的结果了',
-                'money' => '多钱'
-            ]);
+                $userData['phone'], 'SMS_249280572',[]);
         }
 
         return true;
