@@ -205,6 +205,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             ])
         );
         foreach ($rawDatas as $rawDataItem){
+            self::setworkPath( $rawDataItem['file_path'] );
             //按行读取企业数据
             $companyDatas = self::getYieldData($rawDataItem['name']);
             foreach ($companyDatas as $dataItem){
