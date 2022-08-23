@@ -220,7 +220,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 ]
             ])
         );
-        foreach ($rawDatas as $rawDataItem){ 
+        foreach ($rawDatas as $rawDataItem){
             //========================================================
             //========================================================
             //如果不需要拆分
@@ -287,7 +287,27 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             $companyDatas = self::getYieldData($rawDataItem['name']);
             foreach ($companyDatas as $dataItem){
                 $mobilesArr = explode(',',$dataItem[2]);
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        [
+                            'splitByMobile'=>[
+                                '$mobilesArr' =>$mobilesArr,
+                            ]
+                        ]
+                    ])
+                );
                 foreach ($mobilesArr as $mobiles){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            [
+                                'splitByMobile'=>[
+                                    '$mobiles' =>$mobiles,
+                                ]
+                            ]
+                        ])
+                    );
                     $file->data([
                         $dataItem[0],
                         $dataItem[1],
