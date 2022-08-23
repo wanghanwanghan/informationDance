@@ -133,21 +133,21 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             //phones | splite by ,
             //$value2 = self::strtr_func($one[2]);
             $value2 = trim($one[2]);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        'splitByMobile'=>[
-                            '$value0' => $value0,
-                            '$one[0]' => $one[0],
-                            '$value1' => $value1,
-                            '$one[1]' => $one[1],
-                            '$value2' => $value2,
-                            '$one[2]' => $one[2],
-                        ]
-                    ]
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    [
+//                        'splitByMobile'=>[
+//                            '$value0' => $value0,
+//                            '$one[0]' => $one[0],
+//                            '$value1' => $value1,
+//                            '$one[1]' => $one[1],
+//                            '$value2' => $value2,
+//                            '$one[2]' => $one[2],
+//                        ]
+//                    ]
+//                ])
+//            );
             $tmpData = [
                 $value0,
                 $value1,
@@ -220,53 +220,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 ]
             ])
         );
-        foreach ($rawDatas as $rawDataItem){
-            self::setworkPath( $rawDataItem['file_path'] );
-            //按行读取企业数据
-            $companyDatas = self::getYieldData($rawDataItem['name']);
-            foreach ($companyDatas as $dataItem){
-               // $fileObject ->data([$dataItem]);
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        [
-//                            'splitByMobile'=>[
-//                                'msg' => 'add_sheet1',
-//                                '$dataItem1'=>$dataItem,
-//                            ]
-//                        ]
-//                    ])
-//                );
-            }
-
-            $companyDatas = self::getYieldData($rawDataItem['name']);
-            foreach ($companyDatas as $dataItem){
-                $mobilesArr = explode(',',$dataItem[2]);
-                foreach ($mobilesArr as $mobiles){
-//                    CommonService::getInstance()->log4PHP(
-//                        json_encode([
-//                            __CLASS__.__FUNCTION__ .__LINE__,
-//                            [
-//                                'splitByMobile'=>[
-//                                    'msg' => 'add_sheet2',
-//                                    '$dataItem2'=>[
-//                                        $dataItem[0],
-//                                        $dataItem[1],
-//                                        $mobiles,
-//                                    ]
-//                                ]
-//                            ]
-//                        ])
-//                    );
-//                    $file->data([
-//                        $dataItem[0],
-//                        $dataItem[1],
-//                        $mobiles,
-//                    ]);
-                }
-            }
-
-            continue ;
+        foreach ($rawDatas as $rawDataItem){ 
             //========================================================
             //========================================================
             //如果不需要拆分
