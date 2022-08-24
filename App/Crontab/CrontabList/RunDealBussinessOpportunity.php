@@ -18,9 +18,11 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecordV3;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
+use App\HttpController\Models\AdminV2\BussinessOpportunityDetails;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
+use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
@@ -43,6 +45,8 @@ class RunDealBussinessOpportunity extends AbstractCronTask
     public $crontabBase;
     public $filePath = ROOT_PATH . '/Static/Temp/';
     public static $workPath;
+    static $sheet1 = 'Sheet1';
+    static $sheet2 = 'Sheet2';
 
     static function strtr_func($str): string
     {
@@ -196,8 +200,9 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         //设置为正在执行中
         ConfigInfo::setIsRunning(__CLASS__);
 
-        //将客户名单解析到db
-        self::splitByMobile(10);
+        //
+        self::delEmptyMobile(10);
+        //self::splitByMobile(10);
 
         //去空号
 
@@ -237,7 +242,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         }
     }
     //单行拆解成多行
-    static function  splitByMobile(){
+    static function  splitByMobileOld(){
         $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(
             " WHERE status =  ".AdminUserBussinessOpportunityUploadRecord::$status_init
         );
@@ -279,7 +284,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
             $excel = new \Vtiful\Kernel\Excel($config);
             $filename = '1_'.$rawDataItem['name'];
-            $fileObject = $excel->fileName($filename, 'Sheet1');
+            $fileObject = $excel->fileName($filename, self::$sheet1);
             $fileHandle = $fileObject->getHandle();
             $format = new Format($fileHandle);
             $colorStyle = $format
@@ -310,7 +315,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             }
 
             //生成第二个sheet
-            $file->addSheet('Sheet2')
+            $file->addSheet(self::$sheet2)
                 ->defaultFormat($colorStyle)
                 ->header([
                     '公司名称' , //
@@ -371,6 +376,634 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 [
                     'new_name' => $filename,
                     'status' => AdminUserBussinessOpportunityUploadRecord::$status_split_success,
+                ]
+            );
+        }
+        return true;
+    }
+
+    //拆解成多行
+    static function  splitByMobileOld2(){
+        $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(
+            " WHERE status =  ".AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'splitByMobile'=>[
+                        'msg' => 'start',
+                    ]
+                ]
+            ])
+        );
+        foreach ($rawDatas as $rawDataItem){
+            //========================================================
+            //========================================================
+            //如果不需要拆分
+            if(!$rawDataItem['split_mobile']){
+                AdminUserBussinessOpportunityUploadRecord::updateById(
+                    $rawDataItem['id'],
+                    [
+                        'status' => AdminUserBussinessOpportunityUploadRecord::$status_split_success
+                    ]
+                );
+                continue ;
+            }
+
+            // 找到上传的文件路径
+            //$dirPath =  dirname($rawDataItem['file_path']).DIRECTORY_SEPARATOR;
+            self::setworkPath( $rawDataItem['file_path'] );
+
+            //先生成第一个sheet
+            $config=  [
+                'path' => TEMP_FILE_PATH // xlsx文件保存路径
+            ];
+
+            $excel = new \Vtiful\Kernel\Excel($config);
+            $filename = '1_'.$rawDataItem['new_name'];
+            $fileObject = $excel->fileName($filename, self::$sheet1);
+            $fileHandle = $fileObject->getHandle();
+            $format = new Format($fileHandle);
+            $colorStyle = $format
+                ->fontColor(Format::COLOR_ORANGE)
+                ->border(Format::BORDER_DASH_DOT)
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+            $format = new Format($fileHandle);
+            $alignStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+            $file = $fileObject
+                ->defaultFormat($colorStyle)
+                ->header(
+                    [
+                        '公司名称', //
+                        '信用代码', //
+                        '手机号', //
+                        '手机号', //
+                    ]
+                )
+                 ->defaultFormat($alignStyle)
+            ;
+
+            //按行读取企业数据
+            $companyDatas = self::getYieldData($rawDataItem['name']);
+            foreach ($companyDatas as $dataItem){
+                $fileObject ->data([$dataItem]);
+            }
+
+            //生成第二个sheet
+            $file->addSheet(self::$sheet2)
+                ->defaultFormat($colorStyle)
+                ->header([
+                    '公司名称' , //
+                    '信用代码' , //
+                    '手机号' , //
+                ])
+                ->defaultFormat($alignStyle)
+            ;
+            $companyDatas = self::getYieldData($rawDataItem['name']);
+            foreach ($companyDatas as $dataItem){
+                $mobilesArr = explode(',',$dataItem[2]);
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        [
+                            'splitByMobile'=>[
+                                '$mobilesArr' =>$mobilesArr,
+                            ]
+                        ]
+                    ])
+                );
+                foreach ($mobilesArr as $mobiles){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            [
+                                'splitByMobile'=>[
+                                    '$mobiles' =>$mobiles,
+                                ]
+                            ]
+                        ])
+                    );
+                    $file->data(
+                        [
+                            [
+                                $dataItem[0],
+                                $dataItem[1],
+                                $mobiles,
+                            ]
+                        ]
+                    );
+                }
+            }
+            //==============================================
+
+            $format = new Format($fileHandle);
+            //单元格有\n解析成换行
+            $wrapStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->wrap()
+                ->toResource();
+
+            $fileObject->output();
+
+            //新文件
+            AdminUserBussinessOpportunityUploadRecord::updateById(
+                $rawDataItem['id'],
+                [
+                    'new_name' => $filename,
+                    'status' => AdminUserBussinessOpportunityUploadRecord::$status_split_success,
+                ]
+            );
+        }
+        return true;
+    }
+
+
+    //去空号
+    static function  delEmptyMobileOld(){
+        $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(
+            " WHERE status =  ".AdminUserBussinessOpportunityUploadRecord::$status_split_success
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'delEmptyMobile'=>[
+                        'msg' => 'start',
+                    ]
+                ]
+            ])
+        );
+        foreach ($rawDatas as $rawDataItem){
+            //========================================================
+            //========================================================
+            //如果不需要去空号
+            if(!$rawDataItem['del_empty']){
+                AdminUserBussinessOpportunityUploadRecord::updateById(
+                    $rawDataItem['id'],
+                    [
+                        'status' => AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success
+                    ]
+                );
+                continue ;
+            }
+
+            //需要去空号的
+
+            // 找到上传的文件路径
+            //$dirPath =  dirname($rawDataItem['file_path']).DIRECTORY_SEPARATOR;
+            self::setworkPath( $rawDataItem['file_path'] );
+
+            //=====================按sheet读取旧的文件======================================
+            $excel = new \Vtiful\Kernel\Excel(['path' =>  TEMP_FILE_PATH]);
+            // 打开示例文件
+            $sheetList = $excel->openFile($rawDataItem['new_name'])
+                ->sheetList();
+            foreach ($sheetList as $sheetName) {
+                // 通过工作表名称获取工作表数据
+                $excel = $excel
+                    ->openSheet($sheetName);// ->getSheetData();
+                if(
+                    $sheetName == self::$sheet1
+                ){
+                    $sheet1 =   RunDealBussinessOpportunity::getYieldDataBySheet($excel);
+                }
+                if(
+                    $sheetName == self::$sheet2
+                ){
+                    $sheet2 =   RunDealBussinessOpportunity::getYieldDataBySheet($excel);
+                }
+            }
+
+            //=====================按sheet读取旧的文件======================================
+            //先生成第一个sheet
+            $config=  [
+                //'path' => TEMP_FILE_PATH // xlsx文件保存路径
+                'path' => $rawDataItem['file_path'] // xlsx文件保存路径
+            ];
+
+
+            $excel = new \Vtiful\Kernel\Excel($config);
+            $filename = '1_'.$rawDataItem['name'];
+            if($rawDataItem['new_name']){
+                $filename = '1_'.$rawDataItem['new_name'];
+            }
+
+            $fileObject = $excel->fileName($filename, self::$sheet1);
+            $fileHandle = $fileObject->getHandle();
+            $format = new Format($fileHandle);
+            $colorStyle = $format
+                ->fontColor(Format::COLOR_ORANGE)
+                ->border(Format::BORDER_DASH_DOT)
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+            $format = new Format($fileHandle);
+            $alignStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+            $file = $fileObject
+                ->defaultFormat($colorStyle)
+                ->header(
+                    [
+                        '公司名称', //
+                        '信用代码', //
+                        '手机号', //
+                        '有效手机号', //
+                    ]
+                )
+                 ->defaultFormat($alignStyle)
+            ;
+
+            //按行读取企业数据
+            foreach ($sheet1 as $dataItem){
+
+                $mobileStr = str_replace(";", ",", trim($dataItem[2]));
+                $newmobileStr = "";
+                if(!empty($mobileStr)){
+                    $res = (new ChuangLanService())->getCheckPhoneStatus([
+                        'mobiles' => $mobileStr,
+                    ]);
+                    if (!empty($res['data'])){// $res['data']还能是空呢?
+                        foreach($res['data'] as $dataItem){
+                            if($dataItem['status'] == 1){
+                                $newmobileStr .= $dataItem["mobile"].';';
+                            }
+                        }
+                    }
+                }
+                $fileObject ->data([
+                    [
+                        $dataItem[0],
+                        $dataItem[1],
+                        $dataItem[2],
+                        $newmobileStr,
+                    ]
+                ]);
+            }
+
+            //生成第二个sheet
+            $file->addSheet(self::$sheet2)
+                ->defaultFormat($colorStyle)
+                ->header([
+                    '公司名称' , //
+                    '信用代码' , //
+                    '手机号' , //
+                    '状态' , //
+                ])
+                ->defaultFormat($alignStyle)
+            ;
+            foreach ($sheet2 as $dataItem){
+                $mobilesArr = explode(',',$dataItem[2]);
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        [
+                            'splitByMobile'=>[
+                                '$mobilesArr' =>$mobilesArr,
+                            ]
+                        ]
+                    ])
+                );
+                foreach ($mobilesArr as $mobiles){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            [
+                                'splitByMobile'=>[
+                                    '$mobiles' =>$mobiles,
+                                ]
+                            ]
+                        ])
+                    );
+                    $file->data(
+                        [
+                            [
+                                $dataItem[0],
+                                $dataItem[1],
+                                $mobiles,
+                            ]
+                        ]
+                    );
+                }
+            }
+            //==============================================
+
+            $format = new Format($fileHandle);
+            //单元格有\n解析成换行
+            $wrapStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->wrap()
+                ->toResource();
+
+            $fileObject->output();
+
+            //新文件
+            AdminUserBussinessOpportunityUploadRecord::updateById(
+                $rawDataItem['id'],
+                [
+                    'new_name' => $filename,
+                    'status' => AdminUserBussinessOpportunityUploadRecord::$status_split_success,
+                ]
+            );
+        }
+        return true;
+    }
+
+    static function  delEmptyMobileOld2(){
+        $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(
+            " WHERE status =  ".AdminUserBussinessOpportunityUploadRecord::$status_init
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'delEmptyMobile'=>[
+                        'msg' => 'start',
+                    ]
+                ]
+            ])
+        );
+        foreach ($rawDatas as $rawDataItem){
+            //========================================================
+            //========================================================
+            //如果不需要去空号
+            if(!$rawDataItem['del_empty']){
+                AdminUserBussinessOpportunityUploadRecord::updateById(
+                    $rawDataItem['id'],
+                    [
+                        'status' => AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success
+                    ]
+                );
+                continue ;
+            }
+
+            // 找到上传的文件路径
+            self::setworkPath( $rawDataItem['file_path'] );
+
+            $newName = '1_'.$rawDataItem['name'];
+            //==============================生成文件start=====================================
+            $config=  [
+                'path' => TEMP_FILE_PATH // xlsx文件保存路径
+            ];
+
+            $excel = new \Vtiful\Kernel\Excel($config);
+            $fileObject = $excel->fileName($newName, self::$sheet1);
+            $fileHandle = $fileObject->getHandle();
+
+            $format = new Format($fileHandle);
+            $colorStyle = $format
+                ->fontColor(Format::COLOR_ORANGE)
+                ->border(Format::BORDER_DASH_DOT)
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+
+            $format = new Format($fileHandle);
+
+            $alignStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+
+            $file = $fileObject
+                ->defaultFormat($colorStyle)
+                ->header(
+                    [
+                        '企业名称' , //
+                        '税号' , //
+                        '手机号' , //
+                        '有效手机号' , //
+                    ]
+                )
+                 ->defaultFormat($alignStyle)  ;
+
+            $companyDatas = self::getYieldData($rawDataItem['name']);
+            foreach ($companyDatas as $dataItem){
+                //============================================
+                $mobileStr = str_replace(";", ",", trim($dataItem[2]));
+                $newmobileStr = "";
+                if(!empty($mobileStr)){
+                    $res = (new ChuangLanService())->getCheckPhoneStatus([
+                        'mobiles' => $mobileStr,
+                    ]);
+                    if (!empty($res['data'])){
+                        foreach($res['data'] as $resdataItem){
+                            if($dataItem['status'] == 1){
+                                $newmobileStr .= $resdataItem["mobile"].';';
+                            }
+                        }
+                    }
+                }
+
+                $fileObject ->data(
+                    [
+                        [
+                            $dataItem[0],
+                            $dataItem[1],
+                            $dataItem[2],
+                            $newmobileStr
+                        ]
+                    ]
+                );
+            }
+
+            $format = new Format($fileHandle);
+            //单元格有\n解析成换行
+            $wrapStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->wrap()
+                ->toResource();
+
+            $fileObject->output();
+            //===============================
+            //==============================生成文件end=====================================
+            AdminUserBussinessOpportunityUploadRecord::updateById(
+                $rawDataItem['id'],
+                [
+                    'status' => AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success,
+                    'new_name' => $newName,
+
+                ]
+            );
+        }
+        return true;
+    }
+    /**
+    第一步：先去空号
+     */
+    static function  delEmptyMobile(){
+        $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(
+            " WHERE status =  ".AdminUserBussinessOpportunityUploadRecord::$status_init
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'delEmptyMobile'=>[
+                        'msg' => 'start',
+                    ]
+                ]
+            ])
+        );
+        foreach ($rawDatas as $rawDataItem){
+            // 找到上传的文件路径
+            self::setworkPath( $rawDataItem['file_path'] );
+            $companyDatas = self::getYieldData($rawDataItem['name']);
+            foreach ($companyDatas as $companyDataItem){
+
+                $mobileString = $companyDataItem[2];
+                //如果是需要去空号
+                if($rawDataItem['del_empty']){
+                    $mobileStr = str_replace(";", ",", trim($mobileString));
+                    $newmobileStr = "";
+                    if(!empty($mobileStr)){
+                        $res = (new ChuangLanService())->getCheckPhoneStatus([
+                            'mobiles' => $mobileStr,
+                        ]);
+                        if (!empty($res['data'])){
+                            foreach($res['data'] as $dataItem){
+                                if($dataItem['status'] == 1){
+                                    $newmobileStr .= $dataItem["mobile"].';';
+                                }
+                            }
+                        }
+                    }
+                    $mobileString = $newmobileStr;
+                }
+
+                // 拆分出来
+                $mobilesArr = explode(';',$mobileString);
+                foreach ($mobilesArr as $mobile){
+                    BussinessOpportunityDetails::addRecordV2(
+                        [
+                            'upload_record_id' => $rawDataItem['id'], //
+                            'entName' => $companyDataItem[0], //
+                            'entCode' => $companyDataItem[1], //
+                            'mobile' => $mobile,
+                            'remark' => '', //
+                        ]
+                    );
+                }
+            }
+            //==============================生成文件end=====================================
+            AdminUserBussinessOpportunityUploadRecord::updateById(
+                $rawDataItem['id'],
+                [
+                    'status' => AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success,
+                ]
+            );
+        }
+        return true;
+    }
+
+    /**
+
+
+        生成新的文件
+        传文件 然后 导出
+        微信补充后
+        重新导出
+
+        库里是非公开的联系人  很多么有姓名 所以一般需要微信名匹配一下
+        url公开的 要看情况 如果很全了  就直接出  如果不全  就再用微信匹配一遍
+
+       默认出库里的微信名，
+       默认出微信名+手机号
+
+       Chcek:
+        1:导出的时候：初步设定为导出三个sheet：sheet1：企业基本信息（全字段的话，所有字段全在这个sheet）
+        2：建议勾选项：是否全字段，是否取公开联系人信息，是否匹配非公开联系人
+        3：企业全字段问题：建议多选解决：勾选的，sheet1出现全字段，如果没勾选，只出现企业名/税号/手机号（有时候并没有|取公开信息的时候就没有）
+        4：如果只勾选了公开联系人：sheet3里出现公开联系人，通过公开联系人姓名，匹配库里数据，补全职位等信息，没有联系人姓名的通过库里微信名匹配详细信息，
+        5：如果只勾选了非公开联系人：sheet2里出现非公开联系人，通过库里微信名匹配详细信息，如果一旦发现需要再去匹配微信，自己去匹配，然后告知系统，重新下载
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     */
+    static function  generateNewFile(){
+        $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(
+            " WHERE status =  ".AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'delEmptyMobile'=>[
+                        'msg' => 'start',
+                    ]
+                ]
+            ])
+        );
+        foreach ($rawDatas as $rawDataItem){
+
+            $rawDataItem['fill_weixin'] ;   //补充微信
+            $rawDataItem['pull_api'] ;   //拉取url联系人
+            $rawDataItem['match_by_weixin'] ;   //匹配微信
+            $rawDataItem['get_all_field'] ;   //取全字段
+
+            //第一部分 sheet1 企业部分数据
+            //第二部分库里的联系人部分数据
+            $allRecords = BussinessOpportunityDetails::findByUploadId($rawDataItem['id']);
+             foreach ($allRecords as $Record){
+                 $Record[''];
+             }
+            // 找到上传的文件路径
+            self::setworkPath( $rawDataItem['file_path'] );
+            $companyDatas = self::getYieldData($rawDataItem['name']);
+            foreach ($companyDatas as $companyDataItem){
+
+                $mobileString = $companyDataItem[2];
+                //如果是需要去空号
+                if($rawDataItem['del_empty']){
+                    $mobileStr = str_replace(";", ",", trim($mobileString));
+                    $newmobileStr = "";
+                    if(!empty($mobileStr)){
+                        $res = (new ChuangLanService())->getCheckPhoneStatus([
+                            'mobiles' => $mobileStr,
+                        ]);
+                        if (!empty($res['data'])){
+                            foreach($res['data'] as $dataItem){
+                                if($dataItem['status'] == 1){
+                                    $newmobileStr .= $dataItem["mobile"].';';
+                                }
+                            }
+                        }
+                    }
+                    $mobileString = $newmobileStr;
+                }
+
+                // 拆分出来
+                $mobilesArr = explode(';',$mobileString);
+                foreach ($mobilesArr as $mobile){
+                    BussinessOpportunityDetails::addRecordV2(
+                        [
+                            'upload_record_id' => $rawDataItem['id'], //
+                            'entName' => $companyDataItem[0], //
+                            'entCode' => $companyDataItem[1], //
+                            'mobile' => $mobile,
+                            'remark' => '', //
+                        ]
+                    );
+                }
+            }
+            //==============================生成文件end=====================================
+            AdminUserBussinessOpportunityUploadRecord::updateById(
+                $rawDataItem['id'],
+                [
+                    'status' => AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success,
                 ]
             );
         }

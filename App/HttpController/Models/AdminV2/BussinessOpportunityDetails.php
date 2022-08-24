@@ -11,31 +11,13 @@ use App\HttpController\Service\LongXin\LongXinService;
 
 // use App\HttpController\Models\AdminRole;
 
-class AdminUserBussinessOpportunityUploadRecord extends ModelBase
+class BussinessOpportunityDetails extends ModelBase
 {
-    protected $tableName = 'admin_user_bussiness_opportunity_upload_record';
+    protected $tableName = 'bussiness_opportunity_details';
 
     static $status_init = 1;
     static $status_init_cname = '初始';
 
-    //先验证空号 然后在拆解为多sheet
-    static $status_check_mobile_success = 5;
-    static $status_check_mobile_success_cname = '打空号标签成功';
-
-    static $status_split_success = 10;
-    static $status_split_success_cname = '拆分为多sheet成功';
-
-    static $status_match_weixin_success = 15;
-    static $status_match_weixin_success_cname = '匹配微信标签成功';
-
-    static $status_fill_api_contact_success = 20;
-    static $status_fill_api_contact_success_cname = '通过url取联系人成功';
-
-    static $status_match_contect_by_weixin_success = 30;
-    static $status_match_contect_by_weixin_success_cname = '通过微信匹配联系人职位成功';
-
-    static $need_yes = 5 ;
-    static $need_no = 10 ;
 
     public static function getStatusMap(){
 
@@ -47,36 +29,26 @@ class AdminUserBussinessOpportunityUploadRecord extends ModelBase
     static  function  addRecordV2($info){
 
         if(
-            self::findByName($info['name'],$info['user_id'])
+            self::findByName($info['entName'],$info['upload_record_id'])
         ){
             return  true;
         }
 
-        return AdminUserBussinessOpportunityUploadRecord::addRecord(
+        return BussinessOpportunityDetails::addRecord(
             $info
         );
     }
 
+
     public static function addRecord($requestData){
         try {
-           $res =  AdminUserBussinessOpportunityUploadRecord::create()->data([
-                'user_id' => $requestData['user_id'], //
-                'file_path' => $requestData['file_path'], //
-                'name' => $requestData['name'], //
-                'new_name' => $requestData['new_name']?:'', //
-                'title' => $requestData['title']?:'', //
-                'size' => $requestData['size']?:'', //
-                'type' => $requestData['type']?:'1', //
-                'fill_weixin' => $requestData['fill_weixin']?:self::$need_no,
-                'pull_api' => $requestData['pull_api']?:self::$need_no,
-                'split_mobile' => $requestData['split_mobile']?:self::$need_no,
-                'del_empty' => $requestData['del_empty']?:self::$need_no,
-                'match_by_weixin' => $requestData['match_by_weixin']?:self::$need_no,
-                'get_all_field' => $requestData['get_all_field']?:self::$need_no,
-                'priority' => $requestData['priority'],
-                'batch' => $requestData['batch'],
-                'reamrk' => $requestData['reamrk'],
-                'status' => $requestData['status']?:self::$status_init,
+           $res =  BussinessOpportunityDetails::create()->data([
+                'upload_record_id' => $requestData['upload_record_id'], //
+                'entName' => $requestData['entName'], //
+                'entCode' => $requestData['entCode'], //
+                'mobile' => $requestData['mobile'], //
+                'mobile_status' => $requestData['mobile_status']?:'', //
+                'remark' => $requestData['remark']?:'', //
                'created_at' => time(),
                'updated_at' => time(),
            ])->save();
@@ -94,14 +66,14 @@ class AdminUserBussinessOpportunityUploadRecord extends ModelBase
     }
 
     public static function findAllByCondition($whereArr){
-        $res =  AdminUserBussinessOpportunityUploadRecord::create()
+        $res =  BussinessOpportunityDetails::create()
             ->where($whereArr)
             ->all();
         return $res;
     }
 
     public static function setTouchTime($id,$touchTime){
-        $info = AdminUserBussinessOpportunityUploadRecord::findById($id);
+        $info = BussinessOpportunityDetails::findById($id);
 
         return $info->update([
             'touch_time' => $touchTime,
@@ -115,8 +87,11 @@ class AdminUserBussinessOpportunityUploadRecord extends ModelBase
         return $info->update($data);
     }
 
+
+
+
     public static function findByConditionWithCountInfo($whereArr,$page){
-        $model = AdminUserBussinessOpportunityUploadRecord::create()
+        $model = BussinessOpportunityDetails::create()
                 ->where($whereArr)
                 ->page($page)
                 ->order('id', 'DESC')
@@ -132,7 +107,7 @@ class AdminUserBussinessOpportunityUploadRecord extends ModelBase
     }
 
     public static function findByConditionV2($whereArr,$page){
-        $model = AdminUserBussinessOpportunityUploadRecord::create();
+        $model = BussinessOpportunityDetails::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -150,22 +125,29 @@ class AdminUserBussinessOpportunityUploadRecord extends ModelBase
     }
 
     public static function findById($id){
-        $res =  AdminUserBussinessOpportunityUploadRecord::create()
+        $res =  BussinessOpportunityDetails::create()
             ->where('id',$id)            
             ->get();  
         return $res;
     }
 
-    public static function findByName($name,$user_id){
-        $res =  AdminUserBussinessOpportunityUploadRecord::create()
-            ->where('user_id',$user_id)
-            ->where('name',$name)
+    public static function findByUploadId($id){
+        $res =  BussinessOpportunityDetails::create()
+            ->where('upload_record_id',$id)
+            ->all();
+        return $res;
+    }
+
+    public static function findByName($name,$upload_record_id){
+        $res =  BussinessOpportunityDetails::create()
+            ->where('upload_record_id',$upload_record_id)
+            ->where('entName',$name)
             ->get();
         return $res;
     }
 
     public static function setData($id,$field,$value){
-        $info = AdminUserBussinessOpportunityUploadRecord::findById($id);
+        $info = BussinessOpportunityDetails::findById($id);
         return $info->update([
             "$field" => $value,
         ]);
@@ -175,7 +157,7 @@ class AdminUserBussinessOpportunityUploadRecord extends ModelBase
     public static function findBySql($where){
         $Sql = " select *  
                             from  
-                        `admin_user_bussiness_opportunity_upload_record` 
+                        `bussiness_opportunity_details` 
                             $where
       " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));

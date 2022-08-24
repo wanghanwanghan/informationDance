@@ -637,8 +637,8 @@ class RunDealEmailReceiver extends AbstractCronTask
             );
             $insuranceDatas['id'] = $data['id'];
             $tableHtml = self::getTableHtml($insuranceDatas,$dataRes);
-            $res1 = CommonService::getInstance()->sendEmailV2(
-                '1270331569@qq.com',
+            $res0 = CommonService::getInstance()->sendEmailV2(
+                'bm1@51baoya.com',
                 // 'minglongoc@me.com',
                 '询价'.$dataRes['data']['title'],
                 $tableHtml
@@ -693,24 +693,20 @@ class RunDealEmailReceiver extends AbstractCronTask
                     //TEMP_FILE_PATH . 'qianzhang2.png',
                 ]
             );
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'send_consloe_data_to_bao_ya'=> [
-                        'msg'=>'send_email',
-                        'res'=>[
-                            '$res4'=>$res4,
-                            '$res3'=>$res3,
-                            '$res2'=>$res2,
-                            '$res1'=>$res1,
-                        ],
-                    ],
-                ])
-            );
             OperatorLog::addRecord(
                 [
                     'user_id' => 0,
-                    'msg' =>  "邮件内容:".$tableHtml .' 邮件结果:'.$res1,
+                    'msg' =>   json_encode(
+                        [
+                            '邮件内容'=>$tableHtml,
+                            'title'=>'用户询价'.$dataRes['data']['title'],
+                            '$res0'=>$res0,
+                            '$res1'=>$res1,
+                            '$res2'=>$res2,
+                            '$res3'=>$res3,
+                            '$res4'=>$res4,
+                        ]
+                    ),
                     'details' =>json_encode( XinDongService::trace()),
                     'type_cname' => '宝押发邮件',
                 ]
@@ -744,8 +740,8 @@ class RunDealEmailReceiver extends AbstractCronTask
             $insuranceDatas['id'] = $data['id'];
             $tableHtml = self::getTableHtmlHuiZhong($insuranceDatas);
             //810304146@qq.com
-            $res1 = CommonService::getInstance()->sendEmailV2(
-                '1270331569@qq.com',
+            $res0 = CommonService::getInstance()->sendEmailV2(
+                '810304146@qq.com',
                 // 'minglongoc@me.com',
                 '用户车险分期预授信',
                 $tableHtml
@@ -815,7 +811,17 @@ class RunDealEmailReceiver extends AbstractCronTask
             OperatorLog::addRecord(
                 [
                     'user_id' => 0,
-                    'msg' =>  "邮件内容:".$tableHtml .' 邮件结果:'.$res1,
+                    'msg' =>   json_encode(
+                        [
+                            '邮件内容'=>$tableHtml,
+                            'title'=>'用户车险分期预授信',
+                            '$res0'=>$res0,
+                            '$res1'=>$res1,
+                            '$res2'=>$res2,
+                            '$res3'=>$res3,
+                            '$res4'=>$res4,
+                        ]
+                    ),
                     'details' =>json_encode( XinDongService::trace()),
                     'type_cname' => '麾众发邮件',
                 ]
