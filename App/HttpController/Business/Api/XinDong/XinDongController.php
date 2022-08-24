@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\Api\XinDong;
 
+use App\Crontab\CrontabBase;
 use App\Crontab\CrontabList\RunCompleteCompanyData;
 use App\Crontab\CrontabList\RunDealApiSouKe;
 use App\Crontab\CrontabList\RunDealBussinessOpportunity;
@@ -13,6 +14,7 @@ use App\Crontab\CrontabList\RunDealFinanceCompanyDataNewV2;
 use App\Crontab\CrontabList\RunDealToolsFile;
 use App\Crontab\CrontabList\RunDealZhaoTouBiao;
 use App\Csp\Service\CspService;
+use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminNewUser;
 use App\HttpController\Models\AdminV2\AdminUserFinanceData;
@@ -3617,6 +3619,32 @@ eof;
 
     function testExport()
     {
+
+        if(
+            $this->getRequestData('withoutOverlappingV2')
+        ){ 
+
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                CrontabBase::withoutOverlappingV2($this->getRequestData('withoutOverlappingV2')),
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
+            $this->getRequestData('removeOverlappingKeyV2')
+        ){
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                CrontabBase::removeOverlappingKeyV2($this->getRequestData('removeOverlappingKeyV2')),
+                '成功',
+                true,
+                []
+            );
+        }
         if(
             $this->getRequestData('testNewSms')
         ){
