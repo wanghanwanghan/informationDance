@@ -47,6 +47,11 @@ class FillEntAllField extends AbstractCronTask
                         //有这个文件前缀 并且 也有 success_ 表示已经执行 或者 正在执行
                         $check = glob(TEMP_FILE_PATH . "success*{$file}*");
                         if (!empty($check)) {
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__.'FillEntAllField_stop_run3_'.$file,
+                                ])
+                            );
                             continue;
                         }
                         $fp_r = fopen(TEMP_FILE_PATH . $file, 'r');
@@ -85,15 +90,22 @@ class FillEntAllField extends AbstractCronTask
                         @unlink(TEMP_FILE_PATH . 'success_' . $file);
                     }
                 }
-            }else{
+            }
+            else{
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__.' stop run ',
+                        __CLASS__.__FUNCTION__ .__LINE__.'FillEntAllField_stop_run2 ',
                     ])
                 );
             }
             closedir($dh);
             $this->crontabBase->removeOverlappingKey(self::getTaskName());
+        }else{
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__.'FillEntAllField_stop_run ',
+                ])
+            );
         }
 
         return true;

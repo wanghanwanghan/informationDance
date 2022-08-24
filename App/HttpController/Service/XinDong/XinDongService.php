@@ -2561,12 +2561,12 @@ class XinDongService extends ServiceBase
         return !empty($res)? $res:[];
     }
 
-    function getEsBasicInfoV3($companyName): array
+    function getEsBasicInfoV3($value,$field = 'ENTNAME'): array
     {
 
         $ElasticSearchService = new ElasticSearchService();
 
-        $ElasticSearchService->addMustMatchPhraseQuery( 'ENTNAME' , $companyName) ;
+        $ElasticSearchService->addMustMatchPhraseQuery( $field , $value) ;
 
         $size = 1;
         $page = 1;

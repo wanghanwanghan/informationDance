@@ -51,7 +51,6 @@ class BaoYaService extends ServiceBase
     function get($url, $body,array $header = [], array $ext = [])
     {
         $time = time();
-
         //$token = strtoupper(md5($this->appkey . $time . $this->seckey));
 
         //$header = ['Token' => $token, 'Timespan' => $time];

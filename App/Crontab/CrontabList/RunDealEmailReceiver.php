@@ -776,8 +776,7 @@ class RunDealEmailReceiver extends AbstractCronTask
                 'wanghan@meirixindong.com',
                 // 'minglongoc@me.com',
                 '用户车险分期预授信',
-                $tableHtml
-                ,
+                $tableHtml ,
                 [
                     // TEMP_FILE_PATH . 'personal.png',
                     //TEMP_FILE_PATH . 'qianzhang2.png',

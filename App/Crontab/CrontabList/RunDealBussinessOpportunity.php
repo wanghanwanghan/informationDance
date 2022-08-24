@@ -22,6 +22,9 @@ use App\HttpController\Models\AdminV2\BussinessOpportunityDetails;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
+use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
+use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -897,9 +900,52 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         return true;
     }
 
+    // id 商机id
+    static function getYieldCompanyData($id){
+        $datas = [];
+
+        $bussinessOpportunity = AdminUserBussinessOpportunityUploadRecord::findById($id);
+        $bussinessOpportunity = $bussinessOpportunity->toArray();
+
+        $allRecords = BussinessOpportunityDetails::findByUploadId($id);
+        $newReords = [];
+        foreach ($allRecords as $Record){
+            $newReords[trim($Record['entName'])][$Record['mobile']]  = $Record['mobile'];
+        }
+        foreach ($newReords as $entName => $mobilesArr){
+            $details =  BussinessOpportunityDetails::findByName($entName,$id);
+            $details =  $details->toArray();
+            $code = trim($details['entCode']);
+
+            $baseArr = [
+                $entName,
+                $code,
+                join(',',$mobilesArr)
+            ];
+
+            if(!$bussinessOpportunity['get_all_field']){
+                yield $datas[] = $baseArr;
+            }
+
+            //需要补全字段
+            if($code){
+                $companyBasic = CompanyBasic::findByCode($code);
+                $res = (new XinDongService())->getEsBasicInfoV3($companyId);
+            }
+            else{
+                $companyBasic = CompanyBasic::findByName($entName);
+            }
+            $companyBasic = $companyBasic->toArray();
+
+            $res['ENTTYPE_CNAME'] =   '';
+            $res['ENTTYPE'] && $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
+            $res['ENTSTATUS_CNAME'] =   '';
+            $res['ENTSTATUS'] && $res['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($res['ENTSTATUS']);
+
+        }
+    }
+
     /**
-
-
         生成新的文件
         传文件 然后 导出
         微信补充后
@@ -917,21 +963,6 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         3：企业全字段问题：建议多选解决：勾选的，sheet1出现全字段，如果没勾选，只出现企业名/税号/手机号（有时候并没有|取公开信息的时候就没有）
         4：如果只勾选了公开联系人：sheet3里出现公开联系人，通过公开联系人姓名，匹配库里数据，补全职位等信息，没有联系人姓名的通过库里微信名匹配详细信息，
         5：如果只勾选了非公开联系人：sheet2里出现非公开联系人，通过库里微信名匹配详细信息，如果一旦发现需要再去匹配微信，自己去匹配，然后告知系统，重新下载
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
      */
     static function  generateNewFile(){
         $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(
@@ -948,18 +979,29 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             ])
         );
         foreach ($rawDatas as $rawDataItem){
-
             $rawDataItem['fill_weixin'] ;   //补充微信
             $rawDataItem['pull_api'] ;   //拉取url联系人
             $rawDataItem['match_by_weixin'] ;   //匹配微信
             $rawDataItem['get_all_field'] ;   //取全字段
 
             //第一部分 sheet1 企业部分数据
-            //第二部分库里的联系人部分数据
+            $allRecords = BussinessOpportunityDetails::findByUploadId($rawDataItem['id']);
+            foreach ($allRecords as $Record){
+                $Record[''];
+            }
+
+            //第二部分非公开联系人
             $allRecords = BussinessOpportunityDetails::findByUploadId($rawDataItem['id']);
              foreach ($allRecords as $Record){
                  $Record[''];
              }
+
+            //第三部分公开联系人
+            $allRecords = BussinessOpportunityDetails::findByUploadId($rawDataItem['id']);
+            foreach ($allRecords as $Record){
+                $Record[''];
+            }
+
             // 找到上传的文件路径
             self::setworkPath( $rawDataItem['file_path'] );
             $companyDatas = self::getYieldData($rawDataItem['name']);
