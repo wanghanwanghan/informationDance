@@ -855,7 +855,11 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             self::setworkPath( $rawDataItem['file_path'] );
             $companyDatas = self::getYieldData($rawDataItem['name']);
             foreach ($companyDatas as $companyDataItem){
-                $mobileString = $companyDataItem[2];
+                $str = $companyDataItem[0];
+                $dataArr = explode('|',$str);
+                $name1 = $dataArr[0];
+                $code1 = $dataArr[1];
+                $mobileString = $dataArr[2];
                 //如果是需要去空号
                 if($rawDataItem['del_empty']){
                     $mobileStr = str_replace(";", ",", trim($mobileString));
@@ -878,11 +882,14 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 // 拆分出来
                 $mobilesArr = explode(';',$mobileString);
                 foreach ($mobilesArr as $mobile){
+                    if($mobile<0){
+                        continue;
+                    }
                     BussinessOpportunityDetails::addRecordV2(
                         [
                             'upload_record_id' => $rawDataItem['id'], //
-                            'entName' => $companyDataItem[0], //
-                            'entCode' => $companyDataItem[1], //
+                            'entName' => $name1, //
+                            'entCode' => $code1, //
                             'mobile' => $mobile,
                             'remark' => '', //
                         ]
