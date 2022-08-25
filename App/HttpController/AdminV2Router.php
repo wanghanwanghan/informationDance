@@ -229,7 +229,7 @@ class AdminV2Router
     private function BusinessOpportunityRouterV1(RouteCollector $routeCollector): bool
     {
         $prefix = '/Business/AdminV2/Mrxd/BusinessOpportunityController/';
-        $routeCollector->addGroup('/businessopportunity ', function (RouteCollector $routeCollector) use ($prefix) {
+        $routeCollector->addGroup('/businessopportunity', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/uploadBussinessFile', $prefix . 'uploadBussinessFile');
             $routeCollector->addRoute(['GET', 'POST'], '/downloadBussinessFile', $prefix . 'downloadBussinessFile');
             $routeCollector->addRoute(['GET', 'POST'], '/bussinessFilesList', $prefix . 'bussinessFilesList');
