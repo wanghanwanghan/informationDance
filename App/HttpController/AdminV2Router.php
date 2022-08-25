@@ -234,6 +234,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/redownloadBussinessFile', $prefix . 'redownloadBussinessFile');
             $routeCollector->addRoute(['GET', 'POST'], '/bussinessFilesList', $prefix . 'bussinessFilesList');
             $routeCollector->addRoute(['GET', 'POST'], '/uploadWeiXinFile', $prefix . 'uploadWeiXinFile');
+            $routeCollector->addRoute(['GET', 'POST'], '/WeiXinFilesList', $prefix . 'WeiXinFilesList');
         });
 
         return true;

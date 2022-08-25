@@ -144,6 +144,31 @@ class BusinessOpportunityController extends ControllerBase
         return $this->writeJson(200, [], [],'导入成功 入库文件数量:'.$succeedNums);
     }
 
+    public function WeiXinFilesList(){
+        $requestData =  $this->getRequestData();
+        $page = $requestData['page']?:1;
+        $size = $requestData['pageSize']?:10;
+        $records = AdminUserBussinessOpportunityUploadRecord::findByConditionV2(
+            [ ],
+            $page
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$records'   => $records
+            ])
+        );
+        foreach ($records['data'] as &$dataitem){
+            $dataitem['status_cname'] = AdminUserBussinessOpportunityUploadRecord::getStatusMap()[$dataitem['status']];
+        }
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' => $size,
+            'total' => $records['total'],
+            'totalPage' => ceil($records['total']/$size) ,
+        ],  $records['data'],'成功');
+    }
+
 
     //用户-上传客户列表
     public function bussinessFilesList(){
