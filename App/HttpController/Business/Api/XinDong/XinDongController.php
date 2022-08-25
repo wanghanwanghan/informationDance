@@ -3621,6 +3621,20 @@ eof;
     {
 
         if(
+            $this->getRequestData('delEmptyMobile')
+        ){
+
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                RunDealBussinessOpportunity::delEmptyMobile(),
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
             $this->getRequestData('withoutOverlappingV2')
         ){
 

@@ -855,7 +855,6 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             self::setworkPath( $rawDataItem['file_path'] );
             $companyDatas = self::getYieldData($rawDataItem['name']);
             foreach ($companyDatas as $companyDataItem){
-
                 $mobileString = $companyDataItem[2];
                 //如果是需要去空号
                 if($rawDataItem['del_empty']){
