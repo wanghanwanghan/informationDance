@@ -933,7 +933,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 }
 
                 // 拆分出来
-                $mobilesArr = explode(';',$mobileString);
+                $mobilesArr = explode(';',trim($mobileString));
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
