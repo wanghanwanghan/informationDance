@@ -118,13 +118,13 @@ class BusinessOpportunityController extends ControllerBase
                         //按手机号拆分成多行
                         'split_mobile' => intval($requestData['split_mobile']),
                         //删除空号
-                        'del_empty' => intval($requestData['del_empty']),
+                        'del_empty' => 1,
                         //匹配微信
                         'match_by_weixin' => intval($requestData['match_by_weixin']),
                         //取全字段
                         'get_all_field' => intval($requestData['get_all_field']),
                         //填充旧的微信
-                        'fill_weixin' => intval($requestData['fill_weixin']),
+                        'fill_weixin' => 1,
                         'batch' =>  'BO'.date('YmdHis'),
                         'reamrk' => $requestData['reamrk']?:'',
                         'name' =>  $fileName,
@@ -171,9 +171,17 @@ class BusinessOpportunityController extends ControllerBase
         ],  $records['data'],'成功');
     }
 
-    public function downloadBussinessFile(){
+    public function redownloadBussinessFile(){
         $requestData =  $this->getRequestData();
-        return $this->writeJson(200, [], '/Static/Temp/dianziqian_ent.png','成功 ');
+
+        return $this->writeJson(200, [],
+            AdminUserBussinessOpportunityUploadRecord::updateById(
+                $requestData['id'],
+                [
+                    'status'=>AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success
+                ]
+            )
+            ,'成功 ');
     }
 
 }

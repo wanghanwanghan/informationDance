@@ -1072,7 +1072,13 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             $details =  BussinessOpportunityDetails::findByName($recordItem['entName'],$id);
             $details =  $details->toArray();
             $code = trim($details['entCode']);
-
+            if($recordItem['mobile']<=0 ){
+                yield $datas[] =  [
+                    'entName' =>$recordItem['entName'],
+                    'mobile'=>$recordItem['mobile'],
+                ];
+                continue;
+            }
             //匹配微信名字
             $matchedWeiXinName = WechatInfo::findByPhoneV2($recordItem['mobile']);
             if(empty($matchedWeiXinName)){
