@@ -474,7 +474,8 @@ class RunDealApiSouKe extends AbstractCronTask
 
 
             $filedCname = ['xd_id'];
-            $allFields = AdminUserSoukeConfig::getAllFields();
+            //$allFields = AdminUserSoukeConfig::getAllFields();
+            $allFields = AdminUserSoukeConfig::getAllFieldsV2();
             foreach ($fieldsArr as $field){
                 if($allFields[$field]){
                     $filedCname[] = $allFields[$field];

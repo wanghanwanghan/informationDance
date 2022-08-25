@@ -3622,7 +3622,7 @@ eof;
 
         if(
             $this->getRequestData('withoutOverlappingV2')
-        ){ 
+        ){
 
             return $this->writeJson(
                 200,[] ,

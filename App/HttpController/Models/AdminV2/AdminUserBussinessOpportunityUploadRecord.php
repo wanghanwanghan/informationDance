@@ -25,15 +25,6 @@ class AdminUserBussinessOpportunityUploadRecord extends ModelBase
     static $status_split_success = 10;
     static $status_split_success_cname = '拆分为多sheet成功';
 
-    static $status_match_weixin_success = 15;
-    static $status_match_weixin_success_cname = '匹配微信标签成功';
-
-    static $status_fill_api_contact_success = 20;
-    static $status_fill_api_contact_success_cname = '通过url取联系人成功';
-
-    static $status_match_contect_by_weixin_success = 30;
-    static $status_match_contect_by_weixin_success_cname = '通过微信匹配联系人职位成功';
-
     static $need_yes = 5 ;
     static $need_no = 10 ;
 

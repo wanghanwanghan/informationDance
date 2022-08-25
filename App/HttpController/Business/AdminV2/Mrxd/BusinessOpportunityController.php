@@ -92,16 +92,20 @@ class BusinessOpportunityController extends ControllerBase
     //用户-上传客户列表
     public function bussinessFilesList(){
         $requestData =  $this->getRequestData();
-
-        return $this->writeJson(200, [], [
+        $page = $requestData['page'];
+        $size = $requestData['pageSize'];
+        $records = AdminUserBussinessOpportunityUploadRecord::findByConditionV2(
             [
-                'name' => 'xxx',
-                'created_at' => '1661139789',
-                'size' => '11M',
-                'status' => '1',
-                'status_cnam' => '待处理',
-            ]
-        ],'成功 ');
+
+            ],
+            $page
+        );
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' => $size,
+            'total' => $records['total'],
+            'totalPage' => ceil($records['total']/$size) ,
+        ], $records['data'],'成功 ');
     }
 
     public function downloadBussinessFile(){

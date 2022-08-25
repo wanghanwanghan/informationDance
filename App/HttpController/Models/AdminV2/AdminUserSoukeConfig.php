@@ -126,6 +126,55 @@ class AdminUserSoukeConfig extends ModelBase
         ];
         return $fields;
     }
+    static public function getAllFieldsV2(){
+        $fields = [
+            'ENTNAME' => '企业名',
+            'PRIPID' => '公示系统ID',
+            'UNISCID' => '统一社会信用代码',
+            'REGNO' => '注册号',
+            'NACAOID' => '组织机构代码',
+            'NAME' => '法人姓名',
+            'NAMETITLE' => '法人称谓',
+            'ENTTYPE' => '公司类型编码',
+            'ESDATE' => '成立日期',
+            'APPRDATE' => '核准日期',
+            'ENTSTATUS' => '企业状态编码',
+            'REGCAP' => '注册资金(万元)',
+            'REGCAP_NAME' => '注册资金原始',
+            'REGCAPCUR' => '注册资金币种',
+            'RECCAP' => '实收注册资金',
+            'REGORG' => '登记机关',
+            'OPFROM' => '营业期限开始日期',
+            'OPTO' => '营业期限终止日期',
+            'OPSCOPE' => '经营范围',
+            'DOM' => '注册地址',
+            'DOMDISTRICT' => '所在行政区划',
+            'NIC_ID' => '行业分类代码',
+            'CANDATE' => '注销日期',
+            'REVDATE' => '吊销日期',
+            'ying_shou_gui_mo'=>'营收规模',
+            'gong_si_jian_jie'=>'公司简介',
+            'gao_xin_ji_shu' => '高新技术',
+            'deng_ling_qi_ye' => '瞪羚企业',
+            'tuan_dui_ren_shu' => '团队人数',
+            'tong_xun_di_zhi'=>'通讯地址',
+            'web' => '官网',
+            'yi_ban_ren' => '一般人',
+            'shang_shi_xin_xi' => '商品信息',
+            'app' => 'APP',
+            'manager' => '企业主要人员',
+            'inv'=>'股东',
+            'en_name' => 'en_name',
+            'email' => '邮箱',
+            'app_data'=>'主营产品',
+            'shang_pin_data'=>'商品',
+            'zlxxcy' => '战略新兴产业',
+            'szjjcy' => '数字经济产业',
+            'jin_chu_kou' => '进出口',
+            'iso' => '高新技术',
+        ];
+        return $fields;
+    }
 
     static function  getAllowedFieldsArray($userId){
         $res = self::findByUser($userId);

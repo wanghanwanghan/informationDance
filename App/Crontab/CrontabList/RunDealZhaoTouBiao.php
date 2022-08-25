@@ -300,6 +300,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
     }
     //TODO  改成按行的 防止内存溢出
     static function  exportDataV4($dateStart,$dateEnd){
+        $startMemory = memory_get_usage();
         //p1
 
         $financeDatas = self::getZhaoTouBiaoData(

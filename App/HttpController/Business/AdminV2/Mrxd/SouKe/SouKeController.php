@@ -1979,7 +1979,8 @@ class SouKeController extends ControllerBase
     }
 
     public function getAllFields(){
-        return $this->writeJson(200,  [], AdminUserSoukeConfig::getAllFields(),'成功');
+        //return $this->writeJson(200,  [], AdminUserSoukeConfig::getAllFields(),'成功');
+        return $this->writeJson(200,  [], AdminUserSoukeConfig::getAllFieldsV2(),'成功');
     }
 
     public function updateConfigs(){

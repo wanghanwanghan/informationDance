@@ -22,6 +22,7 @@ use App\HttpController\Models\AdminV2\BussinessOpportunityDetails;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
+use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
@@ -205,7 +206,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
         //
         self::delEmptyMobile(10);
-        //self::splitByMobile(10);
+        self::generateNewFile(10);
 
         //去空号
 
@@ -929,19 +930,176 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
             //需要补全字段
             if($code){
-                $companyBasic = CompanyBasic::findByCode($code);
-                $res = (new XinDongService())->getEsBasicInfoV3($companyId);
+                $res = (new XinDongService())->getEsBasicInfoV3($code,'UNISCID');
             }
             else{
-                $companyBasic = CompanyBasic::findByName($entName);
+                $res = (new XinDongService())->getEsBasicInfoV3($entName,'ENTNAME');
             }
-            $companyBasic = $companyBasic->toArray();
 
-            $res['ENTTYPE_CNAME'] =   '';
-            $res['ENTTYPE'] && $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
-            $res['ENTSTATUS_CNAME'] =   '';
-            $res['ENTSTATUS'] && $res['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($res['ENTSTATUS']);
+            $allFields = AdminUserSoukeConfig::getAllFieldsV2();
+            foreach ($allFields as $field=>$cname){
+                /**
+                $res['ENTTYPE_CNAME'] =   '';
+                $res['ENTTYPE'] && $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
+                $res['ENTSTATUS_CNAME'] =   '';
+                $res['ENTSTATUS'] && $res['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($res['ENTSTATUS']);
+                 */
+                $baseArr[] = $res[$field] ;
+                if(
+                    is_array($res[$field])
+                ){
+                    $baseArr[] = empty($res[$field])?'无':'有' ;
+                }
+            }
+            yield $datas[] = $baseArr;
+        }
+    }
+    //
+    static function getYieldPublicContactData($id){
+        $datas = [];
 
+        $bussinessOpportunity = AdminUserBussinessOpportunityUploadRecord::findById($id);
+        $bussinessOpportunity = $bussinessOpportunity->toArray();
+
+        //如果不需要拉取公开的联系人
+        if(!$bussinessOpportunity['pull_api']){
+            return $datas;
+        }
+
+        $allRecords = BussinessOpportunityDetails::findByUploadId($id);
+        $newReords = [];
+        foreach ($allRecords as $Record){
+            $newReords[trim($Record['entName'])][$Record['mobile']]  = $Record['mobile'];
+        }
+        foreach ($newReords as $entName => $mobilesArr){
+            $details =  BussinessOpportunityDetails::findByName($entName,$id);
+            $details =  $details->toArray();
+            $code = trim($details['entCode']);
+
+            $retData =  (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getEntLianXi([
+                    'entName' => $entName,
+                ])['result'];
+            $retData = LongXinService::complementEntLianXiMobileState($retData);
+            $retData = LongXinService::complementEntLianXiPosition($retData, $entName);
+            foreach($retData as $datautem){
+                /**
+                [
+                {
+                "duty": "公司最高代表",
+                "source": "黄页",
+                "lid": 199752834,
+                "ltype": "1",
+                "name": "严庆",
+                "idx": "A",
+                "quhao": "广东省深圳市",
+                "url": "http://www.czvv.com/huangye/1516626.html",
+                "lianxi": "13823539096",
+                "lianxitype": "手机",
+                "mobile_check_res": "1",
+                "mobile_check_res_cname": "正常",
+                "staff_position": "--"
+                }]
+                 */
+                 if($datautem['lianxi'] != '手机'){
+                     yield $datas[] = array_values(
+                         array_merge(
+                             [
+                                 'comname' =>$entName,
+                                 'weixin_name'=>'',
+                             ],
+                             $datautem
+                         )
+                     );
+                     continue;
+                 }
+
+                //匹配微信名字
+                $matchedWeiXinName = WechatInfo::findByPhoneV2($datautem['lianxi']);
+                if(empty($matchedWeiXinName)){
+                    yield $datas[] = array_values(
+                        array_merge(
+                            [
+                                'comname' =>$entName,
+                                'weixin_name'=>$matchedWeiXinName['weixin'],
+                            ],
+                            $datautem
+                        )
+                    );
+                }
+                 //用微信匹配
+                $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($entName,$matchedWeiXinName['weixin']);
+                yield $datas[] = array_values(
+                    array_merge(
+                        [
+                            'comname' =>$entName,
+                            'weixin_name'=>$matchedWeiXinName['weixin'],
+                        ],
+                        $datautem,
+                        [
+                            'matched_stff_name' => $tmpRes['data']['stff_name'],
+                            'matched_staff_type_name' => $tmpRes['data']['staff_type_name'],
+                            'match_type' => $tmpRes['match_res']['type'],
+                            'match_typedetails' => $tmpRes['match_res']['details'],
+                            'match_percentage' => $tmpRes['match_res']['percentage'],
+                        ]
+                    )
+                );
+
+            }
+        }
+    }
+
+    // NonPublicise
+    static function getYieldNonPubliciseContactData($id){
+        $datas = [];
+
+        $bussinessOpportunity = AdminUserBussinessOpportunityUploadRecord::findById($id);
+        $bussinessOpportunity = $bussinessOpportunity->toArray();
+
+        //如果不需要拉取公开的联系人
+        if(!$bussinessOpportunity['pull_api']){
+            return $datas;
+        }
+
+        $allRecords = BussinessOpportunityDetails::findByUploadId($id);
+        $newReords = [];
+        foreach ($allRecords as $Record){
+            $newReords[trim($Record['entName'])][$Record['mobile']]  = $Record['mobile'];
+        }
+        foreach ($allRecords as $recordItem){
+            $details =  BussinessOpportunityDetails::findByName($recordItem['entName'],$id);
+            $details =  $details->toArray();
+            $code = trim($details['entCode']);
+
+            //匹配微信名字
+            $matchedWeiXinName = WechatInfo::findByPhoneV2($recordItem['mobile']);
+            if(empty($matchedWeiXinName)){
+                yield $datas[] =  [
+                    'entName' =>$recordItem['entName'],
+                    'mobile'=>$recordItem['mobile'],
+                    'weixin'=>$matchedWeiXinName['weixin'],
+                ];
+            }
+            //用微信匹配
+            $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($recordItem['entName'],$matchedWeiXinName['weixin']);
+            yield $datas[] = array_values(
+                array_merge(
+                    [
+                        'entName' =>$recordItem['entName'],
+                        'mobile'=>$recordItem['mobile'],
+                        'weixin'=>$matchedWeiXinName['weixin'],
+                    ],
+                    [
+                        'matched_stff_name' => $tmpRes['data']['stff_name'],
+                        'matched_staff_type_name' => $tmpRes['data']['staff_type_name'],
+                        'match_type' => $tmpRes['match_res']['type'],
+                        'match_typedetails' => $tmpRes['match_res']['details'],
+                        'match_percentage' => $tmpRes['match_res']['percentage'],
+                    ]
+                )
+            );
         }
     }
 
@@ -979,77 +1137,126 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             ])
         );
         foreach ($rawDatas as $rawDataItem){
-            $rawDataItem['fill_weixin'] ;   //补充微信
-            $rawDataItem['pull_api'] ;   //拉取url联系人
-            $rawDataItem['match_by_weixin'] ;   //匹配微信
-            $rawDataItem['get_all_field'] ;   //取全字段
-
+            $startMemory = memory_get_usage();
             //第一部分 sheet1 企业部分数据
-            $allRecords = BussinessOpportunityDetails::findByUploadId($rawDataItem['id']);
-            foreach ($allRecords as $Record){
-                $Record[''];
-            }
-
-            //第二部分非公开联系人
-            $allRecords = BussinessOpportunityDetails::findByUploadId($rawDataItem['id']);
-             foreach ($allRecords as $Record){
-                 $Record[''];
-             }
-
-            //第三部分公开联系人
-            $allRecords = BussinessOpportunityDetails::findByUploadId($rawDataItem['id']);
-            foreach ($allRecords as $Record){
-                $Record[''];
-            }
+            $sheet1Datas = self::getYieldCompanyData($rawDataItem['id']);
+            //第二部分 sheet2
+            $sheet2Datas = self::getYieldPublicContactData($rawDataItem['id']);
+            //第三部分 sheet3
+            $sheet3Datas = self::getYieldNonPubliciseContactData($rawDataItem['id']);
 
             // 找到上传的文件路径
             self::setworkPath( $rawDataItem['file_path'] );
-            $companyDatas = self::getYieldData($rawDataItem['name']);
-            foreach ($companyDatas as $companyDataItem){
 
-                $mobileString = $companyDataItem[2];
-                //如果是需要去空号
-                if($rawDataItem['del_empty']){
-                    $mobileStr = str_replace(";", ",", trim($mobileString));
-                    $newmobileStr = "";
-                    if(!empty($mobileStr)){
-                        $res = (new ChuangLanService())->getCheckPhoneStatus([
-                            'mobiles' => $mobileStr,
-                        ]);
-                        if (!empty($res['data'])){
-                            foreach($res['data'] as $dataItem){
-                                if($dataItem['status'] == 1){
-                                    $newmobileStr .= $dataItem["mobile"].';';
-                                }
-                            }
-                        }
-                    }
-                    $mobileString = $newmobileStr;
-                }
+            $filename = date('YmdHis').'_'.$rawDataItem['name'];
+            //==============================生成文件start===================================
+            $config=  [
+                'path' => TEMP_FILE_PATH // xlsx文件保存路径
+            ];
 
-                // 拆分出来
-                $mobilesArr = explode(';',$mobileString);
-                foreach ($mobilesArr as $mobile){
-                    BussinessOpportunityDetails::addRecordV2(
-                        [
-                            'upload_record_id' => $rawDataItem['id'], //
-                            'entName' => $companyDataItem[0], //
-                            'entCode' => $companyDataItem[1], //
-                            'mobile' => $mobile,
-                            'remark' => '', //
-                        ]
-                    );
-                }
+            $excel = new \Vtiful\Kernel\Excel($config);
+            $fileObject = $excel->fileName($filename, 'p1');
+            $fileHandle = $fileObject->getHandle();
+
+            $format = new Format($fileHandle);
+            $colorStyle = $format
+                ->fontColor(Format::COLOR_ORANGE)
+                ->border(Format::BORDER_DASH_DOT)
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+
+            $format = new Format($fileHandle);
+
+            $alignStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->toResource();
+
+            $file = $fileObject
+                ->defaultFormat($colorStyle)
+                ->header(
+                    [
+                        '标题' , //
+                        '项目名称' , //
+                    ]
+                )
+                 ->defaultFormat($alignStyle) ;
+
+            foreach ($sheet1Datas as $dataItem){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$dataItem1' => $dataItem
+                    ])
+                );
+                $fileObject ->data([$dataItem]);
             }
+            //==============================================
+            //p2
+            $file->addSheet('p2')
+                ->defaultFormat($colorStyle)
+                ->header([
+                    '标题' , //
+                    '项目名称' , //
+                ])
+                ->defaultFormat($alignStyle)   ;
+
+            foreach ($sheet2Datas as $dataItem){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$dataItem2' => $dataItem
+                    ])
+                );
+                $file->data([$dataItem]);
+                $p2Nums ++;
+            }
+            //==============================================
+            //p3
+            $file->addSheet('p3')
+                ->defaultFormat($colorStyle)
+                ->header([
+                    '标题' , //
+                    '项目名称' , //
+                ])
+                ->defaultFormat($alignStyle)   ;
+
+            foreach ($sheet3Datas as $dataItem){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$dataItem2' => $dataItem
+                    ])
+                );
+                $file->data([$dataItem]);
+                $p2Nums ++;
+            }
+            //==============================================
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+                ])
+            );
+
+            $format = new Format($fileHandle);
+            //单元格有\n解析成换行
+            $wrapStyle = $format
+                ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+                ->wrap()
+                ->toResource();
+
+            $fileObject->output();
+
             //==============================生成文件end=====================================
             AdminUserBussinessOpportunityUploadRecord::updateById(
                 $rawDataItem['id'],
                 [
-                    'status' => AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success,
+                    'status' => AdminUserBussinessOpportunityUploadRecord::$status_split_success,
                 ]
             );
+
+            return true;
         }
-        return true;
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
