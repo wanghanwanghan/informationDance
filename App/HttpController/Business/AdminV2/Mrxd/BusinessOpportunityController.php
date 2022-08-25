@@ -92,8 +92,8 @@ class BusinessOpportunityController extends ControllerBase
     //用户-上传客户列表
     public function bussinessFilesList(){
         $requestData =  $this->getRequestData();
-        $page = $requestData['page'];
-        $size = $requestData['pageSize'];
+        $page = $requestData['page']?:1;
+        $size = $requestData['pageSize']?:10;
         $records = AdminUserBussinessOpportunityUploadRecord::findByConditionV2(
             [ ],
             $page
@@ -104,13 +104,12 @@ class BusinessOpportunityController extends ControllerBase
                 '$records'   => $records
             ])
         );
-        return $this->writeJson(200, [], [],'导入成功 入库文件数量:');
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' => $size,
             'total' => $records['total'],
             'totalPage' => ceil($records['total']/$size) ,
-        ], $records['data'],'成功 ');
+        ],  $records['data'],'成功'); 
     }
 
     public function downloadBussinessFile(){
