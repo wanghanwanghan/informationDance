@@ -3620,6 +3620,20 @@ eof;
     function testExport()
     {
 
+
+        if(
+            $this->getRequestData('generateNewFile')
+        ){
+
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                RunDealBussinessOpportunity::generateNewFile(),
+                '成功',
+                true,
+                []
+            );
+        }
         if(
             $this->getRequestData('delEmptyMobile')
         ){

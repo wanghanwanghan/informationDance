@@ -986,7 +986,11 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         $allRecords = BussinessOpportunityDetails::findByUploadId($id);
         $newReords = [];
         foreach ($allRecords as $Record){
-            $newReords[trim($Record['entName'])][$Record['mobile']]  = $Record['mobile'];
+            $mobile = trim($Record['mobile']);
+            if(empty($mobile)){
+                continue;
+            }
+            $newReords[$Record['entName']][$mobile]  = $mobile;
         }
         foreach ($newReords as $entName => $mobilesArr){
             $details =  BussinessOpportunityDetails::findByName($entName,$id);
@@ -1010,7 +1014,19 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             else{
                 $res = (new XinDongService())->getEsBasicInfoV3($entName,'ENTNAME');
             }
-
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        'getYieldCompanyData'=>[
+                            '$res'=>$res,
+                            '$mobilesArr'=>$mobilesArr,
+                            '$code'=>$code,
+                            '$entName'=>$entName,
+                        ]
+                    ]
+                ])
+            );
             $allFields = AdminUserSoukeConfig::getAllFieldsV2();
             foreach ($allFields as $field=>$cname){
                 /**
@@ -1044,7 +1060,8 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         $allRecords = BussinessOpportunityDetails::findByUploadId($id);
         $newReords = [];
         foreach ($allRecords as $Record){
-            $newReords[trim($Record['entName'])][$Record['mobile']]  = $Record['mobile'];
+            $mobile = trim($Record['mobile']);
+            $newReords[$Record['entName']][$mobile]  = $mobile;
         }
         foreach ($newReords as $entName => $mobilesArr){
             $details =  BussinessOpportunityDetails::findByName($entName,$id);
@@ -1056,8 +1073,20 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 ->getEntLianXi([
                     'entName' => $entName,
                 ])['result'];
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        'getYieldPublicContactData'=>[
+                            '$retData'=>$retData,
+                            '$entName'=>$entName
+                        ]
+                    ]
+                ])
+            );
             $retData = LongXinService::complementEntLianXiMobileState($retData);
             $retData = LongXinService::complementEntLianXiPosition($retData, $entName);
+
             foreach($retData as $datautem){
                 /**
                 [
@@ -1141,7 +1170,8 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         $allRecords = BussinessOpportunityDetails::findByUploadId($id);
         $newReords = [];
         foreach ($allRecords as $Record){
-            $newReords[trim($Record['entName'])][$Record['mobile']]  = $Record['mobile'];
+            $mobile = trim($Record['mobile']);
+            $newReords[$Record['entName']][$mobile]  = $mobile;
         }
         foreach ($allRecords as $recordItem){
             $details =  BussinessOpportunityDetails::findByName($recordItem['entName'],$id);
@@ -1211,7 +1241,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 [
-                    'delEmptyMobile'=>[
+                    'generateNewFile'=>[
                         'msg' => 'start',
                     ]
                 ]
@@ -1225,6 +1255,35 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             $sheet2Datas = self::getYieldPublicContactData($rawDataItem['id']);
             //第三部分 sheet3
             $sheet3Datas = self::getYieldNonPubliciseContactData($rawDataItem['id']);
+
+            foreach ($sheet1Datas as $sheetData){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                       '$sheet1Datas_$sheetData'=>$sheetData
+                    ])
+                );
+            }
+
+            foreach ($sheet2Datas as $sheetData){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$sheet2Datas_$sheetData'=>$sheetData
+                    ])
+                );
+            }
+
+            foreach ($sheet3Datas as $sheetData){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$sheet3Datas_$sheetData'=>$sheetData
+                    ])
+                );
+            }
+
+            continue;
 
             // 找到上传的文件路径
             self::setworkPath( $rawDataItem['file_path'] );
