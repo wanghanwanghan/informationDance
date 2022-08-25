@@ -873,6 +873,21 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                                 if($dataItem['status'] == 1){
                                     $newmobileStr .= $dataItem["mobile"].';';
                                 }
+                                else{
+                                    OperatorLog::addRecord(
+                                        [
+                                            'user_id' => 0,
+                                            'msg' =>json_encode(
+                                                [
+                                                    'mobile'=>$dataItem["mobile"],
+                                                    'res'=>$dataItem,
+                                                ]
+                                            ),
+                                            'details' => json_encode(XinDongService::trace()),
+                                            'type_cname' => '无效的手机_'.$dataItem["mobile"],
+                                        ]
+                                    );
+                                }
                             }
                         }
                     }
