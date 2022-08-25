@@ -104,6 +104,7 @@ class BusinessOpportunityController extends ControllerBase
                 '$records'   => $records
             ])
         );
+        return $this->writeJson(200, [], [],'导入成功 入库文件数量:');
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' => $size,
