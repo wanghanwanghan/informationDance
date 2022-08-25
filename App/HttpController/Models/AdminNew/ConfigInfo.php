@@ -44,9 +44,9 @@ class ConfigInfo extends ModelBase
     }
 
     public static function setIsRunning($crontabName){
-//        CommonService::getInstance()->log4PHP(
-//            'setIsRunning '.$crontabName
-//        );
+        CommonService::getInstance()->log4PHP(
+            'setIsRunning '.$crontabName
+        );
 
         $info = ConfigInfo::findByName('crontab');
         $config = $info->getAttr("value");
@@ -72,9 +72,9 @@ class ConfigInfo extends ModelBase
     }
 
     public static function setIsDone($crontabName){
-//        CommonService::getInstance()->log4PHP(
-//            'setIsDone '.$crontabName
-//        );
+        CommonService::getInstance()->log4PHP(
+            'setIsDone '.$crontabName
+        );
 
         $info = ConfigInfo::findByName('crontab');
         $config = $info->getAttr("value");
