@@ -207,18 +207,18 @@ class RunDealEmailReceiver extends AbstractCronTask
                 'raw_return' => stripslashes(json_encode($mail)),
                 'date' => date('Y-m-d H:i:s',strtotime($mailHeader['date'])) ,
             ];
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'pull_Email_lists_attachs'=>[
-                        'msg'=>'add_to_db',
-                        '$attachs'=>$attachs,
-                        '$mailHeader'=>$mailHeader,
-                        'email_id'=>intval(@imap_uid($source, $msgcount)),
-                        'subject'=>stripslashes($mailHeader['subject']),
-                    ]
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    'pull_Email_lists_attachs'=>[
+//                        'msg'=>'add_to_db',
+//                        '$attachs'=>$attachs,
+//                        '$mailHeader'=>$mailHeader,
+//                        'email_id'=>intval(@imap_uid($source, $msgcount)),
+//                        'subject'=>stripslashes($mailHeader['subject']),
+//                    ]
+//                ])
+//            );
             MailReceipt::addRecordV2(
                 $datas
             );
