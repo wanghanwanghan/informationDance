@@ -95,10 +95,14 @@ class BusinessOpportunityController extends ControllerBase
         $page = $requestData['page'];
         $size = $requestData['pageSize'];
         $records = AdminUserBussinessOpportunityUploadRecord::findByConditionV2(
-            [
-
-            ],
+            [ ],
             $page
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$records'   => $records
+            ])
         );
         return $this->writeJson(200, [
             'page' => $page,
