@@ -92,7 +92,7 @@ class BusinessOpportunityController extends ControllerBase
     public function uploadWeiXinFile(){
         $requestData =  $this->getRequestData();
         $files = $this->request()->getUploadedFiles();
-
+        return $this->writeJson(200, [], [],'导入成功 入库文件数量:');
         $succeedNums = 0;
         foreach ($files as $key => $oneFile) {
             try {
@@ -173,7 +173,12 @@ class BusinessOpportunityController extends ControllerBase
 
     public function redownloadBussinessFile(){
         $requestData =  $this->getRequestData();
-
+        if(
+            $requestData['id'] <= 0
+        ){
+            return $this->writeJson(201, [
+               ],  [],'参数缺失');
+        }
         return $this->writeJson(200, [],
             AdminUserBussinessOpportunityUploadRecord::updateById(
                 $requestData['id'],
