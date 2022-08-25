@@ -190,7 +190,7 @@ class UserController extends ControllerBase
             'id' => $requestData['id'],
             'user_name' => $requestData['user_name'] ? $requestData['user_name']: $info['user_name'],
             'password' => $requestData['password'] ? AdminNewUser::aesEncode($requestData['password']): $info['password'],
-            'phone' => $requestData['phone'] ? AdminNewUser::aesEncode($requestData['phone']): $info['phone'],
+            'phone' => $requestData['user_phone'] ? AdminNewUser::aesEncode($requestData['user_phone']): $info['user_phone'],
             'email' => $requestData['email'] ? $requestData['email']: $info['email'],
         ]);
         return $this->writeJson();
