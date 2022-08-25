@@ -89,6 +89,62 @@ class BusinessOpportunityController extends ControllerBase
         return $this->writeJson(200, [], [],'导入成功 入库文件数量:'.$succeedNums);
     }
 
+    public function uploadWeiXinFile(){
+        $requestData =  $this->getRequestData();
+        $files = $this->request()->getUploadedFiles();
+
+        $succeedNums = 0;
+        foreach ($files as $key => $oneFile) {
+            try {
+                $fileName = $oneFile->getClientFilename();
+                $path = TEMP_FILE_PATH . $fileName;
+                if(file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件已存在！');;
+                }
+
+                $res = $oneFile->moveTo($path);
+                if(!file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件移动失败！');
+                }
+
+                $addUploadRecordRes = AdminUserBussinessOpportunityUploadRecord::addRecordV2(
+                    [
+                        'user_id' => $this->loginUserinfo['id'],
+                        'file_path' => TEMP_FILE_PATH,
+                        'title' => $requestData['title']?:'',
+                        'size' => filesize($path),
+                        //是否拉取url联系人
+                        'pull_api' => intval($requestData['pull_api']),
+                        //按手机号拆分成多行
+                        'split_mobile' => intval($requestData['split_mobile']),
+                        //删除空号
+                        'del_empty' => intval($requestData['del_empty']),
+                        //匹配微信
+                        'match_by_weixin' => intval($requestData['match_by_weixin']),
+                        //取全字段
+                        'get_all_field' => intval($requestData['get_all_field']),
+                        //填充旧的微信
+                        'fill_weixin' => intval($requestData['fill_weixin']),
+                        'batch' =>  'BO'.date('YmdHis'),
+                        'reamrk' => $requestData['reamrk']?:'',
+                        'name' =>  $fileName,
+                        'status' => AdminUserFinanceUploadRecord::$stateInit,
+                    ]
+                );
+
+                if(!$addUploadRecordRes){
+                    return $this->writeJson(203, [], [],'入库失败，请联系管理员');
+                }
+                $succeedNums ++;
+            } catch (\Throwable $e) {
+                return $this->writeJson(202, [], [],'导入失败'.$e->getMessage());
+            }
+        }
+
+        return $this->writeJson(200, [], [],'导入成功 入库文件数量:'.$succeedNums);
+    }
+
+
     //用户-上传客户列表
     public function bussinessFilesList(){
         $requestData =  $this->getRequestData();
@@ -104,12 +160,15 @@ class BusinessOpportunityController extends ControllerBase
                 '$records'   => $records
             ])
         );
+        foreach ($records['data'] as &$dataitem){
+            $dataitem['status_cname'] = AdminUserBussinessOpportunityUploadRecord::getStatusMap()[$dataitem['status']];
+        }
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' => $size,
             'total' => $records['total'],
             'totalPage' => ceil($records['total']/$size) ,
-        ],  $records['data'],'成功'); 
+        ],  $records['data'],'成功');
     }
 
     public function downloadBussinessFile(){

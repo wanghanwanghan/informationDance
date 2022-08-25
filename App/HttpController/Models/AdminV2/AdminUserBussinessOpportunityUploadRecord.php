@@ -31,7 +31,9 @@ class AdminUserBussinessOpportunityUploadRecord extends ModelBase
     public static function getStatusMap(){
 
         return [
-
+            self::$status_init =>'待处理',
+            self::$status_check_mobile_success =>'处理中',
+            self::$status_split_success => '成功',
         ];
     }
 
