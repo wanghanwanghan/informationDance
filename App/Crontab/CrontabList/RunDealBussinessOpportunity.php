@@ -948,7 +948,10 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                     ])
                 );
                 foreach ($mobilesArr as $mobile){
-                    if($mobile<0){
+                    if(
+                        empty($mobile) ||
+                        $mobile < 0
+                    ){
                         continue;
                     }
                     BussinessOpportunityDetails::addRecordV2(
