@@ -875,14 +875,14 @@ class AdminUserFinanceData extends ModelBase
     }
 
     public static function findByConditionV3($whereArr,$page,$pageSize){
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    __CLASS__.__FUNCTION__.__LINE__,
-                    'findByConditionV3' => $whereArr
-                ]
-            )
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode(
+//                [
+//                    __CLASS__.__FUNCTION__.__LINE__,
+//                    'findByConditionV3' => $whereArr
+//                ]
+//            )
+//        );
 
         $model = AdminUserFinanceData::create();
         foreach ($whereArr as $whereItem){
@@ -896,15 +896,15 @@ class AdminUserFinanceData extends ModelBase
 
         $total = $model->lastQueryResult()->getTotalCount();
 
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    __CLASS__.__FUNCTION__.__LINE__,
-                    '$res' => $res,
-                    '$total' => $total
-                ]
-            )
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode(
+//                [
+//                    __CLASS__.__FUNCTION__.__LINE__,
+//                    '$res' => $res,
+//                    '$total' => $total
+//                ]
+//            )
+//        );
         return [
             'data' => $res,
             'total' =>$total,
