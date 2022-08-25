@@ -29,7 +29,7 @@ class BussinessOpportunityDetails extends ModelBase
     static  function  addRecordV2($info){
 
         if(
-            self::findByName($info['entName'],$info['upload_record_id'])
+            self::findByName($info['entName'],$info['upload_record_id'],$info['mobile'])
         ){
             return  true;
         }
@@ -138,10 +138,11 @@ class BussinessOpportunityDetails extends ModelBase
         return $res;
     }
 
-    public static function findByName($name,$upload_record_id){
+    public static function findByName($name,$upload_record_id,$mobile){
         $res =  BussinessOpportunityDetails::create()
             ->where('upload_record_id',$upload_record_id)
             ->where('entName',$name)
+            ->where('mobile',$mobile)
             ->get();
         return $res;
     }
