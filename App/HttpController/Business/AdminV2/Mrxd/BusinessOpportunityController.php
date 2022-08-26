@@ -59,17 +59,17 @@ class BusinessOpportunityController extends ControllerBase
                         'title' => $requestData['title']?:'',
                         'size' => filesize($path),
                         //是否拉取url联系人
-                        'pull_api' => intval($requestData['pull_api']),
+                        'pull_api' => $requestData['pull_api']?1:0,
                         //按手机号拆分成多行
-                        'split_mobile' => intval($requestData['split_mobile']),
+                        'split_mobile' => 1,
                         //删除空号
-                        'del_empty' => intval($requestData['del_empty']),
+                        'del_empty' => 1,
                         //匹配微信
-                        'match_by_weixin' => intval($requestData['match_by_weixin']),
+                        'match_by_weixin' => 1,
                         //取全字段
-                        'get_all_field' => intval($requestData['get_all_field']),
+                        'get_all_field' => $requestData['get_all_field']?1:0,
                         //填充旧的微信
-                        'fill_weixin' => intval($requestData['fill_weixin']),
+                        'fill_weixin' => 1,
                         'batch' =>  'BO'.date('YmdHis'),
                         'reamrk' => $requestData['reamrk']?:'',
                         'name' =>  $fileName,
