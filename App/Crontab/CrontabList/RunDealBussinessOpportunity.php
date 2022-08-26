@@ -1164,9 +1164,9 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         $bussinessOpportunity = $bussinessOpportunity->toArray();
 
         //如果不需要拉取公开的联系人
-        if(!$bussinessOpportunity['pull_api']){
-            return $datas;
-        }
+//        if(!$bussinessOpportunity['pull_api']){
+//            return $datas;
+//        }
 
         $allRecords = BussinessOpportunityDetails::findByUploadId($id);
         $newReords = [];
