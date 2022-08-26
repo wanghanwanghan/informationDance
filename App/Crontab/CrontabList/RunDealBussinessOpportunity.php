@@ -978,7 +978,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
     // id 商机id
     static function getYieldCompanyData($id){
-        $datas = [     ];
+        $datas = [];
 
         $bussinessOpportunity = AdminUserBussinessOpportunityUploadRecord::findById($id);
         $bussinessOpportunity = $bussinessOpportunity->toArray();
@@ -998,8 +998,17 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             '税号',
             '手机号',
         ];
+        $noNeedFeilds = [
+            'ENTNAME',
+            'companyid',
+        ];
         $allFields = AdminUserSoukeConfig::getAllFieldsV2();
         foreach ($allFields as $field=>$cname){
+            if(
+                in_array($field,$noNeedFeilds)
+            ){
+                continue;
+            }
             /**
             $res['ENTTYPE_CNAME'] =   '';
             $res['ENTTYPE'] && $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
@@ -1049,6 +1058,11 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             );
 
             foreach ($allFields as $field=>$cname){
+                if(
+                    in_array($field,$noNeedFeilds)
+                ){
+                    continue;
+                }
                 /**
                 $res['ENTTYPE_CNAME'] =   '';
                 $res['ENTTYPE'] && $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
@@ -1107,6 +1121,30 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             $retData = LongXinService::complementEntLianXiMobileState($retData);
             $retData = LongXinService::complementEntLianXiPosition($retData, $entName);
 
+            yield $datas[] = [
+                '企业名',
+                '微信名',
+                '联系人职位',
+                '联系方式来源',
+                '联系方式唯一标识',
+                'ltype',
+                '联系人姓名',
+                '联系方式权重',
+                '手机归属地/座机区号',
+                '联系方式来源网页链接',
+                '联系方式',
+                '联系方式类型（手机/座机/邮箱）',
+                'mobile_check_res',
+                '手机号码状态',
+                '联系人姓名匹配到的职位',
+                '联系人名称（疑似）',
+                '职位（疑似）',
+                '真实联系人',
+                '实际职位',
+                '匹配类型',
+                '匹配子类型',
+                '匹配值',
+            ];
             foreach($retData as $datautem){
                 /**
                 [
@@ -1130,8 +1168,8 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                      yield $datas[] = array_values(
                          array_merge(
                              [
-                                 'comname' =>$entName,
-                                 'weixin_name'=>'',
+                                 'comname' =>$entName, //企业名
+                                 'weixin_name'=>'', //微信名
                              ],
                              $datautem
                          )
@@ -1193,6 +1231,20 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             $mobile = trim($Record['mobile']);
             $newReords[$Record['entName']][$mobile]  = $mobile;
         }
+
+        yield $datas[] = [
+            '企业名',
+            '手机号',
+            '微信',
+            '联系人名称（疑似）',
+            '职位（疑似）',
+            '真实联系人',
+            '实际职位',
+            '匹配类型',
+            '匹配子类型',
+            '匹配值',
+        ]; 
+
         foreach ($allRecords as $recordItem){
             $details =  BussinessOpportunityDetails::findOneByName($recordItem['entName'],$id);
             $details =  $details->toArray();
