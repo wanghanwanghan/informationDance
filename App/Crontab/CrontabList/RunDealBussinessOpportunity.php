@@ -860,53 +860,52 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 $name1 = $dataArr[0];
                 $code1 = $dataArr[1];
                 $mobileString = $dataArr[2];
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'delEmptyMobile'=>[
-                                'read_data' => [
-                                    '$name1'=>$name1,
-                                    '$code1'=>$code1,
-                                    '$mobileString'=>$mobileString,
-                                ],
-                            ]
-                        ]
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        [
+//                            'delEmptyMobile'=>[
+//                                'read_data' => [
+//                                    '$name1'=>$name1,
+//                                    '$code1'=>$code1,
+//                                    '$mobileString'=>$mobileString,
+//                                ],
+//                            ]
+//                        ]
+//                    ])
+//                );
                 //如果是需要去空号
                 if($rawDataItem['del_empty']){
                     $mobileStr = str_replace(";", ",", trim($mobileString));
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            __CLASS__.__FUNCTION__ .__LINE__,
-                            [
-                                'delEmptyMobile'=>[
-                                    'del_empty' => [
-                                        '$mobileStr'=>$mobileStr,
-                                    ],
-                                ]
-                            ]
-                        ])
-                    );
-
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode([
+//                            __CLASS__.__FUNCTION__ .__LINE__,
+//                            [
+//                                'delEmptyMobile'=>[
+//                                    'del_empty' => [
+//                                        '$mobileStr'=>$mobileStr,
+//                                    ],
+//                                ]
+//                            ]
+//                        ])
+//                    );
                     $newmobileStr = "";
                     if(!empty($mobileStr)){
                         $res = (new ChuangLanService())->getCheckPhoneStatus([
                             'mobiles' => $mobileStr,
                         ]);
-                        CommonService::getInstance()->log4PHP(
-                            json_encode([
-                                __CLASS__.__FUNCTION__ .__LINE__,
-                                [
-                                    'delEmptyMobile'=>[
-                                        'del_empty' => [
-                                            'mobile_check_res'=>$res,
-                                        ],
-                                    ]
-                                ]
-                            ])
-                        );
+//                        CommonService::getInstance()->log4PHP(
+//                            json_encode([
+//                                __CLASS__.__FUNCTION__ .__LINE__,
+//                                [
+//                                    'delEmptyMobile'=>[
+//                                        'del_empty' => [
+//                                            'mobile_check_res'=>$res,
+//                                        ],
+//                                    ]
+//                                ]
+//                            ])
+//                        );
                         if (!empty($res['data'])){
                             foreach($res['data'] as $dataItem){
                                 if($dataItem['status'] == 1){
@@ -935,19 +934,32 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
                 // 拆分出来
                 $mobilesArr = explode(';',trim($mobileString));
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        [
+//                            'delEmptyMobile'=>[
+//                                'del_empty' => [
+//                                    '$mobileString'=>$mobileString,
+//                                    '$mobilesArr'=>$mobilesArr,
+//                                ],
+//                            ]
+//                        ]
+//                    ])
+//                );
+                if(empty($mobilesArr)){
+                    BussinessOpportunityDetails::addRecordV2(
                         [
-                            'delEmptyMobile'=>[
-                                'del_empty' => [
-                                    '$mobileString'=>$mobileString,
-                                    '$mobilesArr'=>$mobilesArr,
-                                ],
-                            ]
+                            'upload_record_id' => $rawDataItem['id'], //
+                            'entName' => $name1, //
+                            'entCode' => $code1, //
+                            'mobile' => 0,
+                            'remark' => '', //
                         ]
-                    ])
-                );
+                    );
+                    continue;
+                }
+
                 foreach ($mobilesArr as $mobile){
                     if(
                         empty($mobile) ||
@@ -988,9 +1000,9 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         $newReords = [];
         foreach ($allRecords as $Record){
             $mobile = trim($Record['mobile']);
-            if(empty($mobile)){
-                continue;
-            }
+//            if(empty($mobile)){
+//                continue;
+//            }
             $newReords[$Record['entName']][$mobile]  = $mobile;
         }
 
@@ -1253,6 +1265,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 yield $datas[] =  [
                     'entName' =>$recordItem['entName'],
                     'mobile'=>$recordItem['mobile'],
+                    'weixin'=>'',
                 ];
                 continue;
             }
