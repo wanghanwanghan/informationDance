@@ -1271,7 +1271,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                     [
                         'entName' =>$recordItem['entName'],
                         'mobile'=>$recordItem['mobile'],
-                        'weixin'=>$matchedWeiXinName['weixin'],
+                        'weixin'=>$matchedWeiXinName['nickname'],
                     ],
                     [
                         'matched_stff_name' => $tmpRes['data']['stff_name'],
