@@ -126,7 +126,19 @@ class WechatInfo extends ModelBase
 
     public static function findByPhoneV2($phone){
         $res =  self::findByPhone($phone);
-        return $res?$res->toArray():[];
+        $resData =  $res?$res->toArray():[];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'findWeiXinByPhone'=>[
+                        '$phone'=>$phone,
+                        '$resData'=>$resData
+                    ]
+                ]
+            ])
+        );
+        return $resData;
     }
 
     public static function setData($id,$field,$value){

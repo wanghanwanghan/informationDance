@@ -1177,18 +1177,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                  }
 
                 //匹配微信名字
-                $matchedWeiXinName = WechatInfo::findByPhoneV2($datautem['lianxi']);
-                 CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'getYieldPublicContactData'=>[
-                                'lianxi'=>$datautem['lianxi'],
-                                '$entName'=>$matchedWeiXinName
-                            ]
-                        ]
-                    ])
-                );
+                $matchedWeiXinName = WechatInfo::findByPhoneV2($datautem['lianxi']); 
                 if(empty($matchedWeiXinName)){
                     yield $datas[] = array_values(
                         array_merge(
