@@ -187,7 +187,7 @@ class BusinessOpportunityController extends ControllerBase
                 'operate' => 'like',
             ];
         }
-        $createdAtStr = $requestData['created'];
+        $createdAtStr = $requestData['created_at'];
         $createdAtArr = explode('|||',$createdAtStr);
 
         if (
