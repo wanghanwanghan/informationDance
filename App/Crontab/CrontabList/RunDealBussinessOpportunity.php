@@ -1243,7 +1243,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             '匹配类型',
             '匹配子类型',
             '匹配值',
-        ]; 
+        ];
 
         foreach ($allRecords as $recordItem){
             $details =  BussinessOpportunityDetails::findOneByName($recordItem['entName'],$id);
