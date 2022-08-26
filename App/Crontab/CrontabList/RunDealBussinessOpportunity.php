@@ -1188,6 +1188,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                             $datautem
                         )
                     );
+                    continue;
                 }
                  //用微信匹配
                 $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($entName,$matchedWeiXinName['nickname']);
@@ -1263,6 +1264,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                     'mobile'=>$recordItem['mobile'],
                     'weixin'=>$matchedWeiXinName['nickname'],
                 ];
+                continue;
             }
             //用微信匹配
             $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($recordItem['entName'],$matchedWeiXinName['nickname']);
