@@ -1163,7 +1163,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 "staff_position": "--"
                 }]
                  */
-                 if($datautem['lianxi'] != '手机'){
+                 if($datautem['lianxitype'] != '手机'){
                      yield $datas[] = array_values(
                          array_merge(
                              [
