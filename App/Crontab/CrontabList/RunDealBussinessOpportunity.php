@@ -993,7 +993,8 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             $newReords[$Record['entName']][$mobile]  = $mobile;
         }
         foreach ($newReords as $entName => $mobilesArr){
-            $details =  BussinessOpportunityDetails::findByName($entName,$id);
+            //
+            $details =  BussinessOpportunityDetails::findOneByName($entName,$id);
             $details =  $details->toArray();
             $code = trim($details['entCode']);
 
@@ -1064,7 +1065,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             $newReords[$Record['entName']][$mobile]  = $mobile;
         }
         foreach ($newReords as $entName => $mobilesArr){
-            $details =  BussinessOpportunityDetails::findByName($entName,$id);
+            $details =  BussinessOpportunityDetails::findOneByName($entName,$id);
             $details =  $details->toArray();
             $code = trim($details['entCode']);
 
@@ -1174,7 +1175,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             $newReords[$Record['entName']][$mobile]  = $mobile;
         }
         foreach ($allRecords as $recordItem){
-            $details =  BussinessOpportunityDetails::findByName($recordItem['entName'],$id);
+            $details =  BussinessOpportunityDetails::findOneByName($recordItem['entName'],$id);
             $details =  $details->toArray();
             $code = trim($details['entCode']);
             if($recordItem['mobile']<=0 ){

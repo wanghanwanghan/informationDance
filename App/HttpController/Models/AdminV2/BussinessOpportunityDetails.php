@@ -146,6 +146,13 @@ class BussinessOpportunityDetails extends ModelBase
             ->get();
         return $res;
     }
+    public static function findOneByName($name,$upload_record_id){
+        $res =  BussinessOpportunityDetails::create()
+            ->where('upload_record_id',$upload_record_id)
+            ->where('entName',$name)
+            ->get();
+        return $res;
+    }
 
     public static function setData($id,$field,$value){
         $info = BussinessOpportunityDetails::findById($id);
