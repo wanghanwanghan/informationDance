@@ -978,7 +978,13 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
     // id 商机id
     static function getYieldCompanyData($id){
-        $datas = [];
+        $datas = [
+            [
+                '企业',
+                '税号',
+                '手机号',
+            ]
+        ];
 
         $bussinessOpportunity = AdminUserBussinessOpportunityUploadRecord::findById($id);
         $bussinessOpportunity = $bussinessOpportunity->toArray();
@@ -999,13 +1005,14 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             $code = trim($details['entCode']);
 
             $baseArr = [
-                $entName,
-                $code,
-                join(',',$mobilesArr)
+                $entName, //企业,
+                $code,//税号,
+                join(',',$mobilesArr)//手机号,
             ];
 
             if(!$bussinessOpportunity['get_all_field']){
                 yield $datas[] = $baseArr;
+                continue;
             }
 
             //需要补全字段
@@ -1255,7 +1262,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             //第二部分 sheet2
             $sheet2Datas = self::getYieldPublicContactData($rawDataItem['id']);
             //第三部分 sheet3
-            $sheet3Datas = self::getYieldNonPubliciseContactData($rawDataItem['id']); 
+            $sheet3Datas = self::getYieldNonPubliciseContactData($rawDataItem['id']);
 
             //continue;
 
@@ -1366,6 +1373,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 $rawDataItem['id'],
                 [
                     'status' => AdminUserBussinessOpportunityUploadRecord::$status_split_success,
+                    'new_name' => $filename,
                 ]
             );
 
