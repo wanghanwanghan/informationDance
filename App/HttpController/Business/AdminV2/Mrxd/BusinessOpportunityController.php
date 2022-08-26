@@ -175,6 +175,18 @@ class BusinessOpportunityController extends ControllerBase
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
         $size = $requestData['pageSize']?:10;
+
+        //bussinessFilesList
+        $conditions = [];
+        if(
+            $requestData['name']
+        ){
+            $conditions[] = [
+                'field' => 'name',
+                'value' => '%'.$requestData['name'].'%',
+                'operate' => 'like',
+            ];
+        }
         $records = AdminUserBussinessOpportunityUploadRecord::findByConditionV2(
             [ ],
             $page
