@@ -1255,34 +1255,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             //第二部分 sheet2
             $sheet2Datas = self::getYieldPublicContactData($rawDataItem['id']);
             //第三部分 sheet3
-            $sheet3Datas = self::getYieldNonPubliciseContactData($rawDataItem['id']);
-
-            foreach ($sheet1Datas as $sheetData){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                       '$sheet1Datas_$sheetData'=>$sheetData
-                    ])
-                );
-            }
-
-            foreach ($sheet2Datas as $sheetData){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$sheet2Datas_$sheetData'=>$sheetData
-                    ])
-                );
-            }
-
-            foreach ($sheet3Datas as $sheetData){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$sheet3Datas_$sheetData'=>$sheetData
-                    ])
-                );
-            }
+            $sheet3Datas = self::getYieldNonPubliciseContactData($rawDataItem['id']); 
 
             //continue;
 
