@@ -125,7 +125,7 @@ class WechatInfo extends ModelBase
     }
 
     public static function findByPhoneV2($phone){
-        $res =  self::findByPhone($phone);
+        $res =  self::findByPhone(md5($phone));
         $resData =  $res?$res->toArray():[];
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -133,6 +133,7 @@ class WechatInfo extends ModelBase
                 [
                     'findWeiXinByPhone'=>[
                         '$phone'=>$phone,
+                        'md5'=>md5($phone),
                         '$resData'=>$resData
                     ]
                 ]

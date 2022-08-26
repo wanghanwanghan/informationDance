@@ -1177,7 +1177,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                  }
 
                 //匹配微信名字
-                $matchedWeiXinName = WechatInfo::findByPhoneV2($datautem['lianxi']); 
+                $matchedWeiXinName = WechatInfo::findByPhoneV2($datautem['lianxi']);
                 if(empty($matchedWeiXinName)){
                     yield $datas[] = array_values(
                         array_merge(
@@ -1256,7 +1256,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 continue;
             }
             //匹配微信名字
-            $matchedWeiXinName = WechatInfo::findByPhoneV2(md5($recordItem['mobile']));
+            $matchedWeiXinName = WechatInfo::findByPhoneV2(($recordItem['mobile']));
             if(empty($matchedWeiXinName)){
                 yield $datas[] =  [
                     'entName' =>$recordItem['entName'],
