@@ -992,11 +992,24 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             }
             $newReords[$Record['entName']][$mobile]  = $mobile;
         }
-        yield $datas[] =  [
+
+        $title = [
             '企业',
             '税号',
             '手机号',
         ];
+        $allFields = AdminUserSoukeConfig::getAllFieldsV2();
+        foreach ($allFields as $field=>$cname){
+            /**
+            $res['ENTTYPE_CNAME'] =   '';
+            $res['ENTTYPE'] && $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
+            $res['ENTSTATUS_CNAME'] =   '';
+            $res['ENTSTATUS'] && $res['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($res['ENTSTATUS']);
+             */
+            $title[] = $cname ;
+        }
+
+        yield $datas[] =  $title;
         foreach ($newReords as $entName => $mobilesArr){
             //
             $details =  BussinessOpportunityDetails::findOneByName($entName,$id);
@@ -1034,7 +1047,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                     ]
                 ])
             );
-            $allFields = AdminUserSoukeConfig::getAllFieldsV2();
+
             foreach ($allFields as $field=>$cname){
                 /**
                 $res['ENTTYPE_CNAME'] =   '';
