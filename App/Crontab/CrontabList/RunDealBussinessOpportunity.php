@@ -889,6 +889,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                             ]
                         ])
                     );
+
                     $newmobileStr = "";
                     if(!empty($mobileStr)){
                         $res = (new ChuangLanService())->getCheckPhoneStatus([
@@ -1009,12 +1010,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             ){
                 continue;
             }
-            /**
-            $res['ENTTYPE_CNAME'] =   '';
-            $res['ENTTYPE'] && $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
-            $res['ENTSTATUS_CNAME'] =   '';
-            $res['ENTSTATUS'] && $res['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($res['ENTSTATUS']);
-             */
+
             $title[] = $cname ;
         }
 
@@ -1043,19 +1039,19 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             else{
                 $res = (new XinDongService())->getEsBasicInfoV3($entName,'ENTNAME');
             }
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        'getYieldCompanyData'=>[
-                            '$res'=>$res,
-                            '$mobilesArr'=>$mobilesArr,
-                            '$code'=>$code,
-                            '$entName'=>$entName,
-                        ]
-                    ]
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    [
+//                        'getYieldCompanyData'=>[
+//                            '$res'=>$res,
+//                            '$mobilesArr'=>$mobilesArr,
+//                            '$code'=>$code,
+//                            '$entName'=>$entName,
+//                        ]
+//                    ]
+//                ])
+//            );
 
             foreach ($allFields as $field=>$cname){
                 if(
@@ -1063,12 +1059,16 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 ){
                     continue;
                 }
-                /**
-                $res['ENTTYPE_CNAME'] =   '';
-                $res['ENTTYPE'] && $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
-                $res['ENTSTATUS_CNAME'] =   '';
-                $res['ENTSTATUS'] && $res['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($res['ENTSTATUS']);
-                 */
+
+                if($field=='ENTTYPE'){
+                    $cname =   CodeCa16::findByCode($res['ENTTYPE']);
+                    $res['ENTTYPE'] =  $cname;
+                }
+                if($field=='ENTSTATUS'){
+                    $cname =   CodeEx02::findByCode($res['ENTSTATUS']);
+                    $res['ENTSTATUS'] =  $cname;
+                }
+
                 $baseArr[] = $res[$field] ;
                 if(
                     is_array($res[$field])
@@ -1082,7 +1082,6 @@ class RunDealBussinessOpportunity extends AbstractCronTask
     //
     static function getYieldPublicContactData($id){
         $datas = [];
-
         $bussinessOpportunity = AdminUserBussinessOpportunityUploadRecord::findById($id);
         $bussinessOpportunity = $bussinessOpportunity->toArray();
 
@@ -1107,17 +1106,17 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 ->getEntLianXi([
                     'entName' => $entName,
                 ])['result'];
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        'getYieldPublicContactData'=>[
-                            '$retData'=>$retData,
-                            '$entName'=>$entName
-                        ]
-                    ]
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    [
+//                        'getYieldPublicContactData'=>[
+//                            '$retData'=>$retData,
+//                            '$entName'=>$entName
+//                        ]
+//                    ]
+//                ])
+//            );
             $retData = LongXinService::complementEntLianXiMobileState($retData);
             $retData = LongXinService::complementEntLianXiPosition($retData, $entName);
 
@@ -1179,24 +1178,35 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
                 //匹配微信名字
                 $matchedWeiXinName = WechatInfo::findByPhoneV2($datautem['lianxi']);
+                 CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        [
+                            'getYieldPublicContactData'=>[
+                                'lianxi'=>$datautem['lianxi'],
+                                '$entName'=>$matchedWeiXinName
+                            ]
+                        ]
+                    ])
+                );
                 if(empty($matchedWeiXinName)){
                     yield $datas[] = array_values(
                         array_merge(
                             [
                                 'comname' =>$entName,
-                                'weixin_name'=>$matchedWeiXinName['weixin'],
+                                'weixin_name'=>$matchedWeiXinName['nickname'],
                             ],
                             $datautem
                         )
                     );
                 }
                  //用微信匹配
-                $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($entName,$matchedWeiXinName['weixin']);
+                $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($entName,$matchedWeiXinName['nickname']);
                 yield $datas[] = array_values(
                     array_merge(
                         [
                             'comname' =>$entName,
-                            'weixin_name'=>$matchedWeiXinName['weixin'],
+                            'weixin_name'=>$matchedWeiXinName['nickname'],
                         ],
                         $datautem,
                         [
@@ -1257,16 +1267,16 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 continue;
             }
             //匹配微信名字
-            $matchedWeiXinName = WechatInfo::findByPhoneV2($recordItem['mobile']);
+            $matchedWeiXinName = WechatInfo::findByPhoneV2(md5($recordItem['mobile']));
             if(empty($matchedWeiXinName)){
                 yield $datas[] =  [
                     'entName' =>$recordItem['entName'],
                     'mobile'=>$recordItem['mobile'],
-                    'weixin'=>$matchedWeiXinName['weixin'],
+                    'weixin'=>$matchedWeiXinName['nickname'],
                 ];
             }
             //用微信匹配
-            $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($recordItem['entName'],$matchedWeiXinName['weixin']);
+            $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($recordItem['entName'],$matchedWeiXinName['nickname']);
             yield $datas[] = array_values(
                 array_merge(
                     [

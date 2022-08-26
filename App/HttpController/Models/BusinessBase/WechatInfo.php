@@ -119,7 +119,7 @@ class WechatInfo extends ModelBase
 
     public static function findByPhone($phone){
         $res =  WechatInfo::create()
-            ->where('phone',$phone)
+            ->where('phone_md5',$phone)
             ->get();
         return $res;
     }
