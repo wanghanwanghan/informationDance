@@ -978,13 +978,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
     // id 商机id
     static function getYieldCompanyData($id){
-        $datas = [
-            [
-                '企业',
-                '税号',
-                '手机号',
-            ]
-        ];
+        $datas = [     ];
 
         $bussinessOpportunity = AdminUserBussinessOpportunityUploadRecord::findById($id);
         $bussinessOpportunity = $bussinessOpportunity->toArray();
@@ -998,6 +992,11 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             }
             $newReords[$Record['entName']][$mobile]  = $mobile;
         }
+        yield $datas[] =  [
+            '企业',
+            '税号',
+            '手机号',
+        ];
         foreach ($newReords as $entName => $mobilesArr){
             //
             $details =  BussinessOpportunityDetails::findOneByName($entName,$id);
