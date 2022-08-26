@@ -1131,17 +1131,17 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 ->getEntLianXi([
                     'entName' => $entName,
                 ])['result'];
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    __CLASS__.__FUNCTION__ .__LINE__,
-//                    [
-//                        'getYieldPublicContactData'=>[
-//                            '$retData'=>$retData,
-//                            '$entName'=>$entName
-//                        ]
-//                    ]
-//                ])
-//            );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        'getYieldPublicContactData'=>[
+                            '$retData'=>$retData,
+                            '$entName'=>$entName
+                        ]
+                    ]
+                ])
+            );
             $retData = LongXinService::complementEntLianXiMobileState($retData);
             $retData = LongXinService::complementEntLianXiPosition($retData, $entName);
 
