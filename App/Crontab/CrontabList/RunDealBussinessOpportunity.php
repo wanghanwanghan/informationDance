@@ -1284,7 +1284,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 );
             }
 
-            continue;
+            //continue;
 
             // 找到上传的文件路径
             self::setworkPath( $rawDataItem['file_path'] );
