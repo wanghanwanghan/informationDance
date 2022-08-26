@@ -1293,12 +1293,12 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
             $file = $fileObject
                 ->defaultFormat($colorStyle)
-                ->header(
-                    [
-                        '标题' , //
-                        '项目名称' , //
-                    ]
-                )
+//                ->header(
+//                    [
+//                        '标题' , //
+//                        '项目名称' , //
+//                    ]
+//                )
                  ->defaultFormat($alignStyle) ;
 
             foreach ($sheet1Datas as $dataItem){
@@ -1314,10 +1314,10 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             //p2
             $file->addSheet('p2')
                 ->defaultFormat($colorStyle)
-                ->header([
-                    '标题' , //
-                    '项目名称' , //
-                ])
+//                ->header([
+//                    '标题' , //
+//                    '项目名称' , //
+//                ])
                 ->defaultFormat($alignStyle)   ;
 
             foreach ($sheet2Datas as $dataItem){
@@ -1334,10 +1334,10 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             //p3
             $file->addSheet('p3')
                 ->defaultFormat($colorStyle)
-                ->header([
-                    '标题' , //
-                    '项目名称' , //
-                ])
+//                ->header([
+//                    '标题' , //
+//                    '项目名称' , //
+//                ])
                 ->defaultFormat($alignStyle)   ;
 
             foreach ($sheet3Datas as $dataItem){
