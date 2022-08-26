@@ -187,6 +187,26 @@ class BusinessOpportunityController extends ControllerBase
                 'operate' => 'like',
             ];
         }
+        $createdAtStr = $requestData['created'];
+        $createdAtArr = explode('|||',$createdAtStr);
+
+        if (
+            !empty($createdAtArr) &&
+            !empty($createdAtStr)
+        ) {
+            $conditions[] =  [
+                'field' => 'created_at',
+                'value' => strtotime($createdAtArr[0].' 00:00:00'),
+                'operate' => '>=',
+            ];
+            $conditions[] = [
+                'field' => 'created_at',
+                'value' => strtotime($createdAtArr[1]." 23:59:59"),
+                'operate' => '<=',
+            ];
+
+        }
+
         $records = AdminUserBussinessOpportunityUploadRecord::findByConditionV2(
             $conditions,
             $page
