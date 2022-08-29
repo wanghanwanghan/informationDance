@@ -43,6 +43,24 @@ class ConfigInfo extends ModelBase
         }
     }
 
+    public static function checkCrontabIfCanRunV2($crontabName){
+        $info = ConfigInfo::findByName('crontab');
+        $config = $info->getAttr("value");
+        $configArr = json_decode($config,true);
+        if(isset($configArr[$crontabName])){
+            // start_time
+            if(!$configArr[$crontabName]['is_running']){
+                return   false;
+            }
+
+            $startTime = $configArr[$crontabName]['is_running'];
+
+            return  $configArr[$crontabName]['is_running']?false:true;
+        } else{
+            return  true;
+        }
+    }
+
     public static function setIsRunning($crontabName){
         CommonService::getInstance()->log4PHP(
             'setIsRunning '.$crontabName

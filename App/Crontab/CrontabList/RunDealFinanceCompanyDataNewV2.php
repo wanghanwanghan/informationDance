@@ -148,15 +148,15 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
 
         //return  true;
         //防止重复跑
-        if(
-            !ConfigInfo::checkCrontabIfCanRun(__CLASS__)
-        ){
-            return     CommonService::getInstance()->log4PHP(json_encode(
-                [
-                    __CLASS__ . ' is already running  ',
-                ]
-            ));
-        }
+//        if(
+//            !ConfigInfo::checkCrontabIfCanRun(__CLASS__)
+//        ){
+//            return     CommonService::getInstance()->log4PHP(json_encode(
+//                [
+//                    __CLASS__ . ' is already running  ',
+//                ]
+//            ));
+//        }
 
         //设置为正在执行中
         ConfigInfo::setIsRunning(__CLASS__);
@@ -185,7 +185,7 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
         self::sendSmsWhenBalanceIsNotEnough();
 
         //设置为已执行完毕
-        ConfigInfo::setIsDone(__CLASS__);
+//        ConfigInfo::setIsDone(__CLASS__);
 
         return true ;   
     }
