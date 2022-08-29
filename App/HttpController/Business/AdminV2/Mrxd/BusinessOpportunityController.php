@@ -228,6 +228,7 @@ class BusinessOpportunityController extends ControllerBase
         );
         foreach ($records['data'] as &$dataitem){
             $dataitem['status_cname'] = AdminUserBussinessOpportunityUploadRecord::getStatusMap()[$dataitem['status']];
+            $dataitem['size'] = self::convert($dataitem['size'])  ;
         }
         return $this->writeJson(200, [
             'page' => $page,
@@ -235,6 +236,12 @@ class BusinessOpportunityController extends ControllerBase
             'total' => $records['total'],
             'totalPage' => ceil($records['total']/$size) ,
         ],  $records['data'],'成功');
+    }
+
+    static  function convert($size)
+    {
+        $unit=array('b','kb','mb','gb','tb','pb');
+        return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
     }
 
     public function redownloadBussinessFile(){
