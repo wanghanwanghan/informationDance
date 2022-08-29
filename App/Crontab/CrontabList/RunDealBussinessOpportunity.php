@@ -26,6 +26,7 @@ use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Models\RDS3\NicCode;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -1094,13 +1095,31 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                     $res['ENTSTATUS'] =  $cname?$cname->getAttr('name'):'';
                 }
 
-                //
+                //地区
+                if(
+                    $field=='DOMDISTRICT' &&
+                    $res['DOMDISTRICT'] >0
+                ){
+                    $regionRes = CompanyBasic::findRegion($res['DOMDISTRICT']);
+                    $res['DOMDISTRICT'] =  $regionRes['name'];
+                }
 
-                $baseArr[] = $res[$field] ;
+                //行业分类代码  findNICID
+
+                if(
+                    $field=='NIC_ID' &&
+                    $res['NIC_ID'] >0
+                ){
+                    $nicRes = NicCode::findNICID($res['NIC_ID']);
+                    $res['NIC_ID'] =  $nicRes['industry'];
+                }
+
                 if(
                     is_array($res[$field])
                 ){
                     $baseArr[] = empty($res[$field])?'无':'有' ;
+                }else{
+                    $baseArr[] = $res[$field] ;
                 }
             }
             yield $datas[] = $baseArr;

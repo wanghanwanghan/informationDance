@@ -28,6 +28,7 @@ class CodeEx02 extends ModelBase
         return $res;
     }
 
+
     public static function findByCode($UNISCID){
         $res =  CodeEx02::create()
             ->where('code',$UNISCID)

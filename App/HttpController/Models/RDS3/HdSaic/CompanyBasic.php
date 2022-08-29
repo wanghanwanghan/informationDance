@@ -43,6 +43,14 @@ class CompanyBasic extends ModelBase
     }
 
 
+    public static function findRegion($code){
+        $Sql = "SELECT * FROM code_region  WHERE `code` = '$code' limit 1  " ;
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_hd_saic'));
+        return $data[0];
+    }
+
+
+
 
     public static function findCancelDateByCode($UNISCID){
         $res =  self::findByCode($UNISCID);

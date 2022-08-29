@@ -171,7 +171,7 @@ class AdminUserSoukeConfig extends ModelBase
             'zlxxcy' => '战略新兴产业',
             'szjjcy' => '数字经济产业',
             'jin_chu_kou' => '进出口',
-            'iso' => '高新技术',
+            'iso' => 'iso',
         ];
         return $fields;
     }
