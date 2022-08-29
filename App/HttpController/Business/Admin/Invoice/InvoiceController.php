@@ -76,7 +76,6 @@ class InvoiceController extends InvoiceBase
                         ->where('fileUrl', '', '<>')
                         ->order('created_at', 'desc')
                         ->all();
-                    CommonService::getInstance()->log4PHP(['另一张表', $info]);
                     if (!empty($info)) {
                         foreach ($info as $one_auth) {
                             if (
@@ -106,7 +105,6 @@ class InvoiceController extends InvoiceBase
             }
             fclose($fp);
             $pdf[] = TEMP_FILE_PATH . $filename . '.csv';
-            CommonService::getInstance()->log4PHP($pdf);
             ZipService::getInstance()->zip($pdf, TEMP_FILE_PATH . $filename . '.zip');
             $path = $filename;
         }
