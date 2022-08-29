@@ -1087,12 +1087,14 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
                 if($field=='ENTTYPE'){
                     $cname =   CodeCa16::findByCode($res['ENTTYPE']);
-                    $res['ENTTYPE'] =  $cname;
+                    $res['ENTTYPE'] =  $cname?$cname->getAttr('name'):'';
                 }
                 if($field=='ENTSTATUS'){
                     $cname =   CodeEx02::findByCode($res['ENTSTATUS']);
-                    $res['ENTSTATUS'] =  $cname;
+                    $res['ENTSTATUS'] =  $cname?$cname->getAttr('name'):'';
                 }
+
+                //
 
                 $baseArr[] = $res[$field] ;
                 if(

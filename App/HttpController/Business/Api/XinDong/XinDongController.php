@@ -3619,6 +3619,21 @@ eof;
 
     function testExport()
     {
+        if(
+            $this->getRequestData('code_region')
+        ){
+
+            $Sql = "SELECT * FROM code_region  WHERE `code` = '110000' " ;
+            $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_hd_saic'));
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                $data,
+                '成功',
+                true,
+                []
+            );
+        }
 
 
         if(
