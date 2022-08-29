@@ -1105,13 +1105,33 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 }
 
                 //行业分类代码  findNICID
-
                 if(
                     $field=='NIC_ID' &&
                     $res['NIC_ID'] >0
                 ){
                     $nicRes = NicCode::findNICID($res['NIC_ID']);
                     $res['NIC_ID'] =  $nicRes['industry'];
+                }
+
+                //一般人
+                if(
+                    $field=='yi_ban_ren'
+                ){
+                    $res['yi_ban_ren'] =  $res['yi_ban_ren']?'有':'无';
+                }
+
+                //战略新兴产业
+                if(
+                    $field=='zlxxcy'
+                ){
+                    $res['zlxxcy'] =  $res['zlxxcy']?'有':'无';
+                }
+
+                //数字经济产业
+                if(
+                    $field=='szjjcy'
+                ){
+                    $res['szjjcy'] =  $res['szjjcy']?'有':'无';
                 }
 
                 if(

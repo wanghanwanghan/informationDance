@@ -43,6 +43,15 @@ class BusinessOpportunityController extends ControllerBase
             try {
                 $fileName = $oneFile->getClientFilename();
                 $path = TEMP_FILE_PATH . $fileName;
+
+                $ext = pathinfo($path);
+                if(
+                    $ext['extension']!='.xlsx'
+                ){
+                    return $this->writeJson(203, [], [],'不是xlsx文件！');;
+                }
+
+
                 if(file_exists($path)){
                     return $this->writeJson(203, [], [],'文件已存在！');;
                 }
