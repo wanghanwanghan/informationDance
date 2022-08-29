@@ -655,7 +655,7 @@ class DianZiQianService extends ServiceBase
                     continue;
                 }
                 $this->updateDianZiQianPersonalResultCode($v['id'], $contractSignStatus,$contractCode);
-                if($contractSignStatus['result']['resultCode'] < 1) $flag = false;
+                if($contractSignStatus['result']['resultCode'] != 1 && $contractSignStatus['result']['resultCode'] != -1) $flag = false;
             }
             $url = '';
             if($contractSignStatus['result']['resultCode'] >0){
