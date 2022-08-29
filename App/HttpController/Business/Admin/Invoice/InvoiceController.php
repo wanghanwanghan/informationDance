@@ -82,7 +82,7 @@ class InvoiceController extends InvoiceBase
                                 !empty($one_auth->getAttr('filePath')) &&
                                 file_exists(INV_AUTH_PATH . $one_auth->getAttr('fileUrl'))
                             ) {
-                                $pdf[] = INV_AUTH_PATH . $one->getAttr('fileUrl');
+                                $pdf[] = INV_AUTH_PATH . $one_auth->getAttr('fileUrl');
                                 break;
                             }
                         }
