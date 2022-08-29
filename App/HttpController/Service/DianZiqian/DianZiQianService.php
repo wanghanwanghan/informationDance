@@ -622,7 +622,7 @@ class DianZiQianService extends ServiceBase
     }
 
     public function getUrl(){
-        $data = DianZiQianAuth::create()->where("entUrlResultCode = 0 or personalUrlResultCode = 0 or url <>''")->all();
+        $data = DianZiQianAuth::create()->where("entUrlResultCode = 0 or personalUrlResultCode = 0 or (url ='' and (entUrl <>'' or personalUrl <>''))")->all();
         if(empty($data)){
             return $this->createReturn(200, null, [], '没有需要查询的数据');
         }
