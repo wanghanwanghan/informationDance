@@ -80,7 +80,7 @@ class InvoiceController extends InvoiceBase
                     if (!empty($info)) {
                         foreach ($info as $one_auth) {
                             if (
-                                !empty($one_auth->getAttr('filePath')) &&
+                                !empty($one_auth->getAttr('fileUrl')) &&
                                 file_exists(INV_AUTH_PATH . $one_auth->getAttr('fileUrl'))
                             ) {
                                 $pdf[] = INV_AUTH_PATH . $one_auth->getAttr('fileUrl');
