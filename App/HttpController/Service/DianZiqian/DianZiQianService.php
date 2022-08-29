@@ -622,7 +622,7 @@ class DianZiQianService extends ServiceBase
     }
 
     public function getUrl(){
-        $data = DianZiQianAuth::create()->where("entUrlResultCode = 0 or personalUrlResultCode = 0")->all();
+        $data = DianZiQianAuth::create()->where("entUrlResultCode = 0 or personalUrlResultCode = 0 or (url ='' and (entUrl <>'' or personalUrl <>''))")->all();
         if(empty($data)){
             return $this->createReturn(200, null, [], '没有需要查询的数据');
         }
@@ -648,14 +648,14 @@ class DianZiQianService extends ServiceBase
             }
             //法人章签署状态查询
             $nowData = DianZiQianAuth::create()->get($v['id']);
-            if($v['personalUrlResultCode'] < 1 && ($nowData->getAttr('entUrlResultCode') == 1|| $nowData->getAttr('entUrlResultCode') == 2)) {
+            if($v['personalUrlResultCode'] == 0 && ($nowData->getAttr('entUrlResultCode') == 1|| $nowData->getAttr('entUrlResultCode') == 2)) {
                 $contractSignStatus = $this->contractSignStatus($personalTransactionCode);
                 if ($contractSignStatus['code'] != 200) {
                     dingAlarm('法人章签署状态查询异常', ['$contractSignStatus' => json_encode($contractSignStatus)]);
                     continue;
                 }
                 $this->updateDianZiQianPersonalResultCode($v['id'], $contractSignStatus,$contractCode);
-                if($contractSignStatus['result']['resultCode'] < 1) $flag = false;
+                if($contractSignStatus['result']['resultCode'] != 1 && $contractSignStatus['result']['resultCode'] != -1) $flag = false;
             }
             $url = '';
             if($contractSignStatus['result']['resultCode'] >0){
