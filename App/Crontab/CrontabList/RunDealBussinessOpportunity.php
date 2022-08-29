@@ -1204,26 +1204,26 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             yield $datas[] = [
                 '企业名',
                 '微信名',
-                '联系人职位',
-                '联系方式来源',
-                '联系方式唯一标识',
-                'ltype',
-                '联系人姓名',
-                '联系方式权重',
-                '手机归属地/座机区号',
-                '联系方式来源网页链接',
-                '联系方式',
-                '联系方式类型（手机/座机/邮箱）',
-                'mobile_check_res',
-                '手机号码状态',
-                '联系人姓名匹配到的职位',
-                '联系人名称（疑似）',
-                '职位（疑似）',
-                '真实联系人',
-                '实际职位',
-                '匹配类型',
-                '匹配子类型',
-                '匹配值',
+                '联系人职位[url]',
+                '联系方式来源[url]',
+                '联系方式唯一标识[url]',
+                'ltype[url]',
+                '联系人姓名[url]',
+                '联系方式权重[url]',
+                '手机归属地/座机区号[url]',
+                '联系方式来源网页链接[url]',
+                '联系方式[url]',
+                '联系方式类型（手机/座机/邮箱）[url]',
+                'mobile_check_res[url]',
+                '手机号码状态[url]',
+                'url联系人姓名匹配到的职位[url]',
+                '联系人名称（疑似）[微信匹配]',
+                '职位（疑似）[微信匹配]',
+                '真实联系人[微信匹配]',
+                '实际职位[微信匹配]',
+                '匹配类型[微信匹配]',
+                '匹配子类型[微信匹配]',
+                '匹配值[微信匹配]',
             ];
             foreach($retData as $datautem){
                 /**
@@ -1273,6 +1273,18 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 }
                  //用微信匹配
                 $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($entName,$matchedWeiXinName['nickname']);
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        [
+                            'getYieldPublicContactData'=>[
+                                'match_by_weixin_res'=> $tmpRes,
+                                'nickname'=> $matchedWeiXinName['nickname'],
+                                '$entName'=> $entName,
+                            ]
+                        ]
+                    ])
+                );
                 yield $datas[] = array_values(
                     array_merge(
                         [
@@ -1317,13 +1329,13 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             '企业名',
             '手机号',
             '微信',
-            '联系人名称（疑似）',
-            '职位（疑似）',
-            '真实联系人',
-            '实际职位',
-            '匹配类型',
-            '匹配子类型',
-            '匹配值',
+            '联系人名称（疑似）[微信匹配]',
+            '职位（疑似）[微信匹配]',
+            '真实联系人[微信匹配]',
+            '实际职位[微信匹配]',
+            '匹配类型[微信匹配]',
+            '匹配子类型[微信匹配]',
+            '匹配值[微信匹配]',
         ];
 
         foreach ($allRecords as $recordItem){
