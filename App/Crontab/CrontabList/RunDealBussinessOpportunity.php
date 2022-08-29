@@ -1276,8 +1276,8 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                         __CLASS__.__FUNCTION__ .__LINE__,
                         [
                             'getYieldPublicContactData'=>[
-                                'match_by_weixin_res'=> $tmpRes,
-                                'nickname'=> $matchedWeiXinName['nickname'],
+                                'match_by_weixin_res1'=> $tmpRes,
+                                'nickname2'=> $matchedWeiXinName['nickname'],
                                 '$entName'=> $entName,
                             ]
                         ]
@@ -1329,7 +1329,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             '手机号',
             '微信',
             '联系人名称（疑似）[微信匹配]',
-            '职位（疑似）[微信匹配]', 
+            '职位（疑似）[微信匹配]',
             '匹配类型[微信匹配]',
             '匹配子类型[微信匹配]',
             '匹配值[微信匹配]',
