@@ -48,7 +48,7 @@ class BusinessOpportunityController extends ControllerBase
                 if(
                     $ext['extension']!='.xlsx'
                 ){
-                    return $this->writeJson(203, [], [],'不是xlsx文件！');;
+                    return $this->writeJson(203, [], [],'不是xlsx文件('.$ext['extension'].')！');;
                 }
 
 
@@ -169,6 +169,7 @@ class BusinessOpportunityController extends ControllerBase
         );
         foreach ($records['data'] as &$dataitem){
             $dataitem['status_cname'] = AdminUserBussinessOpportunityUploadRecord::getStatusMap()[$dataitem['status']];
+            $dataitem['size'] = self::convert($dataitem['size']) ;
         }
         return $this->writeJson(200, [
             'page' => $page,
