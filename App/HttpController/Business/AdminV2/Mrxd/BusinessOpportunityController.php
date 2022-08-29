@@ -46,7 +46,7 @@ class BusinessOpportunityController extends ControllerBase
 
                 $ext = pathinfo($path);
                 if(
-                    $ext['extension']!='.xlsx'
+                    $ext['extension']!='xlsx'
                 ){
                     return $this->writeJson(203, [], [],'不是xlsx文件('.$ext['extension'].')！');;
                 }
