@@ -648,7 +648,7 @@ class DianZiQianService extends ServiceBase
             }
             //法人章签署状态查询
             $nowData = DianZiQianAuth::create()->get($v['id']);
-            if($v['personalUrlResultCode'] < 1 && ($nowData->getAttr('entUrlResultCode') == 1|| $nowData->getAttr('entUrlResultCode') == 2)) {
+            if($v['personalUrlResultCode'] == 0 && ($nowData->getAttr('entUrlResultCode') == 1|| $nowData->getAttr('entUrlResultCode') == 2)) {
                 $contractSignStatus = $this->contractSignStatus($personalTransactionCode);
                 if ($contractSignStatus['code'] != 200) {
                     dingAlarm('法人章签署状态查询异常', ['$contractSignStatus' => json_encode($contractSignStatus)]);
