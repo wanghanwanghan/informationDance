@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Admin\Invoice;
 
 use App\HttpController\Models\Api\AntAuthList;
+use App\HttpController\Models\Api\AntAuthSealDetail;
 use App\HttpController\Models\Api\DianZiQianAuth;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\MaYi\MaYiService;
@@ -38,7 +39,7 @@ class InvoiceController extends InvoiceBase
         }
 
         return $this->writeJson(200, null, $orm->all());
-    } 
+    }
 
     function createZip(): bool
     {
@@ -67,6 +68,25 @@ class InvoiceController extends InvoiceBase
             foreach ($target as $one) {
                 if (!empty($one->getAttr('filePath')) && file_exists(INV_AUTH_PATH . $one->getAttr('filePath'))) {
                     $pdf[] = INV_AUTH_PATH . $one->getAttr('filePath');
+                } else {
+                    //从另一张表里找
+                    $info = AntAuthSealDetail::create()
+                        ->where('antAuthId', $one->getAttr('id'))
+                        ->where('type', 4)
+                        ->where('fileUrl', '', '<>')
+                        ->order('created_at', 'desc')
+                        ->all();
+                    if (!empty($info)) {
+                        foreach ($info as $one_auth) {
+                            if (
+                                !empty($one_auth->getAttr('filePath')) &&
+                                file_exists(INV_AUTH_PATH . $one_auth->getAttr('fileUrl'))
+                            ) {
+                                $pdf[] = INV_AUTH_PATH . $one->getAttr('fileUrl');
+                                break;
+                            }
+                        }
+                    }
                 }
                 $insert = [];
                 $insert[] = $one->getAttr('province');
