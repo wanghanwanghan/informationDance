@@ -1134,6 +1134,21 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                     $res['szjjcy'] =  $res['szjjcy']?'有':'无';
                 }
 
+
+                if(
+                    $field=='jin_chu_kou'
+                ){
+                    $res['jin_chu_kou'] =  $res['jin_chu_kou']?'有':'无';
+                }
+
+
+                if(
+                    $field=='iso'
+                ){
+                    $res['iso'] =  $res['iso']?'有':'无';
+                }
+
+
                 if(
                     is_array($res[$field])
                 ){
