@@ -228,7 +228,14 @@ class BusinessOpportunityController extends ControllerBase
         );
         foreach ($records['data'] as &$dataitem){
             $dataitem['status_cname'] = AdminUserBussinessOpportunityUploadRecord::getStatusMap()[$dataitem['status']];
-            $dataitem['size'] = self::convert($dataitem['size'])  ;
+            $dataitem['size'] = self::convert($dataitem['size']) ;
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'size1'   => $dataitem['size'],
+                    'size2'   => self::convert($dataitem['size']),
+                ])
+            );
         }
         return $this->writeJson(200, [
             'page' => $page,
