@@ -59,7 +59,7 @@ function dingAlarmAtUser($title,$arr,$user){
             'msg' => $item,
         ];
     }
-    $res = dingAlarmMarkdownForWork($title,$text,$user);
+    $res = dingAlarmMarkdownForWorkAtUser($title,$text,$user);
     CommonService::getInstance()->log4PHP($res,'info','dingAlarm');
 }
 
@@ -71,7 +71,7 @@ function dingAlarmMarkdownForWorkAtUser($title,$text,$user){
     }
 
     $msg = ['title'=>$title,'text'=>$content];
-    $data = array ('msgtype' => 'markdown','markdown' => $msg,'atUserIds'=>$user);
+    $data = array ('msgtype' => 'markdown','markdown' => $msg,'at'=>['atMobiles'=>$user]);
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $webhook);
     curl_setopt($ch, CURLOPT_POST, 1);
