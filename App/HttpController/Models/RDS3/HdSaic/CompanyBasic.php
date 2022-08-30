@@ -234,6 +234,10 @@ class CompanyBasic extends ModelBase
                 ($legth+strlen($wordItem)) >= 16
             ){
                 if($legth==0){
+                    if(strlen($wordItem)==9){
+                        $newName = $wordItem;
+                        break;
+                    }
                     //$areasArr;
                     //太短了
                     if(strlen($wordItem)<=8){
