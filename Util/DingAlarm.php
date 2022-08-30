@@ -71,7 +71,7 @@ function dingAlarmMarkdownForWorkAtUser($title,$text,$user){
     }
 
     $msg = ['title'=>$title,'text'=>$content];
-    $data = array ('msgtype' => 'markdown','markdown' => $msg,'atUserIds'=>$user);
+    $data = array ('msgtype' => 'markdown','markdown' => $msg,'atMobiles'=>$user);
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $webhook);
     curl_setopt($ch, CURLOPT_POST, 1);
