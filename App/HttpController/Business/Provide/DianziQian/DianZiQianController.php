@@ -112,7 +112,19 @@ class DianZiQianController extends ProvideBase
         $res = (new DianZiQianService())->doTemporaryAction();
         return $this->writeJson($res['code'], null, $res, '成功');
     }
-
+    public function accountInfo(){
+        $res = (new DianZiQianService())->accountInfo();
+        return $this->writeJson($res['code'], null, $res, '成功');
+    }
+    public function costRecord(){
+        $freezeDate = $this->getRequestData('freezeDate');
+        if(empty($freezeDate)){
+            return $this->writeJson(201, null, [], 'freezeDate不能为空');
+        }
+        $postData = ['freezeDate'=>$freezeDate];
+        $res = (new DianZiQianService())->costRecord($postData);
+        return $this->writeJson($res['code'], null, $res, '成功');
+    }
     function testInvEntList():bool
     {
         $tmp = $this->getRequestData('data');
