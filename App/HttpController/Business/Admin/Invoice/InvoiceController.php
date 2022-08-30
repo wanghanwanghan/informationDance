@@ -143,12 +143,9 @@ class InvoiceController extends InvoiceBase
                             ]
                         );
                         //这里把traceNo入库
-                        $success = $task_res['success'] ?? '';
                         $code = $task_res['code'] ?? '';
-                        $msg = $task_res['msg'] ?? '';
-                        $data = $task_res['data'] ?? '';
-                        if ($success === true && $code === 'S000' && $msg === '请求成功' && !empty($data)) {
-                            $data = base64_decode($data);
+                        $data = $task_res['result'] ?? '';
+                        if ($code === 'S000' && !empty($data)) {
                             JinCaiRwh::create()->data([
                                 'entName' => $info->getAttr('entName'),
                                 'socialCredit' => $info->getAttr('socialCredit'),
@@ -156,8 +153,8 @@ class InvoiceController extends InvoiceBase
                                 'rwh' => trim($data['traceNo']),
                                 'province' => trim($data['province']),
                                 'taskCode' => trim($data['taskCode']),
-                                'kprqq' => strtotime($data['ywBody']['kprqq']) - 0,
-                                'kprqz' => strtotime($data['ywBody']['kprqz']) - 0,
+                                'kprqq' => str_replace('-', '', $data['ywBody']['kprqq']) - 0,
+                                'kprqz' => str_replace('-', '', $data['ywBody']['kprqz']) - 0,
                                 'cxlx' => trim($data['ywBody']['cxlx']) - 0,
                             ])->save();
                         } else {
