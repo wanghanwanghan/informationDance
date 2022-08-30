@@ -1041,6 +1041,28 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
         if(!empty($newReords)){
             yield $datas[] =  $title;
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        'generateNewFile'=>[
+                            'add field' => '',
+                        ]
+                    ]
+                ])
+            );
+        }
+        else{
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        'generateNewFile'=>[
+                            'add no field' => '',
+                        ]
+                    ]
+                ])
+            );
         }
         foreach ($newReords as $entName => $mobilesArr){
             //
