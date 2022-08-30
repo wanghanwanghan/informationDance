@@ -120,6 +120,7 @@ class CompanyBasic extends ModelBase
             ])
         );
         $validWordsArr = [];
+        $areasArr = [];
         foreach ($wordsArr as $wordItem){
             //删除省份
             if(
@@ -134,6 +135,9 @@ class CompanyBasic extends ModelBase
                     ]
                 ])
             );
+                $province = $dataArr['province'];
+                $name = str_replace("（", "", $name);
+                $areasArr[] = $dataArr['province'];
                 continue;
             }
             //删除市

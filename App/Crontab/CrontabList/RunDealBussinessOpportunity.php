@@ -1464,7 +1464,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             ];
 
             $excel = new \Vtiful\Kernel\Excel($config);
-            $fileObject = $excel->fileName($filename, 'p1');
+            $fileObject = $excel->fileName($filename, '企业基本信息');
             $fileHandle = $fileObject->getHandle();
 
             $format = new Format($fileHandle);
@@ -1501,7 +1501,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             }
             //==============================================
             //p2
-            $file->addSheet('p2')
+            $file->addSheet('公开数据')
                 ->defaultFormat($colorStyle)
 //                ->header([
 //                    '标题' , //
@@ -1521,7 +1521,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             }
             //==============================================
             //p3
-            $file->addSheet('p3')
+            $file->addSheet('非公开')
                 ->defaultFormat($colorStyle)
 //                ->header([
 //                    '标题' , //
