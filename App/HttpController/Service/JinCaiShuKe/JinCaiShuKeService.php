@@ -380,9 +380,9 @@ class JinCaiShuKeService extends ServiceBase
     }
 
     //无盘 查询状态接口
-    function obtainTaskStatus(string $traceNo): array
+    function obtainResultTraceNo(string $traceNo): array
     {
-        $url = 'api/obtainTaskStatus';
+        $url = 'api/obtainResultTraceNo';
 
         $post_data = [
             'traceNo' => trim($traceNo)
