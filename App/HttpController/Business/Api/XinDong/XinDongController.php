@@ -3619,6 +3619,23 @@ eof;
 
     function testExport()
     {
+
+
+        if(
+            $this->getRequestData('jieba')
+        ){
+
+            $jieba = jieba('北京每日心动有限公司', 0);
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                $data,
+                '成功',
+                true,
+                []
+            );
+        }
+
         if(
             $this->getRequestData('code_region')
         ){
