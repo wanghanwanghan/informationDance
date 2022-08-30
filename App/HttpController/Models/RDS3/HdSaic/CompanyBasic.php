@@ -236,7 +236,7 @@ class CompanyBasic extends ModelBase
             $legth += strlen($wordItem);
         }
 
-        return $name;
+        return $newName;
     }
 
 }
