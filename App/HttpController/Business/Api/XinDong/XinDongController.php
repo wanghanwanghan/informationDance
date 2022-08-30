@@ -3633,7 +3633,8 @@ eof;
                 //CommonService::ClearHtml($res['body']),
                [
                    CompanyBasic::findBriefName($this->getRequestData('jieba')),
-                   jieba($this->getRequestData('jieba'), 0)
+                   jieba($this->getRequestData('jieba'), 0),
+                   jieba($this->getRequestData('jieba'), 1),
                ],
                 '成功',
                 true,
