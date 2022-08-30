@@ -4,6 +4,7 @@ namespace App\HttpController\Models\RDS3\HdSaic;
 
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\ModelBase;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 
 class CompanyBasic extends ModelBase
