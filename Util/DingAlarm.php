@@ -59,7 +59,7 @@ function dingAlarmAtUser($title,$arr,$user){
             'msg' => $item,
         ];
     }
-    $res = dingAlarmMarkdownForWork($title,$text,$user);
+    $res = dingAlarmMarkdownForWorkAtUser($title,$text,$user);
     CommonService::getInstance()->log4PHP($res,'info','dingAlarm');
 }
 
