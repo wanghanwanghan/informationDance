@@ -1192,7 +1192,7 @@ return $output;
         $param     = $this->buildParam([], $path);
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param);
+            ->send($this->url . $path, $param,[], ['enableSSL' => true], 'GET');
         CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'signerPerson');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
@@ -1201,10 +1201,10 @@ return $output;
      */
     public function costRecord($postData){
         $path      = '/open-api/trade/costRecord';
-        $param     = $this->buildParam(['c'=> $postData['$postData']], $path);//时间格式yyyy-MM-dd
+        $param     = $this->buildParam(['freezeDate'=> $postData[$postData]], $path);//时间格式yyyy-MM-dd
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param);
+            ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
         CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'signerPerson');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
