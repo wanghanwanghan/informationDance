@@ -1197,7 +1197,7 @@ return $output;
                         [
                             '累计充值下单金额总额' => $resp['data']['totalAmount'],
                             '已使用金额总额' => $resp['data']['usedAmount'],
-                            '目前可用金额' => "<fontcolor=#FF0000size=6face='黑体'>".$resp['data']['availableAmount']."</font>",
+                            '目前可用金额' => "<font color=#FF0000size=6face='黑体'>".$resp['data']['availableAmount']."</font>",
                             '查看人'=>'@18511881968'
                         ],
                         ['18511881968']
