@@ -856,8 +856,12 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             $companyDatas = self::getYieldData($rawDataItem['name']);
             foreach ($companyDatas as $companyDataItem){
                 $str = $companyDataItem[0];
+
                 $dataArr = explode('|',$str);
                 $name1 = $dataArr[0];
+                if(empty($name1)){
+                    continue;
+                }
                 $code1 = $dataArr[1];
                 $mobileString = $dataArr[2];
 //                CommonService::getInstance()->log4PHP(
@@ -1069,11 +1073,16 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             $details =  BussinessOpportunityDetails::findOneByName($entName,$id);
             $details =  $details->toArray();
             $code = trim($details['entCode']);
-
+            $newMobielsArr = [];
+            foreach ($mobilesArr as $mobileItem){
+                if($mobileItem>0){
+                    $newMobielsArr[] = $mobileItem;
+                }
+            }
             $baseArr = [
                 $entName, //企业,
                 $code,//税号,
-                join(',',$mobilesArr)//手机号,
+                join(',',$newMobielsArr)//手机号,
             ];
 
             if(!$bussinessOpportunity['get_all_field']){
