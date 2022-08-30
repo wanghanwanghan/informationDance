@@ -121,6 +121,28 @@ class CompanyBasic extends ModelBase
         $validWordsArr = [];
         $areasArr = '';
         foreach ($wordsArr as $wordItem){
+            if(
+                in_array(
+                    $wordItem.'县', $wordsArr
+                )
+            ){
+                continue;
+            }
+            if(
+                in_array(
+                    $wordItem.'省', $wordsArr
+                )
+            ){
+                continue;
+            }
+            if(
+                in_array(
+                    $wordItem.'市', $wordsArr
+                )
+            ){
+                continue;
+            }
+
             //删除省份
             if(
                 in_array($wordItem, $dataArr['province'])
@@ -241,7 +263,7 @@ class CompanyBasic extends ModelBase
             if(
                 $legth==9
             ){
-                
+
                 break;
             }
 
