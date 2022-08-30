@@ -3625,17 +3625,13 @@ eof;
             $this->getRequestData('jieba')
         ){
 
-            $jieba0 = jieba($this->getRequestData('jieba'), 0);
-            $jieba1 = jieba($this->getRequestData('jieba'), 1);
-            $jieba2 = jieba($this->getRequestData('jieba'), 2);
+//            $jieba0 = jieba($this->getRequestData('jieba'), 0);
+//            $jieba1 = jieba($this->getRequestData('jieba'), 1);
+//            $jieba2 = jieba($this->getRequestData('jieba'), 2);
             return $this->writeJson(
                 200,[] ,
                 //CommonService::ClearHtml($res['body']),
-                [
-                    $jieba0 ,
-                    $jieba1 ,
-                    $jieba2 ,
-                ],
+                CompanyBasic::findBriefName($this->getRequestData('jieba')),
                 '成功',
                 true,
                 []
