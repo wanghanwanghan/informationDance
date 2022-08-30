@@ -64,7 +64,7 @@ function dingAlarmAtUser($title,$arr,$user){
 }
 
 function dingAlarmMarkdownForWorkAtUser($title,$text,$user){
-    $webhook = 'https://oapi.dingtalk.com/robot/send?access_token=188728702d363a6eb79bccd584361da3f6de3a83e19071403345871747cd2482';
+    $webhook = 'https://oapi.dingtalk.com/robot/send?access_token=54c82e7b5c12b9c4d866cf9f8ac8857cf3e80516c5f261544f0b1a799be8c846';
     $content = "# **{$title}**\n";
     foreach ($text as $item) {
         $content .= "> **{$item['name']}：** {$item['msg']}\n\n";
