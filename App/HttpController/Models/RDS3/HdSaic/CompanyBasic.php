@@ -134,8 +134,8 @@ class CompanyBasic extends ModelBase
                     ]
                 ])
             );
-                $province = $dataArr['province'];
-                $province = str_replace("省", "", $province);
+
+                $province = str_replace("省", "", $wordItem);
                 $areasArr = $province;
                 continue;
             }
@@ -152,8 +152,8 @@ class CompanyBasic extends ModelBase
                         ]
                     ])
                 );
-                $cities = $dataArr['cities'];
-                $cities = str_replace("市", "", $cities);
+
+                $cities = str_replace("市", "", $wordItem);
                 $areasArr = $cities;
                 continue;
             }
@@ -171,8 +171,8 @@ class CompanyBasic extends ModelBase
                         ]
                     ])
                 );
-                $cities = $dataArr['cities'];
-                $cities = str_replace("市", "", $cities);
+
+                $cities = str_replace("市", "", $wordItem);
                 $areasArr = $cities;
                 continue;
             }
@@ -187,8 +187,8 @@ class CompanyBasic extends ModelBase
                         ]
                     ])
                 );
-                $district = $dataArr['district'];
-                $district = str_replace("县", "", $district);
+
+                $district = str_replace("县", "", $wordItem);
                 $areasArr = $district;
                 continue;
             }
@@ -200,7 +200,7 @@ class CompanyBasic extends ModelBase
                 __CLASS__.__FUNCTION__ .__LINE__,
                 [
                     'findBriefName'=>'$areasArr',
-                    '$areasArr'=>$areasArr,
+                    '$areasArr1'=>$areasArr,
                 ]
             ])
         );
@@ -239,7 +239,7 @@ class CompanyBasic extends ModelBase
                     //$areasArr;
                     //太短了
                     if(strlen($wordItem)<=8){
-                        
+
                         $newName = $areasArr.$wordItem;
                     }
                     else{
