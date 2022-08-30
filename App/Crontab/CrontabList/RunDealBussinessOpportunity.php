@@ -1039,7 +1039,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             $title[] = $cname ;
         }
 
-        if(!empty($newReords)){
+        if($bussinessOpportunity['get_all_field']){
             yield $datas[] =  $title;
             CommonService::getInstance()->log4PHP(
                 json_encode([
