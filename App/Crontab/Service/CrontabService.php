@@ -10,6 +10,7 @@ use App\Crontab\CrontabList\GetAuthBookDZQ;
 use App\Crontab\CrontabList\GetInvData;
 use App\Crontab\CrontabList\GetInvDataJinCai;
 use App\Crontab\CrontabList\MoveOut;
+use App\Crontab\CrontabList\RunCheckCapital;
 use App\Crontab\CrontabList\RunDianZiQianGetPdf;
 use App\Crontab\CrontabList\RunJinCaiShuKeRWH;
 use App\Crontab\CrontabList\RunSaiMengHuiZhiCaiWu;
@@ -61,9 +62,13 @@ class CrontabService
         $this->RunDealEmailReceiver();//
         $this->RunDealCarInsuranceInstallment();//
         $this->RunDealBussinessOpportunity();//
+        $this->RunCheckCapital();
         return true;
     }
-
+    private function RunCheckCapital():Crontab
+    {
+        return Crontab::getInstance()->addTask(RunCheckCapital::class);
+    }
     private function RunJinCaiShuKeRWH():Crontab
     {
         return Crontab::getInstance()->addTask(RunJinCaiShuKeRWH::class);
