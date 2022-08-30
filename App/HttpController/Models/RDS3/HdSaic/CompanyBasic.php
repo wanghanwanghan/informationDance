@@ -120,7 +120,7 @@ class CompanyBasic extends ModelBase
             ])
         );
         $validWordsArr = [];
-        $areasArr = [];
+        $areasArr = '';
         foreach ($wordsArr as $wordItem){
             //删除省份
             if(
@@ -136,8 +136,8 @@ class CompanyBasic extends ModelBase
                 ])
             );
                 $province = $dataArr['province'];
-                $name = str_replace("（", "", $name);
-                $areasArr[] = $dataArr['province'];
+                $province = str_replace("省", "", $province);
+                $areasArr = $province;
                 continue;
             }
             //删除市
@@ -153,6 +153,9 @@ class CompanyBasic extends ModelBase
                         ]
                     ])
                 );
+                $cities = $dataArr['cities'];
+                $cities = str_replace("市", "", $cities);
+                $areasArr = $cities;
                 continue;
             }
 
@@ -169,6 +172,9 @@ class CompanyBasic extends ModelBase
                         ]
                     ])
                 );
+                $cities = $dataArr['cities'];
+                $cities = str_replace("市", "", $cities);
+                $areasArr = $cities;
                 continue;
             }
             // 删除县
@@ -182,6 +188,9 @@ class CompanyBasic extends ModelBase
                         ]
                     ])
                 );
+                $district = $dataArr['district'];
+                $district = str_replace("县", "", $district);
+                $areasArr = $district;
                 continue;
             }
             $validWordsArr[] = $wordItem;
@@ -218,7 +227,14 @@ class CompanyBasic extends ModelBase
                 ($legth+strlen($wordItem)) >= 16
             ){
                 if($legth==0){
-                    $newName = $wordItem;
+                    //$areasArr;
+                    //太短了
+                    if(strlen($wordItem)<=8){
+                        $newName = $areasArr.$wordItem;
+                    }
+                    else{
+                        $newName = $wordItem;
+                    }
                 }
 
                 CommonService::getInstance()->log4PHP(
