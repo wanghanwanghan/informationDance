@@ -172,8 +172,6 @@ class CompanyBasic extends ModelBase
                     ])
                 );
 
-                $cities = str_replace("市", "", $wordItem);
-                $areasArr = $cities;
                 continue;
             }
             // 删除县
@@ -199,8 +197,8 @@ class CompanyBasic extends ModelBase
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 [
-                    'findBriefName'=>'$areasArr',
-                    '$areasArr1'=>$areasArr,
+                    'findBriefName'=>'$validWordsArr',
+                    '$validWordsArr'=>$validWordsArr,
                 ]
             ])
         );
@@ -209,8 +207,8 @@ class CompanyBasic extends ModelBase
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 [
-                    'findBriefName'=>'to_short',
-                    '$wordItem'=>$wordItem,
+                    'findBriefName'=>'$areasArr',
+                    '$areasArr'=>$areasArr,
                 ]
             ])
         );
