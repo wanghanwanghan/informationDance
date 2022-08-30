@@ -239,6 +239,14 @@ class CompanyBasic extends ModelBase
             }
 
             if(
+                $legth==9
+            ){
+                
+                break;
+            }
+
+
+            if(
                 ($legth+strlen($wordItem)) >= 16
             ){
                 if($legth==0){
