@@ -51,7 +51,41 @@ function dingAlarm($title,$arr){
     $res = dingAlarmMarkdownForWork($title,$text);
     CommonService::getInstance()->log4PHP($res,'info','dingAlarm');
 }
+function dingAlarmAtUser($title,$arr,$user){
+    $text = [];
+    foreach ($arr as $key=>$item) {
+        $text[] = [
+            'name' => $key,
+            'msg' => $item,
+        ];
+    }
+    $res = dingAlarmMarkdownForWork($title,$text,$user);
+    CommonService::getInstance()->log4PHP($res,'info','dingAlarm');
+}
 
+function dingAlarmMarkdownForWorkAtUser($title,$text,$user){
+    $webhook = 'https://oapi.dingtalk.com/robot/send?access_token=188728702d363a6eb79bccd584361da3f6de3a83e19071403345871747cd2482';
+    $content = "# **{$title}**\n";
+    foreach ($text as $item) {
+        $content .= "> **{$item['name']}：** {$item['msg']}\n\n";
+    }
+
+    $msg = ['title'=>$title,'text'=>$content];
+    $data = array ('msgtype' => 'markdown','markdown' => $msg,'atUserIds'=>$user);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $webhook);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array ('Content-Type: application/json;charset=utf-8'));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+// 线下环境不用开启curl证书验证, 未调通情况可尝试添加该代码
+// curl_setopt ($ch, CURLOPT_SSL_VERIFYHOST, 0);
+// curl_setopt ($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    $data = curl_exec($ch);
+    curl_close($ch);
+    return $data;
+}
 //function ding
 function dingAlarmMarkdownForWork($title,$text){
 $webhook = 'https://oapi.dingtalk.com/robot/send?access_token=188728702d363a6eb79bccd584361da3f6de3a83e19071403345871747cd2482';
