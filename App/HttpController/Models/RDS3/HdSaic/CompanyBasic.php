@@ -96,10 +96,9 @@ class CompanyBasic extends ModelBase
 
     public static function findBriefName($name){
         //去除特殊符号
-        $name = str_replace("（", "", $name);
-        $name = str_replace("(", "", $name);
-        $name = str_replace("）", "", $name);
-        $name = str_replace(")", "", $name);
+        $name = preg_replace('/\(.*?\)/', '', $name);
+        $name = preg_replace('/\（.*?\）/', '', $name);
+
 
         $json = '{
                     "province": ["北京市", "天津市", "河北省", "山西省", "内蒙古自治区", "辽宁省", "吉林省", "黑龙江省", "上海市", "江苏省", "浙江省", "安徽省", "福建省", "江西省", "山东省", "河南省", "湖北省", "湖南省", "广东省", "海南省", "广西壮族自治区", "甘肃省", "陕西省", "新疆维吾尔自治区", "青海省", "宁夏回族自治区", "重庆市", "四川省", "贵州省", "云南省", "西藏自治区", "台湾省", "澳门特别行政区", "香港特别行政区", "北京", "天津", "河北", "山西", "内蒙古", "辽宁", "吉林", "黑龙江", "上海", "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北", "湖南", "广东", "海南", "广西壮族", "广西", "甘肃", "陕西", "新疆维吾尔", "青海", "宁夏回族", "宁夏", "重庆", "四川", "贵州", "云南", "西藏", "台湾", "澳门特别行政区", "澳门", "香港特别行政区", "香港"],
@@ -200,8 +199,18 @@ class CompanyBasic extends ModelBase
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 [
-                    'findBriefName'=>'del_invalid',
-                    '$validWordsArr'=>$validWordsArr,
+                    'findBriefName'=>'$areasArr',
+                    '$areasArr'=>$areasArr,
+                ]
+            ])
+        );
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'findBriefName'=>'to_short',
+                    '$wordItem'=>$wordItem,
                 ]
             ])
         );
@@ -230,6 +239,7 @@ class CompanyBasic extends ModelBase
                     //$areasArr;
                     //太短了
                     if(strlen($wordItem)<=8){
+                        
                         $newName = $areasArr.$wordItem;
                     }
                     else{
