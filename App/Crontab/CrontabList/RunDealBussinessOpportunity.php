@@ -116,7 +116,6 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
     /**
     sheet1：企业名称，税号，手机号（多个的话逗号隔开）
-
      */
     static function getYieldData($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
@@ -1040,7 +1039,9 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             $title[] = $cname ;
         }
 
-        yield $datas[] =  $title;
+        if(!empty($newReords)){
+            yield $datas[] =  $title;
+        }
         foreach ($newReords as $entName => $mobilesArr){
             //
             $details =  BussinessOpportunityDetails::findOneByName($entName,$id);
