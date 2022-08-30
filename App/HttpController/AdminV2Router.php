@@ -28,8 +28,13 @@ class AdminV2Router
         $this->DocumentationRouterV1($routeCollector);
         $this->BusinessOpportunityRouterV1($routeCollector);
         $this->PStaticsRouterV1($routeCollector);
+
     }
 
+    private function dzqRouterV1(): bool
+    {
+        $prefix = '/Business/AdminV2/Mrxd/User/UserController/';
+    }
     private function UserRouterV1(RouteCollector $routeCollector): bool
     {
         $prefix = '/Business/AdminV2/Mrxd/User/UserController/';
