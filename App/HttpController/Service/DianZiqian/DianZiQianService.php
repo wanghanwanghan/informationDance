@@ -1193,6 +1193,14 @@ return $output;
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param,[], ['enableSSL' => true], 'GET');
+        dingAlarmAtUser('本公司在电子牵的账户信息',
+                        [
+                            '累计充值下单金额总额' => $resp['data']['totalAmount'],
+                            '已使用金额总额' => $resp['data']['usedAmount'],
+                            '目前可用金额' => $resp['data']['availableAmount'],
+                        ],
+                        ['lemon1968']
+        );
         CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'signerPerson');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
