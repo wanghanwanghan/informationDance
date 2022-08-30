@@ -1201,7 +1201,7 @@ return $output;
      */
     public function costRecord($postData){
         $path      = '/open-api/trade/costRecord';
-        $param     = $this->buildParam(['freezeDate'=> $postData[$postData]], $path);//时间格式yyyy-MM-dd
+        $param     = $this->buildParam(['freezeDate'=> $postData['freezeDate']], $path);//时间格式yyyy-MM-dd
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
