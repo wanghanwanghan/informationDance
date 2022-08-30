@@ -5,9 +5,12 @@ namespace App\HttpController\Business\Admin\Invoice;
 use App\HttpController\Models\Api\AntAuthList;
 use App\HttpController\Models\Api\AntAuthSealDetail;
 use App\HttpController\Models\Api\DianZiQianAuth;
+use App\HttpController\Models\Api\JinCaiRwh;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\MaYi\MaYiService;
 use App\HttpController\Service\Zip\ZipService;
+use Carbon\Carbon;
 use wanghanwanghan\someUtils\control;
 
 class InvoiceController extends InvoiceBase
@@ -126,6 +129,42 @@ class InvoiceController extends InvoiceBase
                     'canGetDataDate' => time(),
                     'status' => MaYiService::STATUS_3,
                 ]);
+                if ($info->getAttr('getDataSource') - 0 === 2) {
+                    //如果是金财的，就要发起归集
+                    for ($i = 2; $i--;) {
+                        $task_res = (new JinCaiShuKeService())->addTask(
+                            '91110108MA01KPGK0L',
+                            $info->getAttr('province'),
+                            [
+                                'cxlx' => trim($i),//查询类型 0销项 1 进项
+                                'kprqq' => Carbon::now()->subMonths(24)->startOfMonth()->format('Y-m-d'),//开票日期起
+                                'kprqz' => Carbon::now()->subMonths(1)->endOfMonth()->format('Y-m-d'),//开票日期止
+                                'nsrsbh' => $info->getAttr('socialCredit'),//纳税人识别号
+                            ]
+                        );
+                        //这里把traceNo入库
+                        $success = $task_res['success'] ?? '';
+                        $code = $task_res['code'] ?? '';
+                        $msg = $task_res['msg'] ?? '';
+                        $data = $task_res['data'] ?? '';
+                        if ($success === true && $code === 'S000' && $msg === '请求成功' && !empty($data)) {
+                            $data = base64_decode($data);
+                            JinCaiRwh::create()->data([
+                                'entName' => $info->getAttr('entName'),
+                                'socialCredit' => $info->getAttr('socialCredit'),
+                                'type' => 1,
+                                'rwh' => trim($data['traceNo']),
+                                'province' => trim($data['province']),
+                                'taskCode' => trim($data['taskCode']),
+                                'kprqq' => strtotime($data['ywBody']['kprqq']) - 0,
+                                'kprqz' => strtotime($data['ywBody']['kprqz']) - 0,
+                                'cxlx' => trim($data['ywBody']['cxlx']) - 0,
+                            ])->save();
+                        } else {
+                            CommonService::getInstance()->log4PHP($task_res, 'jincai');
+                        }
+                    }
+                }
             }
         }
 

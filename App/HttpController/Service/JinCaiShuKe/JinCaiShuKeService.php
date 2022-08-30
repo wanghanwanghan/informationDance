@@ -22,7 +22,7 @@ class JinCaiShuKeService extends ServiceBase
     public $oauthToken;
     public $wupan_url;
 
-    public $province = [
+    static public $province = [
         '北京' => 'beijing',
         '天津' => 'tianjin',
         '河北' => 'hebei',
@@ -70,7 +70,7 @@ class JinCaiShuKeService extends ServiceBase
         $this->appKey = '1f58a6db7805';
         $this->appSecret = '3ab58912f92493131aa2';
 
-        $this->wupan_url = 'http://cra.test.jcsk100.com/';
+        $this->wupan_url = 'http://ctp.jcsk100.com/';
         $this->oauthToken = 'akP/bi8gjDT94hUe/ORJsdwkk+phnrz/nzkEifyfjA28BaAEUPQAHDzZ0s6/kE23';
 
         return true;
@@ -357,21 +357,12 @@ class JinCaiShuKeService extends ServiceBase
     {
         $url = 'task/addTask';
 
-        foreach ($this->province as $work => $py) {
+        foreach (self::$province as $work => $py) {
             if (is_numeric(mb_strpos($province, $work))) {
                 $province = $py;
                 break;
             }
         }
-
-        // {
-        //	"cxlx": "",//查询类型 0销项， 1 进项
-        //	"fpdm": "",//发票代码
-        //	"fplx": "",//发票类型，详见附件发票类型说明
-        //	"kprqq": "",//开票日期起
-        //	"kprqz": "",//开票日期止
-        //	"nsrsbh": ""//纳税人识别号
-        // }
 
         $post_data = [
             'nsrsbh' => trim($nsrsbh),
@@ -383,7 +374,7 @@ class JinCaiShuKeService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(true)
-            ->send($this->wupan_url . $url, $post_data, [], [], 'postjson');
+            ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken], [], 'postjson');
 
         return $this->checkResp($res, 'wupan');
     }
@@ -400,7 +391,7 @@ class JinCaiShuKeService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(true)
-            ->send($this->wupan_url . $url, $post_data, [], [], 'postjson');
+            ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken], [], 'postjson');
 
         return $this->checkResp($res, 'wupan');
     }
@@ -417,7 +408,7 @@ class JinCaiShuKeService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(true)
-            ->send($this->wupan_url . $url, $post_data, [], [], 'postjson');
+            ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken], [], 'postjson');
 
         return $this->checkResp($res, 'wupan');
     }
@@ -434,7 +425,7 @@ class JinCaiShuKeService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(true)
-            ->send($this->wupan_url . $url, $post_data, [], [], 'postjson');
+            ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken], [], 'postjson');
 
         return $this->checkResp($res, 'wupan');
     }
