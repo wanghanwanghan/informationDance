@@ -747,7 +747,7 @@ class DianZiQianService extends ServiceBase
         $resp  = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'signerPerson');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'signerPerson');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
@@ -761,7 +761,7 @@ class DianZiQianService extends ServiceBase
         $resp  = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'signerPerson');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'signerPerson');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
@@ -776,7 +776,7 @@ class DianZiQianService extends ServiceBase
         $resp  = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('file'));
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'signerPerson');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'signerPerson');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
     /**
@@ -790,7 +790,7 @@ class DianZiQianService extends ServiceBase
         $resp  = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('file'));
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'contractFile');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'contractFile');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
@@ -809,7 +809,7 @@ class DianZiQianService extends ServiceBase
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'contractFileTemplateFilling');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'contractFileTemplateFilling');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
@@ -852,7 +852,7 @@ class DianZiQianService extends ServiceBase
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('file'));
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'signerPerson');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'signerPerson');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
@@ -957,7 +957,7 @@ class DianZiQianService extends ServiceBase
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'contractFile');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'contractFile');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
     /**
@@ -979,7 +979,7 @@ class DianZiQianService extends ServiceBase
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'contractFile');
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'contractFile');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
@@ -1184,4 +1184,28 @@ return $output;
         return $this->createReturn(200, null, [], '成功');
     }
 
+    /**
+     * 查询账户资金
+     */
+    public function accountInfo(){
+        $path      = '/open-api/trade/accountInfo';
+        $param     = $this->buildParam([], $path);
+        $resp      = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $path, $param);
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'signerPerson');
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
+    /**
+     * 查询账户资金
+     */
+    public function costRecord($postData){
+        $path      = '/open-api/trade/costRecord';
+        $param     = $this->buildParam(['c'=> $postData['$postData']], $path);//时间格式yyyy-MM-dd
+        $resp      = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $path, $param);
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'signerPerson');
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
 }

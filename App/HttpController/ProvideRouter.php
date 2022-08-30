@@ -45,6 +45,8 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getCarAuthFile', $prefix . 'getCarAuthFile');
             $routeCollector->addRoute(['GET', 'POST'], '/doTemporaryAction', $prefix . 'doTemporaryAction');//doTemporaryAction
             $routeCollector->addRoute(['GET', 'POST'], '/testInvEntList', $prefix . 'testInvEntList');//testInvEntList
+            $routeCollector->addRoute(['GET', 'POST'], '/accountInfo', $prefix . 'accountInfo');
+            $routeCollector->addRoute(['GET', 'POST'], '/costRecord', $prefix . 'costRecord');
         });
         return true;
     }
