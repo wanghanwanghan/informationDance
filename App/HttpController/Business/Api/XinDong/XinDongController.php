@@ -3619,7 +3619,49 @@ eof;
 
     function testExport()
     {
+        if(
+            $this->getRequestData('export_wechat')
+        ){
 
+            $fileName = date('YmdHis').'_'.'export_wechat.csv';
+//            $f = fopen(TEMP_FILE_PATH.$fileName, "w");
+//            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $Sql = " select *  from     `wechat_info`  WHERE `code` LIKE  '9144%'   " ;
+            $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3'));
+            foreach ($data as $dataItem){
+                if($dataItem['code']){
+                    $companyRes = CompanyBasic::findByCode($dataItem['code']);
+                    $companyRes = $companyRes?$companyRes->toArray():[];
+                }
+                //$dataItem['phone_md5'];
+                //$dataItem['phone'];
+                $phone_res = \wanghanwanghan\someUtils\control::aesDecode($dataItem['phone'], CreateConf::getInstance()->getConf('env.salt'));
+//                $dataItem['nick_name'];
+                return $this->writeJson(
+                    200,[] ,
+                    //CommonService::ClearHtml($res['body']),
+                    [
+                        $dataItem['code'],
+                        $companyRes['ENTNAME'],
+                        $phone_res,
+                        $dataItem['nick_name'],
+                        $fileName
+                    ],
+                    '成功',
+                    true,
+                    []
+                );
+//                fputcsv($f, [
+//                    $dataItem['code'],
+//                    $companyRes['ENTNAME'],
+//                    $phone_res,
+//                    $dataItem['nick_name'],
+//                ]);
+            }
+
+
+        }
 
         if(
             $this->getRequestData('jieba')
