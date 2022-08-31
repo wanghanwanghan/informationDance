@@ -280,13 +280,21 @@ class GetInvData extends ProcessBase
                 if (!in_array($file, $ignore, true)) {
                     if (strpos($file, $fileSuffix) !== false) {
                         CommonService::getInstance()->log4PHP($file, 'info', 'upload_oss.log');
-                        $oss = new OSSService();
-                        $file_arr[] = $oss->doUploadFile(
-                            $this->oss_bucket,
-                            Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $file,
-                            $store . $file,
-                            $this->oss_expire_time
-                        );
+                        try {
+                            $oss = new OSSService();
+                            $file_arr[] = $oss->doUploadFile(
+                                $this->oss_bucket,
+                                Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $file,
+                                $store . $file,
+                                $this->oss_expire_time
+                            );
+                        } catch (\Throwable $e) {
+                            $file = $e->getFile();
+                            $line = $e->getLine();
+                            $msg = $e->getMessage();
+                            $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+                            CommonService::getInstance()->log4PHP($content, 'error', 'upload_oss.log');
+                        }
                     }
                 }
             }
