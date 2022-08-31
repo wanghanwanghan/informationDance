@@ -66,7 +66,7 @@ class CoHttpClient extends ServiceBase
             //整理结果
             $data = $data->getBody();
 //            dingAlarm('http返回',['$url'=>$url,'$data'=>json_encode($data),'$postData'=>json_encode($postData)]);
-          CommonService::getInstance()->log4PHP([$url,$postData,$data,$headers],'info','http_return_data');
+            CommonService::getInstance()->log4PHP([$url, $postData, $data, $headers], 'info', 'http_return_data');
         } catch (\Exception $e) {
             $this->writeErr($e, 'CoHttpClient');
             return ['coHttpErr' => 'error'];
@@ -96,11 +96,11 @@ class CoHttpClient extends ServiceBase
         return $this;
     }
 
-    private function storeResult($url, $postData, $result, $options)
+    private function storeResult($url, $postData, $result, $options): void
     {
         $key = $this->createKey($url, $postData, $options);
 
-        return Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($key, $result, $url, $postData) {
+        Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($key, $result, $url, $postData) {
             $redis->select($this->db);
             $redis->setEx($url, 3600, jsonEncode($postData));
             return $redis->setEx($key, $this->ttlDay, $result);
