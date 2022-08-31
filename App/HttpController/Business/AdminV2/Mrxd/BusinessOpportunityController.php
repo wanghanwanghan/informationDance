@@ -9,6 +9,7 @@ use App\HttpController\Models\AdminV2\AdminUserBussinessOpportunityUploadRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
+use App\HttpController\Models\AdminV2\AdminUserWechatInfoUploadRecord;
 use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
@@ -101,7 +102,7 @@ class BusinessOpportunityController extends ControllerBase
     public function uploadWeiXinFile(){
         $requestData =  $this->getRequestData();
         $files = $this->request()->getUploadedFiles();
-        return $this->writeJson(200, [], [],'导入成功 入库文件数量:');
+        //return $this->writeJson(200, [], [],'导入成功 入库文件数量:');
         $succeedNums = 0;
         foreach ($files as $key => $oneFile) {
             try {
@@ -116,28 +117,16 @@ class BusinessOpportunityController extends ControllerBase
                     return $this->writeJson(203, [], [],'文件移动失败！');
                 }
 
-                $addUploadRecordRes = AdminUserBussinessOpportunityUploadRecord::addRecordV2(
+                $addUploadRecordRes = AdminUserWechatInfoUploadRecord::addRecordV2(
                     [
                         'user_id' => $this->loginUserinfo['id'],
                         'file_path' => TEMP_FILE_PATH,
                         'title' => $requestData['title']?:'',
                         'size' => filesize($path),
-                        //是否拉取url联系人
-                        'pull_api' => intval($requestData['pull_api']),
-                        //按手机号拆分成多行
-                        'split_mobile' => intval($requestData['split_mobile']),
-                        //删除空号
-                        'del_empty' => 1,
-                        //匹配微信
-                        'match_by_weixin' => intval($requestData['match_by_weixin']),
-                        //取全字段
-                        'get_all_field' => intval($requestData['get_all_field']),
-                        //填充旧的微信
-                        'fill_weixin' => 1,
                         'batch' =>  'BO'.date('YmdHis'),
                         'reamrk' => $requestData['reamrk']?:'',
                         'name' =>  $fileName,
-                        'status' => AdminUserFinanceUploadRecord::$stateInit,
+                        'status' => AdminUserWechatInfoUploadRecord::$status_init,
                     ]
                 );
 

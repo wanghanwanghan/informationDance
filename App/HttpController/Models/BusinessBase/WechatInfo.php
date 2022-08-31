@@ -23,7 +23,7 @@ class WechatInfo extends ModelBase
     static  function  addRecordV2($info){
 
         if(
-            self::findByPhone($info['phone'])
+            self::findByPhoneV2($info['phone'])
         ){
             return  true;
         }
@@ -36,10 +36,16 @@ class WechatInfo extends ModelBase
     public static function addRecord($requestData){
         try {
             $res =  WechatInfo::create()->data([
-                'upload_record_id' => $requestData['upload_record_id'],
-                'status' => $requestData['status']?:1,
-                'created_at' => time(),
-                'updated_at' => time(),
+                'code' => $requestData['code'],
+                'phone' => $requestData['phone'],
+                'phone_md5' => $requestData['phone_md5'],
+                'sex' => $requestData['sex'],
+                'nickname' => $requestData['nickname'],
+                'signature' => $requestData['signature'],
+                'province' => $requestData['province'],
+                'city' => $requestData['city'],
+                'created_at' => $requestData['created_at'],
+                'updated_at' => $requestData['updated_at'],
             ])->save();
 
         } catch (\Throwable $e) {

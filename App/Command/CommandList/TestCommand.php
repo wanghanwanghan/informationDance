@@ -3,7 +3,6 @@
 namespace App\Command\CommandList;
 
 use App\Command\CommandBase;
-use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\ElasticSearch\Service\ElasticSearchService;
@@ -34,16 +33,10 @@ class TestCommand extends CommandBase
             /* 调用协程API */
             // 用户可以在这里调用上述协程 API
 //            $Sql = " select *  from   `wechat_info`  WHERE `code` LIKE  '9144%' limit 2  " ;
-            $data = WechatInfo::findByConditionV2([
-                [
-                    'field'=>'code',
-                    'value'=>'9144%',
-                    'operate'=>'LIKE',
-                ]
-            ]);
 //            $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3'));
             var_dump([
-                count($data),
+                $data,
+                CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3'),
                 'xxx'
             ]);
 //            foreach ($data as $dataItem){

@@ -18,6 +18,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadeRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecordV3;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
+use App\HttpController\Models\AdminV2\AdminUserWechatInfoUploadRecord;
 use App\HttpController\Models\AdminV2\BussinessOpportunityDetails;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\NewFinanceData;
@@ -204,11 +205,9 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         //设置为正在执行中
         ConfigInfo::setIsRunning(__CLASS__);
 
-        //
-        self::delEmptyMobile(10);
-        self::generateNewFile(10);
-
-        //去空号
+        self::delEmptyMobile();
+        self::generateNewFile();
+        self::addWeChatInfo();
 
 
         //设置为已执行完毕
@@ -1000,6 +999,72 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 $rawDataItem['id'],
                 [
                     'status' => AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success,
+                ]
+            );
+        }
+        return true;
+    }
+    static function  addWeChatInfo(){
+        $rawDatas = AdminUserWechatInfoUploadRecord::findBySql(
+            " WHERE status =  ".AdminUserWechatInfoUploadRecord::$status_init
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'addWeChatInfo'=>[
+                        'msg' => 'start ' ,
+                    ]
+                ]
+            ])
+        );
+        foreach ($rawDatas as $rawDataItem){
+            // 找到上传的文件路径
+            self::setworkPath( $rawDataItem['file_path'] );
+            $companyDatas = self::getYieldData($rawDataItem['name']);
+            foreach ($companyDatas as $companyDataItem){
+                //企业 税号 电话 微信名
+                $companyName = $companyDataItem[0];
+                $companyCode = $companyDataItem[1];
+                $phone = $companyDataItem[2];
+                $wechat = $companyDataItem[3];
+
+                if(empty($phone)){
+                    continue;
+                }
+                if(empty($wechat)){
+                    continue;
+                }
+                if(strlen($phone) !== 11){
+                    continue;
+                }
+
+                $created_at = time();
+                $phone_aes = \wanghanwanghan\someUtils\control::aesEncode($phone, $created_at . '');
+                $phone_md5 = md5($phone);
+                $insert = [
+                    'code' => $companyCode,
+                    'phone' => $phone_aes,
+                    'phone_md5' => $phone_md5,
+                    'nickname' => $wechat,
+                    'created_at' => $created_at,
+                    'updated_at' => $created_at,
+                ];
+                CommonService    ::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        $insert
+                    ])
+                );
+                WechatInfo::addRecordV2(
+                    $insert
+                );
+            }
+            //==============================生成文件end=====================================
+            AdminUserWechatInfoUploadRecord::updateById(
+                $rawDataItem['id'],
+                [
+                    'status' => AdminUserWechatInfoUploadRecord::$status_success,
                 ]
             );
         }
