@@ -207,7 +207,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
         self::delEmptyMobile();
         self::generateNewFile();
-        self::addWeChatInfo();
+        //self::addWeChatInfo();
 
 
         //设置为已执行完毕

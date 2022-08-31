@@ -3700,7 +3700,6 @@ eof;
             );
         }
 
-
         if(
             $this->getRequestData('generateNewFile')
         ){
@@ -3714,6 +3713,21 @@ eof;
                 []
             );
         }
+
+
+        //将微信信息入库
+        if(
+            $this->getRequestData('addWeChatInfo')
+        ){
+            return $this->writeJson(
+                200,[] ,
+                RunDealBussinessOpportunity::addWeChatInfo(),
+                '成功',
+                true,
+                []
+            );
+        }
+
         if(
             $this->getRequestData('delEmptyMobile')
         ){
