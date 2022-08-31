@@ -271,7 +271,7 @@ class CompanyBasic extends ModelBase
 
             if(
                 $legth==9
-            ){ 
+            ){
                 break;
             }
 
