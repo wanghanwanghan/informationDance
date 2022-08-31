@@ -150,7 +150,8 @@ class GetInvData extends ProcessBase
                 $kprq[$key] = strtotime($item);
             }
         }
-        $bigKprq = max($kprq);
+        // $bigKprq = max($kprq);
+        $bigKprq = '';
         //上传到oss
         $this->sendToOSS($NSRSBH, $bigKprq);
 
