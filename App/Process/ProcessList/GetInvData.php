@@ -100,7 +100,7 @@ class GetInvData extends ProcessBase
             for ($page = 1; $page <= 999999; $page++) {
                 $res = (new DaXiangService())
                     ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
-                CommonService::getInstance()->log4PHP("进项 税号 {$NSRSBH} 已经执行到了第 {$page} 页", 'info', 'runcheck');
+                CommonService::getInstance()->log4PHP("进项 税号 {$NSRSBH} {$FPLXDM} 已经执行到了第 {$page} 页", 'info', 'runcheck');
                 if (!isset($res['content'])) {
                     CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
                     break;
@@ -127,7 +127,7 @@ class GetInvData extends ProcessBase
             for ($page = 1; $page <= 999999; $page++) {
                 $res = (new DaXiangService())
                     ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
-                CommonService::getInstance()->log4PHP("销项 税号 {$NSRSBH} 已经执行到了第 {$page} 页", 'info', 'runcheck');
+                CommonService::getInstance()->log4PHP("销项 税号 {$NSRSBH} {$FPLXDM} 已经执行到了第 {$page} 页", 'info', 'runcheck');
                 if (!isset($res['content'])) {
                     CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
                     break;
