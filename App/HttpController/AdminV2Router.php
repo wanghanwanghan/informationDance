@@ -28,13 +28,13 @@ class AdminV2Router
         $this->DocumentationRouterV1($routeCollector);
         $this->BusinessOpportunityRouterV1($routeCollector);
         $this->PStaticsRouterV1($routeCollector);
-
+        $this->dzqRouterV1($routeCollector);
     }
 
     private function dzqRouterV1(RouteCollector $routeCollector): bool
     {
         $prefix = '/Business/AdminV2/Mrxd/Dzq/DzqController/';
-        $routeCollector->addGroup('/user', function (RouteCollector $routeCollector) use ($prefix) {
+        $routeCollector->addGroup('/dzq', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/accountInfo', $prefix . 'accountInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/costRecord', $prefix . 'costRecord');
         });

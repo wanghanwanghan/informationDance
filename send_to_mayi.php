@@ -7,14 +7,11 @@ use App\HttpController\Service\CreateMysqlOrm;
 use App\HttpController\Service\CreateMysqlPoolForEntDb;
 use App\HttpController\Service\CreateMysqlPoolForMinZuJiDiDb;
 use App\HttpController\Service\CreateMysqlPoolForRDS3NicCode;
-use App\HttpController\Service\CreateMysqlPoolForRDS3Prism1;
 use App\HttpController\Service\CreateMysqlPoolForProjectDb;
 use App\HttpController\Service\CreateMysqlPoolForRDS3SiJiFenLei;
-use App\HttpController\Service\HttpClient\CoHttpClient;
-use Carbon\Carbon;
+use App\HttpController\Service\DaXiang\DaXiangService;
 use \EasySwoole\EasySwoole\Core;
 use App\HttpController\Service\CreateDefine;
-use App\HttpController\Service\Common\CommonService;
 use \EasySwoole\Component\Process\Config;
 use \EasySwoole\Component\Process\AbstractProcess;
 
@@ -25,49 +22,18 @@ Core::getInstance()->initialize();
 
 class send_to_mayi extends AbstractProcess
 {
-    public $baseUrl = 'http://api.qixiangyun.com/v1/';
-    public $appkey = '10002009';
-    public $secret = 'OkdvOUZ3fxb3mNxtko69nedNPgkjY2E8gBP7x7opkoY5tSyO';
-    public $nsrsbh = '91110108MA01KPGK0L';
-
-    function createToken(): string
-    {
-        $url = $this->baseUrl . 'AGG/oauth2/login';
-
-        $data = [
-            'grant_type' => 'client_credentials',
-            'client_appkey' => $this->appkey,
-            'client_secret' => md5($this->secret),
-        ];
-
-        $header = [
-            'content-type' => 'application/json;charset=UTF-8'
-        ];
-
-        $res = (new CoHttpClient())
-            ->useCache(false)->setEx(0.3)
-            ->needJsonDecode(true)
-            ->send($url, $data, $header, [], 'postjson');
-
-        return $res['value']['access_token'];
-    }
-
     protected function run($arg)
     {
-        //        $res = sqlRaw('select * from company where id = 1;', 'prism1');
-        $res =\App\HttpController\Models\RDS3\Company::create()->limit(1)->get();
+        $FPLXDMS = [
+            '01', '02', '03', '04', '10', '11', '14', '15'
+        ];
 
+        foreach ($FPLXDMS as $FPLXDM) {
+            $res = (new DaXiangService())
+                ->getInv('91110108MA01KPGK0L', '1', '91130606568934818M', '1', $FPLXDM, '2022-01-01', '2022-07-31');
+            dd(jsonDecode(base64_decode($res['content'])), $res);
+        }
 
-        dd($res);
-    }
-
-    function writeErr(\Throwable $e): void
-    {
-        $file = $e->getFile();
-        $line = $e->getLine();
-        $msg = $e->getMessage();
-        $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-        CommonService::getInstance()->log4PHP($content);
     }
 
     protected function onShutDown()
@@ -77,7 +43,7 @@ class send_to_mayi extends AbstractProcess
 
     protected function onException(\Throwable $throwable, ...$args)
     {
-        $this->writeErr($throwable);
+
     }
 }
 
