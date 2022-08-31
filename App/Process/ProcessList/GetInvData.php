@@ -151,7 +151,7 @@ class GetInvData extends ProcessBase
             }
         }
         // $bigKprq = max($kprq);
-        $bigKprq = '';
+        $bigKprq = 0;
         //上传到oss
         $this->sendToOSS($NSRSBH, $bigKprq);
 
