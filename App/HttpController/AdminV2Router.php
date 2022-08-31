@@ -28,7 +28,7 @@ class AdminV2Router
         $this->DocumentationRouterV1($routeCollector);
         $this->BusinessOpportunityRouterV1($routeCollector);
         $this->PStaticsRouterV1($routeCollector);
-
+        $this->dzqRouterV1($routeCollector);
     }
 
     private function dzqRouterV1(RouteCollector $routeCollector): bool
