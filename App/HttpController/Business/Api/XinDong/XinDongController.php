@@ -3703,7 +3703,6 @@ eof;
         if(
             $this->getRequestData('generateNewFile')
         ){
-
             return $this->writeJson(
                 200,[] ,
                 //CommonService::ClearHtml($res['body']),

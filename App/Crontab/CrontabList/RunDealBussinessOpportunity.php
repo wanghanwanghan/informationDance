@@ -178,17 +178,13 @@ class RunDealBussinessOpportunity extends AbstractCronTask
     function run(int $taskId, int $workerIndex): bool
     {
         /*
-
         非公开联系人文件：
         企业名单文件：
         微信名称名单：
-
         拆成多行
         去空号
         匹配库里微信名
-        补全字段
-
-
+        补全字段  
          * */
 
         //防止重复跑
@@ -208,7 +204,6 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         self::delEmptyMobile();
         self::generateNewFile();
         //self::addWeChatInfo();
-
 
         //设置为已执行完毕
         ConfigInfo::setIsDone(__CLASS__);
