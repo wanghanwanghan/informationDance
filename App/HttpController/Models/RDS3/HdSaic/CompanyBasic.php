@@ -181,31 +181,28 @@ class CompanyBasic extends ModelBase
                 continue;
             }
 
-//            // 删除公司 前缀
-//            if(
-//                in_array($wordItem, $dataArr['company_suffixes'])
-//            ){
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        [
-//                            'findBriefName'=>'is_company_suffixes',
-//                            '$wordItem'=>$wordItem,
-//                        ]
-//                    ])
-//                );
-//                $areasArrRaw[] = $wordItem;
-//                continue;
-//            }
-
         }
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'findBriefName'=>'$areasArr',
+                    '$areasArr'=>$areasArr,
+                    '$areasArrRaw'=>$areasArrRaw,
+                ]
+            ])
+        );
         foreach ($wordsArr as $wordItem){
             //删除地区的
+            $isArea = false;
             foreach ($areasArrRaw as $area){
                 if(strpos($area,$wordItem) !== false){
-                       continue;
+                    $isArea = true;
+                       break;
                 }
+            }
+            if($isArea){
+               continue;
             }
             // 删除公司 前缀
             if(
@@ -222,6 +219,7 @@ class CompanyBasic extends ModelBase
                 );
                 continue;
             }
+            $validWordsArr[] = $wordItem;
         }
 
         CommonService::getInstance()->log4PHP(
@@ -232,17 +230,7 @@ class CompanyBasic extends ModelBase
                     '$validWordsArr'=>$validWordsArr,
                 ]
             ])
-        );
-
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                [
-                    'findBriefName'=>'$areasArr',
-                    '$areasArr'=>$areasArr,
-                ]
-            ])
-        );
+        ); 
 
         $newName = '';
         $legth = 0;
