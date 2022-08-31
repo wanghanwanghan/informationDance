@@ -3,6 +3,7 @@
 namespace App\Command\CommandList;
 
 use App\Command\CommandBase;
+use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\ElasticSearch\Service\ElasticSearchService;
@@ -29,16 +30,36 @@ class TestCommand extends CommandBase
     //只能执行initialize里的
     function exec(array $args): ?string
     {
-        parent::commendInit();
+        $res =  go(function() {
+            /* 调用协程API */
+            // 用户可以在这里调用上述协程 API
+//            $Sql = " select *  from   `wechat_info`  WHERE `code` LIKE  '9144%' limit 2  " ;
+            $data = WechatInfo::findByConditionV2([
+                [
+                    'field'=>'code',
+                    'value'=>'9144%',
+                    'operate'=>'LIKE',
+                ]
+            ]);
+//            $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3'));
+            var_dump([
+                count($data),
+                'xxx'
+            ]);
+//            foreach ($data as $dataItem){
+//
+//            }
 
-        return 'this is exec' . PHP_EOL;
+        });
+
+        return 'exec' . PHP_EOL;
     }
 
-    //php easyswoole help test
+    //php easyswoole  test help
     function help(array $args): ?string
     { 
         
-       $res =  go(function() {
+        $res =  go(function() {
             /* 调用协程API */
             // 用户可以在这里调用上述协程 API
            $essentialRes = (new GuoPiaoService())->getEssential('91110105MA01AHQE9C');
@@ -51,7 +72,7 @@ class TestCommand extends CommandBase
 
         
  
-        return 'this is exec'.$res . PHP_EOL;
+        return 'help'.$res . PHP_EOL;
     } 
  
 }
