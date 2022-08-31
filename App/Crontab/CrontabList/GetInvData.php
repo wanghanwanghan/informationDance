@@ -66,6 +66,8 @@ class GetInvData extends AbstractCronTask
                 //放到redis队列
                 $key = $this->redisKey . $suffix;
                 $redis->lPush($key, jsonEncode($one, false));
+                //往redis里扔了哪些企业
+                CommonService::getInstance()->log4PHP($one, 'redis_in', 'step1.log');
                 $redis->hIncrBy($this->readToSendAntFlag, $this->readToSendAntFlag . $suffix, 1);
             }
         }

@@ -54,8 +54,10 @@ class GetInvData extends ProcessBase
                 \co::sleep(mt_rand(30, 90));
                 continue;
             }
+            CommonService::getInstance()->log4PHP($entInRedis, 'redis_out', 'step2.log');
             $this->currentAesKey = $redis->hGet($this->readToSendAntFlag, 'current_aes_key');
             $this->getDataByEle(jsonDecode($entInRedis));
+            CommonService::getInstance()->log4PHP($entInRedis, 'finish', 'step3.log');
             $redis->hIncrBy($this->readToSendAntFlag, $this->readToSendAntFlag . $this->p_index, -1);
         }
     }
@@ -486,7 +488,6 @@ class GetInvData extends ProcessBase
             ], 'doinsert', 'inv_store_mysql_error.log');
             return;
         }
-
     }
 
     protected function onPipeReadable(Process $process): bool
