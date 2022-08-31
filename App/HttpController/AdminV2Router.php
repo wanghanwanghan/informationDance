@@ -34,7 +34,7 @@ class AdminV2Router
     private function dzqRouterV1(RouteCollector $routeCollector): bool
     {
         $prefix = '/Business/AdminV2/Mrxd/Dzq/DzqController/';
-        $routeCollector->addGroup('/user', function (RouteCollector $routeCollector) use ($prefix) {
+        $routeCollector->addGroup('/dzq', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/accountInfo', $prefix . 'accountInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/costRecord', $prefix . 'costRecord');
         });
