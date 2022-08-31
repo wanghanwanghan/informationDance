@@ -91,14 +91,15 @@ class GetInvData extends ProcessBase
         $FPLXDMS = [
             '01', '02', '03', '04', '10', '11', '14', '15'
         ];
+
         $kprq = [];
+
         //进项
         foreach ($FPLXDMS as $FPLXDM) {
             $KM = '1';
             for ($page = 1; $page <= 999999; $page++) {
                 $res = (new DaXiangService())
                     ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
-                \co::sleep(0.3);
                 if (!isset($res['content'])) {
                     CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
                     break;
@@ -125,7 +126,6 @@ class GetInvData extends ProcessBase
             for ($page = 1; $page <= 999999; $page++) {
                 $res = (new DaXiangService())
                     ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
-                \co::sleep(0.3);
                 if (!isset($res['content'])) {
                     CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
                     break;
@@ -238,23 +238,6 @@ class GetInvData extends ProcessBase
                 //没有数据了
                 if (empty($list)) break;
                 foreach ($list as $oneInv) {
-                    //为了曹芳测试，修改一下主票的数据内容
-                    $test_time = trim(Carbon::now()->format('Ymd'));
-                    if (in_array($test_time, ['20220622', '20220623'], true)) {
-                        //xfmc 销售方名称
-                        //gfmc 购买方名称
-                        //gfdzdh 购买方地址电话
-                        //gfyhzh 购买方银行账号
-                        if (mt_rand(1, 1000) % 4 === 0) {
-                            $oneInv->xfmc = '';
-                        } elseif (mt_rand(1, 1000) % 4 === 1) {
-                            $oneInv->gfmc = '';
-                        } elseif (mt_rand(1, 1000) % 4 === 2) {
-                            $oneInv->gfdzdh = '';
-                        } else {
-                            $oneInv->gfyhzh = '';
-                        }
-                    }
                     //每张添加明细
                     $detail = EntInvoiceDetail::create()
                         ->addSuffix($oneInv->getAttr('fpdm'), $oneInv->getAttr('fphm'), 'wusuowei')
@@ -270,8 +253,7 @@ class GetInvData extends ProcessBase
                             'mxxh',//
                             'dj',//
                             'ggxh',//
-                        ])
-                        ->all();
+                        ])->all();
                     empty($detail) ? $oneInv->fpxxMxs = null : $oneInv->fpxxMxs = $detail;
                 }
                 $content = jsonEncode($list, false);
