@@ -120,45 +120,26 @@ class CompanyBasic extends ModelBase
         );
         $validWordsArr = [];
         $areasArr = '';
+        $areasArrRaw = [];
         foreach ($wordsArr as $wordItem){
-            if(
-                in_array(
-                    $wordItem.'县', $wordsArr
-                )
-            ){
-                continue;
-            }
-            if(
-                in_array(
-                    $wordItem.'省', $wordsArr
-                )
-            ){
-                continue;
-            }
-            if(
-                in_array(
-                    $wordItem.'市', $wordsArr
-                )
-            ){
-                continue;
-            }
 
             //删除省份
             if(
                 in_array($wordItem, $dataArr['province'])
             ){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        'findBriefName'=>'is_province',
-                        '$wordItem'=>$wordItem,
-                    ]
-                ])
-            );
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        [
+                            'findBriefName'=>'is_province',
+                            '$wordItem'=>$wordItem,
+                        ]
+                    ])
+                );
 
                 $province = str_replace("省", "", $wordItem);
                 $areasArr = $province;
+                $areasArrRaw[] = $wordItem;
                 continue;
             }
             //删除市
@@ -177,25 +158,11 @@ class CompanyBasic extends ModelBase
 
                 $cities = str_replace("市", "", $wordItem);
                 $areasArr = $cities;
+                $areasArrRaw[] = $wordItem;
                 continue;
             }
 
-            // 删除公司 前缀
-            if(
-                in_array($wordItem, $dataArr['company_suffixes'])
-            ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'findBriefName'=>'is_company_suffixes',
-                            '$wordItem'=>$wordItem,
-                        ]
-                    ])
-                );
 
-                continue;
-            }
             // 删除县
             if (strpos($wordItem, '县') !== false) {
                 CommonService::getInstance()->log4PHP(
@@ -210,9 +177,51 @@ class CompanyBasic extends ModelBase
 
                 $district = str_replace("县", "", $wordItem);
                 $areasArr = $district;
+                $areasArrRaw[] = $wordItem;
                 continue;
             }
-            $validWordsArr[] = $wordItem;
+
+//            // 删除公司 前缀
+//            if(
+//                in_array($wordItem, $dataArr['company_suffixes'])
+//            ){
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        [
+//                            'findBriefName'=>'is_company_suffixes',
+//                            '$wordItem'=>$wordItem,
+//                        ]
+//                    ])
+//                );
+//                $areasArrRaw[] = $wordItem;
+//                continue;
+//            }
+
+        }
+
+        foreach ($wordsArr as $wordItem){
+            //删除地区的
+            foreach ($areasArrRaw as $area){
+                if(strpos($area,$wordItem) !== false){
+                       continue;
+                }
+            }
+            // 删除公司 前缀
+            if(
+                in_array($wordItem, $dataArr['company_suffixes'])
+            ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        [
+                            'findBriefName'=>'is_company_suffixes',
+                            '$wordItem'=>$wordItem,
+                        ]
+                    ])
+                );
+                continue;
+            }
         }
 
         CommonService::getInstance()->log4PHP(
@@ -262,8 +271,7 @@ class CompanyBasic extends ModelBase
 
             if(
                 $legth==9
-            ){
-
+            ){ 
                 break;
             }
 
