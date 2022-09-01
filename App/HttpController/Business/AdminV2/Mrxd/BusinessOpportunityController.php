@@ -43,7 +43,8 @@ class BusinessOpportunityController extends ControllerBase
         foreach ($files as $key => $oneFile) {
             try {
                 $fileName = $oneFile->getClientFilename();
-                $path = TEMP_FILE_PATH . $fileName;
+                $fileName = date('is').'_'.$fileName;
+                $path = TEMP_FILE_PATH .$fileName;
 
                 $ext = pathinfo($path);
                 if(
