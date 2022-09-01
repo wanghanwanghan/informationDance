@@ -150,11 +150,11 @@ class ToolsController extends ControllerBase
         $page = $this->request()->getRequestParam('page')??1;
         $res = ToolsUploadQueue::findByConditionV2(
             [
-                [
-                    'field' => 'admin_id',
-                    'value' => $this->loginUserinfo['id'],
-                    'operate' => '=',
-                ],
+//                [
+//                    'field' => 'admin_id',
+//                    'value' => $this->loginUserinfo['id'],
+//                    'operate' => '=',
+//                ],
             ],
             $page
         );
