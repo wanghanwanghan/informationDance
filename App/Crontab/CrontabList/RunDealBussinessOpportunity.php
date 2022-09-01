@@ -190,25 +190,25 @@ class RunDealBussinessOpportunity extends AbstractCronTask
          * */
 
         //防止重复跑
-        if(
-            !ConfigInfo::checkCrontabIfCanRun(__CLASS__)
-        ){
-            return     CommonService::getInstance()->log4PHP(json_encode(
-                [
-                    __CLASS__ . ' is already running  ',
-                ]
-            ));
-        }
+//        if(
+//            !ConfigInfo::checkCrontabIfCanRun(__CLASS__)
+//        ){
+//            return     CommonService::getInstance()->log4PHP(json_encode(
+//                [
+//                    __CLASS__ . ' is already running  ',
+//                ]
+//            ));
+//        }
 
         //设置为正在执行中
-        ConfigInfo::setIsRunning(__CLASS__);
+//        ConfigInfo::setIsRunning(__CLASS__);
 
         self::delEmptyMobile();
         self::generateNewFile();
-        //self::addWeChatInfo();
+        self::addWeChatInfo();
 
         //设置为已执行完毕
-        ConfigInfo::setIsDone(__CLASS__);
+//        ConfigInfo::setIsDone(__CLASS__);
 
         return true ;   
     }
@@ -464,6 +464,17 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             ])
         );
         foreach ($rawDatas as $rawDataItem){
+            if($rawDataItem['touch_time']>1){
+                continue;
+            }
+            AdminUserWechatInfoUploadRecord::updateById(
+                $rawDataItem['id'],
+                [
+                    'touch_time' => date('Y-m-d H:i:s'),
+                ]
+            );
+
+
             // 找到上传的文件路径
             self::setworkPath( $rawDataItem['file_path'] );
             $companyDatas = self::getYieldData($rawDataItem['name']);
@@ -525,6 +536,12 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 $rawDataItem['id'],
                 [
                     'status' => AdminUserWechatInfoUploadRecord::$status_success,
+                ]
+            );
+            AdminUserWechatInfoUploadRecord::updateById(
+                $rawDataItem['id'],
+                [
+                    'touch_time' => null,
                 ]
             );
         }
