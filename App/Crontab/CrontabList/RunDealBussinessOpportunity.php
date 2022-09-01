@@ -664,7 +664,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 //行业分类代码  findNICID
                 if(
                     $field=='NIC_ID' &&
-                    $res['NIC_ID'] >0
+                   !empty( $res['NIC_ID'])
                 ){
                     $nicRes = NicCode::findNICID($res['NIC_ID']);
                     $res['NIC_ID'] =  $nicRes['industry'];
