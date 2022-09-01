@@ -888,9 +888,6 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         ];
 
         foreach ($allRecords as $recordItem){
-            $details =  BussinessOpportunityDetails::findOneByName($recordItem['entName'],$id);
-            $details =  $details->toArray();
-            $code = trim($details['entCode']);
             if($recordItem['mobile']<=0 ){
                 yield $datas[] =  [
                     'entName' =>$recordItem['entName'],
@@ -899,6 +896,11 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 ];
                 continue;
             }
+            
+            $details =  BussinessOpportunityDetails::findOneByName($recordItem['entName'],$id);
+            $details =  $details->toArray();
+            $code = trim($details['entCode']);
+
             //匹配微信名字
             $matchedWeiXinName = WechatInfo::findByPhoneV2(($recordItem['mobile']));
             if(empty($matchedWeiXinName)){
