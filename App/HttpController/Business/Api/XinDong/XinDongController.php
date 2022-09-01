@@ -3640,7 +3640,7 @@ eof;
                 '微信匹配得分',
             ]);
 
-            $Sql = " select *  from     `wechat_info`  WHERE `code` LIKE  '9144%'  limit 500  " ;
+            $Sql = " select *  from     `wechat_info`  WHERE `code` LIKE  '9144%'  limit 2000  " ;
             $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3'));
             foreach ($data as $dataItem){
                 if($dataItem['code']){
