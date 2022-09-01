@@ -1029,16 +1029,18 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
             $i = 1;
             foreach ($sheet1Datas as $dataItem){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'genenrate1'=>[
-                                '$i' => $i,
+                if ($i%100==0){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            [
+                                'genenrate1'=>[
+                                    '$i' => $i,
+                                ]
                             ]
-                        ]
-                    ])
-                );
+                        ])
+                    );
+                }
                 $i++;
                 $fileObject ->data([$dataItem]);
             }
@@ -1054,16 +1056,18 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
             $i = 1;
             foreach ($sheet2Datas as $dataItem){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'genenrate2'=>[
-                                '$i' => $i,
+                if ($i%100==0){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            [
+                                'genenrate2'=>[
+                                    '$i' => $i,
+                                ]
                             ]
-                        ]
-                    ])
-                );
+                        ])
+                    );
+                }
                 $i++;
                 $file->data([$dataItem]);
                 $p2Nums ++;
@@ -1079,27 +1083,29 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 ->defaultFormat($alignStyle)   ;
             $i = 1;
             foreach ($sheet3Datas as $dataItem){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'genenrate2'=>[
-                                '$i' => $i,
+                if ($i%100==0){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            [
+                                'genenrate3'=>[
+                                    '$i' => $i,
+                                ]
                             ]
-                        ]
-                    ])
-                );
+                        ])
+                    );
+                }
                 $i++;
                 $file->data([$dataItem]);
                 $p2Nums ++;
             }
             //==============================================
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+//                ])
+//            );
 
             $format = new Format($fileHandle);
             //单元格有\n解析成换行
