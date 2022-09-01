@@ -3625,8 +3625,20 @@ eof;
         ){
 
             $fileName = date('YmdHis').'_'.'export_wechat.csv';
-//            $f = fopen(TEMP_FILE_PATH.$fileName, "w");
-//            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+            $f = fopen(TEMP_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            fputcsv($f, [
+                '企业名',
+                '税号',
+                '手机号',
+                '微信',
+                '姓名',
+                '职位',
+                '微信匹配方式',
+                '微信匹配详情',
+                '微信匹配得分',
+            ]);
 
             $Sql = " select *  from     `wechat_info`  WHERE `code` LIKE  '9144%'  limit 500  " ;
             $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3'));
@@ -3639,31 +3651,27 @@ eof;
                 //$dataItem['phone'];
                 $phone_res = \wanghanwanghan\someUtils\control::aesDecode($dataItem['phone'], $dataItem['created_at']);
                 $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($companyRes['ENTNAME'],$dataItem['nickname']);
-//                $dataItem['nick_name'];
-                return $this->writeJson(
-                    200,[] ,
-                    //CommonService::ClearHtml($res['body']),
-                    [
-                        $dataItem['code'],
-                        $companyRes['ENTNAME'],
-                        $phone_res,
-                        $tmpRes,
-                        $dataItem['nick_name'],
-                        $fileName,
-                    ],
-                    '成功',
-                    true,
-                    []
-                );
-//                fputcsv($f, [
-//                    $dataItem['code'],
-//                    $companyRes['ENTNAME'],
-//                    $phone_res,
-//                    $dataItem['nick_name'],
-//                ]);
+
+                fputcsv($f, [
+                    $companyRes['ENTNAME'],
+                    $dataItem['code'],
+                    $phone_res,
+                    $dataItem['nick_name'],
+                    $tmpRes['data']['stff_name'],
+                    $tmpRes['data']['staff_type_name'],
+                    $tmpRes['match_res']['type'],
+                    $tmpRes['match_res']['details'],
+                    $tmpRes['match_res']['percentage'],
+                ]);
             }
-
-
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                $fileName,
+                '成功',
+                true,
+                []
+            );
         }
 
         if(
