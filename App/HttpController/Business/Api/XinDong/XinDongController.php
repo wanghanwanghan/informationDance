@@ -3628,7 +3628,7 @@ eof;
 //            $f = fopen(TEMP_FILE_PATH.$fileName, "w");
 //            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
 
-            $Sql = " select *  from     `wechat_info`  WHERE `code` LIKE  '9144%'   " ;
+            $Sql = " select *  from     `wechat_info`  WHERE `code` LIKE  '9144%'  limit 500  " ;
             $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3'));
             foreach ($data as $dataItem){
                 if($dataItem['code']){
@@ -3638,6 +3638,7 @@ eof;
                 //$dataItem['phone_md5'];
                 //$dataItem['phone'];
                 $phone_res = \wanghanwanghan\someUtils\control::aesDecode($dataItem['phone'], CreateConf::getInstance()->getConf('env.salt'));
+                $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($companyRes['ENTNAME'],$dataItem['nickname']);
 //                $dataItem['nick_name'];
                 return $this->writeJson(
                     200,[] ,
@@ -3646,8 +3647,9 @@ eof;
                         $dataItem['code'],
                         $companyRes['ENTNAME'],
                         $phone_res,
+                        $tmpRes,
                         $dataItem['nick_name'],
-                        $fileName
+                        $fileName,
                     ],
                     '成功',
                     true,
