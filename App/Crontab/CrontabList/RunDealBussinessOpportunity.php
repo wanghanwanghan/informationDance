@@ -709,6 +709,12 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                     $res['iso'] =  $res['iso']?'有':'无';
                 }
 
+                // 高新技术
+                if(
+                    $field=='gao_xin_ji_shu'
+                ){
+                    $res['gao_xin_ji_shu'] =  $res['gao_xin_ji_shu']?'有':'无';
+                }
 
                 if(
                     is_array($res[$field])

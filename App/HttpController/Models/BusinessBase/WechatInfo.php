@@ -5,8 +5,10 @@ namespace App\HttpController\Models\BusinessBase;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\ModelBase;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
+use App\HttpController\Service\XinDong\XinDongService;
 
 class WechatInfo extends ModelBase
 {
@@ -167,5 +169,49 @@ class WechatInfo extends ModelBase
         return $data;
     }
 
+    /**
+     * 按地区导出
+     */
+    static  function  exportByDistrict($distric  = '9144'){
+        $fileName = date('YmdHis').'_'.'export_wechat.csv';
+        $f = fopen(TEMP_FILE_PATH.$fileName, "w");
+        fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+        fputcsv(
+            $f,
+        [
+            '企业名',
+            '税号',
+            '手机号',
+            '微信',
+            '姓名',
+            '职位',
+            '微信匹配方式',
+            '微信匹配详情',
+            '微信匹配得分',
+        ]);
+
+        $Sql = " select *  from     `wechat_info`  WHERE `code` LIKE  '$distric%'  limit 2000  " ;
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3'));
+        foreach ($data as $dataItem){
+            if($dataItem['code']){
+                $companyRes = CompanyBasic::findByCode($dataItem['code']);
+                $companyRes = $companyRes?$companyRes->toArray():[];
+            }
+            $phone_res = \wanghanwanghan\someUtils\control::aesDecode($dataItem['phone'], $dataItem['created_at']);
+            $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($companyRes['ENTNAME'],$dataItem['nickname']);
+            fputcsv($f, [
+                $companyRes['ENTNAME'],
+                $dataItem['code'],
+                $phone_res,
+                $dataItem['nickname'],
+                $tmpRes['data']['stff_name'],
+                $tmpRes['data']['staff_type_name'],
+                $tmpRes['match_res']['type'],
+                $tmpRes['match_res']['details'],
+                $tmpRes['match_res']['percentage'],
+            ]);
+        }
+        return $fileName;
+    }
 
 }
