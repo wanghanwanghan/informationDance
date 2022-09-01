@@ -142,6 +142,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             //phones | splite by ,
             //$value2 = self::strtr_func($one[2]);
             $value2 = trim($one[2]);
+            $value3 = trim($one[3]);
 //            CommonService::getInstance()->log4PHP(
 //                json_encode([
 //                    __CLASS__.__FUNCTION__ .__LINE__,
@@ -161,6 +162,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 $value0,
                 $value1,
                 $value2,
+                $value3,
             ] ;
             yield $datas[] = $tmpData;
         }
@@ -433,11 +435,26 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             self::setworkPath( $rawDataItem['file_path'] );
             $companyDatas = self::getYieldData($rawDataItem['name']);
             foreach ($companyDatas as $companyDataItem){
+
                 //企业 税号 电话 微信名
                 $companyName = $companyDataItem[0];
                 $companyCode = $companyDataItem[1];
                 $phone = $companyDataItem[2];
                 $wechat = $companyDataItem[3];
+
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        [
+                            'addWeChatInfo'=>[
+                                '$companyDataItem' => $companyDataItem ,
+                                '$companyCode' => $companyCode ,
+                                '$phone' => $phone ,
+                                '$wechat' => $wechat ,
+                            ]
+                        ]
+                    ])
+                );
 
                 if(empty($phone)){
                     continue;
