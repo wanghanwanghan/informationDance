@@ -146,7 +146,7 @@ class BusinessOpportunityController extends ControllerBase
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
         $size = $requestData['pageSize']?:10;
-        $records = AdminUserBussinessOpportunityUploadRecord::findByConditionV2(
+        $records = AdminUserWechatInfoUploadRecord::findByConditionV2(
             [ ],
             $page
         );
@@ -157,7 +157,7 @@ class BusinessOpportunityController extends ControllerBase
             ])
         );
         foreach ($records['data'] as &$dataitem){
-            $dataitem['status_cname'] = AdminUserBussinessOpportunityUploadRecord::getStatusMap()[$dataitem['status']];
+            $dataitem['status_cname'] = AdminUserWechatInfoUploadRecord::getStatusMap()[$dataitem['status']];
             $dataitem['size'] = self::convert($dataitem['size']) ;
         }
         return $this->writeJson(200, [

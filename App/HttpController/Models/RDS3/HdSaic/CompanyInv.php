@@ -56,7 +56,7 @@ class CompanyInv extends ModelBase
         return $res?$res->getAttr('CANDATE'):'';
     }
 
-
+   //
 
     public static function findByConditionV2($whereArr,$page){
         $model = CompanyInv::create();
