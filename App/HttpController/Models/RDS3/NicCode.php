@@ -29,6 +29,14 @@ class NicCode extends ModelBase
         return $res;
     }
 
+    public static function findByNicId($id){
+        $res =  NicCode::create()
+            ->where('nic_id',$id)
+            ->get();
+        return $res;
+    }
+
+
     public static function findByNssc($nssc){
         $res =  NicCode::create()
             ->where('nssc',$nssc)
@@ -38,6 +46,18 @@ class NicCode extends ModelBase
 
     //直接查  如果查不到  就去掉个零 查父级
     public static function findNICID($code){
+        $first = substr( $code, 0, 1 );
+        if(
+            is_numeric($first) &&
+            $first >0
+        ){
+            $res = self::findByNicId($code);
+            if($res){
+                return $res->toArray();
+            }
+            return [];
+        }
+
        $res = self::findByNssc($code);
         if($res){
             return $res->toArray();
