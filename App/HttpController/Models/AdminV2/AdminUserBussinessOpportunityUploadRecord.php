@@ -124,12 +124,12 @@ class AdminUserBussinessOpportunityUploadRecord extends ModelBase
         ];
     }
 
-    public static function findByConditionV2($whereArr,$page){
+    public static function findByConditionV2($whereArr,$page,$size){
         $model = AdminUserBussinessOpportunityUploadRecord::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
-        $model->page($page)
+        $model->page($page,$size)
             ->order('id', 'DESC')
             ->withTotalCount();
 
