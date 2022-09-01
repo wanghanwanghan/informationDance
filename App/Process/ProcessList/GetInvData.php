@@ -84,7 +84,12 @@ class GetInvData extends ProcessBase
         } else {
             $KPKSRQ = date('Y-m-d', $big_kprq);
         }
-        $KPJSRQ = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');//截止日
+        if (trim(date('Ymd', time())) === '20220901') {
+            $subMonths = 2;
+        } else {
+            $subMonths = 1;
+        }
+        $KPJSRQ = Carbon::now()->subMonths($subMonths)->endOfMonth()->format('Y-m-d');//截止日
 
         //$KPKSRQ = '2020-01-01';
         //$KPJSRQ = '2021-08-31';
