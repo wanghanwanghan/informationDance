@@ -241,7 +241,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             ];
         }
     }
-    
+
     /**
     第一步：先去空号
      */

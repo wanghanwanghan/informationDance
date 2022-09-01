@@ -852,6 +852,7 @@ eof;
 
 
         foreach($companyEsModel->return_data['hits']['hits'] as &$dataItem){
+            $dataItem['_source']['short_name'] =  CompanyBasic::findBriefName($dataItem['_source']['ENTNAME']);
             $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
             $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
             $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
