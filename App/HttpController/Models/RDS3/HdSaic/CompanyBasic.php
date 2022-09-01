@@ -109,15 +109,15 @@ class CompanyBasic extends ModelBase
 
         //分词
         $wordsArr = jieba($name, 1);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                [
-                    'findBriefName'=>'jieba',
-                    '$wordsArr'=>$wordsArr,
-                ]
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                [
+//                    'findBriefName'=>'jieba',
+//                    '$wordsArr'=>$wordsArr,
+//                ]
+//            ])
+//        );
         $validWordsArr = [];
         $areasArr = '';
         $areasArrRaw = [];
@@ -127,15 +127,15 @@ class CompanyBasic extends ModelBase
             if(
                 in_array($wordItem, $dataArr['province'])
             ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'findBriefName'=>'is_province',
-                            '$wordItem'=>$wordItem,
-                        ]
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        [
+//                            'findBriefName'=>'is_province',
+//                            '$wordItem'=>$wordItem,
+//                        ]
+//                    ])
+//                );
 
                 $province = str_replace("省", "", $wordItem);
                 $areasArr = $province;
@@ -146,15 +146,15 @@ class CompanyBasic extends ModelBase
             if(
                 in_array($wordItem, $dataArr['cities'])
             ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'findBriefName'=>'is_cities',
-                            '$wordItem'=>$wordItem,
-                        ]
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        [
+//                            'findBriefName'=>'is_cities',
+//                            '$wordItem'=>$wordItem,
+//                        ]
+//                    ])
+//                );
 
                 $cities = str_replace("市", "", $wordItem);
                 $areasArr = $cities;
@@ -165,15 +165,15 @@ class CompanyBasic extends ModelBase
 
             // 删除县
             if (strpos($wordItem, '县') !== false) {
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'findBriefName'=>'is_district',
-                            '$wordItem'=>$wordItem,
-                        ]
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        [
+//                            'findBriefName'=>'is_district',
+//                            '$wordItem'=>$wordItem,
+//                        ]
+//                    ])
+//                );
 
                 $district = str_replace("县", "", $wordItem);
                 $areasArr = $district;
@@ -182,16 +182,16 @@ class CompanyBasic extends ModelBase
             }
 
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                [
-                    'findBriefName'=>'$areasArr',
-                    '$areasArr'=>$areasArr,
-                    '$areasArrRaw'=>$areasArrRaw,
-                ]
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                [
+//                    'findBriefName'=>'$areasArr',
+//                    '$areasArr'=>$areasArr,
+//                    '$areasArrRaw'=>$areasArrRaw,
+//                ]
+//            ])
+//        );
         foreach ($wordsArr as $wordItem){
             //删除地区的
             $isArea = false;
@@ -208,44 +208,44 @@ class CompanyBasic extends ModelBase
             if(
                 in_array($wordItem, $dataArr['company_suffixes'])
             ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'findBriefName'=>'is_company_suffixes',
-                            '$wordItem'=>$wordItem,
-                        ]
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        [
+//                            'findBriefName'=>'is_company_suffixes',
+//                            '$wordItem'=>$wordItem,
+//                        ]
+//                    ])
+//                );
                 continue;
             }
             $validWordsArr[] = $wordItem;
         }
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                [
-                    'findBriefName'=>'$validWordsArr',
-                    '$validWordsArr'=>$validWordsArr,
-                ]
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                [
+//                    'findBriefName'=>'$validWordsArr',
+//                    '$validWordsArr'=>$validWordsArr,
+//                ]
+//            ])
+//        );
 
         $newName = '';
         $legth = 0;
         foreach ($validWordsArr as $wordItem){
            if($legth >= 16){
-               CommonService::getInstance()->log4PHP(
-                   json_encode([
-                       __CLASS__.__FUNCTION__ .__LINE__,
-                       [
-                           'findBriefName'=>'legth_bigger_than_16',
-                           '$legth'=>$legth,
-                           '$newName'=>$newName,
-                       ]
-                   ])
-               );
+//               CommonService::getInstance()->log4PHP(
+//                   json_encode([
+//                       __CLASS__.__FUNCTION__ .__LINE__,
+//                       [
+//                           'findBriefName'=>'legth_bigger_than_16',
+//                           '$legth'=>$legth,
+//                           '$newName'=>$newName,
+//                       ]
+//                   ])
+//               );
                 continue;
            }
 
@@ -279,17 +279,17 @@ class CompanyBasic extends ModelBase
                     }
                 }
 
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'findBriefName'=>'legth_bigger_than_16_2',
-                            '$legth'=>$legth,
-                            '$newName'=>$newName,
-                            '$wordItem'=>$wordItem,
-                        ]
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        [
+//                            'findBriefName'=>'legth_bigger_than_16_2',
+//                            '$legth'=>$legth,
+//                            '$newName'=>$newName,
+//                            '$wordItem'=>$wordItem,
+//                        ]
+//                    ])
+//                );
 
                 continue;
             }
