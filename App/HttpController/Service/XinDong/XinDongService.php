@@ -1704,8 +1704,13 @@ class XinDongService extends ServiceBase
         //市占率tag
         //$marketShare = XinDongService::getMarjetShare($dataItem['xd_id']);
         if($dataItem['market_share']){
-            $tags[130] = $dataItem['market_share']['ent_market_share']['bottom'].'~'.
-                $dataItem['market_share']['ent_market_share']['top'];
+            if(
+                $dataItem['market_share']['ent_market_share']['bottom'] ||
+                $dataItem['market_share']['ent_market_share']['top']
+            ){
+                $tags[130] = $dataItem['market_share']['ent_market_share']['bottom'].'~'.
+                    $dataItem['market_share']['ent_market_share']['top'];
+            }
         }
 
         return $tags;

@@ -27,23 +27,23 @@ class BussinessOpportunityDetails extends ModelBase
     }
 
     static  function  addRecordV2($info){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                    'addRecordV2'=> $info
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                    'addRecordV2'=> $info
+//            ])
+//        );
         if(
             self::findByName($info['entName'],$info['upload_record_id'],$info['mobile'])
         ){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'addRecordV2_exists'=> [
-                        $info['entName'],$info['upload_record_id'],$info['mobile'],
-                    ]
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    'addRecordV2_exists'=> [
+//                        $info['entName'],$info['upload_record_id'],$info['mobile'],
+//                    ]
+//                ])
+//            );
             return  true;
         }
 
