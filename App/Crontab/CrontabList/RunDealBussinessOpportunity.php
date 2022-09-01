@@ -895,11 +895,11 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
         foreach ($allRecords as $recordItem){
             if($recordItem['mobile']<=0 ){
-                yield $datas[] =  [
-                    'entName' =>$recordItem['entName'],
-                    'mobile'=>$recordItem['mobile'],
-                    'weixin'=>'',
-                ];
+//                yield $datas[] =  [
+//                    'entName' =>$recordItem['entName'],
+//                    'mobile'=>$recordItem['mobile'],
+//                    'weixin'=>'',
+//                ];
                 continue;
             }
 
