@@ -275,7 +275,19 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             // 找到上传的文件路径
             self::setworkPath( $rawDataItem['file_path'] );
             $companyDatas = self::getYieldData($rawDataItem['name']);
+            $i = 1;
             foreach ($companyDatas as $companyDataItem){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        [
+                            'delEmptyMobile'=>[
+                                '$i' => $i,
+                            ]
+                        ]
+                    ])
+                );
+                $i++;
                 $str = $companyDataItem[0];
 
                 $dataArr = explode('|',$str);
@@ -1007,13 +1019,19 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 //                )
                  ->defaultFormat($alignStyle) ;
 
+            $i = 1;
             foreach ($sheet1Datas as $dataItem){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
-                        '$dataItem1' => $dataItem
+                        [
+                            'genenrate1'=>[
+                                '$i' => $i,
+                            ]
+                        ]
                     ])
                 );
+                $i++;
                 $fileObject ->data([$dataItem]);
             }
             //==============================================
@@ -1026,13 +1044,19 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 //                ])
                 ->defaultFormat($alignStyle)   ;
 
+            $i = 1;
             foreach ($sheet2Datas as $dataItem){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
-                        '$dataItem2' => $dataItem
+                        [
+                            'genenrate2'=>[
+                                '$i' => $i,
+                            ]
+                        ]
                     ])
                 );
+                $i++;
                 $file->data([$dataItem]);
                 $p2Nums ++;
             }
@@ -1045,14 +1069,19 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 //                    '项目名称' , //
 //                ])
                 ->defaultFormat($alignStyle)   ;
-
+            $i = 1;
             foreach ($sheet3Datas as $dataItem){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
-                        '$dataItem2' => $dataItem
+                        [
+                            'genenrate2'=>[
+                                '$i' => $i,
+                            ]
+                        ]
                     ])
                 );
+                $i++;
                 $file->data([$dataItem]);
                 $p2Nums ++;
             }
