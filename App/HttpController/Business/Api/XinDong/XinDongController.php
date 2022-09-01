@@ -3637,7 +3637,7 @@ eof;
                 }
                 //$dataItem['phone_md5'];
                 //$dataItem['phone'];
-                $phone_res = \wanghanwanghan\someUtils\control::aesDecode($dataItem['phone'], CreateConf::getInstance()->getConf('env.salt'));
+                $phone_res = \wanghanwanghan\someUtils\control::aesDecode($dataItem['phone'], $dataItem['created_at']);
                 $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($companyRes['ENTNAME'],$dataItem['nickname']);
 //                $dataItem['nick_name'];
                 return $this->writeJson(
