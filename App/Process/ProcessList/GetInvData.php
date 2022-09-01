@@ -100,8 +100,18 @@ class GetInvData extends ProcessBase
         foreach ($FPLXDMS as $FPLXDM) {
             $KM = '1';
             for ($page = 1; $page <= 999999; $page++) {
-                $res = (new DaXiangService())
-                    ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
+                \co::sleep(0.1);
+                try {
+                    $res = (new DaXiangService())
+                        ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
+                } catch (\Throwable $e) {
+                    $file = $e->getFile();
+                    $line = $e->getLine();
+                    $msg = $e->getMessage();
+                    $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}] [code ==> {$NSRSBH}]";
+                    CommonService::getInstance()->log4PHP($content, 'getindata', 'send_fapiao_err.log');
+                    continue;
+                }
                 if (!isset($res['content'])) {
                     CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
                     break;
@@ -126,8 +136,18 @@ class GetInvData extends ProcessBase
         foreach ($FPLXDMS as $FPLXDM) {
             $KM = '2';
             for ($page = 1; $page <= 999999; $page++) {
-                $res = (new DaXiangService())
-                    ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
+                \co::sleep(0.1);
+                try {
+                    $res = (new DaXiangService())
+                        ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
+                } catch (\Throwable $e) {
+                    $file = $e->getFile();
+                    $line = $e->getLine();
+                    $msg = $e->getMessage();
+                    $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}] [code ==> {$NSRSBH}]";
+                    CommonService::getInstance()->log4PHP($content, 'getoutdata', 'send_fapiao_err.log');
+                    continue;
+                }
                 if (!isset($res['content'])) {
                     CommonService::getInstance()->log4PHP($res, 'getInv', 'inv_store_mysql_error.log');
                     break;
@@ -152,6 +172,7 @@ class GetInvData extends ProcessBase
                 $kprq[$key] = strtotime($item);
             }
         }
+
         // $bigKprq = max($kprq);
         $bigKprq = 0;
         //上传到oss
@@ -293,7 +314,7 @@ class GetInvData extends ProcessBase
                             $line = $e->getLine();
                             $msg = $e->getMessage();
                             $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-                            CommonService::getInstance()->log4PHP($content, 'error', 'upload_oss.log');
+                            CommonService::getInstance()->log4PHP($content, 'sendToOSS', 'send_fapiao_err.log');
                         }
                     }
                 }
@@ -511,7 +532,11 @@ class GetInvData extends ProcessBase
 
     protected function onException(\Throwable $throwable, ...$args)
     {
-        CommonService::getInstance()->log4PHP($throwable->getTraceAsString(), 'info', 'zzzzzzzzzzzzzzz');
+        $file = $throwable->getFile();
+        $line = $throwable->getLine();
+        $msg = $throwable->getMessage();
+        $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+        CommonService::getInstance()->log4PHP($content, 'onException', 'send_fapiao_err.log');
     }
 
 

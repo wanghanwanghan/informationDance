@@ -35,8 +35,7 @@ class DaXiangService extends ServiceBase
         $appSecret = 'awSW7gts8AS4StGV84HCKVCf';
 
         $token_info = (new CoHttpClient())
-            ->useCache(true)
-            ->setEx(1)
+            ->useCache(false)
             ->send('https://openapi.ele-cloud.com/api/authen/token', [
                 'appKey' => $this->appKey,
                 'appSecret' => $this->appSecret,
