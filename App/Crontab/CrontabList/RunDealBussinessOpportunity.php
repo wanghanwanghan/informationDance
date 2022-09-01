@@ -262,6 +262,16 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             ])
         );
         foreach ($rawDatas as $rawDataItem){
+            if($rawDataItem['touch_time']>1){
+                continue;
+            }
+            AdminUserBussinessOpportunityUploadRecord::updateById(
+                $rawDataItem['id'],
+                [
+                    'touch_time' => date('Y-m-d H:i:s'),
+                ]
+            );
+
             // 找到上传的文件路径
             self::setworkPath( $rawDataItem['file_path'] );
             $companyDatas = self::getYieldData($rawDataItem['name']);
@@ -411,6 +421,12 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 $rawDataItem['id'],
                 [
                     'status' => AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success,
+                ]
+            );
+            AdminUserBussinessOpportunityUploadRecord::updateById(
+                $rawDataItem['id'],
+                [
+                    'touch_time' => null,
                 ]
             );
         }
@@ -936,6 +952,15 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             ])
         );
         foreach ($rawDatas as $rawDataItem){
+            if($rawDataItem['touch_time']>1){
+                continue;
+            }
+            AdminUserBussinessOpportunityUploadRecord::updateById(
+                $rawDataItem['id'],
+                [
+                    'touch_time' => date('Y-m-d H:i:s'),
+                ]
+            );
             $startMemory = memory_get_usage();
             //第一部分 sheet1 企业部分数据
             $sheet1Datas = self::getYieldCompanyData($rawDataItem['id']);
@@ -1056,7 +1081,12 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                     'new_name' => $filename,
                 ]
             );
-
+            AdminUserBussinessOpportunityUploadRecord::updateById(
+                $rawDataItem['id'],
+                [
+                    'touch_time' => null,
+                ]
+            );
             return true;
         }
     }
