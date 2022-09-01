@@ -444,6 +444,11 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         }
         return true;
     }
+
+    /**
+    赛蒙的 确认问题 可以先导出
+    赛蒙的 确认问题 可以先导出
+     */
     static function  addWeChatInfo(){
         $rawDatas = AdminUserWechatInfoUploadRecord::findBySql(
             " WHERE status =  ".AdminUserWechatInfoUploadRecord::$status_init
@@ -720,139 +725,140 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
         //如果不需要拉取公开的联系人
         if(!$bussinessOpportunity['pull_api']){
-            return $datas;
+            yield $datas[] = [  ];
         }
+        else{
+            $allRecords = BussinessOpportunityDetails::findByUploadId($id);
+            $newReords = [];
+            foreach ($allRecords as $Record){
+                $mobile = trim($Record['mobile']);
+                $newReords[$Record['entName']][$mobile]  = $mobile;
+            }
+            foreach ($newReords as $entName => $mobilesArr){
+                $details =  BussinessOpportunityDetails::findOneByName($entName,$id);
+                $details =  $details->toArray();
+                $code = trim($details['entCode']);
 
-        $allRecords = BussinessOpportunityDetails::findByUploadId($id);
-        $newReords = [];
-        foreach ($allRecords as $Record){
-            $mobile = trim($Record['mobile']);
-            $newReords[$Record['entName']][$mobile]  = $mobile;
-        }
-        foreach ($newReords as $entName => $mobilesArr){
-            $details =  BussinessOpportunityDetails::findOneByName($entName,$id);
-            $details =  $details->toArray();
-            $code = trim($details['entCode']);
-
-            $retData =  (new LongXinService())
-                ->setCheckRespFlag(true)
-                ->getEntLianXi([
-                    'entName' => $entName,
-                ])['result'];
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        'getYieldPublicContactData'=>[
-                            '$retData'=>$retData,
-                            '$entName'=>$entName
+                $retData =  (new LongXinService())
+                    ->setCheckRespFlag(true)
+                    ->getEntLianXi([
+                        'entName' => $entName,
+                    ])['result'];
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        [
+                            'getYieldPublicContactData'=>[
+                                '$retData'=>$retData,
+                                '$entName'=>$entName
+                            ]
                         ]
-                    ]
-                ])
-            );
-            $retData = LongXinService::complementEntLianXiMobileState($retData);
-            $retData = LongXinService::complementEntLianXiPosition($retData, $entName);
+                    ])
+                );
+                $retData = LongXinService::complementEntLianXiMobileState($retData);
+                $retData = LongXinService::complementEntLianXiPosition($retData, $entName);
 
-            yield $datas[] = [
-                '企业名',
-                '微信名',
-                '联系人职位[url]',
-                '联系方式来源[url]',
-                '联系方式唯一标识[url]',
-                'ltype[url]',
-                '联系人姓名[url]',
-                '联系方式权重[url]',
-                '手机归属地/座机区号[url]',
-                '联系方式来源网页链接[url]',
-                '联系方式[url]',
-                '联系方式类型（手机/座机/邮箱）[url]',
-                'mobile_check_res[url]',
-                '手机号码状态[url]',
-                'url联系人姓名匹配到的职位[url]',
-                '联系人名称（疑似）[微信匹配]',
-                '职位（疑似）[微信匹配]',
-                '匹配类型[微信匹配]',
-                '匹配子类型[微信匹配]',
-                '匹配值[微信匹配]',
-            ];
-            foreach($retData as $datautem){
-                /**
-                [
-                {
-                "duty": "公司最高代表",
-                "source": "黄页",
-                "lid": 199752834,
-                "ltype": "1",
-                "name": "严庆",
-                "idx": "A",
-                "quhao": "广东省深圳市",
-                "url": "http://www.czvv.com/huangye/1516626.html",
-                "lianxi": "13823539096",
-                "lianxitype": "手机",
-                "mobile_check_res": "1",
-                "mobile_check_res_cname": "正常",
-                "staff_position": "--"
-                }]
-                 */
-                 if($datautem['lianxitype'] != '手机'){
-                     yield $datas[] = array_values(
-                         array_merge(
-                             [
-                                 'comname' =>$entName, //企业名
-                                 'weixin_name'=>'', //微信名
-                             ],
-                             $datautem
-                         )
-                     );
-                     continue;
-                 }
+                yield $datas[] = [
+                    '企业名',
+                    '微信名',
+                    '联系人职位[url]',
+                    '联系方式来源[url]',
+                    '联系方式唯一标识[url]',
+                    'ltype[url]',
+                    '联系人姓名[url]',
+                    '联系方式权重[url]',
+                    '手机归属地/座机区号[url]',
+                    '联系方式来源网页链接[url]',
+                    '联系方式[url]',
+                    '联系方式类型（手机/座机/邮箱）[url]',
+                    'mobile_check_res[url]',
+                    '手机号码状态[url]',
+                    'url联系人姓名匹配到的职位[url]',
+                    '联系人名称（疑似）[微信匹配]',
+                    '职位（疑似）[微信匹配]',
+                    '匹配类型[微信匹配]',
+                    '匹配子类型[微信匹配]',
+                    '匹配值[微信匹配]',
+                ];
+                foreach($retData as $datautem){
+                    /**
+                    [
+                    {
+                    "duty": "公司最高代表",
+                    "source": "黄页",
+                    "lid": 199752834,
+                    "ltype": "1",
+                    "name": "严庆",
+                    "idx": "A",
+                    "quhao": "广东省深圳市",
+                    "url": "http://www.czvv.com/huangye/1516626.html",
+                    "lianxi": "13823539096",
+                    "lianxitype": "手机",
+                    "mobile_check_res": "1",
+                    "mobile_check_res_cname": "正常",
+                    "staff_position": "--"
+                    }]
+                     */
+                    if($datautem['lianxitype'] != '手机'){
+                        yield $datas[] = array_values(
+                            array_merge(
+                                [
+                                    'comname' =>$entName, //企业名
+                                    'weixin_name'=>'', //微信名
+                                ],
+                                $datautem
+                            )
+                        );
+                        continue;
+                    }
 
-                //匹配微信名字
-                $matchedWeiXinName = WechatInfo::findByPhoneV2($datautem['lianxi']);
-                if(empty($matchedWeiXinName)){
+                    //匹配微信名字
+                    $matchedWeiXinName = WechatInfo::findByPhoneV2($datautem['lianxi']);
+                    if(empty($matchedWeiXinName)){
+                        yield $datas[] = array_values(
+                            array_merge(
+                                [
+                                    'comname' =>$entName,
+                                    'weixin_name'=>$matchedWeiXinName['nickname'],
+                                ],
+                                $datautem
+                            )
+                        );
+                        continue;
+                    }
+                    //用微信匹配
+                    $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($entName,$matchedWeiXinName['nickname']);
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            [
+                                'getYieldPublicContactData'=>[
+                                    'match_by_weixin_res1'=> $tmpRes,
+                                    'nickname2'=> $matchedWeiXinName['nickname'],
+                                    '$entName'=> $entName,
+                                ]
+                            ]
+                        ])
+                    );
                     yield $datas[] = array_values(
                         array_merge(
                             [
                                 'comname' =>$entName,
                                 'weixin_name'=>$matchedWeiXinName['nickname'],
                             ],
-                            $datautem
+                            $datautem,
+
+                            [
+                                'matched_stff_name' => $tmpRes['data']['stff_name'], // '联系人名称（疑似）[微信匹配]',
+                                'matched_staff_type_name' => $tmpRes['data']['staff_type_name'],// '职位（疑似）[微信匹配]',
+                                'match_type' => $tmpRes['match_res']['type'],
+                                'match_typedetails' => $tmpRes['match_res']['details'],
+                                'match_percentage' => $tmpRes['match_res']['percentage'],
+                            ]
                         )
                     );
-                    continue;
+
                 }
-                 //用微信匹配
-                $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($entName,$matchedWeiXinName['nickname']);
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'getYieldPublicContactData'=>[
-                                'match_by_weixin_res1'=> $tmpRes,
-                                'nickname2'=> $matchedWeiXinName['nickname'],
-                                '$entName'=> $entName,
-                            ]
-                        ]
-                    ])
-                );
-                yield $datas[] = array_values(
-                    array_merge(
-                        [
-                            'comname' =>$entName,
-                            'weixin_name'=>$matchedWeiXinName['nickname'],
-                        ],
-                        $datautem,
-
-                        [
-                            'matched_stff_name' => $tmpRes['data']['stff_name'], // '联系人名称（疑似）[微信匹配]',
-                            'matched_staff_type_name' => $tmpRes['data']['staff_type_name'],// '职位（疑似）[微信匹配]',
-                            'match_type' => $tmpRes['match_res']['type'],
-                            'match_typedetails' => $tmpRes['match_res']['details'],
-                            'match_percentage' => $tmpRes['match_res']['percentage'],
-                        ]
-                    )
-                );
-
             }
         }
     }
