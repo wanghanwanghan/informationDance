@@ -3651,12 +3651,29 @@ eof;
                 //$dataItem['phone'];
                 $phone_res = \wanghanwanghan\someUtils\control::aesDecode($dataItem['phone'], $dataItem['created_at']);
                 $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($companyRes['ENTNAME'],$dataItem['nickname']);
-
+//                return $this->writeJson(
+//                    200,[] ,
+//                    //CommonService::ClearHtml($res['body']),
+//                    [
+//                        $companyRes['ENTNAME'],
+//                        $dataItem['code'],
+//                        $phone_res,
+//                        $dataItem['nick_name'],
+//                        $tmpRes['data']['stff_name'],
+//                        $tmpRes['data']['staff_type_name'],
+//                        $tmpRes['match_res']['type'],
+//                        $tmpRes['match_res']['details'],
+//                        $tmpRes['match_res']['percentage'],
+//                    ],
+//                    '成功',
+//                    true,
+//                    []
+//                );
                 fputcsv($f, [
                     $companyRes['ENTNAME'],
                     $dataItem['code'],
                     $phone_res,
-                    $dataItem['nick_name'],
+                    $dataItem['nickname'],
                     $tmpRes['data']['stff_name'],
                     $tmpRes['data']['staff_type_name'],
                     $tmpRes['match_res']['type'],
