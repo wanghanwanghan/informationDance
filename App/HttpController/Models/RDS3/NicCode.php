@@ -4,6 +4,7 @@ namespace App\HttpController\Models\RDS3;
 
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 
 class NicCode extends ModelBase
@@ -47,6 +48,9 @@ class NicCode extends ModelBase
     //直接查  如果查不到  就去掉个零 查父级
     public static function findNICID($code){
         $first = substr( $code, 0, 1 );
+        CommonService::getInstance()->log4PHP(json_encode([
+            '$first'=>$first,
+        ]));
         if(
             is_numeric($first) &&
             $first >0
