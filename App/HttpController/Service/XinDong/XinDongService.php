@@ -1497,7 +1497,7 @@ class XinDongService extends ServiceBase
             ],
             [
                 'pid' => 90,
-                'desc' => '是否物流企业',
+                'desc' => '是否物流',
                 'detail' => '',
                 'key' => 'wu_liu_xin_xi',
                 'type' => 'select',
