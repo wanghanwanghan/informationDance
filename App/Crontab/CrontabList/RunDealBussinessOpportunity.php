@@ -896,7 +896,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 ];
                 continue;
             }
-            
+
             $details =  BussinessOpportunityDetails::findOneByName($recordItem['entName'],$id);
             $details =  $details->toArray();
             $code = trim($details['entCode']);
