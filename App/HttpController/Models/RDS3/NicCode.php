@@ -55,28 +55,29 @@ class NicCode extends ModelBase
             is_numeric($first) &&
             $first >0
         ){
-            $res = self::findByNicId($code);
+            $res = self::findByNssc($code);
+            if($res){
+                return $res->toArray();
+            }
+
+            if(
+                substr($code,-1) === '0'
+            ){
+                $code = substr_replace($code ,"",-1);
+            }
+            $res = self::findByNssc($code);
             if($res){
                 return $res->toArray();
             }
             return [];
         }
 
-       $res = self::findByNssc($code);
-        if($res){
-            return $res->toArray();
-        }
-
-        if(
-            substr($code,-1) === '0'
-        ){
-            $code = substr_replace($code ,"",-1);
-        }
-        $res = self::findByNssc($code);
+        $res = self::findByNicId($code);
         if($res){
             return $res->toArray();
         }
         return [];
+
     }
 
 }
