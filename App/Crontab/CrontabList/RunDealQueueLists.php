@@ -116,7 +116,9 @@ class RunDealQueueLists extends AbstractCronTask
     }  
 
 
+    /**
 
+     */
     function run(int $taskId, int $workerIndex): bool
     {
         //一次取十个
@@ -126,12 +128,7 @@ class RunDealQueueLists extends AbstractCronTask
                     'field' => 'status',
                     'value' => QueueLists::$status_init,
                     'operate' => '=',
-                ],
-//                [
-//                    'field' => 'touch_time',
-//                    'value' =>  NULL,
-//                    'operate' => '=',
-//                ],
+                ]
             ],
             1,
             20
@@ -151,17 +148,6 @@ class RunDealQueueLists extends AbstractCronTask
             if($data['touch_time']>1){
                 continue;
             }
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        'runDealQueue'=>[
-                            'stage'=>'$data',
-                            '$data'=>$data,
-                        ],
-                    ]
-                ])
-            );
             QueueLists::updateById(
                 $data['id'],
                 [
@@ -211,7 +197,7 @@ class RunDealQueueLists extends AbstractCronTask
                 [
                     'touch_time' => null,
                     'status' => QueueLists::$status_succees,
-                    'msg' => json_decode($tmpRes),
+                    'msg' => json_encode($tmpRes),
                 ]
             );
         }

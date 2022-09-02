@@ -26,6 +26,7 @@ use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\AdminV2\InvoiceTask;
 use App\HttpController\Models\AdminV2\InvoiceTaskDetails;
+use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
@@ -3620,6 +3621,39 @@ eof;
 
     function testExport()
     {
+        if(
+            $this->getRequestData('add_queue')
+        ){
+            $res = QueueLists::addRecordV2(
+                [
+                    'name' => '',
+                    'desc' => '',
+                    'fun_info_json' => json_encode(
+                        [
+                            'class' => $this->getRequestData('class'),
+                            'static_func'=> $this->getRequestData('static_func'),
+                        ]
+                    ),
+                    'params_json' => json_encode([
+                        'data'=>''
+                    ]),
+                    'type' => QueueLists::$typle_finance,
+                    'remark' => '',
+                    'begin_date' => NULL,
+                    'msg' => '',
+                    'status' => QueueLists::$status_init,
+                ]
+            );
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                $res,
+                '成功1',
+                true,
+                []
+            );
+        }
+
         if(
             $this->getRequestData('test_call')
         ){
