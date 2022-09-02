@@ -15,6 +15,11 @@ class QueueLists extends ModelBase
 {
     protected $tableName = 'queue_lists';
 
+    static $status_init  = 0;
+    static $status_succees  = 5;
+    static $status_failed  = 10;
+
+    static $typle_finance = 5;
 
 
     public static function getStatusMap(){
@@ -40,22 +45,14 @@ class QueueLists extends ModelBase
     public static function addRecord($requestData){
         try {
            $res =  QueueLists::create()->data([
-                'user_id' => $requestData['user_id'], //
-                'file_path' => $requestData['file_path'], //
-                'name' => $requestData['name'], //
-                'new_name' => $requestData['new_name']?:'', //
-                'title' => $requestData['title']?:'', //
-                'size' => $requestData['size']?:'', //
-                'type' => $requestData['type']?:'1', //
-                'fill_weixin' => $requestData['fill_weixin'],
-                'pull_api' => $requestData['pull_api'],
-                'split_mobile' => $requestData['split_mobile'],
-                'del_empty' => $requestData['del_empty'],
-                'match_by_weixin' => $requestData['match_by_weixin'],
-                'get_all_field' => $requestData['get_all_field'],
-                'priority' => $requestData['priority'],
-                'batch' => $requestData['batch'],
-                'reamrk' => $requestData['reamrk'],
+                'name' => $requestData['name'],
+                'desc' => $requestData['desc']?:'',
+                'fun_info_json' => $requestData['fun_info_json'],
+                'params_json' => $requestData['params_json']?:'',
+                'type' => $requestData['type'],
+                'remark' => $requestData['remark']?:'',
+                'begin_date' => $requestData['begin_date']?:NULL,
+                'msg' => $requestData['msg']?:'',
                 'status' => $requestData['status']?:self::$status_init,
                'created_at' => time(),
                'updated_at' => time(),
@@ -66,7 +63,8 @@ class QueueLists extends ModelBase
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'failed',
-                    '$requestData' => $requestData
+                    '$requestData' => $requestData,
+                    'message' => $e->getMessage()
                 ])
             );
         }

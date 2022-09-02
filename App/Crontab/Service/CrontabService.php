@@ -27,6 +27,7 @@ use App\Crontab\CrontabList\RunDealZhaoTouBiao;
 use App\Crontab\CrontabList\RunDealEmailReceiver;
 use App\Crontab\CrontabList\RunDealCarInsuranceInstallment;
 use App\Crontab\CrontabList\RunDealBussinessOpportunity;
+use App\Crontab\CrontabList\RunDealQueueLists;
 
 use EasySwoole\Component\Singleton;
 use EasySwoole\EasySwoole\Crontab\Crontab;
@@ -63,6 +64,7 @@ class CrontabService
         $this->RunDealCarInsuranceInstallment();//
         $this->RunDealBussinessOpportunity();//
         $this->RunCheckCapital();
+        $this->RunDealQueueLists();
         return true;
     }
     private function RunCheckCapital():Crontab
@@ -193,5 +195,8 @@ class CrontabService
     {
         return Crontab::getInstance()->addTask(RunDealBussinessOpportunity::class);
     }
-
+    private function RunDealQueueLists(): Crontab
+    {
+        return Crontab::getInstance()->addTask(RunDealQueueLists::class);
+    }
 }
