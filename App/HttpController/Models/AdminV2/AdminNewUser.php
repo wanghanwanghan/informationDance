@@ -202,6 +202,6 @@ class AdminNewUser extends ModelBase
     }
 
     static function testtest(){
-        return [];
+        return ['dssddsds'];
     }
 }
