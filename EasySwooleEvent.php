@@ -82,7 +82,7 @@ class EasySwooleEvent implements Event
         ProcessService::getInstance()->create(Docx2Doc::class, 'docx2doc');
         ProcessService::getInstance()->create(ConsumeOcrProcess::class, 'consumeOcr');
         ProcessService::getInstance()->create(GetInvData::class, 'getInvData', [], GetInvData::ProcessNum);
-        ProcessService::getInstance()->create(MatchSimilarEnterprisesProccess::class, 'matchSimilarEnterprises', [], MatchSimilarEnterprisesProccess::ProcessNum);
+//        ProcessService::getInstance()->create(MatchSimilarEnterprisesProccess::class, 'matchSimilarEnterprises', [], MatchSimilarEnterprisesProccess::ProcessNum);
         ProcessService::getInstance()->create(FinancesSearchHandleFengXianAndCaiWu::class, 'FinancesSearchHandleFengXianAndCaiWu');
 
         //注册定时任务
