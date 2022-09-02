@@ -137,7 +137,8 @@ class RunDealQueueLists extends AbstractCronTask
             10
         );
 
-        foreach ($datas as $data){
+        foreach ($datas['data'] as $data){
+            
             QueueLists::updateById(
                 $data['id'],
                 [
