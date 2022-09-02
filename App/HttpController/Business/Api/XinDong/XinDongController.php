@@ -3621,6 +3621,20 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('test_call')
+        ){
+            $str = '\App\HttpController\Models\AdminV2\AdminNewUser';
+            $obj = new $str();
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                $obj,
+                '成功',
+                true,
+                []
+            );
+        }
+        if(
             $this->getRequestData('export_wechat')
         ){
 
