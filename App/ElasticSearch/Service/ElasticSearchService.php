@@ -62,6 +62,17 @@ class ElasticSearchService extends ServiceBase
         return $this;
     }
 
+    function customGetBody($bean)
+    {
+        $cli = (new ElasticSearch($this->config))->client();
+        if ($bean instanceof Get) {
+            $res = $cli->get($bean)->getBody();
+        } else {
+            $res = $cli->search($bean)->getBody();
+        }
+        return $res;
+    }
+
     function getBody()
     {
         return (new ElasticSearch($this->config))
