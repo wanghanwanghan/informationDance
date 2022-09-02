@@ -43,7 +43,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
 
             $score = (new qpf(
                 $info['baes'][0], $info['baes'][1], $info['baes'][2], $info['baes'][3],
-                $info['ys_label'], $info['NIC_ID'], $info['ESDATE'], $info['DOMDISTRICT']
+                $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
             ))->expr();
 
             UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([

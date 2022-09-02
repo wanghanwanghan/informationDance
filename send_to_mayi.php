@@ -9,7 +9,7 @@ use App\HttpController\Service\CreateMysqlPoolForMinZuJiDiDb;
 use App\HttpController\Service\CreateMysqlPoolForRDS3NicCode;
 use App\HttpController\Service\CreateMysqlPoolForProjectDb;
 use App\HttpController\Service\CreateMysqlPoolForRDS3SiJiFenLei;
-use App\HttpController\Service\DaXiang\DaXiangService;
+use App\HttpController\Service\CreateRedisPool;
 use \EasySwoole\EasySwoole\Core;
 use App\HttpController\Service\CreateDefine;
 use \EasySwoole\Component\Process\Config;
@@ -24,15 +24,24 @@ class send_to_mayi extends AbstractProcess
 {
     protected function run($arg)
     {
-        $FPLXDMS = [
-            '01', '02', '03', '04', '10', '11', '14', '15'
+        $content = [
+            'ys_label' => 'A8',
+            'NIC_ID' => 'F8888',
+            'ESDATE' => '2020',
+            'DOMDISTRICT' => '110104',
+            'companyid' => 100,
+            'user_id' => 1,
+            'base' => [
+                'A10',
+                'F9999',
+                '8',
+                '110108',
+            ],
         ];
 
-        foreach ($FPLXDMS as $FPLXDM) {
-            $res = (new DaXiangService())
-                ->getInv('91110108MA01KPGK0L', '1', '91130606568934818M', '1', $FPLXDM, '2022-01-01', '2022-07-31');
-            dd(jsonDecode(base64_decode($res['content'])), $res);
-        }
+        $redis = \EasySwoole\RedisPool\Redis::defer('redis');
+        $redis->select(15);
+        $redis->lPush('MatchSimilarEnterprisesQueue', jsonEncode($content, false));
 
     }
 
@@ -64,6 +73,8 @@ CreateMysqlOrm::getInstance()->createRDS3Orm();
 CreateMysqlOrm::getInstance()->createRDS3NicCodeOrm();
 CreateMysqlOrm::getInstance()->createRDS3SiJiFenLeiOrm();
 CreateMysqlOrm::getInstance()->createRDS3Prism1Orm();
+
+CreateRedisPool::getInstance()->createRedis();
 
 for ($i = 1; $i--;) {
     $conf = new Config();
