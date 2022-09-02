@@ -142,13 +142,23 @@ class RunDealQueueLists extends AbstractCronTask
                 [
                     'runDealQueue'=>[
                         'stage'=>'start',
-                        '$datas'=>count($datas),
+                        '$datas'=>count($datas['data']),
                     ],
                 ]
             ])
         );
         foreach ($datas['data'] as $data){
-
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        'runDealQueue'=>[
+                            'stage'=>'$data',
+                            '$data'=>$data,
+                        ],
+                    ]
+                ])
+            );
             QueueLists::updateById(
                 $data['id'],
                 [
