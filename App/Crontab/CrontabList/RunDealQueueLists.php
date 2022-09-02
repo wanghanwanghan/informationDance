@@ -127,14 +127,14 @@ class RunDealQueueLists extends AbstractCronTask
                     'value' => QueueLists::$status_init,
                     'operate' => '=',
                 ],
-                [
-                    'field' => 'touch_time',
-                    'value' =>  NULL,
-                    'operate' => '=',
-                ],
+//                [
+//                    'field' => 'touch_time',
+//                    'value' =>  NULL,
+//                    'operate' => '=',
+//                ],
             ],
             1,
-            10
+            20
         );
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -148,6 +148,9 @@ class RunDealQueueLists extends AbstractCronTask
             ])
         );
         foreach ($datas['data'] as $data){
+            if($data['touch_time']>1){
+                continue;
+            }
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
