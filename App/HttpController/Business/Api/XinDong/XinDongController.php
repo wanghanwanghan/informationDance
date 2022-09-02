@@ -3628,14 +3628,14 @@ eof;
                 [
                     'name' => '',
                     'desc' => '',
-                    'fun_info_json' => json_encode(
+                    'func_info_json' => json_encode(
                         [
                             'class' => $this->getRequestData('class'),
                             'static_func'=> $this->getRequestData('static_func'),
                         ]
                     ),
                     'params_json' => json_encode([
-                        'data'=>''
+                        'data_id'=>'1111'
                     ]),
                     'type' => QueueLists::$typle_finance,
                     'remark' => '',

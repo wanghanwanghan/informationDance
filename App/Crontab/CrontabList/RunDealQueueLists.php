@@ -172,7 +172,7 @@ class RunDealQueueLists extends AbstractCronTask
                 continue;
             }
 
-            $basicInfo1 = json_decode($data['fun_info_json'],true);
+            $basicInfo1 = json_decode($data['func_info_json'],true);
             $basicInfo2 = json_decode($data['params_json'],true);
             $class = $basicInfo1['class'];
             $staticName = $basicInfo1['static_func'];

@@ -233,5 +233,27 @@ class DataModelExample extends ModelBase
         return $data;
     }
 
+    static function dealUploadFiles($files){
+        $succeedNums = 0;
+        foreach ($files as $key => $oneFile) {
+            try {
+                $fileName = $oneFile->getClientFilename();
+                $fileName = date('YmdHis').'_'.$fileName;
+                $path = TEMP_FILE_PATH . $fileName;
+                $res = $oneFile->moveTo($path);
+                $succeedNums ++;
+            } catch (\Throwable $e) {
+                return  [
+                    'msg' => $e->getMessage(),
+                    'res' => 'failed',
+                ];
+            }
+        }
+
+        return  [
+            'succeedNums' => $succeedNums,
+            'res' => 'succeed',
+        ];
+    }
 
 }

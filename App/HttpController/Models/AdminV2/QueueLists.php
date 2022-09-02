@@ -47,7 +47,7 @@ class QueueLists extends ModelBase
            $res =  QueueLists::create()->data([
                 'name' => $requestData['name'],
                 'desc' => $requestData['desc']?:'',
-                'fun_info_json' => $requestData['fun_info_json'],
+                'func_info_json' => $requestData['func_info_json'],
                 'params_json' => $requestData['params_json']?:'',
                 'type' => $requestData['type'],
                 'remark' => $requestData['remark']?:'',
