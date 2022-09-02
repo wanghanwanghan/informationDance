@@ -51,13 +51,21 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
 
             CommonService::getInstance()->log4PHP($score, 'step2', 'wanghanqueue');
 
-            UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
-                'userid' => $info['user_id'],
-                'companyid' => $info['companyid'],
-                'esid' => '',
-                'score' => $score,
-                'mvcc' => '',
-            ])->save();
+            try {
+                UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
+                    'userid' => $info['user_id'],
+                    'companyid' => $info['companyid'],
+                    'esid' => '',
+                    'score' => $score,
+                    'mvcc' => '',
+                ])->save();
+            } catch (\Throwable $e) {
+                $file = $e->getFile();
+                $line = $e->getLine();
+                $msg = $e->getMessage();
+                $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+                CommonService::getInstance()->log4PHP($content, 'step3', 'wanghanqueue');
+            }
 
         }
 
