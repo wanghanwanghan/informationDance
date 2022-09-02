@@ -17,6 +17,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
     const QueueKey = 'MatchSimilarEnterprisesQueue';
 
     public $p_index;
+    private $es_obj_time;//es对象有链接超时时间
 
     //匹配近似企业
 
@@ -75,9 +76,17 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
 
     private function toEs(string $esid, array $data)
     {
-        //这里可以把搜客中的数据查出来，放到新的es库中
+        if (empty($this->es_obj_time)) {
+            $bean = new \EasySwoole\ElasticSearch\RequestBean\Get();
+            $bean->setIndex('my-index');
+            $bean->setType('my-type');
+            $bean->setId('my-id');
+            $obj = (new ElasticSearchService())->createSearchBean()->getBody();
+        }
+
+
+        //这里可以把搜客中的数据查出来(company_202209)，放到新的es库中
         go(function () use ($esid, $data) {
-            //(new ElasticSearchService())->
         });
     }
 
