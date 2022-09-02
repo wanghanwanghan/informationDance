@@ -42,7 +42,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
             $info = jsonDecode($entInRedis);
 
             $score = (new qpf(
-                $info['baes'][0], $info['baes'][1], $info['baes'][2], $info['baes'][3],
+                $info['base'][0], $info['base'][1], $info['base'][2], $info['base'][3],
                 $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
             ))->expr();
 
