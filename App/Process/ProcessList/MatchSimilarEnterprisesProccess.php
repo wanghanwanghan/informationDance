@@ -3,6 +3,7 @@
 namespace App\Process\ProcessList;
 
 use App\HttpController\Models\Api\UserApproximateEnterpriseModel;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\XinDong\Score\qpf;
 use App\Process\ProcessBase;
 use EasySwoole\RedisPool\Redis;
@@ -41,10 +42,14 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
 
             $info = jsonDecode($entInRedis);
 
+            CommonService::getInstance()->log4PHP($info, 'step1', 'wanghanqueue');
+
             $score = (new qpf(
                 $info['base'][0], $info['base'][1], $info['base'][2], $info['base'][3],
                 $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
             ))->expr();
+
+            CommonService::getInstance()->log4PHP($score, 'step2', 'wanghanqueue');
 
             UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
                 'userid' => $info['user_id'],

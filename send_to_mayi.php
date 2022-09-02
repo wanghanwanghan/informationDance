@@ -33,9 +33,9 @@ class send_to_mayi extends AbstractProcess
             'user_id' => 1,
             'base' => [
                 'A10',
-                'F9999',
+                'F5',
                 '8',
-                '110108',
+                '110105',
             ],
         ];
 
