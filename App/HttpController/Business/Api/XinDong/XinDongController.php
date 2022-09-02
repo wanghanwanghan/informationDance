@@ -3623,8 +3623,9 @@ eof;
         if(
             $this->getRequestData('test_call')
         ){
-            $str = '\App\HttpController\Models\AdminV2\AdminNewUser';
-            $obj = new $str();
+            $str1 = '\App\HttpController\Models\AdminV2\AdminNewUser';
+            $str2 = 'testtest';
+            $obj =  $str1::$str2();
             return $this->writeJson(
                 200,[] ,
                 //CommonService::ClearHtml($res['body']),

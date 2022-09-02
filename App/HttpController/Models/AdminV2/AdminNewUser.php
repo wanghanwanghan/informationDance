@@ -201,4 +201,7 @@ class AdminNewUser extends ModelBase
         return $res;
     }
 
+    static function testtest(){
+        return [];
+    }
 }
