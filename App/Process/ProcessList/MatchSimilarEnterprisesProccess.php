@@ -42,7 +42,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
             $info = jsonDecode($entInRedis);
 
             $score = (new qpf(
-                ...$info['baes'],
+                $info['baes'][0], $info['baes'][1], $info['baes'][2], $info['baes'][3],
                 $info['ys_label'], $info['NIC_ID'], $info['ESDATE'], $info['DOMDISTRICT']
             ))->expr();
 
@@ -58,7 +58,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
 
     }
 
-    protected function onPipeReadable(Process $process): bool
+    protected function onPipeReadable(Process $process)
     {
         parent::onPipeReadable($process);
         return true;
