@@ -42,14 +42,10 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
 
             $info = jsonDecode($entInRedis);
 
-            CommonService::getInstance()->log4PHP($info, 'step1', 'wanghanqueue');
-
             $score = (new qpf(
                 $info['base'][0], $info['base'][1], $info['base'][2], $info['base'][3],
                 $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
             ))->expr();
-
-            CommonService::getInstance()->log4PHP($score, 'step2', 'wanghanqueue');
 
             try {
                 UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
@@ -64,7 +60,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                 $line = $e->getLine();
                 $msg = $e->getMessage();
                 $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-                CommonService::getInstance()->log4PHP($content, 'step3', 'wanghanqueue');
+                CommonService::getInstance()->log4PHP($content);
             }
 
         }
