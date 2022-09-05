@@ -28,7 +28,7 @@ class XinDongKeDongController extends XinDongBase
         $entName = $this->request()->getRequestParam('entName_json');//企业名称字符串
         $file = $this->request()->getRequestParam('file');//上传的文件路径
 
-        //在这里处理出4个搜索条件 营收 行业 年限 地域
+        //在这里处理出4个搜索条件 营收 行业 年限 地域 还有userid
 
         $uid = (User::create()->where('phone', $phone)->get())->getAttr('id');
 
