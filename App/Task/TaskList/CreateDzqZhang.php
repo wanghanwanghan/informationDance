@@ -23,7 +23,7 @@ class CreateDzqZhang extends TaskBase implements TaskInterface
 
     function run(int $taskId, int $workerIndex)
     {
-        $zhuData = AntAuthList::create()->where(['authDate'=>0,'filePath'=>'','dianZiQian_status'=>0]);
+        $zhuData = AntAuthList::create()->where(['authDate'=>0,'dianZiQian_status'=>0]);
         if(!empty($zhuData)){
             foreach ( $zhuData as $val ){
                 $detail = AntAuthSealDetail::create()->where(['dianZiQian_id'=>$val->getAttr('id')]);
