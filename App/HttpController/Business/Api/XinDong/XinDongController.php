@@ -4694,7 +4694,7 @@ eof;
             return $this->writeJson(
                 200,
                 [ ] ,
-                CompanyLiquidation::findByName($this->getRequestData('CompanyLiquidation')),
+                CompanyLiquidation::findByCompanyId(intval($this->getRequestData('CompanyLiquidation'))),
                 '成功',
                 true,
                 []
