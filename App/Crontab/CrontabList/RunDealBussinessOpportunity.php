@@ -374,33 +374,33 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
                 // 拆分出来
                 $mobilesArr = explode(';',trim($mobileString));
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'delEmptyMobile'=>[
-                                'del_empty' => [
-                                    '$mobileString'=>$mobileString,
-                                    '$mobilesArr'=>$mobilesArr,
-                                ],
-                            ]
-                        ]
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        [
+//                            'delEmptyMobile'=>[
+//                                'del_empty' => [
+//                                    '$mobileString'=>$mobileString,
+//                                    '$mobilesArr'=>$mobilesArr,
+//                                ],
+//                            ]
+//                        ]
+//                    ])
+//                );
                 if($mobileString<=0){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            __CLASS__.__FUNCTION__ .__LINE__,
-                            [
-                                'delEmptyMobile'=>[
-                                    'empty' => [
-                                        '$mobileString'=>$mobileString,
-                                        '$mobilesArr'=>$mobilesArr,
-                                    ],
-                                ]
-                            ]
-                        ])
-                    );
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode([
+//                            __CLASS__.__FUNCTION__ .__LINE__,
+//                            [
+//                                'delEmptyMobile'=>[
+//                                    'empty' => [
+//                                        '$mobileString'=>$mobileString,
+//                                        '$mobilesArr'=>$mobilesArr,
+//                                    ],
+//                                ]
+//                            ]
+//                        ])
+//                    );
                     BussinessOpportunityDetails::addRecordV2(
                         [
                             'upload_record_id' => $rawDataItem['id'], //
