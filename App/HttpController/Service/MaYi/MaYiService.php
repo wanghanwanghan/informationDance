@@ -5328,7 +5328,12 @@ class MaYiService extends ServiceBase
                         'city'         => $check2->getAttr('city'),
                     ];
                     $dianziqian_id = (new DianZiQianService())->getAuthFileId($gaizhangParam);
-                    AntAuthList::create()->where('id=' . $id)->update(['dianZiQian_id' => $dianziqian_id,'dianZiQian_status'=>0]);
+                    if(is_array($dianziqian_id)){
+                        dingAlarmUser('获取电子牵盖章ID',['id'=>$id,'res'=>$dianziqian_id],[18511881968]);
+                        CommonService::getInstance()->log4PHP([$id], 'info', 'getAuthFileId');
+                    }else{
+                        AntAuthList::create()->where('id=' . $id)->update(['dianZiQian_id' => $dianziqian_id,'dianZiQian_status'=>0]);
+                    }
                 } catch (\Throwable $e) {
                     CommonService::getInstance()->log4PHP([$e], 'info', 'mayilog');
                 }
