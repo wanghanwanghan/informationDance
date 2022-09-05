@@ -15,6 +15,7 @@ use App\HttpController\Models\AdminV2\AdminUserRole;
 use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\OperatorLog;
+use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\RDS3\Company;
@@ -334,61 +335,64 @@ class FinanceController extends ControllerBase
         }
 
         $requestData =  $this->getRequestData();
-        $files = $this->request()->getUploadedFiles();
-
-        DataModelExample::dealUploadFiles();
-
-        $succeedNums = 0;
-        foreach ($files as $key => $oneFile) {
-            try {
-                $fileName = $oneFile->getClientFilename();
-                $path = TEMP_FILE_PATH . $fileName;
-                if(file_exists($path)){
-                   return $this->writeJson(203, [], [],'文件已存在！');;
-                }
-
-                $res = $oneFile->moveTo($path);
-                if(!file_exists($path)){
-                    CommonService::getInstance()->log4PHP( json_encode(['uploadeCompanyLists   file_not_exists moveTo false ', 'params $path '=> $path,  ]) );
-                    return $this->writeJson(203, [], [],'文件移动失败！');
-                }
-
-                $UploadRecordRes =  AdminUserFinanceUploadRecord::findByIdAndFileName(
-                    $this->loginUserinfo['id'],
-                    $fileName
-                );
-                if($UploadRecordRes){
-                    return $this->writeJson(203, [], [],'文件已存在！');
-                }
-
-                $addUploadRecordRes = AdminUserFinanceUploadRecord::addUploadRecord(
-                    [
-                        'user_id' => $this->loginUserinfo['id'],
-                        'file_path' => $path,
-                        'years' => $requestData['years'],
-                        'file_name' => $fileName,
-                        'title' => $requestData['title']?:'',
-                        'reamrk' => $requestData['reamrk']?:'',
-                        'batch' => 'CWMD'.date('YmdHis'),
-                        'finance_config' => json_encode(
-                            AdminUserFinanceConfig::getConfigDataByUserId(
-                                $this->loginUserinfo['id']
-                            )
-                        ),
-                        'status' => AdminUserFinanceUploadRecord::$stateInit,
-                    ]
-                 );
-
-                if(!$addUploadRecordRes){
-                    return $this->writeJson(203, [], [],'入库失败，请联系管理员');
-                }
-                $succeedNums ++;
-            } catch (\Throwable $e) {
-                return $this->writeJson(202, [], [],'导入失败'.$e->getMessage());
+        $fileUplaodRes = DataModelExample::dealUploadFiles($this->request()->getUploadedFiles());
+        foreach ($fileUplaodRes['fileNames'] as  $fileName){
+            $UploadRecordRes =  AdminUserFinanceUploadRecord::findByIdAndFileName(
+                $this->loginUserinfo['id'],
+                $fileName
+            );
+            if($UploadRecordRes){
+                return $this->writeJson(203, [], [],'文件已存在！');
             }
+
+            $addUploadRecordRes = AdminUserFinanceUploadRecord::addUploadRecord(
+                [
+                    'user_id' => $this->loginUserinfo['id'],
+                    'file_path' => TEMP_FILE_PATH .$fileName,
+                    'years' => $requestData['years'],
+                    'file_name' => $fileName,
+                    'title' => $requestData['title']?:'',
+                    'reamrk' => $requestData['reamrk']?:'',
+                    'batch' => 'CWMD'.date('YmdHis'),
+                    'finance_config' => json_encode(
+                        AdminUserFinanceConfig::getConfigDataByUserId(
+                            $this->loginUserinfo['id']
+                        )
+                    ),
+                    'status' => AdminUserFinanceUploadRecord::$stateInit,
+                ]
+            );
+
+            if(!$addUploadRecordRes){
+                return $this->writeJson(203, [], [],'入库失败，请联系管理员');
+            }
+
+
+
+            //入库成功 添加个后置事件
+            $res = QueueLists::addRecordV2(
+                [
+                    'name' => '',
+                    'desc' => '',
+                    'func_info_json' => json_encode(
+                        [
+                            'class' => '\App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord',
+                            'static_func'=> 'ParseFileToDb',
+                        ]
+                    ),
+                    'params_json' => json_encode([
+                        'db_id'=>$addUploadRecordRes
+                    ]),
+                    'type' => QueueLists::$typle_finance,
+                    'remark' => '',
+                    'begin_date' => NULL,
+                    'msg' => '',
+                    'status' => QueueLists::$status_init,
+                ]
+            );
         }
 
-        return $this->writeJson(200, [], [],'导入成功 入库文件数量:'.$succeedNums);
+        return $this->writeJson(200, [], [],'导入成功 入库文件数量:'.$fileUplaodRes['succeedNums']);
     }
 
     //用户上传的列表 所有上传的客户名单

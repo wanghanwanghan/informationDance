@@ -10,6 +10,7 @@ use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
+use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
@@ -1806,6 +1807,89 @@ class SouKeController extends ControllerBase
      * 导出客户数据
      * */
     function exportEntData(): bool
+    {
+        if(
+            !ConfigInfo::setRedisNx('exportEntData',5)
+        ){
+            return $this->writeJson(201, null, [],  '请勿重复提交');
+        }
+
+        $requestData =  $this->getRequestData();
+        if(substr($requestData['basic_nicid'], -1) == ','){
+            $requestData['basic_nicid'] = rtrim($requestData['basic_nicid'], ",");
+        }
+
+        if(substr($requestData['basic_regionid'], -1) == ','){
+            $requestData['basic_regionid'] = rtrim($requestData['basic_regionid'], ",");
+        }
+
+        if(substr($requestData['basic_jlxxcyid'], -1) == ','){
+            $requestData['basic_jlxxcyid'] = rtrim($requestData['basic_jlxxcyid'], ",");
+        }
+
+        $checkRes = DataModelExample::checkField(
+            [
+
+                'total_nums' => [
+                    'bigger_than' => 0,
+                    'less_than' => 1000000,
+                    'field_name' => 'total_nums',
+                    'err_msg' => '总数不对！必须大于0且小于100万',
+                ]
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        //下载
+        $id = DownloadSoukeHistory::addRecord(
+            [
+                'admin_id' => $this->loginUserinfo['id'],
+                'entName' => $requestData['entName'],
+                //选择的哪些条件
+                'feature' => json_encode($requestData),
+                //标题
+                'title' => $requestData['title'],
+                'remark' => $requestData['remark'],
+                'total_nums' => $requestData['total_nums'],
+                'status' => DeliverHistory::$state_init,
+                'type' => $requestData['type']?:1,
+            ]
+        );
+        if($id<=0){
+            ConfigInfo::removeRedisNx('exportEntData');
+            return $this->writeJson(201,[ ] , [], '下载失败', true, []);
+        }
+
+        $res = QueueLists::addRecordV2(
+            [
+                'name' => 'sou_ke_export',
+                'desc' => '后台-搜客-导出',
+                'func_info_json' => json_encode(
+                    [
+                        'class' => '\App\ElasticSearch\Model\Company',
+                        'static_func'=> 'exportCompanyData',
+                    ]
+                ),
+                'params_json' => json_encode([
+                    'data_id'=>$id
+                ]),
+                'type' => QueueLists::$typle_finance,
+                'remark' => '',
+                'begin_date' => NULL,
+                'msg' => '',
+                'status' => QueueLists::$status_init,
+            ]
+        );
+
+        ConfigInfo::removeRedisNx('exportEntData');
+        return $this->writeJson(200,[ ] , [], '已发起下载，请去我的下载中查看', true, []);
+    }
+    function exportEntDataOld(): bool
     {
         if(
             !ConfigInfo::setRedisNx('exportEntData',5)
