@@ -5267,7 +5267,22 @@ class MaYiService extends ServiceBase
         } else {
             $id = $check->getAttr('id');
         }
-
+        if (!empty($data['fileData'])) {
+            foreach ($data['fileData'] as $datum) {
+                AntAuthSealDetail::create()->data([
+                  'orderNo'       => $data['orderNo'],
+                  //蚂蚁传过来的意思是 是否已经盖过章
+                  'isSeal'        => $datum['isSeal'] === 'true' ? 'false' : 'true',
+                  'isReturn'      => $datum['isReturn'],
+                  'fileAddress'   => $datum['fileAddress'],
+                  'fileId'        => $datum['fileId'],
+                  'antAuthId'     => $id,
+                  'type'          => $datum['type'],
+                  'fileSecret'    => $datum['fileSecret'] ?? '',
+                  'dianZiQian_id' =>  ''
+              ])->save();
+            }
+        }
         TaskService::getInstance()->create(new CreateDzqZhang($id,$data));
         return $this->check(200, null, null, null);
     }

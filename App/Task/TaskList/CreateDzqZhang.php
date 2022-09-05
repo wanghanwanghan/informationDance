@@ -43,24 +43,14 @@ class CreateDzqZhang extends TaskBase implements TaskInterface
 
                     try{
                         $dianziqian_id = (new DianZiQianService())->gaiZhang($gaizhangParam);
+                        dingAlarmUser('获取电子牵盖章ID',['id'=>$this->id,'fileId'=>$datum['fileId'],'res'=>$dianziqian_id],[18511881968]);
                         CommonService::getInstance()->log4PHP([$dianziqian_id], 'gaiZhang_res', 'mayilog');
                     } catch (\Throwable $e){
                         CommonService::getInstance()->log4PHP([$e], 'gaiZhang$e', 'mayilog');
                         $dianziqian_id = '';
                     }
                 }
-                AntAuthSealDetail::create()->data([
-                  'orderNo'       => $data['orderNo'],
-                  //蚂蚁传过来的意思是 是否已经盖过章
-                  'isSeal'        => $datum['isSeal'] === 'true' ? 'false' : 'true',
-                  'isReturn'      => $datum['isReturn'],
-                  'fileAddress'   => $datum['fileAddress'],
-                  'fileId'        => $datum['fileId'],
-                  'antAuthId'     => $this->id,
-                  'type'          => $datum['type'],
-                  'fileSecret'    => $datum['fileSecret'] ?? '',
-                  'dianZiQian_id' => $dianziqian_id ?? ''
-              ])->save();
+                AntAuthSealDetail::create()->where(['fileId'=>$datum['fileId'],'antAuthId'=>$this->id])->update(['dianZiQian_id' => $dianziqian_id ?? '']);
             }
         } else{
             try {
