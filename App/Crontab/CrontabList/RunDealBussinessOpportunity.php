@@ -774,17 +774,17 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                     ->getEntLianXi([
                         'entName' => $entName,
                     ])['result'];
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'getYieldPublicContactData'=>[
-                                '$retData'=>$retData,
-                                '$entName'=>$entName
-                            ]
-                        ]
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        [
+//                            'getYieldPublicContactData'=>[
+//                                '$retData'=>$retData,
+//                                '$entName'=>$entName
+//                            ]
+//                        ]
+//                    ])
+//                );
                 $retData = LongXinService::complementEntLianXiMobileState($retData);
                 $retData = LongXinService::complementEntLianXiPosition($retData, $entName);
 
@@ -858,18 +858,18 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                     }
                     //用微信匹配
                     $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($entName,$matchedWeiXinName['nickname']);
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            __CLASS__.__FUNCTION__ .__LINE__,
-                            [
-                                'getYieldPublicContactData'=>[
-                                    'match_by_weixin_res1'=> $tmpRes,
-                                    'nickname2'=> $matchedWeiXinName['nickname'],
-                                    '$entName'=> $entName,
-                                ]
-                            ]
-                        ])
-                    );
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode([
+//                            __CLASS__.__FUNCTION__ .__LINE__,
+//                            [
+//                                'getYieldPublicContactData'=>[
+//                                    'match_by_weixin_res1'=> $tmpRes,
+//                                    'nickname2'=> $matchedWeiXinName['nickname'],
+//                                    '$entName'=> $entName,
+//                                ]
+//                            ]
+//                        ])
+//                    );
                     yield $datas[] = array_values(
                         array_merge(
                             [
