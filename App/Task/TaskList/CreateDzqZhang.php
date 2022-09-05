@@ -13,73 +13,82 @@ use EasySwoole\Task\AbstractInterface\TaskInterface;
 class CreateDzqZhang extends TaskBase implements TaskInterface
 {
     private $data;
+    private $id;
 
-    function __construct($data)
+    function __construct($id,$data)
     {
         $this->data = $data;
-
+        $this->id = $id;
         return parent::__construct();
     }
 
     function run(int $taskId, int $workerIndex)
     {
-        $zhuData = AntAuthList::create()->where(['authDate'=>0,'dianZiQian_status'=>0]);
-        if(!empty($zhuData)){
-            foreach ( $zhuData as $val ){
-                $detail = AntAuthSealDetail::create()->where(['dianZiQian_id'=>$val->getAttr('id')]);
-                if(!empty($detail)){
-                    if($detail->getAttr('isSeal')){
-                        $gaizhangParam = [
-                            'entName'      => $val->getAttr('entName'),
-                            'legalPerson'  => $val->getAttr('legalPerson'),
-                            'idCard'       => $val->getAttr('idCard'),
-                            'socialCredit' => $val->getAttr('socialCredit'),
-                        ];
-                        $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
-                        is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
-                        $path = $path .$val->getAttr('orderNo').Carbon::now()->format('YmdHis').'.pdf';
-                        //储存pdf
-                        file_put_contents( INV_AUTH_PATH .$path,file_get_contents($detail->getAttr('fileAddress')),FILE_APPEND | LOCK_EX);
-                        $gaizhangParam['file'] = $path;
-
-                        $dianziqian_id = '';
-                        try{
-                            $dianziqian_id = (new DianZiQianService())->gaiZhang($gaizhangParam);
-                            if(is_array($dianziqian_id)){
-                                dingAlarmUser('获取电子牵盖章ID',['dianZiQian_id'=>$val->getAttr('id'),'res'=>$dianziqian_id],[18511881968]);
-                                CommonService::getInstance()->log4PHP([$dianziqian_id], 'info', 'getAuthFileId');
-                            }
-                            CommonService::getInstance()->log4PHP([$dianziqian_id], 'gaiZhang_res', 'mayilog');
-                        } catch (\Throwable $e){
-                            CommonService::getInstance()->log4PHP([$e], 'gaiZhang$e', 'mayilog');
-                        }
-                        if($dianziqian_id != ''){
-                            AntAuthSealDetail::create()->get($detail->getAttr('id'))->update(['dianZiQian_id'=>$dianziqian_id]);
-                        }
-                    }
-                }else{
+        $data = $this->data;
+        if (!empty($data['fileData'])) {
+            foreach ($data['fileData'] as $datum) {
+                if($datum['isSeal']){
                     $gaizhangParam = [
-                        'entName'      => $val->getAttr('entName'),
-                        'legalPerson'  => $val->getAttr('legalPerson'),
-                        'idCard'       => $val->getAttr('idCard'),
-                        'socialCredit' => $val->getAttr('socialCredit'),
-                        'file'         => 'dianziqian_jcsk_shouquanshu.pdf',
-                        'phone'        => $val->getAttr('phone'),
-                        'regAddress'   => $val->getAttr('regAddress'),
-                        'city'         => $val->getAttr('city'),
+                        'entName'      => $data['entName'],
+                        'legalPerson'  => $data['legalPerson'],
+                        'idCard'       => $data['idCard'],
+                        'socialCredit' => $data['socialCredit'],
                     ];
-                    $dianziqian_id = (new DianZiQianService())->getAuthFileId($gaizhangParam);
-                    if(is_array($dianziqian_id)){
-                        dingAlarmUser('获取电子牵盖章ID',['id'=>$val->getAttr('id'),'res'=>$dianziqian_id],[18511881968]);
-                        CommonService::getInstance()->log4PHP([$dianziqian_id], 'info', 'getAuthFileId');
-                    }else{
-                        AntAuthList::create()->where('id=' . $val->getAttr('id'))->update(['dianZiQian_id' => $dianziqian_id,'dianZiQian_status'=>0]);
+                    $path = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
+                    is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
+                    $path = $path .$data['orderNo'].Carbon::now()->format('YmdHis').'.pdf';
+                    //储存pdf
+                    file_put_contents( INV_AUTH_PATH .$path,file_get_contents($datum['fileAddress']),FILE_APPEND | LOCK_EX);
+                    $gaizhangParam['file'] = $path;
+
+                    try{
+                        $dianziqian_id = (new DianZiQianService())->gaiZhang($gaizhangParam);
+                        CommonService::getInstance()->log4PHP([$dianziqian_id], 'gaiZhang_res', 'mayilog');
+                    } catch (\Throwable $e){
+                        CommonService::getInstance()->log4PHP([$e], 'gaiZhang$e', 'mayilog');
+                        $dianziqian_id = '';
                     }
                 }
+                AntAuthSealDetail::create()->data([
+                  'orderNo'       => $data['orderNo'],
+                  //蚂蚁传过来的意思是 是否已经盖过章
+                  'isSeal'        => $datum['isSeal'] === 'true' ? 'false' : 'true',
+                  'isReturn'      => $datum['isReturn'],
+                  'fileAddress'   => $datum['fileAddress'],
+                  'fileId'        => $datum['fileId'],
+                  'antAuthId'     => $this->id,
+                  'type'          => $datum['type'],
+                  'fileSecret'    => $datum['fileSecret'] ?? '',
+                  'dianZiQian_id' => $dianziqian_id ?? ''
+              ])->save();
             }
-
+        } else{
+            try {
+                $check2 = AntAuthList::create()->where([
+                              'entName' => $data['entName'],
+                              'socialCredit' => $data['socialCredit'],
+                          ])->get();
+                $gaizhangParam = [
+                    'entName'      => $data['entName'],
+                    'legalPerson'  => $data['legalPerson'],
+                    'idCard'       => $data['idCard'],
+                    'socialCredit' => $data['socialCredit'],
+                    'file'         => 'dianziqian_jcsk_shouquanshu.pdf',
+                    'phone'        => $data['phone'],
+                    'regAddress'   => $check2->getAttr('regAddress'),
+                    'city'         => $check2->getAttr('city'),
+                ];
+                $dianziqian_id = (new DianZiQianService())->getAuthFileId($gaizhangParam);
+                if(is_array($dianziqian_id)){
+                    dingAlarmUser('获取电子牵盖章ID',['id'=>$this->id,'res'=>$dianziqian_id],[18511881968]);
+                    CommonService::getInstance()->log4PHP([$dianziqian_id], 'info', 'getAuthFileId');
+                }else{
+                    AntAuthList::create()->where('id=' . $this->id)->update(['dianZiQian_id' => $dianziqian_id,'dianZiQian_status'=>0]);
+                }
+            } catch (\Throwable $e) {
+                CommonService::getInstance()->log4PHP([$e], 'info', 'mayilog');
+            }
         }
-
     }
 
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
