@@ -76,14 +76,12 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
     private function toEs(string $esid, array $data)
     {
         //这里可以把搜客中的数据查出来(company_202209)，放到新的es库中
-        go(function () use ($esid, $data) {
-            $bean = new \EasySwoole\ElasticSearch\RequestBean\Get();
-            $bean->setIndex('company_202209');
-            $bean->setType('_doc');
-            $bean->setId($data['companyid']);
-            $res = (new ElasticSearchService())->customGetBody($bean);
-            CommonService::getInstance()->log4PHP($res, 'info', 'es_ent_check');
-        });
+        $bean = new \EasySwoole\ElasticSearch\RequestBean\Get();
+        $bean->setIndex('company_202209');
+        $bean->setType('_doc');
+        $bean->setId($data['companyid']);
+        $res = (new ElasticSearchService())->customGetBody($bean);
+        CommonService::getInstance()->log4PHP($res, 'info', 'es_ent_check');
     }
 
     protected function onPipeReadable(Process $process)
