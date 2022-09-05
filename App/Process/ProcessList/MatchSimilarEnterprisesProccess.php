@@ -2,11 +2,14 @@
 
 namespace App\Process\ProcessList;
 
+use App\ElasticSearch\Service\ElasticSearchService;
 use App\HttpController\Models\Api\UserApproximateEnterpriseModel;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\XinDong\Score\qpf;
 use App\Process\ProcessBase;
 use EasySwoole\RedisPool\Redis;
 use Swoole\Process;
+use wanghanwanghan\someUtils\control;
 
 class MatchSimilarEnterprisesProccess extends ProcessBase
 {
@@ -42,20 +45,43 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
             $info = jsonDecode($entInRedis);
 
             $score = (new qpf(
-                $info['baes'][0], $info['baes'][1], $info['baes'][2], $info['baes'][3],
-                $info['ys_label'], $info['NIC_ID'], $info['ESDATE'], $info['DOMDISTRICT']
+                $info['base'][0], $info['base'][1], $info['base'][2], $info['base'][3],
+                $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
             ))->expr();
 
-            UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
-                'userid' => $info['user_id'],
-                'companyid' => $info['companyid'],
-                'esid' => '',
-                'score' => $score,
-                'mvcc' => '',
-            ])->save();
+            $esid = control::getUuid();
+
+            $this->toEs($esid, $info);
+
+            try {
+                UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
+                    'userid' => $info['user_id'],
+                    'companyid' => $info['companyid'],
+                    'esid' => $esid,
+                    'score' => $score,
+                    'mvcc' => '',
+                ])->save();
+            } catch (\Throwable $e) {
+                $file = $e->getFile();
+                $line = $e->getLine();
+                $msg = $e->getMessage();
+                $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+                CommonService::getInstance()->log4PHP($content);
+            }
 
         }
 
+    }
+
+    private function toEs(string $esid, array $data)
+    {
+        //这里可以把搜客中的数据查出来(company_202209)，放到新的es库中
+        $bean = new \EasySwoole\ElasticSearch\RequestBean\Get();
+        $bean->setIndex('company_202209');
+        $bean->setType('_doc');
+        $bean->setId($data['companyid']);
+        $res = (new ElasticSearchService())->customGetBody($bean);
+        CommonService::getInstance()->log4PHP($res, 'info', 'es_ent_check');
     }
 
     protected function onPipeReadable(Process $process)
