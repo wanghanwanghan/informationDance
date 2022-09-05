@@ -277,16 +277,19 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             $companyDatas = self::getYieldData($rawDataItem['name']);
             $i = 1;
             foreach ($companyDatas as $companyDataItem){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'delEmptyMobile'=>[
-                                '$i' => $i,
+                if ($i%100==0){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            [
+                                'delEmptyMobile'=>[
+                                    '$i' => $i,
+                                ]
                             ]
-                        ]
-                    ])
-                );
+                        ])
+                    );
+                }
+
                 $i++;
                 $str = $companyDataItem[0];
 
