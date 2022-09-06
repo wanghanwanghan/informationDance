@@ -4772,7 +4772,7 @@ eof;
             return $this->writeJson(
                 200,
                 [ ] ,
-                [],
+                $res,
                 '成功',
                 true,
                 []
