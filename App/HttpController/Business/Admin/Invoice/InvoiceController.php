@@ -133,9 +133,7 @@ class InvoiceController extends InvoiceBase
                 if ($info->getAttr('getDataSource') - 0 === 2) {
                     //如果是金财的，就要发起归集
                     for ($i = 2; $i--;) {
-
                         TaskService::getInstance()->create(function () use ($i, $info) {
-
                             $task_res = (new JinCaiShuKeService())->addTask(
                                 '91110108MA01KPGK0L',
                                 $info->getAttr('province'),
@@ -164,9 +162,7 @@ class InvoiceController extends InvoiceBase
                             } else {
                                 CommonService::getInstance()->log4PHP($task_res, 'jincai');
                             }
-
                         });
-
                     }
                 }
             }
