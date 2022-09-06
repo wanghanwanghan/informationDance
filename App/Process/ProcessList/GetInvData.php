@@ -197,6 +197,7 @@ class GetInvData extends ProcessBase
         $info = AntAuthList::create()
             ->where('belong', [36, 41, 42], 'IN')
             ->where('socialCredit', $NSRSBH)
+            ->where('getDataSource', 1)
             ->get();
 
         if (empty($info)) return false;

@@ -104,6 +104,7 @@ class GetInvData extends AbstractCronTask
         $total = AntAuthList::create()
             ->where('belong', array_keys($url_arr), 'IN')
             ->where('status', MaYiService::STATUS_3)
+            ->where('getDataSource', 1)
             ->count();
 
         if (empty($total)) return false;
@@ -115,6 +116,7 @@ class GetInvData extends AbstractCronTask
             $list = AntAuthList::create()
                 ->where('belong', array_keys($url_arr), 'IN')
                 ->where('status', MaYiService::STATUS_3)
+                ->where('getDataSource', 1)
                 ->limit($offset, 2000)
                 ->all();
             if (empty($list)) break;
