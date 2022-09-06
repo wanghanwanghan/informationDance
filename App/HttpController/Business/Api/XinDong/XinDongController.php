@@ -4764,7 +4764,7 @@ eof;
                 );
 
                 //破产2
-                $res[$entName]['破产1'] = (new XinDongService())->getBankruptcyTs(
+                $res[$entName]['破产2'] = (new XinDongService())->getBankruptcyTs(
                     $companyRes['ENTNAME']
                 );
             }
