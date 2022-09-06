@@ -27,7 +27,7 @@ class CreateDzqZhang extends TaskBase implements TaskInterface
         $data = $this->data;
         if (!empty($data['fileData'])) {
             foreach ($data['fileData'] as $datum) {
-                if ($datum['isSeal']) {
+                if (!$datum['isSeal']) {
                     $gaizhangParam = [
                         'entName' => $data['entName'],
                         'legalPerson' => $data['legalPerson'],
@@ -44,7 +44,7 @@ class CreateDzqZhang extends TaskBase implements TaskInterface
                     try {
                         $dianziqian_id = (new DianZiQianService())->gaiZhang($gaizhangParam);
                         if (is_array($dianziqian_id)) {
-                            dingAlarmUser('获取电子牵盖章ID', ['id' => $this->id, 'fileId' => $datum['fileId'], 'res' => json_encode($dianziqian_id)], [18511881968]);
+                            dingAlarmUser('获取电子牵盖章ID', ['id' => $this->id, 'fileId' => $datum['fileId'], 'res' => json_encode($dianziqian_id),'msg'=>$dianziqian_id['msg']??''], [18511881968]);
                             CommonService::getInstance()->log4PHP([$dianziqian_id], 'gaiZhang_res', 'mayilog');
                         }else{
                             AntAuthSealDetail::create()->where(['fileId' => $datum['fileId'], 'antAuthId' => $this->id])->update(['dianZiQian_id' => $dianziqian_id ?? '']);
@@ -72,7 +72,7 @@ class CreateDzqZhang extends TaskBase implements TaskInterface
                 ];
                 $dianziqian_id = (new DianZiQianService())->getAuthFileId($gaizhangParam);
                 if (is_array($dianziqian_id)) {
-                    dingAlarmUser('获取电子牵盖章ID', ['id' => $this->id, 'res' => json_encode($dianziqian_id)], [18511881968]);
+                    dingAlarmUser('获取电子牵盖章ID', ['id' => $this->id, 'res' => json_encode($dianziqian_id),'msg'=>$dianziqian_id['msg']??''], [18511881968]);
                     CommonService::getInstance()->log4PHP([$dianziqian_id], 'info', 'getAuthFileId');
                 } else {
                     AntAuthList::create()->where('id=' . $this->id)->update(['dianZiQian_id' => $dianziqian_id, 'dianZiQian_status' => 0]);
