@@ -4769,10 +4769,97 @@ eof;
                 );
             }
 
+            $html =  '
+<style>
+ td {
+  max-width: 600px;
+  word-break: break-all;    // 设置强行换行 break-all强制英文单词断行
+  word-wrap: break-word;    // 内容将在边界内换行
+}
+
+.styled-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+.styled-table thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+}
+.styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+
+.styled-table tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+}
+</style>
+
+
+<table class="styled-table"  >
+  <thead>
+    <tr>
+      <th >企业名</th>
+      <th>我们库里是否覆盖此企业</th>
+      <th>工商-清算信息</th>
+      <th>注销日期</th>
+      <th>失信被执行人C1</th>
+      <th>失信被执行人C10</th>
+      <th>破产1</th>
+      <th>破产2</th>
+    </tr>
+   </thead>
+   <tbody>
+    
+';
+
+            foreach ($res as $entName=>$array){
+                $html .=  '
+
+     <tr>
+       <td  style="word-wrap:break-word;">'.$entName.'</td>
+       <td  style="word-wrap:break-word;" >'.$array['我们库里是否覆盖此企业'].'</td>
+       <td style="word-wrap:break-word;" >'.json_encode($array['工商-清算信息'],320).'</td>
+       <td style="word-wrap:break-word;" >'.json_encode($array['注销日期'],320).'</td>
+       <td  style="word-wrap:break-word;" >'.json_encode($array['失信被执行人C1']['result'],320).'</td>
+       <td  style="word-wrap:break-word;" >'.json_encode($array['失信被执行人C10']['result'],320).'</td>
+       <td  style="word-wrap:break-word;" >'.json_encode($array['破产1']['result'],320).'</td>
+       <td  style="word-wrap:break-word;" >'.json_encode($array['破产2']['result'],320).'</td>
+        
+     </tr> 
+    
+';
+            }
+
+
+            $html .=  '
+ <tr>
+     </tr>
+  </tbody>
+</table>
+';
+
             return $this->writeJson(
                 200,
                 [ ] ,
-                $res,
+                $html,
                 '成功',
                 true,
                 []
