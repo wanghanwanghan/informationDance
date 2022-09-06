@@ -10,6 +10,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\MaYi\MaYiService;
 use App\HttpController\Service\Zip\ZipService;
+use App\Task\Service\TaskService;
 use Carbon\Carbon;
 use wanghanwanghan\someUtils\control;
 
@@ -132,34 +133,40 @@ class InvoiceController extends InvoiceBase
                 if ($info->getAttr('getDataSource') - 0 === 2) {
                     //如果是金财的，就要发起归集
                     for ($i = 2; $i--;) {
-                        $task_res = (new JinCaiShuKeService())->addTask(
-                            '91110108MA01KPGK0L',
-                            $info->getAttr('province'),
-                            [
-                                'cxlx' => trim($i),//查询类型 0销项 1 进项
-                                'kprqq' => Carbon::now()->subMonths(24)->startOfMonth()->format('Y-m-d'),//开票日期起
-                                'kprqz' => Carbon::now()->subMonths(1)->endOfMonth()->format('Y-m-d'),//开票日期止
-                                'nsrsbh' => $info->getAttr('socialCredit'),//纳税人识别号
-                            ]
-                        );
-                        //这里把traceNo入库
-                        $code = $task_res['code'] ?? '';
-                        $data = $task_res['result'] ?? '';
-                        if ($code === 'S000' && !empty($data)) {
-                            JinCaiRwh::create()->data([
-                                'entName' => $info->getAttr('entName'),
-                                'socialCredit' => $info->getAttr('socialCredit'),
-                                'type' => 1,
-                                'rwh' => trim($data['traceNo']),
-                                'province' => trim($data['province']),
-                                'taskCode' => trim($data['taskCode']),
-                                'kprqq' => str_replace('-', '', $data['ywBody']['kprqq']) - 0,
-                                'kprqz' => str_replace('-', '', $data['ywBody']['kprqz']) - 0,
-                                'cxlx' => trim($data['ywBody']['cxlx']) - 0,
-                            ])->save();
-                        } else {
-                            CommonService::getInstance()->log4PHP($task_res, 'jincai');
-                        }
+
+                        TaskService::getInstance()->create(function () use ($i, $info) {
+
+                            $task_res = (new JinCaiShuKeService())->addTask(
+                                '91110108MA01KPGK0L',
+                                $info->getAttr('province'),
+                                [
+                                    'cxlx' => trim($i),//查询类型 0销项 1 进项
+                                    'kprqq' => Carbon::now()->subMonths(24)->startOfMonth()->format('Y-m-d'),//开票日期起
+                                    'kprqz' => Carbon::now()->subMonths(1)->endOfMonth()->format('Y-m-d'),//开票日期止
+                                    'nsrsbh' => $info->getAttr('socialCredit'),//纳税人识别号
+                                ]
+                            );
+                            //这里把traceNo入库
+                            $code = $task_res['code'] ?? '';
+                            $data = $task_res['result'] ?? '';
+                            if ($code === 'S000' && !empty($data)) {
+                                JinCaiRwh::create()->data([
+                                    'entName' => $info->getAttr('entName'),
+                                    'socialCredit' => $info->getAttr('socialCredit'),
+                                    'type' => 1,
+                                    'rwh' => trim($data['traceNo']),
+                                    'province' => trim($data['province']),
+                                    'taskCode' => trim($data['taskCode']),
+                                    'kprqq' => str_replace('-', '', $data['ywBody']['kprqq']) - 0,
+                                    'kprqz' => str_replace('-', '', $data['ywBody']['kprqz']) - 0,
+                                    'cxlx' => trim($data['ywBody']['cxlx']) - 0,
+                                ])->save();
+                            } else {
+                                CommonService::getInstance()->log4PHP($task_res, 'jincai');
+                            }
+
+                        });
+
                     }
                 }
             }

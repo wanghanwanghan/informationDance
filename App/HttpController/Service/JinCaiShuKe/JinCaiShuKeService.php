@@ -81,12 +81,10 @@ class JinCaiShuKeService extends ServiceBase
     private function checkResp($res, string $type = ''): array
     {
         if ($type === 'wupan') {
-            return [
-                $res['code'],
+            return $this->createReturn($res['code'],
                 null,
                 jsonDecode(base64_decode($res['data'])),
-                $res['msg']
-            ];
+                $res['msg']);
         } else {
             $res['code'] !== '0000' ?: $res['code'] = 200;
             $arr['content'] = jsonDecode(base64_decode($res['content']));
