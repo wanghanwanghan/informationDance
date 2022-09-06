@@ -1,6 +1,7 @@
 <?php
 
 namespace App\HttpController\Models\AdminV2;
+use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Service\CreateConf;
 
 
@@ -243,6 +244,24 @@ class AdminUserFinanceConfig extends ModelBase
             ])
         );
         return true ;
+    }
+    public static function checkIfIsLocked($userid){
+
+        $res = ConfigInfo::findByName('locked_finance_user_id');
+        if(empty($res)){
+            return  false;
+        }
+        $res = $res->toArray();
+
+        $userids = json_decode($res['value'],true);
+        if(
+           in_array($userid,$userids)
+        ){
+            return true ;
+        }
+        else{
+            return false ;
+        }
     }
 
     public static function checkIfNeedsConfirm($userid){
