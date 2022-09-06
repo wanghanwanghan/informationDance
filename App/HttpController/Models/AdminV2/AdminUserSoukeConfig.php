@@ -184,6 +184,14 @@ class AdminUserSoukeConfig extends ModelBase
         $fieldStr = $res->getAttr("allowed_fields");
         return json_decode($fieldStr,true);
     }
+    static function  getAllowedFieldsArrayV2($userId){
+        $res = self::findByUser($userId);
+        if(!$res){
+            return ["companyid","ENTNAME"];
+        }
+        $fieldStr = $res->getAttr("allowed_fields");
+        return json_decode($fieldStr,true);
+    }
 
     public static function addRecord($requestData){
 
