@@ -370,14 +370,10 @@ class JinCaiShuKeService extends ServiceBase
             'ywBody' => $ywBody,
         ];
 
-        CommonService::getInstance()->log4PHP($post_data, 'send', 'jincaijincai');
-
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken], [], 'postjson');
-
-        CommonService::getInstance()->log4PHP($post_data, 'return', 'jincaijincai');
 
         return $this->checkResp($res, 'wupan');
     }

@@ -144,9 +144,6 @@ class InvoiceController extends InvoiceBase
                                     'nsrsbh' => $info->getAttr('socialCredit'),//纳税人识别号
                                 ]
                             );
-
-                            CommonService::getInstance()->log4PHP($task_res, 'returtocontro', 'jincaijincai');
-
                             //这里把traceNo入库
                             $code = $task_res['code'] ?? '';
                             $data = $task_res['result'] ?? '';
