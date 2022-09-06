@@ -4688,6 +4688,21 @@ eof;
         }
 
         if(
+            $this->getRequestData('test')
+        ){
+
+            return $this->writeJson(
+                200,
+                [ ] ,
+                CompanyLiquidation::findByCompanyId(intval($this->getRequestData('CompanyLiquidation'))),
+                '成功',
+                true,
+                []
+            );
+        }
+
+
+        if(
             $this->getRequestData('CompanyLiquidation')
         ){
 
