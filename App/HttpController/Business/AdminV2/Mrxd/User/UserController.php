@@ -109,32 +109,12 @@ class UserController extends ControllerBase
         $info = AdminNewUser::findByUserNameAndPwd(
             $username,$enCodePassword
         );
+
         if(empty($info)){
             return $this->writeJson(201, null, null, '账号密码错误');
-        }else{
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'login succeed',
-                    '$username' =>$username,
-                    '$enCodePassword'=>$enCodePassword,
-                ])
-            );
-            $newToken = UserService::getInstance()->createAccessToken(
-                AdminNewUser::aesDecode($info->phone),
-                AdminNewUser::aesDecode($info->password)
-            );
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'create new token ',
-                    '$newToken' =>$newToken,
-                    'AdminNewUser::aesDecode($info->phone)' => AdminNewUser::aesDecode($info->phone),
-                    'AdminNewUser::aesDecode($info->password)' => AdminNewUser::aesDecode($info->password)
-                ])
-            );
+        }
 
-            $info->update(['token' => $newToken]);
-            //$info->token = $newToken;
-            //$info->phone = AdminNewUser::aesDecode($info->phone );
+        if($info->getAttr('token')){
             return $this->writeJson(200, [ ] , ['id' => $info->id,
                 'user_name' => $info->user_name,
                 'password' => $info->password,
@@ -143,6 +123,38 @@ class UserController extends ControllerBase
                 'token' => $info->token,
             ], null, '登录成功');
         }
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'login succeed',
+                '$username' =>$username,
+                '$enCodePassword'=>$enCodePassword,
+            ])
+        );
+
+        $newToken = UserService::getInstance()->createAccessToken(
+            AdminNewUser::aesDecode($info->phone),
+            AdminNewUser::aesDecode($info->password)
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'create new token ',
+                '$newToken' =>$newToken,
+                'AdminNewUser::aesDecode($info->phone)' => AdminNewUser::aesDecode($info->phone),
+                'AdminNewUser::aesDecode($info->password)' => AdminNewUser::aesDecode($info->password)
+            ])
+        );
+
+        $info->update(['token' => $newToken]);
+        //$info->token = $newToken;
+        //$info->phone = AdminNewUser::aesDecode($info->phone );
+        return $this->writeJson(200, [ ] , ['id' => $info->id,
+            'user_name' => $info->user_name,
+            'password' => $info->password,
+            'phone' => AdminNewUser::aesDecode($info->phone ),
+            'email' => $info->email,
+            'token' => $info->token,
+        ], null, '登录成功');
     }
     public function signOut()
     { 
