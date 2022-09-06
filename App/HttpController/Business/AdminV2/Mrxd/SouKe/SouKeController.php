@@ -1865,7 +1865,7 @@ class SouKeController extends ControllerBase
             return $this->writeJson(201,[ ] , [], '下载失败', true, []);
         }
 
-        $res = QueueLists::addRecordV2(
+        $res = QueueLists::addRecord(
             [
                 'name' => 'sou_ke_export',
                 'desc' => '后台-搜客-导出',
@@ -1879,6 +1879,7 @@ class SouKeController extends ControllerBase
                     'data_id'=>$id
                 ]),
                 'type' => QueueLists::$typle_finance,
+                'user_id' => $this->loginUserinfo['id'],
                 'remark' => '',
                 'begin_date' => NULL,
                 'msg' => '',

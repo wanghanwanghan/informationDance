@@ -380,7 +380,7 @@ class FinanceController extends ControllerBase
 
 
             //入库成功 添加个后置事件
-            $res = QueueLists::addRecordV2(
+            $res = QueueLists::addRecord(
                 [
                     'name' => '',
                     'desc' => '',

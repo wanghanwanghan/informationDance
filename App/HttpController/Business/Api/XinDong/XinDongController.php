@@ -3625,7 +3625,7 @@ eof;
         if(
             $this->getRequestData('add_queue')
         ){
-            $res = QueueLists::addRecordV2(
+            $res = QueueLists::addRecord(
                 [
                     'name' => '',
                     'desc' => '',
@@ -4691,7 +4691,7 @@ eof;
         if(
             $this->getRequestData('fengxian')
         ){
-            $html = CompanyBasic::createRiskDataHtml([
+            $html = CompanyBasic::createRiskLevelHtmlData([
                 '北京华锐怡贤艺苑商场',
                 '北京市门头沟区三建公司苇子水建筑队',
                 '北京市天龙世纪精密机电配件厂新技术开发部',
