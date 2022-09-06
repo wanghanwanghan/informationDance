@@ -47,6 +47,7 @@ use App\HttpController\Models\RDS3\HdSaicExtension\DataplusAppIosH;
 use App\HttpController\Models\RDS3\HdSaicExtension\MostTorchHightechH;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CompanyRiskService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Export\Excel\ExportExcelService;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
@@ -3621,6 +3622,23 @@ eof;
 
     function testExport()
     {
+        if(
+            $this->getRequestData('test_gao_feng')
+        ){
+            $model = new CompanyRiskService(
+                $this->getRequestData('test_gao_feng')
+            );
+            $model->run(); 
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                $model->getFzDetail(),
+                '成功1',
+                true,
+                []
+            );
+
+        }
 
         if(
             $this->getRequestData('add_queue')
