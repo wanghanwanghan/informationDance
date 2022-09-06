@@ -7,6 +7,7 @@ use App\HttpController\Models\Api\InvoiceIn;
 use App\HttpController\Models\Api\InvoiceOut;
 use App\HttpController\Models\Api\JincaiRwhLog;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\XinDong\XinDongService;
@@ -67,11 +68,11 @@ class JinCaiShuKeService extends ServiceBase
 
         $this->url = 'https://pubapi.jcsk100.com/pre/api/';
         $this->jtnsrsbh = '91110108MA01KPGK0L';
-        $this->appKey = '1f58a6db7805';
-        $this->appSecret = '3ab58912f92493131aa2';
+        $this->appKey = CreateConf::getInstance()->getConf('jincai.appKey');
+        $this->appSecret = CreateConf::getInstance()->getConf('jincai.appSecret');
 
         $this->wupan_url = 'http://ctp.jcsk100.com/';
-        $this->oauthToken = 'akP/bi8gjDT94hUe/ORJsdwkk+phnrz/nzkEifyfjA28BaAEUPQAHDzZ0s6/kE23';
+        $this->oauthToken = CreateConf::getInstance()->getConf('jincai.oauthToken');
 
         return true;
     }
