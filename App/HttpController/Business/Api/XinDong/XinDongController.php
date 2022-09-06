@@ -4691,7 +4691,7 @@ eof;
         if(
             $this->getRequestData('fengxian')
         ){
-            $arr = [
+            $html = CompanyBasic::createRiskDataHtml([
                 '北京华锐怡贤艺苑商场',
                 '北京市门头沟区三建公司苇子水建筑队',
                 '北京市天龙世纪精密机电配件厂新技术开发部',
@@ -4717,145 +4717,7 @@ eof;
                 '北京市平谷区马昌营供销合作社',
                 '北京奥士凯宝龙商场有限责任公司',
                 '北京市海佳利企业管理有限责任公司',
-            ];
-            $res = [];
-            foreach ($arr as $entName){
-
-                //库里是否覆盖
-                $companyRes = CompanyBasic::findByName($entName);
-                if(empty($companyRes)){
-                    $res[$entName]['我们库里是否覆盖此企业'] = '否';
-                    continue;
-                }
-                $res[$entName]['我们库里是否覆盖此企业'] = '是';
-                $companyRes = $companyRes->toArray();
-
-                //工商-清算信息
-                $CompanyLiquidationRes = CompanyLiquidation::findByCompanyId($companyRes['companyid']);
-                $CompanyLiquidationRes = $CompanyLiquidationRes?$CompanyLiquidationRes->toArray():[];
-                $res[$entName]['工商-清算信息'] = $CompanyLiquidationRes;
-
-                //注销日期
-                $res[$entName]['注销日期'] = CompanyBasic::findCancelDateByName($companyRes['ENTNAME']);
-
-                //失信被执行人C1
-                $postData = [
-                    'entName' => $companyRes['ENTNAME'],
-                    'version' => 'C1' ,
-                ];
-                $shixin_res = (new LongXinService())
-                    ->setCheckRespFlag(true)
-                    ->getEntDetail($postData);
-                $res[$entName]['失信被执行人C1'] = $shixin_res;
-
-                //失信被执行人C10
-                $postData = [
-                    'entName' => $companyRes['ENTNAME'],
-                    'version' => 'C10' ,
-                ];
-                $shixin_res = (new LongXinService())
-                    ->setCheckRespFlag(true)
-                    ->getEntDetail($postData);
-                $res[$entName]['失信被执行人C10'] = $shixin_res;
-
-                //破产1
-                $res[$entName]['破产1'] = (new XinDongService())->getBankruptcyCheck(
-                    $companyRes['ENTNAME']
-                );
-
-                //破产2
-                $res[$entName]['破产2'] = (new XinDongService())->getBankruptcyTs(
-                    $companyRes['ENTNAME']
-                );
-            }
-
-            $html =  '
-<style>
- td {
-  max-width: 600px;
-  word-break: break-all;    // 设置强行换行 break-all强制英文单词断行
-  word-wrap: break-word;    // 内容将在边界内换行
-}
-
-.styled-table {
-    border-collapse: collapse;
-    margin: 25px 0;
-    font-size: 0.9em;
-    font-family: sans-serif;
-    min-width: 400px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
-}
-.styled-table thead tr {
-    background-color: #009879;
-    color: #ffffff;
-    text-align: left;
-}
-.styled-table th,
-.styled-table td {
-    padding: 12px 15px;
-}
-.styled-table tbody tr {
-    border-bottom: 1px solid #dddddd;
-}
-
-.styled-table tbody tr:nth-of-type(even) {
-    background-color: #f3f3f3;
-}
-
-.styled-table tbody tr:last-of-type {
-    border-bottom: 2px solid #009879;
-}
-
-.styled-table tbody tr.active-row {
-    font-weight: bold;
-    color: #009879;
-}
-</style>
-
-
-<table class="styled-table"  >
-  <thead>
-    <tr>
-      <th >企业名</th>
-      <th>我们库里是否覆盖此企业</th>
-      <th>工商-清算信息</th>
-      <th>注销日期</th>
-      <th>失信被执行人C1</th>
-      <th>失信被执行人C10</th>
-      <th>破产1</th>
-      <th>破产2</th>
-    </tr>
-   </thead>
-   <tbody>
-    
-';
-
-            foreach ($res as $entName=>$array){
-                $html .=  '
-
-     <tr>
-       <td  style="word-wrap:break-word;">'.$entName.'</td>
-       <td  style="word-wrap:break-word;" >'.$array['我们库里是否覆盖此企业'].'</td>
-       <td style="word-wrap:break-word;" >'.json_encode($array['工商-清算信息'],320).'</td>
-       <td style="word-wrap:break-word;" >'.json_encode($array['注销日期'],320).'</td>
-       <td  style="word-wrap:break-word;" >'.json_encode($array['失信被执行人C1']['result'],320).'</td>
-       <td  style="word-wrap:break-word;" >'.json_encode($array['失信被执行人C10']['result'],320).'</td>
-       <td  style="word-wrap:break-word;" >'.json_encode($array['破产1']['result'],320).'</td>
-       <td  style="word-wrap:break-word;" >'.json_encode($array['破产2']['result'],320).'</td>
-        
-     </tr> 
-    
-';
-            }
-
-
-            $html .=  '
- <tr>
-     </tr>
-  </tbody>
-</table>
-';
-
+            ]);
             return $this->writeJson(
                 200,
                 [ ] ,
