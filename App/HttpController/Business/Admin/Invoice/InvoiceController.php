@@ -144,6 +144,9 @@ class InvoiceController extends InvoiceBase
                                     'nsrsbh' => $info->getAttr('socialCredit'),//纳税人识别号
                                 ]
                             );
+
+                            CommonService::getInstance()->log4PHP($task_res, 'returtocontro', 'jincaijincai');
+
                             //这里把traceNo入库
                             $code = $task_res['code'] ?? '';
                             $data = $task_res['result'] ?? '';
@@ -159,8 +162,6 @@ class InvoiceController extends InvoiceBase
                                     'kprqz' => str_replace('-', '', $data['ywBody']['kprqz']) - 0,
                                     'cxlx' => trim($data['ywBody']['cxlx']) - 0,
                                 ])->save();
-                            } else {
-                                CommonService::getInstance()->log4PHP($task_res, 'jincai');
                             }
                         });
                     }
