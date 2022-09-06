@@ -3621,6 +3621,7 @@ eof;
 
     function testExport()
     {
+
         if(
             $this->getRequestData('add_queue')
         ){
@@ -4686,6 +4687,98 @@ eof;
                 []
             );
         }
+
+        if(
+            $this->getRequestData('fengxian')
+        ){
+            $arr = [
+                '北京华锐怡贤艺苑商场',
+                '北京市门头沟区三建公司苇子水建筑队',
+                '北京市天龙世纪精密机电配件厂新技术开发部',
+                '北京中商联物贸发展公司',
+                '北京美康科技贸易发展公司',
+                '北京京煤集团有限责任公司',
+                '北京印刷集团有限责任公司胶印二厂',
+                '北京航星机器制造有限公司',
+                '北京市北京饭店有限责任公司',
+                '北京市电影股份有限公司',
+                '北京华夏永信商贸有限公司',
+                '北京巨阵星空科技有限公司',
+                '北京云辰科技有限公司',
+                '北京恒聚科技有限公司',
+                '北京捷龙科技有限公司',
+                '北京华夏永信商贸有限公司',
+                '北京巨阵星空科技有限公司',
+                '北京恒生源科技有限公司',
+                '北京盛世辉煌商贸有限公司',
+                '北京云辰科技有限公司',
+                '北京大栅栏五联宾馆有限责任公司',
+                '北京怀柔燕北医药有限公司',
+                '北京市平谷区马昌营供销合作社',
+                '北京奥士凯宝龙商场有限责任公司',
+                '北京市海佳利企业管理有限责任公司',
+            ];
+            $res = [];
+            foreach ($arr as $entName){
+
+                //库里是否覆盖
+                $companyRes = CompanyBasic::findByName($entName);
+                if(empty($companyRes)){
+                    $res[$entName]['我们库里是否覆盖此企业'] = '否';
+                    continue;
+                }
+                $res[$entName]['我们库里是否覆盖此企业'] = '是';
+                $companyRes = $companyRes->toArray();
+
+                //工商-清算信息
+                $CompanyLiquidationRes = CompanyLiquidation::findByCompanyId($companyRes['companyid']);
+                $CompanyLiquidationRes = $CompanyLiquidationRes?$CompanyLiquidationRes->toArray():[];
+                $res[$entName]['工商-清算信息'] = $CompanyLiquidationRes;
+
+                //注销日期
+                $res[$entName]['注销日期'] = CompanyBasic::findCancelDateByName($companyRes['ENTNAME']);
+
+                //失信被执行人C1
+                $postData = [
+                    'entName' => $companyRes['ENTNAME'],
+                    'version' => 'C1' ,
+                ];
+                $shixin_res = (new LongXinService())
+                    ->setCheckRespFlag(true)
+                    ->getEntDetail($postData);
+                $res[$entName]['失信被执行人C1'] = $shixin_res;
+
+                //失信被执行人C10
+                $postData = [
+                    'entName' => $companyRes['ENTNAME'],
+                    'version' => 'C10' ,
+                ];
+                $shixin_res = (new LongXinService())
+                    ->setCheckRespFlag(true)
+                    ->getEntDetail($postData);
+                $res[$entName]['失信被执行人C10'] = $shixin_res;
+
+                //破产1
+                $res[$entName]['破产1'] = (new XinDongService())->getBankruptcyCheck(
+                    $companyRes['ENTNAME']
+                );
+
+                //破产2
+                $res[$entName]['破产2'] = (new XinDongService())->getBankruptcyTs(
+                    $companyRes['ENTNAME']
+                );
+            }
+
+            return $this->writeJson(
+                200,
+                [ ] ,
+                $res,
+                '成功',
+                true,
+                []
+            );
+        }
+
 
         if(
             $this->getRequestData('CompanyLiquidation')

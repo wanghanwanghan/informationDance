@@ -310,6 +310,16 @@ class FinanceController extends ControllerBase
                 if(!$addUploadRecordRes){
                     return $this->writeJson(203, [], [],'入库失败，请联系管理员');
                 }
+
+                if(
+                    AdminUserFinanceConfig::checkIfIsLocked(
+                        $this->loginUserinfo['id']
+                    )
+                ){
+                    AdminUserFinanceUploadRecord::setTouchTime($addUploadRecordRes,date('Y-m-d H:i:s'));
+                }
+
+
                 $succeedNums ++;
             } catch (\Throwable $e) {
                 return $this->writeJson(202, [], [],'导入失败'.$e->getMessage());

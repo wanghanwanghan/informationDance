@@ -58,6 +58,11 @@ class CompanyBasic extends ModelBase
         return $res?$res->getAttr('CANDATE'):'';
     }
 
+    public static function findCancelDateByName($name){
+        $res =  self::findByName($name);
+        return $res?$res->getAttr('CANDATE'):'';
+    }
+
 
 
     public static function findByConditionV2($whereArr,$page){
