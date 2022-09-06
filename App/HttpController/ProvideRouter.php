@@ -47,6 +47,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/testInvEntList', $prefix . 'testInvEntList');//testInvEntList
             $routeCollector->addRoute(['GET', 'POST'], '/accountInfo', $prefix . 'accountInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/costRecord', $prefix . 'costRecord');
+            $routeCollector->addRoute(['GET', 'POST'], '/gaiZhang', $prefix . 'gaiZhang');
         });
         return true;
     }
