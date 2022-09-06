@@ -135,7 +135,7 @@ class InvoiceController extends InvoiceBase
                     for ($i = 2; $i--;) {
                         TaskService::getInstance()->create(function () use ($i, $info) {
                             $task_res = (new JinCaiShuKeService())->addTask(
-                                '91110108MA01KPGK0L',
+                                $info->getAttr('socialCredit'),
                                 $info->getAttr('province'),
                                 [
                                     'cxlx' => trim($i),//查询类型 0销项 1 进项
