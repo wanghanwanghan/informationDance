@@ -5,6 +5,7 @@ namespace App\ElasticSearch\Model;
 use App\ElasticSearch\Service\ElasticSearchService;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
+use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -188,51 +189,51 @@ class Company extends ServiceBase
     }
 
 
-    function getYieldDataForSouKe($areaArr,$type =1){
-
-        $startMemory = memory_get_usage();
-        $start = microtime(true);
-        $datas = [];
-
-        $size = 5000;
-        $offset = 0;
-        $nums =1;
-        $lastId = 0;
-
-        while ($totalNums > 0) {
-            if($totalNums<$size){
-                $size = $totalNums;
-            }
-
-            $companyLocationEsModel = new \App\ElasticSearch\Model\CompanyLocation($type);
-            $companyLocationEsModel
-                //经营范围
-                ->SetAreaQuery($areaArr)
-                ->searchFromEs();
-
-            if($lastId>0){
-                $companyLocationEsModel->addSearchAfterV1($lastId);
-            }
-
-            foreach($companyLocationEsModel->return_data['hits']['hits'] as $dataItem){
-                $lastId = $dataItem['_id'];
-
-                $nums ++;
-
-                yield $datas[] = $dataItem['_source'];
-            }
-
-            $totalNums -= $size;
-            $offset +=$size;
-        }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
-                'generate data  done . costs seconds '=>microtime(true) - $start
-            ])
-        );
-    }
+//    function getYieldDataForSouKe($areaArr,$type =1){
+//
+//        $startMemory = memory_get_usage();
+//        $start = microtime(true);
+//        $datas = [];
+//
+//        $size = 5000;
+//        $offset = 0;
+//        $nums =1;
+//        $lastId = 0;
+//
+//        while ($totalNums > 0) {
+//            if($totalNums<$size){
+//                $size = $totalNums;
+//            }
+//
+//            $companyLocationEsModel = new \App\ElasticSearch\Model\CompanyLocation($type);
+//            $companyLocationEsModel
+//                //经营范围
+//                ->SetAreaQuery($areaArr)
+//                ->searchFromEs();
+//
+//            if($lastId>0){
+//                $companyLocationEsModel->addSearchAfterV1($lastId);
+//            }
+//
+//            foreach($companyLocationEsModel->return_data['hits']['hits'] as $dataItem){
+//                $lastId = $dataItem['_id'];
+//
+//                $nums ++;
+//
+//                yield $datas[] = $dataItem['_source'];
+//            }
+//
+//            $totalNums -= $size;
+//            $offset +=$size;
+//        }
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+//                'generate data  done . costs seconds '=>microtime(true) - $start
+//            ])
+//        );
+//    }
 
     function setReturnData($data)
     {
@@ -765,4 +766,259 @@ class Company extends ServiceBase
 
         return $this;
     }
+
+
+    /**
+    事件里执行的
+     */
+    static function exportCompanyData($paramsData){
+        $startMemory = memory_get_usage();
+        $InitData =  DownloadSoukeHistory::findById( $paramsData['data_id'] );
+        if(empty($InitData)){
+            return [
+                'msg' => 'wrong id',
+                'data_id' => $paramsData['data_id'],
+                '$paramsData' => $paramsData,
+            ];
+        }
+        $InitData =  DownloadSoukeHistory::findById( $paramsData['data_id'] );
+
+        $filename = '搜客导出_'.date('YmdHis').'.xlsx';
+        $config=  [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+
+
+        $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArray($InitData['admin_id']);
+        array_unshift($fieldsArr, 'xd_id');  //在数组开头插入
+
+        $filedCname = ['companyid'];
+        $allFields = AdminUserSoukeConfig::getAllFieldsV2();
+        foreach ($fieldsArr as $field){
+            if($allFields[$field]){
+                $filedCname[] = $allFields[$field];
+            }
+        }
+
+        $excel = new \Vtiful\Kernel\Excel($config);
+        $fileObject = $excel->fileName($filename, 'sheet');
+        $fileHandle = $fileObject->getHandle();
+
+        $format = new Format($fileHandle);
+        $colorStyle = $format
+            ->fontColor(Format::COLOR_ORANGE)
+            ->border(Format::BORDER_DASH_DOT)
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $format = new Format($fileHandle);
+
+        $alignStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $fileObject
+            ->defaultFormat($colorStyle)
+            ->header($filedCname)
+            ->defaultFormat($alignStyle)
+        ;
+
+        $featureArr = json_decode($InitData['feature'],true);
+        // get SouKe Config
+
+        $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
+        foreach ($tmpXlsxDatas as $dataItem){
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$dataItem' => $dataItem
+//                    ])
+//                );
+            $tmp = [
+                //'xd_id'=>$dataItem['xd_id'],
+            ];
+            foreach ($fieldsArr as $field){
+                $tmp[$field] = $dataItem[$field];
+            }
+            //$tmp['xd_id'] = $dataItem['xd_id'];
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$dataItem' => $dataItem,
+//                        '$featureArr'=>$featureArr,
+//                        '$tmp'=>$tmp,
+//                    ])
+//                );
+            $fileObject ->data([$tmp]);
+        }
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+            ])
+        );
+
+        $format = new Format($fileHandle);
+        //单元格有\n解析成换行
+        $wrapStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->wrap()
+            ->toResource();
+
+        $fileObject->output();
+
+        //更新文件地址
+        DownloadSoukeHistory::setFilePath($InitData['id'],'/Static/Temp/',$filename);
+
+        //设置状态
+        DownloadSoukeHistory::setStatus(
+            $InitData['id'],DownloadSoukeHistory::$state_file_succeed
+        );
+    }
+
+    static function getYieldDataForSouKe($totalNums,$requestDataArr,$fieldsArr){
+
+        $startMemory = memory_get_usage();
+        $start = microtime(true);
+        $searchOption = json_decode($requestDataArr['searchOption'],true);
+        $datas = [];
+
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                '$datas' => $datas
+//            ])
+//        );
+
+        $size = 3500;
+        $offset = 0;
+        $nums =1;
+        $lastId = 0;
+        while ($totalNums > 0) {
+            if($totalNums<$size){
+                $size = $totalNums;
+            }
+
+            //区域搜索
+            $areas_arr  = json_decode($requestDataArr['areas'],true) ;
+            if(!empty($areas_arr)){
+
+                //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
+                $first = $areas_arr[0];;
+                $last =  end($areas_arr);
+                if(
+                    strval($first[0])!= strval($last[0]) ||
+                    strval($first[1])!= strval($last[1])
+                ){
+                    $areas_arr[] = $first;
+                }
+            }
+
+            $companyEsModel = new \App\ElasticSearch\Model\Company();
+            $companyEsModel
+                //经营范围
+                ->SetQueryByBusinessScope(trim($requestDataArr['OPSCOPE'],"OPSCOPE"))
+                //数字经济及其核心产业
+                ->SetQueryByBasicSzjjid(trim($requestDataArr['basic_szjjid']))
+                // 搜索文案 智能搜索
+                ->SetQueryBySearchTextV2( trim($requestDataArr['searchText']))
+                // 搜索战略新兴产业
+                ->SetQueryByBasicJlxxcyid(trim($requestDataArr['basic_jlxxcyid']))
+                // 搜索shang_pin_data 商品信息 appStr:五香;农庄
+                ->SetQueryByShangPinData( trim($requestDataArr['appStr']))
+                //必须存在官网
+                ->SetQueryByWeb($searchOption)
+                ->SetAreaQueryV5($areas_arr,$requestDataArr['areas_type']?:1)
+                //必须存在APP
+                ->SetQueryByApp($searchOption)
+                //必须是物流企业
+                ->SetQueryByWuLiuQiYe($searchOption)
+                // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
+                ->SetQueryByCompanyOrgType($searchOption)
+                // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
+                ->SetQueryByEstiblishTimeV2($searchOption)
+                // 营业状态   传过来的是 10  20  转换成文案后 去匹配
+                ->SetQueryByRegStatusV2($searchOption)
+                // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
+                ->SetQueryByRegCaptialV2($searchOption)
+                // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
+                ->SetQueryByTuanDuiRenShu($searchOption)
+                // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
+                ->SetQueryByYingShouGuiMo($searchOption)
+                //四级分类 basic_nicid: A0111,A0112,A0113,
+                ->SetQueryBySiJiFenLei(trim($requestDataArr['basic_nicid']))
+                //公司类型
+                ->SetQueryByCompanyType(trim($requestDataArr['ENTTYPE']))
+                //公司状态
+                ->SetQueryByCompanyStatus(trim($requestDataArr['ENTSTATUS']))
+                // 地区 basic_regionid: 110101,110102,
+                ->SetQueryByBasicRegionid(trim($requestDataArr['basic_regionid']))
+                ->addSize($size)
+                ->setSource($fieldsArr)
+
+                //->addSize($size)
+                //->addFrom($offset)
+                //设置默认值 不传任何条件 搜全部
+                //->setDefault()
+                //->searchFromEs('company_202208')
+                // 格式化下日期和时间
+                //->formatEsDate()
+                // 格式化下金额
+                //->formatEsMoney('REGCAP')
+            ;
+
+
+            if($lastId>0){
+                $companyEsModel->addSearchAfterV1($lastId);
+            }
+            // 格式化下日期和时间
+            $companyEsModel
+                ->setDefault()
+                ->searchFromEs('company_202208')
+                ->formatEsDate()
+                // 格式化下金额
+                ->formatEsMoney();
+
+            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+                $lastId = $dataItem['_id'];
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$lastId' => $lastId
+//                    ])
+//                );
+
+
+                $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
+                $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
+                $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
+
+
+                $nums ++;
+
+                // 官网
+                $webStr = trim($dataItem['_source']['web']);
+                if(!$webStr){
+                    yield $datas[] = $dataItem['_source'];
+                    continue;
+                }
+                $webArr = explode('&&&', $webStr);
+                !empty($webArr) && $dataItem['_source']['web'] = end($webArr);
+
+                yield $datas[] = $dataItem['_source'];
+            }
+
+            $totalNums -= $size;
+            $offset +=$size;
+        }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+                'generate data  done . costs seconds '=>microtime(true) - $start
+            ])
+        );
+    }
+
 }

@@ -235,10 +235,12 @@ class DataModelExample extends ModelBase
 
     static function dealUploadFiles($files){
         $succeedNums = 0;
+        $fileNames = [];
         foreach ($files as $key => $oneFile) {
             try {
                 $fileName = $oneFile->getClientFilename();
                 $fileName = date('YmdHis').'_'.$fileName;
+                $fileNames[] = $fileName;
                 $path = TEMP_FILE_PATH . $fileName;
                 $res = $oneFile->moveTo($path);
                 $succeedNums ++;
@@ -252,8 +254,72 @@ class DataModelExample extends ModelBase
 
         return  [
             'succeedNums' => $succeedNums,
+            'fileNames' => $fileNames,
             'res' => 'succeed',
         ];
     }
 
+    static function getYieldData($xlsx_name,$workPath){
+        $excel_read = new \Vtiful\Kernel\Excel(['path' => $workPath]);
+        $excel_read->openFile($xlsx_name)->openSheet();
+
+        $datas = [];
+        while (true) {
+
+            $one = $excel_read->nextRow([
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+            ]);
+
+            if (empty($one)) {
+                break;
+            }
+
+            $value0 = self::strtr_func($one[0]);
+            $value1 = self::strtr_func($one[1]);
+            $value2 = self::strtr_func($one[2]);
+            $value3 = self::strtr_func($one[3]);
+            $value4 = self::strtr_func($one[4]);
+            $value5 = self::strtr_func($one[5]);
+            $value6 = self::strtr_func($one[6]);
+            $value6 = self::strtr_func($one[7]);
+            $value8 = self::strtr_func($one[8]);
+            $value9 = self::strtr_func($one[9]);
+            $tmpData = [
+                $value0,
+                $value1,
+                $value2,
+                $value3,
+            ] ;
+            yield $datas[] = $tmpData;
+        }
+    }
+
+    static function strtr_func($str): string
+    {
+        $str = trim($str);
+
+        if (empty($str)) {
+            return '';
+        }
+
+        $arr = [
+            '０' => '0', '１' => '1', '２' => '2', '３' => '3', '４' => '4', '５' => '5', '６' => '6', '７' => '7', '８' => '8', '９' => '9',
+            'Ａ' => 'A', 'Ｂ' => 'B', 'Ｃ' => 'C', 'Ｄ' => 'D', 'Ｅ' => 'E', 'Ｆ' => 'F', 'Ｇ' => 'G', 'Ｈ' => 'H', 'Ｉ' => 'I', 'Ｊ' => 'J',
+            'Ｋ' => 'K', 'Ｌ' => 'L', 'Ｍ' => 'M', 'Ｎ' => 'N', 'Ｏ' => 'O', 'Ｐ' => 'P', 'Ｑ' => 'Q', 'Ｒ' => 'R', 'Ｓ' => 'S', 'Ｔ' => 'T',
+            'Ｕ' => 'U', 'Ｖ' => 'V', 'Ｗ' => 'W', 'Ｘ' => 'X', 'Ｙ' => 'Y', 'Ｚ' => 'Z', 'ａ' => 'a', 'ｂ' => 'b', 'ｃ' => 'c', 'ｄ' => 'd',
+            'ｅ' => 'e', 'ｆ' => 'f', 'ｇ' => 'g', 'ｈ' => 'h', 'ｉ' => 'i', 'ｊ' => 'j', 'ｋ' => 'k', 'ｌ' => 'l', 'ｍ' => 'm', 'ｎ' => 'n',
+            'ｏ' => 'o', 'ｐ' => 'p', 'ｑ' => 'q', 'ｒ' => 'r', 'ｓ' => 's', 'ｔ' => 't', 'ｕ' => 'u', 'ｖ' => 'v', 'ｗ' => 'w', 'ｘ' => 'x',
+            'ｙ' => 'y', 'ｚ' => 'z',
+            '（' => '(', '）' => ')', '〔' => '(', '〕' => ')', '【' => '[', '】' => ']', '〖' => '[', '〗' => ']',
+            '｛' => '{', '｝' => '}', '《' => '<', '》' => '>', '％' => '%', '＋' => '+', '—' => '-', '－' => '-',
+            '～' => '~', '：' => ':', '。' => '.', '，' => ',', '、' => ',', '；' => ';', '？' => '?', '！' => '!', '…' => '-',
+            '‖' => '|', '”' => '"', '’' => '`', '‘' => '`', '｜' => '|', '〃' => '"', '　' => ' ', '×' => '*', '￣' => '~', '．' => '.', '＊' => '*',
+            '＆' => '&', '＜' => '<', '＞' => '>', '＄' => '$', '＠' => '@', '＾' => '^', '＿' => '_', '＂' => '"', '￥' => '$', '＝' => '=',
+            '＼' => '\\', '／' => '/', '“' => '"', PHP_EOL => ''
+        ];
+
+        return str_replace([',', ' '], '', strtr($str, $arr));
+    }
 }

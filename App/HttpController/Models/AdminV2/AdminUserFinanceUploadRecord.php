@@ -962,4 +962,116 @@ class AdminUserFinanceUploadRecord extends ModelBase
     }
 
 
+    // =========================================================================分割线================================
+    static function  ParseFileToDb($params){
+        $dbId = $params['db_id'];
+
+        $uploadRecords = AdminUserFinanceUploadRecord::findById($dbId);
+        if(empty($uploadRecords)){
+            return  [
+                'msg'=> 'id错误',
+            ];
+        }
+        // 待解析的客户名单
+        $uploadRecord = $uploadRecords->toArray();
+        //touch time：占用符 标识该条记录在执行中  防止重复执行
+        AdminUserFinanceUploadRecord::setTouchTime(
+            $uploadRecord['id'], date('Y-m-d H:i:s')
+        );
+
+
+        foreach($uploadRecords as $uploadRecord) {
+
+
+            // 找到上传的文件路径
+            $dirPath =  dirname($uploadRecord['file_path']).DIRECTORY_SEPARATOR;
+            self::setworkPath( $dirPath );
+
+            //按行读取数据
+            $companyDatas = self::getYieldData($uploadRecord['file_name']);
+
+            foreach ($companyDatas as $companyData) {
+                if(empty($companyData[0])){
+                    continue;
+                }
+                // 按年度解析为数据
+                $yearsArr = json_decode($uploadRecord['years'],true);
+                if(empty($yearsArr)){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ ,
+                            'error . $yearsArr is emprty . $yearsArr ='=>$yearsArr
+                        ])
+                    );
+                    continue;
+                }
+                foreach($yearsArr as $yearItem){
+                    $UserFinanceDataId =  AdminUserFinanceData::addNewRecordV2(
+                        [
+                            'user_id' => $uploadRecord['user_id'] ,
+                            'entName' => $companyData[0] ,
+                            'year' => $yearItem ,
+                            'finance_data_id' => 0,
+                            'price' => 0,
+                            'price_type' => 0,
+                            'cache_end_date' => 0,
+                            'status' => AdminUserFinanceData::$statusinit,
+                        ]
+                    );
+                    if(!$UserFinanceDataId){
+                        OperatorLog::addRecord(
+                            [
+                                'user_id' => $uploadRecord['user_id'],
+                                'msg' =>  "上传记录".$uploadRecord['id'].",入库admin_user_finance_data表失败 企业：".$companyData[0]." 年度：$yearItem",
+                                'details' =>json_encode( XinDongService::trace()),
+                                'type_cname' => '【失败】财务定时，解析数据失败',
+                            ]
+                        );
+                        return false;
+                    }
+
+                    //如果之前确认过的  需要重新确认
+                    if(
+                        AdminUserFinanceData::checkIfCheckedBefore($UserFinanceDataId)
+                    ){
+                        AdminUserFinanceData::updateStatus(
+                            $UserFinanceDataId,AdminUserFinanceData::$statusNeedsConfirm
+                        );
+                    }
+
+                    $res =AdminUserFinanceUploadDataRecord::addRecordV2(
+                        [
+                            'user_id' => $uploadRecord['user_id'] ,
+                            'record_id' => $uploadRecord['id'] ,
+                            'user_finance_data_id' => $UserFinanceDataId,
+                            'status' => 0,
+                        ]
+                    );
+                    if(!$res){
+                        OperatorLog::addRecord(
+                            [
+                                'user_id' => $uploadRecord['user_id'],
+                                'msg' =>  "上传记录".$uploadRecord['id'].",入库admin_user_finance_upload_data_record表失败  admin_user_finance_data表id：$UserFinanceDataId",
+                                'details' =>json_encode( XinDongService::trace()),
+                                'type_cname' => '【失败】财务定时，解析数据失败',
+                            ]
+                        );
+                        return false;
+                    }
+                }
+            }
+            AdminUserFinanceUploadRecord::changeStatus(
+                $uploadRecord['id'],AdminUserFinanceUploadRecordV3::$stateParsed
+            );
+
+            AdminUserFinanceUploadRecord::setTouchTime(
+                $uploadRecord['id'], NULL
+            );
+        }
+
+        return true;
+    }
+
+
+
 }
