@@ -789,8 +789,8 @@ class Company extends ServiceBase
         ];
 
 
-        $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArray($InitData['admin_id']);
-        array_unshift($fieldsArr, 'xd_id');  //在数组开头插入
+        $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArrayV2($InitData['admin_id']);
+        array_unshift($fieldsArr, 'companyid');  //在数组开头插入
 
         $filedCname = ['companyid'];
         $allFields = AdminUserSoukeConfig::getAllFieldsV2();
