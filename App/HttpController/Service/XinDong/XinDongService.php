@@ -2869,7 +2869,7 @@ class XinDongService extends ServiceBase
     }
     // $tobeMatch 姓名   $target：微信名
     function matchNamesV2($tobeMatch,$target){
-        CommonService::getInstance()->log4PHP(json_encode(['$tobeMatch'=>$tobeMatch,'$target'=>$target]));
+//        CommonService::getInstance()->log4PHP(json_encode(['$tobeMatch'=>$tobeMatch,'$target'=>$target]));
 
         //完全匹配
         $res = $this->matchNamesByEqual($tobeMatch,$target);
