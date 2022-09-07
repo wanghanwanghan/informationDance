@@ -82,7 +82,7 @@ class XinDongController extends ProvideBase
                     ];
                 }
                 try {
-                    NeoCrmPendingEnt::create()->data($insert)->save();
+                    NeoCrmPendingEnt::create()->data($insert)->saveAll($insert, false, false);
                 } catch (\Throwable $exception) {
 
                 }
