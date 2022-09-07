@@ -220,7 +220,7 @@ class CompanyRiskService extends ServiceBase
         $fx['gaofengxian'] = 0.4 * $res['联合惩戒名单信息'];
         //==============================================================================================================
         $res['fz_score'] = sprintf('%.2f', array_sum($fz));
-        $res['fx_score'] = sprintf('%.2f', array_sum($fx));   
+        $res['fx_score'] = sprintf('%.2f', array_sum($fx));
         $this->setFzDetail($res);
         return $res;
     }
