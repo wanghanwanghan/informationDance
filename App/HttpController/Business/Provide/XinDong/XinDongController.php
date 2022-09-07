@@ -66,8 +66,9 @@ class XinDongController extends ProvideBase
         $entNameString = $this->getRequestData('entNameString');
         $urgency = $this->getRequestData('urgency');//1-100
         $remark = $this->getRequestData('remark');//250个字最多
+        $type = $this->getRequestData('type');//gs nacao
 
-        $this->csp->add($this->cspKey, function () use ($entNameString, $urgency, $remark) {
+        $this->csp->add($this->cspKey, function () use ($entNameString, $urgency, $remark, $type) {
             if (!empty($entNameString)) {
                 $entName_arr = explode('|', trim($entNameString));
                 if (!is_numeric($urgency) || $urgency - 0 < 1 || $urgency - 0 > 100) {
@@ -78,7 +79,8 @@ class XinDongController extends ProvideBase
                     $insert[] = [
                         'entname' => trim($one),
                         'urgency' => $urgency - 0,
-                        'remark' => trim($remark)
+                        'remark' => trim($remark),
+                        'type' => trim(strtolower($type))
                     ];
                 }
                 try {
