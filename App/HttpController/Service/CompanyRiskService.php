@@ -79,6 +79,46 @@ class CompanyRiskService extends ServiceBase
         return $this->fx_detail;
     }
 
+    /**
+    {
+    "企业性质": 50,
+    "企业对外投资": 60,
+    "融资历史": 50,
+    "行政许可": 60,
+    "专利": 70,
+    "软件著作权": 80,
+    "近三年团队人数": 50,
+    "近两年团队人数": 40,
+    "招投标": 60,
+    "财务资产": [
+    80,
+    97
+    ],
+    "行业位置": 0,
+    "企业变更信息": 0,
+    "经营异常": 0,
+    "裁判文书": 0,
+    "执行公告": 0,
+    "涉税处罚公示": 0,
+    "税务非正常户公示": 0,
+    "欠税公告": 0,
+    "行政处罚": 0,
+    "联合惩戒名单信息": 0
+    }
+     */
+    static function getDatas($companys){
+        $return = [];
+        foreach ($companys as $company){
+            $model = new CompanyRiskService(
+                $company
+            );
+            $model->run();
+            $tmpRes = $model->getFzDetail();
+            $return[] = $tmpRes;
+        }
+        return $return;
+    }
+
     //计算信动分
      function exprXDS($data)
     {
@@ -165,45 +205,6 @@ class CompanyRiskService extends ServiceBase
         return $res;
     }
 
-    //分数旁的一句话或几句话
-    private function fz_and_fx_detail(TemplateProcessor $docObj, $data)
-    {
-        //专利
-        $zl = (int)$data['PatentV4Search']['total'];
-
-        //软件著作权
-        $rz = (int)$data['SearchSoftwareCr']['total'];
-
-        if ($zl === 0 && $rz < 2) $this->fz_detail[] = '企业需进一步增强创新研发能力';
-
-        //龙信 财务
-        if (empty($data['FinanceData'])) $this->fz_detail[] = '企业经营能力与核心竞争力方面需进一步提升';
-        if (!empty($data['FinanceData']) && mt_rand(0, 100) > 80) $this->fx_detail[] = '企业需进一步加强在资产负债方面的管控意识';
-
-        //乾启 团队人数
-        foreach ($data['itemInfo'] as $oneYear) {
-            if (isset($oneYear['yoy']) && !empty($oneYear['yoy']) && is_numeric($oneYear['yoy'])) {
-                if ($oneYear['yoy'] < 0.06) {
-                    $this->fz_detail[] = '企业团队人员管理方面需进一步加强';
-                    break;
-                }
-            }
-        }
-
-        //企业资质证书
-        if ((int)$data['SearchCertification']['total'] === 0) $this->fz_detail[] = '企业需进一步提升所在行业领域的政府资质或荣誉申领意识';
-
-        //裁判文书
-        if ((int)$data['cpws']['total'] > 5) $this->fx_detail[] = '企业的法律经营意识方面需进一步加强';
-
-        //行政处罚+欠税公告+非正常户
-        $a = (int)$data['GetAdministrativePenaltyList']['total'];
-        $b = (int)$data['satparty_qs']['total'];
-        $c = (int)$data['satparty_fzc']['total'];
-        if ($a + $b + $c >= 2) $this->fx_detail[] = '企业在接受行政管理方面需进一步完善';
-
-        return true;
-    }
 
     //失信公告
     private function sxgg($data)
