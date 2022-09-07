@@ -114,7 +114,7 @@ class CompanyRiskService extends ServiceBase
             );
             $model->run();
             $tmpRes = $model->getFzDetail();
-            $return[] = $tmpRes;
+            $return[$company] = $tmpRes;
         }
         return $return;
     }
