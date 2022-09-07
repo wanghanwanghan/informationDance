@@ -788,28 +788,28 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 $retData = LongXinService::complementEntLianXiMobileState($retData);
                 $retData = LongXinService::complementEntLianXiPosition($retData, $entName);
 
-                yield $datas[] = [
-                    '企业名',
-                    '微信名',
-                    '联系人职位[url]',
-                    '联系方式来源[url]',
-                    '联系方式唯一标识[url]',
-                    'ltype[url]',
-                    '联系人姓名[url]',
-                    '联系方式权重[url]',
-                    '手机归属地/座机区号[url]',
-                    '联系方式来源网页链接[url]',
-                    '联系方式[url]',
-                    '联系方式类型（手机/座机/邮箱）[url]',
-                    'mobile_check_res[url]',
-                    '手机号码状态[url]',
-                    'url联系人姓名匹配到的职位[url]',
-                    '联系人名称（疑似）[微信匹配]',
-                    '职位（疑似）[微信匹配]',
-                    '匹配类型[微信匹配]',
-                    '匹配子类型[微信匹配]',
-                    '匹配值[微信匹配]',
-                ];
+//                yield $datas[] = [
+//                    '企业名',
+//                    '微信名',
+//                    '联系人职位[url]',
+//                    '联系方式来源[url]',
+//                    '联系方式唯一标识[url]',
+//                    'ltype[url]',
+//                    '联系人姓名[url]',
+//                    '联系方式权重[url]',
+//                    '手机归属地/座机区号[url]',
+//                    '联系方式来源网页链接[url]',
+//                    '联系方式[url]',
+//                    '联系方式类型（手机/座机/邮箱）[url]',
+//                    'mobile_check_res[url]',
+//                    '手机号码状态[url]',
+//                    'url联系人姓名匹配到的职位[url]',
+//                    '联系人名称（疑似）[微信匹配]',
+//                    '职位（疑似）[微信匹配]',
+//                    '匹配类型[微信匹配]',
+//                    '匹配子类型[微信匹配]',
+//                    '匹配值[微信匹配]',
+//                ];
                 foreach($retData as $datautem){
                     /**
                     [
@@ -1075,13 +1075,34 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 $fileObject ->data([$dataItem]);
             }
             //==============================================
+
             //p2
             $file->addSheet('公开数据')
                 ->defaultFormat($colorStyle)
-//                ->header([
-//                    '标题' , //
-//                    '项目名称' , //
-//                ])
+                ->header(
+                    [
+                        '企业名',
+                        '微信名',
+                        '联系人职位[url]',
+                        '联系方式来源[url]',
+                        '联系方式唯一标识[url]',
+                        'ltype[url]',
+                        '联系人姓名[url]',
+                        '联系方式权重[url]',
+                        '手机归属地/座机区号[url]',
+                        '联系方式来源网页链接[url]',
+                        '联系方式[url]',
+                        '联系方式类型（手机/座机/邮箱）[url]',
+                        'mobile_check_res[url]',
+                        '手机号码状态[url]',
+                        'url联系人姓名匹配到的职位[url]',
+                        '联系人名称（疑似）[微信匹配]',
+                        '职位（疑似）[微信匹配]',
+                        '匹配类型[微信匹配]',
+                        '匹配子类型[微信匹配]',
+                        '匹配值[微信匹配]',
+                    ]
+                )
                 ->defaultFormat($alignStyle)   ;
 
             $i = 1;
