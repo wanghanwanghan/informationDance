@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\XinDong;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Models\Api\NeoCrmPendingEnt;
 use App\HttpController\Models\EntDb\EntDbEnt;
 use App\HttpController\Models\EntDb\EntDbFinance;
 use App\HttpController\Models\EntDb\EntDbTzList;
@@ -57,6 +58,46 @@ class XinDongController extends ProvideBase
         }
 
         return true;
+    }
+
+    //销售易传过来的有问题企业
+    function pendingEnt(): bool
+    {
+        $entNameString = $this->getRequestData('entNameString');
+        $urgency = $this->getRequestData('urgency');//1-100
+        $remark = $this->getRequestData('remark');//250个字最多
+        $type = $this->getRequestData('type');//gs nacao
+
+        $this->csp->add($this->cspKey, function () use ($entNameString, $urgency, $remark, $type) {
+            if (!empty($entNameString)) {
+                $entName_arr = explode('|', trim($entNameString));
+                if (!is_numeric($urgency) || $urgency - 0 < 1 || $urgency - 0 > 100) {
+                    $urgency = 50;
+                }
+                $insert = [];
+                foreach ($entName_arr as $one) {
+                    $insert[] = [
+                        'entname' => trim($one),
+                        'urgency' => $urgency - 0,
+                        'remark' => trim($remark),
+                        'type' => trim(strtolower($type))
+                    ];
+                }
+                try {
+                    NeoCrmPendingEnt::create()->data($insert)->saveAll($insert, false, false);
+                } catch (\Throwable $exception) {
+
+                }
+            }
+            return null;
+        });
+
+        return $this->checkResponse([$this->cspKey => [
+            'code' => 200,
+            'paging' => null,
+            'result' => CspService::getInstance()->exec($this->csp, $this->cspTimeout),
+            'msg' => null,
+        ]]);
     }
 
     //发送短信
