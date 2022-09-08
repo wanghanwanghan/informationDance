@@ -3630,7 +3630,7 @@ eof;
                 //CommonService::ClearHtml($res['body']),
                 \App\ElasticSearch\Model\Company::serachFromEs(
                     [
-                        'entNames' => '上饶玉宏公路工程有限公司,临洮惠仁堂药业连锁有限公司北关店',
+                        'entNames' => '范县智嘉建筑工程有限公司,惠州优居乐业房地产经纪有限公司蔚蓝北区分公司',
                     ],
                     [
 
