@@ -3631,6 +3631,7 @@ eof;
                 \App\ElasticSearch\Model\Company::serachFromEs(
                     [
                         'entNames' => '范县智嘉建筑工程有限公司,惠州优居乐业房地产经纪有限公司蔚蓝北区分公司',
+                        'companyids' => '83643763',
                     ],
                     [
 
