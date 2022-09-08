@@ -450,6 +450,8 @@ class FinanceController extends ControllerBase
         foreach ($res['data'] as &$dataItem){
             $dataItem['status_cname'] = AdminUserFinanceUploadRecordV3::getStatusMaps()[$dataItem['status']];
             $dataItem['if_can_download'] = AdminUserFinanceUploadRecord::ifCanDownload($dataItem['id'])?1:0;
+            $userREs = \App\HttpController\Models\AdminV2\AdminNewUser::findById($dataItem['user_id']);
+            $dataItem['user_name'] =   $userREs?$userREs->getAttr('user_name'):'';
         }
         return $this->writeJson(200,  [
             'page' => $page,
@@ -491,6 +493,8 @@ class FinanceController extends ControllerBase
                 $obj  =AdminUserFinanceUploadRecord::findById($value['upload_record_id']);
                 $obj && $value['upload_details'] = $obj->toArray();
             }
+            $userREs = \App\HttpController\Models\AdminV2\AdminNewUser::findById($value['user_id']);
+            $value['user_name'] =   $userREs?$userREs->getAttr('user_name'):'';
         }
         return $this->writeJson(200,  [
             'page' => $page,
