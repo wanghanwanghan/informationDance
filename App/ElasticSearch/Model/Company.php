@@ -369,7 +369,7 @@ class Company extends ServiceBase
     }
 
     function SetQueryBySearchCompanyNames($entNames){
-        if(!empty($xdIds)){
+        if(!empty($entNames)){
             $this->es->addMustTermsQuery('ENTNAME',$entNames);
         }
         return $this;
