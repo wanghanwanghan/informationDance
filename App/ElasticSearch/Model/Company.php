@@ -6,6 +6,8 @@ use App\ElasticSearch\Service\ElasticSearchService;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\QueueLists;
+use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
+use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -358,6 +360,21 @@ class Company extends ServiceBase
         }
         return $this;
     }
+
+    function SetQueryBySearchCompanyIds($xdIds){
+        if(!empty($xdIds)){
+            $this->es->addMustTermsQuery('companyid',$xdIds);
+        }
+        return $this;
+    }
+
+    function SetQueryBySearchCompanyNames($entNames){
+        if(!empty($xdIds)){
+            $this->es->addMustTermsQuery('ENTNAME',$entNames);
+        }
+        return $this;
+    }
+
 
     function SetQueryByBusinessScope($basic_opscope,$business_scope_field_name = "business_scope"){
         // 需要按文本搜索的
@@ -1019,6 +1036,195 @@ class Company extends ServiceBase
                 'generate data  done . costs seconds '=>microtime(true) - $start
             ])
         );
+    }
+
+    static  function  getNamesByText($page,$size,$searchText){
+
+        $companyEsModel = new \App\ElasticSearch\Model\Company();
+
+        $offset  =  ($page-1)*$size;
+
+        $companyEsModel
+            // 搜索文案 智能搜索
+            ->SetQueryBySearchTextV2( trim($searchText))
+            ->addSize($size)
+            ->addFrom($offset)
+            //设置默认值 不传任何条件 搜全部
+            ->setDefault()
+            ->searchFromEs('company_202208')
+            // 格式化下日期和时间
+            ->formatEsDate()
+            // 格式化下金额
+            ->formatEsMoney('REGCAP')
+        ;
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'es_hits_count' =>  count($companyEsModel->return_data['hits']['hits'])
+            ])
+        );
+        $names = [];
+        foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+            $names[] = $dataItem['_source']['ENTNAME'];
+        }
+        return $names;
+    }
+
+    static  function  serachFromEs(
+            $requestData,
+            $dataConfig = [ 'show_log' => true,]
+    )
+    {
+        $companyEsModel = new \App\ElasticSearch\Model\Company();
+
+        //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
+        $searchOptionStr =  trim($requestData['searchOption']);
+        $searchOptionArr = json_decode($searchOptionStr, true);
+
+        $size = $requestData['size']??20;
+        $page = $requestData['page']??1;
+        $offset  =  ($page-1)*$size;
+
+        //区域搜索
+        $areas_arr  = json_decode($requestData['areas'],true) ;
+        if(!empty($areas_arr)){
+
+            //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
+            $first = $areas_arr[0];;
+            $last =  end($areas_arr);
+            if(
+                strval($first[0])!= strval($last[0]) ||
+                strval($first[1])!= strval($last[1])
+            ){
+                $areas_arr[] = $first;
+            }
+        }
+
+        $companyEsModel
+            //经营范围
+            ->SetQueryByBusinessScope(trim($requestData['OPSCOPE'],"OPSCOPE"))
+            //数字经济及其核心产业
+            ->SetQueryByBasicSzjjid(trim($requestData['basic_szjjid']))
+            // 搜索文案 智能搜索
+            ->SetQueryBySearchTextV2( trim($requestData['searchText']))
+            ->SetQueryBySearchCompanyIds(
+                !empty($requestData['companyids'])?
+                explode(',',$requestData['companyids']):[]
+            )
+            ->SetQueryBySearchCompanyNames(
+                !empty($requestData['entNames'])?
+                    explode(',',$requestData['entNames']):[]
+            )
+            // 搜索战略新兴产业
+            ->SetQueryByBasicJlxxcyid(trim($requestData['basic_jlxxcyid']))
+            // 搜索shang_pin_data 商品信息 appStr:五香;农庄
+            ->SetQueryByShangPinData( trim($requestData['appStr']))
+            //必须存在官网
+            ->SetQueryByWeb($searchOptionArr)
+            ->SetAreaQueryV5($areas_arr,$requestData['areas_type']?:1)
+            //必须存在APP
+            ->SetQueryByApp($searchOptionArr)
+            //必须是物流企业
+            ->SetQueryByWuLiuQiYe($searchOptionArr)
+            // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
+            ->SetQueryByCompanyOrgType($searchOptionArr)
+            // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
+            ->SetQueryByEstiblishTimeV2($searchOptionArr)
+            // 营业状态   传过来的是 10  20  转换成文案后 去匹配
+            ->SetQueryByRegStatusV2($searchOptionArr)
+            // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
+            ->SetQueryByRegCaptialV2($searchOptionArr)
+            // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
+            ->SetQueryByTuanDuiRenShu($searchOptionArr)
+            // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
+            ->SetQueryByYingShouGuiMo($searchOptionArr)
+            //四级分类 basic_nicid: A0111,A0112,A0113,
+            ->SetQueryBySiJiFenLei(trim($requestData['basic_nicid']))
+            //公司类型
+            ->SetQueryByCompanyType(trim($requestData['ENTTYPE']))
+            //公司状态
+            ->SetQueryByCompanyStatus(trim($requestData['ENTSTATUS']))
+            // 地区 basic_regionid: 110101,110102,
+            ->SetQueryByBasicRegionid(trim($requestData['basic_regionid']))
+            ->addSize($size)
+            ->addFrom($offset)
+            //设置默认值 不传任何条件 搜全部
+            ->setDefault()
+            ->searchFromEs('company_202208')
+            // 格式化下日期和时间
+            ->formatEsDate()
+            // 格式化下金额
+            ->formatEsMoney('REGCAP')
+        ;
+
+        if($dataConfig['show_log']){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'hits_count' =>  count($companyEsModel->return_data['hits']['hits'])
+                ])
+            );
+        }
+
+        foreach($companyEsModel->return_data['hits']['hits'] as &$dataItem){
+            if($dataConfig['fill_short_name']){
+                $dataItem['_source']['short_name'] =  CompanyBasic::findBriefName($dataItem['_source']['ENTNAME']);
+            }
+            if($dataConfig['fill_LAST_EMAIL']){
+                $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
+                $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
+                $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
+                $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntIdV2($dataItem['_source']['companyid']);
+            }
+
+            if($dataConfig['fill_tags']){
+                // 添加tag
+                $dataItem['_source']['tags'] = array_values(
+                    (new XinDongService())::getAllTagesByData(
+                        $dataItem['_source']
+                    )
+                );
+            }
+
+
+            $dataItem['_source']['ENTTYPE_CNAME'] =   '';
+            $dataItem['_source']['ENTSTATUS_CNAME'] =  '';
+            if(
+                $dataItem['_source']['ENTTYPE'] &&
+                ($dataConfig['fill_ENTTYPE_CNAME'])
+            ){
+                $dataItem['_source']['ENTTYPE_CNAME'] =   CodeCa16::findByCode($dataItem['_source']['ENTTYPE']);
+            }
+            if(
+                $dataItem['_source']['ENTSTATUS'] &&
+                ($dataConfig['fill_ENTSTATUS_CNAME'])
+            ){
+                $dataItem['_source']['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($dataItem['_source']['ENTSTATUS']);
+            }
+
+            // 公司简介
+            $tmpArr = explode('&&&', trim($dataItem['_source']['gong_si_jian_jie']));
+            array_pop($tmpArr);
+            $dataItem['_source']['gong_si_jian_jie_data_arr'] = [];
+            foreach($tmpArr as $tmpItem_){
+                // $dataItem['_source']['gong_si_jian_jie_data_arr'][] = [$tmpItem_];
+                $dataItem['_source']['gong_si_jian_jie_data_arr'][] = $tmpItem_;
+            }
+
+            // 官网
+            $webStr = trim($dataItem['_source']['web']);
+            if(!$webStr){
+                continue;
+            }
+
+            $webArr = explode('&&&', $webStr);
+            !empty($webArr) && $dataItem['_source']['web'] = end($webArr);
+        }
+
+        return  [
+            'total' => intval($companyEsModel->return_data['hits']['total']['value']),
+            'data'=>$companyEsModel->return_data['hits']['hits'],
+        ];
     }
 
 }

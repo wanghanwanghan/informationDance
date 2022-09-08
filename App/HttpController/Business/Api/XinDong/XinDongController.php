@@ -3623,6 +3623,25 @@ eof;
     function testExport()
     {
         if(
+            $this->getRequestData('serachFromEs')
+        ){
+            return $this->writeJson(
+                200,[] ,
+                //CommonService::ClearHtml($res['body']),
+                \App\ElasticSearch\Model\Company::serachFromEs(
+                    [
+                        'entNames' => '上饶玉宏公路工程有限公司,临洮惠仁堂药业连锁有限公司北关店',
+                    ],
+                    [
+
+                    ]
+                ),
+                '成功1',
+                true,
+                []
+            );
+        }
+        if(
             $this->getRequestData('test_gao_feng')
         ){
             $res = QueueLists::addRecord(

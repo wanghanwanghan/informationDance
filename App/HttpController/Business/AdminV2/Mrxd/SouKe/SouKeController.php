@@ -11,6 +11,7 @@ use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\QueueLists;
+use App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
@@ -1802,6 +1803,150 @@ class SouKeController extends ControllerBase
             ]
             , $retData, '成功', true, []);
     }
+
+    //------ 添加企业进入待分析名单
+    function addCompanyToAnalyzeLists(): bool
+    {
+
+        $requestData =  $this->getRequestData();
+        $checkRes = DataModelExample::checkField(
+            [
+
+                'ent_name' => [
+                    'not_empty' => 1,
+                    'field_name' => 'ent_name',
+                    'err_msg' => '企业名不能为空',
+                ]
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        // 添加
+        $id = XinDongKeDongAnalyzeList::addRecordV2(
+            [
+                'user_id' => $this->loginUserinfo['id'],
+                'is_del' => XinDongKeDongAnalyzeList::$state_ok,
+                'status' => XinDongKeDongAnalyzeList::$status_init,
+                'name' => $requestData['name']?:'',
+                'ent_name' => $requestData['ent_name']?:'',
+                'remark' => $requestData['remark']?:'',
+            ]
+        );
+        if($id<=0){
+            return $this->writeJson(201,[ ] , [], '入库失败', true, []);
+        }
+
+        return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+    }
+
+    /**
+
+    开始分析具体特征
+
+
+     */
+    function startAnalysis(): bool
+    {
+        $requestData =  $this->getRequestData();
+
+        //提取特征
+        XinDongKeDongAnalyzeList::addRecordV2();
+
+        //开始分析
+
+
+
+
+        foreach ($fileUplaodRes['fileNames'] as  $fileName){
+            $res = QueueLists::addRecord(
+                [
+                    'name' => '',
+                    'desc' => '',
+                    'func_info_json' => json_encode(
+                        [
+                            'class' => '\App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList',
+                            'static_func'=> 'addRecordByFile',
+                        ]
+                    ),
+                    'params_json' => json_encode([
+                        'file'=>$fileName,
+                        'user_id' => $this->loginUserinfo['id'],
+                        'name' => $requestData['name']?:'',
+                        'ent_name' => $requestData['ent_name']?:'',
+                        'remark' => $requestData['remark']?:'',
+                    ]),
+                    'type' => QueueLists::$typle_finance,
+                    'remark' => '',
+                    'begin_date' => NULL,
+                    'msg' => '',
+                    'status' => QueueLists::$status_init,
+                ]
+            );
+        }
+        return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+    }
+
+    //按文件传输
+    function addCompanyToAnalyzeListsByFile(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $fileUplaodRes = DataModelExample::dealUploadFiles($this->request()->getUploadedFiles());
+
+        foreach ($fileUplaodRes['fileNames'] as  $fileName){
+            $res = QueueLists::addRecord(
+                [
+                    'name' => '',
+                    'desc' => '',
+                    'func_info_json' => json_encode(
+                        [
+                            'class' => '\App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList',
+                            'static_func'=> 'addRecordByFile',
+                        ]
+                    ),
+                    'params_json' => json_encode([
+                        'file'=>$fileName,
+                        'user_id' => $this->loginUserinfo['id'],
+                        'name' => $requestData['name']?:'',
+                        'ent_name' => $requestData['ent_name']?:'',
+                        'remark' => $requestData['remark']?:'',
+                    ]),
+                    'type' => QueueLists::$typle_finance,
+                    'remark' => '',
+                    'begin_date' => NULL,
+                    'msg' => '',
+                    'status' => QueueLists::$status_init,
+                ]
+            );
+        }
+        return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+    }
+
+
+    //搜索企业
+    function serachCompanyByName(): bool
+    {
+        //====================== 分割线
+        $requestData =  $this->getRequestData();
+        $size = $requestData['size']??20;
+        $page = $requestData['page']??1;
+
+        return $this->writeJson(200,
+            [
+
+            ]
+            ,  \App\ElasticSearch\Model\Company::getNamesByText($page,$size,trim($requestData['searchText'])),
+            '成功',
+            true,
+            []
+        );
+    }
+
+
 
     /*
      * 导出客户数据
