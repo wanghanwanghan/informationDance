@@ -1861,7 +1861,7 @@ class SouKeController extends ControllerBase
                 __CLASS__.__FUNCTION__ .__LINE__,
                 'startAnalysis'=>json_encode(
                     [
-                        'msg'=>
+//                        'msg'=>
                     ]
                 )
             ])
