@@ -88,37 +88,40 @@ class CreateDzqZhang extends TaskBase implements TaskInterface
             $actionData = [];
             $list       = json_decode(json_encode($list), true);
             foreach ($list as $val) {
-                $actionData[$val['antAuthId']]['detail'] = $val;
+                $actionData[$val['antAuthId']]['detail'][] = $val;
             }
             foreach ($actionData as $id => $v) {
                 $info                    = AntAuthList::create()->get($id);
                 $actionData[$id]['info'] = json_decode(json_encode($info), true);
             }
             foreach ($actionData as $value) {
-                $gaizhangParam = [
-                    'entName'      => $value['info']['entName'],
-                    'legalPerson'  => $value['info']['legalPerson'],
-                    'idCard'       => $value['info']['idCard'],
-                    'socialCredit' => $value['info']['socialCredit'],
-                ];
-                $path          = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
-                is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
-                $path = $path . $value['info']['orderNo'] . Carbon::now()->format('YmdHis') . '.pdf';
-                //储存pdf
-                file_put_contents(INV_AUTH_PATH . $path, file_get_contents($value['detail']['fileAddress']), FILE_APPEND | LOCK_EX);
-                $gaizhangParam['file'] = $path;
+                foreach ($value['detail'] as $vv){
+                    $gaizhangParam = [
+                        'entName'      => $value['info']['entName'],
+                        'legalPerson'  => $value['info']['legalPerson'],
+                        'idCard'       => $value['info']['idCard'],
+                        'socialCredit' => $value['info']['socialCredit'],
+                    ];
+                    $path          = Carbon::now()->format('Ymd') . DIRECTORY_SEPARATOR;
+                    is_dir(INV_AUTH_PATH . $path) || mkdir(INV_AUTH_PATH . $path, 0755);
+                    $path = $path . $value['info']['orderNo'] . Carbon::now()->format('YmdHis') . '.pdf';
+                    //储存pdf
+                    file_put_contents(INV_AUTH_PATH . $path, file_get_contents($vv['fileAddress']), FILE_APPEND | LOCK_EX);
+                    $gaizhangParam['file'] = $path;
 
-                try {
-                    $dianziqian_id = (new DianZiQianService())->gaiZhang($gaizhangParam);
-                    if (is_array($dianziqian_id)) {
-                        dingAlarmUser('获取电子牵盖章ID', ['fileId' => $value['detail']['fileId'], 'res' => json_encode($dianziqian_id), 'msg' => $dianziqian_id['msg'] ?? ''], [18511881968]);
-                        CommonService::getInstance()->log4PHP([$dianziqian_id], 'gaiZhang_res', 'mayilog');
-                    } else {
-                        AntAuthSealDetail::create()->where(['fileId' => $value['detail']['fileId']])->update(['dianZiQian_id' => $dianziqian_id ?? '']);
+                    try {
+                        $dianziqian_id = (new DianZiQianService())->gaiZhang($gaizhangParam);
+                        if (is_array($dianziqian_id)) {
+                            dingAlarmUser('获取电子牵盖章ID', ['fileId' => $vv['fileId'], 'res' => json_encode($dianziqian_id), 'msg' => $dianziqian_id['msg'] ?? ''], [18511881968]);
+                            CommonService::getInstance()->log4PHP([$dianziqian_id], 'gaiZhang_res', 'mayilog');
+                        } else {
+                            AntAuthSealDetail::create()->where(['fileId' => $vv['fileId']])->update(['dianZiQian_id' => $dianziqian_id ?? '']);
+                        }
+                    } catch (\Throwable $e) {
+                        CommonService::getInstance()->log4PHP([$e], 'gaiZhang$e', 'mayilog');
                     }
-                } catch (\Throwable $e) {
-                    CommonService::getInstance()->log4PHP([$e], 'gaiZhang$e', 'mayilog');
                 }
+
             }
         }
         $iList = AntAuthList::create()->where([
