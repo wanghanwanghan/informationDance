@@ -1844,51 +1844,99 @@ class SouKeController extends ControllerBase
         return $this->writeJson(200,[ ] , [], '添加成功', true, []);
     }
 
+    static function calYearsNums($date){
+       $yearsNums =  date('Y') - date('Y',strtotime($date));
+       if($yearsNums<=2){
+          return '0-2';
+       }
+        if(
+            $yearsNums >= 2 &&
+            $yearsNums <= 5
+        ){
+            return '2-5';
+        }
+        if(
+            $yearsNums >= 5 &&
+            $yearsNums <= 10
+        ){
+            return '5-10';
+        }
+        if(
+            $yearsNums >= 10 &&
+            $yearsNums <= 15
+        ){
+            return '10-15';
+        }
+        if(
+            $yearsNums >= 15 &&
+            $yearsNums <= 20
+        ){
+            return '10-15';
+        }
+        if(
+            $yearsNums >= 20
+        ){
+            return '20年以上';
+        }
+    }
+
     /**
 
     开始分析具体特征
-
 
      */
     function startAnalysis(): bool
     {
         $requestData =  $this->getRequestData();
+        $fields = [
+            '营收规模'=>'ying_shou_gui_mo',
+            '国标行业'=>'NIC_ID',
+            '所在行政区划'=>'DOMDISTRICT',
+        ];
+        $fields2 = [
+            'OPFROM'=>[
+                'des'=>'营业期限开始日期',
+                'filed'=>'OPFROM',
+                'static_func'=>'calYearsNums',
+            ],
+        ];
+        $res = [];
 
         //提取特征
-        XinDongKeDongAnalyzeList::addRecordV2();
-
-        //开始分析
-
-
-
-
-        foreach ($fileUplaodRes['fileNames'] as  $fileName){
-            $res = QueueLists::addRecord(
-                [
-                    'name' => '',
-                    'desc' => '',
-                    'func_info_json' => json_encode(
-                        [
-                            'class' => '\App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList',
-                            'static_func'=> 'addRecordByFile',
-                        ]
-                    ),
-                    'params_json' => json_encode([
-                        'file'=>$fileName,
-                        'user_id' => $this->loginUserinfo['id'],
-                        'name' => $requestData['name']?:'',
-                        'ent_name' => $requestData['ent_name']?:'',
-                        'remark' => $requestData['remark']?:'',
-                    ]),
-                    'type' => QueueLists::$typle_finance,
-                    'remark' => '',
-                    'begin_date' => NULL,
-                    'msg' => '',
-                    'status' => QueueLists::$status_init,
-                ]
+        $lists = XinDongKeDongAnalyzeList::findByUser($this->loginUserinfo['id']);
+        foreach ($lists as $list){
+            $tmpEsData = \App\ElasticSearch\Model\Company::getNamesByText(
+                1,
+                1,
+                $list['ent_name'],
+                true
             );
+            foreach ($tmpEsData['hits']['hits'] as $esData){
+                //直接比较的字段
+                foreach ($fields as $field){
+                    if(empty($esData['_source'][$field])){
+                        continue;
+                    }
+                    $res[$field][$esData['_source'][$field]] += 1 ;
+                }
+                //需要计算的字段
+                foreach ($fields2 as $field){
+                    if(empty($esData['_source'][$field]['filed'])){
+                        continue;
+                    }
+                    $newRes = self::$field['static_func']($esData['_source'][$field['filed']]);
+                    $res[$field][$newRes] += 1 ;
+                }
+            }
         }
-        return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+
+        foreach ($res as $field=>$fieldValue){
+
+        }
+        //开始分析
+        return [
+
+        ];
     }
 
     //按文件传输

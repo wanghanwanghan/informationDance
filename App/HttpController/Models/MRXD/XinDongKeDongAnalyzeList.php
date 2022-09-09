@@ -161,6 +161,15 @@ class XinDongKeDongAnalyzeList extends ModelBase
         return $res;
     }
 
+    public static function findByUser($user_id){
+        $res =  XinDongKeDongAnalyzeList::create()
+            ->where('user_id',$user_id)
+            ->where('is_del',0)
+            ->get();
+        return $res;
+    }
+
+
     public static function findByEntNameV2($user_id,$ent_name){
         $res =  XinDongKeDongAnalyzeList::create()
             ->where('user_id',$user_id)

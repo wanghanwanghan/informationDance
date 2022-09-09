@@ -360,6 +360,26 @@ class Company extends ServiceBase
         }
         return $this;
     }
+    function SetQueryBySearchTextV3($searchText,$fileds = [
+        'ENTNAME',
+        'shang_pin_data.name',
+        'OPSCOPE.name',
+    ]){
+        if($searchText){
+            $matchedCnames = [
+                [ 'field'=>'ENTNAME' ,'value'=> $searchText],
+                [ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
+                [ 'field'=>'OPSCOPE' ,'value'=> $searchText]
+            ];
+
+            foreach ($fileds as $filed){
+                $matchedCnames[] =  [ 'field'=>$filed ,'value'=> $searchText];
+            }
+            $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
+        }
+        return $this;
+    }
+
 
     function SetQueryBySearchCompanyIds($xdIds){
         if(!empty($xdIds)){
@@ -1038,7 +1058,7 @@ class Company extends ServiceBase
         );
     }
 
-    static  function  getNamesByText($page,$size,$searchText){
+    static  function  getNamesByText($page,$size,$searchText,$returnFullField = false){
 
         $companyEsModel = new \App\ElasticSearch\Model\Company();
 
@@ -1046,7 +1066,9 @@ class Company extends ServiceBase
 
         $companyEsModel
             // 搜索文案 智能搜索
-            ->SetQueryBySearchTextV2( trim($searchText))
+            ->SetQueryBySearchTextV3( trim($searchText),[
+                'ENTNAME',
+            ])
             ->addSize($size)
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
@@ -1063,6 +1085,9 @@ class Company extends ServiceBase
                 'es_hits_count' =>  count($companyEsModel->return_data['hits']['hits'])
             ])
         );
+        if($returnFullField){
+            return $companyEsModel->return_data;
+        }
         $names = [];
         foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
             $names[] = $dataItem['_source']['ENTNAME'];
