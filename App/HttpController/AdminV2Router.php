@@ -175,6 +175,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/serachCompanyByName', $prefix . 'serachCompanyByName');
             //按文件传输
             $routeCollector->addRoute(['GET', 'POST'], '/addCompanyToAnalyzeListsByFile', $prefix . 'addCompanyToAnalyzeListsByFile');
+            $routeCollector->addRoute(['GET', 'POST'], '/startAnalysis', $prefix . 'startAnalysis');
         });
 
         return true;
