@@ -1845,6 +1845,43 @@ class SouKeController extends ControllerBase
         return $this->writeJson(200,[ ] , [], '添加成功', true, []);
     }
 
+    //删除名单
+    function delCompanyToAnalyzeLists(): bool
+    {
+
+        $requestData =  $this->getRequestData();
+        $checkRes = DataModelExample::checkField(
+            [
+
+                'ent_name' => [
+                    'not_empty' => 1,
+                    'field_name' => 'ent_name',
+                    'err_msg' => '企业名不能为空',
+                ]
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        $res = XinDongKeDongAnalyzeList::findByEntNameV2();
+        if(empty($res)){
+            return $this->writeJson(203,[ ] , [], '企业不存在', true, []);
+        }
+
+        XinDongKeDongAnalyzeList::updateById(
+            $res->getAttr('id'),
+            [
+                'is_del' => XinDongKeDongAnalyzeList::$state_del
+            ]
+        );
+
+        return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+    }
+
 
 
     /**
