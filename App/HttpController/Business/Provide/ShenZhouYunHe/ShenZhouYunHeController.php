@@ -60,7 +60,7 @@ class ShenZhouYunHeController extends ProvideBase
             'pageNum' => $pageNum,
             'pageSize' => $pageSize
         ];
-
+        dingAlarm('invoices',['$postData'=>$postData]);
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new ShenZhouYunHeService())->setCheckRespFlag(true)->invoices($postData);
         });
