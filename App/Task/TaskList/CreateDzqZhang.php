@@ -96,6 +96,7 @@ class CreateDzqZhang extends TaskBase implements TaskInterface
             }
             foreach ($actionData as $value) {
                 foreach ($value['detail'] as $vv){
+                    CommonService::getInstance()->log4PHP($vv, 'info', 'mayilog11111');
                     $gaizhangParam = [
                         'entName'      => $value['info']['entName'],
                         'legalPerson'  => $value['info']['legalPerson'],
@@ -113,12 +114,12 @@ class CreateDzqZhang extends TaskBase implements TaskInterface
                         $dianziqian_id = (new DianZiQianService())->gaiZhang($gaizhangParam);
                         if (is_array($dianziqian_id)) {
                             dingAlarmUser('获取电子牵盖章ID', ['fileId' => $vv['fileId'], 'res' => json_encode($dianziqian_id), 'msg' => $dianziqian_id['msg'] ?? ''], [18511881968]);
-                            CommonService::getInstance()->log4PHP([$dianziqian_id], 'gaiZhang_res', 'mayilog');
+                            CommonService::getInstance()->log4PHP([$dianziqian_id], 'info', 'mayilog');
                         } else {
                             AntAuthSealDetail::create()->where(['fileId' => $vv['fileId']])->update(['dianZiQian_id' => $dianziqian_id ?? '']);
                         }
                     } catch (\Throwable $e) {
-                        CommonService::getInstance()->log4PHP([$e], 'gaiZhang$e', 'mayilog');
+                        CommonService::getInstance()->log4PHP([$e], 'info', 'mayilog');
                     }
                 }
 
