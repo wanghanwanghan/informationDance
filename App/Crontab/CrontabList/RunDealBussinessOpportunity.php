@@ -690,8 +690,9 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 //                    CommonService::getInstance()->log4PHP(json_encode([
 //                        'NIC_ID'=>$res['NIC_ID'],
 //                        '$nicRes'=>$nicRes,
-//                    ]));
-                    $res['NIC_ID'] =  $nicRes['industry'];
+//                    ]));nic_full_name
+//                    $res['NIC_ID'] =  $nicRes['industry'];
+                    $res['NIC_ID'] =  $res['nic_full_name'];
                 }
 
                 //一般人

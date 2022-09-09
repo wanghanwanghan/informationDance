@@ -219,65 +219,98 @@ class XinDongKeDongAnalyzeList extends ModelBase
 
         return $return;
     }
-
+    static function calYearsNums($date){
+        $yearsNums =  date('Y') - date('Y',strtotime($date));
+        if($yearsNums<=2){
+            return '0-2';
+        }
+        if(
+            $yearsNums >= 2 &&
+            $yearsNums <= 5
+        ){
+            return '2-5';
+        }
+        if(
+            $yearsNums >= 5 &&
+            $yearsNums <= 10
+        ){
+            return '5-10';
+        }
+        if(
+            $yearsNums >= 10 &&
+            $yearsNums <= 15
+        ){
+            return '10-15';
+        }
+        if(
+            $yearsNums >= 15 &&
+            $yearsNums <= 20
+        ){
+            return '10-15';
+        }
+        if(
+            $yearsNums >= 20
+        ){
+            return '20年以上';
+        }
+    }
     //提取用户传的目标客户的特征
-    static function extractFeature($userId){
+    static function extractFeature($userId,$returnRaw =false){
         //找到所有的目标客户群体
-        $aimCompanys = self::findAllByUserId($userId);
-
-        $filedLists = [
-            'ying_shou_gui_mo',
+        $fields = [
+            '营收规模'=>'ying_shou_gui_mo',
+            '国标行业'=>'NIC_ID',
+            '所在行政区划'=>'DOMDISTRICT',
         ];
-
-        foreach ($aimCompanys as $company){
-            /**
-            id
-            user_id
-            is_del
-            status
-            name
-            ent_name
-            remark
-            created_at
-            updated_at
-             */
-
-        }
-
-        //================================================== 分割线
-
-        Company::serachFromEs(
-            [
-                'entNames' => '上饶玉宏公路工程有限公司,临洮惠仁堂药业连锁有限公司北关店',
+        $fields2 = [
+            'OPFROM'=>[
+                'des'=>'营业期限开始日期',
+                'filed'=>'OPFROM',
+                'static_func'=>'calYearsNums',
             ],
-            [
-
-            ]
-        );
-
-
-
-
-        $records = DataModelExample::getYieldData(
-            $paramsArr['file'],
-            TEMP_FILE_PATH
-        );
-        $return = [];
-        foreach ($records as $record){
-            $res = self::addRecordV2(
-                [
-                    'user_id' => $paramsArr['user_id'],
-                    'is_del' => XinDongKeDongAnalyzeList::$state_ok,
-                    'status' => XinDongKeDongAnalyzeList::$status_init,
-                    'name' => $paramsArr['name']?:'',
-                    'ent_name' => $paramsArr['ent_name']?:'',
-                    'remark' => $paramsArr['remark']?:'',
-                ]
+        ];
+        $res = [];
+        $lists = XinDongKeDongAnalyzeList::findAllByUserId($userId);
+        foreach ($lists as $list){
+            $tmpEsData = \App\ElasticSearch\Model\Company::getNamesByText(
+                1,
+                1,
+                $list['ent_name'],
+                true
             );
-            $return[] = $res;
+            foreach ($tmpEsData['hits']['hits'] as $esData){
+                //直接比较的字段
+                foreach ($fields as $field){
+                    if(empty($esData['_source'][$field])){
+                        continue;
+                    }
+                    $res[$field][$esData['_source'][$field]] += 1 ;
+                }
+                //需要计算的字段
+                foreach ($fields2 as $field){
+                    if(empty($esData['_source'][$field]['filed'])){
+                        continue;
+                    }
+                    if($returnRaw){
+                        $newRes = $esData['_source'][$field['filed']];
+                    }
+                    else{
+                        $newRes = self::$field['static_func']($esData['_source'][$field['filed']]);
+                    }
+                    $res[$field][$newRes] += 1 ;
+                }
+            }
         }
 
-        return $return;
+        $returnData = [];
+        foreach ($res as $field=>$fieldValue){
+            asort($fieldValue) ;
+            $tmp = array_keys($fieldValue);
+            $returnData[$field] =  end($tmp);
+        }
+
+        //开始分析
+        return $returnData;
     }
 
 }
