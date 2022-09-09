@@ -1891,6 +1891,14 @@ class SouKeController extends ControllerBase
     {
         $requestData =  $this->getRequestData();
 
+        //最少5家 
+        if(
+         count(XinDongKeDongAnalyzeList::findAllByUserId($this->loginUserinfo['id']))<=4
+        ){
+            return $this->writeJson(202,[ ] , [], '请最少上传5家企业再进行分析', true, []);
+        }
+
+
         //提取特征
         $featureslists = XinDongKeDongAnalyzeList::extractFeature($this->loginUserinfo['id'],true);
         CommonService::getInstance()->log4PHP(
