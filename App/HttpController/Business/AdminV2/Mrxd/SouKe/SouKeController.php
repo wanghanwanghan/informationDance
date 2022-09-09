@@ -1867,7 +1867,7 @@ class SouKeController extends ControllerBase
             return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
         }
 
-        $res = XinDongKeDongAnalyzeList::findByEntNameV2();
+        $res = XinDongKeDongAnalyzeList::findByEntNameV2($requestData['ent_name']);
         if(empty($res)){
             return $this->writeJson(203,[ ] , [], '企业不存在', true, []);
         }
