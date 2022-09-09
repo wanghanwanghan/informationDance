@@ -169,6 +169,13 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/getUploadOpportunityLists', $prefix . 'getUploadOpportunityLists');
             $routeCollector->addRoute(['GET', 'POST'], '/getCountInfo', $prefix . 'getCountInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/getEntLianXi', $prefix . 'getEntLianXi');
+            //把企业添加到待分析列表
+            $routeCollector->addRoute(['GET', 'POST'], '/addCompanyToAnalyzeLists', $prefix . 'addCompanyToAnalyzeLists');
+            //根据名称搜索企业
+            $routeCollector->addRoute(['GET', 'POST'], '/serachCompanyByName', $prefix . 'serachCompanyByName');
+            //按文件传输
+            $routeCollector->addRoute(['GET', 'POST'], '/addCompanyToAnalyzeListsByFile', $prefix . 'addCompanyToAnalyzeListsByFile');
+            $routeCollector->addRoute(['GET', 'POST'], '/startAnalysis', $prefix . 'startAnalysis');
         });
 
         return true;
