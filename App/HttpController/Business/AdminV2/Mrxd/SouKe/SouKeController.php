@@ -1891,7 +1891,7 @@ class SouKeController extends ControllerBase
     {
         $requestData =  $this->getRequestData();
 
-        //最少5家 
+        //最少5家
         if(
          count(XinDongKeDongAnalyzeList::findAllByUserId($this->loginUserinfo['id']))<=4
         ){
@@ -1901,6 +1901,32 @@ class SouKeController extends ControllerBase
 
         //提取特征
         $featureslists = XinDongKeDongAnalyzeList::extractFeature($this->loginUserinfo['id'],true);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'startAnalysis'=>json_encode(
+                    [
+//                        'msg'=>
+                    ]
+                )
+            ])
+        );
+//        (new XinDongKeDongService())->MatchSimilarEnterprises(
+//            $this->loginUserinfo['id'],
+//            $featureslists['ying_shou_gui_mo'],
+//            $featureslists['NIC_ID'],
+//            $featureslists['OPFROM'],
+//            $featureslists['DOMDISTRICT']
+//        );
+        //开始分析
+        return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
+    }
+    function getKeDongFeature(): bool
+    {
+        $requestData =  $this->getRequestData();
+
+        //提取特征
+        $featureslists = XinDongKeDongAnalyzeList::extractFeature($this->loginUserinfo['id']);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
