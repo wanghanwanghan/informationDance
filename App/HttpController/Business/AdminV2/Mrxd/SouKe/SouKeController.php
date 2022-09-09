@@ -1845,6 +1845,43 @@ class SouKeController extends ControllerBase
         return $this->writeJson(200,[ ] , [], '添加成功', true, []);
     }
 
+    //删除名单
+    function delCompanyToAnalyzeLists(): bool
+    {
+
+        $requestData =  $this->getRequestData();
+        $checkRes = DataModelExample::checkField(
+            [
+
+                'ent_name' => [
+                    'not_empty' => 1,
+                    'field_name' => 'ent_name',
+                    'err_msg' => '企业名不能为空',
+                ]
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        $res = XinDongKeDongAnalyzeList::findByEntNameV2($this->loginUserinfo['id'],$requestData['ent_name']);
+        if(empty($res)){
+            return $this->writeJson(203,[ ] , [], '企业不存在', true, []);
+        }
+
+        XinDongKeDongAnalyzeList::updateById(
+            $res->getAttr('id'),
+            [
+                'is_del' => XinDongKeDongAnalyzeList::$state_del
+            ]
+        );
+
+        return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+    }
+
 
 
     /**
@@ -1854,8 +1891,42 @@ class SouKeController extends ControllerBase
     {
         $requestData =  $this->getRequestData();
 
+        //最少5家
+        if(
+         count(XinDongKeDongAnalyzeList::findAllByUserId($this->loginUserinfo['id']))<=4
+        ){
+            return $this->writeJson(202,[ ] , [], '请最少上传5家企业再进行分析', true, []);
+        }
+
+
         //提取特征
         $featureslists = XinDongKeDongAnalyzeList::extractFeature($this->loginUserinfo['id'],true);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'startAnalysis'=>json_encode(
+                    [
+//                        'msg'=>
+                    ]
+                )
+            ])
+        );
+//        (new XinDongKeDongService())->MatchSimilarEnterprises(
+//            $this->loginUserinfo['id'],
+//            $featureslists['ying_shou_gui_mo'],
+//            $featureslists['NIC_ID'],
+//            $featureslists['OPFROM'],
+//            $featureslists['DOMDISTRICT']
+//        );
+        //开始分析
+        return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
+    }
+    function getKeDongFeature(): bool
+    {
+        $requestData =  $this->getRequestData();
+
+        //提取特征
+        $featureslists = XinDongKeDongAnalyzeList::extractFeature($this->loginUserinfo['id']);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,

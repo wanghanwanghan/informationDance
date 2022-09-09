@@ -176,6 +176,8 @@ class AdminV2Router
             //按文件传输
             $routeCollector->addRoute(['GET', 'POST'], '/addCompanyToAnalyzeListsByFile', $prefix . 'addCompanyToAnalyzeListsByFile');
             $routeCollector->addRoute(['GET', 'POST'], '/startAnalysis', $prefix . 'startAnalysis');
+            $routeCollector->addRoute(['GET', 'POST'], '/delCompanyToAnalyzeLists', $prefix . 'delCompanyToAnalyzeLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/getKeDongFeature', $prefix . 'getKeDongFeature');
         });
 
         return true;
