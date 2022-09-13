@@ -37,14 +37,14 @@ class ShenZhouYunHeService extends ServiceBase
         $url = '?Version='.$this->Version.'&AccessKeyID='.$this->AccessKeyID.'&TimeStamp='.$this->TimeStamp.'&SignatureNonce='.$this->SignatureNonce.'&Signature='.$Signature;
 
         $Content = [
-            'taxNum'=>$postData['taxNum'],//'91110108MA01KPGK0L',//公司税号
-            'reportPeriod' => $postData['reportPeriod'],//'2022-03',//税款所属期
-            'billingDateStart'=>$postData['billingDateStart'],//'2022-07-08',//开票日期起
-            'billingDateEnd' => $postData['billingDateEnd'],//'2022-09-08',//开票日期止
-            'invoiceType'=>$postData['invoiceType'],//'All',//发票类型  ALL:全部发票，01：增值税专用发票，03：机动车销售统一发票，04：增值税普通发票，05：增值税电子专用发票，10：增值税电子普通发票，11：卷式发票，14：通行费，15：二手车发票
-            'sjlx' => $postData['sjlx'],//'1',//数据类型    “1”进项票 “2”销项票
-            'pageNum' => $postData['pageNum'],//1,
-            'pageSize' => $postData['pageSize'],//100
+            'taxNum'=>$postData['taxNum']??'',//'91110108MA01KPGK0L',//公司税号
+            'reportPeriod' => $postData['reportPeriod']??'',//'2022-03',//税款所属期
+            'billingDateStart'=>$postData['billingDateStart']??'',//'2022-07-08',//开票日期起
+            'billingDateEnd' => $postData['billingDateEnd']??'',//'2022-09-08',//开票日期止
+            'invoiceType'=>$postData['invoiceType']??'',//'All',//发票类型  ALL:全部发票，01：增值税专用发票，03：机动车销售统一发票，04：增值税普通发票，05：增值税电子专用发票，10：增值税电子普通发票，11：卷式发票，14：通行费，15：二手车发票
+            'sjlx' => $postData['sjlx']??'',//'1',//数据类型    “1”进项票 “2”销项票
+            'pageNum' => $postData['pageNum']??'',//1,
+            'pageSize' => $postData['pageSize']??'',//100
         ];
         $data = ['RequestID'=>'mrxd'.date('YmdHis').control::getUuid(8),'Content'=>$Content];
         return [$url,$data];
