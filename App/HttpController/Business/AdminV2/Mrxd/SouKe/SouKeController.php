@@ -1827,6 +1827,8 @@ class SouKeController extends ControllerBase
             return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
         }
 
+        $companyBasicRes = CompanyBasic::findByName($requestData['ent_name']);
+        $companyBasicRes = $companyBasicRes->toArray();
         // 添加
         $id = XinDongKeDongAnalyzeList::addRecordV2(
             [
@@ -1835,6 +1837,7 @@ class SouKeController extends ControllerBase
                 'status' => XinDongKeDongAnalyzeList::$status_init,
                 'name' => $requestData['name']?:'',
                 'ent_name' => $requestData['ent_name']?:'',
+                'companyid' => $companyBasicRes['companyid'],
                 'remark' => $requestData['remark']?:'',
             ]
         );
@@ -1900,7 +1903,7 @@ class SouKeController extends ControllerBase
 
 
         //提取特征
-        $featureslists = XinDongKeDongAnalyzeList::extractFeature($this->loginUserinfo['id'],true);
+        $featureslists = XinDongKeDongAnalyzeList::extractFeatureV2($this->loginUserinfo['id'],true);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
@@ -1926,7 +1929,43 @@ class SouKeController extends ControllerBase
         $requestData =  $this->getRequestData();
 
         //提取特征
-        $featureslists = XinDongKeDongAnalyzeList::extractFeature($this->loginUserinfo['id']);
+        $featureslists = XinDongKeDongAnalyzeList::extractFeatureV2($this->loginUserinfo['id']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'startAnalysis'=>json_encode(
+                    [
+//                        'msg'=>
+                    ]
+                )
+            ])
+        );
+//        (new XinDongKeDongService())->MatchSimilarEnterprises(
+//            $this->loginUserinfo['id'],
+//            $featureslists['ying_shou_gui_mo'],
+//            $featureslists['NIC_ID'],
+//            $featureslists['OPFROM'],
+//            $featureslists['DOMDISTRICT']
+//        );
+        //开始分析
+        return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
+    }
+
+    //获取优企列表
+    function getRecommendCompanys(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page = $requestData['page']?:1;
+        $size = $requestData['pageSize']?:10;
+
+        //提取特征
+        $featureslists = XinDongKeDongAnalyzeList::searchFromEs(
+            [
+                ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
+            ],
+            $page,
+            $size
+        );
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,

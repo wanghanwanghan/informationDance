@@ -60,6 +60,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
         try {
            $res =  XinDongKeDongAnalyzeList::create()->data([
                 'user_id' => intval($requestData['user_id']),
+                'companyid' => intval($requestData['companyid']),
                 'is_del' => intval($requestData['is_del']),
                 'status' => intval($requestData['status']),
                 'name' => $requestData['name']?:'',
@@ -82,6 +83,31 @@ class XinDongKeDongAnalyzeList extends ModelBase
         return $res;
     }
 
+    /**
+    从es筛选
+    用户：
+    企业分：
+
+     *
+     */
+    public static function searchFromEs($whereArr,$page,$limit){
+
+        $model = XinDongKeDongAnalyzeList::create();
+        foreach ($whereArr as $whereItem){
+            $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+        }
+        $model->page($page,$limit)
+            ->order('id', 'DESC')
+            ->withTotalCount();
+
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+        return [
+            'data' => $res,
+            'total' =>$total,
+        ];
+    }
 
     public static function findAllByCondition($whereArr){
         $res =  XinDongKeDongAnalyzeList::create()
@@ -299,6 +325,64 @@ class XinDongKeDongAnalyzeList extends ModelBase
                     }
                     $res[$field][$newRes] += 1 ;
                 }
+            }
+        }
+
+        $returnData = [];
+        foreach ($res as $field=>$fieldValue){
+            asort($fieldValue) ;
+            $tmp = array_keys($fieldValue);
+            $returnData[$field] =  end($tmp);
+        }
+
+        //开始分析
+        return $returnData;
+    }
+    static function extractFeatureV2($userId,$returnRaw =false){
+        //找到所有的目标客户群体
+        $fields = [
+            '营收规模'=>'ying_shou_gui_mo',
+            '国标行业'=>'NIC_ID',
+            '所在行政区划'=>'DOMDISTRICT',
+        ];
+        $fields2 = [
+            'OPFROM'=>[
+                'des'=>'营业期限开始日期',
+                'filed'=>'OPFROM',
+                'static_func'=>'calYearsNums',
+            ],
+        ];
+        $res = [];
+        $lists = XinDongKeDongAnalyzeList::findAllByUserId($userId);
+        $companyIds = array_column($lists,'companyid');
+        $esRes = \App\ElasticSearch\Model\Company::serachFromEs(
+            [
+                'companyids' => join(',',$companyIds),
+            ],
+            [
+
+            ]
+        ) ;
+        foreach ($esRes['data'] as $esData){
+            //直接比较的字段
+            foreach ($fields as $field){
+                if(empty($esData['_source'][$field])){
+                    continue;
+                }
+                $res[$field][$esData['_source'][$field]] += 1 ;
+            }
+            //需要计算的字段
+            foreach ($fields2 as $field){
+                if(empty($esData['_source'][$field]['filed'])){
+                    continue;
+                }
+                if($returnRaw){
+                    $newRes = $esData['_source'][$field['filed']];
+                }
+                else{
+                    $newRes = self::$field['static_func']($esData['_source'][$field['filed']]);
+                }
+                $res[$field][$newRes] += 1 ;
             }
         }
 
