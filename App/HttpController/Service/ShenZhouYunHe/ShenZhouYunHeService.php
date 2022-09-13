@@ -23,11 +23,13 @@ class ShenZhouYunHeService extends ServiceBase
     {
         parent::__construct();
         $this->checkRespFlag = true;
+
         //test
         $this->url        = 'https://jxp-ports-fp.bigfintax.com/jxp/';
-        $this->AccessKeyID = CreateConf::getInstance()->getConf('shenzhouyunhe.AccessKeyID');
+        $this->AccessKeyID = CreateConf::getInstance()->getConf('shenzhouyunhe.AccessKeyID_TEST');
         $this->AccessKeySecret = CreateConf::getInstance()->getConf('shenzhouyunhe.AccessKeySecret_TEST');
         $this->TimeStamp      = str_replace(' ','T',date('Y-m-d H:i:s',time())).'Z';
+        $this->Version = '1.0';
         $this->curl_use_cache = false;
         return true;
     }
