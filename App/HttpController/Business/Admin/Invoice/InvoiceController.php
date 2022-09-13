@@ -76,18 +76,24 @@ class InvoiceController extends InvoiceBase
                     //从另一张表里找
                     $info = AntAuthSealDetail::create()
                         ->where('antAuthId', $one->getAttr('id'))
-                        ->where('type', 4)
+                        ->where('type', 2)
                         ->where('fileUrl', '', '<>')
                         ->order('created_at', 'desc')
                         ->all();
                     if (!empty($info)) {
                         foreach ($info as $one_auth) {
-                            if (
-                                !empty($one_auth->getAttr('fileUrl')) &&
-                                file_exists(INV_AUTH_PATH . $one_auth->getAttr('fileUrl'))
-                            ) {
+                            if (!empty($one_auth->getAttr('fileUrl')) && file_exists(INV_AUTH_PATH . $one_auth->getAttr('fileUrl'))) {
                                 $pdf[] = INV_AUTH_PATH . $one_auth->getAttr('fileUrl');
                                 break;
+                            } else {
+                                // 不需要盖章的情况
+                                if ($one_auth->getAttr('isSeal') === 'false' && !empty($one_auth->getAttr('fileAddress'))) {
+                                    $new_file_name = control::getUuid() . '.pdf';
+                                    $path = Carbon::now()->format('Ym');
+                                    file_put_contents(INV_AUTH_PATH . $path . DIRECTORY_SEPARATOR . $new_file_name, file_get_contents($one_auth->getAttr('fileAddress')));
+                                    $pdf[] = INV_AUTH_PATH . $path . DIRECTORY_SEPARATOR . $new_file_name;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -130,39 +136,39 @@ class InvoiceController extends InvoiceBase
                     'canGetDataDate' => time(),
                     'status' => MaYiService::STATUS_3,
                 ]);
-                if ($info->getAttr('getDataSource') - 0 === 2) {
-                    //如果是金财的，就要发起归集
-                    for ($i = 2; $i--;) {
-                        TaskService::getInstance()->create(function () use ($i, $info) {
-                            $task_res = (new JinCaiShuKeService())->addTask(
-                                $info->getAttr('socialCredit'),
-                                $info->getAttr('province'),
-                                [
-                                    'cxlx' => trim($i),//查询类型 0销项 1 进项
-                                    'kprqq' => Carbon::now()->subMonths(24)->startOfMonth()->format('Y-m-d'),//开票日期起
-                                    'kprqz' => Carbon::now()->subMonths(1)->endOfMonth()->format('Y-m-d'),//开票日期止
-                                    'nsrsbh' => $info->getAttr('socialCredit'),//纳税人识别号
-                                ]
-                            );
-                            //这里把traceNo入库
-                            $code = $task_res['code'] ?? '';
-                            $data = $task_res['result'] ?? '';
-                            if ($code === 'S000' && !empty($data)) {
-                                JinCaiRwh::create()->data([
-                                    'entName' => $info->getAttr('entName'),
-                                    'socialCredit' => $info->getAttr('socialCredit'),
-                                    'type' => 1,
-                                    'rwh' => trim($data['traceNo']),
-                                    'province' => trim($data['province']),
-                                    'taskCode' => trim($data['taskCode']),
-                                    'kprqq' => str_replace('-', '', $data['ywBody']['kprqq']) - 0,
-                                    'kprqz' => str_replace('-', '', $data['ywBody']['kprqz']) - 0,
-                                    'cxlx' => trim($data['ywBody']['cxlx']) - 0,
-                                ])->save();
-                            }
-                        });
-                    }
-                }
+//                if ($info->getAttr('getDataSource') - 0 === 2) {
+//                    //如果是金财的，就要发起归集
+//                    for ($i = 2; $i--;) {
+//                        TaskService::getInstance()->create(function () use ($i, $info) {
+//                            $task_res = (new JinCaiShuKeService())->addTask(
+//                                $info->getAttr('socialCredit'),
+//                                $info->getAttr('province'),
+//                                [
+//                                    'cxlx' => trim($i),//查询类型 0销项 1 进项
+//                                    'kprqq' => Carbon::now()->subMonths(24)->startOfMonth()->format('Y-m-d'),//开票日期起
+//                                    'kprqz' => Carbon::now()->subMonths(1)->endOfMonth()->format('Y-m-d'),//开票日期止
+//                                    'nsrsbh' => $info->getAttr('socialCredit'),//纳税人识别号
+//                                ]
+//                            );
+//                            //这里把traceNo入库
+//                            $code = $task_res['code'] ?? '';
+//                            $data = $task_res['result'] ?? '';
+//                            if ($code === 'S000' && !empty($data)) {
+//                                JinCaiRwh::create()->data([
+//                                    'entName' => $info->getAttr('entName'),
+//                                    'socialCredit' => $info->getAttr('socialCredit'),
+//                                    'type' => 1,
+//                                    'rwh' => trim($data['traceNo']),
+//                                    'province' => trim($data['province']),
+//                                    'taskCode' => trim($data['taskCode']),
+//                                    'kprqq' => str_replace('-', '', $data['ywBody']['kprqq']) - 0,
+//                                    'kprqz' => str_replace('-', '', $data['ywBody']['kprqz']) - 0,
+//                                    'cxlx' => trim($data['ywBody']['cxlx']) - 0,
+//                                ])->save();
+//                            }
+//                        });
+//                    }
+//                }
             }
         }
 

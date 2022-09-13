@@ -34,8 +34,16 @@ class ProvideRouter
         $this->GuangZhouYinLianV1($routeCollector);
         $this->DianZiQianV1($routeCollector);
         $this->NanJingXiaoAnV1($routeCollector);
+        $this->ShenZhouYunHeV1($routeCollector);
     }
-
+    private function ShenZhouYunHeV1(RouteCollector $routeCollector){
+        $prefix = '/Business/Provide/ShenZhouYunHe/ShenZhouYunHeController/';
+        $routeCollector->addGroup('/szyh', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/invoices', $prefix . 'invoices');
+            $routeCollector->addRoute(['GET', 'POST'], '/collection', $prefix . 'collection');
+        });
+        return true;
+    }
     private function DianZiQianV1(RouteCollector $routeCollector)
     {
         $prefix = '/Business/Provide/DianziQian/DianZiQianController/';
