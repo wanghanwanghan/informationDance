@@ -11,6 +11,8 @@ use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\QueueLists;
+use App\HttpController\Models\MRXD\SoukeRecommendCompanyExportHistory;
+use App\HttpController\Models\MRXD\SoukeRecommendCompanyExportHistoryDetails;
 use App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
@@ -1986,6 +1988,38 @@ class SouKeController extends ControllerBase
         //开始分析
         return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
     }
+
+    /**
+    导出优企 先同步下载好了  等多了啊 到时候再调整呀
+     */
+    function exportRecommendedCompanys(): bool
+    {
+        // 需要和用户等级挂钩  未付费用户 只能下载100个 付费用户 可继续下载
+        //
+        // SoukeRecommendCompanyExportHistory::addRecordV2();
+        // SoukeRecommendCompanyExportHistoryDetails::addRecord();
+        return $this->writeJson(200,[ ] , '/Static/Temp/zhao_tou_biao_20220908180000.xlsx', '成功', true, []);
+    }
+
+    // 我的下载列表
+    function recommendedCompanysExportLists(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page = $requestData['page']?:1;
+        $size = $requestData['pageSize']?:10;
+        // 需要和用户等级挂钩  未付费用户 只能下载100个 付费用户 可继续下载
+        $lists = SoukeRecommendCompanyExportHistory::findByConditionV2(
+            //  $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+            [],
+            $page,
+            $size
+        );
+
+        // SoukeRecommendCompanyExportHistory::addRecordV2();
+        // SoukeRecommendCompanyExportHistoryDetails::addRecord();
+        return $this->writeJson(200,[ ] , $lists, '成功', true, []);
+    }
+
 
     //按文件传输
     function addCompanyToAnalyzeListsByFile(): bool
