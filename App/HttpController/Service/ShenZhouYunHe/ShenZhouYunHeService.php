@@ -68,7 +68,7 @@ class ShenZhouYunHeService extends ServiceBase
         $resp  = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path.$url, $data, $this->getHeader('json'), ['enableSSL' => true], 'postjson');
-        dingAlarm('invoices接口入参，返回',['$data'=>json_encode($data),'$resp'=>json_encode($resp)]);
+        dingAlarm('invoices接口入参，返回',['url'=>$this->url . $path.$url,'$data'=>json_encode($data),'$resp'=>json_encode($resp)]);
         CommonService::getInstance()->log4PHP([$this->url . $path, $data,$resp], 'info', 'shenzhou_invoices');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
