@@ -365,15 +365,15 @@ class XinDongController extends ProvideBase
         }
 
         // 看2021的有没有，是空的话，只给2020和2019
-        if (isset($res[$this->cspKey]['result']['2021'])) {
+        if (isset($res[$this->cspKey]['result'][2021])) {
             $unset = 0;
-            foreach ($res[$this->cspKey]['result']['2021'] as $field => $vals) {
+            foreach ($res[$this->cspKey]['result'][2021] as $field => $vals) {
                 if (empty($vals)) $unset++;
             }
             if ($unset >= 8) {
-                unset($res[$this->cspKey]['result']['2021']);
+                unset($res[$this->cspKey]['result'][2021]);
             } else {
-                unset($res[$this->cspKey]['result']['2019']);
+                unset($res[$this->cspKey]['result'][2019]);
             }
         }
 
