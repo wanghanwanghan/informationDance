@@ -276,8 +276,8 @@ class XinDongController extends ProvideBase
     //狮桥
     function getFinanceBaseDataSQ(): bool
     {
-        $beginYear = 2020;
-        $dataCount = 2;
+        $beginYear = 2021;
+        $dataCount = 3;
 
         $postData = [
             'entName' => $this->getRequestData('entName', ''),
@@ -286,15 +286,16 @@ class XinDongController extends ProvideBase
             'dataCount' => $dataCount,
         ];
 
-        $check = EntDbEnt::create()->where('name', $this->getRequestData('entName'))->get();
+        $check = EntDbEnt::create()
+            ->where('name', $this->getRequestData('entName'))->get();
 
-        if (empty($check)) {
+        if (date('Ymd') - 0 < 20220916 || empty($check)) {
             $f_info = [];
         } else {
             $f_info = EntDbFinance::create()
                 ->where('cid', $check->getAttr('id'))
                 ->order('ANCHEYEAR', 'DESC')
-                ->limit(0, 2)
+                ->limit(0, 3)
                 ->field([
                     'ASSGRO',
                     'LIAGRO',
