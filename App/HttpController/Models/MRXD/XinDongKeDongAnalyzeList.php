@@ -361,6 +361,34 @@ class XinDongKeDongAnalyzeList extends ModelBase
         //开始分析
         return $returnData;
     }
+
+    static function getFeatrueArray(){
+        /***
+        {
+        "NIC_ID": {
+        "F521": 1,
+        "C1469": 1,
+        "F5179": 1,
+        "M7590": 1,
+        "F522": 1,
+        "C1495": 1,
+        "7210": 1
+        },
+        "ying_shou_gui_mo": {
+        "F": 2,
+        "A3": 1,
+        "A15": 1
+        },
+        "DOMDISTRICT": {
+        "371000": 1,
+        "440300": 1,
+        "110108": 1,
+        "371482": 1,
+        "120118": 1
+        }
+         */
+    }
+
     static function extractFeatureV2($userId, $returnRaw =false, $retrunAllData = false){
         //找到所有的目标客户群体
         $fields = [
@@ -396,7 +424,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
             }
             //需要计算的字段
             foreach ($fields2 as $field){
-                if(empty($esData['_source'][$field]['filed'])){
+                if(empty($esData['_source'][$field['filed']])){
                     continue;
                 }
                 if($returnRaw){
