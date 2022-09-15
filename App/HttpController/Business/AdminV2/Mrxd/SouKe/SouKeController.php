@@ -1988,7 +1988,7 @@ class SouKeController extends ControllerBase
         //提取特征
         $featureslists = XinDongKeDongAnalyzeList::searchFromEs(
             [
-                ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
+               // ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
             ],
             $page,
             $size
