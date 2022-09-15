@@ -3626,6 +3626,22 @@ eof;
         $requestData =  $this->getRequestData();
 
         if(
+            $this->getRequestData('extractFeatureV2')
+        ){
+
+            $featureslists = XinDongKeDongAnalyzeList::extractFeatureV2(2);
+            return $this->writeJson(
+                200,
+                [ ] ,
+                $featureslists,
+                '添加成功',
+                true,
+                []
+            );
+        }
+
+
+        if(
             $this->getRequestData('searchEsText')
         ){
             return $this->writeJson(200,[ ] ,  \App\ElasticSearch\Model\Company::getNamesByText(
