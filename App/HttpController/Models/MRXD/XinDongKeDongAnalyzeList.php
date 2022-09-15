@@ -105,12 +105,17 @@ class XinDongKeDongAnalyzeList extends ModelBase
 
         $res = $model->all();
         foreach ($res as &$data){
+            if($data['companyid'] <=0){
+                continue;
+            }
             $res = Company::serachFromEs(
                 [
-                    'companyids' => $data['companyid']
+                    'companyids' => $data['companyid'],
+                    'size' => 1,
+                    'page' => 1,
                 ]
             );
-            $data = array_merge($data,$res['data'][0]); 
+            $data = array_merge($data,$res['data'][0]);
         }
 
         $total = $model->lastQueryResult()->getTotalCount();
