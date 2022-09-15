@@ -126,7 +126,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
             //地域
             $data['DOMDISTRICT'] = $esres['data'][0]['_source']['DOMDISTRICT'];
             if($data['DOMDISTRICT']){
-                $data['DOMDISTRICT'] =  CompanyBasic::findRegion($data['DOMDISTRICT']);
+                $data['DOMDISTRICT'] =  CompanyBasic::findRegion($data['DOMDISTRICT'])['fulltitle'];
             }
 
             //团队规模
