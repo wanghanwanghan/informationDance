@@ -109,7 +109,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
             if($data['companyid'] <=0){
                 continue;
             }
-            $res = Company::serachFromEs(
+            $esres = Company::serachFromEs(
                 [
                     'companyids' => $data['companyid'],
                     'size' => 1,
@@ -118,98 +118,28 @@ class XinDongKeDongAnalyzeList extends ModelBase
             );
 
             //营收规模
-            $data['ying_shou_gui_mo'] = $res['data'][0]['_source']['ying_shou_gui_mo'];
+            $data['ying_shou_gui_mo'] = $esres['data'][0]['_source']['ying_shou_gui_mo'];
             if($data['ying_shou_gui_mo']){
                 $data['ying_shou_gui_mo'] =  XinDongService::mapYingShouGuiMo()[$data['ying_shou_gui_mo']];
             }
 
             //地域
-            $data['DOMDISTRICT'] = $res['data'][0]['_source']['DOMDISTRICT'];
+            $data['DOMDISTRICT'] = $esres['data'][0]['_source']['DOMDISTRICT'];
             if($data['DOMDISTRICT']){
                 $data['DOMDISTRICT'] =  CompanyBasic::findRegion($data['DOMDISTRICT']);
             }
 
             //团队规模
-            $data['tuan_dui_ren_shu'] = $res['data'][0]['_source']['tuan_dui_ren_shu'];
+            $data['tuan_dui_ren_shu'] = $esres['data'][0]['_source']['tuan_dui_ren_shu'];
 
             // 营业期限开始日期  OPFROM
-            $data['OPFROM'] = $res['data'][0]['_source']['OPFROM'];
-
-            /****
-            "companyid": "83830977",
-            "ENTNAME": "\u9e21\u4e1c\u53bf\u94f6\u79cb\u654f\u8fbe\u7cae\u98df\u8d38\u6613\u6709\u9650\u516c\u53f8",
-            "UNISCID": "91230321MA1CKWLP4M",
-            "REGNO": "",
-            "NACAOID": "MA1CKWLP4",
-            "NAME": "\u675c\u8273\u79cb",
-            "NAMETITLE": "",
-            "ENTTYPE": "1151",
-            "ESDATE": "2021-05-25",
-            "APPRDATE": "2021-05-25",
-            "ENTSTATUS": "1",
-            "REGCAP": "300",
-            "REGCAP_NAME": "",
-            "REGCAPCUR": "156",
-            "RECCAP": "0",
-            "REGORG": "230321",
-            "OPFROM": "2021-05-25",
-            "OPTO": "",
-            "OPSCOPE": "\u8c37\u7269,\u8c46\u53ca\u85af\u7c7b\u9500\u552e;\u8c37\u7269\u78e8\u5236;\u7cae\u98df\u6536\u8d2d,\u70d8\u5e72,\u4ed3\u50a8.",
-            "DOM": "\u9ed1\u9f99\u6c5f\u7701\u9e21\u897f\u5e02\u9e21\u4e1c\u53bf\u5e73\u9633\u9547\u6c38\u5174\u6751",
-            "DOMDISTRICT": "230321",
-            "NIC_ID": "F52",
-            "CANDATE": "",
-            "REVDATE": "",
-            "updated": "2022-04-11 10:12:47",
-            "ying_shou_gui_mo": "",
-            "nic_full_name": "\u6279\u53d1\u548c\u96f6\u552e\u4e1a-\u96f6\u552e\u4e1a",
-            "market_share": {
-            "ent_market_share": {
-            "top": "",
-            "bottom": ""
-            },
-            "top": "601960387",
-            "bottom": "713433923",
-            "ent_num": "102956"
-            },
-            "gong_si_jian_jie": "",
-            "gao_xin_ji_shu": "",
-            "deng_ling_qi_ye": "",
-            "tuan_dui_ren_shu": "",
-            "tong_xun_di_zhi": "",
-            "web": "",
-            "yi_ban_ren": "",
-            "shang_shi_xin_xi": "",
-            "app": "",
-            "manager": "",
-            "inv": "",
-            "email": "",
-            "wu_liu_xin_xi": "",
-            "szjjcy": "050602",
-            "zlxxcy": "",
-            "app_data": [],
-            "shang_pin_data": [],
-            "report_year": [],
-            "iso": "",
-            "jin_chu_kou": "",
-            "location": {
-            "type": "point",
-            "coordinates": [131.237956, 45.149395]
-            },
-            "estiblish_time": "",
-            "from_time": "",
-            "to_time": "",
-            "approved_time": "",
-            "ENTTYPE_CNAME": "",
-            "ENTSTATUS_CNAME": "",
-            "gong_si_jian_jie_data_arr": []
-             */
+            $data['OPFROM'] = $esres['data'][0]['_source']['OPFROM'];
 
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     [
-                        'serachFromEs' =>  $res['data'][0]['_source'],
+                        'serachFromEs' =>  $esres['data'][0]['_source'],
                     ]
                 ])
             );
