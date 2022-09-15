@@ -269,6 +269,14 @@ class XinDongKeDongAnalyzeList extends ModelBase
         return $return;
     }
     static function calYearsNums($date){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    $date => $date,
+                ]
+            ])
+        );
         $yearsNums =  date('Y') - date('Y',strtotime($date));
         if($yearsNums<=2){
             return '0-2';
@@ -424,6 +432,14 @@ class XinDongKeDongAnalyzeList extends ModelBase
             }
             //需要计算的字段
             foreach ($fields2 as $field){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        [
+                            $field['filed'] => $esData['_source'][$field['filed']],
+                        ]
+                    ])
+                );
                 if(empty($esData['_source'][$field['filed']])){
                     continue;
                 }
