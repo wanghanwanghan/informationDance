@@ -5,6 +5,7 @@ namespace App\HttpController\Models\MRXD;
 use App\ElasticSearch\Model\Company;
 use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\DataModelExample;
+use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
@@ -14,6 +15,7 @@ use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Sms\AliSms;
 use App\HttpController\Service\XinDong\XinDongService;
 use EasySwoole\RedisPool\Redis;
+use Vtiful\Kernel\Format;
 
 // use App\HttpController\Models\AdminRole;
 
@@ -590,4 +592,92 @@ class XinDongKeDongAnalyzeList extends ModelBase
 
         return true;
     }
+
+    //导出
+    static function  exportRecommendCompanys($requestData,$userId){
+        //
+        //  $datas = self::searchFromEs();
+        //
+
+        //============================分割线=========================================
+        $filename = date('Y-m-d H:i:s')."_优企名单.xlsx";
+        // xlsx文件保存路径
+        $config=  [
+            'path' => TEMP_FILE_PATH
+        ];
+
+        $excel = new \Vtiful\Kernel\Excel($config);
+        $fileObject = $excel->fileName($filename, 'sheet');
+        $fileHandle = $fileObject->getHandle();
+
+        $format = new Format($fileHandle);
+        $colorStyle = $format
+            ->fontColor(Format::COLOR_ORANGE)
+            ->border(Format::BORDER_DASH_DOT)
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $format = new Format($fileHandle);
+
+        $alignStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $fileObject
+            ->defaultFormat($colorStyle)
+            ->header([
+                'x',
+                'xx',
+                'xxx',
+                'xxxx',
+                'xxxxx',
+                'xxxxxx',
+            ])
+            ->defaultFormat($alignStyle)
+        ;
+
+        foreach ($datas as $dataItem){
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$dataItem' => $dataItem
+//                    ])
+//                );
+            $tmp = [
+                //'xd_id'=>$dataItem['xd_id'],
+            ];
+
+            //$tmp['xd_id'] = $dataItem['xd_id'];
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$dataItem' => $dataItem,
+//                        '$featureArr'=>$featureArr,
+//                        '$tmp'=>$tmp,
+//                    ])
+//                );
+            $fileObject ->data([$tmp]);
+        }
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+            ])
+        );
+
+        $format = new Format($fileHandle);
+        //单元格有\n解析成换行
+        $wrapStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->wrap()
+            ->toResource();
+
+        $fileObject->output();
+
+        //============================分割线=========================================
+
+        return '/Static/Temp/'.$filename;
+    }
+
 }

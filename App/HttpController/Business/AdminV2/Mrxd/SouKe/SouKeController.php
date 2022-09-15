@@ -2019,10 +2019,17 @@ class SouKeController extends ControllerBase
      */
     function exportRecommendedCompanys(): bool
     {
+        $requestData =  $this->getRequestData();
         // 需要和用户等级挂钩  未付费用户 只能下载100个 付费用户 可继续下载
         //
         // SoukeRecommendCompanyExportHistory::addRecordV2();
         // SoukeRecommendCompanyExportHistoryDetails::addRecord();
+
+//        $filePath = XinDongKeDongAnalyzeList::exportRecommendCompanys(
+//            $requestData,
+//            $this->loginUserinfo['id']
+//        );
+
         return $this->writeJson(200,[ ] , '/Static/Temp/zhao_tou_biao_20220908180000.xlsx', '成功', true, []);
     }
 
