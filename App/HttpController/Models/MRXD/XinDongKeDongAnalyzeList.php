@@ -41,7 +41,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
         //如果被删除了 重新找回来
         $oldRes2 = self::findByEntNameV2($info['user_id'],$info['ent_name']);
         if($oldRes2){
-            self::updateById(
+            return self::updateById(
                 $oldRes2->getAttr('id'),
                 [
                     'is_del' => self::$state_ok_cname
@@ -60,8 +60,8 @@ class XinDongKeDongAnalyzeList extends ModelBase
     public static function addRecord($requestData){
         try {
            $res =  XinDongKeDongAnalyzeList::create()->data([
-                'user_id' => intval($requestData['user_id']),
-                'companyid' => intval($requestData['companyid']),
+                'user_id' => $requestData['user_id'],
+                'companyid' => $requestData['companyid'],
                 'is_del' => intval($requestData['is_del']),
                 'status' => intval($requestData['status']),
                 'name' => $requestData['name']?:'',
