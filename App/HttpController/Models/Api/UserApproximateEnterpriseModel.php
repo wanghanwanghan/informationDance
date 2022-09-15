@@ -82,7 +82,6 @@ class UserApproximateEnterpriseModel extends ModelBase
     }
 
 
-
     public  function setData($id,$field,$value){
         $info = UserApproximateEnterpriseModel::findById($id);
         return $info->update([

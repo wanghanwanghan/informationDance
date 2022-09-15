@@ -1849,6 +1849,21 @@ class SouKeController extends ControllerBase
 
         return $this->writeJson(200,[ ] , [], '添加成功', true, []);
     }
+    function getKeDongSampleCompanys(): bool
+    {
+
+        $requestData =  $this->getRequestData();
+        $page = $requestData['page']?:1;
+        $size = $requestData['pageSize']?:10;
+        $lists = XinDongKeDongAnalyzeList::findByConditionV2(
+            [],
+            $page,
+            $size
+        );
+
+
+        return $this->writeJson(200,[ ] , $lists, '成功', true, []);
+    }
 
     //删除名单
     function delCompanyToAnalyzeLists(): bool

@@ -24,7 +24,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
         return parent::__construct();
     }
 
-    // 第一步根据条件取主表里的近似企业
+    // 第一步根据条件取主表里的近似企业    | TODO 这一步 改为直接从es里查询
     // 第二步放到redis队列
     function run(int $taskId, int $workerIndex)
     {
