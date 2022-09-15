@@ -2025,10 +2025,27 @@ class SouKeController extends ControllerBase
         // SoukeRecommendCompanyExportHistory::addRecordV2();
         // SoukeRecommendCompanyExportHistoryDetails::addRecord();
 
-//        $filePath = XinDongKeDongAnalyzeList::exportRecommendCompanys(
-//            $requestData,
-//            $this->loginUserinfo['id']
-//        );
+        $filePath = XinDongKeDongAnalyzeList::exportRecommendCompanys(
+            $requestData,
+            $this->loginUserinfo['id']
+        );
+
+        // souke_recommend_company_export_history
+
+        SoukeRecommendCompanyExportHistory::addRecordV2(
+            [
+                'user_id' => $this->loginUserinfo['id'],
+                'request_json' =>  json_encode($requestData),
+                'name' => ($requestData['name'])?:'',
+                'min_score' => 0,
+                'max_score' => 0,
+                'export_nums' => ($requestData['export_nums']),
+                'status' => intval($requestData['status']),
+                'remark' => $requestData['remark']?:'',
+            ]
+        );
+
+
 
         return $this->writeJson(200,[ ] , '/Static/Temp/zhao_tou_biao_20220908180000.xlsx', '成功', true, []);
     }

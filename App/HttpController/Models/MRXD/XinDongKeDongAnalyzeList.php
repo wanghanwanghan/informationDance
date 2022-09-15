@@ -596,8 +596,10 @@ class XinDongKeDongAnalyzeList extends ModelBase
     //导出
     static function  exportRecommendCompanys($requestData,$userId){
         //
-        //  $datas = self::searchFromEs();
-        //
+        //    $datas = self::searchFromEs();
+        $exportNums = 0;
+        $minScore = 0 ;
+        $maxScore = 0 ;
 
         //============================分割线=========================================
         $filename = date('Y-m-d H:i:s')."_优企名单.xlsx";
@@ -677,7 +679,12 @@ class XinDongKeDongAnalyzeList extends ModelBase
 
         //============================分割线=========================================
 
-        return '/Static/Temp/'.$filename;
+        return  [
+            'patch' => '/Static/Temp/'.$filename,
+            'countnums' => $exportNums,
+            'minscore' => $minscore,
+        ]
+         ;
     }
 
 }
