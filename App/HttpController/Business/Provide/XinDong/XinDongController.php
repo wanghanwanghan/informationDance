@@ -8,6 +8,7 @@ use App\HttpController\Models\Api\NeoCrmPendingEnt;
 use App\HttpController\Models\EntDb\EntDbEnt;
 use App\HttpController\Models\EntDb\EntDbFinance;
 use App\HttpController\Models\EntDb\EntDbTzList;
+use App\HttpController\Models\Provide\RequestRecode;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
 use App\HttpController\Service\Common\CommonService;
@@ -276,59 +277,51 @@ class XinDongController extends ProvideBase
     //狮桥
     function getFinanceBaseDataSQ(): bool
     {
-        $beginYear = 2020;
-        $dataCount = 2;
-
         $postData = [
             'entName' => $this->getRequestData('entName', ''),
             'code' => $this->getRequestData('code', ''),
-            'beginYear' => $beginYear,
-            'dataCount' => $dataCount,
+            'beginYear' => 2021,
+            'dataCount' => 3,
         ];
 
-        $check = EntDbEnt::create()->where('name', $this->getRequestData('entName'))->get();
+        $page = 1;
+        $gived = false;
 
-        if (empty($check)) {
-            $f_info = [];
-        } else {
-            $f_info = EntDbFinance::create()
-                ->where('cid', $check->getAttr('id'))
-                ->order('ANCHEYEAR', 'DESC')
-                ->limit(0, 2)
-                ->field([
-                    'ASSGRO',
-                    'LIAGRO',
-                    'MAIBUSINC',
-                    'NETINC',
-                    'PROGRO',
-                    'RATGRO',
-                    'TOTEQU',
-                    'VENDINC',
-                    'ANCHEYEAR',
-                ])->all();
-        }
-
-        if (!empty($f_info)) {
-            $this->spendMoney = 0;
-            $tmp = [];
-            foreach ($f_info as $one) {
-                $tmp[$one->ANCHEYEAR . ''] = obj2Arr($one);
+        while (true) {
+            $recode_info = RequestRecode::create()->addSuffix(date('Y'))->where([
+                'userId' => $this->userId,
+                'requestUrl' => '/provide/v1/xd/getFinanceBaseDataSQ',
+                'responseCode' => 200,
+            ])->page($page, 100)->field(['requestData', 'responseData'])->all();
+            if (empty($recode_info)) break;
+            foreach ($recode_info as $one) {
+                $requestData = jsonDecode($one->getAttr('requestData'));
+                $responseData = jsonDecode($one->getAttr('responseData'));
+                if (!empty($requestData) && !empty($responseData)) {
+                    // 找到当前企业的这条
+                    if (isset($requestData['entName']) && $requestData['entName'] === $postData['entName']) {
+                        foreach ($responseData as $year => $vals) {
+                            if ($year - 0 === 2021) {
+                                $gived = true;
+                            }
+                        }
+                    }
+                }
             }
-            $res = [$this->cspKey => [
-                'code' => 200,
-                'paging' => null,
-                'result' => $tmp,
-                'msg' => null,
-            ]];
-        } else {
-            $this->csp->add($this->cspKey, function () use ($postData) {
-                return (new LongXinService())
-                    ->setCheckRespFlag(true)
-                    ->setCal(false)
-                    ->getFinanceData($postData, false);
-            });
-            $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+            $page++;
         }
+
+        if ($gived) {
+            $this->spendMoney = 0;
+        }
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->setCal(false)
+                ->getFinanceData($postData, false);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         if ($res[$this->cspKey]['code'] === 200 && !empty($res[$this->cspKey]['result'])) {
             $indexTable = [
@@ -368,6 +361,19 @@ class XinDongController extends ProvideBase
                     }
                     $res[$this->cspKey]['result'][$year][$field] = $tmp;
                 }
+            }
+        }
+
+        // 看2021的有没有，是空的话，只给2020和2019
+        if (isset($res[$this->cspKey]['result'][2021])) {
+            $unset = 0;
+            foreach ($res[$this->cspKey]['result'][2021] as $field => $vals) {
+                if (empty($vals)) $unset++;
+            }
+            if ($unset >= 8) {
+                unset($res[$this->cspKey]['result'][2021]);
+            } else {
+                unset($res[$this->cspKey]['result'][2019]);
             }
         }
 
