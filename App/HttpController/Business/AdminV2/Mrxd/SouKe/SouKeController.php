@@ -1848,38 +1848,13 @@ class SouKeController extends ControllerBase
 
         return $this->writeJson(200,[ ] , [], '添加成功', true, []);
     }
+
+    //增删改 全部一起
     function addCompanyToAnalyzeListsV2(): bool
     {
         $requestData =  $this->getRequestData();
-        $newEntNames = $requestData['entNames'];
-        $newEntNamesArr = explode(',',$newEntNames);
-        return $this->writeJson(200,[ ] , [], '添加成功', true, []);
 
-        $allLists = XinDongKeDongAnalyzeList::findAllByUserId($this->loginUserinfo['id']);
-        foreach ($allLists as $data){ //
-            if(!in_array($data['ent_name'],$newEntNamesArr)){
-
-            }
-            $companyBasicRes = CompanyBasic::findByName($requestData['ent_name']);
-            $companyBasicRes = $companyBasicRes->toArray();
-
-        }
-
-        // 添加
-        $id = XinDongKeDongAnalyzeList::addRecordV2(
-            [
-                'user_id' => $this->loginUserinfo['id'],
-                'is_del' => XinDongKeDongAnalyzeList::$state_ok,
-                'status' => XinDongKeDongAnalyzeList::$status_init,
-                'name' => $requestData['name']?:'',
-                'ent_name' => $requestData['ent_name']?:'',
-                'companyid' => $companyBasicRes['companyid'],
-                'remark' => $requestData['remark']?:'',
-            ]
-        );
-        if($id<=0){
-            return $this->writeJson(201,[ ] , [], '入库失败', true, []);
-        }
+        XinDongKeDongAnalyzeList::updateListsByUser($requestData,$this->loginUserinfo['id']);
 
         return $this->writeJson(200,[ ] , [], '添加成功', true, []);
     }

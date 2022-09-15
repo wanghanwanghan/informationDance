@@ -7,6 +7,7 @@ use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\ModelBase;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongXin\LongXinService;
@@ -123,6 +124,15 @@ class XinDongKeDongAnalyzeList extends ModelBase
             'touch_time' => $touchTime,
         ]);
     }
+
+    //软删除
+    public static function delRecord($id){
+        $info = XinDongKeDongAnalyzeList::findById($id);
+        return $info->update([
+            'is_del' => self::$state_del,
+        ]);
+    }
+
 
     public static function updateById(
         $id,$data
@@ -401,4 +411,40 @@ class XinDongKeDongAnalyzeList extends ModelBase
         return $returnData;
     }
 
+    static function  updateListsByUser($requestData,$userId){
+
+        $newEntNames = $requestData['entNames'];
+
+        //最新企业名称
+        $newEntNamesArr = explode(',',$newEntNames);
+
+        //当前所有
+        $allLists = XinDongKeDongAnalyzeList::findAllByUserId($userId);
+        foreach ($allLists as $data){
+            //如果被删除了的话
+            if(!in_array($data['ent_name'],$newEntNamesArr)){
+                XinDongKeDongAnalyzeList::delRecord($data['id']);
+            }
+        }
+
+        foreach ($newEntNamesArr as $newEntName){
+            $companyBasicRes = CompanyBasic::findByName($newEntName);
+            $companyBasicRes = $companyBasicRes->toArray();
+            // 添加
+            $id = XinDongKeDongAnalyzeList::addRecordV2(
+                [
+                    'user_id' => $userId,
+                    'is_del' => XinDongKeDongAnalyzeList::$state_ok,
+                    'status' => XinDongKeDongAnalyzeList::$status_init,
+                    'name' => $requestData['name']?:'',
+                    'ent_name' => $newEntName,
+                    'companyid' => $companyBasicRes['companyid'],
+                    'remark' => $requestData['remark']?:'',
+                ]
+            );
+
+        }
+
+        return true;
+    }
 }

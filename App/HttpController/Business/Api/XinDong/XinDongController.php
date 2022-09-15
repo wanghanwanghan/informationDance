@@ -32,6 +32,7 @@ use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\MRXD\InsuranceDataHuiZhong;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
+use App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
@@ -3622,6 +3623,15 @@ eof;
 
     function testExport()
     {
+        $requestData =  $this->getRequestData();
+        if(
+            $this->getRequestData('serachFromEs')
+        ){
+            // 北京每日信动科技有限公司
+            XinDongKeDongAnalyzeList::updateListsByUser($requestData,$requestData['user_id']);
+
+            return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+        }
         if(
             $this->getRequestData('serachFromEs')
         ){
