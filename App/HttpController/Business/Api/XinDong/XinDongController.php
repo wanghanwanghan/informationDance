@@ -3624,7 +3624,31 @@ eof;
     function testExport()
     {
         $requestData =  $this->getRequestData();
+        if(
+            $this->getRequestData('extractFeatureV2')
+        ){
 
+            $featureslists = XinDongKeDongAnalyzeList::searchFromEs(
+                [
+//                    ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
+                ],
+                1,
+                10
+            );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'startAnalysis'=>json_encode(
+                        [
+//                        'msg'=>
+                        ]
+                    )
+                ])
+            );
+            //开始分析
+            return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
+
+        }
         if(
             $this->getRequestData('extractFeatureV2')
         ){
