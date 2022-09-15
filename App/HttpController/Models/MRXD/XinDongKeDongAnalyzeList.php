@@ -362,7 +362,13 @@ class XinDongKeDongAnalyzeList extends ModelBase
         return $returnData;
     }
 
-    static function getFeatrueArray(){
+    static function getFeatrueArray($userId){
+        $rawData = self::extractFeatureV2($userId,false,true);
+        $nicIdsArr = $rawData['NIC_ID'];
+        $OPFROMArr = $rawData['OPFROM'];
+        $ying_shou_gui_moArr = $rawData['ying_shou_gui_mo'];
+        $DOMDISTRICTArr = $rawData['DOMDISTRICT'];
+
         /***
         {
         "NIC_ID": {
@@ -373,6 +379,12 @@ class XinDongKeDongAnalyzeList extends ModelBase
         "F522": 1,
         "C1495": 1,
         "7210": 1
+        },
+        "OPFROM": {
+        "10-15": 2,
+        "0-2": 1,
+        "2-5": 3,
+        "20年以上": 1
         },
         "ying_shou_gui_mo": {
         "F": 2,
@@ -385,6 +397,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
         "110108": 1,
         "371482": 1,
         "120118": 1
+        }
         }
          */
     }
@@ -478,7 +491,14 @@ class XinDongKeDongAnalyzeList extends ModelBase
         }
 
         foreach ($newEntNamesArr as $newEntName){
+            if(empty($newEntName)){
+                continue;
+            }
+
             $companyBasicRes = CompanyBasic::findByName($newEntName);
+            if(empty($companyBasicRes)){
+                continue;
+            }
             $companyBasicRes = $companyBasicRes->toArray();
             // 添加
             $id = XinDongKeDongAnalyzeList::addRecordV2(
