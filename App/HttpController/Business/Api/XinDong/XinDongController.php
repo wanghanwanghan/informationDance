@@ -3625,6 +3625,16 @@ eof;
     {
         $requestData =  $this->getRequestData();
 
+        if(
+            $this->getRequestData('searchEsText')
+        ){
+            return $this->writeJson(200,[ ] ,  \App\ElasticSearch\Model\Company::getNamesByText(
+                1,
+                5,
+                trim($requestData['searchEsText'])
+            ), '添加成功', true, []);
+        }
+
 
         if(
             $this->getRequestData('serachFromEs')
