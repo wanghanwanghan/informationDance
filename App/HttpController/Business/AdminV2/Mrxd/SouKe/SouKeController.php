@@ -1848,6 +1848,35 @@ class SouKeController extends ControllerBase
 
         return $this->writeJson(200,[ ] , [], '添加成功', true, []);
     }
+    function addCompanyToAnalyzeListsV2(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $newEntNames = $requestData[''];
+        $allLists = XinDongKeDongAnalyzeList::findAllByUserId($this->loginUserinfo['id']);
+        foreach ($allLists as $data){
+            $companyBasicRes = CompanyBasic::findByName($requestData['ent_name']);
+            $companyBasicRes = $companyBasicRes->toArray();
+
+        }
+
+        // 添加
+        $id = XinDongKeDongAnalyzeList::addRecordV2(
+            [
+                'user_id' => $this->loginUserinfo['id'],
+                'is_del' => XinDongKeDongAnalyzeList::$state_ok,
+                'status' => XinDongKeDongAnalyzeList::$status_init,
+                'name' => $requestData['name']?:'',
+                'ent_name' => $requestData['ent_name']?:'',
+                'companyid' => $companyBasicRes['companyid'],
+                'remark' => $requestData['remark']?:'',
+            ]
+        );
+        if($id<=0){
+            return $this->writeJson(201,[ ] , [], '入库失败', true, []);
+        }
+
+        return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+    }
     function getKeDongSampleCompanys(): bool
     {
 
@@ -1861,7 +1890,7 @@ class SouKeController extends ControllerBase
         );
 
 
-        return $this->writeJson(200,[ ] , $lists, '成功', true, []);
+        return $this->writeJson(200,[ ] , array_column($lists,'ent_name'), '成功', true, []);
     }
 
     //删除名单
