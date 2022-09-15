@@ -361,7 +361,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
         //开始分析
         return $returnData;
     }
-    static function extractFeatureV2($userId,$returnRaw =false){
+    static function extractFeatureV2($userId, $returnRaw =false, $retrunAllData = false){
         //找到所有的目标客户群体
         $fields = [
             '营收规模'=>'ying_shou_gui_mo',
@@ -409,6 +409,9 @@ class XinDongKeDongAnalyzeList extends ModelBase
             }
         }
 
+        if($retrunAllData){
+            return  $res;
+        }
         $returnData = [];
         foreach ($res as $field=>$fieldValue){
             asort($fieldValue) ;

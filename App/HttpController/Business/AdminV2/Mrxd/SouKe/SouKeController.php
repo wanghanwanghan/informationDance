@@ -1956,7 +1956,7 @@ class SouKeController extends ControllerBase
         $requestData =  $this->getRequestData();
 
         //提取特征
-        $featureslists = XinDongKeDongAnalyzeList::extractFeatureV2($this->loginUserinfo['id']);
+        $featureslists = XinDongKeDongAnalyzeList::extractFeatureV2($this->loginUserinfo['id'],false,true);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
