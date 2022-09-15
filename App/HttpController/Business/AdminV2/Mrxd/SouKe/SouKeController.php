@@ -1810,7 +1810,6 @@ class SouKeController extends ControllerBase
     //------ 添加企业进入待分析名单
     function addCompanyToAnalyzeLists(): bool
     {
-
         $requestData =  $this->getRequestData();
         $checkRes = DataModelExample::checkField(
             [
