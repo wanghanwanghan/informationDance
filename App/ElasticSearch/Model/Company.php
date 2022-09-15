@@ -1039,7 +1039,7 @@ class Company extends ServiceBase
                 //->addFrom($offset)
                 //设置默认值 不传任何条件 搜全部
                 //->setDefault()
-                //->searchFromEs('company_202208')
+                //->searchFromEs('company_202209')
                 // 格式化下日期和时间
                 //->formatEsDate()
                 // 格式化下金额
@@ -1053,7 +1053,7 @@ class Company extends ServiceBase
             // 格式化下日期和时间
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202208')
+                ->searchFromEs('company_202209')
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();
@@ -1114,7 +1114,7 @@ class Company extends ServiceBase
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202208')
+            ->searchFromEs('company_202209')
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
@@ -1137,8 +1137,8 @@ class Company extends ServiceBase
     }
 
     static  function  serachFromEs(
-            $requestData,
-            $dataConfig = [ 'show_log' => true,]
+        $requestData,
+        $dataConfig = [ 'show_log' => true,]
     )
     {
         $companyEsModel = new \App\ElasticSearch\Model\Company();
@@ -1216,7 +1216,7 @@ class Company extends ServiceBase
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202208')
+            ->searchFromEs('company_202209')
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额

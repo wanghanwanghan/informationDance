@@ -93,6 +93,8 @@ class XinDongKeDongAnalyzeList extends ModelBase
      */
     public static function searchFromEs($whereArr,$page,$limit){
 
+        //Company::serachFromEs();
+
         $model = XinDongKeDongAnalyzeList::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
@@ -102,6 +104,14 @@ class XinDongKeDongAnalyzeList extends ModelBase
             ->withTotalCount();
 
         $res = $model->all();
+        foreach ($res as &$data){
+            $res = Company::serachFromEs(
+                [
+                    'companyids' => $data['companyid']
+                ]
+            );
+            $data = array_merge($data,$res['data'][0]); 
+        }
 
         $total = $model->lastQueryResult()->getTotalCount();
         return [
