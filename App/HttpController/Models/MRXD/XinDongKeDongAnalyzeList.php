@@ -230,13 +230,17 @@ class XinDongKeDongAnalyzeList extends ModelBase
         );
         $return = [];
         foreach ($records as $record){
+            $entName = trim($paramsArr['ent_name']);
+            if(empty($entName)){
+                continue;
+            }
             $res = self::addRecordV2(
                 [
                     'user_id' => $paramsArr['user_id'],
                     'is_del' => XinDongKeDongAnalyzeList::$state_ok,
                     'status' => XinDongKeDongAnalyzeList::$status_init,
                     'name' => $paramsArr['name']?:'',
-                    'ent_name' => $paramsArr['ent_name']?:'',
+                    'ent_name' => $entName?:'',
                     'remark' => $paramsArr['remark']?:'',
                 ]
             );

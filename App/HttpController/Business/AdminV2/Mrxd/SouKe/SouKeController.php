@@ -1890,6 +1890,7 @@ class SouKeController extends ControllerBase
         );
 
 
+
         return $this->writeJson(200,[ ] , array_column($lists['data'],'ent_name'), '成功', true, []);
     }
 
