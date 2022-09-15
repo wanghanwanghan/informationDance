@@ -3633,7 +3633,10 @@ eof;
             return $this->writeJson(
                 200,
                 [ ] ,
-                $featureslists,
+                [
+                    $featureslists,
+                    XinDongKeDongAnalyzeList::getFeatrueArray(2)
+                ],
                 '添加成功',
                 true,
                 []

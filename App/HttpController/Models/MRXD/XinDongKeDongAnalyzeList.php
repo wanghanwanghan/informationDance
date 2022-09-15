@@ -363,11 +363,38 @@ class XinDongKeDongAnalyzeList extends ModelBase
     }
 
     static function getFeatrueArray($userId){
+        $returnData = [];
+
         $rawData = self::extractFeatureV2($userId,false,true);
         $nicIdsArr = $rawData['NIC_ID'];
+        $allNicScore = array_sum($nicIdsArr);
+
+        foreach ($nicIdsArr as $key => $value){
+            $returnData['nicX'][] = $key;
+            $returnData['nicY'][] = number_format($value/$allNicScore,2,",",".");
+        }
+
         $OPFROMArr = $rawData['OPFROM'];
+        $allOPFROMScore = array_sum($OPFROMArr);
+        foreach ($OPFROMArr as $key => $value){
+            $returnData['openFromX'][] = $key;
+            $returnData['openFromY'][] = number_format($value/$allOPFROMScore,2,",",".");
+        }
+
         $ying_shou_gui_moArr = $rawData['ying_shou_gui_mo'];
+        $allYingSHouGuiMoScore = array_sum($ying_shou_gui_moArr);
+        foreach ($ying_shou_gui_moArr as $key => $value){
+            $returnData['YingShouX'][] = $key;
+            $returnData['YingShouY'][] = number_format($value/$allYingSHouGuiMoScore,2,",",".");
+        }
+
+
         $DOMDISTRICTArr = $rawData['DOMDISTRICT'];
+        $allDOMDISTRICTScore = array_sum($DOMDISTRICTArr);
+        foreach ($DOMDISTRICTArr as $key => $value){
+            $returnData['YingShouX'][] = $key;
+            $returnData['YingShouY'][] = number_format($value/$allDOMDISTRICTScore,2,",",".");
+        }
 
         /***
         {
@@ -400,6 +427,8 @@ class XinDongKeDongAnalyzeList extends ModelBase
         }
         }
          */
+
+    return $returnData;
     }
 
     static function extractFeatureV2($userId, $returnRaw =false, $retrunAllData = false){
