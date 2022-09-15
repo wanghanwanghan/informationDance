@@ -425,7 +425,8 @@ class XinDongKeDongAnalyzeList extends ModelBase
         $newEntNames = $requestData['entNames'];
 
         //最新企业名称
-        $newEntNamesArr = explode(',',$newEntNames);
+//        $newEntNamesArr = explode(',',$newEntNames);
+        $newEntNamesArr = json_decode($newEntNames,true);
 
         //当前所有
         $allLists = XinDongKeDongAnalyzeList::findAllByUserId($userId);

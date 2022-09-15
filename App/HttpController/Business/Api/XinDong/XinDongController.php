@@ -3624,6 +3624,8 @@ eof;
     function testExport()
     {
         $requestData =  $this->getRequestData();
+
+
         if(
             $this->getRequestData('serachFromEs')
         ){
@@ -3632,6 +3634,19 @@ eof;
 
             return $this->writeJson(200,[ ] , [], '添加成功', true, []);
         }
+
+
+        if(
+            $this->getRequestData('serachFromEs')
+        ){
+            // 北京每日信动科技有限公司
+            XinDongKeDongAnalyzeList::updateListsByUser($requestData,$requestData['user_id']);
+
+            return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+        }
+
+
+
         if(
             $this->getRequestData('serachFromEs')
         ){
