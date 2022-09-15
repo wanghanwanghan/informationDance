@@ -1851,9 +1851,15 @@ class SouKeController extends ControllerBase
     function addCompanyToAnalyzeListsV2(): bool
     {
         $requestData =  $this->getRequestData();
-        $newEntNames = $requestData[''];
+        $newEntNames = $requestData['entNames'];
+        $newEntNamesArr = explode(',',$newEntNames);
+        return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+
         $allLists = XinDongKeDongAnalyzeList::findAllByUserId($this->loginUserinfo['id']);
-        foreach ($allLists as $data){
+        foreach ($allLists as $data){ //
+            if(!in_array($data['ent_name'],$newEntNamesArr)){
+
+            }
             $companyBasicRes = CompanyBasic::findByName($requestData['ent_name']);
             $companyBasicRes = $companyBasicRes->toArray();
 
