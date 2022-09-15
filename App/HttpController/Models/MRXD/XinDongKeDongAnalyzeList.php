@@ -431,7 +431,8 @@ class XinDongKeDongAnalyzeList extends ModelBase
                     $newRes = $esData['_source'][$field['filed']];
                 }
                 else{
-                    $newRes = self::$field['static_func']($esData['_source'][$field['filed']]);
+                    $tmpRes = $field['static_func'];
+                    $newRes = self::$tmpRes($esData['_source'][$field['filed']]);
                 }
                 $res[$field][$newRes] += 1 ;
             }
