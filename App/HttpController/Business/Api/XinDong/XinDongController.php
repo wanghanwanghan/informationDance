@@ -3625,7 +3625,7 @@ eof;
     {
         $requestData =  $this->getRequestData();
         if(
-            $this->getRequestData('searchFromEs')
+            $this->getRequestData('searchFromEs11')
         ){
 
             $featureslists = XinDongKeDongAnalyzeList::searchFromEs(

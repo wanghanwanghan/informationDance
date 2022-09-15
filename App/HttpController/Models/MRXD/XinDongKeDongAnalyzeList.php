@@ -115,7 +115,14 @@ class XinDongKeDongAnalyzeList extends ModelBase
                     'page' => 1,
                 ]
             );
-            $data = array_merge($data,$res['data'][0]);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        '$res' => $res,
+                    ]
+                ])
+            );
         }
 
         $total = $model->lastQueryResult()->getTotalCount();
