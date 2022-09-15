@@ -39,7 +39,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
     static  function  addRecordV2($info){
         $oldRes = self::findByEntName($info['user_id'],$info['ent_name']);
         //如果被删除了 重新找回来
-        $oldRes2 = self::findByEntNameV2($info['user_id'],$info['ent_name']);
+        $oldRes2 = self::findByEntNameV3($info['user_id'],$info['ent_name']);
         if($oldRes2){
             return self::updateById(
                 $oldRes2->getAttr('id'),
@@ -211,6 +211,15 @@ class XinDongKeDongAnalyzeList extends ModelBase
             ->where('user_id',$user_id)
             ->where('ent_name',$ent_name)
             ->where('is_del',0)
+            ->get();
+        return $res;
+    }
+
+    public static function findByEntNameV3($user_id,$ent_name){
+        $res =  XinDongKeDongAnalyzeList::create()
+            ->where('user_id',$user_id)
+            ->where('ent_name',$ent_name)
+            ->where('is_del',1)
             ->get();
         return $res;
     }
