@@ -769,6 +769,47 @@ class Company extends ServiceBase
 
         return $this;
     }
+    function SetQueryByYingShouGuiMoV2($searchOptionArr){
+
+        $ying_shou_gui_mo_values = [];  // 营收规模
+
+        foreach($searchOptionArr as $item){
+            if($item['pid'] == 50){
+                $ying_shou_gui_mo_values = $item['value'];
+            }
+        }
+
+        $map = [
+            5 => ['A1'], //微型
+            10 => ['A2'], //小型C类
+            15 => ['A3'],// 小型B类
+            20 => ['A4'],// 小型A类
+            25 => ['A5'],// 中型C类
+            30 => ['A6'],// 中型B类
+            40 => ['A7'],// 中型A类
+            45 => ['A8'],// 大型C类
+            50 => ['A9'],//大型B类
+            60 => ['A10'],//大型A类，一般指规模在10亿以上，50亿以下
+            65 => ['A11'],//'特大型C类，一般指规模在50亿以上，100亿以下'
+            70 => ['A12'],//'特大型C类，一般指规模在50亿以上，100亿以下'
+            80 => ['A13'],//'特大型C类，一般指规模在50亿以上，100亿以下'
+        ];
+
+        $matchedCnamesRaw = [];
+        foreach($ying_shou_gui_mo_values as $item){
+            $item && $matchedCnamesRaw[] = $map[$item];
+        }
+        $matchedCnames = [];
+        foreach($matchedCnamesRaw as $items){
+            foreach($items as $item){
+                $matchedCnames[] = $item;
+            }
+        }
+
+        (!empty($matchedCnames)) && $this->es->addMustShouldPhraseQuery( 'ying_shou_gui_mo' , $matchedCnames) ;
+
+        return $this;
+    }
 
     function SetQueryBySiJiFenLei($siJiFenLeiStrs){
         $siJiFenLeiStrs && $siJiFenLeiArr = explode(',', $siJiFenLeiStrs);
@@ -1250,6 +1291,169 @@ class Company extends ServiceBase
             'total' => intval($companyEsModel->return_data['hits']['total']['value']),
             'data'=>$companyEsModel->return_data['hits']['hits'],
         ];
+    }
+
+    static  function SearchAfter($totalNums,$requestDataArr, $dataConfig = [ 'show_log' => true,]){
+
+        $startMemory = memory_get_usage();
+        $start = microtime(true);
+        $searchOption = json_decode($requestDataArr['searchOption'],true);
+        $datas = [];
+
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                '$datas' => $datas
+//            ])
+//        );
+
+        $size = 3500;
+        $offset = 0;
+        $nums =1;
+        $lastId = 0;
+        while ($totalNums > 0) {
+            if($totalNums<$size){
+                $size = $totalNums;
+            }
+
+            $companyEsModel = new \App\ElasticSearch\Model\Company();
+            $companyEsModel
+                //经营范围
+                ->SetQueryByBusinessScope($requestDataArr['basic_opscope'])
+                //数字经济及其核心产业
+                ->SetQueryByBasicSzjjid($requestDataArr['basic_szjjid'])
+                // 搜索文案 智能搜索
+                ->SetQueryBySearchText( $requestDataArr['searchText'])
+                // 搜索战略新兴产业
+                ->SetQueryByBasicJlxxcyid( $requestDataArr['basic_jlxxcyid']   )
+                // 搜索shang_pin_data 商品信息 appStr:五香;农庄
+                ->SetQueryByShangPinData( $requestDataArr['appStr']  )
+                //必须存在官网
+                ->SetQueryByWeb($searchOption)
+                //必须存在APP
+                ->SetQueryByApp($searchOption)
+                ->addSort('_id',"asc")
+                //必须是物流企业
+                ->SetQueryByWuLiuQiYe($searchOption)
+                // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
+                ->SetQueryByCompanyOrgType($searchOption)
+                // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
+                ->SetQueryByEstiblishTime($searchOption)
+                // 营业状态   传过来的是 10  20  转换成文案后 去匹配
+                ->SetQueryByRegStatus($searchOption)
+                // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
+                ->SetQueryByRegCaptial($searchOption)
+                // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
+                ->SetQueryByTuanDuiRenShu($searchOption)
+                // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
+                ->SetQueryByYingShouGuiMo($searchOption)
+                //四级分类 basic_nicid: A0111,A0112,A0113,
+                ->SetQueryBySiJiFenLei(    $requestDataArr['basic_nicid'] )
+                // 地区 basic_regionid: 110101,110102,
+                ->SetQueryByBasicRegionid(   $requestDataArr['basic_regionid']  )
+                ->addSize($size)
+                //->setSource($fieldsArr)
+                //设置默认值 不传任何条件 搜全部
+            ;
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    '$lastId' => $lastId,
+//                    '$totalNums' => $totalNums,
+//                    '$fieldsArr' => $fieldsArr,
+//                    'generate data  . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+//                    ' costs seconds '=>microtime(true) - $start
+//                ])
+//            );
+
+            if($lastId>0){
+                $companyEsModel->addSearchAfterV1($lastId);
+            }
+            // 格式化下日期和时间
+            $companyEsModel
+                ->setDefault()
+                ->searchFromEs()
+                ->formatEsDate()
+                // 格式化下金额
+                ->formatEsMoney();
+
+            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+                $lastId = $dataItem['_id'];
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$lastId' => $lastId
+//                    ])
+//                );
+
+                if($dataConfig['fill_short_name']){
+                    $dataItem['_source']['short_name'] =  CompanyBasic::findBriefName($dataItem['_source']['ENTNAME']);
+                }
+                if($dataConfig['fill_LAST_EMAIL']){
+                    $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
+                    $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
+                    $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
+                    $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntIdV2($dataItem['_source']['companyid']);
+                }
+
+                if($dataConfig['fill_tags']){
+                    // 添加tag
+                    $dataItem['_source']['tags'] = array_values(
+                        (new XinDongService())::getAllTagesByData(
+                            $dataItem['_source']
+                        )
+                    );
+                }
+
+                $dataItem['_source']['ENTTYPE_CNAME'] =   '';
+                $dataItem['_source']['ENTSTATUS_CNAME'] =  '';
+                if(
+                    $dataItem['_source']['ENTTYPE'] &&
+                    ($dataConfig['fill_ENTTYPE_CNAME'])
+                ){
+                    $dataItem['_source']['ENTTYPE_CNAME'] =   CodeCa16::findByCode($dataItem['_source']['ENTTYPE']);
+                }
+                if(
+                    $dataItem['_source']['ENTSTATUS'] &&
+                    ($dataConfig['fill_ENTSTATUS_CNAME'])
+                ){
+                    $dataItem['_source']['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($dataItem['_source']['ENTSTATUS']);
+                }
+
+                // 公司简介
+                $tmpArr = explode('&&&', trim($dataItem['_source']['gong_si_jian_jie']));
+                array_pop($tmpArr);
+                $dataItem['_source']['gong_si_jian_jie_data_arr'] = [];
+                foreach($tmpArr as $tmpItem_){
+                    // $dataItem['_source']['gong_si_jian_jie_data_arr'][] = [$tmpItem_];
+                    $dataItem['_source']['gong_si_jian_jie_data_arr'][] = $tmpItem_;
+                }
+
+                // 官网
+                $webStr = trim($dataItem['_source']['web']);
+                if(!$webStr){
+                    yield $datas[] = $dataItem['_source'];
+                    continue;
+                }
+
+                $webArr = explode('&&&', $webStr);
+                !empty($webArr) && $dataItem['_source']['web'] = end($webArr);
+
+
+                $nums ++;
+                yield $datas[] = $dataItem['_source'];
+            }
+
+            $totalNums -= $size;
+            $offset +=$size;
+        }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+                'generate data  done . costs seconds '=>microtime(true) - $start
+            ])
+        );
     }
 
 }

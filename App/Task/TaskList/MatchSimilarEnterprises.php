@@ -2,6 +2,7 @@
 
 namespace App\Task\TaskList;
 
+use App\ElasticSearch\Model\Company;
 use App\HttpController\Models\BusinessBase\ApproximateEnterpriseModel;
 use App\Process\ProcessList\MatchSimilarEnterprisesProccess;
 use App\Task\TaskBase;
@@ -43,7 +44,52 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
 
         $page = 1;
 
+        $runTimes = 0;
+        $companys = Company::SearchAfter(
+            10000,
+            [ ]
+        );
+
+        foreach ($companys as $company){
+            if($runTimes >= 10000){
+                break;
+            }
+            if (empty($res)) {
+                break;
+            }
+
+            $company['user_id'] = $uid;
+            $company['base'] = $base;//参考系
+            $redis->lPush(MatchSimilarEnterprisesProccess::QueueKey, jsonEncode($company, false));
+
+            $page++;
+            $runTimes ++;
+        }
+
+    }
+
+    function runOld(int $taskId, int $workerIndex)
+    {
+        $uid = $this->data[0] - 0;
+        $ys = $this->createYs($this->data[1]);// A10
+        $nic = $this->createNic($this->data[2]);// F5147
+        $nx = $this->createNx($this->data[3]);// 8
+        $dy = $this->createDy($this->data[4]);// 110108
+
+        $base = [
+            $this->data[1], $this->data[2], $this->data[3], $this->data[4]
+        ];
+
+        $redis = Redis::defer('redis');
+        $redis->select(15);
+
+        $page = 1;
+
+        $runTimes = 0;
         while (true) {
+            if($runTimes >= 10000){
+                break;
+            }
 
             // 只查这些字段，有索引覆盖
             $res = ApproximateEnterpriseModel::create()
@@ -67,9 +113,8 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
             }
 
             $page++;
-
+            $runTimes ++;
         }
-
     }
 
     private function createDy(string $dy)

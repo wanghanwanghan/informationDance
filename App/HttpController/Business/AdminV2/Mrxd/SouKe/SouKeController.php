@@ -1941,13 +1941,13 @@ class SouKeController extends ControllerBase
                 )
             ])
         );
-//        (new XinDongKeDongService())->MatchSimilarEnterprises(
-//            $this->loginUserinfo['id'],
-//            $featureslists['ying_shou_gui_mo'],
-//            $featureslists['NIC_ID'],
-//            $featureslists['OPFROM'],
-//            $featureslists['DOMDISTRICT']
-//        );
+        (new XinDongKeDongService())->MatchSimilarEnterprises(
+            $this->loginUserinfo['id'],
+            $featureslists['ying_shou_gui_mo'],
+            $featureslists['NIC_ID'],
+            $featureslists['OPFROM'],
+            $featureslists['DOMDISTRICT']
+        );
         //开始分析
         return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
     }
