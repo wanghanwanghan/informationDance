@@ -2074,7 +2074,12 @@ class SouKeController extends ControllerBase
         $page = $requestData['page']?:1;
         $size = $requestData['pageSize']?:10;
 
-        return $this->writeJson(200,[ ] , [
+        return $this->writeJson(200,[
+            'page' => 1,
+            'pageSize' => 10,
+            'total' => 1,
+            'totalPage' =>  1,
+            ] , [
             [
                 'id'=>1,
                 'created_at'=>1663297766,
@@ -2082,6 +2087,7 @@ class SouKeController extends ControllerBase
                 'guo_biao_cname'=>'建筑业',
                 'establish_years'=>'3年',
                 'areas_cname'=>'北京',
+                'company_nums'=>'11111',
             ]
         ], '成功', true, []);
     }
