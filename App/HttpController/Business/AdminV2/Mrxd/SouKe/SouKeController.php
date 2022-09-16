@@ -1988,6 +1988,14 @@ class SouKeController extends ControllerBase
                 10=>'80-90',
                 15=>'90-100',
             ],
+            'establish_yeasr_range'=>[
+                2=>'2年以内',
+                5=>'2-5年',
+                10=>'5-10年',
+                15=>'10-15年',
+                20=>'15-20年',
+                25=>'20年以上',
+            ],
             'ying_shou_range'=>[
                 5=>'微型',
                 10=>'小型C类',
@@ -2002,7 +2010,6 @@ class SouKeController extends ControllerBase
                 65=>'特大型C类',
                 70=>'特大型B类',
                 80=>'特大型A类',
-
             ],
         ], '成功', true, []);
     }
