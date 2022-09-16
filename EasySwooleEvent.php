@@ -32,7 +32,7 @@ use wanghanwanghan\someUtils\control;
 
 class EasySwooleEvent implements Event
 {
-    static $ProductionPath = '/home/wwwroot/informationDance/';
+    static $ProductionPath = '/home/wwwroot/informationDance';
 
     static function initialize()
     {
