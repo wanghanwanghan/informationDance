@@ -32,7 +32,7 @@ use wanghanwanghan\someUtils\control;
 
 class EasySwooleEvent implements Event
 {
-    static $ProductionPath = '/home/wwwroot/informationDance';
+    static $ProductionPath = '/home/wwwroot/informationDance/';
 
     static function initialize()
     {
@@ -45,22 +45,29 @@ class EasySwooleEvent implements Event
     }
 
     static function  IsProductionEnv(){
+        if(
+            substr(dirname(__FILE__) , 0 , 32) == self::$ProductionPath
+        ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        'IsProductionEnv_true' => substr(dirname(__FILE__) , 0 , 32),
+                    ]
+                ])
+            );
+
+            return true;
+        }
 
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 [
-                    'IsProductionEnv' => substr(dirname(__FILE__) , 0 , 31),
+                    'IsProductionEnv_false' => substr(dirname(__FILE__) , 0 , 32),
                 ]
             ])
         );
-        if(
-            substr(dirname(__FILE__) , 0 , 31) == self::$ProductionPath
-        ){
-
-
-            return true;
-        }
         return  false;
     }
 
