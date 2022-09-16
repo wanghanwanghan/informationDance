@@ -136,6 +136,10 @@ class XinDongKeDongAnalyzeList extends ModelBase
 
             // 营业期限开始日期  OPFROM
             $data['OPFROM'] = $esres['data'][0]['_source']['OPFROM'];
+            $data['OPFROM'] = $esres['data'][0]['_source']['OPFROM'];
+
+            $data['short_name'] =  CompanyBasic::findBriefName($esres['data'][0]['_source']['ENTNAME']);
+            $data['logo'] =  (new XinDongService())->getLogoByEntIdV2($esres['data'][0]['_source']['companyid']);
 
             CommonService::getInstance()->log4PHP(
                 json_encode([
@@ -145,7 +149,6 @@ class XinDongKeDongAnalyzeList extends ModelBase
                     ]
                 ])
             );
-
         }
 
         $total = $model->lastQueryResult()->getTotalCount();
