@@ -159,8 +159,17 @@ class UserController extends ControllerBase
     public function signOut()
     { 
         $phone = $this->loginUserinfo['phone'];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'signOut$phone' => $phone,
+                ]
+            ])
+        );
         $info = AdminNewUser::findByPhone(
-            AdminNewUser::aesEncode($phone)
+            //AdminNewUser::aesEncode($phone)
+            $phone
         ) ;
         if (empty($info)) return $this->writeJson(201, null, null, '用户不存在');
         $info->update([
