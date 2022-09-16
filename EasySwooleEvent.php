@@ -31,6 +31,8 @@ use wanghanwanghan\someUtils\control;
 
 class EasySwooleEvent implements Event
 {
+    static $ProductionPath = '/home/wwwroot/informationDance/';
+
     static function initialize()
     {
         date_default_timezone_set('Asia/Shanghai');
@@ -39,6 +41,15 @@ class EasySwooleEvent implements Event
         TestEvent::getInstance()->set('testEvent', function () {
             echo control::getUuid() . PHP_EOL;
         });
+    }
+
+    static function  IsProductionEnv(){
+        if(
+            substr(dirname(__FILE__) , 0 , 31) == self::$ProductionPath
+        ){
+            return true;
+        }
+        return  false;
     }
 
     static function mainServerCreate(EventRegister $register)
@@ -78,21 +89,26 @@ class EasySwooleEvent implements Event
         //假装令牌桶
         LimitService::getInstance()->create();
 
-        //注册自定义进程
-        ProcessService::getInstance()->create(Docx2Doc::class, 'docx2doc');
-        ProcessService::getInstance()->create(ConsumeOcrProcess::class, 'consumeOcr');
-        ProcessService::getInstance()->create(GetInvData::class, 'getInvData', [], GetInvData::ProcessNum);
-        ProcessService::getInstance()->create(MatchSimilarEnterprisesProccess::class, 'matchSimilarEnterprises', [], MatchSimilarEnterprisesProccess::ProcessNum);
-        ProcessService::getInstance()->create(FinancesSearchHandleFengXianAndCaiWu::class, 'FinancesSearchHandleFengXianAndCaiWu');
+        //只有生产环境 才去执行这些
+        if(
+            self::IsProductionEnv()
+        ){
+            //注册自定义进程
+            ProcessService::getInstance()->create(Docx2Doc::class, 'docx2doc');
+            ProcessService::getInstance()->create(ConsumeOcrProcess::class, 'consumeOcr');
+            ProcessService::getInstance()->create(GetInvData::class, 'getInvData', [], GetInvData::ProcessNum);
+            ProcessService::getInstance()->create(MatchSimilarEnterprisesProccess::class, 'matchSimilarEnterprises', [], MatchSimilarEnterprisesProccess::ProcessNum);
+            ProcessService::getInstance()->create(FinancesSearchHandleFengXianAndCaiWu::class, 'FinancesSearchHandleFengXianAndCaiWu');
 
-        //注册定时任务
-        CrontabService::getInstance()->create();
+            //注册定时任务
+            CrontabService::getInstance()->create();
 
-        //注册session的处理流程
-        CreateSessionHandler::getInstance()->create(SESSION_PATH);
+            //注册session的处理流程
+            CreateSessionHandler::getInstance()->create(SESSION_PATH);
 
-        //swoole table service
-        SwooleTableService::getInstance()->create();
+            //swoole table service
+            SwooleTableService::getInstance()->create();
+        }
     }
 
     static function onRequest(Request $request, Response $response): bool

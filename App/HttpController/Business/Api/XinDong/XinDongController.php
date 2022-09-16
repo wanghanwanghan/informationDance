@@ -62,6 +62,7 @@ use App\HttpController\Service\Sms\SmsService;
 use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
 // use App\HttpController\Models\RDS3\Company;
+use EasySwoole\EasySwoole\EasySwooleEvent;
 use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
@@ -3624,6 +3625,15 @@ eof;
     function testExport()
     {
         $requestData =  $this->getRequestData();
+
+        if(
+            $this->getRequestData('checkEnv')
+        ){
+            return $this->writeJson(200,[ ] , EasySwooleEvent::IsProductionEnv(), '成功', true, []);
+
+        }
+
+
         if(
             $this->getRequestData('searchFromEs11')
         ){
