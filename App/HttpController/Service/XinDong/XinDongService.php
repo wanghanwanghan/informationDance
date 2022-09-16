@@ -2508,8 +2508,6 @@ class XinDongService extends ServiceBase
 
     function getEsBasicInfoV2($companyId): array
     {
-
-
         $ElasticSearchService = new ElasticSearchService();
 
         $ElasticSearchService->addMustMatchQuery( 'companyid' , $companyId) ;
