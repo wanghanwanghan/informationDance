@@ -311,7 +311,7 @@ class SouKeController extends ControllerBase
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202208')
+            ->searchFromEs('company_202209')
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
@@ -734,7 +734,7 @@ class SouKeController extends ControllerBase
             //->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202208')
+            ->searchFromEs('company_202209')
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
@@ -779,7 +779,7 @@ class SouKeController extends ControllerBase
 //            //->addFrom($offset)
 //            //设置默认值 不传任何条件 搜全部
 //            ->setDefault()
-//            ->searchFromEs('company_202208')
+//            ->searchFromEs('company_202209')
 //            // 格式化下日期和时间
 //            ->formatEsDate()
 //            // 格式化下金额
@@ -1719,7 +1719,7 @@ class SouKeController extends ControllerBase
         $ElasticSearchService->addSize(1) ;
         $ElasticSearchService->addFrom(0) ;
 
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202208');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202209');
         $responseArr = @json_decode($responseJson,true);
         CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
                 [
@@ -1810,7 +1810,6 @@ class SouKeController extends ControllerBase
     //------ 添加企业进入待分析名单
     function addCompanyToAnalyzeLists(): bool
     {
-
         $requestData =  $this->getRequestData();
         $checkRes = DataModelExample::checkField(
             [
@@ -1848,6 +1847,32 @@ class SouKeController extends ControllerBase
         }
 
         return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+    }
+
+    //增删改 全部一起
+    function addCompanyToAnalyzeListsV2(): bool
+    {
+        $requestData =  $this->getRequestData();
+
+        XinDongKeDongAnalyzeList::updateListsByUser($requestData,$this->loginUserinfo['id']);
+
+        return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+    }
+    function getKeDongSampleCompanys(): bool
+    {
+
+        $requestData =  $this->getRequestData();
+        $page = $requestData['page']?:1;
+        $size = $requestData['pageSize']?:10;
+        $lists = XinDongKeDongAnalyzeList::findByConditionV2(
+            [],
+            $page,
+            $size
+        );
+
+
+
+        return $this->writeJson(200,[ ] , array_column($lists['data'],'ent_name'), '成功', true, []);
     }
 
     //删除名单
@@ -1916,13 +1941,13 @@ class SouKeController extends ControllerBase
                 )
             ])
         );
-//        (new XinDongKeDongService())->MatchSimilarEnterprises(
-//            $this->loginUserinfo['id'],
-//            $featureslists['ying_shou_gui_mo'],
-//            $featureslists['NIC_ID'],
-//            $featureslists['OPFROM'],
-//            $featureslists['DOMDISTRICT']
-//        );
+        (new XinDongKeDongService())->MatchSimilarEnterprises(
+            $this->loginUserinfo['id'],
+            $featureslists['ying_shou_gui_mo'],
+            $featureslists['NIC_ID'],
+            $featureslists['OPFROM'],
+            $featureslists['DOMDISTRICT']
+        );
         //开始分析
         return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
     }
@@ -1931,7 +1956,7 @@ class SouKeController extends ControllerBase
         $requestData =  $this->getRequestData();
 
         //提取特征
-        $featureslists = XinDongKeDongAnalyzeList::extractFeatureV2($this->loginUserinfo['id']);
+        $featureslists = XinDongKeDongAnalyzeList::getFeatrueArray($this->loginUserinfo['id']);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
@@ -1963,7 +1988,7 @@ class SouKeController extends ControllerBase
         //提取特征
         $featureslists = XinDongKeDongAnalyzeList::searchFromEs(
             [
-                ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
+               // ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
             ],
             $page,
             $size
@@ -1994,10 +2019,34 @@ class SouKeController extends ControllerBase
      */
     function exportRecommendedCompanys(): bool
     {
+        $requestData =  $this->getRequestData();
         // 需要和用户等级挂钩  未付费用户 只能下载100个 付费用户 可继续下载
         //
         // SoukeRecommendCompanyExportHistory::addRecordV2();
         // SoukeRecommendCompanyExportHistoryDetails::addRecord();
+
+        $filePath = XinDongKeDongAnalyzeList::exportRecommendCompanys(
+            $requestData,
+            $this->loginUserinfo['id']
+        );
+
+        // souke_recommend_company_export_history
+
+        SoukeRecommendCompanyExportHistory::addRecordV2(
+            [
+                'user_id' => $this->loginUserinfo['id'],
+                'request_json' =>  json_encode($requestData),
+                'name' => ($requestData['name'])?:'',
+                'min_score' => 0,
+                'max_score' => 0,
+                'export_nums' => ($requestData['export_nums']),
+                'status' => intval($requestData['status']),
+                'remark' => $requestData['remark']?:'',
+            ]
+        );
+
+
+
         return $this->writeJson(200,[ ] , '/Static/Temp/zhao_tou_biao_20220908180000.xlsx', '成功', true, []);
     }
 

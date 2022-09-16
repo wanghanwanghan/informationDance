@@ -32,6 +32,7 @@ use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\MRXD\InsuranceDataHuiZhong;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
+use App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
@@ -61,6 +62,7 @@ use App\HttpController\Service\Sms\SmsService;
 use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
 // use App\HttpController\Models\RDS3\Company;
+use EasySwoole\EasySwoole\EasySwooleEvent;
 use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
@@ -839,7 +841,7 @@ eof;
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202208')
+            ->searchFromEs('company_202209')
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
@@ -1130,7 +1132,7 @@ eof;
             //->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202208')
+            ->searchFromEs('company_202209')
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
@@ -1175,7 +1177,7 @@ eof;
 //            //->addFrom($offset)
 //            //设置默认值 不传任何条件 搜全部
 //            ->setDefault()
-//            ->searchFromEs('company_202208')
+//            ->searchFromEs('company_202209')
 //            // 格式化下日期和时间
 //            ->formatEsDate()
 //            // 格式化下金额
@@ -3061,7 +3063,7 @@ eof;
         $ElasticSearchService->addSize(1) ;
         $ElasticSearchService->addFrom(0) ;
 
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202208');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202209');
         $responseArr = @json_decode($responseJson,true);
         CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
                 [
@@ -3622,6 +3624,92 @@ eof;
 
     function testExport()
     {
+        $requestData =  $this->getRequestData();
+
+        if(
+            $this->getRequestData('checkEnv')
+        ){
+            return $this->writeJson(200,[ ] , EasySwooleEvent::IsProductionEnv(), '成功', true, []);
+
+        }
+
+
+        if(
+            $this->getRequestData('searchFromEs11')
+        ){
+
+            $featureslists = XinDongKeDongAnalyzeList::searchFromEs(
+                [
+//                    ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
+                ],
+                1,
+                10
+            );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'startAnalysis'=>json_encode(
+                        [
+//                        'msg'=>
+                        ]
+                    )
+                ])
+            );
+            //开始分析
+            return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
+
+        }
+        if(
+            $this->getRequestData('extractFeatureV2')
+        ){
+
+            $featureslists = XinDongKeDongAnalyzeList::extractFeatureV2(2,false,true);
+            return $this->writeJson(
+                200,
+                [ ] ,
+                [
+                    $featureslists,
+                    XinDongKeDongAnalyzeList::getFeatrueArray(2)
+                ],
+                '添加成功',
+                true,
+                []
+            );
+        }
+
+
+        if(
+            $this->getRequestData('getNamesByText')
+        ){
+            return $this->writeJson(200,[ ] ,  \App\ElasticSearch\Model\Company::getNamesByText(
+                1,
+                5,
+                trim($requestData['getNamesByText'])
+            ), '添加成功', true, []);
+        }
+
+
+        if(
+            $this->getRequestData('updateListsByUser')
+        ){
+            // 北京每日信动科技有限公司
+            XinDongKeDongAnalyzeList::updateListsByUser($requestData,$requestData['user_id']);
+
+            return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+        }
+
+
+        if(
+            $this->getRequestData('updateListsByUser')
+        ){
+            // 北京每日信动科技有限公司
+            XinDongKeDongAnalyzeList::updateListsByUser($requestData,$requestData['user_id']);
+
+            return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+        }
+
+
+
         if(
             $this->getRequestData('serachFromEs')
         ){

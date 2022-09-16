@@ -5,13 +5,17 @@ namespace App\HttpController\Models\MRXD;
 use App\ElasticSearch\Model\Company;
 use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\DataModelExample;
+use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\ModelBase;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Sms\AliSms;
+use App\HttpController\Service\XinDong\XinDongService;
 use EasySwoole\RedisPool\Redis;
+use Vtiful\Kernel\Format;
 
 // use App\HttpController\Models\AdminRole;
 
@@ -38,9 +42,9 @@ class XinDongKeDongAnalyzeList extends ModelBase
     static  function  addRecordV2($info){
         $oldRes = self::findByEntName($info['user_id'],$info['ent_name']);
         //如果被删除了 重新找回来
-        $oldRes2 = self::findByEntNameV2($info['user_id'],$info['ent_name']);
+        $oldRes2 = self::findByEntNameV3($info['user_id'],$info['ent_name']);
         if($oldRes2){
-            self::updateById(
+            return self::updateById(
                 $oldRes2->getAttr('id'),
                 [
                     'is_del' => self::$state_ok_cname
@@ -59,8 +63,8 @@ class XinDongKeDongAnalyzeList extends ModelBase
     public static function addRecord($requestData){
         try {
            $res =  XinDongKeDongAnalyzeList::create()->data([
-                'user_id' => intval($requestData['user_id']),
-                'companyid' => intval($requestData['companyid']),
+                'user_id' => $requestData['user_id'],
+                'companyid' => $requestData['companyid'],
                 'is_del' => intval($requestData['is_del']),
                 'status' => intval($requestData['status']),
                 'name' => $requestData['name']?:'',
@@ -92,6 +96,8 @@ class XinDongKeDongAnalyzeList extends ModelBase
      */
     public static function searchFromEs($whereArr,$page,$limit){
 
+        //Company::serachFromEs();
+
         $model = XinDongKeDongAnalyzeList::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
@@ -101,6 +107,46 @@ class XinDongKeDongAnalyzeList extends ModelBase
             ->withTotalCount();
 
         $res = $model->all();
+        foreach ($res as &$data){
+            if($data['companyid'] <=0){
+                continue;
+            }
+            $esres = Company::serachFromEs(
+                [
+                    'companyids' => $data['companyid'],
+                    'size' => 1,
+                    'page' => 1,
+                ]
+            );
+
+            //营收规模
+            $data['ying_shou_gui_mo'] = $esres['data'][0]['_source']['ying_shou_gui_mo'];
+            if($data['ying_shou_gui_mo']){
+                $data['ying_shou_gui_mo'] =  XinDongService::mapYingShouGuiMo()[$data['ying_shou_gui_mo']];
+            }
+
+            //地域
+            $data['DOMDISTRICT'] = $esres['data'][0]['_source']['DOMDISTRICT'];
+            if($data['DOMDISTRICT']){
+                $data['DOMDISTRICT'] =  CompanyBasic::findRegion($data['DOMDISTRICT'])['fulltitle'];
+            }
+
+            //团队规模
+            $data['tuan_dui_ren_shu'] = $esres['data'][0]['_source']['tuan_dui_ren_shu'];
+
+            // 营业期限开始日期  OPFROM
+            $data['OPFROM'] = $esres['data'][0]['_source']['OPFROM'];
+
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        'serachFromEs' =>  $esres['data'][0]['_source'],
+                    ]
+                ])
+            );
+
+        }
 
         $total = $model->lastQueryResult()->getTotalCount();
         return [
@@ -123,6 +169,15 @@ class XinDongKeDongAnalyzeList extends ModelBase
             'touch_time' => $touchTime,
         ]);
     }
+
+    //软删除
+    public static function delRecord($id){
+        $info = XinDongKeDongAnalyzeList::findById($id);
+        return $info->update([
+            'is_del' => self::$state_del,
+        ]);
+    }
+
 
     public static function updateById(
         $id,$data
@@ -147,12 +202,12 @@ class XinDongKeDongAnalyzeList extends ModelBase
         ];
     }
 
-    public static function findByConditionV2($whereArr,$page){
+    public static function findByConditionV2($whereArr,$page, $size){
         $model = XinDongKeDongAnalyzeList::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
-        $model->page($page)
+        $model->page($page,$size)
             ->order('id', 'DESC')
             ->withTotalCount();
 
@@ -205,6 +260,15 @@ class XinDongKeDongAnalyzeList extends ModelBase
         return $res;
     }
 
+    public static function findByEntNameV3($user_id,$ent_name){
+        $res =  XinDongKeDongAnalyzeList::create()
+            ->where('user_id',$user_id)
+            ->where('ent_name',$ent_name)
+            ->where('is_del',1)
+            ->get();
+        return $res;
+    }
+
     public static function setData($id,$field,$value){
         $info = XinDongKeDongAnalyzeList::findById($id);
         return $info->update([
@@ -230,13 +294,17 @@ class XinDongKeDongAnalyzeList extends ModelBase
         );
         $return = [];
         foreach ($records as $record){
+            $entName = trim($paramsArr['ent_name']);
+            if(empty($entName)){
+                continue;
+            }
             $res = self::addRecordV2(
                 [
                     'user_id' => $paramsArr['user_id'],
                     'is_del' => XinDongKeDongAnalyzeList::$state_ok,
                     'status' => XinDongKeDongAnalyzeList::$status_init,
                     'name' => $paramsArr['name']?:'',
-                    'ent_name' => $paramsArr['ent_name']?:'',
+                    'ent_name' => $entName?:'',
                     'remark' => $paramsArr['remark']?:'',
                 ]
             );
@@ -338,7 +406,78 @@ class XinDongKeDongAnalyzeList extends ModelBase
         //开始分析
         return $returnData;
     }
-    static function extractFeatureV2($userId,$returnRaw =false){
+
+    static function getFeatrueArray($userId){
+        $returnData = [];
+
+        $rawData = self::extractFeatureV2($userId,false,true);
+        $nicIdsArr = $rawData['NIC_ID'];
+        $allNicScore = array_sum($nicIdsArr);
+
+        foreach ($nicIdsArr as $key => $value){
+            $returnData['nicX'][] = $key;
+            $tmpres =
+            $returnData['nicY'][] = number_format($value/$allNicScore,2,".",".")*100;
+        }
+
+        $OPFROMArr = $rawData['OPFROM'];
+        $allOPFROMScore = array_sum($OPFROMArr);
+        foreach ($OPFROMArr as $key => $value){
+            $returnData['openFromX'][] = $key;
+            $returnData['openFromY'][] = number_format($value/$allOPFROMScore,2,".",".")*100;
+        }
+
+        $ying_shou_gui_moArr = $rawData['ying_shou_gui_mo'];
+        $allYingSHouGuiMoScore = array_sum($ying_shou_gui_moArr);
+        foreach ($ying_shou_gui_moArr as $key => $value){
+            $returnData['YingShouX'][] = $key;
+            $returnData['YingShouY'][] = number_format($value/$allYingSHouGuiMoScore,2,".",".")*100;
+        }
+
+
+        $DOMDISTRICTArr = $rawData['DOMDISTRICT'];
+        $allDOMDISTRICTScore = array_sum($DOMDISTRICTArr);
+        foreach ($DOMDISTRICTArr as $key => $value){
+            $returnData['areaX'][] = $key;
+            $returnData['areaY'][] = number_format($value/$allDOMDISTRICTScore,2,".",".")*100;
+        }
+
+        /***
+        {
+        "NIC_ID": {
+        "F521": 1,
+        "C1469": 1,
+        "F5179": 1,
+        "M7590": 1,
+        "F522": 1,
+        "C1495": 1,
+        "7210": 1
+        },
+        "OPFROM": {
+        "10-15": 2,
+        "0-2": 1,
+        "2-5": 3,
+        "20年以上": 1
+        },
+        "ying_shou_gui_mo": {
+        "F": 2,
+        "A3": 1,
+        "A15": 1
+        },
+        "DOMDISTRICT": {
+        "371000": 1,
+        "440300": 1,
+        "110108": 1,
+        "371482": 1,
+        "120118": 1
+        }
+        }
+         */
+
+    return $returnData;
+    }
+
+    static function extractFeatureV2($userId, $returnRaw =false, $retrunAllData = false){
         //找到所有的目标客户群体
         $fields = [
             '营收规模'=>'ying_shou_gui_mo',
@@ -373,19 +512,31 @@ class XinDongKeDongAnalyzeList extends ModelBase
             }
             //需要计算的字段
             foreach ($fields2 as $field){
-                if(empty($esData['_source'][$field]['filed'])){
+                if(empty($esData['_source'][$field['filed']])){
                     continue;
                 }
                 if($returnRaw){
                     $newRes = $esData['_source'][$field['filed']];
                 }
                 else{
-                    $newRes = self::$field['static_func']($esData['_source'][$field['filed']]);
+                    $tmpRes = $field['static_func'];
+                    $newRes = self::$tmpRes($esData['_source'][$field['filed']]);
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            [
+                                $esData['_source'][$field['filed']] => $newRes,
+                            ]
+                        ])
+                    );
                 }
-                $res[$field][$newRes] += 1 ;
+                $res[$field['filed']][$newRes] += 1 ;
             }
         }
 
+        if($retrunAllData){
+            return  $res;
+        }
         $returnData = [];
         foreach ($res as $field=>$fieldValue){
             asort($fieldValue) ;
@@ -395,6 +546,145 @@ class XinDongKeDongAnalyzeList extends ModelBase
 
         //开始分析
         return $returnData;
+    }
+
+    static function  updateListsByUser($requestData,$userId){
+
+        $newEntNames = $requestData['entNames'];
+
+        //最新企业名称
+//        $newEntNamesArr = explode(',',$newEntNames);
+        $newEntNamesArr = json_decode($newEntNames,true);
+
+        //当前所有
+        $allLists = XinDongKeDongAnalyzeList::findAllByUserId($userId);
+        foreach ($allLists as $data){
+            //如果被删除了的话
+            if(!in_array($data['ent_name'],$newEntNamesArr)){
+                XinDongKeDongAnalyzeList::delRecord($data['id']);
+            }
+        }
+
+        foreach ($newEntNamesArr as $newEntName){
+            if(empty($newEntName)){
+                continue;
+            }
+
+            $companyBasicRes = CompanyBasic::findByName($newEntName);
+            if(empty($companyBasicRes)){
+                continue;
+            }
+            $companyBasicRes = $companyBasicRes->toArray();
+            // 添加
+            $id = XinDongKeDongAnalyzeList::addRecordV2(
+                [
+                    'user_id' => $userId,
+                    'is_del' => XinDongKeDongAnalyzeList::$state_ok,
+                    'status' => XinDongKeDongAnalyzeList::$status_init,
+                    'name' => $requestData['name']?:'',
+                    'ent_name' => $newEntName,
+                    'companyid' => $companyBasicRes['companyid'],
+                    'remark' => $requestData['remark']?:'',
+                ]
+            );
+
+        }
+
+        return true;
+    }
+
+    //导出
+    static function  exportRecommendCompanys($requestData,$userId){
+        //
+        //    $datas = self::searchFromEs();
+        $exportNums = 0;
+        $minScore = 0 ;
+        $maxScore = 0 ;
+
+        //============================分割线=========================================
+        $filename = date('Y-m-d H:i:s')."_优企名单.xlsx";
+        // xlsx文件保存路径
+        $config=  [
+            'path' => TEMP_FILE_PATH
+        ];
+
+        $excel = new \Vtiful\Kernel\Excel($config);
+        $fileObject = $excel->fileName($filename, 'sheet');
+        $fileHandle = $fileObject->getHandle();
+
+        $format = new Format($fileHandle);
+        $colorStyle = $format
+            ->fontColor(Format::COLOR_ORANGE)
+            ->border(Format::BORDER_DASH_DOT)
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $format = new Format($fileHandle);
+
+        $alignStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $fileObject
+            ->defaultFormat($colorStyle)
+            ->header([
+                'x',
+                'xx',
+                'xxx',
+                'xxxx',
+                'xxxxx',
+                'xxxxxx',
+            ])
+            ->defaultFormat($alignStyle)
+        ;
+
+        foreach ($datas as $dataItem){
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$dataItem' => $dataItem
+//                    ])
+//                );
+            $tmp = [
+                //'xd_id'=>$dataItem['xd_id'],
+            ];
+
+            //$tmp['xd_id'] = $dataItem['xd_id'];
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        '$dataItem' => $dataItem,
+//                        '$featureArr'=>$featureArr,
+//                        '$tmp'=>$tmp,
+//                    ])
+//                );
+            $fileObject ->data([$tmp]);
+        }
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+            ])
+        );
+
+        $format = new Format($fileHandle);
+        //单元格有\n解析成换行
+        $wrapStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->wrap()
+            ->toResource();
+
+        $fileObject->output();
+
+        //============================分割线=========================================
+
+        return  [
+            'patch' => '/Static/Temp/'.$filename,
+            'countnums' => $exportNums,
+            'minscore' => $minscore,
+        ]
+         ;
     }
 
 }
