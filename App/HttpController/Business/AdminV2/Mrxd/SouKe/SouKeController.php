@@ -1978,6 +1978,35 @@ class SouKeController extends ControllerBase
         return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
     }
 
+    function getRecommendSearchOption(): bool
+    {
+
+        //开始分析
+        return $this->writeJson(200,[ ] , [
+            'score_range'=>[
+                5=>'70-80',
+                10=>'80-90',
+                15=>'90-100',
+            ],
+            'ying_shou_range'=>[
+                5=>'微型',
+                10=>'小型C类',
+                15=>'小型B类',
+                20=>'小型A类',
+                25=>'中型C类',
+                30=>'中型B类',
+                40=>'中型A类',
+                45=>'大型C类',
+                50=>'大型B类',
+                60=>'大型A类',
+                65=>'特大型C类',
+                70=>'特大型B类',
+                80=>'特大型A类',
+
+            ],
+        ], '成功', true, []);
+    }
+
     //获取优企列表
     function getRecommendCompanys(): bool
     {
