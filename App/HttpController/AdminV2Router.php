@@ -183,6 +183,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/exportRecommendedCompanys', $prefix . 'exportRecommendedCompanys');
             $routeCollector->addRoute(['GET', 'POST'], '/recommendedCompanysExportLists', $prefix . 'recommendedCompanysExportLists');
             $routeCollector->addRoute(['GET', 'POST'], '/getKeDongSampleCompanys', $prefix . 'getKeDongSampleCompanys');
+            $routeCollector->addRoute(['GET', 'POST'], '/analyzeHistory', $prefix . 'analyzeHistory');
         });
 
         return true;

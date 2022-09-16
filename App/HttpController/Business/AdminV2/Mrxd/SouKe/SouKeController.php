@@ -2045,8 +2045,6 @@ class SouKeController extends ControllerBase
             ]
         );
 
-
-
         return $this->writeJson(200,[ ] , '/Static/Temp/zhao_tou_biao_20220908180000.xlsx', '成功', true, []);
     }
 
@@ -2067,7 +2065,27 @@ class SouKeController extends ControllerBase
         // SoukeRecommendCompanyExportHistory::addRecordV2();
         // SoukeRecommendCompanyExportHistoryDetails::addRecord();
         return $this->writeJson(200,[ ] , $lists, '成功', true, []);
+
     }
+
+    function analyzeHistory(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page = $requestData['page']?:1;
+        $size = $requestData['pageSize']?:10;
+
+        return $this->writeJson(200,[ ] , [
+            [
+                'id'=>1,
+                'created_at'=>1663297766,
+                'ying_shou_gui_mo_cname'=>'100万',
+                'guo_biao_cname'=>'建筑业',
+                'establish_years'=>'3年',
+                'areas_cname'=>'北京',
+            ]
+        ], '成功', true, []);
+    }
+
 
 
     //按文件传输
