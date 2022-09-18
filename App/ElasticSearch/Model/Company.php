@@ -800,7 +800,7 @@ class Company extends ServiceBase
     function SetQueryBySiJiFenLei($siJiFenLeiStrs,$field = 'si_ji_fen_lei_code'){
         $siJiFenLeiStrs && $siJiFenLeiArr = explode(',', $siJiFenLeiStrs);
         if(!empty($siJiFenLeiArr)){
-            $this->es->addMustShouldPhraseQuery( 'si_ji_fen_lei_code' , $siJiFenLeiArr) ;
+            $this->es->addMustShouldPhraseQuery( $field , $siJiFenLeiArr) ;
         }
 
         return $this;
