@@ -822,10 +822,10 @@ class Company extends ServiceBase
         }
         return $this;
     }
-    function SetQueryByBasicRegionid($basiRegionidStr){
+    function SetQueryByBasicRegionid($basiRegionidStr,$fieldName = 'reg_number'){
         $basiRegionidStr && $basiRegionidArr = explode(',',$basiRegionidStr);
         if(!empty($basiRegionidArr)){
-            $this->es->addMustShouldPrefixQuery( 'reg_number' , $basiRegionidArr) ;
+            $this->es->addMustShouldPrefixQuery( $fieldName, $basiRegionidArr) ;
         }
 
         return $this;
@@ -1017,7 +1017,7 @@ class Company extends ServiceBase
                 //公司状态
                 ->SetQueryByCompanyStatus(trim($requestDataArr['ENTSTATUS']))
                 // 地区 basic_regionid: 110101,110102,
-                ->SetQueryByBasicRegionid(trim($requestDataArr['basic_regionid']))
+                ->SetQueryByBasicRegionid(trim($requestDataArr['basic_regionid']) ,'DOMDISTRICT')
                 ->addSize($size)
                 ->setSource($fieldsArr)
 
@@ -1197,7 +1197,7 @@ class Company extends ServiceBase
             //公司状态
             ->SetQueryByCompanyStatus(trim($requestData['ENTSTATUS']))
             // 地区 basic_regionid: 110101,110102,
-            ->SetQueryByBasicRegionid(trim($requestData['basic_regionid']))
+            ->SetQueryByBasicRegionid(trim($requestData['basic_regionid']) ,'DOMDISTRICT')
             ->addSize($size)
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
@@ -1348,7 +1348,7 @@ class Company extends ServiceBase
                 //公司状态
                 ->SetQueryByCompanyStatus(trim($requestDataArr['ENTSTATUS']))
                 // 地区 basic_regionid: 110101,110102,
-                ->SetQueryByBasicRegionid($requestDataArr['basic_regionid']  )
+                ->SetQueryByBasicRegionid($requestDataArr['basic_regionid']  ,'DOMDISTRICT' )
                 ->addSize($size)
                 //->setSource($fieldsArr)
                 //设置默认值 不传任何条件 搜全部
@@ -1522,7 +1522,7 @@ class Company extends ServiceBase
                 //公司状态
                 ->SetQueryByCompanyStatus(trim($requestDataArr['ENTSTATUS']))
                 // 地区 basic_regionid: 110101,110102,
-                ->SetQueryByBasicRegionid($requestDataArr['basic_regionid']  )
+                ->SetQueryByBasicRegionid($requestDataArr['basic_regionid'] ,'DOMDISTRICT' )
                 ->addSize($size)
                 //->setSource($fieldsArr)
                 //设置默认值 不传任何条件 搜全部

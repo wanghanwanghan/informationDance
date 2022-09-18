@@ -123,6 +123,8 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
     }
     static  function pushToRedisList($uid,$ys,$nic,$nx,$dy)
     {
+        $nic = self::createNicV2($nic);
+        $dy = self::createDyV2($dy);
         $searchOptions = [];
         //营收规模
         if($ys){
@@ -285,6 +287,11 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
         return substr($dy, 0, 2);
     }
 
+    static function createDyV2(string $dy)
+    {
+        return substr($dy, 0, 2);
+    }
+
     private function createNx(string $nx)
     {
         $year = (Carbon::now()->format('Y') - $nx) . '1231';
@@ -292,6 +299,11 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
     }
 
     private function createNic(string $nic): string
+    {
+        return strlen($nic) >= 4 ? substr($nic, 0, -2) : $nic;
+    }
+
+    static function createNicV2(string $nic): string
     {
         return strlen($nic) >= 4 ? substr($nic, 0, -2) : $nic;
     }
