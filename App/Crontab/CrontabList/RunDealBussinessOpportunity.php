@@ -552,13 +552,8 @@ class RunDealBussinessOpportunity extends AbstractCronTask
     }
 
     // id 商机id
-    static function getYieldCompanyData($id){
+    static function getYieldCompanyData($id,$bussinessOpportunity,$allRecords){
         $datas = [];
-
-        $bussinessOpportunity = AdminUserBussinessOpportunityUploadRecord::findById($id);
-        $bussinessOpportunity = $bussinessOpportunity->toArray();
-
-        $allRecords = BussinessOpportunityDetails::findByUploadId($id);
         $newReords = [];
         foreach ($allRecords as $Record){
             $mobile = trim($Record['mobile']);
@@ -748,18 +743,17 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             yield $datas[] = $baseArr;
         }
     }
+
     //
-    static function getYieldPublicContactData($id){
+    static function getYieldPublicContactData($id,$bussinessOpportunity,$allRecords){
         $datas = [];
-        $bussinessOpportunity = AdminUserBussinessOpportunityUploadRecord::findById($id);
-        $bussinessOpportunity = $bussinessOpportunity->toArray();
 
         //如果不需要拉取公开的联系人
         if(!$bussinessOpportunity['pull_api']){
             yield $datas[] = [  ];
         }
         else{
-            $allRecords = BussinessOpportunityDetails::findByUploadId($id);
+
             $newReords = [];
             foreach ($allRecords as $Record){
                 $mobile = trim($Record['mobile']);
@@ -895,11 +889,10 @@ class RunDealBussinessOpportunity extends AbstractCronTask
     }
 
     // NonPublicise
-    static function getYieldNonPubliciseContactData($id){
+    static function getYieldNonPubliciseContactData($id,$bussinessOpportunity，){
         $datas = [];
 
-        $bussinessOpportunity = AdminUserBussinessOpportunityUploadRecord::findById($id);
-        $bussinessOpportunity = $bussinessOpportunity->toArray();
+
 
         //如果不需要拉取公开的联系人
 //        if(!$bussinessOpportunity['pull_api']){
@@ -1014,9 +1007,13 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             );
             $startMemory = memory_get_usage();
             //第一部分 sheet1 企业部分数据
-            $sheet1Datas = self::getYieldCompanyData($rawDataItem['id']);
+            $bussinessOpportunity = AdminUserBussinessOpportunityUploadRecord::findById($rawDataItem['id']);
+            $bussinessOpportunity = $bussinessOpportunity->toArray();
+            $allRecords = BussinessOpportunityDetails::findByUploadId($rawDataItem['id']);
+
+            $sheet1Datas = self::getYieldCompanyData($rawDataItem['id'],$bussinessOpportunity,$allRecords);
             //第二部分 sheet2
-            $sheet2Datas = self::getYieldPublicContactData($rawDataItem['id']);
+            $sheet2Datas = self::getYieldPublicContactData($rawDataItem['id'],$bussinessOpportunity,$allRecords);
             //第三部分 sheet3
             $sheet3Datas = self::getYieldNonPubliciseContactData($rawDataItem['id']);
 
