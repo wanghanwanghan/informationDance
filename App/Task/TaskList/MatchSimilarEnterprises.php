@@ -126,8 +126,19 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
         $searchOptions = [];
         //营收规模
         if($ys){
-            $yingshouMap = XinDongService::getYingShouGuiMoMapV3();
-            $yingshouMap = array_flip($yingshouMap);
+            $yingshouMapRaw = XinDongService::getYingShouGuiMoMapV3();
+            $yingshouMap = array_flip($yingshouMapRaw);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        '$yingshouMapRaw' => $yingshouMapRaw,
+                        '$yingshouMap' => $yingshouMap,
+                        '$ys' => $ys,
+                    ]
+                ])
+            );
+
             $searchOptions[] = [
                 'pid'=> 50,
                 'value'=>[$yingshouMap[$ys]],
@@ -193,7 +204,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
         $companys = Company::SearchAfter(
             10,
             [
-                'searchOption' =>  @json_encode($searchOptions),
+                'searchOption' =>  json_encode($searchOptions),
                 'basic_nicid' =>$nic,
                 'basic_regionid' =>$dy,
             ]

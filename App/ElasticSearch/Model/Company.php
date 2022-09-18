@@ -1284,6 +1284,14 @@ class Company extends ServiceBase
         $startMemory = memory_get_usage();
         $start = microtime(true);
         $searchOption = json_decode($requestDataArr['searchOption'],true);
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '$searchOption' => $requestDataArr['searchOption'],
+                '$searchOption2' => $searchOption,
+            ])
+        );
         $datas = [];
 
 //        CommonService::getInstance()->log4PHP(
