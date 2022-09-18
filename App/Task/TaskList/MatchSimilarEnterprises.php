@@ -204,6 +204,14 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
                 'basic_regionid' =>$dy,
             ]
         );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    '$companys' =>$companys
+                ]
+            ])
+        );
         return $companys;
         foreach ($companys as $company){
             if($runTimes >= 10000){
