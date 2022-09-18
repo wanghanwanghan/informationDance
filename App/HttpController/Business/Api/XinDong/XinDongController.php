@@ -63,6 +63,7 @@ use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongKeDongService;
 use App\HttpController\Service\XinDong\XinDongService;
 // use App\HttpController\Models\RDS3\Company;
+use App\Process\ProcessList\MatchSimilarEnterprisesProccess;
 use App\Task\TaskList\MatchSimilarEnterprises;
 use EasySwoole\EasySwoole\EasySwooleEvent;
 use EasySwoole\ElasticSearch\Config;
@@ -3661,6 +3662,25 @@ eof;
             return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
 
         }
+        if(
+            $this->getRequestData('extractFeatureV2')
+        ){
+
+            return $this->writeJson(200,[ ] ,
+                MatchSimilarEnterprisesProccess::calScore(
+                    [
+                        'base' => [
+                            'A10','F5147','2-5','110108'
+                        ],
+                        'ys_label'=> 'A10',
+                        'NIC_ID'=> 'F5147',
+                        'ESDATE'=> '2019-12-18',
+                        'DOMDISTRICT'=> '110108',
+                    ]
+                )
+                , '成功', true, []);
+        }
+
         if(
             $this->getRequestData('extractFeatureV2')
         ){

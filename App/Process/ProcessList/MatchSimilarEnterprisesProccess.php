@@ -72,6 +72,17 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
         }
 
     }
+    static function calScore($info)
+    {
+
+          //开始消费
+        $score = (new qpf(
+            $info['base'][0], $info['base'][1], $info['base'][2], $info['base'][3],
+            $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
+        ))->expr();
+
+        return $score;
+    }
 
     private function toEs(string $esid, array $data)
     {

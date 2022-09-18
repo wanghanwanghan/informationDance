@@ -183,9 +183,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
         $redis = Redis::defer('redis');
         $redis->select(15);
 
-        $page = 1;
 
-        $runTimes = 0;
 
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -198,8 +196,12 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
             ])
         );
 
+        $page = 1;
+        $runTimes = 0;
+        $maxTimes = 100;
+
         $companys = \App\ElasticSearch\Model\Company::SearchAfterV2(
-            10,
+            $maxTimes,
             [
                 'searchOption' =>  json_encode($searchOptions),
                 'basic_nicid' =>$nic,
@@ -214,9 +216,9 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
                 ]
             ])
         );
-        return $companys;
+
         foreach ($companys as $company){
-            if($runTimes >= 10000){
+            if($runTimes >= $maxTimes){
                 break;
             }
             if (empty($res)) {
@@ -224,6 +226,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
             }
 
             $company['user_id'] = $uid;
+            $company['ys_label'] = $company['ying_shou_gui_mo'];
             $company['base'] = $base;//参考系
             $redis->lPush(MatchSimilarEnterprisesProccess::QueueKey, jsonEncode($company, false));
 
