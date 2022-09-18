@@ -178,6 +178,17 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
 
         $runTimes = 0;
 
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'searchOption' =>  @json_encode($searchOptions),
+                    'basic_nicid' =>$nic,
+                    'basic_regionid' =>$dy,
+                ]
+            ])
+        );
+
         $companys = Company::SearchAfter(
             10,
             [

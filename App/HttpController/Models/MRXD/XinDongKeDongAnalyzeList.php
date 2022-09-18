@@ -445,39 +445,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
             $returnData['areaY'][] = number_format($value/$allDOMDISTRICTScore,2,".",".")*100;
         }
 
-        /***
-        {
-        "NIC_ID": {
-        "F521": 1,
-        "C1469": 1,
-        "F5179": 1,
-        "M7590": 1,
-        "F522": 1,
-        "C1495": 1,
-        "7210": 1
-        },
-        "OPFROM": {
-        "10-15": 2,
-        "0-2": 1,
-        "2-5": 3,
-        "20年以上": 1
-        },
-        "ying_shou_gui_mo": {
-        "F": 2,
-        "A3": 1,
-        "A15": 1
-        },
-        "DOMDISTRICT": {
-        "371000": 1,
-        "440300": 1,
-        "110108": 1,
-        "371482": 1,
-        "120118": 1
-        }
-        }
-         */
-
-    return $returnData;
+        return $returnData;
     }
 
     static function extractFeatureV2($userId, $returnRaw =false, $retrunAllData = false){
@@ -524,14 +492,14 @@ class XinDongKeDongAnalyzeList extends ModelBase
                 else{
                     $tmpRes = $field['static_func'];
                     $newRes = self::$tmpRes($esData['_source'][$field['filed']]);
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            __CLASS__.__FUNCTION__ .__LINE__,
-                            [
-                                $esData['_source'][$field['filed']] => $newRes,
-                            ]
-                        ])
-                    );
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode([
+//                            __CLASS__.__FUNCTION__ .__LINE__,
+//                            [
+//                                $esData['_source'][$field['filed']] => $newRes,
+//                            ]
+//                        ])
+//                    );
                 }
                 $res[$field['filed']][$newRes] += 1 ;
             }
