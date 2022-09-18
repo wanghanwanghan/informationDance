@@ -1332,9 +1332,9 @@ class Company extends ServiceBase
                 // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
                 ->SetQueryByCompanyOrgType($searchOption)
                 // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
-                ->SetQueryByEstiblishTime($searchOption)
+                ->SetQueryByEstiblishTimeV2($searchOption)
                 // 营业状态   传过来的是 10  20  转换成文案后 去匹配
-                ->SetQueryByRegStatus($searchOption)
+                ->SetQueryByRegStatusV2($searchOption)
                 // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
                 ->SetQueryByRegCaptial($searchOption)
                 // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
@@ -1506,9 +1506,9 @@ class Company extends ServiceBase
                 // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
                 ->SetQueryByCompanyOrgType($searchOption)
                 // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
-                ->SetQueryByEstiblishTime($searchOption)
+                ->SetQueryByEstiblishTimeV2($searchOption)
                 // 营业状态   传过来的是 10  20  转换成文案后 去匹配
-                ->SetQueryByRegStatus($searchOption)
+                ->SetQueryByRegStatusV2($searchOption)
                 // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
                 ->SetQueryByRegCaptial($searchOption)
                 // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
