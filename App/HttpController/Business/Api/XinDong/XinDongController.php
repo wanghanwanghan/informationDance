@@ -3663,7 +3663,7 @@ eof;
             $this->getRequestData('extractFeatureV2')
         ){
 
-            $featureslists = XinDongKeDongAnalyzeList::extractFeatureV2($this->loginUserinfo['id'],true);
+            $featureslists = XinDongKeDongAnalyzeList::extractFeatureV2($this->loginUserinfo['id'],false);
             return $this->writeJson(
                 200,
                 [ ] ,
