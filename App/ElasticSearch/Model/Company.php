@@ -1293,7 +1293,7 @@ class Company extends ServiceBase
             ])
         );
         $datas = [];
-
+        return $datas;
 //        CommonService::getInstance()->log4PHP(
 //            json_encode([
 //                __CLASS__.__FUNCTION__ .__LINE__,
