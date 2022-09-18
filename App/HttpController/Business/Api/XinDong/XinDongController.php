@@ -3663,7 +3663,7 @@ eof;
 
         }
         if(
-            $this->getRequestData('extractFeatureV2')
+            $this->getRequestData('calScore')
         ){
 
             return $this->writeJson(200,[ ] ,
