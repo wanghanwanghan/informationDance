@@ -3665,7 +3665,13 @@ eof;
             $this->getRequestData('extractFeatureV2')
         ){
 
-            $featureslists = XinDongKeDongAnalyzeList::extractFeatureV2($this->loginUserinfo['id'],false);
+            //$featureslists = XinDongKeDongAnalyzeList::extractFeatureV2($this->loginUserinfo['id'],false);
+            $featureslists= [
+                'ying_shou_gui_mo' => 'A10',
+                'NIC_ID' => 'F5147',
+                'OPFROM' => '2-5',
+                'DOMDISTRICT' => '110108',
+            ];
             $res = MatchSimilarEnterprises::pushToRedisList(
                 $this->loginUserinfo['id'],
                 $featureslists['ying_shou_gui_mo'],
@@ -3673,7 +3679,7 @@ eof;
                 $featureslists['OPFROM'],
                 $featureslists['DOMDISTRICT']
             );
-//            (new ())->MatchSimilarEnterprises(
+//            (new XinDongKeDongService())->MatchSimilarEnterprises(
 //                $this->loginUserinfo['id'],
 //                $featureslists['ying_shou_gui_mo'],
 //                $featureslists['NIC_ID'],
@@ -3685,8 +3691,8 @@ eof;
                 200,
                 [ ] ,
                 [
-                    $featureslists,
-                    XinDongKeDongAnalyzeList::getFeatrueArray(2),
+//                    $featureslists,
+//                    XinDongKeDongAnalyzeList::getFeatrueArray(2),
                     $res
                 ],
                 '添加成功',
