@@ -4,6 +4,7 @@ namespace App\Task\TaskList;
 
 use App\ElasticSearch\Model\Company;
 use App\HttpController\Models\BusinessBase\ApproximateEnterpriseModel;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\XinDong\XinDongService;
 use App\Process\ProcessList\MatchSimilarEnterprisesProccess;
 use App\Task\TaskBase;
