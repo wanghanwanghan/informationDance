@@ -60,8 +60,10 @@ use App\HttpController\Service\Mail\Email;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\Sms\SmsService;
 use App\HttpController\Service\XinDong\Score\xds;
+use App\HttpController\Service\XinDong\XinDongKeDongService;
 use App\HttpController\Service\XinDong\XinDongService;
 // use App\HttpController\Models\RDS3\Company;
+use App\Task\TaskList\MatchSimilarEnterprises;
 use EasySwoole\EasySwoole\EasySwooleEvent;
 use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
@@ -3664,12 +3666,28 @@ eof;
         ){
 
             $featureslists = XinDongKeDongAnalyzeList::extractFeatureV2($this->loginUserinfo['id'],false);
+            $res = MatchSimilarEnterprises::pushToRedisList(
+                $this->loginUserinfo['id'],
+                $featureslists['ying_shou_gui_mo'],
+                $featureslists['NIC_ID'],
+                $featureslists['OPFROM'],
+                $featureslists['DOMDISTRICT']
+            );
+//            (new ())->MatchSimilarEnterprises(
+//                $this->loginUserinfo['id'],
+//                $featureslists['ying_shou_gui_mo'],
+//                $featureslists['NIC_ID'],
+//                $featureslists['OPFROM'],
+//                $featureslists['DOMDISTRICT']
+//            );
+
             return $this->writeJson(
                 200,
                 [ ] ,
                 [
                     $featureslists,
-                    XinDongKeDongAnalyzeList::getFeatrueArray(2)
+                    XinDongKeDongAnalyzeList::getFeatrueArray(2),
+                    $res
                 ],
                 '添加成功',
                 true,

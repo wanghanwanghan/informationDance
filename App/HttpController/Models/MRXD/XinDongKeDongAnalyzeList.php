@@ -343,7 +343,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
             $yearsNums >= 15 &&
             $yearsNums <= 20
         ){
-            return '10-15';
+            return '15-20';
         }
         if(
             $yearsNums >= 20

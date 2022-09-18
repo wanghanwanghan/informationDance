@@ -738,21 +738,7 @@ class Company extends ServiceBase
             }
         }
 
-        $map = [
-            5 => ['A1'], //微型
-            10 => ['A2'], //小型C类
-            15 => ['A3'],// 小型B类
-            20 => ['A4'],// 小型A类
-            25 => ['A5'],// 中型C类
-            30 => ['A6'],// 中型B类
-            40 => ['A7'],// 中型A类
-            45 => ['A8'],// 大型C类
-            50 => ['A9'],//大型B类
-            60 => ['A10'],//大型A类，一般指规模在10亿以上，50亿以下
-            65 => ['A11'],//'特大型C类，一般指规模在50亿以上，100亿以下'
-            70 => ['A12'],//'特大型C类，一般指规模在50亿以上，100亿以下'
-            80 => ['A13'],//'特大型C类，一般指规模在50亿以上，100亿以下'
-        ];
+        $map = XinDongService::getYingShouGuiMoMapV3();
 
         $matchedCnamesRaw = [];
         foreach($ying_shou_gui_mo_values as $item){
@@ -996,7 +982,7 @@ class Company extends ServiceBase
             $companyEsModel = new \App\ElasticSearch\Model\Company();
             $companyEsModel
                 //经营范围
-                ->SetQueryByBusinessScope(trim($requestDataArr['OPSCOPE'],"OPSCOPE"))
+                ->SetQueryByBusinessScope(trim($requestDataArr['OPSCOPE']),"OPSCOPE")
                 //数字经济及其核心产业
                 ->SetQueryByBasicSzjjid(trim($requestDataArr['basic_szjjid']))
                 // 搜索文案 智能搜索
@@ -1168,7 +1154,7 @@ class Company extends ServiceBase
 
         $companyEsModel
             //经营范围
-            ->SetQueryByBusinessScope(trim($requestData['OPSCOPE'],"OPSCOPE"))
+            ->SetQueryByBusinessScope(trim($requestData['OPSCOPE']),"OPSCOPE")
             //数字经济及其核心产业
             ->SetQueryByBasicSzjjid(trim($requestData['basic_szjjid']))
             // 搜索文案 智能搜索
@@ -1319,11 +1305,19 @@ class Company extends ServiceBase
             $companyEsModel = new \App\ElasticSearch\Model\Company();
             $companyEsModel
                 //经营范围
-                ->SetQueryByBusinessScope($requestDataArr['basic_opscope'])
+                ->SetQueryByBusinessScope(trim($requestDataArr['OPSCOPE']),"OPSCOPE")
                 //数字经济及其核心产业
-                ->SetQueryByBasicSzjjid($requestDataArr['basic_szjjid'])
+                ->SetQueryByBasicSzjjid(trim($requestDataArr['basic_szjjid']))
                 // 搜索文案 智能搜索
                 ->SetQueryBySearchText( $requestDataArr['searchText'])
+                ->SetQueryBySearchCompanyIds(
+                    !empty($requestDataArr['companyids'])?
+                        explode(',',$requestDataArr['companyids']):[]
+                )
+                ->SetQueryBySearchCompanyNames(
+                    !empty($requestDataArr['entNames'])?
+                        explode(',',$requestDataArr['entNames']):[]
+                )
                 // 搜索战略新兴产业
                 ->SetQueryByBasicJlxxcyid( $requestDataArr['basic_jlxxcyid']   )
                 // 搜索shang_pin_data 商品信息 appStr:五香;农庄
@@ -1348,9 +1342,13 @@ class Company extends ServiceBase
                 // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
                 ->SetQueryByYingShouGuiMo($searchOption)
                 //四级分类 basic_nicid: A0111,A0112,A0113,
-                ->SetQueryBySiJiFenLei(    $requestDataArr['basic_nicid'] )
+                ->SetQueryBySiJiFenLei($requestDataArr['basic_nicid'])
+                //公司类型
+                ->SetQueryByCompanyType(trim($requestDataArr['ENTTYPE']))
+                //公司状态
+                ->SetQueryByCompanyStatus(trim($requestDataArr['ENTSTATUS']))
                 // 地区 basic_regionid: 110101,110102,
-                ->SetQueryByBasicRegionid(   $requestDataArr['basic_regionid']  )
+                ->SetQueryByBasicRegionid($requestDataArr['basic_regionid']  )
                 ->addSize($size)
                 //->setSource($fieldsArr)
                 //设置默认值 不传任何条件 搜全部
@@ -1372,7 +1370,7 @@ class Company extends ServiceBase
             // 格式化下日期和时间
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs()
+                ->searchFromEs('company_202209')
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();
