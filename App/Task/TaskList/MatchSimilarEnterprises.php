@@ -196,7 +196,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
             ])
         );
 
-        $companys = \App\ElasticSearch\Model\Company::SearchAfter(
+        $companys = \App\ElasticSearch\Model\Company::SearchAfterV2(
             10,
             [
                 'searchOption' =>  json_encode($searchOptions),
