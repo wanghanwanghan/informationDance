@@ -33,7 +33,7 @@ class GetInvData extends AbstractCronTask
     {
         //每月19号凌晨4点可以取上一个月全部数据
         //return '0 4 19 * *' ;
-        return '30 19 1 * * ';
+        return '33 17 19 * * ';
     }
 
     static function getTaskName(): string
@@ -95,8 +95,8 @@ class GetInvData extends AbstractCronTask
     {
         //根据三个id，通知不同的url
         $url_arr = [
-            //36 => 'https://zkinvoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
-            36 => 'https://zkinvocie.dev.dl.alipaydev.com/api/wezTech/collectNotify',//test rsa和dev一样
+            36 => 'https://zkinvoicecommercial.test.dl.alipaydev.com/api/wezTech/collectNotify',//dev
+            //36 => 'https://zkinvocie.dev.dl.alipaydev.com/api/wezTech/collectNotify',//test rsa和dev一样
             41 => 'https://trustdata.antgroup.com/api/wezTech/collectNotify',
             42 => 'https://trustdata-pre.antgroup.com/api/wezTech/collectNotify',
         ];
@@ -198,7 +198,7 @@ class GetInvData extends AbstractCronTask
                 ];
 
                 //通知
-                if ($oneReadyToSend->belong - 0 === 41) {
+                if ($oneReadyToSend->belong - 0 === 41 || $oneReadyToSend->belong - 0 === 36) {
                     CommonService::getInstance()->log4PHP(jsonEncode($collectNotify, false), 'send', 'notify_fp');
                     $ret = (new CoHttpClient())
                         ->useCache(false)
