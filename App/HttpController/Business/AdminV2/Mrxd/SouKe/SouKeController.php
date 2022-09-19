@@ -2115,12 +2115,19 @@ class SouKeController extends ControllerBase
 //            $featureslists['DOMDISTRICT']
 //        );
         //开始分析
-        return $this->writeJson(200,[
-            'page' => $page,
-            'pageSize' => $size,
-            'total' => $lists['total'],
-            'totalPage' => (int)($lists['total']/$size)+1,
-        ] , $lists['data'], '成功', true, []);
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' => $size,
+                'total' => $lists['total'],
+                'totalPage' => (int)($lists['total']/$size)+1,
+            ] ,
+            $lists['data'],
+            '成功',
+            true,
+            []
+        );
     }
 
     /**
@@ -2173,12 +2180,19 @@ class SouKeController extends ControllerBase
 
         // SoukeRecommendCompanyExportHistory::addRecordV2();
         // SoukeRecommendCompanyExportHistoryDetails::addRecord();
-        return $this->writeJson(200,[
-            'page' => $page,
-            'pageSize' => $size,
-            'total' => $lists['total'],
-            'totalPage' => (int)($lists['total']/$size)+1,
-        ] , $lists['data'], '成功', true, []);
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' => $size,
+                'total' => $lists['total'],
+                'totalPage' => (int)($lists['total']/$size)+1,
+            ] ,
+            $lists['data'],
+            '成功',
+            true,
+            []
+        );
 
     }
 
@@ -2194,12 +2208,19 @@ class SouKeController extends ControllerBase
             $size
         );
 
-        return $this->writeJson(200,[
-            'page' => $page,
-            'pageSize' => $size,
-            'total' => $lists['total'],
-            'totalPage' =>  ceil($lists['total']/$size),
-            ] ,$lists['data'], '成功', true, []);
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' => $size,
+                'total' => $lists['total'],
+                'totalPage' =>  ceil($lists['total']/$size),
+            ] ,
+            $lists['data'],
+            '成功',
+            true,
+            []
+        );
     }
 
 
