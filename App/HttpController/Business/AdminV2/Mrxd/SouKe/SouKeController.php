@@ -2021,11 +2021,11 @@ class SouKeController extends ControllerBase
         }
 
         foreach ($featureslists['areaX'] as $value){
-            $mapedData['areaX'][] =   CompanyBasic::findRegion($value);
+            $mapedData['areaX'][] =   CompanyBasic::findRegion($value)['fulltitle'];
         }
         foreach ($featureslists['areaY'] as $value){
             $mapedData['areaY'][] =     $value.'%';
-        } 
+        }
 
         //开始分析
         return $this->writeJson(200,[ ] , $mapedData, '成功', true, []);
