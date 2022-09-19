@@ -118,6 +118,15 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
         $redis = Redis::defer('redis');
         $redis->select(15);
 
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'calScore_start'=>[
+                    '$redis'=> $redis,
+                ]
+            ])
+        );
+        return $redis;
         //开始消费
         $nums = 0;
         while (true) {
