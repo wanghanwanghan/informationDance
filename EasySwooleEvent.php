@@ -44,7 +44,7 @@ class EasySwooleEvent implements Event
         });
     }
 
-    static function IsProductionEnv()
+    static function IsProductionEnv(): bool
     {
         if (
             substr(dirname(__FILE__), 0, 32) == self::$ProductionPath
