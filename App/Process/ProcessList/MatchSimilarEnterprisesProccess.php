@@ -111,16 +111,92 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
         }
     }
 
-    static function calScore($info)
+    static function calScore()
     {
 
-          //开始消费
-        $score = (new qpf(
-            $info['base'][0], $info['base'][1], $info['base'][2], $info['base'][3],
-            $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
-        ))->expr();
 
-        return $score;
+        $redis = Redis::defer('redis');
+        $redis->select(15);
+
+        //开始消费
+        $nums = 0;
+        while (true) {
+            $entInsRedis = $redis->rPop(self::QueueKey);
+            if ($nums>=100) {
+                break;
+            }
+
+            if (empty($entInRedis)) {
+
+                continue;
+            }
+
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'MatchSimilarEnterprisesProccess_pop_from_redis'=>[
+                        'list_key'=> self::QueueKey,
+                        '$entInsRedis'=> $entInsRedis,
+                    ]
+                ])
+            );
+
+            $info = jsonDecode($entInRedis);
+
+            $score = (new qpf(
+                $info['base'][0], $info['base'][1], $info['base'][2], $info['base'][3],
+                $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
+            ))->expr();
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'MatchSimilarEnterprisesProccess_Score'=>[
+                        '$score'=> $score,
+                        '$info'=> $info,
+                        'param1' => $info['base'][0],
+                        'param2' => $info['base'][1],
+                        'param3' => $info['base'][2],
+                        'param4' => $info['base'][3],
+                        'param5' => $info['ys_label'],
+                        'param6' => $info['NIC_ID'],
+                        'param7' => substr($info['ESDATE'], 0, 4),
+                        'param8' => $info['DOMDISTRICT']
+                    ]
+                ])
+            );
+
+
+            $res = (new XinDongService())->getEsBasicInfoV2($info['companyid'],[]);
+
+
+            $res['ENTTYPE'] && $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
+            $res['ENTSTATUS_CNAME'] =   '';
+            $res['ENTSTATUS'] && $res['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($res['ENTSTATUS']);
+
+            try {
+                UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
+                    'userid' => $info['user_id'],
+                    'companyid' => $info['companyid'],
+                    'esid' => 0,
+                    'score' => $score,
+                    'entName' => $res['entName'],
+                    'ying_shou_gui_mo' => $res['ying_shou_gui_mo']?:'',
+                    'nic_id' => $res['NIC_ID']?:'',
+                    'area' => $res['DOMDISTRICT']?:'',
+                    'found_years_nums' => $res['OPFROM']>0?date('Y')-date('Y',strtotime($res['OPFROM'])):0,
+                    'mvcc' => '',
+                ])->save();
+            } catch (\Throwable $e) {
+                $file = $e->getFile();
+                $line = $e->getLine();
+                $msg = $e->getMessage();
+                $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+                CommonService::getInstance()->log4PHP($content);
+            }
+
+            $nums ++;
+        }
+        return $nums;
     }
 
     private function toEs(string $esid, array $data)

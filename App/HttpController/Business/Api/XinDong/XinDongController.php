@@ -3630,10 +3630,17 @@ eof;
         $requestData =  $this->getRequestData();
 
         if(
+            $this->getRequestData('MatchSimilarEnterprisesProccess')
+        ){
+
+            return $this->writeJson(200,[ ] , MatchSimilarEnterprisesProccess::calScore(), '成功', true, []);
+        }
+
+
+        if(
             $this->getRequestData('checkEnv')
         ){
             return $this->writeJson(200,[ ] , EasySwooleEvent::IsProductionEnv(), '成功', true, []);
-
         }
 
 
