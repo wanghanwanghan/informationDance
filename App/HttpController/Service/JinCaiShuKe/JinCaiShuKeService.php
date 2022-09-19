@@ -97,7 +97,7 @@ class JinCaiShuKeService extends ServiceBase
     //
     private function signature(array $content, string $nsrsbh, string $serviceid, string $signType): string
     {
-        empty($content) ? $content = '' : base64_encode(jsonEncode($content, false));
+        empty($content) ? $content = '' : $content = base64_encode(jsonEncode($content, false));
 
         $arr = [
             'appid' => $this->appKey,
