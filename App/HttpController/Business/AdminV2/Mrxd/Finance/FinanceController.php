@@ -683,11 +683,11 @@ class FinanceController extends ControllerBase
         ){
 
         }else{
-//            $whereArr[] =  [
-//                'field' => 'user_id',
-//                'value' => $this->loginUserinfo['id'],
-//                'operate' => '=',
-//            ];
+            $whereArr[] =  [
+                'field' => 'user_id',
+                'value' => $this->loginUserinfo['id'],
+                'operate' => '=',
+            ];
         }
 
         $res = AdminUserFinanceExportDataQueue::findByConditionV3(

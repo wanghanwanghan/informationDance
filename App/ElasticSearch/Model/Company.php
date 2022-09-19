@@ -797,6 +797,7 @@ class Company extends ServiceBase
         return $this;
     }
 
+    // addMustShouldPhrasePrefixQuery
     function SetQueryBySiJiFenLei($siJiFenLeiStrs,$field = 'si_ji_fen_lei_code'){
         $siJiFenLeiStrs && $siJiFenLeiArr = explode(',', $siJiFenLeiStrs);
         if(!empty($siJiFenLeiArr)){
