@@ -105,7 +105,7 @@ class GetInvData extends ProcessBase
         foreach ($FPLXDMS as $FPLXDM) {
             $KM = '1';
             for ($page = 1; $page <= 999999; $page++) {
-                \co::sleep(0.1);
+                \co::sleep(0.3);
                 try {
                     $res = (new DaXiangService())
                         ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
@@ -141,7 +141,7 @@ class GetInvData extends ProcessBase
         foreach ($FPLXDMS as $FPLXDM) {
             $KM = '2';
             for ($page = 1; $page <= 999999; $page++) {
-                \co::sleep(0.1);
+                \co::sleep(0.3);
                 try {
                     $res = (new DaXiangService())
                         ->getInv($this->taxNo, $page . '', $NSRSBH, $KM, $FPLXDM, $KPKSRQ, $KPJSRQ);
