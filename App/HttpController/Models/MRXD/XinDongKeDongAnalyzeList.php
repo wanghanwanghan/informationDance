@@ -237,6 +237,14 @@ class XinDongKeDongAnalyzeList extends ModelBase
         return $res;
     }
 
+    public static function findAllByUserIdV2($userId){
+        $res =  XinDongKeDongAnalyzeList::create()
+            ->where('user_id',$userId)
+            ->where('is_del',0)
+            ->all();
+        return $res;
+    }
+
     public static function findByEntName($user_id,$ent_name){
         $res =  XinDongKeDongAnalyzeList::create()
             ->where('user_id',$user_id)
@@ -463,7 +471,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
             ],
         ];
         $res = [];
-        $lists = XinDongKeDongAnalyzeList::findAllByUserId($userId);
+        $lists = XinDongKeDongAnalyzeList::findAllByUserIdV2($userId);
         $companyIds = array_column($lists,'companyid');
         $esRes = \App\ElasticSearch\Model\Company::serachFromEs(
             [

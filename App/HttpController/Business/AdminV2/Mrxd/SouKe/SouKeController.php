@@ -1937,6 +1937,23 @@ class SouKeController extends ControllerBase
                 'startAnalysis_$featureslists'=> $featureslists
             ])
         );
+
+        $analiyLists = XinDongKeDongAnalyzeList::findAllByUserIdV2($this->loginUserinfo['id']);
+        $companyIdsArr = array_column($analiyLists,'companyid');
+        \App\HttpController\Models\MRXD\XinDongKeDongAnalyzeHistory::addRecord(
+            [
+                'user_id' => $this->loginUserinfo['id'],
+                'company_nums' => count($companyIdsArr),
+                'company_ids' => join(',',$companyIdsArr),
+                'feature_json' => json_encode($featureslists),
+                'status' => intval($requestData['status']),
+                'name' => $requestData['name']?:'',
+                'remark' => $requestData['remark']?:'',
+                'created_at' => time(),
+                'updated_at' => time(),
+            ]
+        );
+
         (new XinDongKeDongService())->MatchSimilarEnterprises(
             $this->loginUserinfo['id'],
             $featureslists['ying_shou_gui_mo'],
@@ -1944,6 +1961,8 @@ class SouKeController extends ControllerBase
             $featureslists['OPFROM'],
             $featureslists['DOMDISTRICT']
         );
+
+
         //开始分析
         return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
     }
@@ -2082,20 +2101,10 @@ class SouKeController extends ControllerBase
         $page = $requestData['page']?:1;
         $size = $requestData['pageSize']?:10;
 
-        $lists = UserApproximateEnterpriseModel::findByConditionV2(
+        $lists = (new UserApproximateEnterpriseModel())->addSuffix($this->loginUserinfo['id'])->findByConditionV2(
             [],
             $page,
             $size
-        );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'startAnalysis'=>json_encode(
-                    [
-//                        'msg'=>
-                    ]
-                )
-            ])
         );
 //        (new XinDongKeDongService())->MatchSimilarEnterprises(
 //            $this->loginUserinfo['id'],

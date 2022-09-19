@@ -65,10 +65,11 @@ class XinDongKeDongAnalyzeHistory extends ModelBase
            $res =  XinDongKeDongAnalyzeHistory::create()->data([
                 'user_id' => $requestData['user_id'],
                 'companyid' => $requestData['companyid'],
-                'is_del' => intval($requestData['is_del']),
+                'company_nums' => $requestData['company_nums'],
+                'company_ids' => $requestData['company_ids'],
+                'feature_json' => $requestData['feature_json'],
                 'status' => intval($requestData['status']),
                 'name' => $requestData['name']?:'',
-                'ent_name' => $requestData['ent_name']?:'',
                 'remark' => $requestData['remark']?:'',
                'created_at' => time(),
                'updated_at' => time(),
