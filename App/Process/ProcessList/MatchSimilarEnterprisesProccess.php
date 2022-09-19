@@ -139,12 +139,11 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                     ]
                 ])
             );
-            
             if ($nums>=100) {
                 break;
             }
 
-            if (empty($entInRedis)) {
+            if (empty($entInsRedis)) {
                 continue;
             }
 
@@ -158,7 +157,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                 ])
             );
 
-            $info = jsonDecode($entInRedis);
+            $info = jsonDecode($entInsRedis);
 
             $score = (new qpf(
                 $info['base'][0], $info['base'][1], $info['base'][2], $info['base'][3],
