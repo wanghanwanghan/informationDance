@@ -2009,7 +2009,7 @@ class SouKeController extends ControllerBase
         }
 
         foreach ($featureslists['openFromY'] as $value){
-            $mapedData['openFromX'][] =  $value.'%';
+            $mapedData['openFromY'][] =  $value.'%';
         }
         $maps = XinDongService::getYingShouGuiMoMapV2();
         foreach ($featureslists['YingShouX'] as $value){
