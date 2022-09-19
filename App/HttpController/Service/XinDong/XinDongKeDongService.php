@@ -47,7 +47,7 @@ class XinDongKeDongService extends ServiceBase
             return TaskService::getInstance()->create(new MatchSimilarEnterprises([$uid, $ys, $nic, $nx, $dy]));
         }
         else{
-            return MatchSimilarEnterprises::pushToRedisList([$uid, $ys, $nic, $nx, $dy]);
+            return MatchSimilarEnterprises::pushToRedisList($uid, $ys, $nic, $nx, $dy);
         }
     }
 
