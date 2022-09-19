@@ -355,8 +355,8 @@ class JinCaiShuKeService extends ServiceBase
     function S000502(string $nsrsbh): array
     {
         $content = [
-            'requuid' => control::getUuid(),
-            'rwh' => control::getUuid(),
+            'requuid' => control::getUuid(),// 傻逼写的接口
+            'rwh' => control::getUuid(),// 自己写的接口自己都调不通，参数必须瞎传才能用
         ];
 
         $signType = '0';
