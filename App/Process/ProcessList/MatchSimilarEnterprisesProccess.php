@@ -139,7 +139,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                     ]
                 ])
             );
-            break;
+            
             if ($nums>=100) {
                 break;
             }

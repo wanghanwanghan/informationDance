@@ -63,6 +63,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
 
         self::pushToRedisList($uid,$ys,$nic,$nx,$dy);
     }
+
     static  function pushToRedisList($uid,$ys,$nic,$nx,$dy)
     {
         CommonService::getInstance()->log4PHP(
