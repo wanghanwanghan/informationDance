@@ -803,9 +803,17 @@ class Company extends ServiceBase
         if(!empty($siJiFenLeiArr)){
             $this->es->addMustShouldPhraseQuery( $field , $siJiFenLeiArr) ;
         }
-
         return $this;
     }
+
+    function SetQueryBySiJiFenLeiV2($nicIdStr,$field = 'NIC_ID'){
+        $nicIdStr && $nicIdArr = explode(',', $nicIdStr);
+        if(!empty($nicIdArr)){
+            $this->es->addMustShouldPhrasePrefixQuery( $field , $nicIdArr) ;
+        }
+        return $this;
+    }
+
 
     function SetQueryByCompanyStatus($companyStatus){
         $companyStatus && $siJiFenLeiArr = explode(',', $companyStatus);
@@ -1520,7 +1528,8 @@ class Company extends ServiceBase
                 // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
                 ->SetQueryByYingShouGuiMo($searchOption)
                 //四级分类 basic_nicid: A0111,A0112,A0113,
-                ->SetQueryBySiJiFenLei($requestDataArr['basic_nicid'],'NIC_ID')
+                //->SetQueryBySiJiFenLei($requestDataArr['basic_nicid'],'NIC_ID')
+                ->SetQueryBySiJiFenLeiV2($requestDataArr['basic_nicid'],'NIC_ID')
                 //公司类型
                 ->SetQueryByCompanyType(trim($requestDataArr['ENTTYPE']))
                 //公司状态
