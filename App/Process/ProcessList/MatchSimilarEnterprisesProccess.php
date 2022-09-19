@@ -23,14 +23,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
 
     protected function run($arg)
     {
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'MatchSimilarEnterprisesProccess_start_run'=>[
-                    '$arg'=> $arg,
-                ]
-            ])
-        );
+
 
         parent::run($arg);
 
@@ -44,6 +37,14 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
         //开始消费
         while (true) {
             $entInsRedis = $redis->rPop(self::QueueKey);
+
+
+            if (empty($entInRedis)) {
+                mt_srand();
+                \co::sleep(2);
+                continue;
+            }
+
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
@@ -53,12 +54,6 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                     ]
                 ])
             );
-
-            if (empty($entInRedis)) {
-                mt_srand();
-                \co::sleep(2);
-                continue;
-            }
 
             $info = jsonDecode($entInRedis);
 
