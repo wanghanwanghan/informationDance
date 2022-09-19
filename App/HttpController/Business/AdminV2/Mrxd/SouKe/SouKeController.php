@@ -1867,13 +1867,13 @@ class SouKeController extends ControllerBase
         $page = $requestData['page']?:1;
         $size = $requestData['pageSize']?:10;
         $lists = XinDongKeDongAnalyzeList::findByConditionV2(
-            [],
+            [
+                // $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+                ['field'=>'is_del','value'=>XinDongKeDongAnalyzeList::$state_ok,'operate'=>'=']
+            ],
             $page,
             $size
         );
-
-
-
         return $this->writeJson(200,[ ] , array_column($lists['data'],'ent_name'), '成功', true, []);
     }
 
@@ -2022,38 +2022,8 @@ class SouKeController extends ControllerBase
 
     function getRecommendSearchOption(): bool
     {
-
         //开始分析
-        return $this->writeJson(200,[ ] , [
-            'score_range'=>[
-                5=>'70-80',
-                10=>'80-90',
-                15=>'90-100',
-            ],
-            'establish_yeasr_range'=>[
-                2=>'2年以内',
-                5=>'2-5年',
-                10=>'5-10年',
-                15=>'10-15年',
-                20=>'15-20年',
-                25=>'20年以上',
-            ],
-            'ying_shou_range'=>[
-                5=>'微型',
-                10=>'小型C类',
-                15=>'小型B类',
-                20=>'小型A类',
-                25=>'中型C类',
-                30=>'中型B类',
-                40=>'中型A类',
-                45=>'大型C类',
-                50=>'大型B类',
-                60=>'大型A类',
-                65=>'特大型C类',
-                70=>'特大型B类',
-                80=>'特大型A类',
-            ],
-        ], '成功', true, []);
+        return $this->writeJson(200,[ ] ,  XinDongKeDongAnalyzeList::getStatusMap() , '成功', true, []);
     }
 
     //获取优企列表
@@ -2112,7 +2082,9 @@ class SouKeController extends ControllerBase
 //            $featureslists['ying_shou_gui_mo'],
 //            $featureslists['NIC_ID'],
 //            $featureslists['OPFROM'],
-//            $featureslists['DOMDISTRICT']
+//            $featureslists['DOMDISTRICT
+//      ']
+
 //        );
         //开始分析
         return $this->writeJson(

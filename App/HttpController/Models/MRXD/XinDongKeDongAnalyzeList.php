@@ -39,6 +39,39 @@ class XinDongKeDongAnalyzeList extends ModelBase
         ];
     }
 
+    static function getStatusMap(){
+        return  [
+            'score_range'=>[
+                5=>'70-80',
+                10=>'80-90',
+                15=>'90-100',
+            ],
+            'establish_yeasr_range'=>[
+                2=>'2年以内',
+                5=>'2-5年',
+                10=>'5-10年',
+                15=>'10-15年',
+                20=>'15-20年',
+                25=>'20年以上',
+            ],
+            'ying_shou_range'=>[
+                5=>'微型',
+                10=>'小型C类',
+                15=>'小型B类',
+                20=>'小型A类',
+                25=>'中型C类',
+                30=>'中型B类',
+                40=>'中型A类',
+                45=>'大型C类',
+                50=>'大型B类',
+                60=>'大型A类',
+                65=>'特大型C类',
+                70=>'特大型B类',
+                80=>'特大型A类',
+            ]
+        ];
+    }
+
     static  function  addRecordV2($info){
         $oldRes = self::findByEntName($info['user_id'],$info['ent_name']);
         //如果被删除了 重新找回来
