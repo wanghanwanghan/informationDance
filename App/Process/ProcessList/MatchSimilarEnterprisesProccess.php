@@ -126,17 +126,25 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                 ]
             ])
         );
-        return $redis;
+
         //开始消费
         $nums = 0;
         while (true) {
             $entInsRedis = $redis->rPop(self::QueueKey);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'calScore_$entInsRedis'=>[
+                        '$entInsRedis'=> $entInsRedis,
+                    ]
+                ])
+            );
+            break;
             if ($nums>=100) {
                 break;
             }
 
             if (empty($entInRedis)) {
-
                 continue;
             }
 
