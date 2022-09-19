@@ -681,7 +681,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                     $field=='NIC_ID' &&
                    !empty( $res['NIC_ID'])
                 ){
-                    $nicRes = NicCode::findNICID($res['NIC_ID']);
+                    //$nicRes = NicCode::findNICID($res['NIC_ID']);
 //                    CommonService::getInstance()->log4PHP(json_encode([
 //                        'NIC_ID'=>$res['NIC_ID'],
 //                        '$nicRes'=>$nicRes,
