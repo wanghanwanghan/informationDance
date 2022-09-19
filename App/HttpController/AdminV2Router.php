@@ -179,6 +179,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/startAnalysis', $prefix . 'startAnalysis');
             $routeCollector->addRoute(['GET', 'POST'], '/delCompanyToAnalyzeLists', $prefix . 'delCompanyToAnalyzeLists');
             $routeCollector->addRoute(['GET', 'POST'], '/getKeDongFeature', $prefix . 'getKeDongFeature');
+            $routeCollector->addRoute(['GET', 'POST'], '/getHistoryKeDongFeature', $prefix . 'getHistoryKeDongFeature');
             $routeCollector->addRoute(['GET', 'POST'], '/getRecommendCompanys', $prefix . 'getRecommendCompanys');
             $routeCollector->addRoute(['GET', 'POST'], '/getRecommendSearchOption', $prefix . 'getRecommendSearchOption');
             $routeCollector->addRoute(['GET', 'POST'], '/exportRecommendedCompanys', $prefix . 'exportRecommendedCompanys');
