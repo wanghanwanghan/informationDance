@@ -14,6 +14,7 @@ use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\Api\UserApproximateEnterpriseModel;
 use App\HttpController\Models\MRXD\SoukeRecommendCompanyExportHistory;
 use App\HttpController\Models\MRXD\SoukeRecommendCompanyExportHistoryDetails;
+use App\HttpController\Models\MRXD\XinDongKeDongAnalyzeHistory;
 use App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
@@ -2187,22 +2188,18 @@ class SouKeController extends ControllerBase
         $page = $requestData['page']?:1;
         $size = $requestData['pageSize']?:10;
 
+        $lists = XinDongKeDongAnalyzeHistory::findByConditionV2(
+            [],
+            $page,
+            $size
+        );
+
         return $this->writeJson(200,[
-            'page' => 1,
-            'pageSize' => 10,
-            'total' => 1,
-            'totalPage' =>  1,
-            ] , [
-            [
-                'id'=>2,
-                'created_at'=>1663297766,
-                'ying_shou_gui_mo_cname'=>'100万',
-                'guo_biao_cname'=>'建筑业',
-                'establish_years'=>'3年',
-                'areas_cname'=>'北京',
-                'company_nums'=>'11111',
-            ]
-        ], '成功', true, []);
+            'page' => $page,
+            'pageSize' => $size,
+            'total' => $lists['total'],
+            'totalPage' =>  ceil($lists['total']/$size),
+            ] ,$lists['data'], '成功', true, []);
     }
 
 
