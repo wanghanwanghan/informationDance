@@ -6,6 +6,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\ServiceBase;
 use App\Task\Service\TaskService;
 use App\Task\TaskList\MatchSimilarEnterprises;
+use EasySwoole\EasySwoole\EasySwooleEvent;
 
 class XinDongKeDongService extends ServiceBase
 {
@@ -39,7 +40,15 @@ class XinDongKeDongService extends ServiceBase
             );;
         }
 
-        return TaskService::getInstance()->create(new MatchSimilarEnterprises([$uid, $ys, $nic, $nx, $dy]));
+        //self::pushToRedisList($uid,$ys,$nic,$nx,$dy);
+        if(
+            EasySwooleEvent::IsProductionEnv()
+        ){
+            return TaskService::getInstance()->create(new MatchSimilarEnterprises([$uid, $ys, $nic, $nx, $dy]));
+        }
+        else{
+            return MatchSimilarEnterprises::pushToRedisList([$uid, $ys, $nic, $nx, $dy]);
+        }
     }
 
 
