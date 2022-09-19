@@ -11,6 +11,7 @@ use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\QueueLists;
+use App\HttpController\Models\Api\UserApproximateEnterpriseModel;
 use App\HttpController\Models\MRXD\SoukeRecommendCompanyExportHistory;
 use App\HttpController\Models\MRXD\SoukeRecommendCompanyExportHistoryDetails;
 use App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList;
@@ -2036,7 +2037,7 @@ class SouKeController extends ControllerBase
     }
 
     //获取优企列表
-    function getRecommendCompanys(): bool
+    function getRecommendCompanysV2(): bool
     {
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
@@ -2075,16 +2076,14 @@ class SouKeController extends ControllerBase
             'totalPage' => (int)($featureslists['total']/$size)+1,
             ] , $featureslists['data'], '成功', true, []);
     }
-    function getRecommendCompanysV2(): bool
+    function getRecommendCompanys(): bool
     {
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
         $size = $requestData['pageSize']?:10;
 
-        $featureslists = XinDongKeDongAnalyzeList::searchFromEs(
-            [
-               // ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'=']
-            ],
+        $lists = UserApproximateEnterpriseModel::findByConditionV2(
+            [],
             $page,
             $size
         );
@@ -2109,9 +2108,9 @@ class SouKeController extends ControllerBase
         return $this->writeJson(200,[
             'page' => $page,
             'pageSize' => $size,
-            'total' => $featureslists['total'],
-            'totalPage' => (int)($featureslists['total']/$size)+1,
-        ] , $featureslists['data'], '成功', true, []);
+            'total' => $lists['total'],
+            'totalPage' => (int)($lists['total']/$size)+1,
+        ] , $lists['data'], '成功', true, []);
     }
 
     /**

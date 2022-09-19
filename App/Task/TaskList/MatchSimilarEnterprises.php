@@ -186,6 +186,8 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
             $page++;
             $runTimes ++;
         }
+
+        return true;
     }
 
     function runOld(int $taskId, int $workerIndex)
