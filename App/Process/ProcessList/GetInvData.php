@@ -352,6 +352,8 @@ class GetInvData extends ProcessBase
     {
         $invType === 'in' ? $invType = '01' : $invType = '02';
 
+        CommonService::getInstance()->log4PHP([$NSRSBH, $FPLXDM, $invType], 'info', 'FP_' . __FUNCTION__);
+
         switch ($FPLXDM) {
             case '01':
             case '04':
