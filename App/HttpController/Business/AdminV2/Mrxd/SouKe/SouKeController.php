@@ -1995,7 +1995,8 @@ class SouKeController extends ControllerBase
             $mapedData['nicX'][] =  $nicRes['full_name'];
         }
         foreach ($featureslists['nicY'] as $value){
-            $mapedData['nicY'][] =  $value.'%';
+//            $mapedData['nicY'][] =  $value.'%';
+            $mapedData['nicY'][] =  $value;
         }
 
         foreach ($featureslists['openFromX'] as $value){
@@ -2009,7 +2010,8 @@ class SouKeController extends ControllerBase
         }
 
         foreach ($featureslists['openFromY'] as $value){
-            $mapedData['openFromY'][] =  $value.'%';
+//            $mapedData['openFromY'][] =  $value.'%';
+            $mapedData['openFromY'][] =  $value;
         }
         $maps = XinDongService::getYingShouGuiMoMapV2();
         foreach ($featureslists['YingShouX'] as $value){
@@ -2017,14 +2019,16 @@ class SouKeController extends ControllerBase
         }
 
         foreach ($featureslists['YingShouY'] as $value){
-            $mapedData['YingShouY'][] =   $value.'%';
+//            $mapedData['YingShouY'][] =   $value.'%';
+            $mapedData['YingShouY'][] =   $value;
         }
 
         foreach ($featureslists['areaX'] as $value){
             $mapedData['areaX'][] =   CompanyBasic::findRegion($value)['fulltitle'];
         }
         foreach ($featureslists['areaY'] as $value){
-            $mapedData['areaY'][] =     $value.'%';
+//            $mapedData['areaY'][] =     $value.'%';
+            $mapedData['areaY'][] =     $value;
         }
 
         //开始分析
