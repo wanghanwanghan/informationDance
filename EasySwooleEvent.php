@@ -46,7 +46,7 @@ class EasySwooleEvent implements Event
 
     static function  IsProductionEnv(){
         if(
-            substr(dirname(__FILE__) , 0 , 32) == self::$ProductionPath
+            substr(dirname(__FILE__) , 0 , 33) == self::$ProductionPath
         ){
             CommonService::getInstance()->log4PHP(
                 json_encode([

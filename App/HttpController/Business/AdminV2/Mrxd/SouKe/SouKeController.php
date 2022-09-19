@@ -31,6 +31,7 @@ use App\HttpController\Models\RDS3\HdSaicExtension\DataplusAppAndroidH;
 use App\HttpController\Models\RDS3\HdSaicExtension\DataplusAppIosH;
 use App\HttpController\Models\RDS3\HdSaicExtension\DlH;
 use App\HttpController\Models\RDS3\HdSaicExtension\MostTorchHightechH;
+use App\HttpController\Models\RDS3\NicCode;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongKeDongService;
@@ -1967,29 +1968,42 @@ class SouKeController extends ControllerBase
         //开始分析
         return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
     }
+
+
     function getKeDongFeature(): bool
     {
         $requestData =  $this->getRequestData();
+         //历史提取
+        if($requestData['history_id']){
 
-        //提取特征
+        }
+        //正常提取特征
         $featureslists = XinDongKeDongAnalyzeList::getFeatrueArray($this->loginUserinfo['id']);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'startAnalysis'=>json_encode(
+                'getKeDongFeature'=>json_encode(
                     [
-//                        'msg'=>
+                        'getKeDongFeature_$featureslists'=>$featureslists
                     ]
                 )
             ])
         );
-//        (new XinDongKeDongService())->MatchSimilarEnterprises(
-//            $this->loginUserinfo['id'],
-//            $featureslists['ying_shou_gui_mo'],
-//            $featureslists['NIC_ID'],
-//            $featureslists['OPFROM'],
-//            $featureslists['DOMDISTRICT']
-//        );
+        $mapedData = [];
+        foreach ($featureslists['nicX'] as $value){
+            $nicRes = NicCode::findNICID($value);
+            $mapedData['nicX'][] =  $nicRes['full_name'];
+        }
+        foreach ($featureslists['nicY'] as $value){
+            $mapedData['nicY'][] =  $value.'%';
+        }
+
+        foreach ($featureslists['openFromX'] as $value){
+           // $value
+            $mapedData['nicY'][] =  $value.'%';
+        }
+
+
         //开始分析
         return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
     }
