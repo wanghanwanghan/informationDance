@@ -44,15 +44,16 @@ class EasySwooleEvent implements Event
         });
     }
 
-    static function  IsProductionEnv(){
-        if(
-            substr(dirname(__FILE__) , 0 , 32) == self::$ProductionPath
-        ){
+    static function IsProductionEnv()
+    {
+        if (
+            substr(dirname(__FILE__), 0, 32) == self::$ProductionPath
+        ) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
+                    __CLASS__ . __FUNCTION__ . __LINE__,
                     [
-                        'IsProductionEnv_true' => substr(dirname(__FILE__) , 0 , 32),
+                        'IsProductionEnv_true' => substr(dirname(__FILE__), 0, 32),
                     ]
                 ])
             );
@@ -62,13 +63,13 @@ class EasySwooleEvent implements Event
 
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
+                __CLASS__ . __FUNCTION__ . __LINE__,
                 [
-                    'IsProductionEnv_false' => substr(dirname(__FILE__) , 0 , 32),
+                    'IsProductionEnv_false' => substr(dirname(__FILE__), 0, 32),
                 ]
             ])
         );
-        return  false;
+        return false;
     }
 
     static function mainServerCreate(EventRegister $register)
@@ -109,9 +110,9 @@ class EasySwooleEvent implements Event
         LimitService::getInstance()->create();
 
         //只有生产环境 才去执行这些
-        if(
+        if (
             self::IsProductionEnv()
-        ){
+        ) {
             //注册自定义进程
             ProcessService::getInstance()->create(Docx2Doc::class, 'docx2doc');
             ProcessService::getInstance()->create(ConsumeOcrProcess::class, 'consumeOcr');
