@@ -40,10 +40,14 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
     function run(int $taskId, int $workerIndex)
     {
         $uid = $this->data[0] - 0;
-        $ys = $this->createYs($this->data[1]);// A10
-        $nic = $this->createNic($this->data[2]);// F5147
-        $nx = $this->createNx($this->data[3]);// 8
-        $dy = $this->createDy($this->data[4]);// 110108
+        //$ys = $this->createYs($this->data[1]);// A10
+        $ys = ($this->data[1]);// A10
+        //$nic = $this->createNic($this->data[2]);// F5147
+        $nic = ($this->data[2]);// F5147
+        //$nx = $this->createNx($this->data[3]);// 8
+        $nx = ($this->data[3]);// 8
+        //$dy = $this->createDy($this->data[4]);// 110108
+        $dy = ($this->data[4]);// 110108
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
