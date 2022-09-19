@@ -144,7 +144,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
             }
 
             if (empty($entInsRedis)) {
-                break; 
+                break;
             }
 
             CommonService::getInstance()->log4PHP(

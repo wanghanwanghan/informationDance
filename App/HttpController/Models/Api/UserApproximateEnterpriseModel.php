@@ -54,7 +54,7 @@ class UserApproximateEnterpriseModel extends ModelBase
     }
 
     public  function findByConditionV2($whereArr,$page,$size){
-        $model = UserApproximateEnterpriseModel::create();
+        $model = $this::create(); 
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
