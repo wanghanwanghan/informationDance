@@ -97,7 +97,7 @@ class JinCaiShuKeService extends ServiceBase
     //
     private function signature(array $content, string $nsrsbh, string $serviceid, string $signType): string
     {
-        $content = base64_encode(jsonEncode($content, false));
+        empty($content) ? $content = '' : base64_encode(jsonEncode($content, false));
 
         $arr = [
             'appid' => $this->appKey,
@@ -340,6 +340,29 @@ class JinCaiShuKeService extends ServiceBase
             'jtnsrsbh' => $this->jtnsrsbh,
             'nsrsbh' => trim($nsrsbh),
             'content' => base64_encode(jsonEncode($content, false)),
+            'signature' => $this->signature($content, trim($nsrsbh), __FUNCTION__, $signType),
+            'signType' => $signType,
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->url, $post_data, [], ['enableSSL' => true]);
+
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
+    }
+
+    //api 获取企业当前税款所属期 用来判断企业是否全电企业，msg : 全电试点企业
+    function S000502(string $nsrsbh): array
+    {
+        $content = [];
+        $signType = '0';
+
+        $post_data = [
+            'appid' => $this->appKey,
+            'serviceid' => __FUNCTION__,
+            'jtnsrsbh' => $this->jtnsrsbh,
+            'nsrsbh' => trim($nsrsbh),
+            'content' => empty($content) ? '' : $content,
             'signature' => $this->signature($content, trim($nsrsbh), __FUNCTION__, $signType),
             'signType' => $signType,
         ];
