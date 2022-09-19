@@ -2113,7 +2113,8 @@ class SouKeController extends ControllerBase
         $page = $requestData['page']?:1;
         $size = $requestData['pageSize']?:10;
 
-        $lists = (new UserApproximateEnterpriseModel())->addSuffix($this->loginUserinfo['id'])->findByConditionV2(
+        $lists = (new UserApproximateEnterpriseModel())->findByConditionV2(
+            $this->loginUserinfo['id'],
             [],
             $page,
             $size

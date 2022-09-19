@@ -53,8 +53,8 @@ class UserApproximateEnterpriseModel extends ModelBase
         ];
     }
 
-    public  function findByConditionV2($whereArr,$page,$size){
-        $model = $this::create(); 
+    public  function findByConditionV2($uid,$whereArr,$page,$size){
+        $model = UserApproximateEnterpriseModel::create()->addSuffix($uid);
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
