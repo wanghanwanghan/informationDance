@@ -1460,12 +1460,15 @@ class Company extends ServiceBase
         $searchOption = json_decode($requestDataArr['searchOption'],true);
         $datas = [];
 
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                __CLASS__.__FUNCTION__ .__LINE__,
-//                '$datas' => $datas
-//            ])
-//        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'es_company_SearchAfterV2' =>
+                [
+                    '$searchOption'=>$searchOption,
+                ]
+            ])
+        );
 
         $size = 3500;
         $offset = 0;
@@ -1619,11 +1622,15 @@ class Company extends ServiceBase
             $totalNums -= $size;
             $offset +=$size;
         }
+
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
-                'generate data  done . costs seconds '=>microtime(true) - $start
+                'es_company_SearchAfterV2_end' =>
+                    [
+                        'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+                        'generate data  done . costs seconds '=>microtime(true) - $start
+                    ]
             ])
         );
         return $datas;

@@ -2523,7 +2523,12 @@ class XinDongService extends ServiceBase
         return str_replace('logo', '', $logoData->getAttr('file_path'));
     }
 
-    function getEsBasicInfoV2($companyId): array
+    function getEsBasicInfoV2($companyId,$configData = [
+        'fill_LAST_EMAIL'=>true,
+        'fill_logo'=>true,
+        'fill_tags'=>true,
+        'fill_gong_si_jian_jie_data_arr'=>true,
+    ]): array
     {
         $ElasticSearchService = new ElasticSearchService();
 
@@ -2547,25 +2552,34 @@ class XinDongService extends ServiceBase
         $hits = $responseArr['hits']['hits'];
 
         foreach($hits as &$dataItem){
-            $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
-            $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
-            $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
-            $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntIdV2($dataItem['_source']['companyid']);
+            if($configData['fill_LAST_EMAIL']){
+                $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
+                $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
+                $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
+            }
 
-            // 添加tag
-            $dataItem['_source']['tags'] = array_values(
-                (new XinDongService())::getAllTagesByData(
-                    $dataItem['_source']
-                )
-            );
+            if($configData['fill_logo']){
+                $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntIdV2($dataItem['_source']['companyid']);
+            }
 
-            // 公司简介
-            $tmpArr = explode('&&&', trim($dataItem['_source']['gong_si_jian_jie']));
-            array_pop($tmpArr);
-            $dataItem['_source']['gong_si_jian_jie_data_arr'] = [];
-            foreach($tmpArr as $tmpItem_){
-                // $dataItem['_source']['gong_si_jian_jie_data_arr'][] = [$tmpItem_];
-                $dataItem['_source']['gong_si_jian_jie_data_arr'][] = $tmpItem_;
+            if($configData['fill_tags']){
+                // 添加tag
+                $dataItem['_source']['tags'] = array_values(
+                    (new XinDongService())::getAllTagesByData(
+                        $dataItem['_source']
+                    )
+                );
+            }
+
+            if($configData['fill_gong_si_jian_jie_data_arr']){
+                // 公司简介
+                $tmpArr = explode('&&&', trim($dataItem['_source']['gong_si_jian_jie']));
+                array_pop($tmpArr);
+                $dataItem['_source']['gong_si_jian_jie_data_arr'] = [];
+                foreach($tmpArr as $tmpItem_){
+                    // $dataItem['_source']['gong_si_jian_jie_data_arr'][] = [$tmpItem_];
+                    $dataItem['_source']['gong_si_jian_jie_data_arr'][] = $tmpItem_;
+                }
             }
 
 

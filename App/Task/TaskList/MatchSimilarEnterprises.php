@@ -61,6 +61,18 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
     }
     static  function pushToRedisList($uid,$ys,$nic,$nx,$dy)
     {
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'pushToRedisList_start'=>[
+                    '$uid'=> $uid,
+                    '$ys'=> $ys,
+                    '$nic'=> $nic,
+                    '$nx'=> $nx,
+                    '$dy'=> $dy,
+                ]
+            ])
+        );
         $nic = self::createNicV2($nic);
         $dy = self::createDyV2($dy);
         $searchOptions = [];
@@ -113,7 +125,6 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
         }
 
         //地域
-
         $base = [
             $ys,$nic,$nx,$dy
         ];
@@ -121,38 +132,35 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
         $redis = Redis::defer('redis');
         $redis->select(15);
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                [
-                    'searchOption' =>  @json_encode($searchOptions),
-                    'basic_nicid' =>$nic,
-                    'basic_regionid' =>$dy,
-                ]
-            ])
-        );
-
         $page = 1;
         $runTimes = 0;
         $maxTimes = 100;
-
-        $companys = \App\ElasticSearch\Model\Company::SearchAfterV2(
-            $maxTimes,
-            [
-                'searchOption' =>  json_encode($searchOptions),
-                'basic_nicid' =>$nic,
-                'basic_regionid' =>$dy,
-            ]
-        );
+        $esRequestData =  [
+            'searchOption' =>  json_encode($searchOptions),
+            'basic_nicid' =>$nic,
+            'basic_regionid' =>$dy,
+        ];
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                [
-                    '$companys' =>$companys
+                'pushToRedisList_about_to_search_from_es'=>[
+                    '$esRequestData'=> $esRequestData,
                 ]
             ])
         );
 
+        $companys = \App\ElasticSearch\Model\Company::SearchAfterV2(
+            $maxTimes,
+            $esRequestData
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'pushToRedisList_search_from_es'=>[
+                    'es_return_nums'=> count($companys),
+                ]
+            ])
+        );
         foreach ($companys as $company){
             if($runTimes >= $maxTimes){
                 break;
@@ -164,8 +172,17 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
             $company['user_id'] = $uid;
             $company['ys_label'] = $company['ying_shou_gui_mo'];
             $company['base'] = $base;//参考系
-            $redis->lPush(MatchSimilarEnterprisesProccess::QueueKey, jsonEncode($company, false));
 
+            $redis->lPush(MatchSimilarEnterprisesProccess::QueueKey, jsonEncode($company, false));
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'pushToRedisList_lPush_to_Redis'=>[
+                        'list_key'=> MatchSimilarEnterprisesProccess::QueueKey,
+                        'value'=> jsonEncode($company, false),
+                    ]
+                ])
+            );
             $page++;
             $runTimes ++;
         }
