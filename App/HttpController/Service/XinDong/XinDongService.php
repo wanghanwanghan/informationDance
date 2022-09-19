@@ -1892,6 +1892,7 @@ class XinDongService extends ServiceBase
             'A42' => ['min' => 10000000,'max' => 99999999],
         ];
     }
+
     static function getYingShouGuiMoMapV3(){
         return    [
             5 => ['A1'], //微型

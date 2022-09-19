@@ -2000,12 +2000,35 @@ class SouKeController extends ControllerBase
 
         foreach ($featureslists['openFromX'] as $value){
            // $value
-            $mapedData['nicY'][] =  $value.'%';
+            if(strpos($value,'年') !== false){
+                $mapedData['openFromX'][] =  $value;
+            }
+            else{
+                $mapedData['openFromX'][] =  $value.'年';
+            }
         }
 
+        foreach ($featureslists['openFromY'] as $value){
+            $mapedData['openFromX'][] =  $value.'%';
+        }
+        $maps = XinDongService::getYingShouGuiMoMapV2();
+        foreach ($featureslists['YingShouX'] as $value){
+            $mapedData['YingShouX'][] =   $maps[$value]['min'].'万-'.$maps[$value]['max'].'万';
+        }
+
+        foreach ($featureslists['YingShouY'] as $value){
+            $mapedData['YingShouY'][] =   $value.'%';
+        }
+
+        foreach ($featureslists['areaX'] as $value){
+            $mapedData['areaX'][] =   CompanyBasic::findRegion($value);
+        }
+        foreach ($featureslists['areaY'] as $value){
+            $mapedData['areaY'][] =     $value.'%';
+        } 
 
         //开始分析
-        return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
+        return $this->writeJson(200,[ ] , $mapedData, '成功', true, []);
     }
     function getHistoryKeDongFeature(): bool
     {
