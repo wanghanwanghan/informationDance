@@ -674,7 +674,7 @@ class FinanceController extends ControllerBase
                 'value' => strtotime($createdAtArr[1]." 23:59:59"),
                 'operate' => '<=',
             ];
-        } 
+        }
 
         if(
             AdminUserRole::checkIfIsAdmin(

@@ -23,7 +23,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'MatchSimilarEnterprises_start_run'=>[
+                'MatchSimilarEnterprises_init'=>[
                     '$data'=> $data
                 ]
             ])
@@ -48,7 +48,11 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 'MatchSimilarEnterprises_start_run'=>[
-                    '$data'=> $data
+                    '$uid'=> $uid,
+                    '$ys'=> $ys,
+                    '$nic'=> $nic,
+                    '$nx'=> $nx,
+                    '$dy'=> $dy,
                 ]
             ])
         );
