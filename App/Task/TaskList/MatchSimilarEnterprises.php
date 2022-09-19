@@ -20,6 +20,14 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
 
     function __construct($data)
     {
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'MatchSimilarEnterprises_start_run'=>[
+                    '$data'=> $data
+                ]
+            ])
+        );
         $this->data = array_map(function ($row) {
             return trim($row);
         }, $data);
@@ -36,6 +44,15 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
         $nic = $this->createNic($this->data[2]);// F5147
         $nx = $this->createNx($this->data[3]);// 8
         $dy = $this->createDy($this->data[4]);// 110108
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'MatchSimilarEnterprises_start_run'=>[
+                    '$data'=> $data
+                ]
+            ])
+        );
+
         self::pushToRedisList($uid,$ys,$nic,$nx,$dy);
     }
     static  function pushToRedisList($uid,$ys,$nic,$nx,$dy)

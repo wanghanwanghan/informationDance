@@ -1933,11 +1933,7 @@ class SouKeController extends ControllerBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'startAnalysis'=>json_encode(
-                    [
-//                        'msg'=>
-                    ]
-                )
+                'startAnalysis_$featureslists'=> $featureslists
             ])
         );
         (new XinDongKeDongService())->MatchSimilarEnterprises(

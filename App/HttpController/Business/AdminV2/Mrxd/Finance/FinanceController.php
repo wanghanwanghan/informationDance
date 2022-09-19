@@ -657,6 +657,25 @@ class FinanceController extends ControllerBase
                 'operate' => '>=',
             ]
         ];
+
+        $createdAtStr = $this->getRequestData('created_at');
+        $createdAtArr = explode('|||',$createdAtStr);
+        if (
+            !empty($createdAtArr) &&
+            !empty($createdAtStr)
+        ) {
+            $whereArr[] = [
+                'field' => 'created_at',
+                'value' => strtotime($createdAtArr[0].' 00:00:00'),
+                'operate' => '>=',
+            ];
+            $whereArr[] = [
+                'field' => 'created_at',
+                'value' => strtotime($createdAtArr[1]." 23:59:59"),
+                'operate' => '<=',
+            ];
+        } 
+
         if(
             AdminUserRole::checkIfIsAdmin(
                 $this->loginUserinfo['id']
