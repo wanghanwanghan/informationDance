@@ -1992,7 +1992,7 @@ class SouKeController extends ControllerBase
         $mapedData = [];
         foreach ($featureslists['nicX'] as $value){
             $nicRes = NicCode::findNICID($value);
-            $mapedData['nicX'][] =  $nicRes['full_name'];
+            $mapedData['nicX'][] =  $nicRes['industry'];
         }
         foreach ($featureslists['nicY'] as $value){
 //            $mapedData['nicY'][] =  $value.'%';
@@ -2024,7 +2024,7 @@ class SouKeController extends ControllerBase
         }
 
         foreach ($featureslists['areaX'] as $value){
-            $mapedData['areaX'][] =   CompanyBasic::findRegion($value)['fulltitle'];
+            $mapedData['areaX'][] =   CompanyBasic::findRegion($value)['name'];
         }
         foreach ($featureslists['areaY'] as $value){
 //            $mapedData['areaY'][] =     $value.'%';
