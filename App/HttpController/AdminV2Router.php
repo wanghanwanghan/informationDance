@@ -169,13 +169,15 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/getUploadOpportunityLists', $prefix . 'getUploadOpportunityLists');
             $routeCollector->addRoute(['GET', 'POST'], '/getCountInfo', $prefix . 'getCountInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/getEntLianXi', $prefix . 'getEntLianXi');
-            //把企业添加到待分析列表
+            //把企业添加到待分析列表-done
             $routeCollector->addRoute(['GET', 'POST'], '/addCompanyToAnalyzeLists', $prefix . 'addCompanyToAnalyzeLists');
+            //把企业添加到待分析列表-done
             $routeCollector->addRoute(['GET', 'POST'], '/addCompanyToAnalyzeListsV2', $prefix . 'addCompanyToAnalyzeListsV2');
-            //根据名称搜索企业
+            //根据名称搜索企业 done
             $routeCollector->addRoute(['GET', 'POST'], '/serachCompanyByName', $prefix . 'serachCompanyByName');
-            //按文件传输
+            //按文件传输 done
             $routeCollector->addRoute(['GET', 'POST'], '/addCompanyToAnalyzeListsByFile', $prefix . 'addCompanyToAnalyzeListsByFile');
+            //---testing
             $routeCollector->addRoute(['GET', 'POST'], '/startAnalysis', $prefix . 'startAnalysis');
             $routeCollector->addRoute(['GET', 'POST'], '/delCompanyToAnalyzeLists', $prefix . 'delCompanyToAnalyzeLists');
             $routeCollector->addRoute(['GET', 'POST'], '/getKeDongFeature', $prefix . 'getKeDongFeature');
@@ -184,6 +186,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/getRecommendSearchOption', $prefix . 'getRecommendSearchOption');
             $routeCollector->addRoute(['GET', 'POST'], '/exportRecommendedCompanys', $prefix . 'exportRecommendedCompanys');
             $routeCollector->addRoute(['GET', 'POST'], '/recommendedCompanysExportLists', $prefix . 'recommendedCompanysExportLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/getKeDongSampleCompanys', $prefix . 'getKeDongSampleCompanys');
             $routeCollector->addRoute(['GET', 'POST'], '/getKeDongSampleCompanys', $prefix . 'getKeDongSampleCompanys');
             $routeCollector->addRoute(['GET', 'POST'], '/analyzeHistory', $prefix . 'analyzeHistory');
         });

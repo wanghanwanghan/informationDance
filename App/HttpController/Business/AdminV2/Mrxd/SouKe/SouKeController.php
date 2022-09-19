@@ -1928,7 +1928,6 @@ class SouKeController extends ControllerBase
             return $this->writeJson(202,[ ] , [], '请最少上传5家企业再进行分析', true, []);
         }
 
-
         //提取特征
         $featureslists = XinDongKeDongAnalyzeList::extractFeatureV2($this->loginUserinfo['id'],false);
         CommonService::getInstance()->log4PHP(
@@ -2073,7 +2072,12 @@ class SouKeController extends ControllerBase
 //            $featureslists['DOMDISTRICT']
 //        );
         //开始分析
-        return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
+        return $this->writeJson(200,[
+            'page' => $page,
+            'pageSize' => $size,
+            'total' => $featureslists['total'],
+            'totalPage' => (int)($featureslists['total']/$size)+1,
+            ] , $featureslists['data'], '成功', true, []);
     }
     function getRecommendCompanysV2(): bool
     {
@@ -2106,7 +2110,12 @@ class SouKeController extends ControllerBase
 //            $featureslists['DOMDISTRICT']
 //        );
         //开始分析
-        return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
+        return $this->writeJson(200,[
+            'page' => $page,
+            'pageSize' => $size,
+            'total' => $featureslists['total'],
+            'totalPage' => (int)($featureslists['total']/$size)+1,
+        ] , $featureslists['data'], '成功', true, []);
     }
 
     /**
@@ -2159,7 +2168,12 @@ class SouKeController extends ControllerBase
 
         // SoukeRecommendCompanyExportHistory::addRecordV2();
         // SoukeRecommendCompanyExportHistoryDetails::addRecord();
-        return $this->writeJson(200,[ ] , $lists, '成功', true, []);
+        return $this->writeJson(200,[
+            'page' => $page,
+            'pageSize' => $size,
+            'total' => $lists['total'],
+            'totalPage' => (int)($lists['total']/$size)+1,
+        ] , $lists['data'], '成功', true, []);
 
     }
 

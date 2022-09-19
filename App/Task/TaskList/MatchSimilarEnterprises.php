@@ -32,94 +32,11 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
     function run(int $taskId, int $workerIndex)
     {
         $uid = $this->data[0] - 0;
-
-        $searchOptions = [];
-        //营收规模
         $ys = $this->createYs($this->data[1]);// A10
-        if($ys){
-            $yingshouMap = XinDongService::getYingShouGuiMoMapV3();
-            $yingshouMap = array_flip($yingshouMap);
-            $searchOptions[] = [
-                'pid'=> 50,
-                'value'=>[$yingshouMap[$ys]],
-            ];
-        }
-
-        //国标行业
         $nic = $this->createNic($this->data[2]);// F5147
-        //年限
         $nx = $this->createNx($this->data[3]);// 8
-        if($nx){
-            $tmpValue = 2;
-            if($nx == '0-2'){
-                $tmpValue = 2;
-            }
-
-            if($nx == '2-5'){
-                $tmpValue = 5;
-            }
-
-            if($nx == '5-10'){
-                $tmpValue = 10;
-            }
-
-            if($nx == '10-15'){
-                $tmpValue = 15;
-            }
-
-            if($nx == '15-20'){
-                $tmpValue = 20;
-            }
-
-            if($nx == '20年以上'){
-                $tmpValue = 25;
-            }
-
-            $searchOptions[] = [
-                'pid'=> 20,
-                'value'=>[$tmpValue],
-            ];
-        }
-
-        //地域
         $dy = $this->createDy($this->data[4]);// 110108
-
-        $base = [
-            $this->data[1], $this->data[2], $this->data[3], $this->data[4]
-        ];
-
-        $redis = Redis::defer('redis');
-        $redis->select(15);
-
-        $page = 1;
-
-        $runTimes = 0;
-
-        $companys = Company::SearchAfter(
-            10000,
-            [
-                'searchOption' =>  @json_encode($searchOptions),
-                'basic_nicid' =>$nic,
-                'basic_regionid' =>$dy,
-            ]
-        );
-
-        foreach ($companys as $company){
-            if($runTimes >= 10000){
-                break;
-            }
-            if (empty($res)) {
-                break;
-            }
-
-            $company['user_id'] = $uid;
-            $company['base'] = $base;//参考系
-            $redis->lPush(MatchSimilarEnterprisesProccess::QueueKey, jsonEncode($company, false));
-
-            $page++;
-            $runTimes ++;
-        }
-
+        self::pushToRedisList($uid,$ys,$nic,$nx,$dy);
     }
     static  function pushToRedisList($uid,$ys,$nic,$nx,$dy)
     {
@@ -183,8 +100,6 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
         $redis = Redis::defer('redis');
         $redis->select(15);
 
-
-
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
@@ -233,7 +148,6 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
             $page++;
             $runTimes ++;
         }
-
     }
 
     function runOld(int $taskId, int $workerIndex)
