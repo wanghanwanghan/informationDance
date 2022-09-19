@@ -169,7 +169,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
             if($runTimes >= $maxTimes){
                 break;
             }
-            if (empty($res)) {
+            if (empty($company)) {
                 break;
             }
 
