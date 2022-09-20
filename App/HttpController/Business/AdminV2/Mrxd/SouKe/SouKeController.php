@@ -2122,7 +2122,13 @@ class SouKeController extends ControllerBase
 
         foreach ($lists['data'] as &$value){
             $value['logo'] =  (new XinDongService())->getLogoByEntIdV2($value['companyid']);
-
+            //XXX
+            $res = (new XinDongService())->getEsBasicInfoV2($value['companyid'],[]);
+            $value['OPSCOPE'] = $res['OPSCOPE'];
+            $value['DOM'] = $res['DOM'];
+            $value['nic_full_name'] = $res['nic_full_name'];
+            $value['tong_xun_di_zhi'] = $res['tong_xun_di_zhi'];
+            $value['ying_shou_gui_mo_cname'] = XinDongService::getYingShouGuiMoMapV2()[$value['ying_shou_gui_mo']]['min'].'_'.XinDongService::getYingShouGuiMoMapV2()[$value['ying_shou_gui_mo']]['max'].'万';
             $value['short_name'] = '';
             if($value['entName']){
                 $value['short_name'] = CompanyBasic::findBriefName($value['entName']);
