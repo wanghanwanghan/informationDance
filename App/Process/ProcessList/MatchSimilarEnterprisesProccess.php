@@ -195,7 +195,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                     'companyid' => $info['companyid'],
                     'esid' => 0,
                     'score' => $score,
-                    'entName' => $res['entName'],
+                    'entName' => $res['ENTNAME'],
                     'ying_shou_gui_mo' => $res['ying_shou_gui_mo']?:'',
                     'nic_id' => $res['NIC_ID']?:'',
                     'area' => $res['DOMDISTRICT']?:'',
