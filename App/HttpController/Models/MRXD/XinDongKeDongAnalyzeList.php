@@ -460,22 +460,51 @@ class XinDongKeDongAnalyzeList extends ModelBase
 
         foreach ($nicIdsArr as $key => $value){
             $returnData['nicX'][] = $key;
-            $returnData['nicY'][] = number_format($value/$allNicScore,2,".","")*100;
-
+            $returnData['nicY'][] = number_format($value/$allNicScore,2)*100;
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        '$value' => $value,
+                        '$allNicScore' => $allNicScore,
+                        'test' => number_format($value/$allNicScore,2)*100,
+                    ]
+                ])
+            );
         }
 
         $OPFROMArr = $rawData['OPFROM'];
         $allOPFROMScore = array_sum($OPFROMArr);
         foreach ($OPFROMArr as $key => $value){
             $returnData['openFromX'][] = $key;
-            $returnData['openFromY'][] = number_format($value/$allOPFROMScore,2,".","")*100;
+            $returnData['openFromY'][] = number_format($value/$allOPFROMScore,2)*100;
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        '$value' => $value,
+                        '$allNicScore' => $allOPFROMScore,
+                        'test' => number_format($value/$allOPFROMScore,2)*100,
+                    ]
+                ])
+            );
         }
 
         $ying_shou_gui_moArr = $rawData['ying_shou_gui_mo'];
         $allYingSHouGuiMoScore = array_sum($ying_shou_gui_moArr);
         foreach ($ying_shou_gui_moArr as $key => $value){
             $returnData['YingShouX'][] = $key;
-            $returnData['YingShouY'][] = number_format($value/$allYingSHouGuiMoScore,2,".","")*100;
+            $returnData['YingShouY'][] = number_format($value/$allYingSHouGuiMoScore,2)*100;
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        '$value' => $value,
+                        '$allNicScore' => $allYingSHouGuiMoScore,
+                        'test' => number_format($value/$allYingSHouGuiMoScore,2)*100,
+                    ]
+                ])
+            );
         }
 
 
@@ -483,7 +512,17 @@ class XinDongKeDongAnalyzeList extends ModelBase
         $allDOMDISTRICTScore = array_sum($DOMDISTRICTArr);
         foreach ($DOMDISTRICTArr as $key => $value){
             $returnData['areaX'][] = $key;
-            $returnData['areaY'][] = number_format($value/$allDOMDISTRICTScore,2,".","")*100;
+            $returnData['areaY'][] = number_format($value/$allDOMDISTRICTScore,2)*100;
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        '$value' => $value,
+                        '$allNicScore' => $allDOMDISTRICTScore,
+                        'test' => number_format($value/$allDOMDISTRICTScore,2)*100,
+                    ]
+                ])
+            );
         }
 
         return $returnData;
