@@ -672,8 +672,9 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                     $field=='DOMDISTRICT' &&
                     $res['DOMDISTRICT'] >0
                 ){
-                    $regionRes = CompanyBasic::findRegion($res['DOMDISTRICT']);
-                    $res['DOMDISTRICT'] =  $regionRes['name'];
+//                    $regionRes = CompanyBasic::findRegion($res['DOMDISTRICT']);
+//                    $res['DOMDISTRICT'] =  $regionRes['name'];
+                    $res['DOMDISTRICT'] =  $res['DOM'];
                 }
 
                 //行业分类代码  findNICID
@@ -681,7 +682,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                     $field=='NIC_ID' &&
                    !empty( $res['NIC_ID'])
                 ){
-                    $nicRes = NicCode::findNICID($res['NIC_ID']);
+//                    $nicRes = NicCode::findNICID($res['NIC_ID']);
 //                    CommonService::getInstance()->log4PHP(json_encode([
 //                        'NIC_ID'=>$res['NIC_ID'],
 //                        '$nicRes'=>$nicRes,
@@ -760,9 +761,9 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 $newReords[$Record['entName']][$mobile]  = $mobile;
             }
             foreach ($newReords as $entName => $mobilesArr){
-                $details =  BussinessOpportunityDetails::findOneByName($entName,$id);
-                $details =  $details->toArray();
-                $code = trim($details['entCode']);
+//                $details =  BussinessOpportunityDetails::findOneByName($entName,$id);
+//                $details =  $details->toArray();
+//                $code = trim($details['entCode']);
 
                 $retData =  (new LongXinService())
                     ->setCheckRespFlag(true)
@@ -889,17 +890,15 @@ class RunDealBussinessOpportunity extends AbstractCronTask
     }
 
     // NonPublicise
-    static function getYieldNonPubliciseContactData($id){
+    static function getYieldNonPubliciseContactData($id,$allRecords){
         $datas = [];
-
-
 
         //如果不需要拉取公开的联系人
 //        if(!$bussinessOpportunity['pull_api']){
 //            return $datas;
 //        }
 
-        $allRecords = BussinessOpportunityDetails::findByUploadId($id);
+//        $allRecords = BussinessOpportunityDetails::findByUploadId($id);
         $newReords = [];
         foreach ($allRecords as $Record){
             $mobile = trim($Record['mobile']);
@@ -927,9 +926,9 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 continue;
             }
 
-            $details =  BussinessOpportunityDetails::findOneByName($recordItem['entName'],$id);
-            $details =  $details->toArray();
-            $code = trim($details['entCode']);
+//            $details =  BussinessOpportunityDetails::findOneByName($recordItem['entName'],$id);
+//            $details =  $details->toArray();
+//            $code = trim($details['entCode']);
 
             //匹配微信名字
             $matchedWeiXinName = WechatInfo::findByPhoneV2(($recordItem['mobile']));
@@ -1015,7 +1014,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             //第二部分 sheet2
             $sheet2Datas = self::getYieldPublicContactData($rawDataItem['id'],$bussinessOpportunity,$allRecords);
             //第三部分 sheet3
-            $sheet3Datas = self::getYieldNonPubliciseContactData($rawDataItem['id']);
+            $sheet3Datas = self::getYieldNonPubliciseContactData($rawDataItem['id'],$allRecords);
 
             //continue;
 
