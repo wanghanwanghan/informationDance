@@ -2121,6 +2121,8 @@ class SouKeController extends ControllerBase
         );
 
         foreach ($lists['data'] as &$value){
+            $value['logo'] =  (new XinDongService())->getLogoByEntIdV2($value['companyid']);
+
             $value['short_name'] = '';
             if($value['entName']){
                 $value['short_name'] = CompanyBasic::findBriefName($value['entName']);
