@@ -1999,6 +1999,9 @@ class SouKeController extends ControllerBase
             $mapedData['nicY'][] =  $value;
         }
 
+        $nicArr = array_combine($mapedData['nicX'],$mapedData['nicY']);
+        arsort($nicArr);
+
         foreach ($featureslists['openFromX'] as $value){
            // $value
             if(strpos($value,'年') !== false){
@@ -2013,6 +2016,10 @@ class SouKeController extends ControllerBase
 //            $mapedData['openFromY'][] =  $value.'%';
             $mapedData['openFromY'][] =  $value;
         }
+
+        $openFormArr = array_combine($mapedData['openFromX'],$mapedData['openFromY']);
+        arsort($openFormArr);
+
         $maps = XinDongService::getYingShouGuiMoMapV2();
         foreach ($featureslists['YingShouX'] as $value){
             $mapedData['YingShouX'][] =   $maps[$value]['min'].'万-'.$maps[$value]['max'].'万';
@@ -2023,6 +2030,10 @@ class SouKeController extends ControllerBase
             $mapedData['YingShouY'][] =   $value;
         }
 
+        $yingShouArr = array_combine($mapedData['YingShouX'],$mapedData['YingShouY']);
+        arsort($yingShouArr);
+
+
         foreach ($featureslists['areaX'] as $value){
             $mapedData['areaX'][] =   CompanyBasic::findRegion($value)['name'];
         }
@@ -2031,8 +2042,20 @@ class SouKeController extends ControllerBase
             $mapedData['areaY'][] =     $value;
         }
 
+        $areaArr = array_combine($mapedData['areaX'],$mapedData['areaY']);
+        arsort($areaArr);
+
         //开始分析
-        return $this->writeJson(200,[ ] , $mapedData, '成功', true, []);
+        return $this->writeJson(200,[ ] , [
+            'nicX'=> array_keys($nicArr),
+            'nicY'=> array_values($nicArr),
+            'openFromX'=> array_keys($openFormArr),
+            'openFromY'=> array_values($openFormArr),
+            'YingShouX'=> array_keys($yingShouArr),
+            'YingShouY'=> array_values($yingShouArr),
+            'areaX'=> array_keys($areaArr),
+            'areaY'=> array_values($areaArr),
+        ], '成功', true, []);
     }
     function getHistoryKeDongFeature(): bool
     {
