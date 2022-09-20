@@ -24,24 +24,11 @@ class send_to_mayi extends AbstractProcess
 {
     protected function run($arg)
     {
-        $content = [
-            'ys_label' => 'A8',
-            'NIC_ID' => 'F8888',
-            'ESDATE' => '2020',
-            'DOMDISTRICT' => '110104',
-            'companyid' => 100,
-            'user_id' => 1,
-            'base' => [
-                'A10',
-                'F5',
-                '8',
-                '110105',
-            ],
-        ];
+        $res = (new \App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService())
+            ->S000502('91441283MA54ANYH2P');
 
-        $redis = \EasySwoole\RedisPool\Redis::defer('redis');
-        $redis->select(15);
-        $redis->lPush('MatchSimilarEnterprisesQueue', jsonEncode($content, false));
+        dd($res);
+
 
     }
 

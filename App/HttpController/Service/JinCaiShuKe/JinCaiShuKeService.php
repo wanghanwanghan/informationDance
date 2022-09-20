@@ -97,7 +97,7 @@ class JinCaiShuKeService extends ServiceBase
     //
     private function signature(array $content, string $nsrsbh, string $serviceid, string $signType): string
     {
-        empty($content) ? $content = '' : base64_encode(jsonEncode($content, false));
+        $content = base64_encode(jsonEncode($content, false));
 
         $arr = [
             'appid' => $this->appKey,
@@ -354,7 +354,11 @@ class JinCaiShuKeService extends ServiceBase
     //api 获取企业当前税款所属期 用来判断企业是否全电企业，msg : 全电试点企业
     function S000502(string $nsrsbh): array
     {
-        $content = [];
+        $content = [
+            'requuid' => control::getUuid(),// 傻逼写的接口
+            'rwh' => control::getUuid(),// 自己写的接口自己都调不通，参数必须瞎传才能用
+        ];
+
         $signType = '0';
 
         $post_data = [
@@ -362,7 +366,7 @@ class JinCaiShuKeService extends ServiceBase
             'serviceid' => __FUNCTION__,
             'jtnsrsbh' => $this->jtnsrsbh,
             'nsrsbh' => trim($nsrsbh),
-            'content' => empty($content) ? '' : $content,
+            'content' => base64_encode(jsonEncode($content, false)),
             'signature' => $this->signature($content, trim($nsrsbh), __FUNCTION__, $signType),
             'signType' => $signType,
         ];
