@@ -2119,6 +2119,14 @@ class SouKeController extends ControllerBase
             $page,
             $size
         );
+
+        foreach ($lists['data'] as &$value){
+            $value['short_name'] = '';
+            if($value['entNames']){
+                $value['short_name'] = CompanyBasic::findBriefName($value['entNames']);
+            }
+        }
+
 //        (new XinDongKeDongService())->MatchSimilarEnterprises(
 //            $this->loginUserinfo['id'],
 //            $featureslists['ying_shou_gui_mo'],
@@ -2221,12 +2229,9 @@ class SouKeController extends ControllerBase
             $page,
             $size
         );
-        foreach ($lists['data'] as &$value){
-            $value['short_name'] = '';
-            if($value['entNames']){
-                $value['short_name'] = CompanyBasic::findBriefName($value['entNames']);
-            }
-        }
+//        foreach ($lists['data'] as &$value){
+//
+//        }
         return $this->writeJson(
             200,
             [
