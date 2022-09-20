@@ -147,15 +147,15 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                 break;
             }
 
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'MatchSimilarEnterprisesProccess_pop_from_redis'=>[
-                        'list_key'=> self::QueueKey,
-                        '$entInsRedis'=> $entInsRedis,
-                    ]
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    'MatchSimilarEnterprisesProccess_pop_from_redis'=>[
+//                        'list_key'=> self::QueueKey,
+//                        '$entInsRedis'=> $entInsRedis,
+//                    ]
+//                ])
+//            );
 
             $info = jsonDecode($entInsRedis);
 
@@ -188,7 +188,14 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
             $res['ENTTYPE'] && $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
             $res['ENTSTATUS_CNAME'] =   '';
             $res['ENTSTATUS'] && $res['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($res['ENTSTATUS']);
-
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'MatchSimilarEnterprisesProccess_pop_from_redis'=>[
+                        'ENTNAME'=>  $res['ENTNAME'], 
+                    ]
+                ])
+            );
             try {
                 UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
                     'userid' => $info['user_id'],
