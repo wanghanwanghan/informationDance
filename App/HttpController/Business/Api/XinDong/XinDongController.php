@@ -3638,7 +3638,7 @@ eof;
                 'basic_nicid' =>'F5',
             ];
 
-            $companys = \App\ElasticSearch\Model\Company::SearchAfterV2(
+            $companys = \App\ElasticSearch\Model\Company::SearchAfterV3(
                 $maxTimes,
                 $esRequestData
             );
