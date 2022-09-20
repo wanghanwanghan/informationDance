@@ -2221,7 +2221,12 @@ class SouKeController extends ControllerBase
             $page,
             $size
         );
-
+        foreach ($lists['data'] as &$value){
+            $value['short_name'] = '';
+            if($value['entNames']){
+                $value['short_name'] = CompanyBasic::findBriefName($value['entNames']);
+            }
+        }
         return $this->writeJson(
             200,
             [

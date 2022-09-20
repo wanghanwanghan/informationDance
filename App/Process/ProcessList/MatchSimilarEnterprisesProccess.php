@@ -192,7 +192,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'MatchSimilarEnterprisesProccess_pop_from_redis'=>[
-                        'ENTNAME'=>  $res['ENTNAME'], 
+                        'ENTNAME'=>  $res['ENTNAME'],
                     ]
                 ])
             );
