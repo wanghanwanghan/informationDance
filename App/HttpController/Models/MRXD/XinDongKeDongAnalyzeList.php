@@ -468,6 +468,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
                         '$value' => $value,
                         '$allNicScore' => $allNicScore,
                         'test' => number_format($value/$allNicScore,2)*100,
+                        'test1' => substr(number_format($value/$allNicScore,2)*100, 0, 3) ,
                     ]
                 ])
             );
@@ -485,6 +486,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
                         '$value' => $value,
                         '$allNicScore' => $allOPFROMScore,
                         'test' => number_format($value/$allOPFROMScore,2)*100,
+                        'test1' => substr(number_format($value/$allOPFROMScore,2)*100, 0, 3) ,
                     ]
                 ])
             );
@@ -502,6 +504,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
                         '$value' => $value,
                         '$allNicScore' => $allYingSHouGuiMoScore,
                         'test' => number_format($value/$allYingSHouGuiMoScore,2)*100,
+                        'test1' => substr(number_format($value/$allYingSHouGuiMoScore,2)*100, 0, 3) ,
                     ]
                 ])
             );
@@ -520,6 +523,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
                         '$value' => $value,
                         '$allNicScore' => $allDOMDISTRICTScore,
                         'test' => number_format($value/$allDOMDISTRICTScore,2)*100,
+                        'test1' => substr(number_format($value/$allDOMDISTRICTScore,2)*100, 0, 3) ,
                     ]
                 ])
             );
