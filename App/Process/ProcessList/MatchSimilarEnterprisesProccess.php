@@ -152,6 +152,9 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                 $info['base'][0], $info['base'][1], $info['base'][2], $info['base'][3],
                 $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
             ))->expr();
+            if($score <= 70 ){
+
+            }
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,

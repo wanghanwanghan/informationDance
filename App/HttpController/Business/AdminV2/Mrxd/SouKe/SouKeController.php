@@ -2125,6 +2125,7 @@ class SouKeController extends ControllerBase
             //XXX
             $res = (new XinDongService())->getEsBasicInfoV2($value['companyid'],[]);
             $value['OPSCOPE'] = $res['OPSCOPE'];
+            $value['tuan_dui_ren_shu'] = $res['tuan_dui_ren_shu'];
             $value['DOM'] = $res['DOM'];
             $value['nic_full_name'] = $res['nic_full_name'];
             $value['tong_xun_di_zhi'] = $res['tong_xun_di_zhi'];
