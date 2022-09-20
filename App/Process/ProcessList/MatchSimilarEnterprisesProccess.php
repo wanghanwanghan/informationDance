@@ -113,22 +113,11 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
 
     static function calScore()
     {
-
-
         $redis = Redis::defer('redis');
         $redis->select(15);
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'calScore_start'=>[
-                    '$redis'=> $redis,
-                ]
-            ])
-        );
-
         //最多执行次数
-        $allowed_run_nums = 100;
+        $allowed_run_nums = 1000;
         //实际执行次数
         $run_nums = 0;
         //有效的数量
@@ -136,11 +125,11 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
         //分值超过90的
         $nums_bigger_than_90 = 0;
         //90分数量阈值  超过则不再取
-        $allowed_nums_bigger_than_90 = 100;
+        $allowed_nums_bigger_than_90 = 1000;
         //分值超过80的
         $nums_bigger_than_80 = 0;
         //最多80分数量   超过则不再取
-        $allowed_nums_bigger_than_80 = 300;
+        $allowed_nums_bigger_than_80 = 3000;
 
         //开始消费
         while (true) {
@@ -159,7 +148,6 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
             if (empty($entInsRedis)) {
                 break;
             }
-
 
             $info = jsonDecode($entInsRedis);
 

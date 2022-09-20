@@ -1462,6 +1462,116 @@ class Company extends ServiceBase
             ])
         );
     }
+    static  function SearchAfterV3($totalNums,$requestDataArr, $dataConfig = [ 'show_log' => true,]){
+        $startMemory = memory_get_usage();
+        $start = microtime(true);
+        $searchOption = json_decode($requestDataArr['searchOption'],true);
+        $datas = [];
+
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                '$datas' => $datas
+//            ])
+//        );
+
+        $size = 3500;
+        $offset = 0;
+        $nums =1;
+        $lastId = 0;
+        while ($totalNums > 0) {
+            if($totalNums<$size){
+                $size = $totalNums;
+            }
+
+            $companyEsModel = new \App\ElasticSearch\Model\Company();
+            $companyEsModel
+                //经营范围
+                ->SetQueryByBusinessScope(trim($requestDataArr['OPSCOPE']),"OPSCOPE")
+                //数字经济及其核心产业
+                ->SetQueryByBasicSzjjid(trim($requestDataArr['basic_szjjid']))
+                // 搜索文案 智能搜索
+                ->SetQueryBySearchText( $requestDataArr['searchText'])
+                ->SetQueryBySearchCompanyIds(
+                    !empty($requestDataArr['companyids'])?
+                        explode(',',$requestDataArr['companyids']):[]
+                )
+                ->SetQueryBySearchCompanyNames(
+                    !empty($requestDataArr['entNames'])?
+                        explode(',',$requestDataArr['entNames']):[]
+                )
+                // 搜索战略新兴产业
+                ->SetQueryByBasicJlxxcyid( $requestDataArr['basic_jlxxcyid']   )
+                // 搜索shang_pin_data 商品信息 appStr:五香;农庄
+                ->SetQueryByShangPinData( $requestDataArr['appStr']  )
+                //必须存在官网
+                ->SetQueryByWeb($searchOption)
+                //必须存在APP
+                ->SetQueryByApp($searchOption)
+                ->addSort('_id',"asc")
+                //必须是物流企业
+                ->SetQueryByWuLiuQiYe($searchOption)
+                // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
+                ->SetQueryByCompanyOrgType($searchOption)
+                // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
+                ->SetQueryByEstiblishTimeV2($searchOption)
+                // 营业状态   传过来的是 10  20  转换成文案后 去匹配
+                ->SetQueryByRegStatusV2($searchOption)
+                // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
+                ->SetQueryByRegCaptial($searchOption)
+                // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
+                ->SetQueryByTuanDuiRenShu($searchOption)
+                // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
+                ->SetQueryByYingShouGuiMo($searchOption)
+                //四级分类 basic_nicid: A0111,A0112,A0113,
+                ->SetQueryBySiJiFenLei($requestDataArr['basic_nicid'],'NIC_ID')
+                //公司类型
+                ->SetQueryByCompanyType(trim($requestDataArr['ENTTYPE']))
+                //公司状态
+                ->SetQueryByCompanyStatus(trim($requestDataArr['ENTSTATUS']))
+                // 地区 basic_regionid: 110101,110102,
+                ->SetQueryByBasicRegionid($requestDataArr['basic_regionid']  ,'DOMDISTRICT' )
+                ->addSize($size)
+                //->setSource($fieldsArr)
+                //设置默认值 不传任何条件 搜全部
+            ;
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    '$lastId' => $lastId,
+//                    '$totalNums' => $totalNums,
+//                    '$fieldsArr' => $fieldsArr,
+//                    'generate data  . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+//                    ' costs seconds '=>microtime(true) - $start
+//                ])
+//            );
+
+            if($lastId>0){
+                $companyEsModel->addSearchAfterV1($lastId);
+            }
+            // 格式化下日期和时间
+            $companyEsModel
+                ->setDefault()
+                ->searchFromEs('company_202209')
+                ->formatEsDate()
+                // 格式化下金额
+                ->formatEsMoney();
+            yield $datas[] = $companyEsModel->return_data['hits']['hits'];
+
+            $lastItem = end($companyEsModel->return_data['hits']['hits']);
+            $lastId = $lastItem['_id'];
+
+            $totalNums -= $size;
+            $offset +=$size;
+        }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+                'generate data  done . costs seconds '=>microtime(true) - $start
+            ])
+        );
+    }
     static  function SearchAfterV2($totalNums,$requestDataArr, $dataConfig = [ 'show_log' => true,]){
 
         $startMemory = memory_get_usage();

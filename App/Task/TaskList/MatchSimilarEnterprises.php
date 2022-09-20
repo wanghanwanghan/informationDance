@@ -139,20 +139,12 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
 
         $page = 1;
         $runTimes = 0;
-        $maxTimes = 100;
+        $maxTimes = 1000;
         $esRequestData =  [
             'searchOption' =>  json_encode($searchOptions),
             'basic_nicid' =>$nic,
             'basic_regionid' =>$dy,
         ];
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'pushToRedisList_about_to_search_from_es'=>[
-                    '$esRequestData'=> $esRequestData,
-                ]
-            ])
-        );
 
         $companys = \App\ElasticSearch\Model\Company::SearchAfterV2(
             $maxTimes,
@@ -162,6 +154,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 'pushToRedisList_search_from_es'=>[
+                    '$esRequestData'=> $esRequestData,
                     'es_return_nums'=> count($companys),
                 ]
             ])

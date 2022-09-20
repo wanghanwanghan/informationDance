@@ -37,7 +37,7 @@ class XinDongKeDongService extends ServiceBase
                         '$dy'=> $dy,
                     ]
                 ])
-            );;
+            );
         }
 
         //self::pushToRedisList($uid,$ys,$nic,$nx,$dy);

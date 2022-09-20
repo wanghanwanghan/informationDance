@@ -3630,6 +3630,26 @@ eof;
         $requestData =  $this->getRequestData();
 
         if(
+            $this->getRequestData('SearchAfterV3')
+        ){
+            $maxTimes = 10;
+            $esRequestData =  [
+                'searchOption' =>  '[]',
+                'basic_nicid' =>'F5',
+            ];
+
+            $companys = \App\ElasticSearch\Model\Company::SearchAfterV2(
+                $maxTimes,
+                $esRequestData
+            );
+            foreach ($companys as $item){
+                return $this->writeJson(200,[ ] , $item, '成功', true, []);
+            }
+            return $this->writeJson(200,[ ] , MatchSimilarEnterprisesProccess::calScore(), '成功', true, []);
+        }
+
+
+        if(
             $this->getRequestData('MatchSimilarEnterprisesProccess')
         ){
 
