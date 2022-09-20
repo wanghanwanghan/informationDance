@@ -127,15 +127,30 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
             ])
         );
 
-        //开始消费
+        //最多执行次数
         $allowed_run_nums = 100;
+        //实际执行次数
         $run_nums = 0;
+        //有效的数量
         $invalid_nums = 0;
+        //分值超过90的
         $nums_bigger_than_90 = 0;
+        //90分数量阈值  超过则不再取
+        $allowed_nums_bigger_than_90 = 100;
+        //分值超过80的
         $nums_bigger_than_80 = 0;
+        //最多80分数量   超过则不再取
+        $allowed_nums_bigger_than_80 = 300;
 
+        //开始消费
         while (true) {
-            if ($run_nums >= $allowed_run_nums) {
+            $run_nums ++;
+
+            if (
+                $run_nums >= $allowed_run_nums ||
+                $nums_bigger_than_90 >= $allowed_nums_bigger_than_90 ||
+                $nums_bigger_than_80 >= $allowed_nums_bigger_than_80
+            ) {
                 break;
             }
 
@@ -153,54 +168,39 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                 $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
             ))->expr();
 
+            //小于70的 不计算
             if($score <= 70 ){
                 continue ;
             }
 
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'MatchSimilarEnterprisesProccess_Score'=>[
-                        '$score'=> $score,
-                        '$info'=> $info,
-                        'param1' => $info['base'][0],
-                        'param2' => $info['base'][1],
-                        'param3' => $info['base'][2],
-                        'param4' => $info['base'][3],
-                        'param5' => $info['ys_label'],
-                        'param6' => $info['NIC_ID'],
-                        'param7' => substr($info['ESDATE'], 0, 4),
-                        'param8' => $info['DOMDISTRICT']
-                    ]
-                ])
-            );
+            if(
+                $info['ENTSTATUS'] &&
+                in_array($info['ENTSTATUS'],array_keys(CodeEx02::invalidCodeMap()))
+            ){
+                continue;
+            };
 
+            $invalid_nums ++;
 
-            $res = (new XinDongService())->getEsBasicInfoV2($info['companyid'],[]);
+            if($score >= 80 ){
+                $nums_bigger_than_80 ++ ;
 
+            }
+            if($score >= 90 ){
+                $nums_bigger_than_90 ++ ;
+            }
 
-            $res['ENTTYPE'] && $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
-            $res['ENTSTATUS_CNAME'] =   '';
-            $res['ENTSTATUS'] && $res['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($res['ENTSTATUS']);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'MatchSimilarEnterprisesProccess_pop_from_redis'=>[
-                        'ENTNAME'=>  $res['ENTNAME'],
-                    ]
-                ])
-            );
             try {
                 UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
                     'userid' => $info['user_id'],
                     'companyid' => $info['companyid'],
                     'esid' => 0,
                     'score' => $score,
-                    'entName' => $res['ENTNAME'],
-                    'ying_shou_gui_mo' => $res['ying_shou_gui_mo']?:'',
-                    'nic_id' => $res['NIC_ID']?:'',
-                    'area' => $res['DOMDISTRICT']?:'',
-                    'found_years_nums' => $res['OPFROM']>0?date('Y')-date('Y',strtotime($res['OPFROM'])):0,
+                    'entName' => $info['ENTNAME'],
+                    'ying_shou_gui_mo' => $info['ying_shou_gui_mo']?:'',
+                    'nic_id' => $info['NIC_ID']?:'',
+                    'area' => $info['DOMDISTRICT']?:'',
+                    'found_years_nums' => $info['OPFROM']>0?date('Y')-date('Y',strtotime($info['OPFROM'])):0,
                     'mvcc' => '',
                 ])->save();
             } catch (\Throwable $e) {
@@ -210,10 +210,8 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                 $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
                 CommonService::getInstance()->log4PHP($content);
             }
-
-            $nums ++;
         }
-        return $nums;
+        return $invalid_nums;
     }
 
     private function toEs(string $esid, array $data)

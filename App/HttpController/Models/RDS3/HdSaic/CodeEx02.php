@@ -28,6 +28,23 @@ class CodeEx02 extends ModelBase
         return $res;
     }
 
+    static function invalidCodeMap(){
+
+        return [
+            '2'=>'吊销',
+            '21'=>'吊销，未注销',
+            '22'=>'吊销，已注销',
+            '3'=>'注销',
+            '4'=>'迁出',
+            '5'=>'撤销',
+            '8'=>'停业',
+            '9_01'=>'撤销',
+            '9_04'=>'清算中',
+            '9_06'=>'拟注销',
+            '30'=>'正在注销',
+        ];
+
+    }
 
     public static function findByCode($UNISCID){
         $res =  CodeEx02::create()
