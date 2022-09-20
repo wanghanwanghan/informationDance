@@ -2122,8 +2122,8 @@ class SouKeController extends ControllerBase
 
         foreach ($lists['data'] as &$value){
             $value['short_name'] = '';
-            if($value['entNames']){
-                $value['short_name'] = CompanyBasic::findBriefName($value['entNames']);
+            if($value['entName']){
+                $value['short_name'] = CompanyBasic::findBriefName($value['entName']);
             }
         }
 
