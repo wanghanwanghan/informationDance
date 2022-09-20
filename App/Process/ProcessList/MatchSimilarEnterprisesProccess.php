@@ -128,34 +128,23 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
         );
 
         //开始消费
-        $nums = 0;
+        $allowed_run_nums = 100;
+        $run_nums = 0;
+        $invalid_nums = 0;
+        $nums_bigger_than_90 = 0;
+        $nums_bigger_than_80 = 0;
+
         while (true) {
-            $entInsRedis = $redis->rPop(self::QueueKey);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'calScore_$entInsRedis'=>[
-                        '$entInsRedis'=> $entInsRedis,
-                    ]
-                ])
-            );
-            if ($nums>=100) {
+            if ($run_nums >= $allowed_run_nums) {
                 break;
             }
+
+            $entInsRedis = $redis->rPop(self::QueueKey);
 
             if (empty($entInsRedis)) {
                 break;
             }
 
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    __CLASS__.__FUNCTION__ .__LINE__,
-//                    'MatchSimilarEnterprisesProccess_pop_from_redis'=>[
-//                        'list_key'=> self::QueueKey,
-//                        '$entInsRedis'=> $entInsRedis,
-//                    ]
-//                ])
-//            );
 
             $info = jsonDecode($entInsRedis);
 
