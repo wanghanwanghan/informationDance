@@ -137,8 +137,8 @@ function microTimeNew(): string
 //发票状态 大象值转蚂蚁需要的值
 function changeFPZT($FPZT): string
 {
-    //大象 : 1-正常 2-作废 3-红冲 8-失控 9-异常
-    //蚂蚁 : 0-正常 2-作废 3-红字 1-失控 4-异常
+    //大象 : 1-正常 2-作废 3-红冲 8-失控 9-异常 4-已部分红冲 5-已全额红冲 6-红冲发票待确认
+    //蚂蚁 : 0-正常 2-作废 3-红冲 1-失控 4-异常 5-已部分红冲 6-已全额红冲 7-红冲发票待确认
 
     switch (trim($FPZT)) {
         case '1':
@@ -155,6 +155,15 @@ function changeFPZT($FPZT): string
             break;
         case '9':
             $ret = '4';
+            break;
+        case '4':
+            $ret = '5';
+            break;
+        case '5':
+            $ret = '6';
+            break;
+        case '6':
+            $ret = '7';
             break;
         default:
             $ret = '';
@@ -223,7 +232,7 @@ function sqlRaw(string $sql, string $conn = null): ?array
     return $res['result'];
 }
 
-function sqlRawV2(string $sql, string $conn = null,$toArray = 1 )
+function sqlRawV2(string $sql, string $conn = null, $toArray = 1)
 {
     if (empty($conn)) {
         $conn = CreateConf::getInstance()->getConf('env.mysqlDatabase');
@@ -232,11 +241,11 @@ function sqlRawV2(string $sql, string $conn = null,$toArray = 1 )
     try {
         $queryBuilder = new QueryBuilder();
         $queryBuilder->raw($sql);
-        if($toArray){
+        if ($toArray) {
             $res = DbManager::getInstance()
                 ->query($queryBuilder, true, $conn)
                 ->toArray();
-        }else{
+        } else {
             $res = DbManager::getInstance()
                 ->query($queryBuilder, true, $conn);
         }

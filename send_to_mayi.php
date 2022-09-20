@@ -10,6 +10,7 @@ use App\HttpController\Service\CreateMysqlPoolForRDS3NicCode;
 use App\HttpController\Service\CreateMysqlPoolForProjectDb;
 use App\HttpController\Service\CreateMysqlPoolForRDS3SiJiFenLei;
 use App\HttpController\Service\CreateRedisPool;
+use App\HttpController\Service\DaXiang\DaXiangService;
 use \EasySwoole\EasySwoole\Core;
 use App\HttpController\Service\CreateDefine;
 use \EasySwoole\Component\Process\Config;
@@ -24,12 +25,17 @@ class send_to_mayi extends AbstractProcess
 {
     protected function run($arg)
     {
-        $res = (new \App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService())
-            ->S000502('91441283MA54ANYH2P');
+        $res = (new DaXiangService())
+            ->getInv('91110108MA01KPGK0L', '1', '91350200MA3435MH5A', '1', '10', '2022-06-27', '2022-06-29');
 
-        dd($res);
+        $content = jsonDecode(base64_decode($res['content']));
 
+        foreach ($content['data']['records'] as $one) {
+            if ($one['FPDM'] === '035022100211' && $one['FPHM'] === '23468601') {
+            }
+        }
 
+        dd(123123123);
     }
 
     protected function onShutDown()
