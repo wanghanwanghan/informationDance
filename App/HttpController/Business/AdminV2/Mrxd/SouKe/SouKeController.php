@@ -2228,6 +2228,12 @@ class SouKeController extends ControllerBase
             }
         }
 
+        // basic_regionid
+        $basic_regionidArr = json_decode($requestData['basic_regionid'],true);
+        if(!empty($basic_regionidArr)){
+            $sqlWhere .=  ' AND area  IN  ( '.join(',',$basic_regionidArr).' )';
+        }
+
         // clnx  成立年限
         if(!empty($requestData['clnx'])){
             $scoreArr = json_decode($requestData['clnx'],true);
