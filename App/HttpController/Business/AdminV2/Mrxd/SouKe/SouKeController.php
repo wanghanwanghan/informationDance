@@ -2141,7 +2141,8 @@ class SouKeController extends ControllerBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ ,
-                'params qpf ' =>  $requestData['qpf']
+                'params qpf ' =>  $requestData['qpf'],
+                'params jygm ' =>  $requestData['jygm']
             ])
         );
 
@@ -2149,7 +2150,6 @@ class SouKeController extends ControllerBase
 
         //分值
         if(!empty($requestData['qpf'])){
-            $sqlWhere .= " AND (  ";
             $scoreArr = json_decode($requestData['qpf'],true);
             $subScoreWhere = "";
             //   $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
@@ -2163,30 +2163,18 @@ class SouKeController extends ControllerBase
                 $subScoreWhere .= " (`score` >= 90 AND `score`<= 100 ) OR";
             }
             $subScoreWhere = substr($subScoreWhere,0,-2);
-            $sqlWhere .= $subScoreWhere;
-            $sqlWhere .= " )";
+
+            if(!empty($subScoreWheres)){
+                $sqlWhere .= " AND (  ";
+                $sqlWhere .= $subScoreWhere;
+                $sqlWhere .= " )";
+            }
         }
 
         //jygm 经营规模
         if(!empty($requestData['jygm'])){
-            /**
-            5 => ['A1'], //微型
-            10 => ['A2'], //小型C类
-            15 => ['A3'],// 小型B类
-            20 => ['A4'],// 小型A类
-            25 => ['A5'],// 中型C类
-            30 => ['A6'],// 中型B类
-            40 => ['A7'],// 中型A类
-            45 => ['A8'],// 大型C类
-            50 => ['A9'],//大型B类
-            60 => ['A10'],//大型A类，一般指规模在10亿以上，50亿以下
-            65 => ['A11'],//'特大型C类，一般指规模在50亿以上，100亿以下'
-            70 => ['A12'],//'特大型C类，一般指规模在50亿以上，100亿以下'
-            80 => ['A13'],//'特大型C类，一般指规模在50亿以上，100亿以下'
-             */
-            $sqlWhere .= " AND    ";
             $scoreArr = json_decode($requestData['jygm'],true);
-            $subScoreWhere = " (";
+            $subScoreWhere = "";
             //   $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
             if(in_array(5,$scoreArr)){
                 $subScoreWhere .= " 'A1',";
@@ -2228,8 +2216,9 @@ class SouKeController extends ControllerBase
                 $subScoreWhere .= " 'A13',";
             }
             $subScoreWhere = substr($subScoreWhere,0,-1);
-            $subScoreWhere .= " ) ";
-            $sqlWhere .=  ' ying_shou_gui_mo  IN '.$subScoreWhere;
+            if(!empty($subScoreWhere)){
+                $sqlWhere .=  ' AND ying_shou_gui_mo  IN  ( '.$subScoreWhere.' )';
+            } 
         }
 
         CommonService::getInstance()->log4PHP(
