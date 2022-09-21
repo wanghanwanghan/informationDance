@@ -2149,6 +2149,12 @@ class SouKeController extends ControllerBase
 
         $sqlWhere = " WHERE 1 = 1 ";
 
+        // searchText
+        if(!empty($requestData['searchText'])){
+            $sqlWhere  .= "  AND entName like '".$requestData['searchText']."%' ";
+        }
+
+
         //分值
         if(!empty($requestData['qpf'])){
             $scoreArr = json_decode($requestData['qpf'],true);
