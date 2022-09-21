@@ -2409,9 +2409,21 @@ class SouKeController extends ControllerBase
             $page,
             $size
         );
-//        foreach ($lists['data'] as &$value){
-//
-//        }
+        foreach ($lists['data'] as &$value){
+            $tmpArr = json_decode($value['feature_json'],true);
+            if($tmpArr['NIC_ID']){
+                $nicRes = NicCode::findNICID($tmpArr['NIC_ID']);
+                $value['NIC_ID_CNAME'] =  $nicRes['industry'];
+            }
+            if($tmpArr['ying_shou_gui_mo']){
+                $Maps = XinDongService::mapYingShouGuiMo();
+                $value['ying_shou_gui_mo_cname'] = $Maps[$tmpArr['ying_shou_gui_mo']];
+            }
+
+            $value['OPFROM'] = $tmpArr['OPFROM'];
+            $res = CompanyBasic::findRegion($tmpArr['DOMDISTRICT']);
+            $value['DOMDISTRICT_CNAME'] = $res['industry'];
+        }
         return $this->writeJson(
             200,
             [
