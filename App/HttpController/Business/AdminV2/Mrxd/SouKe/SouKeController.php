@@ -2171,7 +2171,9 @@ class SouKeController extends ControllerBase
             ])
         );
 
-        $lists = (new UserApproximateEnterpriseModel())->findBySqlV2(
+        $lists = (new UserApproximateEnterpriseModel())
+            ->addSuffix($this->loginUserinfo['id'])
+            ->findBySqlV2(
             $sqlWhere,
             $page,
             $size
