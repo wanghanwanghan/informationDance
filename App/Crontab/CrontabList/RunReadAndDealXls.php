@@ -154,15 +154,17 @@ class RunReadAndDealXls extends AbstractCronTask
                 }
             }
 
+            if ($i%100==0){ 
+                CommonService::getInstance()->log4PHP($xlsx_name.json_encode(
+                        [
+                            'value' => [$value2],
+                            'params' => $mobileStr,
+                            'res' => $res,
+                            'num' =>  $i
+                        ]
+                    ));
+            }
 
-            CommonService::getInstance()->log4PHP($xlsx_name.json_encode(
-                [
-                    'value' => [$value2],
-                    'params' => $mobileStr,
-                    'res' => $res,
-                    'num' =>  $i
-                ]
-            ));
 //            sleep(10);
             $i ++;
             yield $datas[] = [
