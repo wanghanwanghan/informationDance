@@ -378,6 +378,19 @@ class AdminUserFinanceData extends ModelBase
             $NewFinanceData =$getFinanceDataSourceDetailRes['NewFinanceData'] ;
         }
 
+        //有的就是没有找到这个企业
+        if($NewFinanceDataId <= 0){
+            OperatorLog::addRecord(
+                [
+                    'user_id' => $financeData['user_id'],
+                    'msg' =>  "企业:".$financeData['entName'] ,
+                    'details' =>json_encode( XinDongService::trace()),
+                    'type_cname' => '新后台导出财务数据-找不到$NewFinanceDataId',
+                ]
+            );
+            return true;
+        }
+
         //把$NewFinanceDataId更新到表
         self::updateNewFinanceDataId($id,$NewFinanceDataId);
 

@@ -178,7 +178,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 '评标专家' => $dataItem['评标专家'] ?:'' , //
                 'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
                 'url'  => $dataItem['url'] ?:'' , //
-                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 ):'' , //
+                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
             ];
 
         }
