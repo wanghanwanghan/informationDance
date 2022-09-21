@@ -23,7 +23,7 @@ class GetInvDataJinCai extends AbstractCronTask
     static function getRule(): string
     {
         // 每月17号取
-        return '1 20 21 * * ';
+        return '53 19 21 * * ';
     }
 
     static function getTaskName(): string
