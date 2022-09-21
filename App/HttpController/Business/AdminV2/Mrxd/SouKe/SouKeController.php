@@ -2146,6 +2146,8 @@ class SouKeController extends ControllerBase
         );
 
         $sqlWhere = " WHERE 1 = 1 ";
+
+        //分值
         if(!empty($requestData['qpf'])){
             $sqlWhere .= " AND (  ";
             $scoreArr = json_decode($requestData['qpf'],true);
@@ -2164,6 +2166,72 @@ class SouKeController extends ControllerBase
             $sqlWhere .= $subScoreWhere;
             $sqlWhere .= " )";
         }
+
+        //jygm 经营规模
+        if(!empty($requestData['jygm'])){
+            /**
+            5 => ['A1'], //微型
+            10 => ['A2'], //小型C类
+            15 => ['A3'],// 小型B类
+            20 => ['A4'],// 小型A类
+            25 => ['A5'],// 中型C类
+            30 => ['A6'],// 中型B类
+            40 => ['A7'],// 中型A类
+            45 => ['A8'],// 大型C类
+            50 => ['A9'],//大型B类
+            60 => ['A10'],//大型A类，一般指规模在10亿以上，50亿以下
+            65 => ['A11'],//'特大型C类，一般指规模在50亿以上，100亿以下'
+            70 => ['A12'],//'特大型C类，一般指规模在50亿以上，100亿以下'
+            80 => ['A13'],//'特大型C类，一般指规模在50亿以上，100亿以下'
+             */
+            $sqlWhere .= " AND    ";
+            $scoreArr = json_decode($requestData['jygm'],true);
+            $subScoreWhere = " (";
+            //   $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+            if(in_array(5,$scoreArr)){
+                $subScoreWhere .= " A1,";
+            }
+            if(in_array(10,$scoreArr)){
+                $subScoreWhere .= " A2,";
+            }
+            if(in_array(15,$scoreArr)){
+                $subScoreWhere .= " A3,";
+            }
+            if(in_array(20,$scoreArr)){
+                $subScoreWhere .= " A4,";
+            }
+            if(in_array(25,$scoreArr)){
+                $subScoreWhere .= " A5,";
+            }
+            if(in_array(30,$scoreArr)){
+                $subScoreWhere .= " A6,";
+            }
+            if(in_array(40,$scoreArr)){
+                $subScoreWhere .= " A7,";
+            }
+            if(in_array(45,$scoreArr)){
+                $subScoreWhere .= " A8,";
+            }
+            if(in_array(50,$scoreArr)){
+                $subScoreWhere .= " A9,";
+            }
+            if(in_array(60,$scoreArr)){
+                $subScoreWhere .= " A10,";
+            }
+            if(in_array(65,$scoreArr)){
+                $subScoreWhere .= " A11,";
+            }
+            if(in_array(70,$scoreArr)){
+                $subScoreWhere .= " A12,";
+            }
+            if(in_array(80,$scoreArr)){
+                $subScoreWhere .= " A13,";
+            }
+            $subScoreWhere = substr($subScoreWhere,0,-1);
+            $subScoreWhere .= " ) ";
+            $sqlWhere .=  ' ying_shou_gui_mo  IN '.$subScoreWhere; 
+        }
+
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ ,
