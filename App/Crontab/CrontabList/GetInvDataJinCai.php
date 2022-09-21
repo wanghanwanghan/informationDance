@@ -23,7 +23,7 @@ class GetInvDataJinCai extends AbstractCronTask
     static function getRule(): string
     {
         // 每月17号取
-        return '53 19 21 * * ';
+        return '59 19 21 * * ';
     }
 
     static function getTaskName(): string
@@ -92,21 +92,15 @@ class GetInvDataJinCai extends AbstractCronTask
                         $ywBody
                     );
 
-                    CommonService::getInstance()->log4PHP($addTaskInfo);
-
-                    $data = jsonDecode(base64_decode($addTaskInfo['data']));
-
                     JinCaiTrace::create()->data([
                         'entName' => $target->getAttr('entName'),
                         'socialCredit' => $target->getAttr('socialCredit'),
-                        'success' => $addTaskInfo['success'] ?? '未返回',
                         'code' => $addTaskInfo['code'] ?? '未返回',
-                        'trace' => $addTaskInfo['trace'] ?? '未返回',
                         'type' => 1,// 无盘
-                        'province' => $data['province'] ?? '未返回',
-                        'taskCode' => $data['taskCode'] ?? '未返回',
-                        'taskStatus' => $data['taskStatus'] ?? '未返回',
-                        'traceNo' => $data['traceNo'] ?? '未返回',
+                        'province' => $addTaskInfo['result']['province'] ?? '未返回',
+                        'taskCode' => $addTaskInfo['result']['taskCode'] ?? '未返回',
+                        'taskStatus' => $addTaskInfo['result']['taskStatus'] ?? '未返回',
+                        'traceNo' => $addTaskInfo['result']['traceNo'] ?? '未返回',
                         'kprqq' => $kprqq,
                         'kprqz' => $kprqz,
                         'cxlx' => $cxlx,
