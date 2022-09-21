@@ -2222,6 +2222,39 @@ class SouKeController extends ControllerBase
             }
         }
 
+        // clnx  成立年限
+        if(!empty($requestData['clnx'])){
+            $scoreArr = json_decode($requestData['clnx'],true);
+            $subScoreWhere = "";
+            //   $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+            if(in_array(2,$scoreArr)){
+                $subScoreWhere .= " (`found_years_nums` >= 0 AND `found_years_nums`<= 2 ) OR";
+            }
+            if(in_array(5,$scoreArr)){
+                $subScoreWhere .= " (`found_years_nums` >= 2 AND `found_years_nums`<= 5 ) OR";
+            }
+            if(in_array(10,$scoreArr)){
+                $subScoreWhere .= " (`found_years_nums` >= 5 AND `found_years_nums`<= 10 ) OR";
+            }
+            if(in_array(15,$scoreArr)){
+                $subScoreWhere .= " (`found_years_nums` >= 10 AND `found_years_nums`<= 15 ) OR";
+            }
+            if(in_array(20,$scoreArr)){
+                $subScoreWhere .= " (`found_years_nums` >= 15 AND `found_years_nums`<= 20 ) OR";
+            }
+            if(in_array(25,$scoreArr)){
+                $subScoreWhere .= " (`found_years_nums` >= 20) OR";
+            }
+
+            $subScoreWhere = substr($subScoreWhere,0,-2);
+
+            if(!empty($subScoreWheres)){
+                $sqlWhere .= " AND (  ";
+                $sqlWhere .= $subScoreWhere;
+                $sqlWhere .= " )";
+            }
+        }
+
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ ,
