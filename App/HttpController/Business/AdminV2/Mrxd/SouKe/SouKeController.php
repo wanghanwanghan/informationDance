@@ -2230,14 +2230,16 @@ class SouKeController extends ControllerBase
 
         // basic_regionid
         $basic_regionidArr = explode(',',$requestData['basic_regionid']);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ ,
-                'params $basic_regionidArr ' =>$basic_regionidArr
-            ])
-        );
         if(!empty($basic_regionidArr)){
-            $sqlWhere .=  ' AND area  IN  ( '.join(',',$basic_regionidArr).' )';
+            $basic_regionid_str  = "";
+            foreach ($basic_regionidArr as $basic_regionid){
+                if(intval($basic_regionid)>0){
+                    $basic_regionid_str .= intval($basic_regionid);
+                }
+            }
+            if($basic_regionid_str){
+                $sqlWhere .=  ' AND area  IN  ( '.$basic_regionid_str.' )';
+            }
         }
 
         // clnx  成立年限
