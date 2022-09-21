@@ -738,7 +738,8 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 ){
                     $baseArr[] = empty($res[$field])?'无':'有' ;
                 }else{
-                    $baseArr[] = $res[$field] ;
+
+                    $baseArr[] = str_split ( $res[$field], 32766 )  ;
                 }
             }
             yield $datas[] = $baseArr;
