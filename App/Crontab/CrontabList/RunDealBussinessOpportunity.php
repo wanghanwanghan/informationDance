@@ -1057,6 +1057,17 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
             $i = 1;
             foreach ($sheet1Datas as $dataItem){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        [
+                            'genenrate1'=>[
+                                '$i' => $i,
+                                '$dataItem' => $dataItem,
+                            ]
+                        ]
+                    ])
+                );
                 if ($i%100==0){
                     CommonService::getInstance()->log4PHP(
                         json_encode([
