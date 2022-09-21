@@ -738,7 +738,6 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 ){
                     $baseArr[] = empty($res[$field])?'无':'有' ;
                 }else{
-
                     $baseArr[] = str_split ( $res[$field], 32766 )  ;
                 }
             }
@@ -983,8 +982,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
      */
     static function  generateNewFile(){
         $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(
-            " WHERE id = 69 "
-//            " WHERE status =  ".AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success
+            " WHERE status =  ".AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success
         );
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -998,7 +996,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         );
         foreach ($rawDatas as $rawDataItem){
             if($rawDataItem['touch_time']>1){
-//                continue;
+                continue;
             }
             AdminUserBussinessOpportunityUploadRecord::updateById(
                 $rawDataItem['id'],
@@ -1058,17 +1056,6 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
             $i = 1;
             foreach ($sheet1Datas as $dataItem){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'genenrate1'=>[
-                                '$i' => $i,
-                                '$dataItem' => $dataItem,
-                            ]
-                        ]
-                    ])
-                );
                 if ($i%100==0){
                     CommonService::getInstance()->log4PHP(
                         json_encode([
