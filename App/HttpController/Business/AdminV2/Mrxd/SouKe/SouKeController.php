@@ -2234,9 +2234,10 @@ class SouKeController extends ControllerBase
             $basic_regionid_str  = "";
             foreach ($basic_regionidArr as $basic_regionid){
                 if(intval($basic_regionid)>0){
-                    $basic_regionid_str .= intval($basic_regionid);
+                    $basic_regionid_str .= intval($basic_regionid).',';
                 }
             }
+            $basic_regionid_str = substr($basic_regionid_str,0,-1);
             if($basic_regionid_str){
                 $sqlWhere .=  ' AND area  IN  ( '.$basic_regionid_str.' )';
             }
