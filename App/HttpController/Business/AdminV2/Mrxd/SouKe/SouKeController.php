@@ -2229,9 +2229,9 @@ class SouKeController extends ControllerBase
         }
 
         // basic_regionid
-        $basic_regionidArr = json_decode($requestData['basic_regionid'],true);
-        if(!empty($basic_regionidArr)){
-            $sqlWhere .=  ' AND area  IN  ( '.join(',',$basic_regionidArr).' )';
+       // $basic_regionidArr = json_decode($requestData['basic_regionid'],true);
+        if(!empty($requestData['basic_regionid'])){
+            $sqlWhere .=  ' AND area  IN  ( '.$requestData['basic_regionid'].' )';
         }
 
         // clnx  成立年限
