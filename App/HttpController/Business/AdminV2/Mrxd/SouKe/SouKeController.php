@@ -2189,47 +2189,47 @@ class SouKeController extends ControllerBase
             $subScoreWhere = " (";
             //   $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
             if(in_array(5,$scoreArr)){
-                $subScoreWhere .= " A1,";
+                $subScoreWhere .= " 'A1',";
             }
             if(in_array(10,$scoreArr)){
-                $subScoreWhere .= " A2,";
+                $subScoreWhere .= " 'A2',";
             }
             if(in_array(15,$scoreArr)){
-                $subScoreWhere .= " A3,";
+                $subScoreWhere .= " 'A3',";
             }
             if(in_array(20,$scoreArr)){
-                $subScoreWhere .= " A4,";
+                $subScoreWhere .= " 'A4',";
             }
             if(in_array(25,$scoreArr)){
-                $subScoreWhere .= " A5,";
+                $subScoreWhere .= " 'A5',";
             }
             if(in_array(30,$scoreArr)){
-                $subScoreWhere .= " A6,";
+                $subScoreWhere .= " 'A6',";
             }
             if(in_array(40,$scoreArr)){
-                $subScoreWhere .= " A7,";
+                $subScoreWhere .= " 'A7',";
             }
             if(in_array(45,$scoreArr)){
-                $subScoreWhere .= " A8,";
+                $subScoreWhere .= " 'A8',";
             }
             if(in_array(50,$scoreArr)){
-                $subScoreWhere .= " A9,";
+                $subScoreWhere .= " 'A9',";
             }
             if(in_array(60,$scoreArr)){
-                $subScoreWhere .= " A10,";
+                $subScoreWhere .= " 'A10',";
             }
             if(in_array(65,$scoreArr)){
-                $subScoreWhere .= " A11,";
+                $subScoreWhere .= " 'A11',";
             }
             if(in_array(70,$scoreArr)){
-                $subScoreWhere .= " A12,";
+                $subScoreWhere .= " 'A12',";
             }
             if(in_array(80,$scoreArr)){
-                $subScoreWhere .= " A13,";
+                $subScoreWhere .= " 'A13',";
             }
             $subScoreWhere = substr($subScoreWhere,0,-1);
             $subScoreWhere .= " ) ";
-            $sqlWhere .=  ' ying_shou_gui_mo  IN '.$subScoreWhere; 
+            $sqlWhere .=  ' ying_shou_gui_mo  IN '.$subScoreWhere;
         }
 
         CommonService::getInstance()->log4PHP(
