@@ -23,7 +23,7 @@ class GetInvDataJinCai extends AbstractCronTask
     static function getRule(): string
     {
         // 每月17号取
-        return '47 19 21 * * ';
+        return '1 20 21 * * ';
     }
 
     static function getTaskName(): string
@@ -91,6 +91,8 @@ class GetInvDataJinCai extends AbstractCronTask
                         $target->getAttr('province'),
                         $ywBody
                     );
+
+                    CommonService::getInstance()->log4PHP($addTaskInfo);
 
                     $data = jsonDecode(base64_decode($addTaskInfo['data']));
 
