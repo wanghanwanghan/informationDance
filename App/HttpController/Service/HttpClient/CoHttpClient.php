@@ -67,7 +67,7 @@ class CoHttpClient extends ServiceBase
             $data = $data->getBody();
 //            dingAlarm('http返回',['$url'=>$url,'$data'=>json_encode($data),'$postData'=>json_encode($postData)]);
             $d = jsonDecode($data,true);
-            if(empty($data) || $d['Status'] != 200){
+            if(empty($data) || (isset($d['code']) && $d['code'] != 200)){
                 CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_http_return_data');
             }elseif (stripos($url,'qichacha') && $d['Status'] !=200){
                 CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_qichacha_http_return_data');
