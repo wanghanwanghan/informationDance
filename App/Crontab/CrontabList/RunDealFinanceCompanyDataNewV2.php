@@ -194,7 +194,15 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
     static function  pullFinanceDataV2($limit){
         //计算完价格的
         $allUploadRes =  AdminUserFinanceUploadRecord::findBySql(
-            " WHERE  id = 394   
+            " WHERE 
+            `status`  in (  
+                        ".AdminUserFinanceUploadRecordV3::$stateCalCulatedPrice. "  ,  
+                        ".AdminUserFinanceUploadRecordV3::$stateBalanceNotEnough. " ,
+                        ".AdminUserFinanceUploadRecordV3::$stateTooManyPulls. "  
+            )
+             AND touch_time  IS Null
+             ORDER BY priority ASC 
+           LIMIT $limit 
             "
         );
 
