@@ -125,6 +125,12 @@ class UserApproximateEnterpriseModel extends ModelBase
             'data' => $data2
         ];
     }
+    public  function deleteByUid($uid){
+        $Sql = " Delete QUICK from    `".$this->tableName."`  WHERE userid =   $uid " ;
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+
+        return $data;
+    }
 
 
     public  function searchFromEs($whereArr,$page,$limit){

@@ -1956,6 +1956,9 @@ class SouKeController extends ControllerBase
             ]
         );
 
+        (new UserApproximateEnterpriseModel()) ->addSuffix($this->loginUserinfo['id'])->deleteByUid($this->loginUserinfo['id']);
+        
+
         (new XinDongKeDongService())->MatchSimilarEnterprises(
             $this->loginUserinfo['id'],
             $featureslists['ying_shou_gui_mo'],
@@ -2218,7 +2221,7 @@ class SouKeController extends ControllerBase
             $subScoreWhere = substr($subScoreWhere,0,-1);
             if(!empty($subScoreWhere)){
                 $sqlWhere .=  ' AND ying_shou_gui_mo  IN  ( '.$subScoreWhere.' )';
-            } 
+            }
         }
 
         CommonService::getInstance()->log4PHP(
