@@ -2165,7 +2165,7 @@ class SouKeController extends ControllerBase
             }
             $subScoreWhere = substr($subScoreWhere,0,-2);
 
-            if(!empty($subScoreWheres)){
+            if(!empty($subScoreWhere)){
                 $sqlWhere .= " AND (  ";
                 $sqlWhere .= $subScoreWhere;
                 $sqlWhere .= " )";
@@ -2248,7 +2248,7 @@ class SouKeController extends ControllerBase
 
             $subScoreWhere = substr($subScoreWhere,0,-2);
 
-            if(!empty($subScoreWheres)){
+            if(!empty($subScoreWhere)){
                 $sqlWhere .= " AND (  ";
                 $sqlWhere .= $subScoreWhere;
                 $sqlWhere .= " )";
