@@ -172,15 +172,15 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
             $company['base'] = $base;//参考系
 
             $redis->lPush(MatchSimilarEnterprisesProccess::QueueKey, jsonEncode($company, false));
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'pushToRedisList_lPush_to_Redis'=>[
-                        'list_key'=> MatchSimilarEnterprisesProccess::QueueKey,
-                        'value'=> jsonEncode($company, false),
-                    ]
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    'pushToRedisList_lPush_to_Redis'=>[
+//                        'list_key'=> MatchSimilarEnterprisesProccess::QueueKey,
+//                        'value'=> jsonEncode($company, false),
+//                    ]
+//                ])
+//            );
             $page++;
             $runTimes ++;
         }
