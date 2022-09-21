@@ -70,6 +70,7 @@ class CoHttpClient extends ServiceBase
             if(empty($data) || (isset($d['code']) && $d['code'] != 200)){
                 CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_http_return_data');
             }elseif (stripos($url,'qichacha') && $d['Status'] !=200){
+                dingAlarmUser('企查查'.$d['Message'], ['$url' => $url, '$postData' => json_encode($postData), '$d' => json_encode($d)], [18511881968]);
                 CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_qichacha_http_return_data');
             }elseif(stripos($url,'api.wanvdata.com')){
                 CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_taoshu_http_return_data');
