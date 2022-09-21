@@ -2130,11 +2130,20 @@ class SouKeController extends ControllerBase
             'totalPage' => (int)($featureslists['total']/$size)+1,
             ] , $featureslists['data'], '成功', true, []);
     }
+
     function getRecommendCompanys(): bool
     {
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
         $size = $requestData['pageSize']?:10;
+
+        // qpf
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                'params qpf ' =>  $requestData['qpf']
+            ])
+        );
 
         $lists = (new UserApproximateEnterpriseModel())->findByConditionV2(
             $this->loginUserinfo['id'],
