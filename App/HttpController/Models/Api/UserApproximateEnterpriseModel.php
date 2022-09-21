@@ -111,7 +111,7 @@ class UserApproximateEnterpriseModel extends ModelBase
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
 
         $offset = ($page-1)*$size;
-        $Sql2 = " select * as total  
+        $Sql2 = " select * 
                             from  
                         `".$this->tableName."` 
                             $where 
