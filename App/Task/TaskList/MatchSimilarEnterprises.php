@@ -3,6 +3,7 @@
 namespace App\Task\TaskList;
 
 use App\ElasticSearch\Model\Company;
+use App\HttpController\Models\Api\UserApproximateEnterpriseModel;
 use App\HttpController\Models\BusinessBase\ApproximateEnterpriseModel;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\XinDong\XinDongService;
@@ -66,6 +67,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
 
     static  function pushToRedisList($uid,$ys,$nic,$nx,$dy)
     {
+        (new UserApproximateEnterpriseModel()) ->addSuffix($uid)->deleteByUid($uid);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,

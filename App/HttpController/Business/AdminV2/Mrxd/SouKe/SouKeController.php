@@ -1956,8 +1956,6 @@ class SouKeController extends ControllerBase
             ]
         );
 
-        (new UserApproximateEnterpriseModel()) ->addSuffix($this->loginUserinfo['id'])->deleteByUid($this->loginUserinfo['id']);
-
 
         (new XinDongKeDongService())->MatchSimilarEnterprises(
             $this->loginUserinfo['id'],
