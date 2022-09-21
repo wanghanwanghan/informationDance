@@ -982,7 +982,8 @@ class RunDealBussinessOpportunity extends AbstractCronTask
      */
     static function  generateNewFile(){
         $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(
-            " WHERE status =  ".AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success
+            " WHERE id = 69 " 
+//            " WHERE status =  ".AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success
         );
         CommonService::getInstance()->log4PHP(
             json_encode([
