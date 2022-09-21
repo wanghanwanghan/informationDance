@@ -2145,9 +2145,34 @@ class SouKeController extends ControllerBase
             ])
         );
 
-        $lists = (new UserApproximateEnterpriseModel())->findByConditionV2(
-            $this->loginUserinfo['id'],
-            [],
+        $sqlWhere = " WHERE 1 = 1 ";
+        if(!empty($requestData['qpf'])){
+            $sqlWhere .= " AND (  ";
+            $scoreArr = json_decode($requestData['qpf'],true);
+            $subScoreWhere = "";
+            //   $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+            if(in_array(5,$scoreArr)){
+                $subScoreWhere .= " (`score` >= 70 AND `score`<= 80 ) OR";
+            }
+            if(in_array(10,$scoreArr)){
+                $subScoreWhere .= " (`score` >= 80 AND `score`<= 90 ) OR";
+            }
+            if(in_array(15,$scoreArr)){
+                $subScoreWhere .= " (`score` >= 90 AND `score`<= 100 ) OR";
+            }
+            $subScoreWhere = substr($subScoreWhere,0,-2);
+            $sqlWhere .= $subScoreWhere;
+            $sqlWhere .= " )";
+        }
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                '$sqlWhere ' =>  $sqlWhere
+            ])
+        );
+
+        $lists = (new UserApproximateEnterpriseModel())->findBySqlV2(
+            $sqlWhere,
             $page,
             $size
         );
