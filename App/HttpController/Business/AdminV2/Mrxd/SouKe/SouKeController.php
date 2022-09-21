@@ -2422,7 +2422,7 @@ class SouKeController extends ControllerBase
 
             $value['OPFROM'] = $tmpArr['OPFROM'];
             $res = CompanyBasic::findRegion($tmpArr['DOMDISTRICT']);
-            $value['DOMDISTRICT_CNAME'] = $res['industry'];
+            $value['DOMDISTRICT_CNAME'] = $res['fulltitle'];
         }
         return $this->writeJson(
             200,
