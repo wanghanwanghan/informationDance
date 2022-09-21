@@ -28,7 +28,7 @@ class CreateDzqZhang extends TaskBase implements TaskInterface
         if (!empty($data['fileData'])) {
             foreach ($data['fileData'] as $datum) {
                 $d = AntAuthSealDetail::create()->where(['fileId' => $datum['fileId']])->get();
-                if ($d->getAttr('isSeal')) {
+                if ($d->getAttr('isSeal') == 'true') {
                     $gaizhangParam = [
                         'entName'      => $data['entName'],
                         'legalPerson'  => $data['legalPerson'],
