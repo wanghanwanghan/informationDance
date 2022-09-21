@@ -1956,6 +1956,7 @@ class SouKeController extends ControllerBase
             ]
         );
 
+
         (new XinDongKeDongService())->MatchSimilarEnterprises(
             $this->loginUserinfo['id'],
             $featureslists['ying_shou_gui_mo'],
@@ -2130,15 +2131,162 @@ class SouKeController extends ControllerBase
             'totalPage' => (int)($featureslists['total']/$size)+1,
             ] , $featureslists['data'], '成功', true, []);
     }
+
     function getRecommendCompanys(): bool
     {
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
         $size = $requestData['pageSize']?:10;
 
-        $lists = (new UserApproximateEnterpriseModel())->findByConditionV2(
-            $this->loginUserinfo['id'],
-            [],
+        // qpf
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                'params qpf ' =>  $requestData['qpf'],
+                'params jygm ' =>  $requestData['jygm']
+            ])
+        );
+
+        $sqlWhere = " WHERE 1 = 1 ";
+
+        // searchText
+        if(!empty($requestData['searchText'])){
+            $sqlWhere  .= "  AND entName like '".$requestData['searchText']."%' ";
+        }
+
+
+        //分值
+        if(!empty($requestData['qpf'])){
+            $scoreArr = json_decode($requestData['qpf'],true);
+            $subScoreWhere = "";
+            //   $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+            if(in_array(5,$scoreArr)){
+                $subScoreWhere .= " (`score` >= 70 AND `score`<= 80 ) OR";
+            }
+            if(in_array(10,$scoreArr)){
+                $subScoreWhere .= " (`score` >= 80 AND `score`<= 90 ) OR";
+            }
+            if(in_array(15,$scoreArr)){
+                $subScoreWhere .= " (`score` >= 90 AND `score`<= 100 ) OR";
+            }
+            $subScoreWhere = substr($subScoreWhere,0,-2);
+
+            if(!empty($subScoreWhere)){
+                $sqlWhere .= " AND (  ";
+                $sqlWhere .= $subScoreWhere;
+                $sqlWhere .= " )";
+            }
+        }
+
+        //jygm 经营规模
+        if(!empty($requestData['jygm'])){
+            $scoreArr = json_decode($requestData['jygm'],true);
+            $subScoreWhere = "";
+            //   $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+            if(in_array(5,$scoreArr)){
+                $subScoreWhere .= " 'A1',";
+            }
+            if(in_array(10,$scoreArr)){
+                $subScoreWhere .= " 'A2',";
+            }
+            if(in_array(15,$scoreArr)){
+                $subScoreWhere .= " 'A3',";
+            }
+            if(in_array(20,$scoreArr)){
+                $subScoreWhere .= " 'A4',";
+            }
+            if(in_array(25,$scoreArr)){
+                $subScoreWhere .= " 'A5',";
+            }
+            if(in_array(30,$scoreArr)){
+                $subScoreWhere .= " 'A6',";
+            }
+            if(in_array(40,$scoreArr)){
+                $subScoreWhere .= " 'A7',";
+            }
+            if(in_array(45,$scoreArr)){
+                $subScoreWhere .= " 'A8',";
+            }
+            if(in_array(50,$scoreArr)){
+                $subScoreWhere .= " 'A9',";
+            }
+            if(in_array(60,$scoreArr)){
+                $subScoreWhere .= " 'A10',";
+            }
+            if(in_array(65,$scoreArr)){
+                $subScoreWhere .= " 'A11',";
+            }
+            if(in_array(70,$scoreArr)){
+                $subScoreWhere .= " 'A12',";
+            }
+            if(in_array(80,$scoreArr)){
+                $subScoreWhere .= " 'A13',";
+            }
+            $subScoreWhere = substr($subScoreWhere,0,-1);
+            if(!empty($subScoreWhere)){
+                $sqlWhere .=  ' AND ying_shou_gui_mo  IN  ( '.$subScoreWhere.' )';
+            }
+        }
+
+        // basic_regionid
+        $basic_regionidArr = explode(',',$requestData['basic_regionid']);
+        if(!empty($basic_regionidArr)){
+            $basic_regionid_str  = "";
+            foreach ($basic_regionidArr as $basic_regionid){
+                if(intval($basic_regionid)>0){
+                    $basic_regionid_str .= intval($basic_regionid).',';
+                }
+            }
+            $basic_regionid_str = substr($basic_regionid_str,0,-1);
+            if($basic_regionid_str){
+                $sqlWhere .=  ' AND area  IN  ( '.$basic_regionid_str.' )';
+            }
+        }
+
+        // clnx  成立年限
+        if(!empty($requestData['clnx'])){
+            $scoreArr = json_decode($requestData['clnx'],true);
+            $subScoreWhere = "";
+            //   $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+            if(in_array(2,$scoreArr)){
+                $subScoreWhere .= " (`found_years_nums` >= 0 AND `found_years_nums`<= 2 ) OR";
+            }
+            if(in_array(5,$scoreArr)){
+                $subScoreWhere .= " (`found_years_nums` >= 2 AND `found_years_nums`<= 5 ) OR";
+            }
+            if(in_array(10,$scoreArr)){
+                $subScoreWhere .= " (`found_years_nums` >= 5 AND `found_years_nums`<= 10 ) OR";
+            }
+            if(in_array(15,$scoreArr)){
+                $subScoreWhere .= " (`found_years_nums` >= 10 AND `found_years_nums`<= 15 ) OR";
+            }
+            if(in_array(20,$scoreArr)){
+                $subScoreWhere .= " (`found_years_nums` >= 15 AND `found_years_nums`<= 20 ) OR";
+            }
+            if(in_array(25,$scoreArr)){
+                $subScoreWhere .= " (`found_years_nums` >= 20) OR";
+            }
+
+            $subScoreWhere = substr($subScoreWhere,0,-2);
+
+            if(!empty($subScoreWhere)){
+                $sqlWhere .= " AND (  ";
+                $sqlWhere .= $subScoreWhere;
+                $sqlWhere .= " )";
+            }
+        }
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                '$sqlWhere ' =>  $sqlWhere
+            ])
+        );
+
+        $lists = (new UserApproximateEnterpriseModel())
+            ->addSuffix($this->loginUserinfo['id'])
+            ->findBySqlV2(
+            $sqlWhere,
             $page,
             $size
         );
@@ -2261,9 +2409,21 @@ class SouKeController extends ControllerBase
             $page,
             $size
         );
-//        foreach ($lists['data'] as &$value){
-//
-//        }
+        foreach ($lists['data'] as &$value){
+            $tmpArr = json_decode($value['feature_json'],true);
+            if($tmpArr['NIC_ID']){
+                $nicRes = NicCode::findNICID($tmpArr['NIC_ID']);
+                $value['NIC_ID_CNAME'] =  $nicRes['industry'];
+            }
+            if($tmpArr['ying_shou_gui_mo']){
+                $Maps = XinDongService::mapYingShouGuiMo();
+                $value['ying_shou_gui_mo_cname'] = $Maps[$tmpArr['ying_shou_gui_mo']];
+            }
+
+            $value['OPFROM'] = $tmpArr['OPFROM'];
+            $res = CompanyBasic::findRegion($tmpArr['DOMDISTRICT']);
+            $value['DOMDISTRICT_CNAME'] = $res['fulltitle'];
+        }
         return $this->writeJson(
             200,
             [

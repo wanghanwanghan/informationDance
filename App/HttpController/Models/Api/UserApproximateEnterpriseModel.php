@@ -102,6 +102,35 @@ class UserApproximateEnterpriseModel extends ModelBase
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }
+    public  function findBySqlV2($where,$page,$size){
+        $Sql = " select count(1) as total  
+                            from  
+                        `".$this->tableName."` 
+                            $where
+      " ;
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+
+        $offset = ($page-1)*$size;
+        $Sql2 = " select * 
+                            from  
+                        `".$this->tableName."` 
+                            $where 
+                            LIMIT  $offset,$size
+        " ;
+        $data2 = sqlRaw($Sql2, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+
+
+        return [
+            'total' => $data[0]['total'],
+            'data' => $data2
+        ];
+    }
+    public  function deleteByUid($uid){
+        $Sql = " Delete QUICK from    `".$this->tableName."`  WHERE userid =   $uid " ;
+        $data = sqlRawV2($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+
+        return $data;
+    }
 
 
     public  function searchFromEs($whereArr,$page,$limit){
