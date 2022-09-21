@@ -23,7 +23,7 @@ class GetInvDataJinCai extends AbstractCronTask
     static function getRule(): string
     {
         // 每月17号取
-        return '42 19 21 * * ';
+        return '47 19 21 * * ';
     }
 
     static function getTaskName(): string
@@ -40,7 +40,7 @@ class GetInvDataJinCai extends AbstractCronTask
             $list = AntAuthList::create()->where([
                 'status' => MaYiService::STATUS_4,// 实际上是3
                 'getDataSource' => 2
-            ])->page($page, 100)->get()->toArray();
+            ])->page($page, 100)->all();
 
             if (empty($list)) break;
 
