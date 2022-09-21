@@ -982,7 +982,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
      */
     static function  generateNewFile(){
         $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(
-            " WHERE id = 69 " 
+            " WHERE id = 69 "
 //            " WHERE status =  ".AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success
         );
         CommonService::getInstance()->log4PHP(
@@ -997,7 +997,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         );
         foreach ($rawDatas as $rawDataItem){
             if($rawDataItem['touch_time']>1){
-                continue;
+//                continue;
             }
             AdminUserBussinessOpportunityUploadRecord::updateById(
                 $rawDataItem['id'],
