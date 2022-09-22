@@ -63,7 +63,7 @@ class GetJinCaiRwh extends AbstractCronTask
                     try {
                         $wupanTraceNo = $rwh_one['wupanTraceNo'];
                         $check = JinCaiRwh::create()->where('wupanTraceNo', $wupanTraceNo['wupanTraceNo'])->get();
-                        if (!empty($check)) {
+                        if (empty($check)) {
                             JinCaiRwh::create()->data([
                                 'taskStatus' => $wupanTraceNo['taskStatus'] ?? '未返回',
                                 'traceNo' => $rwh_list->getAttr('traceNo'),
