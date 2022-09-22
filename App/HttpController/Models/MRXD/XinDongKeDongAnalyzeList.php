@@ -461,17 +461,17 @@ class XinDongKeDongAnalyzeList extends ModelBase
         foreach ($nicIdsArr as $key => $value){
             $returnData['nicX'][] = $key;
             $returnData['nicY'][] = substr(number_format($value/$allNicScore,2)*100, 0, 3);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        '$value' => $value,
-                        '$allNicScore' => $allNicScore,
-                        'test' => number_format($value/$allNicScore,2)*100,
-                        'test1' => substr(number_format($value/$allNicScore,2)*100, 0, 3) ,
-                    ]
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    [
+//                        '$value' => $value,
+//                        '$allNicScore' => $allNicScore,
+//                        'test' => number_format($value/$allNicScore,2)*100,
+//                        'test1' => substr(number_format($value/$allNicScore,2)*100, 0, 3) ,
+//                    ]
+//                ])
+//            );
         }
 
         $OPFROMArr = $rawData['OPFROM'];
@@ -479,17 +479,17 @@ class XinDongKeDongAnalyzeList extends ModelBase
         foreach ($OPFROMArr as $key => $value){
             $returnData['openFromX'][] = $key;
             $returnData['openFromY'][] = substr(number_format($value/$allOPFROMScore,2)*100, 0, 3);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        '$value' => $value,
-                        '$allNicScore' => $allOPFROMScore,
-                        'test' => number_format($value/$allOPFROMScore,2)*100,
-                        'test1' => substr(number_format($value/$allOPFROMScore,2)*100, 0, 3) ,
-                    ]
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    [
+//                        '$value' => $value,
+//                        '$allNicScore' => $allOPFROMScore,
+//                        'test' => number_format($value/$allOPFROMScore,2)*100,
+//                        'test1' => substr(number_format($value/$allOPFROMScore,2)*100, 0, 3) ,
+//                    ]
+//                ])
+//            );
         }
 
         $ying_shou_gui_moArr = $rawData['ying_shou_gui_mo'];
@@ -497,17 +497,17 @@ class XinDongKeDongAnalyzeList extends ModelBase
         foreach ($ying_shou_gui_moArr as $key => $value){
             $returnData['YingShouX'][] = $key;
             $returnData['YingShouY'][] = substr(number_format($value/$allYingSHouGuiMoScore,2)*100, 0, 3) ;
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        '$value' => $value,
-                        '$allNicScore' => $allYingSHouGuiMoScore,
-                        'test' => number_format($value/$allYingSHouGuiMoScore,2)*100,
-                        'test1' => substr(number_format($value/$allYingSHouGuiMoScore,2)*100, 0, 3) ,
-                    ]
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    [
+//                        '$value' => $value,
+//                        '$allNicScore' => $allYingSHouGuiMoScore,
+//                        'test' => number_format($value/$allYingSHouGuiMoScore,2)*100,
+//                        'test1' => substr(number_format($value/$allYingSHouGuiMoScore,2)*100, 0, 3) ,
+//                    ]
+//                ])
+//            );
         }
 
 
@@ -516,17 +516,17 @@ class XinDongKeDongAnalyzeList extends ModelBase
         foreach ($DOMDISTRICTArr as $key => $value){
             $returnData['areaX'][] = $key;
             $returnData['areaY'][] = substr(number_format($value/$allDOMDISTRICTScore,2)*100, 0, 3) ;
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        '$value' => $value,
-                        '$allNicScore' => $allDOMDISTRICTScore,
-                        'test' => number_format($value/$allDOMDISTRICTScore,2)*100,
-                        'test1' => substr(number_format($value/$allDOMDISTRICTScore,2)*100, 0, 3) ,
-                    ]
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    [
+//                        '$value' => $value,
+//                        '$allNicScore' => $allDOMDISTRICTScore,
+//                        'test' => number_format($value/$allDOMDISTRICTScore,2)*100,
+//                        'test1' => substr(number_format($value/$allDOMDISTRICTScore,2)*100, 0, 3) ,
+//                    ]
+//                ])
+//            );
         }
 
         return $returnData;
@@ -548,6 +548,17 @@ class XinDongKeDongAnalyzeList extends ModelBase
         ];
         $res = [];
         $lists = XinDongKeDongAnalyzeList::findAllByUserIdV2($userId);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'getKeDongFeature'=>json_encode(
+                    [
+                        'findAllByUserIdV2'=>$userId,
+                        'count'=>count($lists),
+                    ]
+                )
+            ])
+        );
         $companyIds = array_column($lists,'companyid');
         $esRes = \App\ElasticSearch\Model\Company::serachFromEs(
             [
