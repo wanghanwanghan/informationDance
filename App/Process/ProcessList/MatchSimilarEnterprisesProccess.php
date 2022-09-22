@@ -149,7 +149,9 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
             }
 
             $entInsRedis = $redis->rPop(self::QueueKey);
-
+            CommonService::getInstance()->log4PHP(json_encode([ 
+                '$entInsRedis'=>$entInsRedis
+            ]));
             if (empty($entInsRedis)) {
                 CommonService::getInstance()->log4PHP(json_encode([
 
