@@ -649,7 +649,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
     }
 
     //导出
-    static function  exportRecommendCompanys($requestData,$userId){
+    static function  exportRecommendCompanys($datas){
         //
         //    $datas = self::searchFromEs();
         $exportNums = 0;
@@ -693,6 +693,8 @@ class XinDongKeDongAnalyzeList extends ModelBase
             ->defaultFormat($alignStyle)
         ;
 
+        $minscore = 100;
+        $maxscore = 0;
         foreach ($datas as $dataItem){
 //                CommonService::getInstance()->log4PHP(
 //                    json_encode([
@@ -713,7 +715,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
 //                        '$tmp'=>$tmp,
 //                    ])
 //                );
-            $fileObject ->data([$tmp]);
+            $fileObject ->data([$dataItem]);
         }
 
         CommonService::getInstance()->log4PHP(
@@ -738,6 +740,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
             'patch' => '/Static/Temp/'.$filename,
             'countnums' => $exportNums,
             'minscore' => $minscore,
+            'maxscore' => $maxscore,
         ]
          ;
     }

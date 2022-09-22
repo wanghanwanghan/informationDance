@@ -2137,6 +2137,26 @@ class SouKeController extends ControllerBase
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
         $size = $requestData['pageSize']?:10;
+        $lists = $this->generateRecommendCompanys($requestData);
+
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' => $size,
+                'total' => $lists['total'],
+                'totalPage' => (int)($lists['total']/$size)+1,
+            ] ,
+            $lists['data'],
+            '成功',
+            true,
+            []
+        );
+    }
+    function generateRecommendCompanys($requestData): bool
+    {
+        $page = $requestData['page']?:1;
+        $size = $requestData['pageSize']?:10;
 
         // qpf
         CommonService::getInstance()->log4PHP(
@@ -2307,29 +2327,8 @@ class SouKeController extends ControllerBase
             }
         }
 
-//        (new XinDongKeDongService())->MatchSimilarEnterprises(
-//            $this->loginUserinfo['id'],
-//            $featureslists['ying_shou_gui_mo'],
-//            $featureslists['NIC_ID'],
-//            $featureslists['OPFROM'],
-//            $featureslists['DOMDISTRICT
-//      ']
-
-//        );
         //开始分析
-        return $this->writeJson(
-            200,
-            [
-                'page' => $page,
-                'pageSize' => $size,
-                'total' => $lists['total'],
-                'totalPage' => (int)($lists['total']/$size)+1,
-            ] ,
-            $lists['data'],
-            '成功',
-            true,
-            []
-        );
+        return  $lists;
     }
 
     /**
@@ -2338,32 +2337,33 @@ class SouKeController extends ControllerBase
     function exportRecommendedCompanys(): bool
     {
         $requestData =  $this->getRequestData();
+        $page = $requestData['page']?:1;
+        //$size = $requestData['pageSize']?:100;
+        $requestData['sizes'] = 100;
         // 需要和用户等级挂钩  未付费用户 只能下载100个 付费用户 可继续下载
         //
         // SoukeRecommendCompanyExportHistory::addRecordV2();
         // SoukeRecommendCompanyExportHistoryDetails::addRecord();
 //
-//        $filePath = XinDongKeDongAnalyzeList::exportRecommendCompanys(
-//            $requestData,
-//            $this->loginUserinfo['id']
-//        );
-//
-//        // souke_recommend_company_export_history
-//
-//        SoukeRecommendCompanyExportHistory::addRecordV2(
-//            [
-//                'user_id' => $this->loginUserinfo['id'],
-//                'request_json' =>  json_encode($requestData),
-//                'name' => ($requestData['name'])?:'',
-//                'min_score' => 0,
-//                'max_score' => 0,
-//                'export_nums' => ($requestData['export_nums']),
-//                'status' => intval($requestData['status']),
-//                'remark' => $requestData['remark']?:'',
-//            ]
-//        );
+        $lists = $this->generateRecommendCompanys($requestData);
+        $fileRes = XinDongKeDongAnalyzeList::exportRecommendCompanys(
+            $lists['data']
+        );
 
-        return $this->writeJson(200,[ ] , '/Static/Temp/test.xlsx', '成功', true, []);
+        SoukeRecommendCompanyExportHistory::addRecordV2(
+            [
+                'user_id' => $this->loginUserinfo['id'],
+                'request_json' =>  json_encode($requestData),
+                'name' => ($requestData['name'])?:'',
+                'min_score' => 0,
+                'max_score' => 0,
+                'export_nums' => ($requestData['export_nums']),
+                'status' => intval($requestData['status']),
+                'remark' => $requestData['remark']?:'',
+            ]
+        );
+
+        return $this->writeJson(200,[ ] , $fileRes['patch'], '成功', true, []);
     }
 
     // 我的下载列表
