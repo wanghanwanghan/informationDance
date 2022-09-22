@@ -35,62 +35,62 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
         $redis->select(15);
 
         //开始消费
-        while (true) {
-            $entInRedis = $redis->rPop(self::QueueKey);
-
-
-            if (empty($entInRedis)) {
-                mt_srand();
-                \co::sleep(2);
-                continue;
-            }
-            $info = jsonDecode($entInRedis);
-
-            $score = (new qpf(
-                $info['base'][0], $info['base'][1], $info['base'][2], $info['base'][3],
-                $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
-            ))->expr();
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    __CLASS__.__FUNCTION__ .__LINE__,
-//                    'MatchSimilarEnterprisesProccess_Score'=>[
-//                        '$score'=> $score,
-//                        '$info'=> $info,
-//                        'param1' => $info['base'][0],
-//                        'param2' => $info['base'][1],
-//                        'param3' => $info['base'][2],
-//                        'param4' => $info['base'][3],
-//                        'param5' => $info['ys_label'],
-//                        'param6' => $info['NIC_ID'],
-//                        'param7' => substr($info['ESDATE'], 0, 4),
-//                        'param8' => $info['DOMDISTRICT']
-//                    ]
-//                ])
-//            );
-            $esid = control::getUuid();
-            $this->toEs($esid, $info);
-
-            try {
-                UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
-                    'userid' => $info['user_id'],
-                    'companyid' => $info['companyid'],
-                    'esid' => $esid,
-                    'score' => $score,
-                    'entName' => $info['ENTNAME'],
-                    'ying_shou_gui_mo' => $info['ying_shou_gui_mo']?:'',
-                    'nic_id' => $info['NIC_ID']?:'',
-                    'area' => $info['DOMDISTRICT']?:'',
-                    'found_years_nums' => $info['OPFROM']>0?date('Y')-date('Y',strtotime($info['OPFROM'])):0,
-                    'mvcc' => '',
-                ])->save();
-            } catch (\Throwable $e) {
-                $file = $e->getFile();
-                $line = $e->getLine();
-                $msg = $e->getMessage();
-                $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-                CommonService::getInstance()->log4PHP($content);
-            }
-        }
+//        while (true) {
+//            $entInRedis = $redis->rPop(self::QueueKey);
+//
+//
+//            if (empty($entInRedis)) {
+//                mt_srand();
+//                \co::sleep(2);
+//                continue;
+//            }
+//            $info = jsonDecode($entInRedis);
+//
+//            $score = (new qpf(
+//                $info['base'][0], $info['base'][1], $info['base'][2], $info['base'][3],
+//                $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
+//            ))->expr();
+////            CommonService::getInstance()->log4PHP(
+////                json_encode([
+////                    __CLASS__.__FUNCTION__ .__LINE__,
+////                    'MatchSimilarEnterprisesProccess_Score'=>[
+////                        '$score'=> $score,
+////                        '$info'=> $info,
+////                        'param1' => $info['base'][0],
+////                        'param2' => $info['base'][1],
+////                        'param3' => $info['base'][2],
+////                        'param4' => $info['base'][3],
+////                        'param5' => $info['ys_label'],
+////                        'param6' => $info['NIC_ID'],
+////                        'param7' => substr($info['ESDATE'], 0, 4),
+////                        'param8' => $info['DOMDISTRICT']
+////                    ]
+////                ])
+////            );
+//            $esid = control::getUuid();
+//            $this->toEs($esid, $info);
+//
+//            try {
+//                UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
+//                    'userid' => $info['user_id'],
+//                    'companyid' => $info['companyid'],
+//                    'esid' => $esid,
+//                    'score' => $score,
+//                    'entName' => $info['ENTNAME'],
+//                    'ying_shou_gui_mo' => $info['ying_shou_gui_mo']?:'',
+//                    'nic_id' => $info['NIC_ID']?:'',
+//                    'area' => $info['DOMDISTRICT']?:'',
+//                    'found_years_nums' => $info['OPFROM']>0?date('Y')-date('Y',strtotime($info['OPFROM'])):0,
+//                    'mvcc' => '',
+//                ])->save();
+//            } catch (\Throwable $e) {
+//                $file = $e->getFile();
+//                $line = $e->getLine();
+//                $msg = $e->getMessage();
+//                $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+//                CommonService::getInstance()->log4PHP($content);
+//            }
+//        }
     }
 
     static function calScore()
