@@ -8,7 +8,7 @@ use App\Crontab\CrontabList\FillEntAllField;
 use App\Crontab\CrontabList\GetAuthBook;
 use App\Crontab\CrontabList\GetAuthBookDZQ;
 use App\Crontab\CrontabList\GetInvData;
-use App\Crontab\CrontabList\GetInvDataJinCai;
+use App\Crontab\CrontabList\GetJinCaiTrace;
 use App\Crontab\CrontabList\MoveOut;
 use App\Crontab\CrontabList\RunCheckCapital;
 use App\Crontab\CrontabList\RunDianZiQianGetPdf;
@@ -28,7 +28,6 @@ use App\Crontab\CrontabList\RunDealEmailReceiver;
 use App\Crontab\CrontabList\RunDealCarInsuranceInstallment;
 use App\Crontab\CrontabList\RunDealBussinessOpportunity;
 use App\Crontab\CrontabList\RunDealQueueLists;
-
 use EasySwoole\Component\Singleton;
 use EasySwoole\EasySwoole\Crontab\Crontab;
 
@@ -47,7 +46,7 @@ class CrontabService
         $this->getAuthBookDZQ();
         $this->RunDianZiQianGetPdf();
         $this->getInvData();//123123123
-        $this->GetInvDataJinCai();//金财取数
+        $this->GetJinCaiTrace();//金财
         $this->RunSaiMengHuiZhiCaiWu();
         $this->RunSouKeUploadFiles();
         $this->RunCompleteCompanyData();
@@ -114,9 +113,9 @@ class CrontabService
         return Crontab::getInstance()->addTask(GetInvData::class);
     }
 
-    private function GetInvDataJinCai(): Crontab
+    private function GetJinCaiTrace(): Crontab
     {
-        return Crontab::getInstance()->addTask(GetInvDataJinCai::class);
+        return Crontab::getInstance()->addTask(GetJinCaiTrace::class);
     }
 
     private function RunDianZiQianGetPdf(): Crontab
