@@ -25,17 +25,26 @@ class send_to_mayi extends AbstractProcess
 {
     protected function run($arg)
     {
-        $res = (new DaXiangService())
-            ->getInv('91110108MA01KPGK0L', '1', '91350200MA3435MH5A', '1', '10', '2022-06-27', '2022-06-29');
+        for ($cxlx = 2; $cxlx--;) {
 
-        $content = jsonDecode(base64_decode($res['content']));
+            $nsrsbh = 'xxx';
+            $province = 'xxx';
 
-        foreach ($content['data']['records'] as $one) {
-            if ($one['FPDM'] === '035022100211' && $one['FPHM'] === '23468601') {
-            }
+            $ywBody = [
+                'cxlx' => trim($cxlx),//查询类型 0销项 1 进项
+                'kprqq' => \Carbon\Carbon::now()->subMonths(24)->startOfMonth()->format('Y-m-d'),//开票日期起
+                'kprqz' => \Carbon\Carbon::now()->subMonths(1)->endOfMonth()->format('Y-m-d'),//开票日期止
+                'nsrsbh' => $nsrsbh,//纳税人识别号
+            ];
+
+            $info1 = (new \App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService())
+                ->addTask($nsrsbh, $province, $ywBody);
+
+            dd($info1);
+
         }
 
-        dd(123123123);
+
     }
 
     protected function onShutDown()
