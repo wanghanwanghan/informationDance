@@ -143,8 +143,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
 
             $info = jsonDecode($entInsRedis);
             CommonService::getInstance()->log4PHP(json_encode([
-                '$info'=>$info,
-                'ENTNAME'=>$info['ENTNAME'],
+                'ENTNAMEXXXX'=>$info['ENTNAME'],
             ]));
             $score = (new qpf(
                 $info['base'][0], $info['base'][1], $info['base'][2], $info['base'][3],

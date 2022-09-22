@@ -40,6 +40,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
     // 第二步放到redis队列
     function run(int $taskId, int $workerIndex)
     {
+        return ;
         $uid = $this->data[0] - 0;
         //$ys = $this->createYs($this->data[1]);// A10
         $ys = ($this->data[1]);// A10
