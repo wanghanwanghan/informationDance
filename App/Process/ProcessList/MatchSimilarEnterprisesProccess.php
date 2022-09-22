@@ -145,15 +145,16 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
             }
 
             $entInsRedis = $redis->rPop(self::QueueKey);
-            CommonService::getInstance()->log4PHP(json_encode([
-                '$entInsRedis'=>$entInsRedis,
-            ]));
+
             if (empty($entInsRedis)) {
                 break;
             }
 
             $info = jsonDecode($entInsRedis);
-
+            CommonService::getInstance()->log4PHP(json_encode([
+                '$info'=>$info,
+                'ENTNAME'=>$info['ENTNAME'],
+            ]));
             $score = (new qpf(
                 $info['base'][0], $info['base'][1], $info['base'][2], $info['base'][3],
                 $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
