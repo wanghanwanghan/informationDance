@@ -219,6 +219,9 @@ class NewFinanceData extends ModelBase
             return [];
         }
         $res =  self::findById($id);
+        if(empty($res)){
+            return [];
+        }
         $data = $res->toArray();
         $newData = [];
         foreach ($data as $field => $dataItem){
