@@ -344,16 +344,16 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
                 $nums_bigger_than_90 ++ ;
             }
             try {
-                UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
-                    'userid' => $info['user_id'],
-                    'companyid' => $info['companyid'],
+                UserApproximateEnterpriseModel::create()->addSuffix($company['user_id'])->data([
+                    'userid' => $company['user_id'],
+                    'companyid' => $company['companyid'],
                     'esid' => 0,
                     'score' => $score,
-                    'entName' => $info['ENTNAME'],
-                    'ying_shou_gui_mo' => $info['ying_shou_gui_mo']?:'',
-                    'nic_id' => $info['NIC_ID']?:'',
-                    'area' => $info['DOMDISTRICT']?:'',
-                    'found_years_nums' => $info['OPFROM']>0?date('Y')-date('Y',strtotime($info['OPFROM'])):0,
+                    'entName' => $company['ENTNAME'],
+                    'ying_shou_gui_mo' => $company['ying_shou_gui_mo']?:'',
+                    'nic_id' => $company['NIC_ID']?:'',
+                    'area' => $company['DOMDISTRICT']?:'',
+                    'found_years_nums' => $company['OPFROM']>0?date('Y')-date('Y',strtotime($company['OPFROM'])):0,
                     'mvcc' => '',
                 ])->save();
             } catch (\Throwable $e) {
