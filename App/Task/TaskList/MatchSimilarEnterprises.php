@@ -70,7 +70,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
 
     static  function pushToRedisList($uid,$ys,$nic,$nx,$dy)
     {
-       // (new UserApproximateEnterpriseModel()) ->addSuffix($uid)->deleteByUid($uid);
+        (new UserApproximateEnterpriseModel()) ->addSuffix($uid)->deleteByUid($uid);
 
         $nic = self::createNicV2($nic);
         $dy = self::createDyV2($dy);

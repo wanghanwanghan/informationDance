@@ -23,7 +23,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
 
     protected function run($arg)
     {
-        CommonService::getInstance()->log4PHP('MatchSimilarEnterprisesProccess_run');
+//        CommonService::getInstance()->log4PHP('MatchSimilarEnterprisesProccess_run');
         parent::run($arg);
 
         $name = $this->getProcessName();
@@ -58,26 +58,26 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
             );
             $esid = control::getUuid();
             $this->toEs($esid, $info);
-//            try {
-//                UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
-//                    'userid' => $info['user_id'],
-//                    'companyid' => $info['companyid'],
-//                    'esid' => $esid,
-//                    'score' => $score,
-//                    'entName' => $info['ENTNAME'],
-//                    'ying_shou_gui_mo' => $info['ying_shou_gui_mo']?:'',
-//                    'nic_id' => $info['NIC_ID']?:'',
-//                    'area' => $info['DOMDISTRICT']?:'',
-//                    'found_years_nums' => $info['OPFROM']>0?date('Y')-date('Y',strtotime($info['OPFROM'])):0,
-//                    'mvcc' => '',
-//                ])->save();
-//            } catch (\Throwable $e) {
-//                $file = $e->getFile();
-//                $line = $e->getLine();
-//                $msg = $e->getMessage();
-//                $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-//                CommonService::getInstance()->log4PHP($content);
-//            }
+            try {
+                UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
+                    'userid' => $info['user_id'],
+                    'companyid' => $info['companyid'],
+                    'esid' => $esid,
+                    'score' => $score,
+                    'entName' => $info['ENTNAME'],
+                    'ying_shou_gui_mo' => $info['ying_shou_gui_mo']?:'',
+                    'nic_id' => $info['NIC_ID']?:'',
+                    'area' => $info['DOMDISTRICT']?:'',
+                    'found_years_nums' => $info['OPFROM']>0?date('Y')-date('Y',strtotime($info['OPFROM'])):0,
+                    'mvcc' => '',
+                ])->save();
+            } catch (\Throwable $e) {
+                $file = $e->getFile();
+                $line = $e->getLine();
+                $msg = $e->getMessage();
+                $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+                CommonService::getInstance()->log4PHP($content);
+            }
         }
     }
 
