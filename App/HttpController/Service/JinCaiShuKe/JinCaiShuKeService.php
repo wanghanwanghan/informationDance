@@ -456,6 +456,23 @@ class JinCaiShuKeService extends ServiceBase
         return $this->checkResp($res, 'wupan');
     }
 
+    //无盘 刷新任务
+    function refreshTask(string $traceNo): array
+    {
+        $url = 'task/refreshTask';
+
+        $post_data = [
+            'traceNo' => trim($traceNo)
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken], [], 'postjson');
+
+        return $this->checkResp($res, 'wupan');
+    }
+
 }
 
 

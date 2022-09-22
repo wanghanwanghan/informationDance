@@ -11,7 +11,7 @@ use App\HttpController\Service\MaYi\MaYiService;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 
-class GetInvDataJinCai extends AbstractCronTask
+class GetJinCaiTrace extends AbstractCronTask
 {
     public $crontabBase;
 
@@ -22,7 +22,7 @@ class GetInvDataJinCai extends AbstractCronTask
 
     static function getRule(): string
     {
-        // 每月17号取
+        // 每月16号取
         return '59 19 21 * * ';
     }
 
@@ -46,20 +46,9 @@ class GetInvDataJinCai extends AbstractCronTask
 
             foreach ($list as $target) {
 
-                // 首先判断是不是全电 取不到票
-                if ($target->getAttr('isElectronics') === '全电试点企业') {
+                //
+                if (!is_numeric(mb_strpos($target->getAttr('isElectronics'), '税款所属期信息成功'))) {
                     continue;
-                }
-
-                // 更新状态
-                if ($target->getAttr('isElectronics') === '') {
-                    // 取状态
-                    $isElectronics = (new JinCaiShuKeService())
-                        ->S000502($target->getAttr('socialCredit'));
-                    $isElectronics = $isElectronics['msg'] ?? '';
-                    // 更新
-                    $target->update(['isElectronics' => $isElectronics]);
-                    if ($isElectronics === '全电试点企业') continue;
                 }
 
                 // 开票日期止
@@ -67,6 +56,11 @@ class GetInvDataJinCai extends AbstractCronTask
 
                 // 最大取票月份
                 $big_kprq = $target->getAttr('big_kprq');
+
+                // 本月取过了 不取了
+                if ($kprqz === $big_kprq) {
+                    continue;
+                }
 
                 // 开票日期起
                 if ($big_kprq - 0 === 0) {
@@ -85,40 +79,39 @@ class GetInvDataJinCai extends AbstractCronTask
                         'nsrsbh' => $target->getAttr('socialCredit'),//纳税人识别号
                     ];
 
-                    // 发送
-                    $addTaskInfo = (new JinCaiShuKeService())->addTask(
-                        $target->getAttr('socialCredit'),
-                        $target->getAttr('province'),
-                        $ywBody
-                    );
-
-                    JinCaiTrace::create()->data([
-                        'entName' => $target->getAttr('entName'),
-                        'socialCredit' => $target->getAttr('socialCredit'),
-                        'code' => $addTaskInfo['code'] ?? '未返回',
-                        'type' => 1,// 无盘
-                        'province' => $addTaskInfo['result']['province'] ?? '未返回',
-                        'taskCode' => $addTaskInfo['result']['taskCode'] ?? '未返回',
-                        'taskStatus' => $addTaskInfo['result']['taskStatus'] ?? '未返回',
-                        'traceNo' => $addTaskInfo['result']['traceNo'] ?? '未返回',
-                        'kprqq' => $kprqq,
-                        'kprqz' => $kprqz,
-                        'cxlx' => $cxlx,
-                    ])->save();
+                    // 傻逼金财
+                    try {
+                        // 发送
+                        $addTaskInfo = (new JinCaiShuKeService())->addTask(
+                            $target->getAttr('socialCredit'),
+                            $target->getAttr('province'),
+                            $ywBody
+                        );
+                        JinCaiTrace::create()->data([
+                            'entName' => $target->getAttr('entName'),
+                            'socialCredit' => $target->getAttr('socialCredit'),
+                            'code' => $addTaskInfo['code'] ?? '未返回',
+                            'type' => 1,// 无盘
+                            'province' => $addTaskInfo['result']['province'] ?? '未返回',
+                            'taskCode' => $addTaskInfo['result']['taskCode'] ?? '未返回',
+                            'taskStatus' => $addTaskInfo['result']['taskStatus'] ?? '未返回',
+                            'traceNo' => $addTaskInfo['result']['traceNo'] ?? '未返回',
+                            'kprqq' => $kprqq,
+                            'kprqz' => $kprqz,
+                            'cxlx' => $cxlx,
+                        ])->save();
+                    } catch (\Throwable $e) {
+                        $file = $e->getFile();
+                        $line = $e->getLine();
+                        $msg = $e->getMessage();
+                        $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+                        CommonService::getInstance()->log4PHP($content, 'try-catch', 'GetJinCaiTrace.log');
+                        continue;
+                    }
 
                 }
 
-
-                //
-                //
-                //
-                //
-                //
-                //
-
-
             }
-
 
             $page++;
 
@@ -131,7 +124,7 @@ class GetInvDataJinCai extends AbstractCronTask
         $line = $throwable->getLine();
         $msg = $throwable->getMessage();
         $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-        CommonService::getInstance()->log4PHP($content, 'error', 'GetInvDataJinCai.log');
+        CommonService::getInstance()->log4PHP($content, 'error', 'GetJinCaiTrace.log');
     }
 
 }

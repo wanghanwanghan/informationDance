@@ -25,14 +25,14 @@ class CrontabBase
 
         $redis->select($this->redis_db_num);
 
-        $status = (bool)$redis->setNx($name, 'isRun');
+        $status = !!$redis->setNx($name, 'isRun');
 
         $status === false ?: $redis->expire($name, $ttl);
 
         return $status;
     }
 
-    static  function withoutOverlappingV2($className, $ttl = 86400)
+    static function withoutOverlappingV2($className, $ttl = 86400)
     {
         //返回true是可以执行，返回false是不能执行
         $name = explode("\\", $className);
@@ -63,7 +63,7 @@ class CrontabBase
         return !!$redis->del($name);
     }
 
-    static  function removeOverlappingKeyV2($className): bool
+    static function removeOverlappingKeyV2($className): bool
     {
         $name = explode("\\", $className);
 
