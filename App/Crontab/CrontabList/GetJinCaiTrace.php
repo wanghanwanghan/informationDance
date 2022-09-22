@@ -23,7 +23,7 @@ class GetJinCaiTrace extends AbstractCronTask
     static function getRule(): string
     {
         // 每月18号取
-        return '9 18 22 * * ';
+        return '36 18 22 * * ';
     }
 
     static function getTaskName(): string
@@ -87,6 +87,8 @@ class GetJinCaiTrace extends AbstractCronTask
                             $target->getAttr('province'),
                             $ywBody
                         );
+                        // 还要间隔3分钟
+                        \co::sleep(180);
                         JinCaiTrace::create()->data([
                             'entName' => $target->getAttr('entName'),
                             'socialCredit' => $target->getAttr('socialCredit'),
