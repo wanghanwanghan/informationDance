@@ -11,6 +11,7 @@ use App\HttpController\Service\CreateMysqlPoolForProjectDb;
 use App\HttpController\Service\CreateMysqlPoolForRDS3SiJiFenLei;
 use App\HttpController\Service\CreateRedisPool;
 use App\HttpController\Service\DaXiang\DaXiangService;
+use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use \EasySwoole\EasySwoole\Core;
 use App\HttpController\Service\CreateDefine;
 use \EasySwoole\Component\Process\Config;
@@ -25,24 +26,12 @@ class send_to_mayi extends AbstractProcess
 {
     protected function run($arg)
     {
-        for ($cxlx = 2; $cxlx--;) {
+        // 91130984MA08YPLX1K1663761540966
+        $rwh_info = (new JinCaiShuKeService())
+            ->obtainResultTraceNo('91130984MA08YPLX1K1663761540966');
 
-            $nsrsbh = 'xxx';
-            $province = 'xxx';
 
-            $ywBody = [
-                'cxlx' => trim($cxlx),//查询类型 0销项 1 进项
-                'kprqq' => \Carbon\Carbon::now()->subMonths(24)->startOfMonth()->format('Y-m-d'),//开票日期起
-                'kprqz' => \Carbon\Carbon::now()->subMonths(1)->endOfMonth()->format('Y-m-d'),//开票日期止
-                'nsrsbh' => $nsrsbh,//纳税人识别号
-            ];
-
-            $info1 = (new \App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService())
-                ->addTask($nsrsbh, $province, $ywBody);
-
-            dd($info1);
-
-        }
+        dd($rwh_info);
 
 
     }
