@@ -67,7 +67,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
 
     static  function pushToRedisList($uid,$ys,$nic,$nx,$dy)
     {
-        (new UserApproximateEnterpriseModel()) ->addSuffix($uid)->deleteByUid($uid);
+//        (new UserApproximateEnterpriseModel()) ->addSuffix($uid)->deleteByUid($uid);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
