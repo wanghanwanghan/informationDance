@@ -33,7 +33,7 @@ class GetJinCaiRwh extends AbstractCronTask
     {
         // 等待金财任务执行1小时后，开始取任务号
 
-        $check = $this->crontabBase->withoutOverlapping(self::getTaskName(), 3600);
+        $check = $this->crontabBase->withoutOverlapping(self::getTaskName(), 7200);
 
         if (!$check) return;
 
