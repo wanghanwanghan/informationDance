@@ -38,7 +38,7 @@ class GetJinCaiTrace extends AbstractCronTask
         while (true) {
 
             $list = AntAuthList::create()->where([
-                'status' => MaYiService::STATUS_4,// 实际上是3
+                'status' => MaYiService::STATUS_3,// 实际上是3
                 'getDataSource' => 2
             ])->page($page, 100)->all();
 
