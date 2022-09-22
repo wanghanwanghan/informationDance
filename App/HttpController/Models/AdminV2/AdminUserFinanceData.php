@@ -379,20 +379,20 @@ class AdminUserFinanceData extends ModelBase
         }
 
         //有的就是没有找到这个企业
-        if($NewFinanceDataId <= 0){
-            OperatorLog::addRecord(
-                [
-                    'user_id' => $financeData['user_id'],
-                    'msg' =>  "企业:".$financeData['entName'] ,
-                    'details' =>json_encode( XinDongService::trace()),
-                    'type_cname' => '新后台导出财务数据-找不到$NewFinanceDataId',
-                ]
-            );
-            return true;
-        }
+//        if($NewFinanceDataId <= 0){
+//            OperatorLog::addRecord(
+//                [
+//                    'user_id' => $financeData['user_id'],
+//                    'msg' =>  "企业:".$financeData['entName'] ,
+//                    'details' =>json_encode( XinDongService::trace()),
+//                    'type_cname' => '新后台导出财务数据-找不到$NewFinanceDataId',
+//                ]
+//            );
+//            return true;
+//        }
 
         //把$NewFinanceDataId更新到表
-        self::updateNewFinanceDataId($id,$NewFinanceDataId);
+        self::updateNewFinanceDataId($id,intval($NewFinanceDataId));
 
 
         //需要变更状态
