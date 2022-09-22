@@ -215,6 +215,9 @@ class NewFinanceData extends ModelBase
 
     //将字段设置为有无
     public static function findByIdV2($id,$needsChangeFields){
+        if($id<=0){
+            return [];
+        }
         $res =  self::findById($id);
         $data = $res->toArray();
         $newData = [];
