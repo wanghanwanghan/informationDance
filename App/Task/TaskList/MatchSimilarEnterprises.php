@@ -5,7 +5,9 @@ namespace App\Task\TaskList;
 use App\ElasticSearch\Model\Company;
 use App\HttpController\Models\Api\UserApproximateEnterpriseModel;
 use App\HttpController\Models\BusinessBase\ApproximateEnterpriseModel;
+use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\XinDong\Score\qpf;
 use App\HttpController\Service\XinDong\XinDongService;
 use App\Process\ProcessList\MatchSimilarEnterprisesProccess;
 use App\Task\TaskBase;
@@ -314,7 +316,55 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
             $company['ys_label'] = $company['ying_shou_gui_mo'];
             $company['base'] = $base;//参考系
 
-          
+            //============================
+            $score = (new qpf(
+                $base[0], $base[1], $base[2], $base[3],
+                $company['ys_label'], $company['NIC_ID'], substr($company['ESDATE'], 0, 4), $company['DOMDISTRICT']
+            ))->expr();
+
+            //小于70的 不计算
+            if($score <= 70 ){
+                continue ;
+            }
+
+            if(
+                $company['ENTSTATUS'] &&
+                in_array($company['ENTSTATUS'],array_keys(CodeEx02::invalidCodeMap()))
+            ){
+                continue;
+            };
+
+            $invalid_nums ++;
+
+            if($score >= 80 ){
+                $nums_bigger_than_80 ++ ;
+
+            }
+            if($score >= 90 ){
+                $nums_bigger_than_90 ++ ;
+            }
+            try {
+                UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
+                    'userid' => $info['user_id'],
+                    'companyid' => $info['companyid'],
+                    'esid' => 0,
+                    'score' => $score,
+                    'entName' => $info['ENTNAME'],
+                    'ying_shou_gui_mo' => $info['ying_shou_gui_mo']?:'',
+                    'nic_id' => $info['NIC_ID']?:'',
+                    'area' => $info['DOMDISTRICT']?:'',
+                    'found_years_nums' => $info['OPFROM']>0?date('Y')-date('Y',strtotime($info['OPFROM'])):0,
+                    'mvcc' => '',
+                ])->save();
+            } catch (\Throwable $e) {
+                $file = $e->getFile();
+                $line = $e->getLine();
+                $msg = $e->getMessage();
+                $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+                CommonService::getInstance()->log4PHP($content);
+            }
+            //============================
+
             $page++;
             $runTimes ++;
         }
