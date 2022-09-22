@@ -73,8 +73,11 @@ class CoHttpClient extends ServiceBase
                 dingAlarmUser('企查查'.$d['Message'], ['$url' => $url, '$postData' => json_encode($postData), '$d' => json_encode($d)], [18511881968]);
                 CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_qichacha_http_return_data');
             }elseif(stripos($url,'api.wanvdata.com')){
+                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'taoshu_http_return_data');
+            }elseif(stripos($url,'api.wanvdata.com') && empty($d)){
+                dingAlarmUser('陶数返回为空', ['$url' => $url, '$postData' => json_encode($postData), '$d' => json_encode($d)], [18511881968]);
                 CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_taoshu_http_return_data');
-            }else{
+            } else{
                 CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'http_return_data');
             }
         } catch (\Exception $e) {
