@@ -657,7 +657,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
         $maxScore = 0 ;
 
         //============================分割线=========================================
-        $filename = date('Y-m-d H:i:s')."_优企名单.xlsx";
+        $filename = date('YmdHis')."_优企名单.xlsx";
         // xlsx文件保存路径
         $config=  [
             'path' => TEMP_FILE_PATH
