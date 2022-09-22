@@ -26,7 +26,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'MatchSimilarEnterprises_init'=>[
+                'MatchSimilarEnterprises___construct'=>[
                     '$data'=> $data
                 ]
             ])
@@ -42,7 +42,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
     // 第二步放到redis队列
     function run(int $taskId, int $workerIndex)
     {
-        return ;
+
         $uid = $this->data[0] - 0;
         //$ys = $this->createYs($this->data[1]);// A10
         $ys = ($this->data[1]);// A10
@@ -71,18 +71,18 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
     static  function pushToRedisList($uid,$ys,$nic,$nx,$dy)
     {
         (new UserApproximateEnterpriseModel()) ->addSuffix($uid)->deleteByUid($uid);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'pushToRedisList_start'=>[
-                    '$uid'=> $uid,
-                    '$ys'=> $ys,
-                    '$nic'=> $nic,
-                    '$nx'=> $nx,
-                    '$dy'=> $dy,
-                ]
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'pushToRedisList_start'=>[
+//                    '$uid'=> $uid,
+//                    '$ys'=> $ys,
+//                    '$nic'=> $nic,
+//                    '$nx'=> $nx,
+//                    '$dy'=> $dy,
+//                ]
+//            ])
+//        );
         $nic = self::createNicV2($nic);
         $dy = self::createDyV2($dy);
         $searchOptions = [];
@@ -185,15 +185,14 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
             $company['base'] = $base;//参考系
 
             $redis->lPush(MatchSimilarEnterprisesProccess::QueueKey, jsonEncode($company, false));
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    __CLASS__.__FUNCTION__ .__LINE__,
-//                    'pushToRedisList_lPush_to_Redis'=>[
-//                        'list_key'=> MatchSimilarEnterprisesProccess::QueueKey,
-//                        'value'=> jsonEncode($company, false),
-//                    ]
-//                ])
-//            );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'pushToRedisList_lPush_to_Redis'=>[
+                        'ent'=> $company['ENTNAME'],
+                    ]
+                ])
+            );
             $page++;
             $runTimes ++;
         }

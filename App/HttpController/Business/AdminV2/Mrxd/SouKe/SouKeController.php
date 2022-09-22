@@ -1965,7 +1965,6 @@ class SouKeController extends ControllerBase
             $featureslists['DOMDISTRICT']
         );
 
-
         //开始分析
         return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
     }
