@@ -560,7 +560,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
             ])
         );
         if(count($lists)<=0){
-            return $returnData;
+            return [];
         }
         $companyIds = array_column($lists,'companyid');
         $esRes = \App\ElasticSearch\Model\Company::serachFromEs(
