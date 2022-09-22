@@ -338,7 +338,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
         );
         $return = [];
         foreach ($records as $record){
-            $entName = trim($paramsArr['ent_name']);
+            $entName = trim($record[0]);
             if(empty($entName)){
                 continue;
             }

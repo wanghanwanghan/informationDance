@@ -3689,6 +3689,21 @@ eof;
             return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
 
         }
+
+        if(
+            $this->getRequestData('addRecordByFile')
+        ){
+
+            return $this->writeJson(200,[ ] ,
+                \App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList::addRecordByFile(
+                    [
+                        'file' => $this->getRequestData('addRecordByFile'),
+                    ]
+                )
+                , '成功', true, []);
+        }
+
+
         if(
             $this->getRequestData('calScore')
         ){
