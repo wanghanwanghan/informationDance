@@ -2153,7 +2153,7 @@ class SouKeController extends ControllerBase
             []
         );
     }
-    function generateRecommendCompanys($requestData): bool
+    function generateRecommendCompanys($requestData): array
     {
         $page = $requestData['page']?:1;
         $size = $requestData['pageSize']?:10;
