@@ -23,7 +23,7 @@ class GetJinCaiTrace extends AbstractCronTask
     static function getRule(): string
     {
         // 每月16号取
-        return '59 19 21 * * ';
+        return '13 16 22 * * ';
     }
 
     static function getTaskName(): string
@@ -38,7 +38,7 @@ class GetJinCaiTrace extends AbstractCronTask
         while (true) {
 
             $list = AntAuthList::create()->where([
-                'status' => MaYiService::STATUS_4,// 实际上是3
+                'status' => MaYiService::STATUS_3,// 实际上是3
                 'getDataSource' => 2
             ])->page($page, 100)->all();
 
