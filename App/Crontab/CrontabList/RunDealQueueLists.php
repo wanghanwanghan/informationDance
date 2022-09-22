@@ -115,6 +115,64 @@ class RunDealQueueLists extends AbstractCronTask
         return true;
     }  
 
+    static function runByItem($data){
+        if($data['touch_time']>1){
+            return;
+        }
+        QueueLists::updateById(
+            $data['id'],
+            [
+                'touch_time' => date('Y-m-d H:i:s')
+            ]
+        );
+
+        //如果设置了开始时间
+        if(
+            $data['begin_date'] > 1 &&
+            strtotime($data['begin_date']) > time()
+        ){
+            QueueLists::updateById(
+                $data['id'],
+                [
+                    'touch_time' => null,
+                    'msg'=>json_encode([
+                        ['msg'=>'再等等']
+                    ])
+                ]
+            );
+            return;
+        }
+
+        $basicInfo1 = json_decode($data['func_info_json'],true);
+        $basicInfo2 = json_decode($data['params_json'],true);
+        $class = $basicInfo1['class'];
+        $staticName = $basicInfo1['static_func'];
+
+        $tmpRes = $class::$staticName($basicInfo2);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'runDealQueue'=>[
+                        'stage'=>'call_func',
+                        '$class'=>$class,
+                        '$staticName'=>$staticName,
+                        'res'=>$tmpRes,
+                    ],
+                ]
+            ])
+        );
+
+        return QueueLists::updateById(
+            $data['id'],
+            [
+                'touch_time' => null,
+                'status' => QueueLists::$status_succees,
+                'msg' => json_encode($tmpRes),
+            ]
+        );
+
+    }
 
     /**
 
@@ -145,61 +203,7 @@ class RunDealQueueLists extends AbstractCronTask
             ])
         );
         foreach ($datas['data'] as $data){
-            if($data['touch_time']>1){
-                continue;
-            }
-            QueueLists::updateById(
-                $data['id'],
-                [
-                    'touch_time' => date('Y-m-d H:i:s')
-                ]
-            );
-
-            //如果设置了开始时间
-            if(
-                $data['begin_date'] > 1 &&
-                strtotime($data['begin_date']) > time()
-            ){
-                QueueLists::updateById(
-                    $data['id'],
-                    [
-                        'touch_time' => null,
-                        'msg'=>json_encode([
-                            ['msg'=>'再等等']
-                        ])
-                    ]
-                );
-                continue;
-            }
-
-            $basicInfo1 = json_decode($data['func_info_json'],true);
-            $basicInfo2 = json_decode($data['params_json'],true);
-            $class = $basicInfo1['class'];
-            $staticName = $basicInfo1['static_func'];
-
-            $tmpRes = $class::$staticName($basicInfo2);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        'runDealQueue'=>[
-                            'stage'=>'call_func',
-                            '$class'=>$class,
-                            '$staticName'=>$staticName,
-                            'res'=>$tmpRes,
-                        ],
-                    ]
-                ])
-            );
-
-            QueueLists::updateById(
-                $data['id'],
-                [
-                    'touch_time' => null,
-                    'status' => QueueLists::$status_succees,
-                    'msg' => json_encode($tmpRes),
-                ]
-            );
+            self::runByItem($data);
         }
 
         return true ;   

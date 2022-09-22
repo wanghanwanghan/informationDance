@@ -11,6 +11,7 @@ use App\Crontab\CrontabList\RunDealEmailReceiver;
 //use App\Crontab\CrontabList\RunDealFinanceCompanyData;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNewV2;
+use App\Crontab\CrontabList\RunDealQueueLists;
 use App\Crontab\CrontabList\RunDealToolsFile;
 use App\Crontab\CrontabList\RunDealZhaoTouBiao;
 use App\Csp\Service\CspService;
@@ -3691,15 +3692,14 @@ eof;
         }
 
         if(
-            $this->getRequestData('addRecordByFile')
+            $this->getRequestData('runQueue')
         ){
+           $res =  QueueLists::findById($this->getRequestData('runQueue'));
+            $res = $res->toArray();
+
             // 20220922161425_测试下上传
             return $this->writeJson(200,[ ] ,
-                \App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList::addRecordByFile(
-                    [
-                        'file' => $this->getRequestData('addRecordByFile'),
-                    ]
-                )
+                RunDealQueueLists::runByItem($res)
                 , '成功', true, []);
         }
 
