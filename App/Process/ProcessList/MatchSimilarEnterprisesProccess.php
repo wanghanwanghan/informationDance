@@ -149,12 +149,11 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
             }
 
             $entInsRedis = $redis->rPop(self::QueueKey);
-            CommonService::getInstance()->log4PHP(json_encode([ 
+            CommonService::getInstance()->log4PHP(json_encode([
                 '$entInsRedis'=>$entInsRedis
             ]));
             if (empty($entInsRedis)) {
                 CommonService::getInstance()->log4PHP(json_encode([
-
                     'return2'=>true,
                 ]));
                 break;
@@ -192,13 +191,16 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                 $nums_bigger_than_90 ++ ;
             }
 
+            $esres = (new XinDongService())->getEsBasicInfoV2($info['companyid'],[]);
+
+
             try {
                 UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
                     'userid' => $info['user_id'],
                     'companyid' => $info['companyid'],
                     'esid' => 0,
                     'score' => $score,
-                    'entName' => $info['ENTNAME'],
+                    'entName' => $esres['ENTNAME'],
                     'ying_shou_gui_mo' => $info['ying_shou_gui_mo']?:'',
                     'nic_id' => $info['NIC_ID']?:'',
                     'area' => $info['DOMDISTRICT']?:'',
