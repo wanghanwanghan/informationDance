@@ -553,7 +553,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
                 __CLASS__.__FUNCTION__ .__LINE__,
                 'getKeDongFeature'=>json_encode(
                     [
-                        'findAllByUserIdV2'=>$userId,
+                        'extractFeatureV2 findAllByUserIdV2'=>$userId,
                         'count'=>count($lists),
                     ]
                 )
