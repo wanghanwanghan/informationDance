@@ -2427,6 +2427,13 @@ class SouKeController extends ControllerBase
         $size = $requestData['pageSize']?:10;
 
         $createdAtStr = $this->getRequestData('created_at');
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ ,
+                'params $createdAtStr ' =>$createdAtStr
+            ])
+        );
         $createdAtArr = explode('|||',$createdAtStr);
         $whereArr = [];
         if (
