@@ -1019,6 +1019,11 @@ class AdminUserFinanceData extends ModelBase
     }
 
     public static function updateNewFinanceDataId($id,$financeDataId){
+        if($financeDataId<=0){
+            return CommonService::getInstance()->log4PHP(
+                'updateStatus failed  $id 不存在'.$id
+            );
+        }
         $info = AdminUserFinanceData::findById($id);
         if(!$info ){
             return CommonService::getInstance()->log4PHP(
