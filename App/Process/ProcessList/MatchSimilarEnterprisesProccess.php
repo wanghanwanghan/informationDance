@@ -141,12 +141,20 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                 $nums_bigger_than_90 >= $allowed_nums_bigger_than_90 ||
                 $nums_bigger_than_80 >= $allowed_nums_bigger_than_80
             ) {
+                CommonService::getInstance()->log4PHP(json_encode([
+
+                    'return1'=>true,
+                ]));
                 break;
             }
 
             $entInsRedis = $redis->rPop(self::QueueKey);
 
             if (empty($entInsRedis)) {
+                CommonService::getInstance()->log4PHP(json_encode([
+
+                    'return2'=>true,
+                ]));
                 break;
             }
 
