@@ -55,9 +55,6 @@ class GetJinCaiRwh extends AbstractCronTask
                 $rwh_info = (new JinCaiShuKeService())
                     ->obtainResultTraceNo($rwh_list->getAttr('traceNo'));
 
-                CommonService::getInstance()->log4PHP($rwh_info, 'rwh_info', 'GetJinCaiRwh.log');
-                CommonService::getInstance()->log4PHP($rwh_list, 'rwh_info', 'GetJinCaiRwh.log');
-
                 foreach ($rwh_info['result'] as $rwh_one) {
 
                     try {
