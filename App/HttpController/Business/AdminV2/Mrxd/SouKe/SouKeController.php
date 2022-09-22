@@ -2426,8 +2426,29 @@ class SouKeController extends ControllerBase
         $page = $requestData['page']?:1;
         $size = $requestData['pageSize']?:10;
 
+        $createdAtStr = $this->getRequestData('created_at');
+        $createdAtArr = explode('|||',$createdAtStr);
+        $whereArr = [];
+        if (
+            !empty($createdAtArr) &&
+            !empty($createdAtStr)
+        ) {
+            $whereArr = [
+                [
+                    'field' => 'created_at',
+                    'value' => strtotime($createdAtArr[0].' 00:00:00'),
+                    'operate' => '>=',
+                ],
+                [
+                    'field' => 'created_at',
+                    'value' => strtotime($createdAtArr[1]." 23:59:59"),
+                    'operate' => '<=',
+                ]
+            ];
+        }
+
         $lists = XinDongKeDongAnalyzeHistory::findByConditionV2(
-            [],
+            $whereArr,
             $page,
             $size
         );
