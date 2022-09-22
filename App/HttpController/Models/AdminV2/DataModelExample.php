@@ -242,6 +242,16 @@ class DataModelExample extends ModelBase
                 $fileName = date('YmdHis').'_'.$fileName;
                 $fileNames[] = $fileName;
                 $path = TEMP_FILE_PATH . $fileName;
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'dealUploadFiles' =>  [
+                            '$path'=>$path,
+                            'TEMP_FILE_PATH'=>TEMP_FILE_PATH,
+                            '$fileName'=>$fileName,
+                        ]
+                    ])
+                );
                 $res = $oneFile->moveTo($path);
                 $succeedNums ++;
             } catch (\Throwable $e) {
