@@ -173,7 +173,6 @@ class RunReadAndDealXls extends AbstractCronTask
                 $value2,
                 $newmobileStr
             ];
-
         }
     }
 
