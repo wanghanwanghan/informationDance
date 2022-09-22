@@ -836,7 +836,9 @@ class FinanceController extends ControllerBase
             foreach (json_decode($configs['allowed_fields']) as $field){
                 $newFields[$field] = $allowedFields[$field];
             }
-            $realData = NewFinanceData::findByIdV2($realFinanceDatId,$newFields);
+            if($realFinanceDatId>0){
+                $realData = NewFinanceData::findByIdV2($realFinanceDatId,$newFields);
+            }
             foreach ($realData as $key=>$datItem){
                 $tmp[$key] = $datItem;
             }
