@@ -22,8 +22,8 @@ class GetJinCaiTrace extends AbstractCronTask
 
     static function getRule(): string
     {
-        // 每月16号取
-        return '31 16 22 * * ';
+        // 每月20号取
+        return '0 0 20 * * ';
     }
 
     static function getTaskName(): string

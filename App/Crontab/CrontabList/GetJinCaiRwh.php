@@ -45,7 +45,7 @@ class GetJinCaiRwh extends AbstractCronTask
 
             $list = JinCaiTrace::create()
                 ->where('updated_at', $time, '<')
-                ->where(['isComplete' => 0, 'code' => 'S000'])
+                ->where('isComplete', 0)
                 ->page($page, 200)->all();
 
             if (empty($list)) break;
