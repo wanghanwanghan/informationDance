@@ -837,12 +837,12 @@ class FinanceController extends ControllerBase
                 $newFields[$field] = $allowedFields[$field];
             }
 
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ ,
-                    'params $realFinanceDatId  ' => $realFinanceDatId
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ ,
+//                    'params $realFinanceDatId  ' => $realFinanceDatId
+//                ])
+//            );
             if($realFinanceDatId>0){
                 $realData = NewFinanceData::findByIdV2($realFinanceDatId,$newFields);
             }

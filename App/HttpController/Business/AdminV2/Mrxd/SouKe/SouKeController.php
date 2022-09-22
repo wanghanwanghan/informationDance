@@ -1870,7 +1870,8 @@ class SouKeController extends ControllerBase
         $lists = XinDongKeDongAnalyzeList::findByConditionV2(
             [
                 // $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
-                ['field'=>'is_del','value'=>XinDongKeDongAnalyzeList::$state_ok,'operate'=>'=']
+                ['field'=>'is_del','value'=>XinDongKeDongAnalyzeList::$state_ok,'operate'=>'='],
+                ['field'=>'user_id','value'=>$this->loginUserinfo['id'],'operate'=>'='],
             ],
             $page,
             $size
