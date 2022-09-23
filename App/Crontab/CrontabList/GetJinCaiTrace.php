@@ -87,8 +87,6 @@ class GetJinCaiTrace extends AbstractCronTask
                             $target->getAttr('province'),
                             $ywBody
                         );
-                        // 还要间隔3分钟
-                        \co::sleep(180);
                         JinCaiTrace::create()->data([
                             'entName' => $target->getAttr('entName'),
                             'socialCredit' => $target->getAttr('socialCredit'),
@@ -102,6 +100,8 @@ class GetJinCaiTrace extends AbstractCronTask
                             'kprqz' => $kprqz,
                             'cxlx' => $cxlx,
                         ])->save();
+                        // 还要间隔3分钟
+                        \co::sleep(180);
                     } catch (\Throwable $e) {
                         $file = $e->getFile();
                         $line = $e->getLine();
