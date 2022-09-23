@@ -34,7 +34,9 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
         $redis->select(15);
 
         //开始消费
+        $runTimes = 0;
         while (true) {
+            $runTimes ++;
             $entInRedis = $redis->rPop(self::QueueKey);
             if (empty($entInRedis)) {
                 mt_srand();
@@ -47,15 +49,19 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                 $info['base'][0], $info['base'][1], $info['base'][2], $info['base'][3],
                 $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
             ))->expr();
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'MatchSimilarEnterprisesProccess_Score'=>[
-                        '$score'=> $score,
-                        'ENTNAME' => $info['ENTNAME']
-                    ]
-                ])
-            );
+            if($runTimes%100==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'MatchSimilarEnterprisesProccess_Score'=>[
+                            '$runTimes'=> $runTimes,
+                            '$score'=> $score,
+                            'ENTNAME' => $info['ENTNAME']
+                        ]
+                    ])
+                );
+            }
+
             $esid = control::getUuid();
             $this->toEs($esid, $info);
             try {

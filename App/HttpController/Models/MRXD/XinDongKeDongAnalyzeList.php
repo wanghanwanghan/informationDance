@@ -353,7 +353,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
                     'remark' => $paramsArr['remark']?:'',
                 ]
             );
-            $return[] = $res;
+            $return[$entName] = $res;
         }
 
         return $return;
@@ -605,16 +605,16 @@ class XinDongKeDongAnalyzeList extends ModelBase
             }
         }
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'extractFeatureV2'=>json_encode(
-                    [
-                        'feature$res'=>$res,
-                    ]
-                )
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'extractFeatureV2'=>json_encode(
+//                    [
+//                        'feature$res'=>$res,
+//                    ]
+//                )
+//            ])
+//        );
 
         if($retrunAllData){
             return  $res;

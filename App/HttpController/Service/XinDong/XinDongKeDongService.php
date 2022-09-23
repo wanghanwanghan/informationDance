@@ -41,15 +41,7 @@ class XinDongKeDongService extends ServiceBase
         }
 
         //self::pushToRedisList($uid,$ys,$nic,$nx,$dy);
-        if(
-            EasySwooleEvent::IsProductionEnv()
-        ){
-            return TaskService::getInstance()->create(new MatchSimilarEnterprises([$uid, $ys, $nic, $nx, $dy]));
-        }
-        else{
-            return TaskService::getInstance()->create(new MatchSimilarEnterprises([$uid, $ys, $nic, $nx, $dy]));
-//            return MatchSimilarEnterprises::pushToRedisListV2($uid, $ys, $nic, $nx, $dy);
-        }
+        return TaskService::getInstance()->create(new MatchSimilarEnterprises([$uid, $ys, $nic, $nx, $dy]));
     }
 
 

@@ -1927,7 +1927,7 @@ class SouKeController extends ControllerBase
 
         //最少5家
         if(
-         count(XinDongKeDongAnalyzeList::findAllByUserId($this->loginUserinfo['id'])) <= 4
+            count(XinDongKeDongAnalyzeList::findAllByUserId($this->loginUserinfo['id'])) <= 4
         ){
             return $this->writeJson(202,[ ] , [], '请最少上传5家企业再进行分析', true, []);
         }

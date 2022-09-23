@@ -23,14 +23,14 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
 
     function __construct($data)
     {
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'MatchSimilarEnterprises___construct'=>[
-                    '$data'=> $data
-                ]
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'MatchSimilarEnterprises___construct'=>[
+//                    '$data'=> $data
+//                ]
+//            ])
+//        );
         $this->data = array_map(function ($row) {
             return trim($row);
         }, $data);
@@ -70,6 +70,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
 
     static  function pushToRedisList($uid,$ys,$nic,$nx,$dy)
     {
+        //删除旧的
         (new UserApproximateEnterpriseModel()) ->addSuffix($uid)->deleteByUid($uid);
 
         $nic = self::createNicV2($nic);
@@ -174,185 +175,17 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
             $company['base'] = $base;//参考系
 
             $redis->lPush(MatchSimilarEnterprisesProccess::QueueKey, jsonEncode($company, false));
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'pushToRedisList_lPush_to_Redis'=>[
-                        'ent'=> $company['ENTNAME'],
-                    ]
-                ])
-            );
-            $page++;
-            $runTimes ++;
-        }
-
-        return true;
-    }
-    static  function pushToRedisListV2($uid,$ys,$nic,$nx,$dy)
-    {
-        (new UserApproximateEnterpriseModel()) ->addSuffix($uid)->deleteByUid($uid);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'pushToRedisList_start'=>[
-                    '$uid'=> $uid,
-                    '$ys'=> $ys,
-                    '$nic'=> $nic,
-                    '$nx'=> $nx,
-                    '$dy'=> $dy,
-                ]
-            ])
-        );
-        $nic = self::createNicV2($nic);
-        $dy = self::createDyV2($dy);
-        $searchOptions = [];
-        //营收规模
-        if($ys){
-            $yingshouMapRaw = XinDongService::getYingShouGuiMoMapV3();
-            foreach ($yingshouMapRaw as $key=>$arr){
-                if(
-                    in_array($ys,$arr)
-                ){
-                    $searchOptions[] = [
-                        'pid'=> 50,
-                        'value'=>[$key],
-                    ];
-                    break;
-                }
+            if($runTimes%100==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'pushToRedisList_lPush_to_Redis'=>[
+                            '$runTimes'=> $runTimes,
+                            'ent'=> $company['ENTNAME'],
+                        ]
+                    ])
+                );
             }
-        }
-        //年限
-        $nxRealYear = 0;
-        if($nx){
-            $tmpValue = 2;
-            if($nx == '0-2'){
-                $tmpValue = 2;
-                $nxRealYear = 1;
-            }
-
-            if($nx == '2-5'){
-                $tmpValue = 5;
-                $nxRealYear = 3;
-            }
-
-            if($nx == '5-10'){
-                $tmpValue = 10;
-                $nxRealYear = 8;
-            }
-
-            if($nx == '10-15'){
-                $tmpValue = 15;
-                $nxRealYear = 12;
-            }
-
-            if($nx == '15-20'){
-                $tmpValue = 20;
-                $nxRealYear = 18;
-            }
-
-            if($nx == '20年以上'){
-                $tmpValue = 25;
-                $nxRealYear = 20;
-            }
-
-            $searchOptions[] = [
-                'pid'=> 20,
-                'value'=>[$tmpValue],
-            ];
-        }
-
-        //地域
-        $base = [
-//            $ys,$nic,$nx,$dy
-            $ys,$nic,$nxRealYear,$dy
-        ];
-
-        $redis = Redis::defer('redis');
-        $redis->select(15);
-
-        $page = 1;
-        $runTimes = 0;
-        $maxTimes = 1000;
-        $esRequestData =  [
-            'searchOption' =>  json_encode($searchOptions),
-            'basic_nicid' =>$nic,
-            'basic_regionid' =>$dy,
-        ];
-
-        $companys = \App\ElasticSearch\Model\Company::SearchAfterV2(
-            $maxTimes,
-            $esRequestData
-        );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'pushToRedisList_search_from_es'=>[
-                    '$esRequestData'=> $esRequestData,
-                    'es_return_nums'=> count($companys),
-                ]
-            ])
-        );
-        foreach ($companys as $company){
-            if($runTimes >= $maxTimes){
-                break;
-            }
-            if (empty($company)) {
-                break;
-            }
-
-            $company['user_id'] = $uid;
-            $company['ys_label'] = $company['ying_shou_gui_mo'];
-            $company['base'] = $base;//参考系
-
-            //============================
-            $score = (new qpf(
-                $base[0], $base[1], $base[2], $base[3],
-                $company['ys_label'], $company['NIC_ID'], substr($company['ESDATE'], 0, 4), $company['DOMDISTRICT']
-            ))->expr();
-
-            //小于70的 不计算
-            if($score <= 70 ){
-                continue ;
-            }
-
-            if(
-                $company['ENTSTATUS'] &&
-                in_array($company['ENTSTATUS'],array_keys(CodeEx02::invalidCodeMap()))
-            ){
-                continue;
-            };
-
-            $invalid_nums ++;
-
-            if($score >= 80 ){
-                $nums_bigger_than_80 ++ ;
-
-            }
-            if($score >= 90 ){
-                $nums_bigger_than_90 ++ ;
-            }
-            try {
-                UserApproximateEnterpriseModel::create()->addSuffix($company['user_id'])->data([
-                    'userid' => $company['user_id'],
-                    'companyid' => $company['companyid'],
-                    'esid' => 0,
-                    'score' => $score,
-                    'entName' => $company['ENTNAME'],
-                    'ying_shou_gui_mo' => $company['ying_shou_gui_mo']?:'',
-                    'nic_id' => $company['NIC_ID']?:'',
-                    'area' => $company['DOMDISTRICT']?:'',
-                    'found_years_nums' => $company['OPFROM']>0?date('Y')-date('Y',strtotime($company['OPFROM'])):0,
-                    'mvcc' => '',
-                ])->save();
-            } catch (\Throwable $e) {
-                $file = $e->getFile();
-                $line = $e->getLine();
-                $msg = $e->getMessage();
-                $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-                CommonService::getInstance()->log4PHP($content);
-            }
-            //============================
-
             $page++;
             $runTimes ++;
         }
