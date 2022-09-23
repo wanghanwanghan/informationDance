@@ -1960,10 +1960,10 @@ class SouKeController extends ControllerBase
 
         (new XinDongKeDongService())->MatchSimilarEnterprises(
             $this->loginUserinfo['id'],
-            $featureslists['ying_shou_gui_mo'],
-            $featureslists['NIC_ID'],
-            $featureslists['OPFROM'],
-            $featureslists['DOMDISTRICT']
+            $featureslists['ying_shou_gui_mo']?:'',
+            $featureslists['NIC_ID']?:'',
+            $featureslists['OPFROM']?:'',
+            $featureslists['DOMDISTRICT']?:''
         );
 
         //开始分析
