@@ -2176,7 +2176,7 @@ class SouKeController extends ControllerBase
 
         // ids=17812,17799&
         if($requestData['ids']>0){
-            $idsArr = explode('',$requestData['ids']);
+            $idsArr = explode(',',$requestData['ids']);
             $sqlWhere  .= "  AND id in ( ".join(',',$idsArr)." )";
             CommonService::getInstance()->log4PHP(
                 json_encode([
