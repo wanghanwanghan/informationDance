@@ -748,7 +748,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
 //                        '$tmp'=>$tmp,
 //                    ])
 //                );
-            $fileObject ->data([$dataItem]);
+            $fileObject ->data([$tmp]);
         }
 
         CommonService::getInstance()->log4PHP(
