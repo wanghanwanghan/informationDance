@@ -8,6 +8,7 @@ use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\ModelBase;
+use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -709,12 +710,11 @@ class XinDongKeDongAnalyzeList extends ModelBase
         $fileObject
             ->defaultFormat($colorStyle)
             ->header([
-                'x',
-                'xx',
-                'xxx',
-                'xxxx',
-                'xxxxx',
-                'xxxxxx',
+               '企业名',
+                '成立日期',
+                '经营范围',
+                '地域',
+                '行业',
             ])
             ->defaultFormat($alignStyle)
         ;
@@ -728,8 +728,15 @@ class XinDongKeDongAnalyzeList extends ModelBase
 //                        '$dataItem' => $dataItem
 //                    ])
 //                );
+            $res = (new XinDongService())->getEsBasicInfoV2($dataItem['companyid']);
+
+
             $tmp = [
-                //'xd_id'=>$dataItem['xd_id'],
+                $res['ENTNAME'],
+                $res['OPFROM'],
+                $res['OPSCOPE'],
+                $res['DOM'],
+                $res['nic_full_name'],
             ];
 
             //$tmp['xd_id'] = $dataItem['xd_id'];
