@@ -2153,6 +2153,8 @@ class SouKeController extends ControllerBase
             []
         );
     }
+
+
     function generateRecommendCompanys($requestData): array
     {
         $page = $requestData['page']?:1;
@@ -2371,7 +2373,7 @@ class SouKeController extends ControllerBase
                 'name' => ($requestData['name'])?:'',
                 'min_score' => 0,
                 'max_score' => 0,
-                'export_nums' => ($requestData['export_nums']),
+                'export_nums' => $requestData['sizes'],
                 'status' => intval($requestData['status']),
                 'remark' => $requestData['remark']?:'',
             ]
