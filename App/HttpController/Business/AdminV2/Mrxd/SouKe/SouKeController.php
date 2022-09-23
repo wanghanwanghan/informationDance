@@ -2173,7 +2173,7 @@ class SouKeController extends ControllerBase
 
         // searchText
         if(!empty($requestData['searchText'])){
-            $sqlWhere  .= "  AND entName like '".$requestData['searchText']."%' ";
+            $sqlWhere  .= "  AND entName like '%".$requestData['searchText']."%' ";
         }
 
         // ids=17812,17799&
