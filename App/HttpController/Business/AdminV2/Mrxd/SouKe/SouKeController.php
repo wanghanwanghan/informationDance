@@ -2174,6 +2174,12 @@ class SouKeController extends ControllerBase
             $sqlWhere  .= "  AND entName like '".$requestData['searchText']."%' ";
         }
 
+        // ids=17812,17799&
+        if(!empty($requestData['ids'])){
+            $idsArr = explode('',$requestData['ids']);
+            $sqlWhere  .= "  AND id in ( ".join(',',$idsArr)." )";
+        }
+
 
         //分值
         if(!empty($requestData['qpf'])){
@@ -2344,7 +2350,7 @@ class SouKeController extends ControllerBase
         //
         // SoukeRecommendCompanyExportHistory::addRecordV2();
         // SoukeRecommendCompanyExportHistoryDetails::addRecord();
-//
+
         $lists = $this->generateRecommendCompanys($requestData);
         $fileRes = XinDongKeDongAnalyzeList::exportRecommendCompanys(
             $lists['data']

@@ -548,20 +548,21 @@ class XinDongKeDongAnalyzeList extends ModelBase
         ];
         $res = [];
         $lists = XinDongKeDongAnalyzeList::findAllByUserIdV2($userId);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'getKeDongFeature'=>json_encode(
-                    [
-                        'extractFeatureV2 findAllByUserIdV2'=>$userId,
-                        'count'=>count($lists),
-                    ]
-                )
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'getKeDongFeature'=>json_encode(
+//                    [
+//                        'extractFeatureV2 findAllByUserIdV2'=>$userId,
+//                        'count'=>count($lists),
+//                    ]
+//                )
+//            ])
+//        );
         if(count($lists)<=0){
             return [];
         }
+
         $companyIds = array_column($lists,'companyid');
         $esRes = \App\ElasticSearch\Model\Company::serachFromEs(
             [
@@ -602,6 +603,17 @@ class XinDongKeDongAnalyzeList extends ModelBase
                 $res[$field['filed']][$newRes] += 1 ;
             }
         }
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'extractFeatureV2'=>json_encode(
+                    [
+                        'feature$res'=>$res,
+                    ]
+                )
+            ])
+        );
 
         if($retrunAllData){
             return  $res;
