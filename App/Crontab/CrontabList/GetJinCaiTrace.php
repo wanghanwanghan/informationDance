@@ -23,7 +23,7 @@ class GetJinCaiTrace extends AbstractCronTask
     static function getRule(): string
     {
         // 每月18号取
-        return '36 18 22 * * ';
+        return '29 10 24 * * ';
     }
 
     static function getTaskName(): string
@@ -85,6 +85,7 @@ class GetJinCaiTrace extends AbstractCronTask
                         $addTaskInfo = (new JinCaiShuKeService())->addTask(
                             $target->getAttr('socialCredit'),
                             $target->getAttr('province'),
+                            $target->getAttr('city'),
                             $ywBody
                         );
                         JinCaiTrace::create()->data([
@@ -100,8 +101,8 @@ class GetJinCaiTrace extends AbstractCronTask
                             'kprqz' => $kprqz,
                             'cxlx' => $cxlx,
                         ])->save();
-                        // 还要间隔3分钟
-                        \co::sleep(180);
+                        // 还要间隔2分钟
+                        \co::sleep(120);
                     } catch (\Throwable $e) {
                         $file = $e->getFile();
                         $line = $e->getLine();
