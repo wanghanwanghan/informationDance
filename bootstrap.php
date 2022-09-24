@@ -142,12 +142,15 @@ function changeFPZT($FPZT): string
 
     switch (trim($FPZT)) {
         case '1':
+        case '正常':
             $ret = '0';
             break;
         case '2':
+        case '作废':
             $ret = '2';
             break;
         case '3':
+        case '红冲':
             $ret = '3';
             break;
         case '8':
@@ -157,6 +160,7 @@ function changeFPZT($FPZT): string
             $ret = '4';
             break;
         case '4':
+        case '部分红冲':
             $ret = '5';
             break;
         case '5':

@@ -93,7 +93,7 @@ class GetJinCaiRwh extends AbstractCronTask
         $line = $throwable->getLine();
         $msg = $throwable->getMessage();
         $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-        CommonService::getInstance()->log4PHP($content, 'error', 'GetJinCaiRwh.log');
+        CommonService::getInstance()->log4PHP($content, 'onException', 'GetJinCaiRwh.log');
     }
 
 }

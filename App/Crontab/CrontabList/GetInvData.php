@@ -144,11 +144,11 @@ class GetInvData extends AbstractCronTask
                 }
 
                 //拿一下这个企业的进项销项总发票数字
-                $in = EntInvoice::create()->addSuffix($oneReadyToSend->getAttr('socialCredit'), '')->where([
+                $in = EntInvoice::create()->addSuffix($oneReadyToSend->getAttr('socialCredit'))->where([
                     'nsrsbh' => $oneReadyToSend->getAttr('socialCredit'),
                     'direction' => '01',//01-进项
                 ])->count();
-                $out = EntInvoice::create()->addSuffix($oneReadyToSend->getAttr('socialCredit'), '')->where([
+                $out = EntInvoice::create()->addSuffix($oneReadyToSend->getAttr('socialCredit'))->where([
                     'nsrsbh' => $oneReadyToSend->getAttr('socialCredit'),
                     'direction' => '02',//02-销项
                 ])->count();

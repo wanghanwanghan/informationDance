@@ -434,12 +434,17 @@ class JinCaiShuKeService extends ServiceBase
     }
 
     //无盘 取数 主票
-    function obtainFpInfo(string $traceNo): array
+    function obtainFpInfo(string $nsrsbh, string $province, string $traceNo, string $taskCode = 'A002'): array
     {
-        $url = 'api/obtainFpInfo';
+        $url = 'api/obtainResult';
 
         $post_data = [
-            'traceNo' => trim($traceNo)
+            'nsrsbh' => $nsrsbh,
+            'province' => $province,
+            'taskCode' => $taskCode,
+            'ywBody' => [
+                'wupanTraceNo' => $traceNo
+            ]
         ];
 
         $res = (new CoHttpClient())
@@ -451,12 +456,17 @@ class JinCaiShuKeService extends ServiceBase
     }
 
     //无盘 取数 详情
-    function obtainFpDetailInfo(string $traceNo): array
+    function obtainFpDetailInfo(string $nsrsbh, string $province, string $traceNo, string $taskCode = 'A002'): array
     {
-        $url = 'api/obtainFpDetailInfo';
+        $url = 'api/obtainDetailResult';
 
         $post_data = [
-            'traceNo' => trim($traceNo)
+            'nsrsbh' => $nsrsbh,
+            'province' => $province,
+            'taskCode' => $taskCode,
+            'ywBody' => [
+                'wupanTraceNo' => $traceNo
+            ]
         ];
 
         $res = (new CoHttpClient())

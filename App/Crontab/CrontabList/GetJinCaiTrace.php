@@ -22,7 +22,7 @@ class GetJinCaiTrace extends AbstractCronTask
 
     static function getRule(): string
     {
-        // 每月18号取
+        // 每月20号取
         return '29 10 24 * * ';
     }
 
@@ -127,7 +127,7 @@ class GetJinCaiTrace extends AbstractCronTask
         $line = $throwable->getLine();
         $msg = $throwable->getMessage();
         $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-        CommonService::getInstance()->log4PHP($content, 'error', 'GetJinCaiTrace.log');
+        CommonService::getInstance()->log4PHP($content, 'onException', 'GetJinCaiTrace.log');
     }
 
 }

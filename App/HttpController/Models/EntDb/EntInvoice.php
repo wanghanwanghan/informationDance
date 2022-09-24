@@ -20,7 +20,7 @@ class EntInvoice extends ModelBase
         $this->connectionName = CreateConf::getInstance()->getConf('env.mysqlDatabaseEntDb');
     }
 
-    function addSuffix(string $nsrsbh, string $type): EntInvoice
+    function addSuffix(string $nsrsbh, string $type = ''): EntInvoice
     {
         //01增值税专用发票 *** 本次蚂蚁用 type1
         //02货运运输业增值税专用发票
@@ -31,10 +31,15 @@ class EntInvoice extends ModelBase
         //14通行费电子票 *** 本次蚂蚁用 type2
         //15二手车销售统一发票
 
-        $this->tableName(implode('_', [
-            $this->tableName,
-            $this->suffixNum($nsrsbh),
-        ]));
+        switch ($type) {
+            case 'test':
+                $tablename = [$this->tableName, $type];
+                break;
+            default:
+                $tablename = [$this->tableName, $this->suffixNum($nsrsbh)];
+        }
+
+        $this->tableName(implode('_', $tablename));
 
         return $this;
     }
