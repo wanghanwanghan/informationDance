@@ -31,7 +31,6 @@ class TaoShuService extends ServiceBase
             $this->url = $args[1];
             $this->taoshuPEM = $args[2];
         }
-        CommonService::getInstance()->log4PHP([$args], 'info', 'error_taoshu_http_return_data');
         openssl_get_publickey($this->taoshuPEM);
     }
 
@@ -118,6 +117,7 @@ class TaoShuService extends ServiceBase
     function post($body, $service)
     {
         $header = [];
+        CommonService::getInstance()->log4PHP([$body, $service], 'info', 'error_taoshu_http_return_data');
 
         $postBody = [
             'uid' => $this->uid,
