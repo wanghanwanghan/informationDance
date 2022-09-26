@@ -416,7 +416,7 @@ class JinCaiShuKeService extends ServiceBase
         return $this->checkResp($res, 'wupan');
     }
 
-    //无盘 查询状态接口
+    //无盘 用于客户获取各个采集任务的流水号
     function obtainResultTraceNo(string $traceNo): array
     {
         $url = 'api/obtainResultTraceNo';

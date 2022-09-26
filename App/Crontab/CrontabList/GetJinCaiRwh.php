@@ -46,16 +46,26 @@ class GetJinCaiRwh extends AbstractCronTask
             $list = JinCaiTrace::create()
                 ->where('updated_at', $time, '<')// 1小时前的所有任务
                 ->where('isComplete', 0)
-                ->page($page, 200)->all();
+                ->page($page, 100)->all();
 
             if (empty($list)) break;
 
             foreach ($list as $rwh_list) {
 
+                CommonService::getInstance()->log4PHP($rwh_list, 'step_1', 'jincai_jiance.log');
+
                 $rwh_info = (new JinCaiShuKeService())
                     ->obtainResultTraceNo($rwh_list->getAttr('traceNo'));
 
+                CommonService::getInstance()->log4PHP($rwh_info, 'step_2', 'jincai_jiance.log');
+
+                // 用来判断是否traceNo已经不用循环了
+                // taskStatus 2是成功 0和1是任务还没开始采集 3是失败
+                $taskStatus_0_1 = $taskStatus_3 = [];
+
                 foreach ($rwh_info['result'] as $rwh_one) {
+
+                    CommonService::getInstance()->log4PHP($rwh_one, 'step_3', 'jincai_jiance.log');
 
                     try {
                         $check = JinCaiRwh::create()->where('wupanTraceNo', $rwh_one['wupanTraceNo'])->get();
@@ -69,9 +79,11 @@ class GetJinCaiRwh extends AbstractCronTask
                         } else {
                             $check->update(['taskStatus' => $rwh_one['taskStatus'] ?? '未返回']);
                         }
-                        if ($rwh_one['taskStatus'] - 0 === 2) {
-                            // 这里要更新taskStatus 2是成功 0和1是任务还没开始采集 3是失败
-                            $rwh_list->update(['isComplete' => 1]);// trace表的作用到此为止
+                        if ($rwh_one['taskStatus'] - 0 === 1 || $rwh_one['taskStatus'] - 0 === 0) {
+                            $taskStatus_0_1[] = $rwh_one['wupanTraceNo'];
+                        }
+                        if ($rwh_one['taskStatus'] - 0 === 3) {
+                            $taskStatus_3[] = $rwh_one['wupanTraceNo'];
                         }
                     } catch (\Throwable $e) {
                         $file = $e->getFile();
@@ -81,7 +93,11 @@ class GetJinCaiRwh extends AbstractCronTask
                         CommonService::getInstance()->log4PHP($content, 'try-catch', 'GetJinCaiRwh.log');
                         continue;
                     }
+                }
 
+                // 所有rwh都正常
+                if (empty($taskStatus_0_1) && empty($taskStatus_3)) {
+                    $rwh_list->update(['isComplete' => 1]);
                 }
 
             }
