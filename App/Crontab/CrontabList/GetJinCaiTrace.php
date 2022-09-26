@@ -73,10 +73,10 @@ class GetJinCaiTrace extends AbstractCronTask
                 for ($cxlx = 2; $cxlx--;) {
 
                     $ywBody = [
-                        'cxlx' => trim($cxlx),//查询类型 0销项 1 进项
-                        'kprqq' => date('Y-m-d', $kprqq),//开票日期起
-                        'kprqz' => date('Y-m-d', $kprqz),//开票日期止
-                        'nsrsbh' => $target->getAttr('socialCredit'),//纳税人识别号
+                        'cxlx' => trim($cxlx),// 查询类型 0销项 1 进项
+                        'kprqq' => date('Y-m-d', $kprqq),// 开票日期起
+                        'kprqz' => date('Y-m-d', $kprqz),// 开票日期止
+                        'nsrsbh' => $target->getAttr('socialCredit'),// 纳税人识别号
                     ];
 
                     // 傻逼金财

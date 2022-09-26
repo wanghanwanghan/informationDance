@@ -92,12 +92,16 @@ class GetInvDataJinCai extends ProcessBase
             $cxlx = trim($main['result']['convertResult']['cxlx']);
             foreach ($main['result']['convertResult']['fieldMapping'] as $one_main) {
                 // 目前主票字段是20个
-                if (count($one_main) <= 18) {
+                if (count($one_main) !== 20) {
+                    CommonService::getInstance()->log4PHP([
+                        '税号' => $nsrsbh,
+                        '问题' => '主票字段不是20个',
+                        '主票信息' => $one_main
+                    ], 'main-getDataByJinCai', 'GetInvDataJinCai.log');
                     continue;
                 }
                 $this->mainStoreMysql($one_main, $nsrsbh, $cxlx, $fplx);
             }
-
             $main_isComplete = 1;
         }
 
@@ -114,7 +118,12 @@ class GetInvDataJinCai extends ProcessBase
             $mxxh = 0;
             foreach ($detail['result']['convertResult']['result'] as $key => $one_detail) {
                 // 目前详情字段是12个
-                if (count($one_detail) <= 10) {
+                if (count($one_detail) !== 12) {
+                    CommonService::getInstance()->log4PHP([
+                        '税号' => $nsrsbh,
+                        '问题' => '详情字段不是12个',
+                        '详情信息' => $one_detail
+                    ], 'detail-getDataByJinCai', 'GetInvDataJinCai.log');
                     continue;
                 }
                 // 第一个是字段中文名称
