@@ -1730,8 +1730,8 @@ class XinDongController extends ProvideBase
     {
         $postData = [
             'entName' => $this->getRequestData('entName'),
-            'page' => $this->getRequestData('page', 1),
-            'pageSize' => $this->getRequestData('pageSize', 200),
+            'page' => $this->getRequestData('page'),
+            'pageSize' => $this->getRequestData('pageSize'),
             'title' => $this->getRequestData('title'),
             'position' => $this->getRequestData('position'),
             'industry' => $this->getRequestData('industry'),
