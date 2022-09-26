@@ -84,8 +84,6 @@ class GetInvDataJinCai extends ProcessBase
         $main = (new JinCaiShuKeService())
             ->obtainFpInfo($info['socialCredit'], $info['province'], $rwh_info['wupanTraceNo']);
 
-        CommonService::getInstance()->log4PHP($main, 'step_1', 'jincai_jince_' . $this->p_index . '.log');
-
         if (!empty($main['result']['convertResult']['fieldMapping'])) {
             $nsrsbh = trim($main['result']['convertResult']['nsrsbh']);
             $kprqq = trim($main['result']['convertResult']['kprqq']);// 起
@@ -111,8 +109,6 @@ class GetInvDataJinCai extends ProcessBase
         $detail = (new JinCaiShuKeService())
             ->obtainFpDetailInfo($info['socialCredit'], $info['province'], $rwh_info['wupanTraceNo']);
 
-        CommonService::getInstance()->log4PHP($detail, 'step_2', 'jincai_jince_' . $this->p_index . '.log');
-
         if (!empty($detail['result']['convertResult']['result']) && count($detail['result']['convertResult']['result']) >= 2) {
             $nsrsbh = trim($detail['result']['convertResult']['nsrsbh']);
             $kprqq = trim($detail['result']['convertResult']['kprqq']);// 起
@@ -135,7 +131,7 @@ class GetInvDataJinCai extends ProcessBase
                     continue;
                 }
                 $mxxh++;
-                $this->detailStoreMysql($mxxh, $one_detail, $nsrsbh, $cxlx, $fplx);
+                $this->detailStoreMysql($one_detail, $nsrsbh, $cxlx, $fplx);
             }
 
             $detail_isComplete = 1;
@@ -218,7 +214,7 @@ class GetInvDataJinCai extends ProcessBase
         }
     }
 
-    private function detailStoreMysql(int $mxxh, array $arr, string $nsrsbh, string $cxlx, string $fplx): void
+    private function detailStoreMysql(array $arr, string $nsrsbh, string $cxlx, string $fplx): void
     {
         //        0 => "序号"
         //        1 => "发票代码"
@@ -251,7 +247,7 @@ class GetInvDataJinCai extends ProcessBase
             'se' => changeDecimal(changeNull($arr[11]), 2),//'税额',
             'dj' => changeDecimal(changeNull($arr[8]), 2),//'不含税单价',
             'ggxh' => changeNull($arr[5]),//'规格型号',
-            'mxxh' => $mxxh,
+            'mxxh' => $arr[0],
             'fpdm' => $arr[1],//'发票代码',
             'fphm' => $arr[2],//'发票号码',
             'fphxz' => '',//'是否折扣行 0否 1是 默认0表示正常商品行',
