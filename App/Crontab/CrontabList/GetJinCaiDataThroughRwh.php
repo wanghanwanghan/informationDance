@@ -22,8 +22,7 @@ class GetJinCaiDataThroughRwh extends AbstractCronTask
 
     static function getRule(): string
     {
-        // return '29 10 24 * * ';
-        return '*/30 * * * * ';
+        return '*/2 * * * * ';
     }
 
     static function getTaskName(): string

@@ -52,21 +52,14 @@ class GetJinCaiRwh extends AbstractCronTask
 
             foreach ($list as $rwh_list) {
 
-                CommonService::getInstance()->log4PHP($rwh_list, 'step_1', 'jincai_jiance.log');
-
                 $rwh_info = (new JinCaiShuKeService())
                     ->obtainResultTraceNo($rwh_list->getAttr('traceNo'));
-
-                CommonService::getInstance()->log4PHP($rwh_info, 'step_2', 'jincai_jiance.log');
 
                 // 用来判断是否traceNo已经不用循环了
                 // taskStatus 2是成功 0和1是任务还没开始采集 3是失败
                 $taskStatus_0_1 = $taskStatus_3 = [];
 
                 foreach ($rwh_info['result'] as $rwh_one) {
-
-                    CommonService::getInstance()->log4PHP($rwh_one, 'step_3', 'jincai_jiance.log');
-
                     try {
                         $check = JinCaiRwh::create()->where('wupanTraceNo', $rwh_one['wupanTraceNo'])->get();
                         if (empty($check)) {
