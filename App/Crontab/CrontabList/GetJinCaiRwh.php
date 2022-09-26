@@ -44,7 +44,7 @@ class GetJinCaiRwh extends AbstractCronTask
         while (true) {
 
             $list = JinCaiTrace::create()
-                ->where('updated_at', $time, '<')
+                ->where('updated_at', $time, '<')// 1小时前的所有任务
                 ->where('isComplete', 0)
                 ->page($page, 200)->all();
 
@@ -66,7 +66,7 @@ class GetJinCaiRwh extends AbstractCronTask
                                 'traceNo' => $rwh_list->getAttr('traceNo'),
                                 'wupanTraceNo' => $rwh_one['wupanTraceNo'] ?? '未返回',
                             ])->save();
-                            $rwh_list->update(['isComplete' => 1]);
+                            $rwh_list->update(['isComplete' => 1]);// trace表的作用到此为止
                         }
                     } catch (\Throwable $e) {
                         $file = $e->getFile();

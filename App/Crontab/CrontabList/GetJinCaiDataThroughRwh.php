@@ -48,7 +48,7 @@ class GetJinCaiDataThroughRwh extends AbstractCronTask
                 ->page($page, 100)->all();
             if (empty($rwh_list)) break;
             foreach ($rwh_list as $one_rwh) {
-                $one_rwh->update(['isComplete' => 2]);// 状态改为执行中
+                $one_rwh->update(['isComplete' => 2]);// 任务号表的这条数据状态改为执行中
                 $one_rwh = obj2Arr($one_rwh);
                 $one_rwh['isComplete'] = 2;
                 $redis->lPush(GetInvDataJinCai::QueueKey, jsonEncode($one_rwh, false));
