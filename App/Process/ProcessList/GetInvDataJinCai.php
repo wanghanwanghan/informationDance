@@ -70,15 +70,11 @@ class GetInvDataJinCai extends ProcessBase
 
     function getDataByJinCai(array $rwh_info): bool
     {
-        CommonService::getInstance()->log4PHP($rwh_info, 'step_1', 'jincai_jince_' . $this->p_index . '.log');
-
         $info = JinCaiTrace::create()->where('traceNo', $rwh_info['traceNo'])->get();
-
-        CommonService::getInstance()->log4PHP($info, 'step_2', 'jincai_jince_' . $this->p_index . '.log');
 
         if (empty($info)) return false;
 
-        if (empty($info['socialCredit']) || empty($info['province']) || empty($info['wupanTraceNo'])) {
+        if (empty($info['socialCredit']) || empty($info['province']) || empty($info['traceNo'])) {
             return false;
         }
 
@@ -86,9 +82,9 @@ class GetInvDataJinCai extends ProcessBase
 
         // 先取主票
         $main = (new JinCaiShuKeService())
-            ->obtainFpInfo($info['socialCredit'], $info['province'], $info['wupanTraceNo']);
+            ->obtainFpInfo($info['socialCredit'], $info['province'], $rwh_info['wupanTraceNo']);
 
-        CommonService::getInstance()->log4PHP($main, 'step_3', 'jincai_jince_' . $this->p_index . '.log');
+        CommonService::getInstance()->log4PHP($main, 'step_1', 'jincai_jince_' . $this->p_index . '.log');
 
         if (!empty($main['result']['convertResult']['fieldMapping'])) {
             $nsrsbh = trim($main['result']['convertResult']['nsrsbh']);
@@ -113,9 +109,9 @@ class GetInvDataJinCai extends ProcessBase
 
         // 再取详情
         $detail = (new JinCaiShuKeService())
-            ->obtainFpDetailInfo($info['socialCredit'], $info['province'], $info['wupanTraceNo']);
+            ->obtainFpDetailInfo($info['socialCredit'], $info['province'], $rwh_info['wupanTraceNo']);
 
-        CommonService::getInstance()->log4PHP($detail, 'step_4', 'jincai_jince_' . $this->p_index . '.log');
+        CommonService::getInstance()->log4PHP($detail, 'step_2', 'jincai_jince_' . $this->p_index . '.log');
 
         if (!empty($detail['result']['convertResult']['result']) && count($detail['result']['convertResult']['result']) >= 2) {
             $nsrsbh = trim($detail['result']['convertResult']['nsrsbh']);
@@ -147,7 +143,7 @@ class GetInvDataJinCai extends ProcessBase
 
         // 入库完毕
         if ($main_isComplete === 1 && $detail_isComplete === 1) {
-            JinCaiRwh::create()->where('traceNo', $rwh_info['wupanTraceNo'])->update(['isComplete' => 1]);
+            JinCaiRwh::create()->where('wupanTraceNo', $rwh_info['wupanTraceNo'])->update(['isComplete' => 1]);
         }
 
         return true;
