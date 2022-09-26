@@ -11,6 +11,8 @@ use EasySwoole\RedisPool\Redis;
 
 class GetJinCaiDataThroughRwh extends AbstractCronTask
 {
+    const maxListLen = 500;
+
     public $crontabBase;
 
     function __construct()
@@ -20,8 +22,8 @@ class GetJinCaiDataThroughRwh extends AbstractCronTask
 
     static function getRule(): string
     {
-        return '29 10 24 * * ';
-        // return '*/30 * * * * ';
+        // return '29 10 24 * * ';
+        return '*/30 * * * * ';
     }
 
     static function getTaskName(): string
@@ -34,17 +36,17 @@ class GetJinCaiDataThroughRwh extends AbstractCronTask
         $redis = Redis::defer('redis');
         $redis->select(15);
 
-        // 判断队列长度，太长就先不加了
-        $llen = $redis->lLen(GetInvDataJinCai::QueueKey);
-        if ($llen > 500) {
-            return;
-        }
-
         $page = 1;
 
         while (true) {
+            // 判断队列长度，太长就先不加了
+            $llen = $redis->lLen(GetInvDataJinCai::QueueKey);
+            if ($llen > self::maxListLen) {
+                break;
+            }
             // 到rwh表里的数据，肯定是已经执行采集超过1小时的
             $rwh_list = JinCaiRwh::create()
+                ->where('taskStatus', '2')// 金财已经采集完成的
                 ->where('isComplete', 0)
                 ->page($page, 100)->all();
             if (empty($rwh_list)) break;

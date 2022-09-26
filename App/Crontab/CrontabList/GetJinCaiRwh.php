@@ -21,7 +21,7 @@ class GetJinCaiRwh extends AbstractCronTask
 
     static function getRule(): string
     {
-        return '* * * * * ';
+        return '*/2 * * * * ';
     }
 
     static function getTaskName(): string
@@ -33,7 +33,7 @@ class GetJinCaiRwh extends AbstractCronTask
     {
         // 等待金财任务执行1小时后，开始取任务号
 
-        $check = $this->crontabBase->withoutOverlapping(self::getTaskName(), 7200);
+        $check = $this->crontabBase->withoutOverlapping(self::getTaskName(), 3600);
 
         if (!$check) return;
 
@@ -59,7 +59,6 @@ class GetJinCaiRwh extends AbstractCronTask
 
                     try {
                         $check = JinCaiRwh::create()->where('wupanTraceNo', $rwh_one['wupanTraceNo'])->get();
-                        // 这里要更新taskStatus
                         if (empty($check)) {
                             // 开始无盘任务号入库
                             JinCaiRwh::create()->data([
@@ -67,6 +66,11 @@ class GetJinCaiRwh extends AbstractCronTask
                                 'traceNo' => $rwh_list->getAttr('traceNo'),
                                 'wupanTraceNo' => $rwh_one['wupanTraceNo'] ?? '未返回',
                             ])->save();
+                        } else {
+                            $check->update(['taskStatus' => $rwh_one['taskStatus'] ?? '未返回']);
+                        }
+                        if ($rwh_one['taskStatus'] - 0 === 2) {
+                            // 这里要更新taskStatus 2是成功 0和1是任务还没开始采集 3是失败
                             $rwh_list->update(['isComplete' => 1]);// trace表的作用到此为止
                         }
                     } catch (\Throwable $e) {
