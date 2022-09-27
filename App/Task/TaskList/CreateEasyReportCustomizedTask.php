@@ -7279,16 +7279,16 @@ TEMP;
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdminPenaltyCheck/GetList', $postData);//AdministrativePenalty/GetAdministrativePenaltyList
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result']['Data'], $res['paging']['total']] : list($res, $total) = [null, null];
 
             if (!empty($res)) {
                 foreach ($res as &$one) {
                     //取详情
                     $postData = ['id' => $one['Id']];
 
-                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdministrativePenalty/GetAdministrativePenaltyDetail', $postData);
+                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdminPenaltyCheck/GetCreditDetail', $postData);AdministrativePenalty/GetAdministrativePenaltyDetail
 
                     if ($detail['code'] == 200 && !empty($detail['result'])) {
                         $one['detail'] = $detail['result'];

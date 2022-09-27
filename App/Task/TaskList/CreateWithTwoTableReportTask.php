@@ -3948,7 +3948,7 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdminPenaltyCheck/GetList', $postData);//AdministrativePenalty/GetAdministrativePenaltyList
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
@@ -3957,7 +3957,7 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
                     //取详情
                     $postData = ['id' => $one['Id']];
 
-                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdministrativePenalty/GetAdministrativePenaltyDetail', $postData);
+                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdminPenaltyCheck/GetCreditDetail', $postData);//AdministrativePenalty/GetAdministrativePenaltyDetail
 
                     if ($detail['code'] == 200 && !empty($detail['result'])) {
                         $one['detail'] = $detail['result'];

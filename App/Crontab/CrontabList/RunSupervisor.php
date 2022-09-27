@@ -827,19 +827,19 @@ class RunSupervisor extends AbstractCronTask
         ];
 
         $res = (new LongDunService())->setCheckRespFlag(true)
-            ->get($this->ldUrl . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
+            ->get($this->ldUrl . 'AdminPenaltyCheck/GetList', $postData);//AdministrativePenalty/GetAdministrativePenaltyList
 
         if ($res['code'] == 200 && !empty($res['result'])) {
-            foreach ($res['result'] as $one) {
+            foreach ($res['result']['Data'] as $one) {
                 $check = SupervisorEntNameInfo::create()->where('keyNo', $one['Id'])->get();
 
                 if ($check) continue;
 
                 strlen($one['LianDate']) > 9 ? $time = $one['LianDate'] : $time = '';
 
-                $content = "<p>案号: {$one['CaseNo']}</p>";
-                $content .= "<p>案由: {$one['CaseReason']}</p>";
-                $content .= "<p>决定日期: {$one['LianDate']}</p>";
+                $content = "<p>案号: {$one['DocNo']}</p>";
+                $content .= "<p>案由: {$one['PunishReason']}</p>";
+                $content .= "<p>决定日期: {$one['PunishDate']}</p>";
 
                 SupervisorEntNameInfo::create()->data([
                     'entName' => $entName,

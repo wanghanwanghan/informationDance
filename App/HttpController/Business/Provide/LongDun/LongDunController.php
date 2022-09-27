@@ -155,7 +155,7 @@ class LongDunController extends ProvideBase
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
+            return (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'AdminPenaltyCheck/GetList', $postData);//AdministrativePenalty/GetAdministrativePenaltyList
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

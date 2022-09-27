@@ -372,7 +372,7 @@ class LongDunController extends LongDunBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'QualificationExpressCheck/GetList', $postData);//Qualification/GetList
+        $res = (new LongDunService())->get($this->baseUrl . 'BuildingQualificationCheck/GetList', $postData);//Qualification/GetList
 
         return $this->checkResponse($res);
     }
@@ -382,9 +382,9 @@ class LongDunController extends LongDunBase
     {
         $id = $this->request()->getRequestParam('id');
 
-        $postData = ['id' => $id];
+        $postData = ['projectId' => $id];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'Qualification/GetDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'Qualification/GetDetail', $postData);//
 
         return $this->checkResponse($res);
     }
@@ -393,7 +393,7 @@ class LongDunController extends LongDunBase
     function getBuildingProjectList()
     {
         $entName = $this->request()->getRequestParam('entName');
-        $page = $this->request()->getRequestParam('page') ?? 1;
+        $page = $this->request()->getRequestParam('pageNo') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         $postData = [
@@ -402,7 +402,7 @@ class LongDunController extends LongDunBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'BuildingProject/GetList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'QualificationExpressCheck/GetList', $postData);//BuildingProject/GetList
 
         return $this->checkResponse($res);
     }
@@ -412,9 +412,9 @@ class LongDunController extends LongDunBase
     {
         $id = $this->request()->getRequestParam('id');
 
-        $postData = ['id' => $id];
+        $postData = ['ProjectId' => $id];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'BuildingProject/GetDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'QualificationProjectCheck/GetInfo', $postData);//BuildingProject/GetDetail
 
         return $this->checkResponse($res);
     }
@@ -453,7 +453,7 @@ class LongDunController extends LongDunBase
     function getAdministrativeLicenseList()
     {
         $entName = $this->request()->getRequestParam('entName');
-        $page = $this->request()->getRequestParam('page') ?? 1;
+        $page = $this->request()->getRequestParam('pageNo') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         $postData = [
@@ -462,7 +462,7 @@ class LongDunController extends LongDunBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'AdminLicenseCheck/GetList', $postData);//ADSTLicense/GetAdministrativeLicenseList
 
         return $this->checkResponse($res);
     }
@@ -483,7 +483,7 @@ class LongDunController extends LongDunBase
     function getAdministrativePenaltyList()
     {
         $entName = $this->request()->getRequestParam('entName');
-        $page = $this->request()->getRequestParam('page') ?? 1;
+        $page = $this->request()->getRequestParam('pageNo') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         $postData = [
