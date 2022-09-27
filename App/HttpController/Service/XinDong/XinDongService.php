@@ -452,7 +452,7 @@ class XinDongService extends ServiceBase
 
             $postData = ['searchKey' => $entName];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'BusinessStateV4/SearchCompanyFinancings', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'CompanyFinancingSearch/GetList', $postData);//BusinessStateV4/SearchCompanyFinancings
 
             if (empty($res['result'])) return null;
 
