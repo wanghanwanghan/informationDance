@@ -110,14 +110,7 @@ class RunCompleteCompanyData extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-//        return true;
-        if(
-            !ConfigInfo::checkCrontabIfCanRun("RunCompleteCompanyData")
-        ){
-            return    CommonService::getInstance()->log4PHP(__CLASS__ . ' is running RunReadAndDealXls');
-
-        }
-        CommonService::getInstance()->log4PHP(__CLASS__ . '开始');
+        CommonService::getInstance()->log4PHP(__CLASS__ . 'start');
 //        if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) {
 //            CommonService::getInstance()->log4PHP(__CLASS__ . '开始-NO');
 //            return true;
@@ -135,10 +128,13 @@ class RunCompleteCompanyData extends AbstractCronTask
 
         // 一个一个的跑
         $file = pathinfo(array_shift($files))['basename'];
+        $newFile = 'dealing_'.$file;
+        rename($this->workPath.$file, $this->workPath.$newFile);
+
         // CommonService::getInstance()->log4PHP('RunCompleteCompanyData file '.($file) );
         
         // 取yield数据
-        $excelDatas = $this->getYieldData($file);
+        $excelDatas = $this->getYieldData($newFile);
         
         $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
         // CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用1 '.$memory .' '.$file );
@@ -155,10 +151,9 @@ class RunCompleteCompanyData extends AbstractCronTask
         $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
         // CommonService::getInstance()->log4PHP('RunCompleteCompanyData 内存使用2 '.$memory .' '.$file );
 
-        @unlink($this->workPath . $file);
+        @unlink($this->workPath . $newFile);
 //        $this->crontabBase->removeOverlappingKey(self::getTaskName());
-        ConfigInfo::setIsDone("RunCompleteCompanyData");
-
+       
         return true ;  
     }
 
