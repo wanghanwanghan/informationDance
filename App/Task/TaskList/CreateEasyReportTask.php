@@ -3036,7 +3036,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             $postData = ['searchKey' => $this->entName];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'BusinessStateV4/SearchCompanyFinancings', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'CompanyFinancingSearch/GetList', $postData);//BusinessStateV4/SearchCompanyFinancings
+            CommonService::getInstance()->log4PHP($res, 'info', 'CompanyFinancingSearch_GetList');
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
 
