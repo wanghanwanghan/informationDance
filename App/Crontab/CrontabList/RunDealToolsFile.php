@@ -117,16 +117,7 @@ class RunDealToolsFile extends AbstractCronTask
       * */
     function run(int $taskId, int $workerIndex): bool
     {
-        //防止重复跑
-        if(
-            !ConfigInfo::checkCrontabIfCanRun(__CLASS__)
-        ){
-            return     CommonService::getInstance()->log4PHP(json_encode(
-                [
-                    __CLASS__ . ' is already running  ',
-                ]
-            ));
-        }
+
 
         //设置为正在执行中
         ConfigInfo::setIsRunning(__CLASS__);
@@ -134,8 +125,6 @@ class RunDealToolsFile extends AbstractCronTask
         //生成文件
         self::generateFile(3);
 
-        //设置为已执行完毕
-        ConfigInfo::setIsDone(__CLASS__);
 
         return true ;   
     }

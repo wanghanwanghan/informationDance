@@ -153,7 +153,7 @@ class RunCompleteCompanyData extends AbstractCronTask
 
         @unlink($this->workPath . $newFile);
 //        $this->crontabBase->removeOverlappingKey(self::getTaskName());
-       
+
         return true ;  
     }
 
