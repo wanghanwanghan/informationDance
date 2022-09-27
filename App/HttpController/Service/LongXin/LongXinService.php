@@ -948,7 +948,7 @@ class LongXinService extends ServiceBase
 
         $res = (new CoHttpClient())
             ->setCheckRespFlag(true)
-            ->useCache(false)
+            ->useCache(true)
             ->send($this->baseUrl . 'company_lianxi/', $arr, $this->sendHeaders);
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
