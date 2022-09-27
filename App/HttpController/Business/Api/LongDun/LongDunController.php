@@ -264,7 +264,7 @@ class LongDunController extends LongDunBase
 
         $postData = ['id' => $id];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'LandPurchase/LandPurchaseDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'LandMergeCheck/GetPurchaseDetail', $postData);//LandPurchase/LandPurchaseDetail
 
         return $this->checkResponse($res);
     }
