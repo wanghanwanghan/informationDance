@@ -314,7 +314,10 @@ class RunReadAndDealXls extends AbstractCronTask
 
         // 取yield数据 
         // $excelDatas = $this->getYieldData($file,'matchNameFormatData');
-        $excelDatas = $this->getYieldDataToMathWeiXin($file);
+        $newFile = 'dealing_'.$file;
+        rename($this->workPath.$file, $this->workPath.$newFile);
+
+        $excelDatas = $this->getYieldDataToMathWeiXin($newFile);
 
         $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
         $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用1 '.$memory .' '.$file );
@@ -331,7 +334,7 @@ class RunReadAndDealXls extends AbstractCronTask
         $memory = round((memory_get_usage()-$startMemory)/1024/1024,3).'M'.PHP_EOL;
         $debugLog && CommonService::getInstance()->log4PHP('matchName 内存使用2 '.$memory .' '.$file );
 
-        @unlink($this->workPath . $file);
+        @unlink($this->workPath . $newFile);
         ConfigInfo::setIsDone("RunReadAndDealXls");
         return true ;
     }
@@ -423,14 +426,6 @@ class RunReadAndDealXls extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex): bool
     {
-        if(
-            !ConfigInfo::checkCrontabIfCanRun("RunReadAndDealXls")
-        ){
-            return    CommonService::getInstance()->log4PHP(__CLASS__ . ' is running RunReadAndDealXls');
-
-        }
-
-//        CommonService::getInstance()->log4PHP(__CLASS__ . ' start running  ');
 
         $debugLog = true;
 
@@ -440,7 +435,7 @@ class RunReadAndDealXls extends AbstractCronTask
         if(empty($files)){
             return true;
         }
-        ConfigInfo::setIsRunning("RunReadAndDealXls");
+
         // 一个一个的跑
 
         $file = pathinfo(array_shift($files))['basename'];
@@ -466,7 +461,7 @@ class RunReadAndDealXls extends AbstractCronTask
         if($fileNameArr[1] == 'checkMobile'){
 //            return true;
 //            $debugLog &&  CommonService::getInstance()->log4PHP('matchWeiXinName  '.($file) );
-            return $this->checkMobile($file,$debugLog);
+           // return $this->checkMobile($file,$debugLog);
         }
 
         // 校验手机号
@@ -475,7 +470,6 @@ class RunReadAndDealXls extends AbstractCronTask
             return $this->checkMobileV2($file,$debugLog);
         }
 
-        ConfigInfo::setIsDone("RunReadAndDealXls");
 
         //  jincai
         if($fileNameArr[1] == 'jincai'){
