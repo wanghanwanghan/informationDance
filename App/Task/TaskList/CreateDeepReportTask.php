@@ -4281,9 +4281,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'Bond/BondList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'CreditorRightsCheck/GetList', $postData);//Bond/BondList
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result']['Data'] : $res = null;
 
             return $res;
         });
