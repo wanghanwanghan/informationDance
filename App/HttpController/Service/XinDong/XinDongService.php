@@ -457,7 +457,7 @@ class XinDongService extends ServiceBase
 
             if (empty($res['result'])) return null;
 
-            foreach ($res['result'] as $one) {
+            foreach ($res['result']['Data'] as $one) {
                 $data[] = $one['Date'] . "，拿到了来自{$one['Investment']}的{$one['Round']}融资，{$one['Amount']}";
             }
 

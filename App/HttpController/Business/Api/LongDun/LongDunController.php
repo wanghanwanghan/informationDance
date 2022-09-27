@@ -432,7 +432,7 @@ class LongDunController extends LongDunBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'Bond/BondList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'CreditorRightsCheck/GetList', $postData);
 
         return $this->checkResponse($res);
     }
