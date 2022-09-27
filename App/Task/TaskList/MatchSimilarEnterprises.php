@@ -52,6 +52,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
         $nx = ($this->data[3]);// 8
         //$dy = $this->createDy($this->data[4]);// 110108
         $dy = ($this->data[4]);// 110108
+        $type =  ($this->data[5]); //  1 
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
@@ -65,10 +66,10 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
             ])
         );
 
-        self::pushToRedisList($uid,$ys,$nic,$nx,$dy);
+        self::pushToRedisList($uid,$ys,$nic,$nx,$dy, $type);
     }
 
-    static  function pushToRedisList($uid,$ys,$nic,$nx,$dy)
+    static  function pushToRedisList($uid,$ys,$nic,$nx,$dy, $type)
     {
         //删除旧的
         (new UserApproximateEnterpriseModel()) ->addSuffix($uid)->deleteByUid($uid);
@@ -142,7 +143,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
 
         $page = 1;
         $runTimes = 0;
-        $maxTimes = 1000;
+        $maxTimes = 20000;
         $esRequestData =  [
             'searchOption' =>  json_encode($searchOptions),
             'basic_nicid' =>$nic,
@@ -162,6 +163,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
                 ]
             ])
         );
+
         foreach ($companys as $company){
             if($runTimes >= $maxTimes){
                 break;
@@ -173,6 +175,7 @@ class MatchSimilarEnterprises extends TaskBase implements TaskInterface
             $company['user_id'] = $uid;
             $company['ys_label'] = $company['ying_shou_gui_mo'];
             $company['base'] = $base;//参考系
+            $company['data_type_front_or_back'] = $type;//参考系
 
             $redis->lPush(MatchSimilarEnterprisesProccess::QueueKey, jsonEncode($company, false));
             if($runTimes%100==0){

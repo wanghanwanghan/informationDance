@@ -1943,7 +1943,7 @@ class SouKeController extends ControllerBase
 
         $analiyLists = XinDongKeDongAnalyzeList::findAllByUserIdV2($this->loginUserinfo['id']);
         $companyIdsArr = array_column($analiyLists,'companyid');
-        \App\HttpController\Models\MRXD\XinDongKeDongAnalyzeHistory::addRecord(
+        XinDongKeDongAnalyzeHistory::addRecord(
             [
                 'user_id' => $this->loginUserinfo['id'],
                 'company_nums' => count($companyIdsArr),
@@ -1963,7 +1963,8 @@ class SouKeController extends ControllerBase
             $featureslists['ying_shou_gui_mo']?:'',
             $featureslists['NIC_ID']?:'',
             $featureslists['OPFROM']?:'',
-            $featureslists['DOMDISTRICT']?:''
+            $featureslists['DOMDISTRICT']?:'',
+            XinDongKeDongService::$type_Backend
         );
 
         //开始分析

@@ -3,11 +3,13 @@
 namespace App\Process\ProcessList;
 
 use App\ElasticSearch\Service\ElasticSearchService;
+use App\HttpController\Models\Api\FrontEndUserApproximateEnterpriseModel;
 use App\HttpController\Models\Api\UserApproximateEnterpriseModel;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\XinDong\Score\qpf;
+use App\HttpController\Service\XinDong\XinDongKeDongService;
 use App\HttpController\Service\XinDong\XinDongService;
 use App\Process\ProcessBase;
 use EasySwoole\RedisPool\Redis;
@@ -48,7 +50,8 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
             $score = (new qpf(
                 $info['base'][0], $info['base'][1], $info['base'][2], $info['base'][3],
                 $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
-            ))->expr();
+            ))->expr(); 
+            
             if($runTimes%100==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
@@ -62,90 +65,8 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                 );
             }
 
-            $esid = control::getUuid();
-            $this->toEs($esid, $info);
-            try {
-                UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
-                    'userid' => $info['user_id'],
-                    'companyid' => $info['companyid'],
-                    'esid' => $esid,
-                    'score' => $score,
-                    'entName' => $info['ENTNAME'],
-                    'ying_shou_gui_mo' => $info['ying_shou_gui_mo']?:'',
-                    'nic_id' => $info['NIC_ID']?:'',
-                    'area' => $info['DOMDISTRICT']?:'',
-                    'found_years_nums' => $info['OPFROM']>0?date('Y')-date('Y',strtotime($info['OPFROM'])):0,
-                    'mvcc' => '',
-                ])->save();
-            } catch (\Throwable $e) {
-                $file = $e->getFile();
-                $line = $e->getLine();
-                $msg = $e->getMessage();
-                $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-                CommonService::getInstance()->log4PHP($content);
-            }
-        }
-    }
-
-    static function calScore()
-    {
-
-        $redis = Redis::defer('redis');
-        $redis->select(15);
-
-        //最多执行次数
-        $allowed_run_nums = 1000;
-        //实际执行次数
-        $run_nums = 0;
-        //有效的数量
-        $invalid_nums = 0;
-        //分值超过90的
-        $nums_bigger_than_90 = 0;
-        //90分数量阈值  超过则不再取
-        $allowed_nums_bigger_than_90 = 1000;
-        //分值超过80的
-        $nums_bigger_than_80 = 0;
-        //最多80分数量   超过则不再取
-        $allowed_nums_bigger_than_80 = 3000;
-
-        //开始消费
-        while (true) {
-            $run_nums ++;
-
-            if (
-                $run_nums >= $allowed_run_nums ||
-                $nums_bigger_than_90 >= $allowed_nums_bigger_than_90 ||
-                $nums_bigger_than_80 >= $allowed_nums_bigger_than_80
-            ) {
-                CommonService::getInstance()->log4PHP(json_encode([
-
-                    'return1'=>true,
-                ]));
-                break;
-            }
-
-            $entInsRedis = $redis->rPop(self::QueueKey);
-            CommonService::getInstance()->log4PHP(json_encode([
-                '$entInsRedis'=>$entInsRedis
-            ]));
-            if (empty($entInsRedis)) {
-                CommonService::getInstance()->log4PHP(json_encode([
-                    'return2'=>true,
-                ]));
-                break;
-            }
-
-            $info = jsonDecode($entInsRedis);
-            CommonService::getInstance()->log4PHP(json_encode([
-                'ENTNAMEXXXX'=>$info['ENTNAME'],
-            ]));
-            $score = (new qpf(
-                $info['base'][0], $info['base'][1], $info['base'][2], $info['base'][3],
-                $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
-            ))->expr();
-
-            //小于70的 不计算
-            if($score <= 70 ){
+             //小于70的 不计算
+             if($score <= 70 ){
                 continue ;
             }
 
@@ -154,33 +75,40 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                 in_array($info['ENTSTATUS'],array_keys(CodeEx02::invalidCodeMap()))
             ){
                 continue;
-            };
+            }; 
+            
 
-            $invalid_nums ++;
-
-            if($score >= 80 ){
-                $nums_bigger_than_80 ++ ;
-
-            }
-            if($score >= 90 ){
-                $nums_bigger_than_90 ++ ;
-            }
-
-            $esres = (new XinDongService())->getEsBasicInfoV2($info['companyid'],[]);
-
+            $esid = control::getUuid();
+            $this->toEs($esid, $info);
             try {
-                UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
-                    'userid' => $info['user_id'],
-                    'companyid' => $info['companyid'],
-                    'esid' => 0,
-                    'score' => $score,
-                    'entName' => $esres['ENTNAME'],
-                    'ying_shou_gui_mo' => $info['ying_shou_gui_mo']?:'',
-                    'nic_id' => $info['NIC_ID']?:'',
-                    'area' => $info['DOMDISTRICT']?:'',
-                    'found_years_nums' => $info['OPFROM']>0?date('Y')-date('Y',strtotime($info['OPFROM'])):0,
-                    'mvcc' => '',
-                ])->save();
+                if($info['data_type_front_or_back'] == XinDongKeDongService::$type_frontkend){
+                    FrontEndUserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
+                        'userid' => $info['user_id'],
+                        'companyid' => $info['companyid'],
+                        'esid' => $esid,
+                        'score' => $score,
+                        'entName' => $info['ENTNAME'],
+                        'ying_shou_gui_mo' => $info['ying_shou_gui_mo']?:'',
+                        'nic_id' => $info['NIC_ID']?:'',
+                        'area' => $info['DOMDISTRICT']?:'',
+                        'found_years_nums' => $info['OPFROM']>0?date('Y')-date('Y',strtotime($info['OPFROM'])):0,
+                        'mvcc' => '',
+                    ])->save();
+                }else{
+                    UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
+                        'userid' => $info['user_id'],
+                        'companyid' => $info['companyid'],
+                        'esid' => $esid,
+                        'score' => $score,
+                        'entName' => $info['ENTNAME'],
+                        'ying_shou_gui_mo' => $info['ying_shou_gui_mo']?:'',
+                        'nic_id' => $info['NIC_ID']?:'',
+                        'area' => $info['DOMDISTRICT']?:'',
+                        'found_years_nums' => $info['OPFROM']>0?date('Y')-date('Y',strtotime($info['OPFROM'])):0,
+                        'mvcc' => '',
+                    ])->save();
+                }
+                
             } catch (\Throwable $e) {
                 $file = $e->getFile();
                 $line = $e->getLine();
@@ -189,8 +117,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                 CommonService::getInstance()->log4PHP($content);
             }
         }
-        return $invalid_nums;
-    }
+    } 
 
     private function toEs(string $esid, array $data)
     {
