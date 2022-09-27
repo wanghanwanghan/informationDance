@@ -372,7 +372,7 @@ class LongDunController extends LongDunBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'QualificationProjectCheck/GetInfo', $postData);//Qualification/GetList
+        $res = (new LongDunService())->get($this->baseUrl . 'QualificationExpressCheck/GetList', $postData);//Qualification/GetList
 
         return $this->checkResponse($res);
     }
@@ -492,7 +492,7 @@ class LongDunController extends LongDunBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'AdministrativePenalty/GetAdministrativePenaltyList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'AdminPenaltyCheck/GetList', $postData);//AdministrativePenalty/GetAdministrativePenaltyList
 
         return $this->checkResponse($res);
     }
@@ -504,7 +504,7 @@ class LongDunController extends LongDunBase
 
         $postData = ['id' => $id];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'AdministrativePenalty/GetAdministrativePenaltyDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'AdminPenaltyCheck/GetCreditDetail', $postData);//AdministrativePenalty/GetAdministrativePenaltyDetail
 
         return $this->checkResponse($res);
     }
