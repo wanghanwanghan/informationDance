@@ -376,7 +376,7 @@ class GetInvData extends ProcessBase
         try {
             if ($FPLXDM === 'type1' || $FPLXDM === 'type2') {
                 //一张发票只属于一个公司的进项和另一个公司的销项
-                $check_exists = EntInvoice::create()->addSuffix($NSRSBH, $FPLXDM)->where([
+                $check_exists = EntInvoice::create()->addSuffix($NSRSBH)->where([
                     'fpdm' => $arr['FPDM'],
                     'fphm' => $arr['FPHM'],
                     'direction' => $invType,//01-购买方 02-销售方
@@ -492,7 +492,7 @@ class GetInvData extends ProcessBase
                     if (!is_numeric($insert['jshj']) && isset($je) && isset($se)) {
                         $insert['jshj'] = changeDecimal($je + $se, 2);
                     }
-                    EntInvoice::create()->addSuffix($NSRSBH, $FPLXDM)->data($insert)->save();
+                    EntInvoice::create()->addSuffix($NSRSBH)->data($insert)->save();
                     if (!empty($insert_detail)) {
                         //发票明细表
                         EntInvoiceDetail::create()->addSuffix($arr['FPDM'], $arr['FPHM'], $FPLXDM)

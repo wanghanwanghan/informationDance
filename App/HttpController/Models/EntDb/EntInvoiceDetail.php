@@ -31,10 +31,15 @@ class EntInvoiceDetail extends ModelBase
         //14通行费电子票 *** 本次蚂蚁用 type2
         //15二手车销售统一发票
 
-        $this->tableName(implode('_', [
-            $this->tableName,
-            $this->suffixNum($fpdm . $fphm),
-        ]));
+        switch ($type) {
+            case 'test':
+                $tablename = [$this->tableName, $type];
+                break;
+            default:
+                $tablename = [$this->tableName, $this->suffixNum($fpdm . $fphm)];
+        }
+
+        $this->tableName(implode('_', $tablename));
 
         return $this;
     }

@@ -70,12 +70,15 @@ class CoHttpClient extends ServiceBase
             if(empty($data) || (isset($d['code']) && $d['code'] != 200)){
                 CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_http_return_data');
             }elseif (stripos($url,'qichacha') && $d['Status'] !=200){
-                dingAlarmUser('企查查'.$d['Message'], ['$url' => $url, '$postData' => json_encode($postData), '$d' => json_encode($d)], [18511881968]);
+//                dingAlarmUser('企查查'.$d['Message'], ['$url' => $url, '$postData' => json_encode($postData), '$d' => json_encode($d)], [18511881968]);
                 CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_qichacha_http_return_data');
-            }elseif(stripos($url,'api.wanvdata.com')){
+            }elseif (stripos($url,'qichacha') && $d['Status'] ==200){
+//                dingAlarmUser('企查查'.$d['Message'], ['$url' => $url, '$postData' => json_encode($postData), '$d' => json_encode($d)], [18511881968]);
+                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'qichacha_http_return_data');
+            }elseif(stripos($url,'api.wanvdata.com') && !empty($d)){
                 CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'taoshu_http_return_data');
             }elseif(stripos($url,'api.wanvdata.com') && empty($d)){
-                dingAlarmUser('陶数返回为空', ['$url' => $url, '$postData' => json_encode($postData), '$d' => json_encode($d)], [18511881968]);
+//                dingAlarmUser('陶数返回为空', ['$url' => $url, '$postData' => json_encode($postData), '$d' => json_encode($d)], [18511881968]);
                 CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_taoshu_http_return_data');
             } else{
                 CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'http_return_data');

@@ -20,6 +20,7 @@ use App\Process\ProcessList\ConsumeOcrProcess;
 use App\Process\ProcessList\Docx2Doc;
 use App\Process\ProcessList\FinancesSearchHandleFengXianAndCaiWu;
 use App\Process\ProcessList\GetInvData;
+use App\Process\ProcessList\GetInvDataJinCai;
 use App\Process\ProcessList\MatchSimilarEnterprisesProccess;
 use App\Process\Service\ProcessService;
 use App\SwooleTable\Service\SwooleTableService;
@@ -119,6 +120,7 @@ class EasySwooleEvent implements Event
             ProcessService::getInstance()->create(Docx2Doc::class, 'docx2doc');
             ProcessService::getInstance()->create(ConsumeOcrProcess::class, 'consumeOcr');
             ProcessService::getInstance()->create(GetInvData::class, 'getInvData', [], GetInvData::ProcessNum);
+            ProcessService::getInstance()->create(GetInvDataJinCai::class, 'getInvDataJinCai', [], GetInvDataJinCai::ProcessNum);
             ProcessService::getInstance()->create(MatchSimilarEnterprisesProccess::class, 'matchSimilarEnterprises', [], MatchSimilarEnterprisesProccess::ProcessNum);
             ProcessService::getInstance()->create(FinancesSearchHandleFengXianAndCaiWu::class, 'FinancesSearchHandleFengXianAndCaiWu');
 

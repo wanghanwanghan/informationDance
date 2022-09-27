@@ -22,8 +22,8 @@ class GetJinCaiTrace extends AbstractCronTask
 
     static function getRule(): string
     {
-        // 每月18号取
-        return '36 18 22 * * ';
+        // 每月20号取
+        return '29 10 24 * * ';
     }
 
     static function getTaskName(): string
@@ -73,10 +73,10 @@ class GetJinCaiTrace extends AbstractCronTask
                 for ($cxlx = 2; $cxlx--;) {
 
                     $ywBody = [
-                        'cxlx' => trim($cxlx),//查询类型 0销项 1 进项
-                        'kprqq' => date('Y-m-d', $kprqq),//开票日期起
-                        'kprqz' => date('Y-m-d', $kprqz),//开票日期止
-                        'nsrsbh' => $target->getAttr('socialCredit'),//纳税人识别号
+                        'cxlx' => trim($cxlx),// 查询类型 0销项 1 进项
+                        'kprqq' => date('Y-m-d', $kprqq),// 开票日期起
+                        'kprqz' => date('Y-m-d', $kprqz),// 开票日期止
+                        'nsrsbh' => $target->getAttr('socialCredit'),// 纳税人识别号
                     ];
 
                     // 傻逼金财
@@ -85,6 +85,7 @@ class GetJinCaiTrace extends AbstractCronTask
                         $addTaskInfo = (new JinCaiShuKeService())->addTask(
                             $target->getAttr('socialCredit'),
                             $target->getAttr('province'),
+                            $target->getAttr('city'),
                             $ywBody
                         );
                         JinCaiTrace::create()->data([
@@ -100,8 +101,8 @@ class GetJinCaiTrace extends AbstractCronTask
                             'kprqz' => $kprqz,
                             'cxlx' => $cxlx,
                         ])->save();
-                        // 还要间隔3分钟
-                        \co::sleep(180);
+                        // 还要间隔2分钟
+                        \co::sleep(120);
                     } catch (\Throwable $e) {
                         $file = $e->getFile();
                         $line = $e->getLine();
@@ -126,7 +127,7 @@ class GetJinCaiTrace extends AbstractCronTask
         $line = $throwable->getLine();
         $msg = $throwable->getMessage();
         $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-        CommonService::getInstance()->log4PHP($content, 'error', 'GetJinCaiTrace.log');
+        CommonService::getInstance()->log4PHP($content, 'onException', 'GetJinCaiTrace.log');
     }
 
 }

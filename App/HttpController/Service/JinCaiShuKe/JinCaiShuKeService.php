@@ -29,25 +29,25 @@ class JinCaiShuKeService extends ServiceBase
         '河北' => 'hebei',
         '山西' => 'shanxi',
         '内蒙古' => 'neimenggu',
-        '辽宁' => 'liaoning',
-        '大连' => 'dalian',
+        '大连' => 'dalian',// 顺序不能乱 单列市
+        '辽宁' => 'liaoning',// 顺序不能乱
         '吉林' => 'jilin',
         '黑龙江' => 'heilongjiang',
         '上海' => 'shanghai',
         '江苏' => 'jiangsu',
-        '浙江' => 'zhejiang',
-        '宁波' => 'ningbo',
+        '宁波' => 'ningbo',// 顺序不能乱 单列市
+        '浙江' => 'zhejiang',// 顺序不能乱
         '安徽' => 'anhui',
         '江西' => 'jiangxi',
-        '福建' => 'fujian',
-        '厦门' => 'xiamen',
-        '山东' => 'shandong',
-        '青岛' => 'qingdao',
+        '厦门' => 'xiamen',// 顺序不能乱 单列市
+        '福建' => 'fujian',// 顺序不能乱
+        '青岛' => 'qingdao',// 顺序不能乱 单列市
+        '山东' => 'shandong',// 顺序不能乱
         '河南' => 'henan',
         '湖北' => 'hubei',
         '湖南' => 'hunan',
-        '广东' => 'guangdong',
-        '深圳' => 'shenzhen',
+        '深圳' => 'shenzhen',// 顺序不能乱 单列市
+        '广东' => 'guangdong',// 顺序不能乱
         '广西' => 'guangxi',
         '海南' => 'hainan',
         '重庆' => 'chongqing',
@@ -379,20 +379,31 @@ class JinCaiShuKeService extends ServiceBase
     }
 
     //无盘 添加任务接口（通用提交采集任务报文）
-    function addTask(string $nsrsbh, string $province, array $ywBody, string $taskCode = 'A002'): array
+    function addTask(string $nsrsbh, string $province, string $city, array $ywBody, string $taskCode = 'A002'): array
     {
         $url = 'task/addTask';
 
+        $province_tmp = '';
+
         foreach (self::$province as $work => $py) {
-            if (is_numeric(mb_strpos($province, $work))) {
-                $province = $py;
+            if (is_numeric(mb_strpos($city, $work))) {
+                $province_tmp = $py;
                 break;
+            }
+        }
+
+        if (empty($province_tmp)) {
+            foreach (self::$province as $work => $py) {
+                if (is_numeric(mb_strpos($province, $work))) {
+                    $province_tmp = $py;
+                    break;
+                }
             }
         }
 
         $post_data = [
             'nsrsbh' => trim($nsrsbh),
-            'province' => trim($province),
+            'province' => trim($province_tmp),
             'taskCode' => trim($taskCode),
             'ywBody' => $ywBody,
         ];
@@ -405,7 +416,7 @@ class JinCaiShuKeService extends ServiceBase
         return $this->checkResp($res, 'wupan');
     }
 
-    //无盘 查询状态接口
+    //无盘 用于客户获取各个采集任务的流水号
     function obtainResultTraceNo(string $traceNo): array
     {
         $url = 'api/obtainResultTraceNo';
@@ -423,12 +434,17 @@ class JinCaiShuKeService extends ServiceBase
     }
 
     //无盘 取数 主票
-    function obtainFpInfo(string $traceNo): array
+    function obtainFpInfo(string $nsrsbh, string $province, string $traceNo, string $taskCode = 'A002'): array
     {
-        $url = 'api/obtainFpInfo';
+        $url = 'api/obtainResult';
 
         $post_data = [
-            'traceNo' => trim($traceNo)
+            'nsrsbh' => $nsrsbh,
+            'province' => $province,
+            'taskCode' => $taskCode,
+            'ywBody' => [
+                'wupanTraceNo' => $traceNo
+            ]
         ];
 
         $res = (new CoHttpClient())
@@ -440,12 +456,17 @@ class JinCaiShuKeService extends ServiceBase
     }
 
     //无盘 取数 详情
-    function obtainFpDetailInfo(string $traceNo): array
+    function obtainFpDetailInfo(string $nsrsbh, string $province, string $traceNo, string $taskCode = 'A002'): array
     {
-        $url = 'api/obtainFpDetailInfo';
+        $url = 'api/obtainDetailResult';
 
         $post_data = [
-            'traceNo' => trim($traceNo)
+            'nsrsbh' => $nsrsbh,
+            'province' => $province,
+            'taskCode' => $taskCode,
+            'ywBody' => [
+                'wupanTraceNo' => $traceNo
+            ]
         ];
 
         $res = (new CoHttpClient())

@@ -1730,7 +1730,8 @@ class XinDongController extends ProvideBase
     {
         $postData = [
             'entName' => $this->getRequestData('entName'),
-            'page' => $this->getRequestData('page', 1),
+            'page' => $this->getRequestData('page'),
+            'pageSize' => $this->getRequestData('pageSize'),
             'title' => $this->getRequestData('title'),
             'position' => $this->getRequestData('position'),
             'industry' => $this->getRequestData('industry'),
@@ -1740,6 +1741,23 @@ class XinDongController extends ProvideBase
             return (new LongXinService())
                 ->setCheckRespFlag(true)
                 ->getJobInfo($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getJobDetail(): bool
+    {
+        $postData = [
+            'pid' => $this->getRequestData('pid'),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getJobDetail($postData['pid']);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

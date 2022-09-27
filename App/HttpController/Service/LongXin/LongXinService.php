@@ -1511,7 +1511,7 @@ class LongXinService extends ServiceBase
         $arr = [
             'usercode' => $this->usercode,
             'entid' => $entId,
-            'pageSize' => '20',//最多200
+            'pageSize' => $data['pageSize'] . '',//最多200
             'pageIndex' => $data['page'] . '',
             'title' => $data['title'] ?? '',//招聘标题，示例："动力工程师"
             'position' => $data['position'] ?? '',//招聘职位，示例："动力工程师"
@@ -1523,6 +1523,8 @@ class LongXinService extends ServiceBase
             'pdate' => $data['pdate'] ?? '',
         ];
 
+        CommonService::getInstance()->log4PHP($arr, 'info', 'getJobInfo.log');
+
         $arr = array_filter($arr);
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
@@ -1531,7 +1533,22 @@ class LongXinService extends ServiceBase
             ->useCache(false)
             ->send($this->baseUrl . 'job/', $arr, $this->sendHeaders);
 
-        CommonService::getInstance()->log4PHP($res);
+        return $this->checkResp($res);
+    }
+
+    //
+    function getJobDetail($pid): ?array
+    {
+        $arr = [
+            'usercode' => $this->usercode,
+            'pid' => $pid . '',
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->baseUrl . 'job_detail/', $arr, $this->sendHeaders);
 
         return $this->checkResp($res);
     }

@@ -190,6 +190,13 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceIncomeStatement', $prefix . 'getFinanceIncomeStatement');//利润表查询
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceBalanceSheetAnnual', $prefix . 'getFinanceBalanceSheetAnnual');//资产负债表--年度查询
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceBalanceSheet', $prefix . 'getFinanceBalanceSheet');//资产负债表查询
+//            $routeCollector->addRoute(['GET', 'POST'], '/getAuthentication', $prefix . 'getAuthentication');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getEssential', $prefix . 'getEssential');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getIncometaxMonthlyDeclaration', $prefix . 'getIncometaxMonthlyDeclaration');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getIncometaxAnnualReport', $prefix . 'getIncometaxAnnualReport');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getVatReturn', $prefix . 'getVatReturn');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getInvoiceMain', $prefix . 'getInvoiceMain');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getInvoiceGoods', $prefix . 'getInvoiceGoods');//
         });
 
         return true;
@@ -238,6 +245,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getSxbzxr', $prefix . 'getSxbzxr');//失信被执行人
             $routeCollector->addRoute(['GET', 'POST'], '/getBzxr', $prefix . 'getBzxr');//被执行人
             $routeCollector->addRoute(['GET', 'POST'], '/getJobInfo', $prefix . 'getJobInfo');//招聘信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getJobDetail', $prefix . 'getJobDetail');//招聘信息
             $routeCollector->addRoute(['GET', 'POST'], '/getInv', $prefix . 'getInv');//大象发票
             $routeCollector->addRoute(['GET', 'POST'], '/vcQueryList', $prefix . 'vcQueryList');//投融快讯
             $routeCollector->addRoute(['GET', 'POST'], '/vcQueryDetail', $prefix . 'vcQueryDetail');//投融快讯
