@@ -140,6 +140,7 @@ class RunDealToolsFile extends AbstractCronTask
             if($nums%100==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
+                        'getYieldDataForUrl $xlsx_name'=>$xlsx_name,
                         'getYieldDataForUrl $nums'=>$nums
                     ])
                 );
@@ -202,7 +203,8 @@ class RunDealToolsFile extends AbstractCronTask
             if($nums%100==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        'getYieldDataForWeinXin $nums'=>$nums
+                        'getYieldDataForWeinXin $xlsx_name'=>$xlsx_name,
+                        'getYieldDataForWeinXin $nums'=>$nums,
                     ])
                 );
             }
@@ -271,7 +273,8 @@ class RunDealToolsFile extends AbstractCronTask
             if($nums%100==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        'getYieldDataForFuzzyMatch $nums'=>$nums
+                        'getYieldDataForFuzzyMatch $xlsx_name'=>$xlsx_name,
+                        'getYieldDataForFuzzyMatch $nums'=>$nums,
                     ])
                 );
             }
