@@ -382,9 +382,9 @@ class LongDunController extends LongDunBase
     {
         $id = $this->request()->getRequestParam('id');
 
-        $postData = ['id' => $id];
+        $postData = ['projectId' => $id];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'Qualification/GetDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'QualificationProjectCheck/GetInfo', $postData);//Qualification/GetDetail
 
         return $this->checkResponse($res);
     }
