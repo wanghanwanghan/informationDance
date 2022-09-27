@@ -79,6 +79,7 @@ use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\Http\Message\UploadFile;
 use App\HttpController\Models\Api\UserBusinessOpportunity;
 use App\HttpController\Models\Api\UserBusinessOpportunityBatch;
+use App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Service\GuangZhouYinLian\GuangZhouYinLianService;
 use Vtiful\Kernel\Format;
@@ -5409,7 +5410,7 @@ eof;
          $requestData =  $this->getRequestData();
          $size = $requestData['size']??20;
          $page = $requestData['page']??1;
-                
+
          return $this->writeJson(200,
              [
              ]
@@ -5420,5 +5421,93 @@ eof;
          );
      }
 
-     
+     //按文件传输
+    function addCompanyToAnalyzeListsByFile(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $fileUplaodRes = DataModelExample::dealUploadFiles($this->request()->getUploadedFiles());
+
+        foreach ($fileUplaodRes['fileNames'] as  $fileName){
+            $res = QueueLists::addRecord(
+                [
+                    'name' => '',
+                    'desc' => '',
+                    'func_info_json' => json_encode(
+                        [
+                            'class' => '\App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList',
+                            'static_func'=> 'addRecordByFile',
+                        ]
+                    ),
+                    'params_json' => json_encode([
+                        'file'=>$fileName,
+                        'user_id' => $this->loginUserinfo['id'],
+                        'name' => $requestData['name']?:'',
+                        'ent_name' => $requestData['ent_name']?:'',
+                        'remark' => $requestData['remark']?:'',
+                    ]),
+                    'type' => QueueLists::$typle_finance,
+                    'remark' => '',
+                    'begin_date' => NULL,
+                    'msg' => '',
+                    'status' => QueueLists::$status_init,
+                ]
+            );
+        }
+        return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+    }
+
+    /**
+    开始分析具体特征
+     */
+    function startAnalysis(): bool
+    {
+        $requestData =  $this->getRequestData();
+
+        //最少5家
+        if(
+            count(XinDongKeDongFrontEndAnalyzeList::findAllByUserId($this->loginUserinfo['id'])) <= 4
+        ){
+            return $this->writeJson(202,[ ] , [], '请最少上传5家企业再进行分析', true, []);
+        }
+
+        //提取特征
+        $featureslists = XinDongKeDongFrontEndAnalyzeList::extractFeatureV2($this->loginUserinfo['id'],false);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'startAnalysis_$featureslists'=> $featureslists
+            ])
+        );
+
+        $analiyLists = XinDongKeDongFrontEndAnalyzeList::findAllByUserIdV2($this->loginUserinfo['id']);
+        $companyIdsArr = array_column($analiyLists,'companyid');
+        \App\HttpController\Models\MRXD\XinDongKeDongFrontEndAnalyzeHistory::addRecord(
+            [
+                'user_id' => $this->loginUserinfo['id'],
+                'company_nums' => count($companyIdsArr),
+                'company_ids' => join(',',$companyIdsArr),
+                'feature_json' => json_encode($featureslists),
+                'status' => intval($requestData['status']),
+                'name' => $requestData['name']?:'',
+                'remark' => $requestData['remark']?:'',
+                'created_at' => time(),
+                'updated_at' => time(),
+            ]
+        );
+
+
+        (new XinDongKeDongService())->MatchSimilarEnterprises(
+            $this->loginUserinfo['id'],
+            $featureslists['ying_shou_gui_mo']?:'',
+            $featureslists['NIC_ID']?:'',
+            $featureslists['OPFROM']?:'',
+            $featureslists['DOMDISTRICT']?:'',
+            XinDongKeDongService::$type_Backend
+        );
+
+        //开始分析
+        return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
+    }
+
+
 }

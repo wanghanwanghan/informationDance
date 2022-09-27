@@ -10,6 +10,10 @@ use EasySwoole\EasySwoole\EasySwooleEvent;
 
 class XinDongKeDongService extends ServiceBase
 {
+
+    static $type_Backend  = 1 ;
+    static $type_frontkend  = 2 ;
+
     function __construct()
     {
         return parent::__construct();
@@ -21,7 +25,7 @@ class XinDongKeDongService extends ServiceBase
     }
 
     //匹配近似企业
-    function MatchSimilarEnterprises(int $uid, string $ys, string $nic, string $nx, string $dy): bool
+    function MatchSimilarEnterprises(int $uid, string $ys, string $nic, string $nx, string $dy,int $type): bool
     {
         // 所有参数不可空
         // $ys=A10 $nic=F51 $nx=8 $dy=110108
@@ -41,7 +45,7 @@ class XinDongKeDongService extends ServiceBase
         }
 
         //self::pushToRedisList($uid,$ys,$nic,$nx,$dy);
-        return TaskService::getInstance()->create(new MatchSimilarEnterprises([$uid, $ys, $nic, $nx, $dy]));
+        return TaskService::getInstance()->create(new MatchSimilarEnterprises([$uid, $ys, $nic, $nx, $dy,$type]));
     }
 
 
