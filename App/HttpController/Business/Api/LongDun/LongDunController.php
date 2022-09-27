@@ -243,7 +243,7 @@ class LongDunController extends LongDunBase
     function landPurchaseList()
     {
         $entName = $this->request()->getRequestParam('entName');
-        $page = $this->request()->getRequestParam('page') ?? 1;
+        $page = $this->request()->getRequestParam('pageNo') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         $postData = [
@@ -363,7 +363,7 @@ class LongDunController extends LongDunBase
     function getQualificationList()
     {
         $entName = $this->request()->getRequestParam('entName');
-        $page = $this->request()->getRequestParam('page') ?? 1;
+        $page = $this->request()->getRequestParam('pageNo') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         $postData = [
@@ -372,7 +372,7 @@ class LongDunController extends LongDunBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'Qualification/GetList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'QualificationProjectCheck/GetInfo', $postData);//Qualification/GetList
 
         return $this->checkResponse($res);
     }

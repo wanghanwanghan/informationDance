@@ -611,7 +611,7 @@ class XinDongService extends ServiceBase
 
                     if ($res['code'] != 200 || empty($res['result'])) break;
 
-                    foreach ($res['result'] as $one) {
+                    foreach ($res['result']['Data'] as $one) {
                         $data[] = "{$one['SignTime']}，通过{$one['SupplyWay']}购得位于{$one['AdminArea']}{$one['Address']}{$one['Area']}公顷的{$one['LandUse']}";
                     }
 
