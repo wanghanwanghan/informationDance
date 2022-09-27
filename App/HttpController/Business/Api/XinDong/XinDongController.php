@@ -33,7 +33,7 @@ use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\MRXD\InsuranceDataHuiZhong;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
-use App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList;
+use App\HttpController\Models\MRXD\XinDongKeDongFrontEndAnalyzeList;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
@@ -5389,8 +5389,17 @@ eof;
 
         //XinDongService::getMarjetShare($requestData['xd_id']);
         return $this->writeJson(200, [ ] ,XinDongService::getMarjetShare($requestData['xd_id']), '成功', true, []);
-    }
+    } 
 
+    //增删改 全部一起
+    function addCompanyToAnalyzeListsV2(): bool
+    {
+        $requestData =  $this->getRequestData();
+
+        XinDongKeDongFrontEndAnalyzeList::updateListsByUser($requestData,$this->loginUserinfo['id']);
+
+        return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+    }
 
 
 }
