@@ -3,6 +3,7 @@
 namespace App\Process\ProcessList;
 
 use App\ElasticSearch\Service\ElasticSearchService;
+use App\HttpController\Models\Api\FrontEndUserApproximateEnterpriseModel;
 use App\HttpController\Models\Api\UserApproximateEnterpriseModel;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
@@ -81,7 +82,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
             $this->toEs($esid, $info);
             try {
                 if($info['data_type_front_or_back'] == XinDongKeDongService::$type_frontkend){
-                    UserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
+                    FrontEndUserApproximateEnterpriseModel::create()->addSuffix($info['user_id'])->data([
                         'userid' => $info['user_id'],
                         'companyid' => $info['companyid'],
                         'esid' => $esid,
