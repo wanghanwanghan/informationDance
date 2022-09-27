@@ -5509,5 +5509,130 @@ eof;
         return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
     }
 
+    //删除名单
+    function delCompanyToAnalyzeLists(): bool
+    {
+
+        $requestData =  $this->getRequestData();
+        $checkRes = DataModelExample::checkField(
+            [
+
+                'ent_name' => [
+                    'not_empty' => 1,
+                    'field_name' => 'ent_name',
+                    'err_msg' => '企业名不能为空',
+                ]
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        $res = XinDongKeDongFrontEndAnalyzeList::findByEntNameV2($this->loginUserinfo['id'],$requestData['ent_name']);
+        if(empty($res)){
+            return $this->writeJson(203,[ ] , [], '企业不存在', true, []);
+        }
+
+        XinDongKeDongFrontEndAnalyzeList::updateById(
+            $res->getAttr('id'),
+            [
+                'is_del' => XinDongKeDongFrontEndAnalyzeList::$state_del
+            ]
+        );
+
+        return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+    }
+
+    function getKeDongFeature(): bool
+    {
+        $requestData =  $this->getRequestData();
+        //历史提取
+        if($requestData['history_id']){
+
+        }
+            
+        //正常提取特征
+        $featureslists = XinDongKeDongFrontEndAnalyzeList::getFeatrueArray($this->loginUserinfo['id']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'getKeDongFeature'=>json_encode(
+                    [
+                        'getKeDongFeature_$featureslists'=>$featureslists
+                    ]
+                )
+            ])
+        );
+        $mapedData = [];
+        foreach ($featureslists['nicX'] as $value){
+            $nicRes = NicCode::findNICID($value);
+            $mapedData['nicX'][] =  $nicRes['industry'];
+        }
+        foreach ($featureslists['nicY'] as $value){
+//            $mapedData['nicY'][] =  $value.'%';
+            $mapedData['nicY'][] =  $value;
+        }
+
+        $nicArr = array_combine($mapedData['nicX'],$mapedData['nicY']);
+        arsort($nicArr);
+
+        foreach ($featureslists['openFromX'] as $value){
+           // $value
+            if(strpos($value,'年') !== false){
+                $mapedData['openFromX'][] =  $value;
+            }
+            else{
+                $mapedData['openFromX'][] =  $value.'年';
+            }
+        }
+
+        foreach ($featureslists['openFromY'] as $value){
+//            $mapedData['openFromY'][] =  $value.'%';
+            $mapedData['openFromY'][] =  $value;
+        }
+
+        $openFormArr = array_combine($mapedData['openFromX'],$mapedData['openFromY']);
+        arsort($openFormArr);
+
+        $maps = XinDongService::getYingShouGuiMoMapV2();
+        foreach ($featureslists['YingShouX'] as $value){
+            $mapedData['YingShouX'][] =   $maps[$value]['min'].'万-'.$maps[$value]['max'].'万';
+        }
+
+        foreach ($featureslists['YingShouY'] as $value){
+//            $mapedData['YingShouY'][] =   $value.'%';
+            $mapedData['YingShouY'][] =   $value;
+        }
+
+        $yingShouArr = array_combine($mapedData['YingShouX'],$mapedData['YingShouY']);
+        arsort($yingShouArr);
+
+
+        foreach ($featureslists['areaX'] as $value){
+            $mapedData['areaX'][] =   CompanyBasic::findRegion($value)['name'];
+        }
+        foreach ($featureslists['areaY'] as $value){
+//            $mapedData['areaY'][] =     $value.'%';
+            $mapedData['areaY'][] =     $value;
+        }
+
+        $areaArr = array_combine($mapedData['areaX'],$mapedData['areaY']);
+        arsort($areaArr);
+
+        //开始分析
+        return $this->writeJson(200,[ ] , [
+            'nicX'=> array_keys($nicArr),
+            'nicY'=> array_values($nicArr),
+            'openFromX'=> array_keys($openFormArr),
+            'openFromY'=> array_values($openFormArr),
+            'YingShouX'=> array_keys($yingShouArr),
+            'YingShouY'=> array_values($yingShouArr),
+            'areaX'=> array_keys($areaArr),
+            'areaY'=> array_values($areaArr),
+        ], '成功', true, []);
+    }
 
 }
