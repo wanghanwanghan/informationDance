@@ -252,7 +252,7 @@ class LongDunController extends LongDunBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'LandMergeCheck/GetPurchaseDetail', $postData);//LandPurchase/LandPurchaseList
+        $res = (new LongDunService())->get($this->baseUrl . 'LandMergeCheck/GetList', $postData);//LandPurchase/LandPurchaseList
 
         return $this->checkResponse($res);
     }
