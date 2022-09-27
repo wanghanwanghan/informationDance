@@ -137,7 +137,13 @@ class RunDealToolsFile extends AbstractCronTask
         $datas = [];
         $nums = 1;
         while (true) {
-
+            if($nums%100==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        'getYieldDataForUrl $nums'=>$nums
+                    ])
+                );
+            }
             $one = $excel_read->nextRow([
                 \Vtiful\Kernel\Excel::TYPE_STRING,
                 \Vtiful\Kernel\Excel::TYPE_STRING,
@@ -193,7 +199,13 @@ class RunDealToolsFile extends AbstractCronTask
         $datas = [];
         $nums = 1;
         while (true) {
-
+            if($nums%100==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        'getYieldDataForWeinXin $nums'=>$nums
+                    ])
+                );
+            }
             $one = $excel_read->nextRow([
                 \Vtiful\Kernel\Excel::TYPE_STRING,
                 \Vtiful\Kernel\Excel::TYPE_STRING,
@@ -256,7 +268,13 @@ class RunDealToolsFile extends AbstractCronTask
         $datas = [];
         $nums = 1;
         while (true) {
-
+            if($nums%100==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        'getYieldDataForFuzzyMatch $nums'=>$nums
+                    ])
+                );
+            }
             $one = $excel_read->nextRow([
                 \Vtiful\Kernel\Excel::TYPE_STRING,
                 \Vtiful\Kernel\Excel::TYPE_STRING,
