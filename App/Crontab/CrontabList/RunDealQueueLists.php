@@ -117,7 +117,7 @@ class RunDealQueueLists extends AbstractCronTask
 
     static function runByItem($data){
         if($data['touch_time']>1){
-            return;
+           // return;
         }
         QueueLists::updateById(
             $data['id'],

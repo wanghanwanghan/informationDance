@@ -23,7 +23,7 @@ use Vtiful\Kernel\Format;
 class XinDongKeDongFrontEndAnalyzeList extends ModelBase
 {
 
-    protected $tableName = 'xin_dong_ke_dong_analyze_list';
+    protected $tableName = 'xin_dong_ke_dong_front_end_analyze_list';
 
     static  $state_del = 1;
     static  $state_del_cname =  '已删除';
@@ -324,9 +324,8 @@ class XinDongKeDongFrontEndAnalyzeList extends ModelBase
     public static function findBySql($where){
         $Sql = " select *  
                             from  
-                        `xin_dong_ke_dong_analyze_list` 
-                            $where
-      " ;
+                        `xin_dong_ke_dong_front_end_analyze_list` 
+                            $where " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }

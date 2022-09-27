@@ -5402,4 +5402,23 @@ eof;
     }
 
 
+     //搜索企业
+     function serachCompanyByName(): bool
+     {
+         //====================== 分割线
+         $requestData =  $this->getRequestData();
+         $size = $requestData['size']??20;
+         $page = $requestData['page']??1;
+                
+         return $this->writeJson(200,
+             [
+             ]
+             ,  \App\ElasticSearch\Model\Company::getNamesByText($page,$size,trim($requestData['searchText'])),
+             '成功',
+             true,
+             []
+         );
+     }
+
+     
 }
