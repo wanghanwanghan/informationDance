@@ -141,38 +141,236 @@ class GuoPiaoController extends ProvideBase
         return $this->writeJson($res['code'], null, $res['data'], $res['message']);
     }
 
+    //企业税务基本信息查询
+    function getEssential(): bool
+    {
+        $code = $this->getRequestData('code');
+
+        $res = (new GuoPiaoService())->getEssential($code);
+
+        return $this->checkResponse($res);
+    }
+
+    //企业所得税-月（季）度申报表查询
+    function getIncometaxMonthlyDeclaration(): bool
+    {
+        $code = $this->getRequestData('code');
+
+        $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration($code);
+
+        //正常
+        if ($res['code'] - 0 === 0 && !empty($res['data'])) {
+            $data = jsonDecode($res['data']);
+            $model = [];
+            foreach ($data as $row) {
+                $year_month = substr(str_replace(['-'], '', $row['beginDate']), 0, 6) . '';
+                if (!isset($model[$year_month])) {
+                    $model[$year_month] = [];
+                }
+                $row['sequence'] = $row['sequence'] - 0;
+                $model[$year_month][] = $row;
+            }
+            //排序
+            foreach ($model as $year => $val) {
+                $model[$year] = control::sortArrByKey($val, 'sequence', 'asc', true);
+            }
+            $res['data'] = jsonEncode($model);
+        }
+
+        return $this->checkResponse($res);
+    }
+
+    //企业所得税-年报查询
+    function getIncometaxAnnualReport(): bool
+    {
+        $code = $this->getRequestData('code');
+
+        $res = (new GuoPiaoService())->getIncometaxAnnualReport($code);
+
+        return $this->checkResponse($res);
+    }
+
+    //利润表 -- 年报查询
     function getFinanceIncomeStatementAnnualReport(): bool
     {
         $code = $this->getRequestData('code');
 
-        $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceIncomeStatementAnnualReport($code);
+        $res = (new GuoPiaoService())->getFinanceIncomeStatementAnnualReport($code);
+
+        //正常
+        if ($res['code'] - 0 === 0 && !empty($res['data'])) {
+            $data = jsonDecode($res['data']);
+            $model = [];
+            foreach ($data as $row) {
+                $year = substr($row['beginDate'], 0, 4) . '';
+                if (!isset($model[$year])) {
+                    $model[$year] = [];
+                }
+                $row['sequence'] = $row['sequence'] - 0;
+                $model[$year][] = $row;
+            }
+            //排序
+            foreach ($model as $year => $val) {
+                $model[$year] = control::sortArrByKey($val, 'sequence', 'asc', true);
+            }
+            $res['data'] = jsonEncode($model);
+        }
 
         return $this->checkResponse($res);
     }
 
+    //利润表查询
     function getFinanceIncomeStatement(): bool
     {
         $code = $this->getRequestData('code');
 
-        $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceIncomeStatement($code);
+        $res = (new GuoPiaoService())->getFinanceIncomeStatement($code);
+
+        //正常
+        if ($res['code'] - 0 === 0 && !empty($res['data'])) {
+            $data = jsonDecode($res['data']);
+            $model = [];
+            foreach ($data as $row) {
+                $year_month = substr(str_replace(['-'], '', $row['beginDate']), 0, 6) . '';
+                if (!isset($model[$year_month])) {
+                    $model[$year_month] = [];
+                }
+                $row['sequence'] = $row['sequence'] - 0;
+                $model[$year_month][] = $row;
+            }
+            //排序
+            foreach ($model as $year => $val) {
+                $model[$year] = control::sortArrByKey($val, 'sequence', 'asc', true);
+            }
+            $res['data'] = jsonEncode($model);
+        }
 
         return $this->checkResponse($res);
     }
 
+    //资产负债表 -- 年度查询
     function getFinanceBalanceSheetAnnual(): bool
     {
         $code = $this->getRequestData('code');
 
-        $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheetAnnual($code);
+        $res = (new GuoPiaoService())->getFinanceBalanceSheetAnnual($code);
+
+        //正常
+        if ($res['code'] - 0 === 0 && !empty($res['data'])) {
+            $data = jsonDecode($res['data']);
+            $model = [];
+            foreach ($data as $row) {
+                $year = substr($row['beginDate'], 0, 4) . '';
+                if (!isset($model[$year])) {
+                    $model[$year] = [];
+                }
+                $row['columnSequence'] = $row['columnSequence'] - 0;
+                $model[$year][] = $row;
+            }
+            //排序
+            foreach ($model as $year => $val) {
+                $model[$year] = control::sortArrByKey($val, 'columnSequence', 'asc', true);
+            }
+            $res['data'] = jsonEncode($model);
+        }
 
         return $this->checkResponse($res);
     }
 
+    //资产负债表查询
     function getFinanceBalanceSheet(): bool
     {
         $code = $this->getRequestData('code');
 
-        $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheet($code);
+        $res = (new GuoPiaoService())->getFinanceBalanceSheet($code);
+
+        //正常
+        if ($res['code'] - 0 === 0 && !empty($res['data'])) {
+            $data = jsonDecode($res['data']);
+            $model = [];
+            foreach ($data as $row) {
+                $year_month = substr(str_replace(['-'], '', $row['beginDate']), 0, 6) . '';
+                if (!isset($model[$year_month])) {
+                    $model[$year_month] = [];
+                }
+                $row['columnSequence'] = $row['columnSequence'] - 0;
+                $model[$year_month][] = $row;
+            }
+            //排序
+            foreach ($model as $year => $val) {
+                $model[$year] = control::sortArrByKey($val, 'columnSequence', 'asc', true);
+            }
+            $res['data'] = jsonEncode($model);
+        }
+
+        return $this->checkResponse($res);
+    }
+
+    //增值税申报表查询
+    function getVatReturn(): bool
+    {
+        $code = $this->getRequestData('code');
+
+        $res = (new GuoPiaoService())->getVatReturn($code);
+
+        //正常
+        if ($res['code'] - 0 === 0 && !empty($res['data'])) {
+            $data = jsonDecode($res['data']);
+            $model = [];
+            foreach ($data as $row) {
+                $year_month = substr(str_replace(['-'], '', $row['beginDate']), 0, 6) . '';
+                if (!isset($model[$year_month])) {
+                    $model[$year_month] = [];
+                }
+                $row['sequence'] = $row['sequence'] - 0;
+                $model[$year_month][] = $row;
+            }
+            //排序
+            foreach ($model as $year => $val) {
+                $model[$year] = control::sortArrByKey($val, 'sequence', 'asc', true);
+            }
+            $res['data'] = jsonEncode($model);
+        }
+
+        return $this->checkResponse($res);
+    }
+
+    //进销项发票信息 信动专用
+    function getInvoiceMain(): bool
+    {
+        $code = $this->getRequestData('code');
+        $dataType = $this->getRequestData('dataType');
+        $startDate = $this->getRequestData('startDate');//date('Y-m-d')
+        $endDate = $this->getRequestData('endDate');//date('Y-m-d')
+        $page = $this->getRequestData('page');
+
+        if (empty($code) || empty($startDate) || empty($endDate))
+            return $this->writeJson(201, null, null, '参数不能是空');
+
+        if (!is_numeric($dataType) || !is_numeric($page))
+            return $this->writeJson(201, null, null, '参数必须是数字');
+
+        $res = (new GuoPiaoService())->getInvoiceMain($code, $dataType, $startDate, $endDate, $page);
+
+        return $this->checkResponse($res);
+    }
+
+    //进销项发票商品明细 信动专用
+    function getInvoiceGoods(): bool
+    {
+        $code = $this->getRequestData('code');
+        $dataType = $this->getRequestData('dataType');
+        $startDate = $this->getRequestData('startDate');//date('Y-m-d')
+        $endDate = $this->getRequestData('endDate');//date('Y-m-d')
+        $page = $this->getRequestData('page');
+
+        if (empty($code) || empty($startDate) || empty($endDate))
+            return $this->writeJson(201, null, null, '参数不能是空');
+
+        if (!is_numeric($dataType) || !is_numeric($page))
+            return $this->writeJson(201, null, null, '参数必须是数字');
+
+        $res = (new GuoPiaoService())->getInvoiceGoods($code, $dataType, $startDate, $endDate, $page);
 
         return $this->checkResponse($res);
     }
