@@ -190,7 +190,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceIncomeStatement', $prefix . 'getFinanceIncomeStatement');//利润表查询
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceBalanceSheetAnnual', $prefix . 'getFinanceBalanceSheetAnnual');//资产负债表--年度查询
             $routeCollector->addRoute(['GET', 'POST'], '/getFinanceBalanceSheet', $prefix . 'getFinanceBalanceSheet');//资产负债表查询
-            $routeCollector->addRoute(['GET', 'POST'], '/getAuthentication', $prefix . 'getAuthentication');//
+//            $routeCollector->addRoute(['GET', 'POST'], '/getAuthentication', $prefix . 'getAuthentication');//
             $routeCollector->addRoute(['GET', 'POST'], '/getEssential', $prefix . 'getEssential');//
             $routeCollector->addRoute(['GET', 'POST'], '/getIncometaxMonthlyDeclaration', $prefix . 'getIncometaxMonthlyDeclaration');//
             $routeCollector->addRoute(['GET', 'POST'], '/getIncometaxAnnualReport', $prefix . 'getIncometaxAnnualReport');//
