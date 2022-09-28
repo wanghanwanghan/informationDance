@@ -3632,6 +3632,16 @@ eof;
         $requestData =  $this->getRequestData();
 
         if(
+            $this->getRequestData('matchContactNameByWeiXinNameV2')
+        ){
+            $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2(
+                $this->getRequestData('ENTNAME') ,
+                $this->getRequestData('nickname')
+            );
+            return $this->writeJson(200,[ ] , $tmpRes, '成功', true, []);
+        }
+
+        if(
             $this->getRequestData('SearchAfterV3')
         ){
             $maxTimes = 10;
