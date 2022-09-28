@@ -565,7 +565,7 @@ class LongDunController extends LongDunBase
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         $postData = [
-            'keyWord' => $entName,
+            'searchKey' => $entName,
             'pageIndex' => $page,
             'pageSize' => $pageSize,
         ];
@@ -583,7 +583,7 @@ class LongDunController extends LongDunBase
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         $postData = [
-            'keyWord' => $entName,
+            'searchKey' => $entName,
             'pageIndex' => $page,
             'pageSize' => $pageSize,
         ];
