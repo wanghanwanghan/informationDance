@@ -170,12 +170,12 @@ class Email extends ServiceBase
         $emailDataV2 = [];
         foreach ($emailData as $msg) {
             $mailHeader = $this->mailHeader($msg);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'mailListBySinceV2_$mailHeader'=> $mailHeader
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    'mailListBySinceV2_$mailHeader'=> $mailHeader
+//                ])
+//            );
             $UID = imap_uid($this->_connect, $msg);
             $emailDataV2[$UID] = [
                 'mailHeader' => $mailHeader,
