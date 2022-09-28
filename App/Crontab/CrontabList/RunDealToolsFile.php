@@ -330,6 +330,7 @@ class RunDealToolsFile extends AbstractCronTask
         $datas = [];
         $nums = 1;
         while (true) {
+            $nums ++;
             if($nums%100==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
@@ -349,17 +350,17 @@ class RunDealToolsFile extends AbstractCronTask
             }
 
             //第一行是标题  不是数据
-            if($nums==1){
-                $nums ++;
+//            if($nums==1){
+//
 //                yield $datas[] = [
 //                    '企业模糊名称',
 //                    '匹配结果1',
 //                    '匹配结果2',
 //                    '匹配结果3',
 //                ];
-                continue;
-            }
-            $nums ++;
+//                continue;
+//            }
+
             //字段1
             $value0 = self::strtr_func($one[0]);
             $value1 = self::strtr_func($one[1]);
@@ -374,6 +375,9 @@ class RunDealToolsFile extends AbstractCronTask
             $value9 = self::strtr_func($one[9]);
             $phonesArr = explode(';',$value2);
             foreach ($phonesArr as $phone){
+                if(empty($phone)){
+                    continue;
+                }
                 yield $datas[] = [
                     $value0,
                     $value1,
