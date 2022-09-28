@@ -60,6 +60,10 @@ class ToolsController extends ControllerBase
                 'name' => '补全联系人姓名职位等信息[主要基于微信名和联系人库]',
                 'path' => '/Static/Template/补全联系人姓名职位等信息[主要基于微信名和联系人库].xlsx',
             ],
+            [
+                'name' => '将表格根据手机号拆分成多行',
+                'path' => '/Static/Template/将表格根据手机号拆分成多行.xlsx',
+            ],
         ],'');
     }
 
