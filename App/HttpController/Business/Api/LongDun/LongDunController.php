@@ -312,7 +312,7 @@ class LongDunController extends LongDunBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'LandTransfer/LandTransferList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'LandMarketDealCheck/GetList', $postData);//LandTransfer/LandTransferList
 
         return $this->checkResponse($res);
     }
@@ -324,7 +324,7 @@ class LongDunController extends LongDunBase
 
         $postData = ['id' => $id];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'LandTransfer/LandTransferDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'LandMarketDealCheck/GetDetail', $postData);//LandTransfer/LandTransferDetail
 
         return $this->checkResponse($res);
     }
