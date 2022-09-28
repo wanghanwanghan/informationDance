@@ -74,6 +74,7 @@ class ToolsController extends ControllerBase
                 5   =>  '补全企业联系人信息(并检测手机状态)',
                 10  =>  '补全联系人姓名职位等信息(主要基于微信名和联系人库)',
                 15  =>  '模糊匹配企业名称',
+                20  =>  '将表格根据手机号拆分成多行',
 
         ],'');
     }
@@ -91,7 +92,7 @@ class ToolsController extends ControllerBase
         $checkRes = DataModelExample::checkField(
             [
                 'id' => [
-                    'is_array' =>  [5,10,15],
+                    'is_array' =>  [5,10,15,20],
                     'field_name' => 'type',
                     'err_msg' => '参数错误',
                 ],

@@ -323,6 +323,73 @@ class RunDealToolsFile extends AbstractCronTask
             ];
         }
     }
+    static function  getYieldDataForSplite($xlsx_name){
+        $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
+        $excel_read->openFile($xlsx_name)->openSheet();
+
+        $datas = [];
+        $nums = 1;
+        while (true) {
+            if($nums%100==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        'getYieldDataForSplite $xlsx_name'=>$xlsx_name,
+                        'getYieldDataForSplite $nums'=>$nums,
+                    ])
+                );
+            }
+            $one = $excel_read->nextRow([
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+            ]);
+
+            if (empty($one)) {
+                break;
+            }
+
+            //第一行是标题  不是数据
+            if($nums==1){
+                $nums ++;
+//                yield $datas[] = [
+//                    '企业模糊名称',
+//                    '匹配结果1',
+//                    '匹配结果2',
+//                    '匹配结果3',
+//                ];
+                continue;
+            }
+            $nums ++;
+            //字段1
+            $value0 = self::strtr_func($one[0]);
+            $value1 = self::strtr_func($one[1]);
+            //手机号
+            $value2 = self::strtr_func($one[2]);
+            $value3 = self::strtr_func($one[3]);
+            $value4 = self::strtr_func($one[4]);
+            $value5 = self::strtr_func($one[5]);
+            $value6 = self::strtr_func($one[6]);
+            $value7 = self::strtr_func($one[7]);
+            $value8 = self::strtr_func($one[8]);
+            $value9 = self::strtr_func($one[9]);
+            $phonesArr = explode(';',$value2);
+            foreach ($phonesArr as $phone){
+                yield $datas[] = [
+                    $value0,
+                    $value1,
+                    $phone,
+                    $value3,
+                    $value4,
+                    $value5,
+                    $value6,
+                    $value7,
+                    $value8,
+                    $value9,
+                ];
+            }
+
+        }
+    }
 
     //生成下载文件
     static function  generateFile($limit){
@@ -359,6 +426,13 @@ class RunDealToolsFile extends AbstractCronTask
             ){
                 $tmpXlsxDatas = self::getYieldDataForFuzzyMatch($InitData['upload_file_name']);
             }
+
+            if(
+                $InitData['type'] == 20
+            ){
+                $tmpXlsxDatas = self::getYieldDataForSplite($InitData['upload_file_name']);
+            }
+
 
             $config=  [
                 'path' => TEMP_FILE_PATH // xlsx文件保存路径
