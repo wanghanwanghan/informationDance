@@ -80,8 +80,17 @@ class RunCompleteCompanyData extends AbstractCronTask
         $excel_read->openFile($xlsx_name)->openSheet();
 
         $datas = [];
+        $nums = 0 ;
         while (true) {
-
+            $nums ++;
+            if($nums%100==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        'getEntLianXi $xlsx_name'=>$xlsx_name,
+                        'getEntLianXi $nums'=>$nums,
+                    ])
+                );
+            }
             $one = $excel_read->nextRow([
                 \Vtiful\Kernel\Excel::TYPE_STRING,
                 \Vtiful\Kernel\Excel::TYPE_STRING,
