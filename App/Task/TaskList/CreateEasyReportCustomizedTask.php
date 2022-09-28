@@ -2377,11 +2377,11 @@ TEMP;
                 foreach ($cspData[__FUNCTION__]['list'] as $one) {
                     $temp = '<tr>';
                     $temp .= "<td>{$i}</td>";
-                    $temp .= "<td>{$one['CaseNo']}</td>";
-                    $temp .= "<td>{$one['detail']['LianDate']}</td>";
-                    $temp .= "<td>{$one['detail']['ExpireDate']}</td>";
-                    $temp .= "<td>{$one['detail']['Content']}</td>";
-                    $temp .= "<td>{$one['detail']['ExecuteGov']}</td>";
+                    $temp .= "<td>{$one['LicenseNo']}</td>";
+                    $temp .= "<td>{$one['detail']['ValidityFrom']}</td>";
+                    $temp .= "<td>{$one['detail']['ValidityTo']}</td>";
+                    $temp .= "<td>{$one['detail']['LicensContent']}</td>";
+                    $temp .= "<td>{$one['detail']['LicenseOffice']}</td>";
                     $temp .= '</tr>';
                     $insert .= $temp;
                     $i++;
@@ -7244,16 +7244,16 @@ TEMP;
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);//ADSTLicense/GetAdministrativeLicenseList
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result']['Data'], $res['paging']['total']] : list($res, $total) = [null, null];
 
             if (!empty($res)) {
                 foreach ($res as &$one) {
                     //取详情
                     $postData = ['id' => $one['Id']];
 
-                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ADSTLicense/GetAdministrativeLicenseDetail', $postData);
+                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdminLicenseCheck/GetDetail', $postData);//ADSTLicense/GetAdministrativeLicenseDetail
 
                     if ($detail['code'] == 200 && !empty($detail['result'])) {
                         $one['detail'] = $detail['result'];
@@ -7288,7 +7288,7 @@ TEMP;
                     //取详情
                     $postData = ['id' => $one['Id']];
 
-                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdminPenaltyCheck/GetCreditDetail', $postData);AdministrativePenalty/GetAdministrativePenaltyDetail
+                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdminPenaltyCheck/GetCreditDetail', $postData);//AdministrativePenalty/GetAdministrativePenaltyDetail
 
                     if ($detail['code'] == 200 && !empty($detail['result'])) {
                         $one['detail'] = $detail['result'];

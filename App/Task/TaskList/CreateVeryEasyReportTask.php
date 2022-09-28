@@ -979,15 +979,15 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("xzxk_no#" . ($i + 1), $i + 1);
             //许可编号
-            $docObj->setValue("xzxk_CaseNo#" . ($i + 1), $this->formatTo($data['GetAdministrativeLicenseList']['list'][$i]['CaseNo']));
+            $docObj->setValue("xzxk_CaseNo#" . ($i + 1), $this->formatTo($data['GetAdministrativeLicenseList']['list'][$i]['LicenseNo']));
             //有效期自
-            $docObj->setValue("xzxk_LianDate#" . ($i + 1), $this->formatDate($data['GetAdministrativeLicenseList']['list'][$i]['detail']['LianDate']));
+            $docObj->setValue("xzxk_LianDate#" . ($i + 1), $this->formatDate($data['GetAdministrativeLicenseList']['list'][$i]['detail']['ValidityFrom']));
             //有效期止
-            $docObj->setValue("xzxk_ExpireDate#" . ($i + 1), $this->formatDate($data['GetAdministrativeLicenseList']['list'][$i]['detail']['ExpireDate']));
+            $docObj->setValue("xzxk_ExpireDate#" . ($i + 1), $this->formatDate($data['GetAdministrativeLicenseList']['list'][$i]['detail']['ValidityTo']));
             //许可内容
-            $docObj->setValue("xzxk_Content#" . ($i + 1), $this->formatTo($data['GetAdministrativeLicenseList']['list'][$i]['detail']['Content']));
+            $docObj->setValue("xzxk_Content#" . ($i + 1), $this->formatTo($data['GetAdministrativeLicenseList']['list'][$i]['detail']['LicensContent']));
             //许可机关
-            $docObj->setValue("xzxk_Province#" . ($i + 1), $this->formatTo($data['GetAdministrativeLicenseList']['list'][$i]['detail']['Province']));
+            $docObj->setValue("xzxk_Province#" . ($i + 1), $this->formatTo($data['GetAdministrativeLicenseList']['list'][$i]['detail']['LicensOffice']));
         }
         $docObj->setValue("xzxk_total", (int)$data['GetAdministrativeLicenseList']['total']);
 
@@ -1004,13 +1004,13 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             //序号
             $docObj->setValue("xzcf_no#" . ($i + 1), $i + 1);
             //文书号
-            $docObj->setValue("xzcf_CaseNo#" . ($i + 1), $this->formatTo($data['GetAdministrativePenaltyList']['list'][$i]['CaseNo']));
+            $docObj->setValue("xzcf_CaseNo#" . ($i + 1), $this->formatTo($data['GetAdministrativePenaltyList']['list'][$i]['DocNo']));
             //决定日期
-            $docObj->setValue("xzcf_LianDate#" . ($i + 1), $this->formatDate($data['GetAdministrativePenaltyList']['list'][$i]['LianDate']));
+            $docObj->setValue("xzcf_LianDate#" . ($i + 1), $this->formatDate($data['GetAdministrativePenaltyList']['list'][$i]['PunishDate']));
             //内容
-            $docObj->setValue("xzcf_Content#" . ($i + 1), $this->formatTo($data['GetAdministrativePenaltyList']['list'][$i]['detail']['Content']));
+            $docObj->setValue("xzcf_Content#" . ($i + 1), $this->formatTo($data['GetAdministrativePenaltyList']['list'][$i]['detail']['Result']));
             //决定机关
-            $docObj->setValue("xzcf_ExecuteGov#" . ($i + 1), $this->formatTo($data['GetAdministrativePenaltyList']['list'][$i]['detail']['ExecuteGov']));
+            $docObj->setValue("xzcf_ExecuteGov#" . ($i + 1), $this->formatTo($data['GetAdministrativePenaltyList']['list'][$i]['detail']['PunishOffice']));
         }
         $docObj->setValue("xzcf_total", (int)$data['GetAdministrativePenaltyList']['total']);
 
@@ -1420,16 +1420,16 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);//ADSTLicense/GetAdministrativeLicenseList
 
-            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
+            ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result']['Data'], $res['paging']['total']] : list($res, $total) = [null, null];
 
             if (!empty($res)) {
                 foreach ($res as &$one) {
                     //取详情
                     $postData = ['id' => $one['Id']];
 
-                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ADSTLicense/GetAdministrativeLicenseDetail', $postData);
+                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdminLicenseCheck/GetDetail', $postData);//ADSTLicense/GetAdministrativeLicenseDetail
 
                     if ($detail['code'] == 200 && !empty($detail['result'])) {
                         $one['detail'] = $detail['result'];

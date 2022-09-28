@@ -359,17 +359,13 @@ class LongDunController extends LongDunBase
         return $this->checkResponse($res);
     }
 
-    //建筑资质证书
+    //建筑资质证书   资质资格核验【建筑企业】
     function getQualificationList()
     {
         $entName = $this->request()->getRequestParam('entName');
-        $page = $this->request()->getRequestParam('pageNo') ?? 1;
-        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         $postData = [
             'searchKey' => $entName,
-            'pageIndex' => $page,
-            'pageSize' => $pageSize,
         ];
 
         $res = (new LongDunService())->get($this->baseUrl . 'BuildingQualificationCheck/GetList', $postData);//Qualification/GetList
