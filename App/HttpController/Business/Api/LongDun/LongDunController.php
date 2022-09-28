@@ -474,7 +474,7 @@ class LongDunController extends LongDunBase
 
         $postData = ['id' => $id];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'ADSTLicense/GetAdministrativeLicenseDetail', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'AdminLicenseCheck/GetDetail', $postData);//ADSTLicense/GetAdministrativeLicenseDetail
 
         return $this->checkResponse($res);
     }
