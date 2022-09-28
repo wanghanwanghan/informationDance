@@ -6560,10 +6560,10 @@ TEMP;
             ];
 
             $res = (new LongDunService())->setCheckRespFlag(true)
-                ->get($this->ldUrl . 'LandPublish/LandPublishList', $postData);
+                ->get($this->ldUrl . 'LandMergeCheck/GetList', $postData);//LandPublish/LandPublishList
 
             ($res['code'] === 200 && !empty($res['result'])) ?
-                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [$res['result']['Data'], $res['paging']['total']] :
                 list($res, $total) = [null, null];
 
             $tmp['list'] = $res;
@@ -6582,10 +6582,10 @@ TEMP;
             ];
 
             $res = (new LongDunService())->setCheckRespFlag(true)
-                ->get($this->ldUrl . 'LandTransfer/LandTransferList', $postData);
+                ->get($this->ldUrl . 'LandMarketDealCheck/GetList', $postData);//LandTransfer/LandTransferList
 
             ($res['code'] === 200 && !empty($res['result'])) ?
-                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [$res['result']['Data'], $res['paging']['total']] :
                 list($res, $total) = [null, null];
 
             $tmp['list'] = $res;
@@ -6596,7 +6596,7 @@ TEMP;
                     //取详情
                     $post = ['id' => $one['Id']];
                     $detail = (new LongDunService())->setCheckRespFlag(true)
-                        ->get($this->ldUrl . 'LandTransfer/LandTransferDetail', $post);
+                        ->get($this->ldUrl . 'LandMarketDealCheck/GetDetail', $post);//LandTransfer/LandTransferDetail
                     ($detail['code'] == 200 && !empty($detail['result'])) ? $detail = $detail['result'] : $detail = null;
                     $one['detail'] = $detail;
                 }

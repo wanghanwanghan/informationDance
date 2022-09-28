@@ -4206,9 +4206,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandPublish/LandPublishList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandMergeCheck/GetList', $postData);//LandPublish/LandPublishList
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result']['Data'] : $res = null;
 
             return $res;
         });
@@ -4222,15 +4222,15 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandTransfer/LandTransferList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandMarketDealCheck/GetList', $postData);//LandTransfer/LandTransferList
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result']['Data'] : $res = null;
 
             if (!empty($res)) {
                 foreach ($res as &$one) {
                     //取详情
                     $post = ['id' => $one['Id']];
-                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandTransfer/LandTransferDetail', $post);
+                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandMarketDealCheck/GetDetail', $post);//LandTransfer/LandTransferDetail
                     ($detail['code'] == 200 && !empty($detail['result'])) ? $detail = $detail['result'] : $detail = null;
                     $one['detail'] = $detail;
                 }

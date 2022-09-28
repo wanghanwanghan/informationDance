@@ -552,7 +552,7 @@ class LongDunController extends LongDunBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'StockEquityPledge/GetStockPledgeList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'EquityPledgedCheck/GetList', $postData);//StockEquityPledge/GetStockPledgeList
 
         return $this->checkResponse($res);
     }
@@ -570,7 +570,7 @@ class LongDunController extends LongDunBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'ChattelMortgage/GetChattelMortgage', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'ChattelMortgageCheck/GetList', $postData);//ChattelMortgage/GetChattelMortgage
 
         return $this->checkResponse($res);
     }
@@ -588,7 +588,7 @@ class LongDunController extends LongDunBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'LandMortgage/GetLandMortgageList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'LandMortgageCheck/GetList', $postData);//LandMortgage/GetLandMortgageList
 
         return $this->checkResponse($res);
     }
@@ -600,7 +600,7 @@ class LongDunController extends LongDunBase
 
         $postData = ['id' => $id];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'LandMortgage/GetLandMortgageDetails', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'LandMortgageCheck/GetDetail', $postData);//LandMortgage/GetLandMortgageDetails
 
         return $this->checkResponse($res);
     }

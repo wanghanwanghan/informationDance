@@ -577,11 +577,11 @@ class XinDongService extends ServiceBase
                         'pageSize' => 50,
                     ];
 
-                    $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandPublish/LandPublishList', $postData);
+                    $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandMergeCheck/GetList', $postData);//LandPublish/LandPublishList
 
                     if ($res['code'] != 200 || empty($res['result'])) break;
 
-                    foreach ($res['result'] as $one) {
+                    foreach ($res['result']['Data'] as $one) {
                         $data[] = "{$one['PublishDate']}，由{$one['PublishGov']}公示了位于{$one['AdminArea']}{$one['Address']}的土地";
                     }
 
@@ -637,11 +637,11 @@ class XinDongService extends ServiceBase
                         'pageSize' => 50,
                     ];
 
-                    $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandTransfer/LandTransferList', $postData);
+                    $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandMarketDealCheck/GetList', $postData);//LandTransfer/LandTransferList
 
                     if ($res['code'] != 200 || empty($res['result'])) break;
 
-                    foreach ($res['result'] as $one) {
+                    foreach ($res['result']['Data'] as $one) {
                         $data[] = "位于{$one['Address']}的土地转让给{$one['NewOwner']['Name']}";
                     }
 
@@ -731,7 +731,7 @@ class XinDongService extends ServiceBase
                 'pageIndex' => 1,
                 'pageSize' => 5,
             ];
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandPublish/LandPublishList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandMergeCheck/GetList', $postData);//LandPublish/LandPublishList
             return empty($res['paging']) ? 0 : $res['paging']['total'];
         });
 
@@ -742,7 +742,7 @@ class XinDongService extends ServiceBase
                 'pageIndex' => 1,
                 'pageSize' => 5,
             ];
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandTransfer/LandTransferList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandMarketDealCheck/GetList', $postData);//LandTransfer/LandTransferList
             return empty($res['paging']) ? 0 : $res['paging']['total'];
         });
 

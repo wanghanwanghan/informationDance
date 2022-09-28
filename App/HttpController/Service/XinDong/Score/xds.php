@@ -1214,14 +1214,14 @@ class xds
 
         //股权出质
         $gqcz = (new LongDunService())->setCheckRespFlag(true)
-            ->get($this->ld . 'StockEquityPledge/GetStockPledgeList', [
+            ->get($this->ld . '/EquityPledgedCheck/GetList', [//StockEquityPledge/GetStockPledgeList
                 'searchKey' => $entName,
                 'pageIndex' => 1,
                 'pageSize' => 100,
             ]);
 
-        if ($gqcz['code'] === 200 && !empty($gqcz['result'])) {
-            foreach ($gqcz['result'] as $row) {
+        if ($gqcz['code'] === 200 && !empty($gqcz['result']['Data'])) {
+            foreach ($gqcz['result']['Data'] as $row) {
                 if (!isset($row['PledgedAmount']) || empty(trim($row['PledgedAmount']))) continue;
                 if (!isset($row['RegDate']) || !is_numeric(substr($row['RegDate'], 0, 4))) continue;
                 preg_match_all('/\d+/', $row['PledgedAmount'], $all);
@@ -1236,14 +1236,14 @@ class xds
 
         //动产抵押
         $dcdy = (new LongDunService())->setCheckRespFlag(true)
-            ->get($this->ld . 'ChattelMortgage/GetChattelMortgage', [
+            ->get($this->ld . 'ChattelMortgageCheck/GetList', [//ChattelMortgage/GetChattelMortgage
                 'keyWord' => $entName,
                 'pageIndex' => 1,
                 'pageSize' => 100,
             ]);
 
-        if ($dcdy['code'] === 200 && !empty($dcdy['result'])) {
-            foreach ($dcdy['result'] as $row) {
+        if ($dcdy['code'] === 200 && !empty($dcdy['result']['Data'])) {
+            foreach ($dcdy['result']['Data'] as $row) {
                 if (!isset($row['DebtSecuredAmount']) || empty(trim($row['DebtSecuredAmount']))) continue;
                 if (!isset($row['RegisterDate']) || !is_numeric(substr($row['RegisterDate'], 0, 4))) continue;
                 preg_match_all('/\d+/', $row['DebtSecuredAmount'], $all);

@@ -3111,10 +3111,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandPublish/LandPublishList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandMergeCheck/GetList', $postData);//LandPublish/LandPublishList
 
             ($res['code'] === 200 && !empty($res['result'])) ?
-                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [$res['result']['data'], $res['paging']['total']] :
                 list($res, $total) = [null, null];
 
             $tmp['list'] = $res;
@@ -3132,10 +3132,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandTransfer/LandTransferList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandMarketDealCheck/GetList', $postData);//LandTransfer/LandTransferList
 
             ($res['code'] === 200 && !empty($res['result'])) ?
-                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [$res['result']['Data'], $res['paging']['total']] :
                 list($res, $total) = [null, null];
 
             $tmp['list'] = $res;
@@ -3145,7 +3145,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 foreach ($tmp['list'] as &$one) {
                     //取详情
                     $post = ['id' => $one['Id']];
-                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandTransfer/LandTransferDetail', $post);
+                    $detail = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandMarketDealCheck/GetDetail', $post);//LandTransfer/LandTransferDetail
                     ($detail['code'] == 200 && !empty($detail['result'])) ? $detail = $detail['result'] : $detail = null;
                     $one['detail'] = $detail;
                 }
