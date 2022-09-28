@@ -518,7 +518,7 @@ class LongDunController extends LongDunBase
             'pageSize' => $pageSize,
         ];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'JudicialSale/GetJudicialSaleList', $postData);
+        $res = (new LongDunService())->get($this->baseUrl . 'JudicialSaleCheck/GetList', $postData);//JudicialSale/GetJudicialSaleList
 
         return $this->checkResponse($res);
     }

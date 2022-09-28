@@ -1420,7 +1420,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);//ADSTLicense/GetAdministrativeLicenseList
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdminLicenseCheck/GetList', $postData);//ADSTLicense/GetAdministrativeLicenseList
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result']['Data'], $res['paging']['total']] : list($res, $total) = [null, null];
 

@@ -1285,7 +1285,7 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
             //资质证书号
             $docObj->setValue("jzzz_CertNo#" . ($i + 1), $this->formatTo($data['Qualification']['list'][$i]['CertNo']));
             //资质名称
-            $docObj->setValue("jzzz_CertName#" . ($i + 1), $this->formatTo($data['Qualification']['list'][$i]['CertName']));
+            $docObj->setValue("jzzz_CertName#" . ($i + 1), $this->formatTo($data['Qualification']['list'][$i]['CertNameList']['0']));
             //发证日期
             $docObj->setValue("jzzz_SignDate#" . ($i + 1), $this->formatDate($data['Qualification']['list'][$i]['SignDate']));
             //证书有效期
@@ -3278,10 +3278,10 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'Qualification/GetList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'BuildingQualificationCheck/GetList', $postData);//Qualification/GetList
 
             ($res['code'] === 200 && !empty($res['result'])) ?
-                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [$res['result']['Data'], $res['paging']['total']] :
                 list($res, $total) = [null, null];
 
             $tmp['list'] = $res;
@@ -3913,7 +3913,7 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);//ADSTLicense/GetAdministrativeLicenseList
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdminLicenseCheck/GetList', $postData);//ADSTLicense/GetAdministrativeLicenseList
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result']['Data'], $res['paging']['total']] : list($res, $total) = [null, null];
 

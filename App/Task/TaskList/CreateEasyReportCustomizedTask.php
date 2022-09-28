@@ -1269,7 +1269,7 @@ TEMP;
                     $temp .= "<td>{$i}</td>";
                     $temp .= "<td>{$one['Category']}</td>";
                     $temp .= "<td>{$one['CertNo']}</td>";
-                    $temp .= "<td>{$one['CertName']}</td>";
+                    $temp .= "<td>{$one['CertNameList']['0']}</td>";
                     $temp .= "<td>{$one['SignDate']}</td>";
                     $temp .= "<td>{$one['ValidPeriod']}</td>";
                     $temp .= "<td>{$one['SignDept']}</td>";
@@ -6616,10 +6616,10 @@ TEMP;
             ];
 
             $res = (new LongDunService())->setCheckRespFlag(true)
-                ->get($this->ldUrl . 'Qualification/GetList', $postData);
+                ->get($this->ldUrl . 'BuildingQualificationCheck/GetList', $postData);//Qualification/GetList
 
             ($res['code'] === 200 && !empty($res['result'])) ?
-                list($res, $total) = [$res['result'], $res['paging']['total']] :
+                list($res, $total) = [$res['result']['Data'], $res['paging']['total']] :
                 list($res, $total) = [null, null];
 
             $tmp['list'] = $res;
@@ -7244,7 +7244,7 @@ TEMP;
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'ADSTLicense/GetAdministrativeLicenseList', $postData);//ADSTLicense/GetAdministrativeLicenseList
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'AdminLicenseCheck/GetList', $postData);//ADSTLicense/GetAdministrativeLicenseList
 
             ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result']['Data'], $res['paging']['total']] : list($res, $total) = [null, null];
 

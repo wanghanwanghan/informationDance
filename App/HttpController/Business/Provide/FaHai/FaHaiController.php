@@ -384,7 +384,7 @@ class FaHaiController extends ProvideBase
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'JudicialSale/GetJudicialSaleList', $postData);
+            return (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'JudicialSaleCheck/GetList', $postData);//JudicialSale/GetJudicialSaleList
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

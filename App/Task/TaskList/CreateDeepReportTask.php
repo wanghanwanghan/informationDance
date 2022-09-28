@@ -2591,7 +2591,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             //资质证书号
             $docObj->setValue("jzzz_CertNo#" . ($i + 1), $data['Qualification'][$i]['CertNo']);
             //资质名称
-            $docObj->setValue("jzzz_CertName#" . ($i + 1), $data['Qualification'][$i]['CertName']);
+            $docObj->setValue("jzzz_CertName#" . ($i + 1), $data['Qualification'][$i]['CertNameList']['0']);
             //发证日期
             $docObj->setValue("jzzz_SignDate#" . ($i + 1), $this->formatDate($data['Qualification'][$i]['SignDate']));
             //证书有效期
@@ -4249,9 +4249,9 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 10,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'Qualification/GetList', $postData);
+            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'BuildingQualificationCheck/GetList', $postData);//Qualification/GetList
 
-            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result'] : $res = null;
+            ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result']['Data'] : $res = null;
 
             return $res;
         });
