@@ -534,7 +534,7 @@ class LongDunController extends LongDunBase
 
         $postData = ['id' => $id];
 
-        $res = (new LongDunService())->get($this->baseUrl . 'JudicialSaleCheck/GetDetail', $postData);JudicialSale/GetJudicialSaleDetail
+        $res = (new LongDunService())->get($this->baseUrl . 'JudicialSaleCheck/GetDetail', $postData);//JudicialSale/GetJudicialSaleDetail
 
         return $this->checkResponse($res);
     }
