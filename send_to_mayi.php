@@ -12,6 +12,7 @@ use App\HttpController\Service\CreateMysqlPoolForRDS3SiJiFenLei;
 use App\HttpController\Service\CreateRedisPool;
 use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
+use App\HttpController\Service\TaoShu\TaoShuService;
 use \EasySwoole\EasySwoole\Core;
 use App\HttpController\Service\CreateDefine;
 use \EasySwoole\Component\Process\Config;
@@ -26,13 +27,13 @@ class send_to_mayi extends AbstractProcess
 {
     protected function run($arg)
     {
-        // 91130984MA08YPLX1K1663761540966
-        $rwh_info = (new JinCaiShuKeService())
-            ->obtainResultTraceNo('91130984MA08YPLX1K1663761540966');
+        $postData = ['entName' => '南京市雨花台区恺克建筑工程服务部'];
 
+        $res = (new TaoShuService())
+            ->setCheckRespFlag(true)
+            ->post($postData, 'getRegisterInfo');
 
-        dd($rwh_info);
-
+        dd($res);
 
     }
 
