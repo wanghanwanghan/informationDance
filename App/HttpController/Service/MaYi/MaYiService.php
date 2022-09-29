@@ -5225,7 +5225,7 @@ class MaYiService extends ServiceBase
             if (empty($res['result'])) {
                 return $this->check(606, null, null, '未找到匹配的企业');
             }
-            $res = ['DOM' => $res['result'][0]['Address']];
+            $res = ['DOM' => $res['result']['Address']];
         } else {
             $res = current($res['result']);
         }
@@ -5238,8 +5238,6 @@ class MaYiService extends ServiceBase
             'entName' => $data['entName'],
             'socialCredit' => $data['socialCredit'],
         ])->get();
-
-        dd(123123123123);
 
         if (empty($check)) {
             $baiduApi = BaiDuService::getInstance()->addressToStructured(trim($res['DOM']));
