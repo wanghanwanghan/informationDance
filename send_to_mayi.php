@@ -28,9 +28,13 @@ class send_to_mayi extends AbstractProcess
 {
     protected function run($arg)
     {
-        $postData = ['keyword' => '南京市雨花台区恺克建筑工程服务部'];
+        $postData = [
+            'entName' => '南京市雨花台区恺克建筑工程服务部',
+            'socialCredit' => '111111111111111111'
+        ];
 
-        $res = (new LongDunService())->get('http://api.qichacha.com/ECIV4/GetBasicDetailsByName', $postData);
+        $res = (new \App\HttpController\Service\MaYi\MaYiService())->authEnt($postData);
+
 
         dd($res);
 
