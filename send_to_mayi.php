@@ -12,6 +12,7 @@ use App\HttpController\Service\CreateMysqlPoolForRDS3SiJiFenLei;
 use App\HttpController\Service\CreateRedisPool;
 use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
+use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use \EasySwoole\EasySwoole\Core;
 use App\HttpController\Service\CreateDefine;
@@ -27,11 +28,9 @@ class send_to_mayi extends AbstractProcess
 {
     protected function run($arg)
     {
-        $postData = ['entName' => '南京市雨花台区恺克建筑工程服务部'];
+        $postData = ['keyword' => '南京市雨花台区恺克建筑工程服务部'];
 
-        $res = (new TaoShuService())
-            ->setCheckRespFlag(true)
-            ->post($postData, 'getRegisterInfo');
+        $res = (new LongDunService())->get('http://api.qichacha.com/ECIV4/GetBasicDetailsByName', $postData);
 
         dd($res);
 

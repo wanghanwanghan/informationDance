@@ -5211,10 +5211,11 @@ class MaYiService extends ServiceBase
             ->post($postData, 'getRegisterInfo');
 
         if (empty($res['result'])) {
+            // 再看看企查查有没有，如果有，需要修改一下字段，配合淘数返回样子
             return $this->check(606, null, null, '未找到匹配的企业');
+        } else {
+            $res = current($res['result']);
         }
-
-        $res = current($res['result']);
 
         $data['address'] = $res['DOM'];
 
