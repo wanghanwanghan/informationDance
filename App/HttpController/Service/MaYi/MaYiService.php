@@ -5239,6 +5239,8 @@ class MaYiService extends ServiceBase
             'socialCredit' => $data['socialCredit'],
         ])->get();
 
+        dd(123123123123);
+
         if (empty($check)) {
             $baiduApi = BaiDuService::getInstance()->addressToStructured(trim($res['DOM']));
             CommonService::getInstance()->log4PHP($baiduApi, 'baidu');
