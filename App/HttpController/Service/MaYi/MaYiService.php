@@ -8,6 +8,7 @@ use App\HttpController\Models\EntDb\EntDbAreaInfo;
 use App\HttpController\Service\BaiDu\BaiDuService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\DianZiqian\DianZiQianService;
+use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\Task\Service\TaskService;
@@ -5206,16 +5207,30 @@ class MaYiService extends ServiceBase
 
         $postData = ['entName' => $data['entName']];
 
+        //临时用
+        $check_ts_qcc = [];
+
         $res = (new TaoShuService())
             ->setCheckRespFlag(true)
             ->post($postData, 'getRegisterInfo');
 
+        $check_ts_qcc['ts'] = $res;
+
         if (empty($res['result'])) {
             // 再看看企查查有没有，如果有，需要修改一下字段，配合淘数返回样子
-            return $this->check(606, null, null, '未找到匹配的企业');
+            $res = (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get('http://api.qichacha.com/ECIV4/GetBasicDetailsByName', ['keyword' => $data['entName']]);
+            $check_ts_qcc['qcc'] = $res;
+            if (empty($res['result'])) {
+                return $this->check(606, null, null, '未找到匹配的企业');
+            }
+            $res = ['DOM' => $res['result'][0]['Address']];
         } else {
             $res = current($res['result']);
         }
+
+        CommonService::getInstance()->log4PHP($check_ts_qcc, 'info', 'check_ts_qcc.log');
 
         $data['address'] = $res['DOM'];
 
