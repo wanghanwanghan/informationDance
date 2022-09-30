@@ -80,7 +80,7 @@ class GetJinCaiTrace extends AbstractCronTask
                     ];
 
                     // 傻逼金财   by wh
-                    // 【确实很傻逼】by tys
+                    // 【确实很傻逼】by lyx
                     try {
                         // 发送
                         $addTaskInfo = (new JinCaiShuKeService())->addTask(
