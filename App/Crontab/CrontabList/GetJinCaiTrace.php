@@ -79,7 +79,8 @@ class GetJinCaiTrace extends AbstractCronTask
                         'nsrsbh' => $target->getAttr('socialCredit'),// 纳税人识别号
                     ];
 
-                    // 傻逼金财
+                    // 傻逼金财   by wh
+                    // 【确实很傻逼】by tys
                     try {
                         // 发送
                         $addTaskInfo = (new JinCaiShuKeService())->addTask(
