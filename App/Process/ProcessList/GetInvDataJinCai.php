@@ -119,11 +119,11 @@ class GetInvDataJinCai extends ProcessBase
             $cxlx = trim($detail['result']['convertResult']['cxlx']);
             $mxxh = 0;
             foreach ($detail['result']['convertResult']['result'] as $key => $one_detail) {
-                // 目前详情字段是12个
-                if (count($one_detail) !== 12) {
+                // 目前详情字段是12个，也有13的情况，第13个是备注，不需要备注
+                if (count($one_detail) !== 12 && count($one_detail) !== 13) {
                     CommonService::getInstance()->log4PHP([
                         '税号' => $nsrsbh,
-                        '问题' => '详情字段不是12个',
+                        '问题' => '详情字段不是12或13个',
                         '详情信息' => $one_detail
                     ], 'detail-getDataByJinCai', 'GetInvDataJinCai.log');
                     continue;
@@ -133,7 +133,7 @@ class GetInvDataJinCai extends ProcessBase
                     continue;
                 }
                 $mxxh++;
-                $this->detailStoreMysql($one_detail, $nsrsbh, $cxlx, $fplx);
+                $this->detailStoreMysql(array_slice($one_detail, 0, 12), $nsrsbh, $cxlx, $fplx);
             }
             $detail_isComplete = 1;
         }
