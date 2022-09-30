@@ -70,7 +70,9 @@ class GetInvDataJinCai extends ProcessBase
 
     function getDataByJinCai(array $rwh_info): bool
     {
-        $info = JinCaiTrace::create()->where('traceNo', $rwh_info['traceNo'])->get();
+        $info = JinCaiTrace::create()
+            ->where('traceNo', $rwh_info['traceNo'])
+            ->get();
 
         if (empty($info)) return false;
 
@@ -133,7 +135,6 @@ class GetInvDataJinCai extends ProcessBase
                 $mxxh++;
                 $this->detailStoreMysql($one_detail, $nsrsbh, $cxlx, $fplx);
             }
-
             $detail_isComplete = 1;
         }
 

@@ -52,6 +52,7 @@ class GetJinCaiRwh extends AbstractCronTask
 
             foreach ($list as $rwh_list) {
 
+                // 拿任务号
                 $rwh_info = (new JinCaiShuKeService())
                     ->obtainResultTraceNo($rwh_list->getAttr('traceNo'));
 
@@ -60,8 +61,11 @@ class GetJinCaiRwh extends AbstractCronTask
                 $taskStatus_0_1 = $taskStatus_3 = [];
 
                 foreach ($rwh_info['result'] as $rwh_one) {
+
                     try {
-                        $check = JinCaiRwh::create()->where('wupanTraceNo', $rwh_one['wupanTraceNo'])->get();
+                        $check = JinCaiRwh::create()
+                            ->where('wupanTraceNo', $rwh_one['wupanTraceNo'])
+                            ->get();
                         if (empty($check)) {
                             // 开始无盘任务号入库
                             JinCaiRwh::create()->data([
@@ -86,11 +90,22 @@ class GetJinCaiRwh extends AbstractCronTask
                         CommonService::getInstance()->log4PHP($content, 'try-catch', 'GetJinCaiRwh.log');
                         continue;
                     }
+
                 }
 
                 // 所有rwh都正常
                 if (empty($taskStatus_0_1) && empty($taskStatus_3)) {
                     $rwh_list->update(['isComplete' => 1]);
+                } else {
+                    // 如果traceNo已经采集很久，还是有未开始的，或者失败的，应该retry一下
+                    $traceNo = $rwh_list->getAttr('traceNo');
+                    $updated_at = $rwh_list->getAttr('updated_at');
+                    $hours = Carbon::createFromTimestamp($updated_at)->diffInHours();
+                    if ($hours > 15) {
+                        // 超过15小时了
+                        $refreshTask = (new JinCaiShuKeService())->refreshTask($traceNo);
+                        $rwh_list->update(['updated_at' => time()]);
+                    }
                 }
 
             }
