@@ -82,13 +82,19 @@ class GetJinCaiTrace extends AbstractCronTask
                     // 傻逼金财   by wh
                     // 【确实很傻逼】by lyx
                     try {
-                        // 发送
-                        $addTaskInfo = (new JinCaiShuKeService())->addTask(
-                            $target->getAttr('socialCredit'),
-                            $target->getAttr('province'),
-                            $target->getAttr('city'),
-                            $ywBody
-                        );
+                        for ($try = 3; $try--;) {
+                            // 发送 试3次
+                            $addTaskInfo = (new JinCaiShuKeService())->addTask(
+                                $target->getAttr('socialCredit'),
+                                $target->getAttr('province'),
+                                $target->getAttr('city'),
+                                $ywBody
+                            );
+                            if (isset($addTaskInfo['code']) && strlen($addTaskInfo['code']) > 1) {
+                                break;
+                            }
+                            \co::sleep(5);
+                        }
                         JinCaiTrace::create()->data([
                             'entName' => $target->getAttr('entName'),
                             'socialCredit' => $target->getAttr('socialCredit'),
