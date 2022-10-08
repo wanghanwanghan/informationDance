@@ -49,12 +49,12 @@ class AdminUserFinanceExportRecord extends ModelBase
         return $res;
     }
 
-    public static function findByConditionV3($whereArr,$page){
+    public static function findByConditionV3($whereArr,$page,$pageSize){
         $model = AdminUserFinanceExportRecord::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
-        $model->page($page)
+        $model->page($page,$pageSize)
             ->order('id', 'DESC')
             ->withTotalCount();
 

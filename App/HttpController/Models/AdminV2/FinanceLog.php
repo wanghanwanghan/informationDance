@@ -137,12 +137,12 @@ class FinanceLog extends ModelBase
     }
 
 
-    public static function findByConditionV3($whereArr,$page){
+    public static function findByConditionV3($whereArr,$page,$size){
         $model = FinanceLog::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
-        $model->page($page)
+        $model->page($page,$size)
             ->order('id', 'DESC')
             ->withTotalCount();
 

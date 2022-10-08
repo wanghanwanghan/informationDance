@@ -464,6 +464,7 @@ class FinanceController extends ControllerBase
     //获取导出列表|财务对账列表
     public function getExportLists(){
         $page = $this->request()->getRequestParam('pageNo')??1;
+        $pageSize = $this->request()->getRequestParam('pageSize')??1;
         $whereArr = [];
         if(
             AdminUserRole::checkIfIsAdmin(
@@ -482,7 +483,7 @@ class FinanceController extends ControllerBase
 
         $res = AdminUserFinanceExportRecord::findByConditionV3(
             $whereArr,
-            $page
+            $page,$pageSize
         );
 
         foreach ($res['data'] as &$value){
@@ -870,6 +871,7 @@ class FinanceController extends ControllerBase
     //账户流水
     public function getFinanceLogLists(){
         $page = $this->request()->getRequestParam('pageNo')??1;
+        $pageSize = $this->request()->getRequestParam('pageSize')??10;
         $requestData =  $this->getRequestData();
         $createdAtStr = $this->getRequestData('created_at');
         $createdAtArr = explode('|||',$createdAtStr);
@@ -918,7 +920,8 @@ class FinanceController extends ControllerBase
         }
         $res = FinanceLog::findByConditionV3(
             $whereArr,
-            $page
+            $page,
+            $pageSize
         );
         foreach ($res['data'] as  &$dataItem){
             $dataItem['type_cname'] = FinanceLog::getTypeCnameMaps()[$dataItem['type']];
@@ -928,7 +931,7 @@ class FinanceController extends ControllerBase
         return $this->writeJson(200,
             [
                 'page' => $page,
-                'pageSize' =>10,
+                'pageSize' =>$pageSize,
                 'total' => $res['total'],
                 'totalPage' => ceil( $res['total']/ 10 ),
             ] , $res['data'], '成功' );
