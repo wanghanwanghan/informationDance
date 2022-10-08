@@ -3,10 +3,12 @@
 namespace App\Crontab\CrontabList;
 
 use App\Crontab\CrontabBase;
+use App\HttpController\Models\Api\AntAuthList;
 use App\HttpController\Models\Api\JinCaiRwh;
 use App\HttpController\Models\Api\JinCaiTrace;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
+use App\HttpController\Service\MaYi\MaYiService;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 
@@ -29,6 +31,48 @@ class GetJinCaiRwh extends AbstractCronTask
         return __CLASS__;
     }
 
+    // 最后校正一次addTask返回的结果，因为有的会返回失败
+    private function retryAddTask(array $arr)
+    {
+        $target = AntAuthList::create()->where('socialCredit', $arr['socialCredit'])->get();
+        $ywBody = [
+            'cxlx' => trim($arr['cxlx']),// 查询类型 0销项 1 进项
+            'kprqq' => date('Y-m-d', $arr['kprqq']),// 开票日期起
+            'kprqz' => date('Y-m-d', $arr['kprqz']),// 开票日期止
+            'nsrsbh' => $arr['socialCredit'],// 纳税人识别号
+        ];
+        for ($try = 3; $try--;) {
+            // 发送 试3次
+            $addTaskInfo = (new JinCaiShuKeService())->addTask(
+                $arr['socialCredit'],
+                $target->getAttr('province'),
+                $target->getAttr('city'),
+                $ywBody
+            );
+            if (isset($addTaskInfo['code']) && strlen($addTaskInfo['code']) > 1) {
+                // 如果成功了
+                break;
+            }
+            \co::sleep(30);
+        }
+        try {
+            JinCaiTrace::create()->where('id', $arr['id'])->update([
+                'code' => $addTaskInfo['code'] ?? '未返回',
+                'province' => $addTaskInfo['result']['province'] ?? '未返回',
+                'taskCode' => $addTaskInfo['result']['taskCode'] ?? '未返回',
+                'taskStatus' => $addTaskInfo['result']['taskStatus'] ?? '未返回',
+                'traceNo' => $addTaskInfo['result']['traceNo'] ?? '未返回',
+                'isComplete' => 0,
+            ]);
+        } catch (\Throwable $e) {
+            $file = $e->getFile();
+            $line = $e->getLine();
+            $msg = $e->getMessage();
+            $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+            CommonService::getInstance()->log4PHP($content, 'retryAddTask', 'GetJinCaiRwh.log');
+        }
+    }
+
     function run(int $taskId, int $workerIndex)
     {
         // 等待金财任务执行1小时后，开始取任务号
@@ -46,11 +90,18 @@ class GetJinCaiRwh extends AbstractCronTask
             $list = JinCaiTrace::create()
                 ->where('updated_at', $time, '<')// 1小时前的所有任务
                 ->where('isComplete', 0)
+                ->where('traceNo', '未返回', 'OR')// 通过这个条件触发retryAddTask
                 ->page($page, 100)->all();
 
             if (empty($list)) break;
 
             foreach ($list as $rwh_list) {
+
+                if ($rwh_list->getAttr('traceNo') === '未返回') {
+                    // 重新处理未返回的情况
+                    $this->retryAddTask(obj2Arr($rwh_list));
+                    continue;
+                }
 
                 // 拿任务号
                 $rwh_info = (new JinCaiShuKeService())
@@ -104,7 +155,10 @@ class GetJinCaiRwh extends AbstractCronTask
                     if ($hours > 15) {
                         // 超过15小时了
                         $refreshTask = (new JinCaiShuKeService())->refreshTask($traceNo);
-                        $rwh_list->update(['updated_at' => time()]);
+                        $rwh_list->update([
+                            'isComplete' => 0,
+                            'updated_at' => time(),
+                        ]);
                     }
                 }
 
