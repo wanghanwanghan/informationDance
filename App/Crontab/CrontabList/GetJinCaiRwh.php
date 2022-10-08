@@ -77,13 +77,9 @@ class GetJinCaiRwh extends AbstractCronTask
     {
         // 等待金财任务执行1小时后，开始取任务号
 
-        CommonService::getInstance()->log4PHP('GetJinCaiRwh run at ' . Carbon::now()->format('Y-m-d H:i:s'));
-
         $check = $this->crontabBase->withoutOverlapping(self::getTaskName(), 3600);
 
         if (!$check) return;
-
-        CommonService::getInstance()->log4PHP('GetJinCaiRwh get lock at ' . Carbon::now()->format('Y-m-d H:i:s'));
 
         $time = Carbon::now()->subHours(1)->timestamp;
 
@@ -97,13 +93,9 @@ class GetJinCaiRwh extends AbstractCronTask
                 ->where('traceNo', '未返回', '=', 'OR')// 通过这个条件触发retryAddTask
                 ->page($page, 100)->all();
 
-            CommonService::getInstance()->log4PHP(DbManager::getInstance()->getLastQuery()->getLastQuery());
-
             if (empty($list)) break;
 
             foreach ($list as $rwh_list) {
-
-                CommonService::getInstance()->log4PHP($rwh_list);
 
                 if ($rwh_list->getAttr('traceNo') === '未返回') {
                     // 重新处理未返回的情况
