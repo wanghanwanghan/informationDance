@@ -10,6 +10,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
+use EasySwoole\ORM\DbManager;
 
 class GetJinCaiRwh extends AbstractCronTask
 {
@@ -96,7 +97,7 @@ class GetJinCaiRwh extends AbstractCronTask
                 ->where('traceNo', '未返回', 'OR')// 通过这个条件触发retryAddTask
                 ->page($page, 100)->all();
 
-            CommonService::getInstance()->log4PHP($list);
+            CommonService::getInstance()->log4PHP(DbManager::getInstance()->getLastQuery()->getLastQuery());
 
             if (empty($list)) break;
 
