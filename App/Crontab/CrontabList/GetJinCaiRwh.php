@@ -94,7 +94,7 @@ class GetJinCaiRwh extends AbstractCronTask
             $list = JinCaiTrace::create()
                 ->where('updated_at', $time, '<')// 1小时前的所有任务
                 ->where('isComplete', 0)
-                ->where('traceNo', '未返回', 'OR')// 通过这个条件触发retryAddTask
+                ->where('traceNo', '未返回', '=', 'OR')// 通过这个条件触发retryAddTask
                 ->page($page, 100)->all();
 
             CommonService::getInstance()->log4PHP(DbManager::getInstance()->getLastQuery()->getLastQuery());
