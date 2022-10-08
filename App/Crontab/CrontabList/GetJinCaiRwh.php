@@ -10,7 +10,6 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use Carbon\Carbon;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
-use EasySwoole\ORM\DbManager;
 
 class GetJinCaiRwh extends AbstractCronTask
 {

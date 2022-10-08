@@ -143,6 +143,10 @@ class GetInvDataJinCai extends ProcessBase
             JinCaiRwh::create()
                 ->where('wupanTraceNo', $rwh_info['wupanTraceNo'])
                 ->update(['isComplete' => 1]);
+        } elseif ($main_isComplete === 0 && $detail_isComplete === 0) {
+            JinCaiRwh::create()
+                ->where('wupanTraceNo', $rwh_info['wupanTraceNo'])
+                ->update(['isComplete' => 3]);
         }
 
         return true;
