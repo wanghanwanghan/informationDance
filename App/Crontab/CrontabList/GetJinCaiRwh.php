@@ -102,6 +102,8 @@ class GetJinCaiRwh extends AbstractCronTask
 
             foreach ($list as $rwh_list) {
 
+                CommonService::getInstance()->log4PHP($rwh_list);
+
                 if ($rwh_list->getAttr('traceNo') === '未返回') {
                     // 重新处理未返回的情况
                     $this->retryAddTask(obj2Arr($rwh_list));
