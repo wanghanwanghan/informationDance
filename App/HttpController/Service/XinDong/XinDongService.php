@@ -25,7 +25,6 @@ use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\Score\xds;
 use EasySwoole\Pool\Manager;
-use Vtiful\Kernel\Format;
 use wanghanwanghan\someUtils\control;
 use wanghanwanghan\someUtils\traits\Singleton;
 use EasySwoole\ElasticSearch\Config;
@@ -42,24 +41,24 @@ class XinDongService extends ServiceBase
     use Singleton;
 
     private $fyyList;
-    private $ldUrl; 
-    
+    private $ldUrl;
+
     // 企业类型
     public $company_org_type_youxian = 10;
-    public $company_org_type_youxian_des =  '有限责任公司'; 
+    public $company_org_type_youxian_des =  '有限责任公司';
     public $company_org_type_youxian2 = 15;
-    public $company_org_type_youxian2_des =  '有限公司'; 
+    public $company_org_type_youxian2_des =  '有限公司';
 
     public $company_org_type_gufen = 20;
-    public $company_org_type_gufen_des =  '股份有限公司'; 
+    public $company_org_type_gufen_des =  '股份有限公司';
 
     public $company_org_type_fengongsi = 25;
-    public $company_org_type_fengongsi_des =  '分公司'; 
+    public $company_org_type_fengongsi_des =  '分公司';
     public $company_org_type_zongsongsi = 30;
-    public $company_org_type_zongsongsi_des =  '总公司'; 
+    public $company_org_type_zongsongsi_des =  '总公司';
 
     public $company_org_type_youxianhehuo = 35;
-    public $company_org_type_youxianhehuo_des =  '有限合伙企业'; 
+    public $company_org_type_youxianhehuo_des =  '有限合伙企业';
 
     // 成立年限
     public $estiblish_year_under_2 = 2;
@@ -141,15 +140,15 @@ class XinDongService extends ServiceBase
     }
 
     // 获取注册资本
-    function getRegCapital($getAll = false) 
+    function getRegCapital($getAll = false)
     {
        $map = [
            $this->reg_capital_50  =>  $this->reg_capital_50_des,
-           $this->reg_capital_50to100  =>  $this->reg_capital_50to100_des, 
-           $this->reg_capital_100to200  =>  $this->reg_capital_100to200_des,  
-           $this->reg_capital_200to500  =>  $this->reg_capital_200to500_des,  
-           $this->reg_capital_500to1000  =>  $this->reg_capital_500to1000_des,  
-           $this->reg_capital_1000to10000  =>  $this->reg_capital_1000to10000_des,  
+           $this->reg_capital_50to100  =>  $this->reg_capital_50to100_des,
+           $this->reg_capital_100to200  =>  $this->reg_capital_100to200_des,
+           $this->reg_capital_200to500  =>  $this->reg_capital_200to500_des,
+           $this->reg_capital_500to1000  =>  $this->reg_capital_500to1000_des,
+           $this->reg_capital_1000to10000  =>  $this->reg_capital_1000to10000_des,
         //    $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des,
            $this->reg_capital_minddle_a  =>  $this->reg_capital_minddle_a_des,
            $this->reg_capital_big_c  =>  $this->reg_capital_big_c_des,
@@ -164,10 +163,10 @@ class XinDongService extends ServiceBase
            return array_merge($map,[0 => '全部']);
        }
        return $map;
-    } 
+    }
 
     // 获取营业状态
-    function getRegStatus($getAll = false) 
+    function getRegStatus($getAll = false)
     {
        $map = [
            $this->reg_status_cunxu  =>  $this->reg_status_cunxu_des,
@@ -182,17 +181,17 @@ class XinDongService extends ServiceBase
        }
        return $map;
 
-    } 
+    }
 
     // 获取企业成立年限
-    function getEstiblishYear($getAll = false) 
+    function getEstiblishYear($getAll = false)
     {
        $map = [
            $this->estiblish_year_under_2 => $this->estiblish_year_under_2_des,
            $this->estiblish_year_2to5  => $this->estiblish_year_2to5_des,
            $this->estiblish_year_5to10  => $this->estiblish_year_5to10_des,
            $this->estiblish_year_10to15  => $this->estiblish_year_10to15_des,
-           $this->estiblish_year_15to20  => $this->estiblish_year_15to20_des, 
+           $this->estiblish_year_15to20  => $this->estiblish_year_15to20_des,
            $this->estiblish_year_more_than_20  => $this->estiblish_year_more_than_20_des,
        ];
 
@@ -201,10 +200,10 @@ class XinDongService extends ServiceBase
        }
        return $map;
 
-    }  
+    }
 
     // 获取企业类型
-     function getCompanyOrgType($getAll = false) 
+     function getCompanyOrgType($getAll = false)
      {
         $map = [
             $this->company_org_type_youxian => $this->company_org_type_youxian_des,
@@ -212,10 +211,10 @@ class XinDongService extends ServiceBase
             $this->company_org_type_gufen => $this->company_org_type_gufen_des,
             $this->company_org_type_fengongsi => $this->company_org_type_fengongsi_des,
             $this->company_org_type_zongsongsi => $this->company_org_type_zongsongsi_des,
-            $this->company_org_type_youxianhehuo => $this->company_org_type_youxianhehuo_des, 
-            40 => '外商独资公司', 
-            50 => '个人独资企业', 
-            60 => '国有独资公司', 
+            $this->company_org_type_youxianhehuo => $this->company_org_type_youxianhehuo_des,
+            40 => '外商独资公司',
+            50 => '个人独资企业',
+            60 => '国有独资公司',
         ];
 
         if ($getAll) {
@@ -223,7 +222,7 @@ class XinDongService extends ServiceBase
         }
         return $map;
 
-     } 
+     }
 
     //处理结果给信息controller
     private function checkResp($code, $paging, $result, $msg)
@@ -1121,11 +1120,11 @@ class XinDongService extends ServiceBase
      * 高级搜索支持的搜索条件
      * 返回示例
      * 注意：type：radio 单选  select 多选
-     * 
+     *
     */
     function getSearchOption($postData = [])
     {
-        
+
         return  [
 //           [
 //                'pid' => 10,
@@ -1184,7 +1183,7 @@ class XinDongService extends ServiceBase
                         'detail' => '',
                         'min' => 0,
                         'max' => 2,
-                    ], 
+                    ],
                     $this->estiblish_year_2to5  => [
                         'cname' => $this->estiblish_year_2to5_des ,
                         'detail' => '',
@@ -1208,7 +1207,7 @@ class XinDongService extends ServiceBase
                         'detail' => '',
                         'min' => 15,
                         'max' => 20,
-                    ], 
+                    ],
                     $this->estiblish_year_more_than_20  => [
                         'cname' => $this->estiblish_year_more_than_20_des,
                         'detail' => '',
@@ -1216,7 +1215,7 @@ class XinDongService extends ServiceBase
                         'max' => 2000,
                     ],
                 ],
-            ], 
+            ],
 //             [
 //                'pid' => 30,
 //                'desc' => '营业状态',
@@ -1328,7 +1327,7 @@ class XinDongService extends ServiceBase
                         'detail' => '',
                         'min' => 100000,
                         'max' => 10000000,
-                    ],  
+                    ],
                 ],
             ],
             [
@@ -1349,31 +1348,31 @@ class XinDongService extends ServiceBase
                         'detail' => '100万以上，500万以下',
                         'min' => 1000000,
                         'max' => 5000000,
-                    ], 
+                    ],
                     $this->reg_capital_100to200  =>  [
                         'cname' => $this->reg_capital_100to200_des,
                         'detail' => '500万以上，1000万以下',
                         'min' => 5000000,
                         'max' => 10000000,
-                    ],  
+                    ],
                     $this->reg_capital_200to500  =>  [
                         'cname' => $this->reg_capital_200to500_des,
                         'detail' => '1000万以上，3000万以下',
                         'min' => 10000000,
                         'max' => 30000000,
-                    ],  
+                    ],
                     $this->reg_capital_500to1000  =>  [
                         'cname' => $this->reg_capital_500to1000_des,
                         'detail' => '3000万以上，5000万以下',
                         'min' => 30000000,
                         'max' => 50000000,
-                    ],  
+                    ],
                     $this->reg_capital_1000to10000  => [
                         'cname' =>  $this->reg_capital_1000to10000_des,
                         'detail' => '5000万以上，8000万以下',
                         'min' => 50000000,
                         'max' => 80000000,
-                    ],  
+                    ],
                  //    $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des,
                     $this->reg_capital_minddle_a  =>  [
                         'cname' => $this->reg_capital_minddle_a_des,
@@ -1431,37 +1430,37 @@ class XinDongService extends ServiceBase
                         'detail' => '',
                         'min' => 0,
                         'max' => 10,
-                    ], 
+                    ],
                     20 => [
                         'cname' => '10-50人',
                         'detail' => '',
                         'min' => 10,
                         'max' => 50,
-                    ], 
+                    ],
                     30 => [
                         'cname' => '50-100人',
                         'detail' => '',
                         'min' => 50,
                         'max' => 100,
-                    ], 
+                    ],
                     40 => [
                         'cname' => '100-500人',
                         'detail' => '',
                         'min' => 100,
                         'max' => 500,
-                    ], 
+                    ],
                     50 => [
                         'cname' => '500-1000人',
                         'detail' => '',
                         'min' => 500,
                         'max' => 1000,
-                    ], 
+                    ],
                     60 => [
                         'cname' => '1000-5000人',
                         'detail' => '',
                         'min' => 1000,
                         'max' => 5000,
-                    ], 
+                    ],
                     70 => [
                         'cname' => '5000人以上',
                         'detail' => '',
@@ -1480,7 +1479,7 @@ class XinDongService extends ServiceBase
                     10 => [
                         'cname' => '有',
                         'detail' => '',
-                    ],  
+                    ],
                 ],
             ],
             [
@@ -1493,7 +1492,7 @@ class XinDongService extends ServiceBase
                     10 => [
                         'cname' => '有',
                         'detail' => '',
-                    ],  
+                    ],
                 ],
             ],
             [
@@ -1506,7 +1505,7 @@ class XinDongService extends ServiceBase
                     10 => [
                         'cname' => '是',
                         'detail' => '',
-                    ],  
+                    ],
                 ],
             ],
         ];
@@ -1515,7 +1514,7 @@ class XinDongService extends ServiceBase
 
      //高级搜索
      function advancedSearch($elasticSearchService, $index = 'company_202207')
-     { 
+     {
         $elasticsearch = new ElasticSearch(
             new  Config([
                 'host' => "es-cn-7mz2m3tqe000cxkfn.public.elasticsearch.aliyuncs.com",
@@ -1523,35 +1522,35 @@ class XinDongService extends ServiceBase
                 'username'=>'elastic',
                 'password'=>'zbxlbj@2018*()',
             ])
-        ); 
+        );
         $bean = new  Search();
         $bean->setIndex($index);
         $bean->setPreference("_primary");
         $bean->setType('_doc');
         $bean->setBody($elasticSearchService->query);
-        $response = $elasticsearch->client()->search($bean)->getBody(); 
+        $response = $elasticsearch->client()->search($bean)->getBody();
 //        CommonService::getInstance()->log4PHP(json_encode(['es_query'=>$elasticSearchService->query]));
         return  $response;
-     } 
+     }
 
      function saveSearchHistory($userId,  $postDataStr, $canme = ''){
         return UserSearchHistory::create()->data([
-            'userId' => $userId, 
+            'userId' => $userId,
             'post_data' => $postDataStr,
             'query' => $canme,
         ])->save();
      }
-     
+
      static function formatEsDate($dataArr, $fieldsArr){
         foreach($dataArr as &$dataItem){
             foreach($fieldsArr as $field){
                 if($dataItem['_source'][$field] == '0000-00-00 00:00:00'){
                     $dataItem['_source'][$field] = '--';
                     continue;
-                } 
+                }
                 $tmpArr = explode(' ', $dataItem['_source'][$field]);
                 $dataItem['_source'][$field] = $tmpArr[0];
- 
+
             }
         }
 
@@ -1566,7 +1565,7 @@ class XinDongService extends ServiceBase
             }
             $tmpArr = explode(' ', $dataObj->$field);
             $dataObj->$field = $tmpArr[0];
-        } 
+        }
 
         return $dataObj;
      }
@@ -1584,10 +1583,10 @@ class XinDongService extends ServiceBase
                     '.',
                     '',
                     $dataObj->$field
-                ); 
+                );
                 // $dataItem['_source'][$field] = date('Y-m-d',strtotime($dataItem['_source'][$field])) ;
             }
-        } 
+        }
 
         return $dataObj;
      }
@@ -1602,7 +1601,7 @@ class XinDongService extends ServiceBase
                 // 不包含
                 if(strpos($dataItem['_source'][$field],'.') === false){
                     continue;
-                } 
+                }
                 $dataItem['_source'][$field] = self::replaceBetween(
                     $dataItem['_source'][$field],
                     '.',
@@ -1623,15 +1622,15 @@ class XinDongService extends ServiceBase
      static function replaceBetween($str, $needle_start, $needle_end, $replacement) {
         $pos = strpos($str, $needle_start);
         $start = $pos === false ? 0 : $pos + strlen($needle_start);
-    
+
         $pos = strpos($str, $needle_end, $start);
         $end = $pos === false ? strlen($str) : $pos;
-    
+
         return substr_replace($str, $replacement, $start, $end - $start);
     }
 
     static function mapYingShouGuiMo(): array
-    { 
+    {
 
         return  [
             'A1' => '微型，一般指规模在100万以下',
@@ -1647,16 +1646,16 @@ class XinDongService extends ServiceBase
             'A11' => '特大型C类，一般指规模在50亿以上，100亿以下',
             'A12' => '特大型B类，一般指规模在100亿以上，500亿以下',
             'A13' => '特大型A类，一般指规模在500亿以上',
-        ]; 
+        ];
     }
 
     static function getYingShouGuiMoTag(string $yingShouGuiMo): string
-    { 
+    {
 
         $str = self::mapYingShouGuiMo()[$yingShouGuiMo];
         $strArr = explode('，', $str);
         return $strArr[0];
-    } 
+    }
 
     static function isJson($string) {
         json_decode($string);
@@ -1673,7 +1672,7 @@ class XinDongService extends ServiceBase
                 $dataItem['ying_shou_gui_mo']
             );
             $yingShouGuiMoTag && $tags[50] = $yingShouGuiMoTag;
-        } 
+        }
 
         // 团队规模
         if($dataItem['tuan_dui_ren_shu']){
@@ -1684,14 +1683,14 @@ class XinDongService extends ServiceBase
         }
 
         // 是否有ISO
-        $dataItem['iso'] && $tags[80] = 'ISO'; 
+        $dataItem['iso'] && $tags[80] = 'ISO';
         // 是否瞪羚 
         $dataItem['deng_ling_qi_ye'] && $tags[85] = '瞪羚';
         // 高新技术 
         $dataItem['gao_xin_ji_shu'] && $tags[90] = '高新技术';
 
         // 上市公司
-        $dataItem['shang_shi_xin_xi'] && $tags[95] = '高新技术'; 
+        $dataItem['shang_shi_xin_xi'] && $tags[95] = '高新技术';
 
         //进出口企业 
         $dataItem['jin_chu_kou'] && $tags[100] = '进出口型企业';
@@ -1725,12 +1724,12 @@ class XinDongService extends ServiceBase
             return '商品';
         }
 
-        return ""; 
+        return "";
     }
     static function checkIfIsShangPinCompany($companyName):bool
     {
        return  \App\HttpController\Models\RDS3\ShangPinTiaoMaJieBa::create()
-                ->where('entname', $companyName) 
+                ->where('entname', $companyName)
                 ->get() ?true : false;
     }
 
@@ -1742,12 +1741,12 @@ class XinDongService extends ServiceBase
             return '进出口型企业';
         }
 
-        return ""; 
+        return "";
     }
     static function checkIfJinChuKou($companyId):bool
     {
        return  \App\HttpController\Models\RDS3\HgGoods::create()
-                ->where('xd_id', $companyId) 
+                ->where('xd_id', $companyId)
                 ->get() ?true : false;
     }
 
@@ -1759,13 +1758,13 @@ class XinDongService extends ServiceBase
             return '上市公司';
         }
 
-        return ""; 
+        return "";
     }
 
     static function checkIfShangeShi($companyId):bool
     {
        return  \App\HttpController\Models\RDS3\XdAggreListedFinance::create()
-                ->where('xd_id', $companyId) 
+                ->where('xd_id', $companyId)
                 ->get() ?true : false;
     }
 
@@ -1777,7 +1776,7 @@ class XinDongService extends ServiceBase
             return 'ISO';
         }
 
-        return ""; 
+        return "";
     }
 
     static function getHighTecTag($companyId):string
@@ -1788,7 +1787,7 @@ class XinDongService extends ServiceBase
             return '高新技术';
         }
 
-        return ""; 
+        return "";
     }
 
     static function getDengLingTag($companyId):string
@@ -1799,7 +1798,7 @@ class XinDongService extends ServiceBase
             return '瞪羚';
         }
 
-        return ""; 
+        return "";
     }
 
     static function checkIfIsHighTec($companyId):bool
@@ -1822,28 +1821,28 @@ class XinDongService extends ServiceBase
                 ->where('xd_id', $companyId)->get() ?true : false;
     }
 
-    static function getTuanDuiGuiMoTag($nums){ 
+    static function getTuanDuiGuiMoTag($nums){
         $map = self::getTuanDuiGuiMoMap();
         foreach($map as $item){
             if(
                 $item['min'] <= $nums &&
-                $item['max'] >= $nums 
+                $item['max'] >= $nums
             ){
                 return $item['des'];
             }
         }
    }
-    static function getTuanDuiGuiMoMap(){ 
+    static function getTuanDuiGuiMoMap(){
          return  [
-            10 => ['min' => 0, 'max' => 10 , 'epreg' => ['[0-9]'], 'des' => '10人以下' ],//, 
-            20 => ['min' => 10, 'max' => 50 , 'epreg' => ['[1-4][0-9]'], 'des' => '10-50人' ], //, 
-            30 => ['min' => 50, 'max' => 100  ,'epreg' => ['[5-9][0-9]'], 'des' => '50-100人' ], //, 
-            40 => ['min' => 100, 'max' => 500 ,'epreg' => ['[1-4][0-9][0-9]'], 'des' => '100-500人'  ], //, 
-            50 => ['min' => 500, 'max' => 1000  ,'epreg' => ['[5-9][0-9][0-9]'], 'des' => '500-1000人' ], //, 
-            60 => ['min' => 1000, 'max' => 5000  ,'epreg' => ['[1-4][0-9][0-9][0-9]'], 'des' => '1000-5000人' ], //, 
-            70 => ['min' => 5000, 'max' => 10000000 ,'epreg' => 
-            ['[5-9][0-9][0-9][0-9]','[1-9][0-9][0-9][0-9][0-9]','[1-9][0-9][0-9][0-9][0-9][0-9]'], 
-            'des' => '5000人以上' ]//, 
+            10 => ['min' => 0, 'max' => 10 , 'epreg' => ['[0-9]'], 'des' => '10人以下' ],//,
+            20 => ['min' => 10, 'max' => 50 , 'epreg' => ['[1-4][0-9]'], 'des' => '10-50人' ], //,
+            30 => ['min' => 50, 'max' => 100  ,'epreg' => ['[5-9][0-9]'], 'des' => '50-100人' ], //,
+            40 => ['min' => 100, 'max' => 500 ,'epreg' => ['[1-4][0-9][0-9]'], 'des' => '100-500人'  ], //,
+            50 => ['min' => 500, 'max' => 1000  ,'epreg' => ['[5-9][0-9][0-9]'], 'des' => '500-1000人' ], //,
+            60 => ['min' => 1000, 'max' => 5000  ,'epreg' => ['[1-4][0-9][0-9][0-9]'], 'des' => '1000-5000人' ], //,
+            70 => ['min' => 5000, 'max' => 10000000 ,'epreg' =>
+            ['[5-9][0-9][0-9][0-9]','[1-9][0-9][0-9][0-9][0-9]','[1-9][0-9][0-9][0-9][0-9][0-9]'],
+            'des' => '5000人以上' ]//,
         ];
     }
 
@@ -1912,17 +1911,17 @@ class XinDongService extends ServiceBase
         ];
     }
 
-    static function getZhuCeZiBenMap(){ 
+    static function getZhuCeZiBenMap(){
         return  [
             10 => ['min' => 0, 'max' => 100 , 'epreg' => ['[0-9]','[1-9][0-9]'], 'des' => '100万以下' ],//,
-            15 => ['min' => 10, 'max' => 500 , 'epreg' => ['[1-4][0-9][0-9]'], 'des' => '100-500' ], //, 
-            20 => ['min' => 500, 'max' => 1000  ,'epreg' => ['[5-9][0-9][0-9]'], 'des' => '500-1000' ], //, 
-            25 => ['min' => 1000, 'max' => 5000 ,'epreg' => ['[1-4][0-9][0-9][0-9]'], 'des' => '1000-5000'  ], //, 
-            30 => ['min' => 5000, 'max' => 10000  ,'epreg' => ['[5-9][0-9][0-9][0-9]'], 'des' => '5000-10000' ], //, 
-            35 => ['min' => 10000, 'max' => 50000  ,'epreg' => ['[1-9][0-9][0-9][0-9][0-9]'], 'des' => '100000-100000' ], //, 
-            40 => ['min' => 5000, 'max' => 10000000 ,'epreg' => 
-            ['[1-9][0-9][0-9][0-9][0-9]','[1-9][0-9][0-9][0-9][0-9][0-9]','[1-9][0-9][0-9][0-9][0-9][0-9][0-9]'], 
-            'des' => '100000+' ]//, 
+            15 => ['min' => 10, 'max' => 500 , 'epreg' => ['[1-4][0-9][0-9]'], 'des' => '100-500' ], //,
+            20 => ['min' => 500, 'max' => 1000  ,'epreg' => ['[5-9][0-9][0-9]'], 'des' => '500-1000' ], //,
+            25 => ['min' => 1000, 'max' => 5000 ,'epreg' => ['[1-4][0-9][0-9][0-9]'], 'des' => '1000-5000'  ], //,
+            30 => ['min' => 5000, 'max' => 10000  ,'epreg' => ['[5-9][0-9][0-9][0-9]'], 'des' => '5000-10000' ], //,
+            35 => ['min' => 10000, 'max' => 50000  ,'epreg' => ['[1-9][0-9][0-9][0-9][0-9]'], 'des' => '100000-100000' ], //,
+            40 => ['min' => 5000, 'max' => 10000000 ,'epreg' =>
+            ['[1-9][0-9][0-9][0-9][0-9]','[1-9][0-9][0-9][0-9][0-9][0-9]','[1-9][0-9][0-9][0-9][0-9][0-9][0-9]'],
+            'des' => '100000+' ]//,
         ];
    }
     static function getZhuCeZiBenMapV2(){
@@ -1945,18 +1944,18 @@ class XinDongService extends ServiceBase
     // 获取所有曾用名称 $getAll: 为true的时候  当前的名字也要了
     static function getAllUsedNames($dataArr, $getAll = false){
         if ($getAll) {
-            $allNames = [ $dataArr['name'] => $dataArr['name']];    
+            $allNames = [ $dataArr['name'] => $dataArr['name']];
         }
         else{
-            $allNames = [ ];    
-        }     
+            $allNames = [ ];
+        }
         $newNames = self::autoSearchNewNames($dataArr);
         $oldNames = self::autoSearchOldNames($dataArr);
         return array_values(array_merge($allNames, $newNames, $oldNames));
     }
 
     //往后找到最新的names
-    static function autoSearchNewNames($dataArr){  
+    static function autoSearchNewNames($dataArr){
         $names = [];
         // 容错次数
         $nums = 1;
@@ -1973,7 +1972,7 @@ class XinDongService extends ServiceBase
                     'id' => $retData->id,
                     'name' => $retData->name,
                     'property2' => $retData->property2,
-                ]; 
+                ];
                 $names[$dataArr['name']] = $dataArr['name'];
             }
             else{
@@ -1981,16 +1980,16 @@ class XinDongService extends ServiceBase
                     'id' => 0,
                     'name' => 0,
                     'property2' => 0,
-                ]; 
+                ];
             }
            $nums ++;
         }
-        
+
        return $names;
     }
 
     //往前找到旧的names
-    static function autoSearchOldNames($dataArr){ 
+    static function autoSearchOldNames($dataArr){
         $names = [];
         // 容错次数
         $nums = 1;
@@ -2017,22 +2016,22 @@ class XinDongService extends ServiceBase
                     'property2' => 0,
                 ];
             }
-            $nums ++; 
-        } 
+            $nums ++;
+        }
        return $names;
     }
 
      static function saveOpportunity($dataItem){
         if (
             UserBusinessOpportunity::create()->where([
-                'userId' => $dataItem['userId'], 
-                'name' => $dataItem['name'], 
+                'userId' => $dataItem['userId'],
+                'name' => $dataItem['name'],
             ])->get()
         ) {
             CommonService::getInstance()->log4PHP('该商机已经存在于客户池 '.json_encode(
                 [
-                    'userId' => $dataItem['userId'], 
-                    'name' => $dataItem['name'], 
+                    'userId' => $dataItem['userId'],
+                    'name' => $dataItem['name'],
                 ]
             ));
             return true ;
@@ -2040,39 +2039,39 @@ class XinDongService extends ServiceBase
 
         try {
             $res = UserBusinessOpportunity::create()->data([
-                        'userId' => $dataItem['userId'], 
+                        'userId' => $dataItem['userId'],
                         'name' => $dataItem['name'],
-                        'code' =>  $dataItem['code'], 
-                        'batchId' => $dataItem['batchId'],   
-                        'source' => $dataItem['source'],   
+                        'code' =>  $dataItem['code'],
+                        'batchId' => $dataItem['batchId'],
+                        'source' => $dataItem['source'],
                     ])->save();
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP($e->getMessage());
-        } 
+        }
         return $res;
     }
 
     function getEntInfoByName($entNames): ?array
     {
-         
+
         // CommonService::getInstance()->log4PHP(json_encode($entNames));
         $retData  = Company::create()
             ->where('name', array_values($entNames),'IN')
             ->field(["id", "name", "company_org_type","reg_location","estiblish_time"])
-            ->get(); 
-         
+            ->get();
+
         return [
             'code' => 200,
             'paging' => [],
             'msg' =>  '成功',
             'result' => $retData,
         ];
-    } 
- 
+    }
+
 
     function matchAainstEntName(
-        $str, 
-        $mode = " IN NATURAL LANGUAGE MODE " , 
+        $str,
+        $mode = " IN NATURAL LANGUAGE MODE " ,
         $companyName = "company_name_0",
         $field = "id,name",
         $limit = 1
@@ -2088,10 +2087,10 @@ class XinDongService extends ServiceBase
                 LIMIT $limit
         ";
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
-        
-        CommonService::getInstance()->log4PHP('matchAainstComName sql'.$sql ); 
+
+        CommonService::getInstance()->log4PHP('matchAainstComName sql'.$sql );
         CommonService::getInstance()->log4PHP('matchAainstComName res'.json_encode($list) );
-         
+
         return $list;
 
         // return [
@@ -2099,11 +2098,11 @@ class XinDongService extends ServiceBase
         //     'list' => $list,
         // ];
     }
- 
+
     function splitChineseNameForMatchAgainst($entName): ?string
     {
-        
-        
+
+
         $arr = preg_split('/(?<!^)(?!$)/u', $entName );
         $matchStr = "";
         if($arr[0] && $arr[1]){
@@ -2121,7 +2120,7 @@ class XinDongService extends ServiceBase
         if($arr[8] && $arr[9]){
             $matchStr .= '+'.$arr[8].$arr[9];
         }
-        
+
         return  $matchStr;
     }
 
@@ -2130,24 +2129,24 @@ class XinDongService extends ServiceBase
             CompanyName::getAllTables() as $tableName
         ){
             $csp->add('BOOLEAN_MODE_'.$tableName, function () use ($entName, $tableName) {
-                $timeStart2 = microtime(true); 
+                $timeStart2 = microtime(true);
                 $matchStr = (new XinDongService())->splitChineseNameForMatchAgainst($entName);
                 $retData =  (new XinDongService())
                             ->matchAainstEntName(
                                 $matchStr,
-                                " IN BOOLEAN MODE ", 
+                                " IN BOOLEAN MODE ",
                                 $tableName ,
                                 'id,name',
                                 3
-                        );  
-                $timeEnd2 = microtime(true); 
-                $execution_time11 = ($timeEnd2 - $timeStart2);  
-                return  [ 
+                        );
+                $timeEnd2 = microtime(true);
+                $execution_time11 = ($timeEnd2 - $timeStart2);
+                return  [
                     'data' => $retData,
                     'type' => 'Boolean',
                     'time' => $execution_time11
                 ];
-            }); 
+            });
         }
     }
 
@@ -2177,30 +2176,30 @@ class XinDongService extends ServiceBase
     }
 
     function matchEntByNameEqualMatchByName($csp,$entName){
-        $csp->add('company_match', function () use ($entName) { 
-            $timeStart2 = microtime(true);  
-            $sql = "SELECT  id,`name` FROM  `company`  WHERE   `name` = '$entName' LIMIT 1"; 
+        $csp->add('company_match', function () use ($entName) {
+            $timeStart2 = microtime(true);
+            $sql = "SELECT  id,`name` FROM  `company`  WHERE   `name` = '$entName' LIMIT 1";
             $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_prism1'));
-            $timeEnd2 = microtime(true); 
-            $execution_time11 = ($timeEnd2 - $timeStart2); 
+            $timeEnd2 = microtime(true);
+            $execution_time11 = ($timeEnd2 - $timeStart2);
             return  [
                 'data' => $list,
                 'type' => 'equal',
                 'time' => $execution_time11
             ];
-        }); 
+        });
     }
 
     function matchEntByNameMatchByEs($entName,$size = 4, $page = 1){
-        $ElasticSearchService = new ElasticSearchService();  
-        $ElasticSearchService->addMustMatchQuery('name', $entName) ;   
+        $ElasticSearchService = new ElasticSearchService();
+        $ElasticSearchService->addMustMatchQuery('name', $entName) ;
         $offset  =  ($page-1)*$size;
         $ElasticSearchService->addSize($size) ;
         $ElasticSearchService->addFrom($offset) ;
         // $ElasticSearchService->addSort('xd_id', 'desc') ;
- 
+
         $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
-        $responseArr = @json_decode($responseJson,true);  
+        $responseArr = @json_decode($responseJson,true);
         // CommonService::getInstance()->log4PHP('matchEntByNameMatchByEs '.
         //     $responseJson
         // ); 
@@ -2209,7 +2208,7 @@ class XinDongService extends ServiceBase
             $datas[] = [
                 'id' => $item['_source']['xd_id'],
                 'name' => $item['_source']['name'],
-            ]; 
+            ];
         }
         return $datas;
     }
@@ -2218,7 +2217,7 @@ class XinDongService extends ServiceBase
         similar_text($var_1, $var_2, $percent);
         return number_format($percent);
     }
- 
+
 
     function checkIfSimilar($name1,$name2){
         $percent = $this->getSimilarPercent($name1,$name2);
@@ -2227,62 +2226,62 @@ class XinDongService extends ServiceBase
         }
         return false ;
     }
-    
+
 
     // $matchType :1 boolean  2:lanague
     function matchEntByName($entName, $matchType = 1, $timeOut = 3.5): array
     {
-        $timeStart = microtime(true);    
-  
+        $timeStart = microtime(true);
+
         //先从es match   
-        $esRes = $this->matchEntByNameMatchByEs($entName); 
+        $esRes = $this->matchEntByNameMatchByEs($entName);
         CommonService::getInstance()->log4PHP('es match'.
-            json_encode( 
+            json_encode(
                [
                     'data' => $esRes,
                     'time' => (microtime(true) - $timeStart),
                ]
-            ) 
-        ); 
+            )
+        );
         // 如果es 就匹配到了 直接返回 
-        foreach($esRes as $data){ 
+        foreach($esRes as $data){
             if( $this->checkIfSimilar($data['name'], $entName) ){
                 CommonService::getInstance()->log4PHP('es match ok , return '.
-                    json_encode( 
+                    json_encode(
                             [
                                 'data' => $matchedItem,
                                 'time' => (microtime(true) - $timeStart),
                         ]
-                        ) 
-                    ); 
+                        )
+                    );
                 return $data ;
             }
-        }   
+        }
 
         // es木有的 从 db找： 分词全文匹配+精确
-        $csp = new \EasySwoole\Component\Csp(); 
+        $csp = new \EasySwoole\Component\Csp();
         // 分词全文匹配找：Boolean mode 
         if ($matchType == 1) {
             $this->matchEntByNameMatchByBooleanMode($csp,$entName);
         }
-        
+
         //分词全文匹配找： language mode 
-        if ($matchType == 2) { 
+        if ($matchType == 2) {
             $this->matchEntByNameMatchByLanguageMode($csp,$entName);
-        }  
-         
+        }
+
         // 精确找 
         $this->matchEntByNameEqualMatchByName($csp,$entName);
-        
-        $dbres = ($csp->exec($timeOut)); 
+
+        $dbres = ($csp->exec($timeOut));
         CommonService::getInstance()->log4PHP('从db找 res'.
-            json_encode( 
+            json_encode(
                 [
                     'data' => $dbres,
                     'time' => (microtime(true) - $timeStart),
                ]
-            ) 
-        ); 
+            )
+        );
         // 从结果找
         $matchedDatas = [];
         // $matchedData = [];
@@ -2293,16 +2292,16 @@ class XinDongService extends ServiceBase
                 !empty($dataItem['data'])
             ){
                 CommonService::getInstance()->log4PHP('精确匹配到了'.
-                json_encode( 
+                json_encode(
                     $dataItem['data'][0]
-                ) 
-            ); 
+                )
+            );
                 return $dataItem['data'][0];
-            }  
-        } 
+            }
+        }
 
         // 剩余的 按照相似度排序 然后返回相似度最高的
-        foreach($esRes as $dataItem){  
+        foreach($esRes as $dataItem){
             $percent = $this->getSimilarPercent($dataItem['name'], $entName) ;
             $matchedDatas[$percent] = [
                 'id' => $dataItem['id'] ,
@@ -2310,17 +2309,17 @@ class XinDongService extends ServiceBase
             ];
         }
         CommonService::getInstance()->log4PHP(' 根据匹配度1  '.
-            json_encode( 
-                $matchedDatas 
-            ) 
-        ); 
+            json_encode(
+                $matchedDatas
+            )
+        );
 
-        foreach($dbres as $dataItem){  
+        foreach($dbres as $dataItem){
             CommonService::getInstance()->log4PHP(' dataItem  '.
-            json_encode( 
-                $dataItem 
-            ) 
-        ); 
+            json_encode(
+                $dataItem
+            )
+        );
             foreach( $dataItem['data'] as $item){
                 $percent = $this->getSimilarPercent($item['name'], $entName) ;
                 $matchedDatas[$percent] = [
@@ -2328,23 +2327,23 @@ class XinDongService extends ServiceBase
                     'name' => $item['name'] ,
                 ];
             }
-        } 
+        }
         CommonService::getInstance()->log4PHP(' 根据匹配度2  '.
-            json_encode( 
-                $matchedDatas 
-            ) 
-        ); 
+            json_encode(
+                $matchedDatas
+            )
+        );
         //根据匹配度 返回最高的一个
         ksort($matchedDatas);
         $resData =  end($matchedDatas);
         CommonService::getInstance()->log4PHP(' 根据匹配度  '.
-            json_encode( 
-                $matchedDatas 
-            ) 
-        ); 
+            json_encode(
+                $matchedDatas
+            )
+        );
 
-        $timeEnd = microtime(true); 
-        $execution_time1 = (microtime(true) - $timeStart); 
+        $timeEnd = microtime(true);
+        $execution_time1 = (microtime(true) - $timeStart);
 
         return $resData;
         // return [
@@ -2469,7 +2468,7 @@ class XinDongService extends ServiceBase
         if(empty($old_traces)){
             return [];
         }
-        
+
         $allowed_field_arr = [
             'file',
             'line',
@@ -2657,19 +2656,19 @@ class XinDongService extends ServiceBase
     }
     function getEsBasicInfo($companyId): array
     {
-        
-        $ElasticSearchService = new ElasticSearchService(); 
-        
-        $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;  
+
+        $ElasticSearchService = new ElasticSearchService();
+
+        $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;
 
         $size = 1;
         $page = 1;
         $offset  =  ($page-1)*$size;
         $ElasticSearchService->addSize($size) ;
-        $ElasticSearchService->addFrom($offset) ; 
+        $ElasticSearchService->addFrom($offset) ;
 
         $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
-        $responseArr = @json_decode($responseJson,true); 
+        $responseArr = @json_decode($responseJson,true);
         // CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
         //     [
         //         'es_query' => $ElasticSearchService->query,
@@ -2685,14 +2684,14 @@ class XinDongService extends ServiceBase
             'approved_time'
         ]);
         $hits = (new XinDongService())::formatEsMoney($hits, [
-            'reg_capital', 
+            'reg_capital',
         ]);
 
 
         foreach($hits as &$dataItem){
             $addresAndEmailData = $this->getLastPostalAddressAndEmail($dataItem);
             $dataItem['_source']['last_postal_address'] = $addresAndEmailData['last_postal_address'];
-            $dataItem['_source']['last_email'] = $addresAndEmailData['last_email']; 
+            $dataItem['_source']['last_email'] = $addresAndEmailData['last_email'];
 
             // 公司简介
             $tmpArr = explode('&&&', trim($dataItem['_source']['gong_si_jian_jie']));
@@ -2702,7 +2701,7 @@ class XinDongService extends ServiceBase
                 // $dataItem['_source']['gong_si_jian_jie_data_arr'][] = [$tmpItem_];
                 $dataItem['_source']['gong_si_jian_jie_data_arr'][] = $tmpItem_;
             }
-            
+
             // tag信息
             $dataItem['_source']['tags'] = array_values(
                 (new XinDongService())::getAllTagesByData(
@@ -2713,11 +2712,11 @@ class XinDongService extends ServiceBase
             // 官网信息
             $webStr = trim($dataItem['_source']['web']);
             if(!$webStr){
-                continue; 
+                continue;
             }
 
             $webArr = explode('&&&', $webStr);
-            !empty($webArr) && $dataItem['_source']['web'] = end($webArr); 
+            !empty($webArr) && $dataItem['_source']['web'] = end($webArr);
         }
         $res = $hits[0]['_source'];
         return !empty($res)? $res:[];
@@ -2725,7 +2724,7 @@ class XinDongService extends ServiceBase
 
     function getLastPostalAddressAndEmail($dataItem){
         if(!empty($dataItem['_source']['report_year'])){
-            $lastReportYearData = end($dataItem['_source']['report_year']); 
+            $lastReportYearData = end($dataItem['_source']['report_year']);
             return [
                 'last_postal_address' => $lastReportYearData['postal_address'],
                 'last_email' => $lastReportYearData['email'],
@@ -2750,12 +2749,12 @@ class XinDongService extends ServiceBase
             'LAST_EMAIL' => '',
         ];
     }
-    function addCarInsuranceInfo($dataItem){  
+    function addCarInsuranceInfo($dataItem){
         $oldModel = CarInsuranceInfo::create()
             ->where(
             [
                 'vin' => $dataItem['vin'],
-                'entId' => $dataItem['entId'], 
+                'entId' => $dataItem['entId'],
             ])->get();
         if($oldModel){
             return $oldModel->getAttr('id') ;
@@ -2765,22 +2764,22 @@ class XinDongService extends ServiceBase
             $newModel = CarInsuranceInfo::create()
                 ->data([
                     'vin' => $dataItem['vin'],
-                    'entId' => $dataItem['entId'], 
+                    'entId' => $dataItem['entId'],
                     'idCard' => $dataItem['idCard'],
                     'legalPerson' => $dataItem['legalPerson'],
                 ])->save() ;
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP($e->getMessage());
             return false;
-        } 
+        }
         return $newModel ;
     }
 
-    function addCompanyCarInsuranceStatusInfo($dataItem){  
+    function addCompanyCarInsuranceStatusInfo($dataItem){
         $oldModel = CompanyCarInsuranceStatusInfo::create()
             ->where(
             [
-                'entId' => $dataItem['entId'], 
+                'entId' => $dataItem['entId'],
             ])->get();
         if($oldModel){
             return $oldModel ;
@@ -2789,36 +2788,36 @@ class XinDongService extends ServiceBase
         try {
             $newModel = CarInsuranceInfo::create()
                 ->where([
-                    'entId' => $dataItem['entId'], 
+                    'entId' => $dataItem['entId'],
                 ])->save() ;
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP($e->getMessage());
             return false;
-        } 
+        }
         return $newModel ;
     }
 
-    function addUserCarsRelation($dataItem){  
+    function addUserCarsRelation($dataItem){
         $oldModel = UserCarsRelation::create()
             ->where(
             [
-                'car_insurance_id' => $dataItem['car_insurance_id'], 
-                'user_id' => $dataItem['user_id'], 
+                'car_insurance_id' => $dataItem['car_insurance_id'],
+                'user_id' => $dataItem['user_id'],
             ])->get();
         if($oldModel){
             return $oldModel ;
         }
-        
+
         try {
             $newModel = CarInsuranceInfo::create()
                 ->where([
-                    'car_insurance_id' => $dataItem['car_insurance_id'], 
-                    'user_id' => $dataItem['user_id'], 
+                    'car_insurance_id' => $dataItem['car_insurance_id'],
+                    'user_id' => $dataItem['user_id'],
                 ])->save() ;
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP($e->getMessage());
             return false;
-        } 
+        }
         return $newModel ;
     }
 
@@ -2840,7 +2839,7 @@ class XinDongService extends ServiceBase
                 return true;
             }
         }
-        
+
         //包含匹配  张三0808    张三
         if($config['matchNamesByContain']){
             $res = $this->matchNamesByContain($tobeMatch,$target);
@@ -2877,7 +2876,7 @@ class XinDongService extends ServiceBase
                 return true;
             }
         }
-         
+
         //文本匹配度  张三0808    张三   
         if($config['matchNamesByPinYinSimilarPercentage']){
             $res = $this->matchNamesByPinYinSimilarPercentage(
@@ -3118,7 +3117,7 @@ class XinDongService extends ServiceBase
 
         return  true;
     }
-    //  tobeMatch：张三丰  target：张三丰 
+    //  tobeMatch：张三丰  target：张三丰
     function matchNamesByEqual($tobeMatch,$target){
         $res =  $tobeMatch === $target ? true :false;
 //        CommonService::getInstance()->log4PHP(
@@ -3146,7 +3145,7 @@ class XinDongService extends ServiceBase
     // tobeMatch : 张三0808  target：张三
     function matchNamesByContain($tobeMatch,$target){
         $res = false;
- 
+
         if (strpos($tobeMatch, $target) !== false) {
           $res = true;
         }
@@ -3164,7 +3163,7 @@ class XinDongService extends ServiceBase
     // tobeMatch : tobeMatch：三丰  target：张三丰 
     function matchNamesByToBeContain($tobeMatch,$target){
         $res = false;
- 
+
         if (strpos($target, $tobeMatch) !== false) {
           $res = true;
         }
@@ -3201,7 +3200,7 @@ class XinDongService extends ServiceBase
 
 
 
-    // tobeMatch : tobeMatch：三丰  target：张三丰 
+    // tobeMatch : tobeMatch：三丰  target：张三丰
     function matchNamesByPinYinSimilarPercentage($tobeMatch,$target,$percentage){
         $res = false;
         $tobeMatchPin = PinYinService::getPinyin($tobeMatch);
@@ -3227,9 +3226,9 @@ class XinDongService extends ServiceBase
 
     function matchContactNameByWeiXinName($entName,$WeiXin){
         $matchedContactName =  [];
-        
+
         //获取所有联系人
-        $staffsDatas = LongXinService::getLianXiByName($entName); 
+        $staffsDatas = LongXinService::getLianXiByName($entName);
         if (empty($staffsDatas)) {
             return $matchedContactName;
         }
@@ -3248,7 +3247,7 @@ class XinDongService extends ServiceBase
                 'matchNamesBySimilarPercentageValue' => 60,
                 'matchNamesByPinYinSimilarPercentage' => true,
                 'matchNamesByPinYinSimilarPercentageValue' => 60,
-            ]);  
+            ]);
             if($res){
 //                CommonService::getInstance()->log4PHP(
 //                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin
@@ -4258,4 +4257,17 @@ class XinDongService extends ServiceBase
 
         return $datas;
     }
+
+    //是否纳税一般人
+    function getEnterprise($code): array
+    {
+        $code = trim($code);
+
+        $sql = "select * from enterprise where NSRSBH = {$code}";
+
+        $res = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3'));
+
+        return $this->checkResp(200, null, $res, '查询成功');
+    }
+
 }
