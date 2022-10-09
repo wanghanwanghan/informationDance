@@ -32,7 +32,9 @@ class GetJinCaiDataThroughRwh extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex)
     {
-        return;
+        $check = $this->crontabBase->withoutOverlapping(self::getTaskName(), 3600);
+
+        if (!$check) return;
 
         $redis = Redis::defer('redis');
         $redis->select(15);
@@ -59,6 +61,8 @@ class GetJinCaiDataThroughRwh extends AbstractCronTask
             }
             $page++;
         }
+
+        $this->crontabBase->removeOverlappingKey(self::getTaskName());
 
     }
 

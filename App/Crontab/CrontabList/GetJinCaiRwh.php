@@ -76,8 +76,6 @@ class GetJinCaiRwh extends AbstractCronTask
     {
         // 等待金财任务执行1小时后，开始取任务号
 
-        return;
-
         $check = $this->crontabBase->withoutOverlapping(self::getTaskName(), 3600);
 
         if (!$check) return;
@@ -113,7 +111,6 @@ class GetJinCaiRwh extends AbstractCronTask
                 $taskStatus_0_1 = $taskStatus_3 = [];
 
                 foreach ($rwh_info['result'] as $rwh_one) {
-
                     try {
                         // mysql中有无
                         $check = JinCaiRwh::create()
@@ -143,7 +140,6 @@ class GetJinCaiRwh extends AbstractCronTask
                         CommonService::getInstance()->log4PHP($content, 'try-catch', 'GetJinCaiRwh.log');
                         continue;
                     }
-
                 }
 
                 // 所有rwh都正常
@@ -161,13 +157,16 @@ class GetJinCaiRwh extends AbstractCronTask
                         if ($hours > 6) {
                             // updated_at 超过6小时了就刷新一次
                             $refreshTask = (new JinCaiShuKeService())->refreshTask($traceNo);
+                            CommonService::getInstance()->log4PHP([
+                                'traceNo' => $traceNo,
+                                '刷新结果' => $refreshTask,
+                            ], 'refreshTask', 'GetJinCaiRwh.log');
                             $rwh_list->update(['isComplete' => 0, 'updated_at' => time()]);
                         }
                     } else {
                         // 2天过后不刷新了
                         $rwh_list->update(['isComplete' => 2, 'updated_at' => time()]);
                     }
-
                 }
 
             }
