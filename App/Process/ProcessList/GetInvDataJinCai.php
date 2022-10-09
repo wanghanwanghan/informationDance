@@ -97,7 +97,22 @@ class GetInvDataJinCai extends ProcessBase
                 if (count($one_main) !== 20 && count($one_main) !== 0) {
                     CommonService::getInstance()->log4PHP([
                         '税号' => $nsrsbh,
+                        '无盘任务号' => $rwh_info['wupanTraceNo'],
                         '问题' => '主票字段不是20个',
+                        '主票信息' => $one_main
+                    ], 'main-getDataByJinCai', 'GetInvDataJinCai.log');
+                    continue;
+                }
+                // 判断是不是字段内也是全空
+                $one_main_tmp = array_filter($one_main, function ($val) {
+                    return strlen($val) > 0;
+                });
+                if (empty($one_main_tmp)) {
+                    // 20个字段全是空的情况
+                    CommonService::getInstance()->log4PHP([
+                        '税号' => $nsrsbh,
+                        '无盘任务号' => $rwh_info['wupanTraceNo'],
+                        '问题' => '20个字段全是空的情况',
                         '主票信息' => $one_main
                     ], 'main-getDataByJinCai', 'GetInvDataJinCai.log');
                     continue;
@@ -123,7 +138,22 @@ class GetInvDataJinCai extends ProcessBase
                 if (count($one_detail) !== 12 && count($one_detail) !== 13 && count($one_detail) !== 0) {
                     CommonService::getInstance()->log4PHP([
                         '税号' => $nsrsbh,
+                        '无盘任务号' => $rwh_info['wupanTraceNo'],
                         '问题' => '详情字段不是12或13个',
+                        '详情信息' => $one_detail
+                    ], 'detail-getDataByJinCai', 'GetInvDataJinCai.log');
+                    continue;
+                }
+                // 判断是不是字段内也是全空
+                $one_detail_tmp = array_filter($one_detail, function ($val) {
+                    return strlen($val) > 0;
+                });
+                if (empty($one_detail_tmp)) {
+                    // 12或者13个字段全是空的情况
+                    CommonService::getInstance()->log4PHP([
+                        '税号' => $nsrsbh,
+                        '无盘任务号' => $rwh_info['wupanTraceNo'],
+                        '问题' => '12或13个字段全空的情况',
                         '详情信息' => $one_detail
                     ], 'detail-getDataByJinCai', 'GetInvDataJinCai.log');
                     continue;

@@ -113,6 +113,7 @@ class GetJinCaiRwh extends AbstractCronTask
                 foreach ($rwh_info['result'] as $rwh_one) {
 
                     try {
+                        // mysql中有无
                         $check = JinCaiRwh::create()
                             ->where('wupanTraceNo', $rwh_one['wupanTraceNo'])
                             ->get();
