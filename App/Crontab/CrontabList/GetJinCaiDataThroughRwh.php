@@ -32,6 +32,8 @@ class GetJinCaiDataThroughRwh extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex)
     {
+        return;
+
         $redis = Redis::defer('redis');
         $redis->select(15);
 
