@@ -37,8 +37,6 @@ class GetJinCaiDataThroughRwh extends AbstractCronTask
 
         $page = 1;
 
-        return;
-
         while (true) {
             // 判断队列长度，太长就先不加了
             $llen = $redis->lLen(GetInvDataJinCai::QueueKey);

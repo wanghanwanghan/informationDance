@@ -52,7 +52,7 @@ class GetJinCaiRwh extends AbstractCronTask
                 // 如果成功了
                 break;
             }
-            \co::sleep(30);
+            \co::sleep(60);
         }
         try {
             JinCaiTrace::create()->where('id', $arr['id'])->update([
@@ -75,8 +75,6 @@ class GetJinCaiRwh extends AbstractCronTask
     function run(int $taskId, int $workerIndex)
     {
         // 等待金财任务执行1小时后，开始取任务号
-
-        return;
 
         $check = $this->crontabBase->withoutOverlapping(self::getTaskName(), 3600);
 
