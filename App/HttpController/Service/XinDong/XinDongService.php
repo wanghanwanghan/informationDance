@@ -4267,6 +4267,8 @@ class XinDongService extends ServiceBase
 
         $res = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3'));
 
+        CommonService::getInstance()->log4PHP($res);
+
         return $this->checkResp(200, null, $res, '查询成功');
     }
 
