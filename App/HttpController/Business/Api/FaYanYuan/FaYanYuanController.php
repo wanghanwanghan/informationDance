@@ -916,7 +916,7 @@ class FaYanYuanController extends FaYanYuanBase
     }
 
     //纳税信用等级
-    function getSatpartyXin()
+    function getSatpartyXin(): bool
     {
         $entName = $this->request()->getRequestParam('entName');
         $page = $this->request()->getRequestParam('page') ?? 1;
@@ -967,7 +967,7 @@ class FaYanYuanController extends FaYanYuanBase
     }
 
     //税务登记
-    function getSatpartyReg()
+    function getSatpartyReg(): bool
     {
         $entName = $this->request()->getRequestParam('entName');
         $page = $this->request()->getRequestParam('page') ?? 1;
@@ -1018,7 +1018,7 @@ class FaYanYuanController extends FaYanYuanBase
     }
 
     //税务许可
-    function getSatpartyXuke()
+    function getSatpartyXuke(): bool
     {
         $entName = $this->request()->getRequestParam('entName');
         $page = $this->request()->getRequestParam('page') ?? 1;
