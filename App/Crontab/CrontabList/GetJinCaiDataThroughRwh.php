@@ -11,7 +11,7 @@ use EasySwoole\RedisPool\Redis;
 
 class GetJinCaiDataThroughRwh extends AbstractCronTask
 {
-    const maxListLen = 500;
+    const maxListLen = 1000;
 
     public $crontabBase;
 

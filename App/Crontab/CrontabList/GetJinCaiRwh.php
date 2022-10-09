@@ -102,6 +102,8 @@ class GetJinCaiRwh extends AbstractCronTask
                     continue;
                 }
 
+                CommonService::getInstance()->log4PHP($rwh_list, 'info', 'wanghantest.log');
+
                 // 拿任务号
                 $rwh_info = (new JinCaiShuKeService())
                     ->obtainResultTraceNo($rwh_list->getAttr('traceNo'));
@@ -149,16 +151,22 @@ class GetJinCaiRwh extends AbstractCronTask
                 } else {
                     // 如果traceNo已经采集很久，还是有未开始的，或者失败的，应该retry一下
                     $traceNo = $rwh_list->getAttr('traceNo');
+                    $created_at = $rwh_list->getAttr('created_at');
                     $updated_at = $rwh_list->getAttr('updated_at');
+                    $day = Carbon::createFromTimestamp($created_at)->diffInHours();
                     $hours = Carbon::createFromTimestamp($updated_at)->diffInHours();
-                    if ($hours > 15) {
-                        // 超过15小时了
-                        $refreshTask = (new JinCaiShuKeService())->refreshTask($traceNo);
-                        $rwh_list->update([
-                            'isComplete' => 0,
-                            'updated_at' => time(),
-                        ]);
+                    if ($day < 48) {
+                        // created_at 在2天内才刷新
+                        if ($hours > 15) {
+                            // updated_at 超过15小时了就刷新一次
+                            $refreshTask = (new JinCaiShuKeService())->refreshTask($traceNo);
+                            $rwh_list->update(['isComplete' => 0, 'updated_at' => time()]);
+                        }
+                    } else {
+                        // 2天过后不刷新了
+                        $rwh_list->update(['isComplete' => 2, 'updated_at' => time()]);
                     }
+
                 }
 
             }
