@@ -4263,7 +4263,7 @@ class XinDongService extends ServiceBase
     {
         $code = trim($code);
 
-        $sql = "select * from enterprise where NSRSBH = '{$code}'";
+        $sql = "select NSRSBH,GSZCRQ from enterprise where NSRSBH = '{$code}'";
 
         $res = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3'));
 
