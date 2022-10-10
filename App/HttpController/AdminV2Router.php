@@ -27,6 +27,7 @@ class AdminV2Router
         $this->PApiRouterV1($routeCollector);
         $this->DocumentationRouterV1($routeCollector);
         $this->BusinessOpportunityRouterV1($routeCollector);
+        $this->ZhiJinCommissionRouterV1($routeCollector);
         $this->PStaticsRouterV1($routeCollector);
         $this->dzqRouterV1($routeCollector);
     }
@@ -266,6 +267,20 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/bussinessFilesList', $prefix . 'bussinessFilesList');
             $routeCollector->addRoute(['GET', 'POST'], '/uploadWeiXinFile', $prefix . 'uploadWeiXinFile');
             $routeCollector->addRoute(['GET', 'POST'], '/WeiXinFilesList', $prefix . 'WeiXinFilesList');
+        });
+
+        return true;
+    }
+    private function ZhiJinCommissionRouterV1(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/AdminV2/Mrxd/ZhiJinCommisionController/';
+        $routeCollector->addGroup('/zhijincommison', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadBussinessFile', $prefix . 'uploadBussinessFile');
+            $routeCollector->addRoute(['GET', 'POST'], '/redownloadBussinessFile', $prefix . 'redownloadBussinessFile');
+            $routeCollector->addRoute(['GET', 'POST'], '/bussinessFilesList', $prefix . 'bussinessFilesList');
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadWeiXinFile', $prefix . 'uploadWeiXinFile');
+            $routeCollector->addRoute(['GET', 'POST'], '/WeiXinFilesList', $prefix . 'WeiXinFilesList');
+            $routeCollector->addRoute(['GET', 'POST'], '/loanOrderLists', $prefix . 'loanOrderLists');
         });
 
         return true;
