@@ -223,6 +223,47 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
     }
 
+    function applyWithdrawalRecords(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $code = $requestData['code'] ;
+
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+                [
+                    'id'=>1,
+                    'money'=>1000,
+                    'state_cname' => '审核中',
+                    // 详情
+                    'details' => '',
+                    'created_at'=>1665367946,
+                ],
+                [
+                    'id'=>2,
+                    'money'=>1000,
+                    'state_cname' => '审核失败',
+                    // 详情
+                    'details' => '你不要提的这么频繁好不好',
+                    'created_at'=>1665367946,
+                ],
+                [
+                    'id'=>3,
+                    'money'=>1000,
+                    'state_cname' => '打款中',
+                    // 详情
+                    'details' => '',
+                    'created_at'=>1665367946,
+                ]
+            ],
+            '成功',
+            true,
+            []
+        );
+    }
+
     function setCommisionRate(): bool
     {
         $requestData =  $this->getRequestData();
