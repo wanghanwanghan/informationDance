@@ -983,6 +983,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue('jyycxx_oneSaid', $oneSaid);
 
         //实际控制人
+        CommonService::getInstance()->log4PHP($data['Beneficiary']);
         if (!empty($data['Beneficiary'])) {
             //姓名
             $docObj->setValue("sjkzr_Name", $this->formatTo($data['Beneficiary']['Name']));
@@ -991,7 +992,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //股权链
             $path = '';
             foreach ($data['Beneficiary']['DetailInfoList'] as $no => $onePath) {
-                $path .= '<w:br/>' . ($no + 1) . $onePath['Path'] . '<w:br/>';
+                $path .= '<w:br/>\n' . ($no + 1) . $onePath['Path'] . '<w:br/>\n';
             }
             $docObj->setValue("sjkzr_Path", $this->formatTo($path));
         } else {

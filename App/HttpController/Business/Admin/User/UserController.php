@@ -202,7 +202,7 @@ class UserController extends UserBase
         $payConfType = $this->request()->getRequestParam('payConfType') ?? 'xd';
         $payWay = $this->request()->getRequestParam('payWay') ?? '';
 
-        $subject = '每日信动信动智调pc端';
+        $subject = '每日信动信动客动pc端';
 
         switch ($payWay) {
             case 'wx_scan':
