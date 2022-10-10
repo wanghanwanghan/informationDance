@@ -141,6 +141,56 @@ class ZhiJinCommisionController extends ControllerBase
         );
     }
 
+    function applyWithdrawalRecords(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $code = $requestData['code'] ;
+
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+                [
+                    'id'=>1,
+                    'money'=>1000,
+                    'state_cname' => '审核中',
+                    'user_id' => 1,
+                    'user_name' =>  '李循环',
+                    'user_money' =>  100,
+                    // 详情
+                    'details' => '',
+                    'created_at'=>1665367946,
+                ],
+                [
+                    'id'=>2,
+                    'money'=>1000,
+                    'state_cname' => '审核中',
+                    'user_id' => 1,
+                    'user_name' =>  '李循环',
+                    'user_money' =>  100,
+                    // 详情
+                    'details' => '',
+                    'created_at'=>1665367946,
+                ],
+                [
+                    'id'=>3,
+                    'money'=>1000,
+                    'state_cname' => '审核中',
+                    'user_id' => 1,
+                    'user_name' =>  '李循环',
+                    'user_money' =>  100,
+                    // 详情
+                    'details' => '',
+                    'created_at'=>1665367946,
+                ]
+            ],
+            '成功',
+            true,
+            []
+        );
+    }
+
     function getZhiJinBaoXianLists(): bool
     {
         $requestData =  $this->getRequestData();
