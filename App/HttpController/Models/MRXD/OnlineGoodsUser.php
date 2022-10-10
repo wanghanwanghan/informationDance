@@ -27,6 +27,21 @@ class OnlineGoodsUser extends ModelBase
     static  $source_by_promote = 3;
     static  $source_by_promote_cname =  '推广注册';
 
+    static $level_vip = 1 ;
+    static $level_vip_cname =  'vip客户' ;
+
+    // 是否vip
+    static function IsVip($userInfo){
+        return $userInfo['level'] == self::$level_vip;
+    }
+
+    // 是否vip
+    static function IsVipV2($id){
+        $userDataModel = self::findById($id);
+        $userInfo = $userDataModel->toArray();
+        return  self::IsVip($userInfo);
+    }
+
     static function  addDailySmsNums($phone,$prx = "daily_online_sendSms_"){
         //每日发送次数限制
         $daily_limit_key = $prx.$phone;

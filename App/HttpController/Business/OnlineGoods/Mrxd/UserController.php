@@ -17,6 +17,7 @@ use App\HttpController\Models\AdminV2\InsuranceData;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
+use App\HttpController\Models\MRXD\OnlineGoodsUserInviteRelation;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Service\Common\CommonService;
@@ -435,7 +436,6 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             OnlineGoodsUser::getRandomDigit($phone)!= $code
         ){
             return $this->writeJson(201, null, [],  '验证码不正确或已过期');
-
         }
 
         $id = OnlineGoodsUser::addRecordV2(
@@ -456,10 +456,24 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'OnlineGoodsUser $phone' => $phone,
             ])
         );
+
+        //- 有邀请码的话 解析邀请码 设置邀请人
+        $invitation_code = trim($requestData['invitation_code']);
+        if(($invitation_code)){
+            $invitatedBy = CommonService::decodeInvitationCodeToId($invitation_code);
+            OnlineGoodsUserInviteRelation::addRecordV2(
+                [
+                    'user_id' => $this->loginUserinfo['id'],
+                    'invite_by' => $invitatedBy,
+                ]
+            );
+        }
+
         $newToken = UserService::getInstance()->createAccessToken(
             $phone,
             $phone
         );
+
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
