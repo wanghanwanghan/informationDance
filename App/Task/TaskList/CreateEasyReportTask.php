@@ -1213,6 +1213,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         //土地公示
         $rows = count($data['LandPublishList']['list']);
+        CommonService::getInstance()->log4PHP($data['LandPublishList']['list'], 'info', 'wanghanwanghan123.log');
         $docObj->cloneRow('tdgs_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
