@@ -25,7 +25,7 @@ class ReportService extends ServiceBase
     const REPORT_TYPE_71 = 71;//71是两表报告定制版pdf版
 
     //生成极简报告
-    function createVeryEasy($entName, $reportNum, $phone, $type)
+    function createVeryEasy($entName, $reportNum, $phone, $type): bool
     {
         try {
             ReportInfo::create()->data([
@@ -51,7 +51,7 @@ class ReportService extends ServiceBase
     }
 
     //生成极简报告 pdf
-    function createVeryEasyPdf($entName, $reportNum, $phone, $type, $dataKey = '')
+    function createVeryEasyPdf($entName, $reportNum, $phone, $type, $dataKey = ''): bool
     {
         try {
             ReportInfo::create()->data([
@@ -78,7 +78,7 @@ class ReportService extends ServiceBase
     }
 
     //生成简版报告
-    function createEasy($entName, $reportNum, $phone, $type)
+    function createEasy($entName, $reportNum, $phone, $type): bool
     {
         try {
             ReportInfo::create()->data([
@@ -104,7 +104,7 @@ class ReportService extends ServiceBase
     }
 
     //生成简版报告 pdf
-    function createEasyPdf($entName, $reportNum, $phone, $type, $dataKey = '')
+    function createEasyPdf($entName, $reportNum, $phone, $type, $dataKey = ''): bool
     {
         try {
             ReportInfo::create()->data([
@@ -131,7 +131,7 @@ class ReportService extends ServiceBase
     }
 
     //生成深度报告
-    function createDeep($entName, $reportNum, $phone, $type)
+    function createDeep($entName, $reportNum, $phone, $type): bool
     {
         try {
             ReportInfo::create()->data([
@@ -158,7 +158,7 @@ class ReportService extends ServiceBase
     }
 
     //生成深度报告 pdf
-    function createDeepPdf($entName, $reportNum, $phone, $type, $dataKey = '')
+    function createDeepPdf($entName, $reportNum, $phone, $type, $dataKey = ''): bool
     {
         try {
             ReportInfo::create()->data([
@@ -185,7 +185,7 @@ class ReportService extends ServiceBase
     }
 
     //生成两表报告
-    function createTwoTable($entName, $reportNum, $phone, $type)
+    function createTwoTable($entName, $reportNum, $phone, $type): bool
     {
         try {
             ReportInfo::create()->data([
