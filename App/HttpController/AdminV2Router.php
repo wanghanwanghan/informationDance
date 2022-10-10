@@ -286,6 +286,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/getZhiJinDaiKuanLists', $prefix . 'getZhiJinDaiKuanLists');
             $routeCollector->addRoute(['GET', 'POST'], '/getZhiJinBaoXianLists', $prefix . 'getZhiJinBaoXianLists');
             $routeCollector->addRoute(['GET', 'POST'], '/applyWithdrawalRecords', $prefix . 'applyWithdrawalRecords');
+            $routeCollector->addRoute(['GET', 'POST'], '/setApplyWithdrawalRes', $prefix . 'setApplyWithdrawalRes');
         });
 
         return true;

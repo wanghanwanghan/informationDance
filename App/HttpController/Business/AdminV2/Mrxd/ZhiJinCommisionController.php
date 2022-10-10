@@ -120,6 +120,7 @@ class ZhiJinCommisionController extends ControllerBase
         );
     }
 
+
     function getZhiJinDaiKuanLists(): bool
     {
         $requestData =  $this->getRequestData();
@@ -134,6 +135,24 @@ class ZhiJinCommisionController extends ControllerBase
                 2=>'贷款B',
                 3=>'贷款C',
                 4=>'贷款D',
+            ],
+            '成功',
+            true,
+            []
+        );
+    }
+
+    function setApplyWithdrawalRes(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $code = $requestData['code'] ;
+
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+
             ],
             '成功',
             true,
