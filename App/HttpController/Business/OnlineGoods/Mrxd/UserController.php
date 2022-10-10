@@ -228,6 +228,72 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
     }
 
+    function register(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $code = $requestData['code'] ;
+        if(
+            OnlineGoodsUser::getRandomDigit($phone)!= $code
+        ){
+            return $this->writeJson(201, null, [],  '验证码不正确或已过期');
+
+        }
+
+        $id = OnlineGoodsUser::addRecordV2(
+            [
+                'source' => OnlineGoodsUser::$source_self_register,
+                'user_name' => $phone,
+                'phone' => $phone,
+                'password' => '',
+                'email' => '',
+                'money' => '',
+                'token' => '',
+            ]
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'OnlineGoodsUser $id' => $id,
+                'OnlineGoodsUser $phone' => $phone,
+            ])
+        );
+        $newToken = UserService::getInstance()->createAccessToken(
+            $phone,
+            $phone
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'OnlineGoodsUser $newToken' => $newToken
+            ])
+        );
+        $res = OnlineGoodsUser::findByPhone($phone);
+        $res = $res->toArray();
+        if($res['token']){
+            return $this->writeJson(
+                200,[ ] ,$res['token'],
+                '成功',
+                true,
+                []
+            );
+        }
+
+        OnlineGoodsUser::updateById(
+            $id,
+            [
+                'token'=>$newToken
+            ]
+        );
+        return $this->writeJson(
+            200,[ ] ,$newToken,
+            '成功',
+            true,
+            []
+        );
+    }
+
+
     function getInvitationCode(): bool
     {
         $requestData =  $this->getRequestData();
