@@ -296,6 +296,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getBasicInfo', $prefix . 'getBasicInfo');// login
             $routeCollector->addRoute(['GET', 'POST'], '/applyForWithdrawal', $prefix . 'applyForWithdrawal');// login
             $routeCollector->addRoute(['GET', 'POST'], '/applyWithdrawalRecords', $prefix . 'applyWithdrawalRecords');// login
+            $routeCollector->addRoute(['GET', 'POST'], '/ZhiJinAccountFlow', $prefix . 'ZhiJinAccountFlow');// login
         });
 
         return true;

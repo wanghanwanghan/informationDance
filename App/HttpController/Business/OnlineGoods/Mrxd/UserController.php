@@ -223,6 +223,46 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
     }
 
+    function ZhiJinAccountFlow(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $code = $requestData['code'] ;
+
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+                [
+                    'id'=>1,
+                    'money'=>1000,
+                    'details' => '你邀请的张老三下单了，您得到一笔佣金',
+                    'user_id' => 1,
+                    'type' => 5,
+                    'type_cname' => '佣金',
+                    'user_name' =>  '李循环',
+                    'user_money' =>  100,
+                    'created_at'=>1665367946,
+                ],
+                [
+                    'id'=>1,
+                    'money'=>100,
+                    'details' => '',
+                    'user_id' => 1,
+                    'type' => 5,
+                    'type_cname' => '提现',
+                    'user_name' =>  '李循环',
+                    'user_money' =>  100,
+                    'created_at'=>1665367946,
+                ],
+            ],
+            '成功',
+            true,
+            []
+        );
+    }
+
+
     function applyWithdrawalRecords(): bool
     {
         $requestData =  $this->getRequestData();
