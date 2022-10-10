@@ -120,6 +120,48 @@ class ZhiJinCommisionController extends ControllerBase
         );
     }
 
+    function getZhiJinDaiKuanLists(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $code = $requestData['code'] ;
+
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+                1=>'贷款A',
+                2=>'贷款B',
+                3=>'贷款C',
+                4=>'贷款D',
+            ],
+            '成功',
+            true,
+            []
+        );
+    }
+
+    function getZhiJinBaoXianLists(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $code = $requestData['code'] ;
+
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+                1=>'保险A',
+                2=>'保险B',
+                3=>'保险C',
+                4=>'保险D',
+            ],
+            '成功',
+            true,
+            []
+        );
+    }
+
     function zhiJinUserLists(): bool
     {
         $requestData =  $this->getRequestData();
