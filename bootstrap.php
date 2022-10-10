@@ -3,7 +3,6 @@
 use App\Command\CommandList\TestCommand;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
-use App\Services\Log\Log;
 use EasySwoole\EasySwoole\Command\CommandContainer;
 use EasySwoole\Mysqli\QueryBuilder;
 use EasySwoole\ORM\DbManager;
@@ -302,5 +301,20 @@ function changeDecimal($num, $precision = 2): string
     return $num;
 }
 
+//替换报告中淘数接口会出现6个0的情况 和 小数点后6位的情况
+function changeDecimalTmp20221010($str, $precision = 2)
+{
+    if (empty($str)) return '';
 
+    preg_match('/\d+\.\d{5,}/', $str, $source_num);
+
+    $source_num = $num = current($source_num);
+
+    if (!empty($num)) {
+        $num = trim(round($num, $precision));
+        $str = str_replace(trim($source_num), $num, $str);
+    }
+
+    return $str;
+}
 
