@@ -184,6 +184,24 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
     }
 
+    function setCommisionRate(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $code = $requestData['code'] ;
+
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+
+            ],
+            '成功',
+            true,
+            []
+        );
+    }
+
     function login(): bool
     {
         $requestData =  $this->getRequestData();
