@@ -22,7 +22,7 @@ use wanghanwanghan\someUtils\control;
 
 class GetInvDataJinCai extends ProcessBase
 {
-    const ProcessNum = 3;
+    const ProcessNum = 5;
     const QueueKey = 'JinCaiWuPanRwh';
 
     public $p_index;
@@ -94,10 +94,25 @@ class GetInvDataJinCai extends ProcessBase
             $cxlx = trim($main['result']['convertResult']['cxlx']);
             foreach ($main['result']['convertResult']['fieldMapping'] as $one_main) {
                 // 目前主票字段是20个
-                if (count($one_main) !== 20) {
+                if (count($one_main) !== 20 && count($one_main) !== 0) {
                     CommonService::getInstance()->log4PHP([
                         '税号' => $nsrsbh,
+                        '无盘任务号' => $rwh_info['wupanTraceNo'],
                         '问题' => '主票字段不是20个',
+                        '主票信息' => $one_main
+                    ], 'main-getDataByJinCai', 'GetInvDataJinCai.log');
+                    continue;
+                }
+                // 判断是不是字段内也是全空
+                $one_main_tmp = array_filter($one_main, function ($val) {
+                    return strlen($val) > 0;
+                });
+                if (empty($one_main_tmp)) {
+                    // 20个字段全是空的情况
+                    CommonService::getInstance()->log4PHP([
+                        '税号' => $nsrsbh,
+                        '无盘任务号' => $rwh_info['wupanTraceNo'],
+                        '问题' => '20个字段全是空的情况',
                         '主票信息' => $one_main
                     ], 'main-getDataByJinCai', 'GetInvDataJinCai.log');
                     continue;
@@ -120,10 +135,25 @@ class GetInvDataJinCai extends ProcessBase
             $mxxh = 0;
             foreach ($detail['result']['convertResult']['result'] as $key => $one_detail) {
                 // 目前详情字段是12个，也有13的情况，第13个是备注，不需要备注
-                if (count($one_detail) !== 12 && count($one_detail) !== 13) {
+                if (count($one_detail) !== 12 && count($one_detail) !== 13 && count($one_detail) !== 0) {
                     CommonService::getInstance()->log4PHP([
                         '税号' => $nsrsbh,
+                        '无盘任务号' => $rwh_info['wupanTraceNo'],
                         '问题' => '详情字段不是12或13个',
+                        '详情信息' => $one_detail
+                    ], 'detail-getDataByJinCai', 'GetInvDataJinCai.log');
+                    continue;
+                }
+                // 判断是不是字段内也是全空
+                $one_detail_tmp = array_filter($one_detail, function ($val) {
+                    return strlen($val) > 0;
+                });
+                if (empty($one_detail_tmp)) {
+                    // 12或者13个字段全是空的情况
+                    CommonService::getInstance()->log4PHP([
+                        '税号' => $nsrsbh,
+                        '无盘任务号' => $rwh_info['wupanTraceNo'],
+                        '问题' => '12或13个字段全空的情况',
                         '详情信息' => $one_detail
                     ], 'detail-getDataByJinCai', 'GetInvDataJinCai.log');
                     continue;
@@ -143,6 +173,10 @@ class GetInvDataJinCai extends ProcessBase
             JinCaiRwh::create()
                 ->where('wupanTraceNo', $rwh_info['wupanTraceNo'])
                 ->update(['isComplete' => 1]);
+        } elseif ($main_isComplete === 0 && $detail_isComplete === 0) {
+            JinCaiRwh::create()
+                ->where('wupanTraceNo', $rwh_info['wupanTraceNo'])
+                ->update(['isComplete' => 3]);
         }
 
         return true;
@@ -153,11 +187,13 @@ class GetInvDataJinCai extends ProcessBase
         // 0销项 1 进项
         $cxlx === '0' ? $cxlx = '02' : $cxlx = '01';
 
-        $check_exists = EntInvoice::create()->addSuffix($nsrsbh, 'test')->where([
-            'fpdm' => $arr['fpdm'],
-            'fphm' => $arr['fphm'],
-            'direction' => $cxlx,//01-购买方 02-销售方
-        ])->get();
+        $check_exists = EntInvoice::create()
+            ->addSuffix($nsrsbh, 'test')
+            ->where([
+                'fpdm' => $arr['fpdm'],
+                'fphm' => $arr['fphm'],
+                'direction' => $cxlx,//01-购买方 02-销售方
+            ])->get();
 
         // 已经存在了
         if (!empty($check_exists)) return;
@@ -165,7 +201,7 @@ class GetInvDataJinCai extends ProcessBase
         $insert_main = [
             'fpdm' => changeNull($arr['fpdm']),//'发票代码',
             'fphm' => changeNull($arr['fphm']),//'发票号码',
-            'kplx' => '',//'开票类型 0-蓝字 1-红字',
+            'kplx' => changeDecimal($arr['jshj'], 2) < 0 ? '1' : '0',//'开票类型 0-蓝字 1-红字',
             'xfsh' => changeNull($arr['xfsh']),//'销售方纳税人识别号',
             'xfmc' => changeNull($arr['xfmc']),//'销售方名称',
             'xfdzdh' => changeNull($arr['xfdzdh']),//'销售方地址电话',
@@ -178,8 +214,8 @@ class GetInvDataJinCai extends ProcessBase
             'kpr' => empty(changeNull($arr['kpr'])) ? changeNull($arr['gfmc']) : changeNull($arr['kpr']),//'开票人',
             'skr' => changeNull($arr['skr']),//'收款人',
             'fhr' => changeNull($arr['fhr']),//'复核人',
-            'yfpdm' => '',//'原发票代码 kplx为1时必填',
-            'yfphm' => '',//'原发票号码 kplx为1时必填',
+            'yfpdm' => '',//'原发票代码 kplx为1时必填 换金财后必填不了了',
+            'yfphm' => '',//'原发票号码 kplx为1时必填 换金财后必填不了了',
             'je' => changeDecimal($arr['fpje'], 2),//'金额',
             'se' => changeDecimal($arr['se'], 2),//'税额',
             'jshj' => changeDecimal($arr['jshj'], 2),//'价税合计 单位元 2位小数',
@@ -207,7 +243,10 @@ class GetInvDataJinCai extends ProcessBase
         ];
 
         try {
-            EntInvoice::create()->addSuffix($nsrsbh, 'test')->data($insert_main)->save();
+            EntInvoice::create()
+                ->addSuffix($nsrsbh, 'test')
+                ->data($insert_main)
+                ->save();
         } catch (\Throwable $e) {
             $file = $e->getFile();
             $line = $e->getLine();
@@ -232,10 +271,12 @@ class GetInvDataJinCai extends ProcessBase
         //        10 => "税率"
         //        11 => "税额"
 
-        $check_exists = EntInvoiceDetail::create()->addSuffix($arr[1], $arr[2], 'test')->where([
-            'fpdm' => $arr[1],
-            'fphm' => $arr[2],
-        ])->get();
+        $check_exists = EntInvoiceDetail::create()
+            ->addSuffix($arr[1], $arr[2], 'test')
+            ->where([
+                'fpdm' => $arr[1],
+                'fphm' => $arr[2],
+            ])->get();
 
         // 已经存在了
         if (!empty($check_exists)) return;
@@ -258,7 +299,10 @@ class GetInvDataJinCai extends ProcessBase
         ];
 
         try {
-            EntInvoiceDetail::create()->addSuffix($arr[1], $arr[2], 'test')->data($insert_detail)->save();
+            EntInvoiceDetail::create()
+                ->addSuffix($arr[1], $arr[2], 'test')
+                ->data($insert_detail)
+                ->save();
         } catch (\Throwable $e) {
             $file = $e->getFile();
             $line = $e->getLine();

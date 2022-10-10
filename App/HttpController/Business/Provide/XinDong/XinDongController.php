@@ -2151,6 +2151,22 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //是否纳税一般人
+    function getEnterprise(): bool
+    {
+        $code = trim($this->getRequestData('code'));
+
+        $this->csp->add($this->cspKey, function () use ($code) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getEnterprise($code);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     function testCsp(): bool
     {
         $timeStart = microtime(true);

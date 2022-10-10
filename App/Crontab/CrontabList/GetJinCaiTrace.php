@@ -46,7 +46,7 @@ class GetJinCaiTrace extends AbstractCronTask
 
             foreach ($list as $target) {
 
-                //
+                // 取数据之前要先验证企业是不是全电试点之类的
                 if (!is_numeric(mb_strpos($target->getAttr('isElectronics'), '税款所属期信息成功'))) {
                     continue;
                 }
@@ -81,6 +81,7 @@ class GetJinCaiTrace extends AbstractCronTask
 
                     // 傻逼金财   by wh
                     // 【确实很傻逼】by lyx
+                    // 楼上说的对 by tys
                     try {
                         for ($try = 3; $try--;) {
                             // 发送 试3次

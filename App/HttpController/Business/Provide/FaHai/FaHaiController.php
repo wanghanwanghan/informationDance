@@ -4,7 +4,6 @@ namespace App\HttpController\Business\Provide\FaHai;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
 use App\HttpController\Service\LongDun\LongDunService;
@@ -27,7 +26,7 @@ class FaHaiController extends ProvideBase
         parent::afterAction($actionName);
     }
 
-    function checkResponse($res)
+    function checkResponse($res): bool
     {
         if (empty($res[$this->cspKey])) {
             $this->responseCode = 500;

@@ -18,7 +18,7 @@ class FaYanYuanController extends ProvideBase
         parent::afterAction($actionName);
     }
 
-    function checkResponse($res)
+    function checkResponse($res): bool
     {
         if (empty($res[$this->cspKey])) {
             $this->responseCode = 500;
@@ -39,7 +39,7 @@ class FaYanYuanController extends ProvideBase
     }
 
     //公开模型 企业
-    function entoutOrg()
+    function entoutOrg(): bool
     {
         $postData = [
             'name' => $this->getRequestData('entName'),
@@ -56,7 +56,7 @@ class FaYanYuanController extends ProvideBase
     }
 
     //公开模型 个人
-    function entoutPeople()
+    function entoutPeople(): bool
     {
         $postData = [
             'name' => $this->getRequestData('entName'),
@@ -73,7 +73,7 @@ class FaYanYuanController extends ProvideBase
     }
 
     //失信 个人
-    function sxbzxrPeople()
+    function sxbzxrPeople(): bool
     {
         $postData = [
             'name' => $this->getRequestData('entName'),
@@ -90,7 +90,7 @@ class FaYanYuanController extends ProvideBase
     }
 
     //限高 个人
-    function xgbzxrPeople()
+    function xgbzxrPeople(): bool
     {
         $postData = [
             'name' => $this->getRequestData('entName'),
