@@ -3116,10 +3116,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 ->setCheckRespFlag(true)
                 ->get($this->ldUrl . 'LandMergeCheck/GetList', $postData);//LandPublish/LandPublishList
 
-            CommonService::getInstance()->log4PHP($res, 'info', 'wanghanwanghan123.log');
-
             ($res['code'] === 200 && !empty($res['result'])) ?
-                list($res, $total) = [$res['result']['data'], $res['paging']['total']] :
+                list($res, $total) = [$res['result']['Data'], $res['paging']['total']] :
                 list($res, $total) = [null, null];
 
             $tmp['list'] = $res;
