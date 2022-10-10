@@ -32,8 +32,6 @@ class GetJinCaiDataThroughRwh extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex)
     {
-        return;
-
         $check = $this->crontabBase->withoutOverlapping(self::getTaskName(), 3600);
 
         if (!$check) return;
