@@ -113,6 +113,39 @@ class ZhiJinCommisionController extends ControllerBase
         );
     }
 
+    function addLoanOrder(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page =  $requestData['page']?:1;
+        $pageSize =  $requestData['pageSize']?:100;
+
+        $userInfo = $this->loginUserinfo;
+
+        CommonService::writeTestLog(
+            [
+                'getInvitationCode'=>[
+                    '$userInfo'=>[
+                        'id'=>$userInfo['id'],
+                        'user_name'=>$userInfo['user_name'],
+                        'phone'=>$userInfo['phone'],
+                    ],
+                ]
+            ]
+        );
+
+
+        return $this->writeJson(
+            200,
+            [
+            ] ,
+           true
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
+
     // 用户-上传客户名单
     public function uploadBussinessFile(){
         $requestData =  $this->getRequestData();

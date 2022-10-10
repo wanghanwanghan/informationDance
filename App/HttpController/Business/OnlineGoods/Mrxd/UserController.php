@@ -294,6 +294,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'commission_set_state_cname'=>'已设置分佣',
                 //分佣状态
                 'commission_state_cname'=>'已领取分佣',
+                //下单时间
+                'order_time'=>'2022-09-09',
                 'created_at'=>1665367946,
                 'state'=>1,
                 'state_cname'=> '已成交',
@@ -314,6 +316,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'commission_set_state_cname'=>'已设置分佣',
                 //分佣状态
                 'commission_state_cname'=>'已领取分佣',
+                //下单时间
+                'order_time'=>'2022-09-09',
                 'created_at'=>1665367946,
                 'state'=>1,
                 'state_cname'=> '已成交',
