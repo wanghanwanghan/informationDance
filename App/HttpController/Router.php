@@ -286,6 +286,8 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/login', $prefix . 'login');// login
             $routeCollector->addRoute(['GET', 'POST'], '/OnlineSignOut', $prefix . 'OnlineSignOut');// login
             $routeCollector->addRoute(['GET', 'POST'], '/OnlineLogOut', $prefix . 'OnlineLogOut');// login
+            $routeCollector->addRoute(['GET', 'POST'], '/getInvitationCode', $prefix . 'getInvitationCode');// login
+            $routeCollector->addRoute(['GET', 'POST'], '/loanOrderLists', $prefix . 'loanOrderLists');// login
         });
 
         return true;
@@ -326,6 +328,7 @@ class Router extends AbstractRouter
 
         return true;
     }
+
 
     private function LongDunRouterV1(RouteCollector $routeCollector)
     {

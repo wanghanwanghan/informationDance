@@ -21,6 +21,7 @@ use App\HttpController\Service\Sms\SmsService;
 use App\Task\Service\TaskService;
 use Carbon\Carbon;
 use EasySwoole\Component\Singleton;
+use EasySwoole\EasySwoole\EasySwooleEvent;
 use EasySwoole\Http\Message\UploadFile;
 use EasySwoole\Http\Response;
 use EasySwoole\RedisPool\Redis;
@@ -38,11 +39,32 @@ class CommonService extends ServiceBase
 {
     use Singleton;
 
+    // 注意这个key里面不能出现数字0  否则当 求模=0 会重复的
+    static $invitationKey = 'abcdefghjkmnpqrstuvwxyz123456789';
+
     //写log
     function log4PHP($content, $type = 'info', $filename = ''): bool
     {
         (!is_array($content) && !is_object($content)) ?:
             $content = jsonEncode($content, false);
+
+        return control::writeLog($content, LOG_PATH, $type, $filename);
+    }
+
+    static function IsProductionEnv(){
+        return EasySwooleEvent::IsProductionEnv();
+    }
+
+    //写log
+    static function writeTestLog($content, $type = 'info', $filename = ''): bool
+    {
+        (!is_array($content) && !is_object($content)) ?:
+            $content = jsonEncode($content, false);
+
+        //正式环境
+        if(self::IsProductionEnv()){
+            return  true;
+        }
 
         return control::writeLog($content, LOG_PATH, $type, $filename);
     }
@@ -618,6 +640,43 @@ class CommonService extends ServiceBase
         $data=preg_replace($html, '', $str);
 
         return $data;
+    }
+
+    static  function encodeIdToInvitationCode($user_id)
+    {
+
+        // 多少进制
+        $num = strlen(self::$invitationKey);
+
+        $code = ''; // 邀请码
+        while ($user_id > 0) { // 转进制
+            $mod = $user_id % $num; // 求模
+
+            $user_id = ($user_id - $mod) / $num;
+            $code = self::$invitationKey[$mod] . $code;
+        }
+
+        $code = str_pad($code, 4, '0', STR_PAD_LEFT); // 不足用0补充
+        return $code;
+    }
+
+
+
+    static  function decodeInvitationCodeToId($code)
+    {
+
+
+        // 多少进制
+        $num = strlen(self::$invitationKey);
+
+        if (strrpos($code, '0') !== false)
+            $code = substr($code, strrpos($code, '0') + 1);
+        $len = strlen($code);
+        $code = strrev($code);
+        $user_id = 0;
+        for ($i = 0; $i < $len; $i++)
+            $user_id += strpos(self::$invitationKey, $code[$i]) * pow($num, $i);
+        return $user_id;
     }
 
 }
