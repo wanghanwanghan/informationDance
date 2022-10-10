@@ -5036,7 +5036,9 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         //二次特征
         $csp->add('features', function () {
-            $res = (new XinDongService())->setCheckRespFlag(true)->getFeatures($this->entName);
+            $res = (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getFeatures($this->entName);
             CommonService::getInstance()->log4PHP($res, 'info', 'features.log');
             if ($res['code'] === 200 && !empty($res['result'])) {
                 return $res['result'];
