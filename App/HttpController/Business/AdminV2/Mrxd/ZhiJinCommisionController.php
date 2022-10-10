@@ -120,6 +120,27 @@ class ZhiJinCommisionController extends ControllerBase
         );
     }
 
+    function zhiJinUserLists(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $code = $requestData['code'] ;
+
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+                1=>'宝花',
+                2=>'宝树',
+                3=>'小花',
+                4=>'小树',
+            ],
+            '成功',
+            true,
+            []
+        );
+    }
+
     function addLoanOrder(): bool
     {
         $requestData =  $this->getRequestData();
