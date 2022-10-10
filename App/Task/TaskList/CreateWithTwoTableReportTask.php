@@ -1233,7 +1233,7 @@ class CreateWithTwoTableReportTask extends TaskBase implements TaskInterface
             //发布机关
             $docObj->setValue("tdgs_PublishGov#" . ($i + 1), $this->formatTo($data['LandPublishList']['list'][$i]['PublishGov']));
             //行政区
-            $docObj->setValue("tdgs_AdminArea#" . ($i + 1), $this->formatTo($data['LandPublishList']['list'][$i]['AdminArea']));
+            $docObj->setValue("tdgs_AdminArea#" . ($i + 1), $this->formatTo($data['LandPublishList']['list'][$i]['Area']));
             //发布日期
             $docObj->setValue("tdgs_PublishDate#" . ($i + 1), $this->formatDate($data['LandPublishList']['list'][$i]['PublishDate']));
         }

@@ -907,6 +907,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         //股东信息
         $rows = count($data['getShareHolderInfo']);
+        CommonService::getInstance()->log4PHP($data['getShareHolderInfo'], 'getShareHolderInfo');
         $docObj->cloneRow('gd_INV', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //股东名称
