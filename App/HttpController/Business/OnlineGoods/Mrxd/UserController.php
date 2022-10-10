@@ -205,6 +205,24 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
     }
 
+    function applyForWithdrawal(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $code = $requestData['code'] ;
+
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+
+            ],
+            '已提交',
+            true,
+            []
+        );
+    }
+
     function setCommisionRate(): bool
     {
         $requestData =  $this->getRequestData();
