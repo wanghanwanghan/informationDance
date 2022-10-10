@@ -1213,7 +1213,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         //土地公示
         $rows = count($data['LandPublishList']['list']);
-        CommonService::getInstance()->log4PHP($data['LandPublishList'], 'info', 'wanghanwanghan123.log');
         $docObj->cloneRow('tdgs_no', $rows);
         for ($i = 0; $i < $rows; $i++) {
             //序号
@@ -3113,7 +3112,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandMergeCheck/GetList', $postData);//LandPublish/LandPublishList
+            $res = (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get($this->ldUrl . 'LandMergeCheck/GetList', $postData);//LandPublish/LandPublishList
+
+            CommonService::getInstance()->log4PHP($res, 'info', 'wanghanwanghan123.log');
 
             ($res['code'] === 200 && !empty($res['result'])) ?
                 list($res, $total) = [$res['result']['data'], $res['paging']['total']] :
