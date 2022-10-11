@@ -225,11 +225,10 @@ class GuoPiaoController extends ProvideBase
     {
         $code = $this->getRequestData('code');
 
-        $res = (new GuoPiaoService())
-            ->setCheckRespFlag(true)
-            ->getFinanceIncomeStatement($code);
+        $res = (new GuoPiaoService())->getFinanceIncomeStatement($code);
 
         CommonService::getInstance()->log4PHP($res);
+
 
         //正常
         if ($res['code'] - 0 === 0 && !empty($res['data'])) {
