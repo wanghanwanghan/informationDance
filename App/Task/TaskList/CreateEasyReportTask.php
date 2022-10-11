@@ -4754,7 +4754,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
                 //不是空就找出来有没有对外担保
                 foreach ($res as $arr) {
-                    if (!isset($arr['ProvideAssuranceList']) || empty($arr['ProvideAssuranceList'])) continue;
+                    if (empty($arr['ProvideAssuranceList'])) continue;
 
                     //如果有对外担保数据
                     foreach ($arr['ProvideAssuranceList'] as $one) {
@@ -5043,7 +5043,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $res = (new XinDongService())
                 ->setCheckRespFlag(true)
                 ->getFeatures($this->entName);
-            CommonService::getInstance()->log4PHP($res, 'info', 'features.log');
             if ($res['code'] === 200 && !empty($res['result'])) {
                 return $res['result'];
             } else {
