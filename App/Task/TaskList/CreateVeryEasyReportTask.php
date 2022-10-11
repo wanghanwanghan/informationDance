@@ -54,7 +54,7 @@ class CreateVeryEasyReportTask extends TaskBase implements TaskInterface
             case 'xd':
                 $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'logo.jpg', 'width' => 200, 'height' => 40]);
 //                $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'zhlc_logo.jpg', 'width' => 200, 'height' => 40]);
-                $tmp->setValue('selectMore', '如需更多信息登录 信动智调 查看');
+                $tmp->setValue('selectMore', '如需更多信息登录 信动客动 查看');
 //                $tmp->setValue('selectMore', '如需更多信息登录 中企链创 查看');
                 break;
             case 'wh':

@@ -67,7 +67,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             case 'xd':
                 $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'xd_logo.png', 'width' => 200, 'height' => 40]);
 //                $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'zhlc_logo.jpg', 'width' => 200, 'height' => 40]);
-                $tmp->setValue('selectMore', '如需更多信息登录 信动智调 查看');
+                $tmp->setValue('selectMore', '如需更多信息登录 信动客动 查看');
 //                $tmp->setValue('selectMore', '如需更多信息登录 中企链创 查看');
                 break;
             case 'wh':
@@ -954,10 +954,10 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $docObj->setValue("bg_ALTDATE#" . ($i + 1), $this->formatDate($data['getRegisterChangeInfo']['list'][$i]['ALTDATE']));
             //变更项目
             $docObj->setValue("bg_ALTITEM#" . ($i + 1), $this->formatTo($data['getRegisterChangeInfo']['list'][$i]['ALTITEM']));
-            //变更前
-            $docObj->setValue("bg_ALTBE#" . ($i + 1), $this->formatTo($data['getRegisterChangeInfo']['list'][$i]['ALTBE']));
-            //变更后
-            $docObj->setValue("bg_ALTAF#" . ($i + 1), $this->formatTo($data['getRegisterChangeInfo']['list'][$i]['ALTAF']));
+            //变更前 出现6个0情况
+            $docObj->setValue("bg_ALTBE#" . ($i + 1), $this->formatTo(changeDecimalTmp20221010($data['getRegisterChangeInfo']['list'][$i]['ALTBE'])));
+            //变更后 出现6个0情况
+            $docObj->setValue("bg_ALTAF#" . ($i + 1), $this->formatTo(changeDecimalTmp20221010($data['getRegisterChangeInfo']['list'][$i]['ALTAF'])));
         }
 
         $oneSaid = OneSaidService::getInstance()->getOneSaid($this->phone, 19, $this->entName, true);
@@ -983,6 +983,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         $docObj->setValue('jyycxx_oneSaid', $oneSaid);
 
         //实际控制人
+        CommonService::getInstance()->log4PHP($data['Beneficiary']);
         if (!empty($data['Beneficiary'])) {
             //姓名
             $docObj->setValue("sjkzr_Name", $this->formatTo($data['Beneficiary']['Name']));
@@ -991,7 +992,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //股权链
             $path = '';
             foreach ($data['Beneficiary']['DetailInfoList'] as $no => $onePath) {
-                $path .= '<w:br/>' . ($no + 1) . $onePath['Path'] . '<w:br/>';
+                $path .= '<w:br/>' . ($no + 1) . $onePath['Path'];
             }
             $docObj->setValue("sjkzr_Path", $this->formatTo($path));
         } else {
@@ -3112,10 +3113,12 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 'pageSize' => 20,
             ];
 
-            $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'LandMergeCheck/GetList', $postData);//LandPublish/LandPublishList
+            $res = (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get($this->ldUrl . 'LandMergeCheck/GetList', $postData);//LandPublish/LandPublishList
 
             ($res['code'] === 200 && !empty($res['result'])) ?
-                list($res, $total) = [$res['result']['data'], $res['paging']['total']] :
+                list($res, $total) = [$res['result']['Data'], $res['paging']['total']] :
                 list($res, $total) = [null, null];
 
             $tmp['list'] = $res;

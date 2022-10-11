@@ -18,6 +18,7 @@ use \EasySwoole\EasySwoole\Core;
 use App\HttpController\Service\CreateDefine;
 use \EasySwoole\Component\Process\Config;
 use \EasySwoole\Component\Process\AbstractProcess;
+use PhpOffice\PhpWord\TemplateProcessor;
 
 require_once './vendor/autoload.php';
 require_once './bootstrap.php';
@@ -28,16 +29,18 @@ class send_to_mayi extends AbstractProcess
 {
     protected function run($arg)
     {
-        $postData = [
-            'entName' => '南京市雨花台区恺克建筑工程服务部',
-            'socialCredit' => '111111111111111111'
-        ];
+        $reportNum = 'wanghan123';
 
-        $res = (new \App\HttpController\Service\MaYi\MaYiService())->authEnt($postData);
+        $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'br_test.docx');
 
+        $path = '<w:br/>' . '1.wanghan';
+        $path .= '<w:br/>' . '2.hanwang';
+        $path .= '<w:br/>' . '3.duanran';
+        $path .= '<w:br/>' . '4.randuan';
 
-        dd($res);
+        $tmp->setValue('entName', $path);
 
+        $tmp->saveAs(REPORT_PATH . $reportNum . '.docx');
     }
 
     protected function onShutDown()
