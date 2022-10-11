@@ -3305,11 +3305,11 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
             if (!empty($res['result'])) {
                 foreach ($res['result'] as $year => $val) {
-                    array_push($tmp, [
+                    $tmp[] = [
                         'year' => $year,
                         'yoy' => is_numeric($val['SOCNUM_yoy']) ? sRound($val['SOCNUM_yoy'] * 100) : null,
                         'num' => is_numeric($val['SOCNUM']) ? $val['SOCNUM'] - 0 : null,
-                    ]);
+                    ];
                 }
             }
 
