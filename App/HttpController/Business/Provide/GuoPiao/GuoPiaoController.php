@@ -134,6 +134,7 @@ class GuoPiaoController extends ProvideBase
         }
 
         if (strpos($res['data'], '?url=')) {
+            CommonService::getInstance()->log4PHP($res);
             $arr = explode('?url=', $res['data']);
             $res['data'] = 'https://api.meirixindong.com/Static/vertify.html?url=' . $arr[1];
         }
