@@ -325,7 +325,15 @@ class GuoPiaoController extends ProvideBase
         if (!is_numeric($dataType) || !is_numeric($page))
             return $this->writeJson(201, null, null, '参数必须是数字');
 
-        $res = (new GuoPiaoService())->getInvoiceGoods($code, $dataType, $startDate, $endDate, $page);
+        $this->csp->add($this->cspKey, function () use ($code, $dataType, $startDate, $endDate, $page) {
+            return (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getInvoiceGoods($code, $dataType, $startDate, $endDate, $page);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkResponse($res);
     }
