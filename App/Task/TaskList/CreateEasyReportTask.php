@@ -992,7 +992,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             //股权链
             $path = '';
             foreach ($data['Beneficiary']['DetailInfoList'] as $no => $onePath) {
-                $path .= '<w:br/>' . ($no + 1) . $onePath['Path'] . '<w:br/>';
+                $path .= '<w:br/>' . ($no + 1) . $onePath['Path'];
             }
             $docObj->setValue("sjkzr_Path", $this->formatTo($path));
         } else {
