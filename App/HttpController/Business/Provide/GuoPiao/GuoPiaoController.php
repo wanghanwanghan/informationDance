@@ -95,7 +95,7 @@ class GuoPiaoController extends ProvideBase
         $appId = $this->getRequestData('appId', '');
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
-        $callback = $this->getRequestData('callback', 'https://pc.meirixindong.com/');
+        $callback = $this->getRequestData('callback', '');
 
         $orderNo = control::getUuid(20);
 
