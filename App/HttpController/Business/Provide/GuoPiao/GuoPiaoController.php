@@ -226,7 +226,9 @@ class GuoPiaoController extends ProvideBase
         $code = $this->getRequestData('code');
 
         $this->csp->add($this->cspKey, function () use ($code) {
-            return (new GuoPiaoService())->getFinanceIncomeStatement($code);
+            return (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getFinanceIncomeStatement($code);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
