@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\FaHai;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
 use App\HttpController\Service\LongDun\LongDunService;
@@ -555,6 +556,9 @@ class FaHaiController extends ProvideBase
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
+            CommonService::writeTestLog(json_encode([
+                'xingZhengPunishList_post'=>$postData
+            ]));
             return  (new FaYanYuanService())
                     ->setCheckRespFlag(true)
                     ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
