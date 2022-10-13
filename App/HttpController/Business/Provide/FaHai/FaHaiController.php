@@ -540,6 +540,29 @@ class FaHaiController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //央行行政处罚
+    function xingZhengPunishList()
+    {
+        $pageno = $this->request()->getRequestParam('page') ?? '1';
+        $range = $this->request()->getRequestParam('pageSize') ?? '20';
+        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+        $doc_type = 'pbcparty';
+        $postData = [
+            'doc_type' => $doc_type,
+            'keyword' => $this->entName,
+            'pageno' => $pageno,
+            'range' => $range,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return  (new FaYanYuanService())
+                    ->setCheckRespFlag(true)
+                    ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 }
 
 
