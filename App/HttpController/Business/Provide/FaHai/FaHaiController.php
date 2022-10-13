@@ -546,11 +546,11 @@ class FaHaiController extends ProvideBase
     {
         $pageno = $this->request()->getRequestParam('page') ?? '1';
         $range = $this->request()->getRequestParam('pageSize') ?? '20';
-        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
         $doc_type = 'pbcparty';
         $postData = [
             'doc_type' => $doc_type,
-            'keyword' => $this->entName,
+            'keyword' => $entName,
             'pageno' => $pageno,
             'range' => $range,
         ];
@@ -568,6 +568,32 @@ class FaHaiController extends ProvideBase
         ]));
         return $this->checkResponse($res);
     }
+    //央行行政处罚
+    function xingZhengPunishDetails()
+    {
+        $pageno = $this->request()->getRequestParam('page') ?? '1';
+        $range = $this->request()->getRequestParam('pageSize') ?? '20';
+        $entryId = $this->request()->getRequestParam('entryId') ?? '';
+        $doc_type = 'pbcparty';
+        //取详情
+        $postData = [
+            'id' => $entryId,
+            'doc_type' => $doc_type
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getDetail( CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $postData['doc_type'], $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        CommonService::writeTestLog(json_encode([
+            'xingZhengPunishDetails_post'=>$postData,
+            'xingZhengPunishDetails_$res'=>$res,
+        ]));
+        return $this->checkResponse($res);
+    }
+
 }
 
 
