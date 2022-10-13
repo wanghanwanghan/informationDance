@@ -2283,4 +2283,19 @@ class XinDongController extends ProvideBase
         // return $this->checkResponse($newres);
 
     }
+
+    //淘数 龙盾 历史沿革
+    function getHistoricalEvolution()
+    {
+        $entName  = $this->request()->getRequestParam('entName') ?? '';
+
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getHistoricalEvolution($entName);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
 }
