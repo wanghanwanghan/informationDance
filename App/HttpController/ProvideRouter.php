@@ -319,6 +319,8 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/zhengJianHuiPunishNoticeDetail', $prefix . 'zhengJianHuiPunishNoticeDetail');
             $routeCollector->addRoute(['GET', 'POST'], '/zhengJianHuiLicenseList', $prefix . 'zhengJianHuiLicenseList');
             $routeCollector->addRoute(['GET', 'POST'], '/zhengJianHuiLicenseDetail', $prefix . 'zhengJianHuiLicenseDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/waiHuiJuPunishList', $prefix . 'waiHuiJuPunishList');
+            $routeCollector->addRoute(['GET', 'POST'], '/waiHuiJuPunishDetail', $prefix . 'waiHuiJuPunishDetail');
 
             $routeCollector->addRoute(['GET', 'POST'], '/getKtggDetail', $prefix . 'getKtggDetail');//开庭公告
             $routeCollector->addRoute(['GET', 'POST'], '/getFyggDetail', $prefix . 'getFyggDetail');//法院公告
