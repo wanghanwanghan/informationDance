@@ -31,7 +31,7 @@ class LongDunController extends ProvideBase
         }elseif ($res[$this->cspKey]['Result']){
             $this->responseCode = $res[$this->cspKey]['Status'];
             $this->responsePaging = $res[$this->cspKey]['Paging'];
-            $this->responseData = $res[$this->cspKey]['Result']['Data'];
+            $this->responseData = $res[$this->cspKey]['Result'];
             $this->responseMsg = $res[$this->cspKey]['Message'];
             $res[$this->cspKey]['Status'] === 200 ?: $this->spendMoney = 0;
         } else {
