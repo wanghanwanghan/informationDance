@@ -561,14 +561,14 @@ class FaHaiController extends ProvideBase
             CommonService::writeTestLog(json_encode([
                 'xingZhengPunishList_post'=>$postData
             ]));
-            return $postData;
+//            return $postData;
             return  (new FaYanYuanService())
-                    ->setCheckRespFlag(true)
+                    ->setCheckRespFlag(false)
                     ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
-        return $res;
+//        return $res;
         return $this->checkResponse($res);
     }
 }
