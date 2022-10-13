@@ -28,14 +28,13 @@ class LongDunController extends ProvideBase
             $this->responseData = $res[$this->cspKey];
             $this->spendMoney = 0;
             $this->responseMsg = '请求超时';
-        }elseif ($res[$this->cspKey]['Result']){
+        }elseif ($res[$this->cspKey]['Status']){
             $this->responseCode = $res[$this->cspKey]['Status'];
             $this->responsePaging = $res[$this->cspKey]['Paging'];
             $this->responseData = $res[$this->cspKey]['Result'];
             $this->responseMsg = $res[$this->cspKey]['Message'];
             $res[$this->cspKey]['Status'] === 200 ?: $this->spendMoney = 0;
         } else {
-            CommonService::getInstance()->log4PHP($res[$this->cspKey],'info','LongDunController');
             $this->responseCode = $res[$this->cspKey]['code'];
             $this->responsePaging = $res[$this->cspKey]['paging'];
             $this->responseData = $res[$this->cspKey]['result'];
