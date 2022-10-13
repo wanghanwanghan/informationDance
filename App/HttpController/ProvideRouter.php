@@ -158,6 +158,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getMainManagerInfo', $prefix . 'getMainManagerInfo');//企业主要管理人员
             $routeCollector->addRoute(['GET', 'POST'], '/getRegisterChangeInfo', $prefix . 'getRegisterChangeInfo');//企业变更信息
             $routeCollector->addRoute(['GET', 'POST'], '/getShareHolderInfo', $prefix . 'getShareHolderInfo');//企业股东及出资信息
+            $routeCollector->addRoute(['GET', 'POST'], '/dongChanDiYa', $prefix . 'dongChanDiYa');//企业股东及出资信息
 
         });
 
@@ -337,6 +338,8 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/shiXinGongGaoList', $prefix . 'shiXinGongGaoList');
             $routeCollector->addRoute(['GET', 'POST'], '/shiXinGongGaoDetail', $prefix . 'shiXinGongGaoDetail');
             $routeCollector->addRoute(['GET', 'POST'], '/beiZhiXingRenList', $prefix . 'beiZhiXingRenList');
+            $routeCollector->addRoute(['GET', 'POST'], '/baoZhengJinZhiYaList', $prefix . 'baoZhengJinZhiYaList');
+            $routeCollector->addRoute(['GET', 'POST'], '/baoZhengJinZhiYaDetail', $prefix . 'baoZhengJinZhiYaDetail');
 
             $routeCollector->addRoute(['GET', 'POST'], '/getKtggDetail', $prefix . 'getKtggDetail');//开庭公告
             $routeCollector->addRoute(['GET', 'POST'], '/getFyggDetail', $prefix . 'getFyggDetail');//法院公告
