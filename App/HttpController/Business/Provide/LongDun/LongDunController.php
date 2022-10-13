@@ -190,6 +190,67 @@ class LongDunController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //行政许可
+    function getAdministrativeLicenseList()
+    {
+        $entName = $this->request()->getRequestParam('entName');
+        $page = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData = [
+            'searchKey' => $entName,
+            'pageIndex' => $page,
+            'pageSize' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get(CreateConf::getInstance()->getConf('longdun.baseUrl')  . 'AdminLicenseCheck/GetList', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+
+    }
+
+    //行政许可详情
+    function getAdministrativeLicenseListDetail()
+    {
+        $id = $this->request()->getRequestParam('id');
+
+        $postData = ['id' => $id];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'AdminLicenseCheck/GetDetail', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    //行政处罚详情
+    function getAdministrativePenaltyListDetail()
+    {
+        $id = $this->request()->getRequestParam('id');
+
+        $postData = ['id' => $id];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'AdminPenaltyCheck/GetCreditDetail', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     public function getSearchSoftwareCr(){
 
     }
