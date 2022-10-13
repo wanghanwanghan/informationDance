@@ -314,6 +314,15 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyXin', $prefix . 'getSatpartyXin');
             $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyReg', $prefix . 'getSatpartyReg');//税务登记列表
 
+            $routeCollector->addRoute(['GET', 'POST'], '/xingZhengPunishList', $prefix . 'xingZhengPunishList');
+            $routeCollector->addRoute(['GET', 'POST'], '/xingZhengPunishDetails', $prefix . 'xingZhengPunishDetails');
+            $routeCollector->addRoute(['GET', 'POST'], '/yinJianHuiPunishNoticeList', $prefix . 'yinJianHuiPunishNoticeList');
+            $routeCollector->addRoute(['GET', 'POST'], '/yinJianHuiPunishNoticeDetail', $prefix . 'yinJianHuiPunishNoticeDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/zhengJianHuiPunishNoticeList', $prefix . 'zhengJianHuiPunishNoticeList');
+            $routeCollector->addRoute(['GET', 'POST'], '/zhengJianHuiPunishNoticeDetail', $prefix . 'zhengJianHuiPunishNoticeDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/zhengJianHuiLicenseList', $prefix . 'zhengJianHuiLicenseList');
+            $routeCollector->addRoute(['GET', 'POST'], '/zhengJianHuiLicenseDetail', $prefix . 'zhengJianHuiLicenseDetail');
+
             $routeCollector->addRoute(['GET', 'POST'], '/getKtggDetail', $prefix . 'getKtggDetail');//开庭公告
             $routeCollector->addRoute(['GET', 'POST'], '/getFyggDetail', $prefix . 'getFyggDetail');//法院公告
             $routeCollector->addRoute(['GET', 'POST'], '/getSatpartyXinDetail', $prefix . 'getSatpartyXinDetail');
@@ -339,7 +348,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getPbcpartyCsrcXkpf', $prefix . 'getPbcpartyCsrcXkpf');
             $routeCollector->addRoute(['GET', 'POST'], '/getSafeChufa', $prefix . 'getSafeChufa');
             $routeCollector->addRoute(['GET', 'POST'], '/getSafeXuke', $prefix . 'getSafeXuke');
-            $routeCollector->addRoute(['GET', 'POST'], '/xingZhengPunishList', $prefix . 'xingZhengPunishList');
+
         });
 
         return true;

@@ -546,11 +546,11 @@ class FaHaiController extends ProvideBase
     {
         $pageno = $this->request()->getRequestParam('page') ?? '1';
         $range = $this->request()->getRequestParam('pageSize') ?? '20';
-        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
         $doc_type = 'pbcparty';
         $postData = [
             'doc_type' => $doc_type,
-            'keyword' => $this->entName,
+            'keyword' => $entName,
             'pageno' => $pageno,
             'range' => $range,
         ];
@@ -568,6 +568,189 @@ class FaHaiController extends ProvideBase
         ]));
         return $this->checkResponse($res);
     }
+
+    //央行行政处罚
+    function xingZhengPunishDetails()
+    {
+        $pageno = $this->request()->getRequestParam('page') ?? '1';
+        $range = $this->request()->getRequestParam('pageSize') ?? '20';
+        $entryId = $this->request()->getRequestParam('entryId') ?? '';
+        $doc_type = 'pbcparty';
+        //取详情
+        $postData = [
+            'id' => $entryId,
+            'doc_type' => $doc_type
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getDetail( CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $postData['doc_type'], $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        CommonService::writeTestLog(json_encode([
+            'xingZhengPunishDetails_post'=>$postData,
+            'xingZhengPunishDetails_$res'=>$res,
+        ]));
+        return $this->checkResponse($res);
+    }
+
+    //银保监会处罚公示
+    function yinJianHuiPunishNoticeList()
+    {
+        $pageno = $this->request()->getRequestParam('page') ?? '1';
+        $range = $this->request()->getRequestParam('pageSize') ?? '20';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $doc_type = 'pbcparty_cbrc';
+        $postData = [
+            'doc_type' => $doc_type,
+            'keyword' => $entName,
+            'pageno' => $pageno,
+            'range' => $range,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+
+            return  (new FaYanYuanService())
+                //->setCheckRespFlag(false)
+                ->setCheckRespFlag(true)
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        CommonService::writeTestLog(json_encode([
+            'yinJianHuiPunishNoticeList_post'=>$postData,
+            'yinJianHuiPunishNoticeList_$res'=>$res,
+        ]));
+        return $this->checkResponse($res);
+    }
+
+    //银保监会处罚公示
+    function yinJianHuiPunishNoticeDetail()
+    {
+        $pageno = $this->request()->getRequestParam('page') ?? '1';
+        $range = $this->request()->getRequestParam('pageSize') ?? '20';
+        $entryId = $this->request()->getRequestParam('entryId') ?? '';
+        $doc_type = 'pbcparty_cbrc';
+        $postData = [
+            'id' => $entryId,
+            'doc_type' => $doc_type
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+
+            return (new FaYanYuanService())->setCheckRespFlag(true)->getDetail(
+                CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $postData['doc_type'], $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        CommonService::writeTestLog(json_encode([
+            'yinJianHuiPunishNoticeDetail_post'=>$postData,
+            'yinJianHuiPunishNoticeDetail_$res'=>$res,
+        ]));
+        return $this->checkResponse($res);
+    }
+
+    // 证监处罚公示列表
+    function zhengJianHuiPunishNoticeList()
+    {
+        $pageno = $this->request()->getRequestParam('page') ?? '1';
+        $range = $this->request()->getRequestParam('pageSize') ?? '20';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $doc_type = 'pbcparty_csrc_chufa';
+        $postData = [
+            'doc_type' => $doc_type,
+            'keyword' => $entName,
+            'pageno' => $pageno,
+            'range' => $range,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+
+            return  (new FaYanYuanService())
+                //->setCheckRespFlag(false)
+                ->setCheckRespFlag(true)
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        CommonService::writeTestLog(json_encode([
+            'zhengJianHuiPunishNoticeList_post'=>$postData,
+            'zhengJianHuiPunishNoticeList_$res'=>$res,
+        ]));
+        return $this->checkResponse($res);
+    }
+
+    // 证监处罚公示详情
+    function zhengJianHuiPunishNoticeDetail()
+    {
+        $pageno = $this->request()->getRequestParam('page') ?? '1';
+        $range = $this->request()->getRequestParam('pageSize') ?? '20';
+        $entryId = $this->request()->getRequestParam('entryId') ?? '';
+        $doc_type = 'pbcparty_csrc_chufa';
+        $postData = [
+            'id' => $entryId,
+            'doc_type' => $doc_type
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+
+            return (new FaYanYuanService())->setCheckRespFlag(true)->getDetail(
+                CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $postData['doc_type'], $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        CommonService::writeTestLog(json_encode([
+            'zhengJianHuiPunishNoticeDetail_post'=>$postData,
+            'zhengJianHuiPunishNoticeDetail_$res'=>$res,
+        ]));
+        return $this->checkResponse($res);
+    }
+
+    //证监会许可信息列表
+    function zhengJianHuiLicenseList()
+    {
+        $pageno = $this->request()->getRequestParam('page') ?? '1';
+        $range = $this->request()->getRequestParam('pageSize') ?? '20';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $doc_type = 'pbcparty_csrc_xkpf';
+        $postData = [
+            'doc_type' => $doc_type,
+            'keyword' => $entName,
+            'pageno' => $pageno,
+            'range' => $range,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+
+            return  (new FaYanYuanService())
+                //->setCheckRespFlag(false)
+                ->setCheckRespFlag(true)
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        CommonService::writeTestLog(json_encode([
+            'zhengJianHuilicenseList_post'=>$postData,
+            'zhengJianHuilicenseList_$res'=>$res,
+        ]));
+        return $this->checkResponse($res);
+    }
+
+    // 证监处罚公示详情
+    function zhengJianHuiLicenseDetail()
+    {
+        $pageno = $this->request()->getRequestParam('page') ?? '1';
+        $range = $this->request()->getRequestParam('pageSize') ?? '20';
+        $entryId = $this->request()->getRequestParam('entryId') ?? '';
+        $doc_type = 'pbcparty_csrc_xkpf';
+        $postData = [
+            'id' => $entryId,
+            'doc_type' => $doc_type
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+
+            return (new FaYanYuanService())->setCheckRespFlag(true)->getDetail(
+                CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $postData['doc_type'], $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        CommonService::writeTestLog(json_encode([
+            'zhengJianHuiLicenseDetail_post'=>$postData,
+            'zhengJianHuiLicenseDetail_$res'=>$res,
+        ]));
+        return $this->checkResponse($res);
+    }
+
 }
 
 
