@@ -698,6 +698,59 @@ class FaHaiController extends ProvideBase
         ]));
         return $this->checkResponse($res);
     }
+
+    //证监会许可信息列表
+    function zhengJianHuiLicenseList()
+    {
+        $pageno = $this->request()->getRequestParam('page') ?? '1';
+        $range = $this->request()->getRequestParam('pageSize') ?? '20';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $doc_type = 'pbcparty_csrc_xkpf';
+        $postData = [
+            'doc_type' => $doc_type,
+            'keyword' => $entName,
+            'pageno' => $pageno,
+            'range' => $range,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+
+            return  (new FaYanYuanService())
+                //->setCheckRespFlag(false)
+                ->setCheckRespFlag(true)
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        CommonService::writeTestLog(json_encode([
+            'zhengJianHuilicenseList_post'=>$postData,
+            'zhengJianHuilicenseList_$res'=>$res,
+        ]));
+        return $this->checkResponse($res);
+    }
+
+    // 证监处罚公示详情
+    function zhengJianHuiLicenseDetail()
+    {
+        $pageno = $this->request()->getRequestParam('page') ?? '1';
+        $range = $this->request()->getRequestParam('pageSize') ?? '20';
+        $entryId = $this->request()->getRequestParam('entryId') ?? '';
+        $doc_type = 'pbcparty_csrc_xkpf';
+        $postData = [
+            'id' => $entryId,
+            'doc_type' => $doc_type
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+
+            return (new FaYanYuanService())->setCheckRespFlag(true)->getDetail(
+                CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $postData['doc_type'], $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        CommonService::writeTestLog(json_encode([
+            'zhengJianHuiLicenseDetail_post'=>$postData,
+            'zhengJianHuiLicenseDetail_$res'=>$res,
+        ]));
+        return $this->checkResponse($res);
+    }
+
 }
 
 
