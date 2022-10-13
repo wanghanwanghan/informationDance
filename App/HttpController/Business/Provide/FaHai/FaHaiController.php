@@ -554,7 +554,9 @@ class FaHaiController extends ProvideBase
             'pageno' => $pageno,
             'range' => $range,
         ];
-
+        CommonService::writeTestLog(json_encode([
+            'xingZhengPunishList_post'=>$postData
+        ]));
         $this->csp->add($this->cspKey, function () use ($postData) {
             CommonService::writeTestLog(json_encode([
                 'xingZhengPunishList_post'=>$postData
