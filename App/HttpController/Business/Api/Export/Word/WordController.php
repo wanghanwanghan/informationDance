@@ -23,13 +23,13 @@ class WordController extends ExportBase
         parent::afterAction($actionName);
     }
 
-    private function createReportNum()
+    private function createReportNum(): string
     {
         return Carbon::now()->format('YmdHis') . '_' . control::randNum(8);
     }
 
     //生成一个极简报告
-    function createVeryEasy()
+    function createVeryEasy(): bool
     {
         $reportNum = $this->request()->getRequestParam('reportNum') ?? $this->createReportNum();
         $phone = $this->request()->getRequestParam('phone') ?? '';
@@ -70,7 +70,7 @@ class WordController extends ExportBase
     }
 
     //生成一个简版报告
-    function createEasy()
+    function createEasy(): bool
     {
         $reportNum = $this->request()->getRequestParam('reportNum') ?? $this->createReportNum();
         $phone = $this->request()->getRequestParam('phone') ?? '';
@@ -113,7 +113,7 @@ class WordController extends ExportBase
     }
 
     //生成一个两表报告
-    function createTwoTable()
+    function createTwoTable(): bool
     {
         $reportNum = $this->request()->getRequestParam('reportNum') ?? $this->createReportNum();
         $phone = $this->request()->getRequestParam('phone') ?? '';
@@ -166,7 +166,7 @@ class WordController extends ExportBase
     }
 
     //生成一个深度报告
-    function createDeep()
+    function createDeep(): bool
     {
         $reportNum = $this->request()->getRequestParam('reportNum') ?? $this->createReportNum();
         $phone = $this->request()->getRequestParam('phone') ?? '';
