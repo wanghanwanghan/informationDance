@@ -557,7 +557,8 @@ class FaHaiController extends ProvideBase
         $this->csp->add($this->cspKey, function () use ($postData) {
 
             return  (new FaYanYuanService())
-                    ->setCheckRespFlag(false)
+                    //->setCheckRespFlag(false)
+                    ->setCheckRespFlag(true)
                     ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
