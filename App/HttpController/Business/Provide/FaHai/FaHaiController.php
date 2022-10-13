@@ -555,15 +555,16 @@ class FaHaiController extends ProvideBase
             'range' => $range,
         ];
         $this->csp->add($this->cspKey, function () use ($postData) {
-            CommonService::writeTestLog(json_encode([
-                'xingZhengPunishList_post'=>$postData
-            ]));
+
             return  (new FaYanYuanService())
-                    ->setCheckRespFlag(true)
+                    ->setCheckRespFlag(false)
                     ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-
+        CommonService::writeTestLog(json_encode([
+            'xingZhengPunishList_post'=>$postData,
+            'xingZhengPunishList_$res'=>$res,
+        ]));
         return $this->checkResponse($res);
     }
 }
