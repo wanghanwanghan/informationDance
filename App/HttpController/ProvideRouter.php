@@ -56,6 +56,8 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/accountInfo', $prefix . 'accountInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/costRecord', $prefix . 'costRecord');
             $routeCollector->addRoute(['GET', 'POST'], '/gaiZhang', $prefix . 'gaiZhang');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAuthFile2Id', $prefix . 'getAuthFile2Id');
+
         });
         return true;
     }

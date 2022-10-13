@@ -470,7 +470,7 @@ class DianZiQianService extends ServiceBase
 
         $entTransactionCode = control::getUuid();
         //自动签署企业章  signUrl
-        $entContractSignUrl = $this->contractSignAuto($signerCodeEnt, $contractCode, '#盖章处#',$entSealCode,$entTransactionCode);
+        $entContractSignUrl = $this->contractSignAuto($signerCodeEnt, $contractCode, '企业盖章处',$entSealCode,$entTransactionCode);
         if ($entContractSignUrl['code'] != 200) return $entContractSignUrl;
         $personalTransactionCode = control::getUuid();
         //自动签署企业法人章

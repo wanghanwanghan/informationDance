@@ -95,7 +95,7 @@ class GuoPiaoController extends ProvideBase
         $appId = $this->getRequestData('appId', '');
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
-        $callback = $this->getRequestData('callback', 'https://pc.meirixindong.com/');
+        $callback = $this->getRequestData('callback', 'https://www.chinatax.gov.cn/');
 
         $orderNo = control::getUuid(20);
 
@@ -134,6 +134,7 @@ class GuoPiaoController extends ProvideBase
         }
 
         if (strpos($res['data'], '?url=')) {
+            CommonService::getInstance()->log4PHP($res);
             $arr = explode('?url=', $res['data']);
             $res['data'] = 'https://api.meirixindong.com/Static/vertify.html?url=' . $arr[1];
         }
@@ -146,7 +147,13 @@ class GuoPiaoController extends ProvideBase
     {
         $code = $this->getRequestData('code');
 
-        $res = (new GuoPiaoService())->getEssential($code);
+        $this->csp->add($this->cspKey, function () use ($code) {
+            return (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getEssential($code);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->checkResponse($res);
     }
@@ -156,26 +163,13 @@ class GuoPiaoController extends ProvideBase
     {
         $code = $this->getRequestData('code');
 
-        $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration($code);
+        $this->csp->add($this->cspKey, function () use ($code) {
+            return (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getIncometaxMonthlyDeclaration($code);
+        });
 
-        //正常
-        if ($res['code'] - 0 === 0 && !empty($res['data'])) {
-            $data = jsonDecode($res['data']);
-            $model = [];
-            foreach ($data as $row) {
-                $year_month = substr(str_replace(['-'], '', $row['beginDate']), 0, 6) . '';
-                if (!isset($model[$year_month])) {
-                    $model[$year_month] = [];
-                }
-                $row['sequence'] = $row['sequence'] - 0;
-                $model[$year_month][] = $row;
-            }
-            //排序
-            foreach ($model as $year => $val) {
-                $model[$year] = control::sortArrByKey($val, 'sequence', 'asc', true);
-            }
-            $res['data'] = jsonEncode($model);
-        }
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->checkResponse($res);
     }
@@ -224,26 +218,13 @@ class GuoPiaoController extends ProvideBase
     {
         $code = $this->getRequestData('code');
 
-        $res = (new GuoPiaoService())->getFinanceIncomeStatement($code);
+        $this->csp->add($this->cspKey, function () use ($code) {
+            return (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getFinanceIncomeStatement($code);
+        });
 
-        //正常
-        if ($res['code'] - 0 === 0 && !empty($res['data'])) {
-            $data = jsonDecode($res['data']);
-            $model = [];
-            foreach ($data as $row) {
-                $year_month = substr(str_replace(['-'], '', $row['beginDate']), 0, 6) . '';
-                if (!isset($model[$year_month])) {
-                    $model[$year_month] = [];
-                }
-                $row['sequence'] = $row['sequence'] - 0;
-                $model[$year_month][] = $row;
-            }
-            //排序
-            foreach ($model as $year => $val) {
-                $model[$year] = control::sortArrByKey($val, 'sequence', 'asc', true);
-            }
-            $res['data'] = jsonEncode($model);
-        }
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->checkResponse($res);
     }
@@ -282,26 +263,13 @@ class GuoPiaoController extends ProvideBase
     {
         $code = $this->getRequestData('code');
 
-        $res = (new GuoPiaoService())->getFinanceBalanceSheet($code);
+        $this->csp->add($this->cspKey, function () use ($code) {
+            return (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getFinanceBalanceSheet($code);
+        });
 
-        //正常
-        if ($res['code'] - 0 === 0 && !empty($res['data'])) {
-            $data = jsonDecode($res['data']);
-            $model = [];
-            foreach ($data as $row) {
-                $year_month = substr(str_replace(['-'], '', $row['beginDate']), 0, 6) . '';
-                if (!isset($model[$year_month])) {
-                    $model[$year_month] = [];
-                }
-                $row['columnSequence'] = $row['columnSequence'] - 0;
-                $model[$year_month][] = $row;
-            }
-            //排序
-            foreach ($model as $year => $val) {
-                $model[$year] = control::sortArrByKey($val, 'columnSequence', 'asc', true);
-            }
-            $res['data'] = jsonEncode($model);
-        }
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->checkResponse($res);
     }
@@ -311,26 +279,13 @@ class GuoPiaoController extends ProvideBase
     {
         $code = $this->getRequestData('code');
 
-        $res = (new GuoPiaoService())->getVatReturn($code);
+        $this->csp->add($this->cspKey, function () use ($code) {
+            return (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getVatReturn($code);
+        });
 
-        //正常
-        if ($res['code'] - 0 === 0 && !empty($res['data'])) {
-            $data = jsonDecode($res['data']);
-            $model = [];
-            foreach ($data as $row) {
-                $year_month = substr(str_replace(['-'], '', $row['beginDate']), 0, 6) . '';
-                if (!isset($model[$year_month])) {
-                    $model[$year_month] = [];
-                }
-                $row['sequence'] = $row['sequence'] - 0;
-                $model[$year_month][] = $row;
-            }
-            //排序
-            foreach ($model as $year => $val) {
-                $model[$year] = control::sortArrByKey($val, 'sequence', 'asc', true);
-            }
-            $res['data'] = jsonEncode($model);
-        }
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->checkResponse($res);
     }
@@ -350,7 +305,13 @@ class GuoPiaoController extends ProvideBase
         if (!is_numeric($dataType) || !is_numeric($page))
             return $this->writeJson(201, null, null, '参数必须是数字');
 
-        $res = (new GuoPiaoService())->getInvoiceMain($code, $dataType, $startDate, $endDate, $page);
+        $this->csp->add($this->cspKey, function () use ($code, $dataType, $startDate, $endDate, $page) {
+            return (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getInvoiceMain($code, $dataType, $startDate, $endDate, $page);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->checkResponse($res);
     }
@@ -370,7 +331,13 @@ class GuoPiaoController extends ProvideBase
         if (!is_numeric($dataType) || !is_numeric($page))
             return $this->writeJson(201, null, null, '参数必须是数字');
 
-        $res = (new GuoPiaoService())->getInvoiceGoods($code, $dataType, $startDate, $endDate, $page);
+        $this->csp->add($this->cspKey, function () use ($code, $dataType, $startDate, $endDate, $page) {
+            return (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getInvoiceGoods($code, $dataType, $startDate, $endDate, $page);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         return $this->checkResponse($res);
     }

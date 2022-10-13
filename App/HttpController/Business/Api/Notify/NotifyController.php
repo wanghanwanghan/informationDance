@@ -251,26 +251,20 @@ class NotifyController extends BusinessBase
 
         $phone = substr($orderNo, 0, 11);
         $time = substr($orderNo, -10);
+
         OperatorLog::addRecord(
             [
                 'user_id' => 0,
                 'msg' => json_encode(
                     [
-                        '$phone'=>$phone,
-                        '$RequestData'=>$RequestData,
+                        '$phone' => $phone,
+                        '$RequestData' => $RequestData,
                     ]
                 ),
                 'details' => json_encode(XinDongService::trace()),
-                'type_cname' => '获取数据通知_'.$entName,
+                'type_cname' => '获取数据通知_' . $entName,
             ]
         );
-        CommonService::getInstance()->log4PHP([
-            'entName' => $entName,
-            'taxNo' => $taxNo,
-            'state' => $state,
-            'message' => $message,
-            'orderNo' => $orderNo,
-        ]);
 
         try {
             $check = AuthBook::create()->where(['phone' => $phone, 'remark' => $orderNo])->get();
@@ -281,8 +275,8 @@ class NotifyController extends BusinessBase
                 AuthBook::updateById(
                     $oldAuthBookData['id'],
                     [
-                        'status'=>3,
-                        'raw_return_json'=> @json_encode(
+                        'status' => 3,
+                        'raw_return_json' => @json_encode(
                             [
                                 $RequestData
                             ]
@@ -315,12 +309,12 @@ class NotifyController extends BusinessBase
                 'user_id' => 0,
                 'msg' => json_encode(
                     [
-                        '$phone'=>$phone,
-                        '$RequestData'=>$RequestData,
+                        '$phone' => $phone,
+                        '$RequestData' => $RequestData,
                     ]
                 ),
                 'details' => json_encode(XinDongService::trace()),
-                'type_cname' => '获取数据通知_'.$entName,
+                'type_cname' => '获取数据通知_' . $entName,
             ]
         );
         CommonService::getInstance()->log4PHP([
@@ -338,8 +332,8 @@ class NotifyController extends BusinessBase
                 $oldAuthBookData = $check->toArray();
 
                 //把新的推送数据 塞进数组里  保存下来
-                $old_raw_return = json_decode($oldAuthBookData['raw_return_json'],true);
-                if(empty($old_raw_return)){
+                $old_raw_return = json_decode($oldAuthBookData['raw_return_json'], true);
+                if (empty($old_raw_return)) {
                     $old_raw_return = [];
                 }
                 $old_raw_return[] = $RequestData;
@@ -348,9 +342,9 @@ class NotifyController extends BusinessBase
                     $oldAuthBookData['id'],
                     [
                         //把状态更新为新的
-                        'status'=> $oldAuthBookData['status']+1,
+                        'status' => $oldAuthBookData['status'] + 1,
                         //把新的推送结果也保存下来
-                        'raw_return_json'=> @json_encode( $old_raw_return )
+                        'raw_return_json' => @json_encode($old_raw_return)
                     ]
                 );
 
