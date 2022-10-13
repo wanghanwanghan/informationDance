@@ -595,7 +595,7 @@ class FaHaiController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    //央行行政处罚
+    //银保监会处罚公示
     function yinJianHuiPunishNoticeList()
     {
         $pageno = $this->request()->getRequestParam('page') ?? '1';
@@ -619,6 +619,30 @@ class FaHaiController extends ProvideBase
         CommonService::writeTestLog(json_encode([
             'yinJianHuiPunishNoticeList_post'=>$postData,
             'yinJianHuiPunishNoticeList_$res'=>$res,
+        ]));
+        return $this->checkResponse($res);
+    }
+
+    //银保监会处罚公示
+    function yinJianHuiPunishNoticeDetail()
+    {
+        $pageno = $this->request()->getRequestParam('page') ?? '1';
+        $range = $this->request()->getRequestParam('pageSize') ?? '20';
+        $entryId = $this->request()->getRequestParam('entryId') ?? '';
+        $doc_type = 'pbcparty_cbrc';
+        $postData = [
+            'id' => $entryId,
+            'doc_type' => $doc_type
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+
+            return (new FaYanYuanService())->setCheckRespFlag(true)->getDetail(
+                CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $postData['doc_type'], $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        CommonService::writeTestLog(json_encode([
+            'yinJianHuiPunishNoticeDetail_post'=>$postData,
+            'yinJianHuiPunishNoticeDetail_$res'=>$res,
         ]));
         return $this->checkResponse($res);
     }
