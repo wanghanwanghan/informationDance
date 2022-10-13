@@ -3,6 +3,7 @@
 namespace App\HttpController\Service\ChuangLan;
 
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 
@@ -14,8 +15,8 @@ class ChuangLanService extends ServiceBase
     function __construct()
     {
         parent::__construct();
-        $this->appId = 'Lz8AqXxJ';
-        $this->appKey = 'mUoCN8pT';
+        $this->appId = CreateConf::getInstance()->getConf('chuanglan.appId');
+        $this->appKey = CreateConf::getInstance()->getConf('chuanglan.appKey');
         return true;
     }
 
