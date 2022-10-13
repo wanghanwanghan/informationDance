@@ -647,6 +647,33 @@ class FaHaiController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    // 证监处罚公示列表
+    function zhengJianHuiPunishNoticeList()
+    {
+        $pageno = $this->request()->getRequestParam('page') ?? '1';
+        $range = $this->request()->getRequestParam('pageSize') ?? '20';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $doc_type = 'pbcparty_csrc_chufa';
+        $postData = [
+            'doc_type' => $doc_type,
+            'keyword' => $entName,
+            'pageno' => $pageno,
+            'range' => $range,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+
+            return  (new FaYanYuanService())
+                //->setCheckRespFlag(false)
+                ->setCheckRespFlag(true)
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        CommonService::writeTestLog(json_encode([
+            'zhengJianHuiPunishNoticeList_post'=>$postData,
+            'zhengJianHuiPunishNoticeList_$res'=>$res,
+        ]));
+        return $this->checkResponse($res);
+    }
 
 }
 
