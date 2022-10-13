@@ -1084,6 +1084,25 @@ class FaHaiController extends ProvideBase
 //        ]));
         return $this->checkResponse($res);
     }
+
+    //被执行人
+    function beiZhiXingRenList()
+    {
+       $entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $postData = [
+            'searchKey' => $entName,
+            'isExactlySame' => true,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+
+            return  (new LongDunService())->setCheckRespFlag(true)->get(
+                CreateConf::getInstance()->getConf('longdun.baseUrl') . 'CourtV4/SearchZhiXing', $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
 }
 
 
