@@ -336,6 +336,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getPbcpartyCsrcXkpf', $prefix . 'getPbcpartyCsrcXkpf');
             $routeCollector->addRoute(['GET', 'POST'], '/getSafeChufa', $prefix . 'getSafeChufa');
             $routeCollector->addRoute(['GET', 'POST'], '/getSafeXuke', $prefix . 'getSafeXuke');
+            $routeCollector->addRoute(['GET', 'POST'], '/xingZhengPunishList', $prefix . 'xingZhengPunishList');
         });
 
         return true;

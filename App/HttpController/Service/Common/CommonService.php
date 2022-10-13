@@ -63,7 +63,7 @@ class CommonService extends ServiceBase
 
         //正式环境
         if(self::IsProductionEnv()){
-            return  true;
+           // return  true;
         }
 
         return control::writeLog($content, LOG_PATH, $type, $filename);
