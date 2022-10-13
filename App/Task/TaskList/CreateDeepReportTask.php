@@ -9,6 +9,8 @@ use App\HttpController\Models\Api\InvoiceOut;
 use App\HttpController\Models\Api\OcrQueue;
 use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Models\Api\User;
+use App\HttpController\Models\EntDb\EntInvoice;
+use App\HttpController\Models\EntDb\EntInvoiceDetail;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
@@ -54,80 +56,59 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         return parent::__construct();
     }
 
-    //接口取发票数据
-    private function getReceiptData()
-    {
-        $code = $this->code;
-
-        //取20个月的进项
-        for ($i = 5; $i <= 20; $i += 5) {
-            $startDate = Carbon::now()->subMonths($i)->format('Y-m-d');
-            $endDate = Carbon::now()->subMonths($i - 5)->format('Y-m-d');
-
-            for ($page = 1; $page <= 10000; $page++) {
-                $res = (new GuoPiaoService())
-                    ->setCheckRespFlag(true)
-                    ->getInOrOutDetailByCert($code, 1, $startDate, $endDate, $page, 200);
-
-                if ($res['code'] !== 200 || empty($res['result'])) break;
-
-                //数据入库
-                foreach ($res['result'] as $oneInvoice) {
-                    try {
-                        $info = InvoiceIn::create()->where('invoiceCode', $oneInvoice['invoiceCode'])
-                            ->where('invoiceNumber', $oneInvoice['invoiceNumber'])->get();
-
-                        if (!empty($info)) continue;
-
-                        InvoiceIn::create()->data($oneInvoice)->save();
-
-                    } catch (\Throwable $e) {
-                        CommonService::getInstance()->log4PHP($e->getMessage());
-                    }
-                }
-            }
-        }
-
-        //取20个月的销项
-        for ($i = 5; $i <= 20; $i += 5) {
-            $startDate = Carbon::now()->subMonths($i)->format('Y-m-d');
-            $endDate = Carbon::now()->subMonths($i - 5)->format('Y-m-d');
-
-            for ($page = 1; $page <= 10000; $page++) {
-                $res = (new GuoPiaoService())
-                    ->setCheckRespFlag(true)
-                    ->getInOrOutDetailByCert($code, 2, $startDate, $endDate, $page, 200);
-
-                if ($res['code'] !== 200 || empty($res['result'])) break;
-
-                //数据入库
-                foreach ($res['result'] as $oneInvoice) {
-                    try {
-                        $info = InvoiceOut::create()->where('invoiceCode', $oneInvoice['invoiceCode'])
-                            ->where('invoiceNumber', $oneInvoice['invoiceNumber'])->get();
-
-                        if (!empty($info)) continue;
-
-                        InvoiceOut::create()->data($oneInvoice)->save();
-
-                    } catch (\Throwable $e) {
-                        CommonService::getInstance()->log4PHP($e->getMessage());
-                    }
-                }
-            }
-        }
-
-        $in = InvoiceIn::create()->where('purchaserTaxNo', $this->code)->all();
-        $this->inDetail = obj2Arr($in);
-        $out = InvoiceOut::create()->where('salesTaxNo', $this->code)->all();
-        $this->outDetail = obj2Arr($out);
-    }
-
     private function getReceiptDataTest()
     {
-        $in = InvoiceIn::create()->where('purchaserTaxNo', $this->code)->all();
+        $field = [
+            'fpdm as invoiceCode', 'fphm as invoiceNumber', 'kprq as billingDate',
+            'je as totalAmount', 'se as totalTax', 'fplx as invoiceType', 'fpztDm as state',
+            'xfsh as salesTaxNo', 'xfmc as salesTaxName', 'gfsh as purchaserTaxNo', 'gfmc as purchaserName'
+        ];
+
+        $in = EntInvoice::create()
+            ->addSuffix($this->code)
+            ->field($field)
+            ->where(['nsrsbh' => $this->code, 'direction' => '01'])->all();
+
+        $out = EntInvoice::create()
+            ->addSuffix($this->code)
+            ->field($field)
+            ->where(['nsrsbh' => $this->code, 'direction' => '02'])->all();
+
+        //从详情里拿 商品名称
+        foreach ($in as $one_in) {
+            $fpdm = $one_in->getAttr('invoiceCode');
+            $fphm = $one_in->getAttr('invoiceNumber');
+            $detail = EntInvoiceDetail::create()
+                ->addSuffix($fpdm, $fphm)
+                ->field('mc')
+                ->where(['fpdm' => $fpdm, 'fphm' => $fphm])->get();
+            $mc = '';
+            if (!empty($detail)) {
+                $mc = $detail->getAttr('mc');
+                $mc = current(array_filter(explode('*', $mc)));
+                empty($mc) ?: $mc = '';
+            }
+            $one_in->goodsName = $mc;
+        }
+
+        //从详情里拿 商品名称
+        foreach ($out as $one_in) {
+            $fpdm = $one_in->getAttr('invoiceCode');
+            $fphm = $one_in->getAttr('invoiceNumber');
+            $detail = EntInvoiceDetail::create()
+                ->addSuffix($fpdm, $fphm)
+                ->field('mc')
+                ->where(['fpdm' => $fpdm, 'fphm' => $fphm])->get();
+            $mc = '';
+            if (!empty($detail)) {
+                $mc = $detail->getAttr('mc');
+                $mc = current(array_filter(explode('*', $mc)));
+                empty($mc) ?: $mc = '';
+            }
+            $one_in->goodsName = $mc;
+        }
+
         $this->inDetail = obj2Arr($in);
-        $out = InvoiceOut::create()->where('salesTaxNo', $this->code)->all();
         $this->outDetail = obj2Arr($out);
     }
 
@@ -151,7 +132,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 $tmp->setValue('selectMore', '如需更多信息登录 信动客动 查看');
         }
 
-        $tmp->setValue('createEnt', $userInfo->company);
+        $tmp->setValue('createEnt', $userInfo->getAttr('company'));
 
         $tmp->setValue('entName', $this->entName);
 
@@ -671,7 +652,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //财务资产
         $c = $this->cwzc($data['FinanceData']['data'], 'fz');
         //计算
-        $this->fz['caiwu'] = ($c[0] * 0.6 + $c[1] * 0.4)*0.35;
+        $this->fz['caiwu'] = ($c[0] * 0.6 + $c[1] * 0.4) * 0.35;
         //==============================================================================================================
         //行业位置
         $a = $this->hywz($data['FinanceData']['data'], $data['getRegisterInfo']);
@@ -688,7 +669,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //财务资产
         $d = $this->cwzc($data['FinanceData']['data'], 'fx');
         //计算
-        $this->fx['caiwu'] = ($d[0] * 0.5 + $d[1] * 0.5)*0.35;
+        $this->fx['caiwu'] = ($d[0] * 0.5 + $d[1] * 0.5) * 0.35;
         //==============================================================================================================
         //近三年团队人数
         $a = $this->tdrs($data['itemInfo'], 'fx');
@@ -4355,11 +4336,11 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
             if (!empty($res['result'])) {
                 foreach ($res['result'] as $year => $val) {
-                    array_push($tmp, [
+                    $tmp[] = [
                         'year' => $year,
                         'yoy' => is_numeric($val['SOCNUM_yoy']) ? sRound($val['SOCNUM_yoy'] * 100) : null,
                         'num' => is_numeric($val['SOCNUM']) ? $val['SOCNUM'] - 0 : null,
-                    ]);
+                    ];
                 }
             }
 
