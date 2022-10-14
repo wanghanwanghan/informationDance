@@ -924,4 +924,24 @@ class TaoShuController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+    //动产抵押
+    function dongChanDiYa()
+    {
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageno = $this->request()->getRequestParam('page') ?? '1';
+        $range = $this->request()->getRequestParam('pageSize') ?? '20';
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageno,
+            'pageSize' => $range,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            $res = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getChattelMortgageInfo');
+
+            return  $res;
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
 }

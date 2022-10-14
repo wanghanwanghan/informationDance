@@ -245,6 +245,7 @@ class Invoice
         if (empty($this->out)) return $return;
 
         foreach ($this->out as $one) {
+            //发票状态代码 0-正常 1-失控 2-作废 3-红字 4-异常票
             //先判断是否是正常发票
             if ($one['state'] != 0) continue;
 
@@ -287,7 +288,7 @@ class Invoice
         if (empty($return)) return $return;
 
         //降序
-        if (!empty($return)) krsort($return);
+        krsort($return);
 
         if (count($return) >= 2) {
             $arr1 = array_shift($return);
@@ -598,7 +599,6 @@ class Invoice
 
         return $temp;
     }
-
 
     //6.1企业开票情况汇总
     public function qykpqkhz()
