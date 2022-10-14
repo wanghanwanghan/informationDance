@@ -462,7 +462,7 @@ class DianZiQianService extends ServiceBase
             'phoneNo'     => $postData['phone'] ?? '',
             'region'      => $postData['city'] ?? '',
             'address'     => $postData['regAddress'] ?? '',
-            'date'        => '2021年09月01日'
+            'date'        => date('Y年m月d日', time())
         ];
         $contractFileTemplateFilling = $this->contractFileTemplateFilling( $contractTemplateCode,$params);
         $contractCode                = $contractFileTemplateFilling['result']['contractCode'] ?? "";
