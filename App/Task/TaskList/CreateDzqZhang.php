@@ -128,7 +128,7 @@ class CreateDzqZhang extends TaskBase implements TaskInterface
         $iList = AntAuthList::create()->where([
                                                   'authDate'          => 0,
                                                   'filePath'          => '',
-                                                  'dianZiQian_id'     => 0,
+//                                                  'dianZiQian_id'     => 0,
                                                   'dianZiQian_status' => 0
                                               ])->all();
         if (!empty($iList)) {
