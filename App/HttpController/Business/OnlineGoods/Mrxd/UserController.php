@@ -760,12 +760,14 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'id'=>1,
                 //用户姓名
                 'name'=>  '张三',
+                //产品名称
+                'product_name'=>  '产品A',
                 //定金金额
                 'order_money'=>  '1000',
                 //收益金额
                 'income_money'=>  '1000',
                 //时间
-                'income_date'=>  '2022-10-09',
+                'income_date'=>  '2022-10-09', 
             ]
         ];
         $total = 100 ;
