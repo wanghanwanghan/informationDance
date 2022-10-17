@@ -2789,7 +2789,7 @@ class LongXinService extends ServiceBase
             ['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn];
     }
 
-    public function getCompanyList($data): array
+    function getCompanyList($data): array
     {
         $arr = [
             'ENTNAME' => $data['entName'],
@@ -2799,10 +2799,12 @@ class LongXinService extends ServiceBase
         ];
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
-        CommonService::getInstance()->log4PHP([$this->baseUrl . 'company_list/', $arr, $this->sendHeaders], 'info', 'getCompanyList');
+
         $res = (new CoHttpClient())
             ->useCache(true)
             ->send($this->baseUrl . 'company_list/', $arr, $this->sendHeaders);
+
+        CommonService::getInstance()->log4PHP($res, 'info', 'getCompanyList');
 
         return $this->checkResp($res);
     }
