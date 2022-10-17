@@ -2802,10 +2802,7 @@ class LongXinService extends ServiceBase
 
         $res = (new CoHttpClient())
             ->useCache(true)
-            ->needJsonDecode(false)
             ->send($this->baseUrl . 'company_list/', $arr, $this->sendHeaders);
-
-        CommonService::getInstance()->log4PHP($res, 'info', 'getCompanyList');
 
         return $this->checkResp($res);
     }
