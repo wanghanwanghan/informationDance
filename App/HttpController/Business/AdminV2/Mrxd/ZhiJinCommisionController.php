@@ -16,6 +16,7 @@ use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\MailReceipt;
+use App\HttpController\Models\MRXD\OnlineGoodsUserDaikuanOrder;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Service\Common\CommonService;
@@ -61,7 +62,15 @@ class ZhiJinCommisionController extends ControllerBase
             ]
         );
 
-        $exampleDatas = [
+
+
+        $datas = OnlineGoodsUserDaikuanOrder::findByConditionV2([],$page,$pageSize);
+        $total = $datas['total'] ;
+        foreach ($datas['data'] as $dataValue){
+
+        }
+        $retrundatas = $datas['data'] ;
+        $retrundatas = [
             [
                 'id'=>1,
                 //产品名称
@@ -103,7 +112,8 @@ class ZhiJinCommisionController extends ControllerBase
                 'state_cname'=> '已成交',
             ]
         ];
-        $total = 100 ;
+        $total = 100;
+
         return $this->writeJson(
             200,
             [
@@ -112,7 +122,7 @@ class ZhiJinCommisionController extends ControllerBase
                 'total' => $total,
                 'totalPage' => ceil( $total/ $pageSize ),
             ] ,
-            $exampleDatas
+            $retrundatas
             ,
             '成功',
             true,
