@@ -16,6 +16,7 @@ use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\MailReceipt;
+use App\HttpController\Models\MRXD\OnlineGoodsUserBaoXianOrder;
 use App\HttpController\Models\MRXD\OnlineGoodsUserDaikuanOrder;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
@@ -151,7 +152,7 @@ class ZhiJinCommisionController extends ControllerBase
 
 
 
-        $datas = OnlineGoodsUserDaikuanOrder::findByConditionV2([],$page,$pageSize);
+        $datas = OnlineGoodsUserBaoXianOrder::findByConditionV2([],$page,$pageSize);
         $total = $datas['total'] ;
         foreach ($datas['data'] as $dataValue){
 
