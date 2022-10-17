@@ -735,6 +735,55 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             []
         );
     }
+    function incomeLists(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page =  $requestData['page']?:1;
+        $pageSize =  $requestData['pageSize']?:100;
+
+        $userInfo = $this->loginUserinfo;
+
+        CommonService::writeTestLog(
+            [
+                'getInvitationCode'=>[
+                    '$userInfo'=>[
+                        'id'=>$userInfo['id'],
+                        'user_name'=>$userInfo['user_name'],
+                        'phone'=>$userInfo['phone'],
+                    ],
+                ]
+            ]
+        );
+
+        $exampleDatas = [
+            [
+                'id'=>1,
+                //用户姓名
+                'name'=>  '张三',
+                //定金金额
+                'order_money'=>  '1000',
+                //收益金额
+                'income_money'=>  '1000',
+                //时间
+                'income_date'=>  '2022-10-09',
+            ]
+        ];
+        $total = 100 ;
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' =>$pageSize,
+                'total' => $total,
+                'totalPage' => ceil( $total/ $pageSize ),
+            ] ,
+            $exampleDatas
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
 
     //前台-我的分佣列表
     function commissionLists(): bool
