@@ -194,13 +194,15 @@ class LongXinService extends ServiceBase
     {
         $entId = $this->getEntid($postData['entName']);
         $version = $postData['version'];
+        $page = $postData['page'];
 
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
 
         $arr = [
             'entid' => $entId,
             'version' => strtoupper($version),
-            'usercode' => $this->usercode
+            'usercode' => $this->usercode,
+            'pageIndex' => trim($page)
         ];
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);

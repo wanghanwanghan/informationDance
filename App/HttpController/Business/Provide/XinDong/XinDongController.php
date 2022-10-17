@@ -1828,6 +1828,7 @@ class XinDongController extends ProvideBase
         $postData = [
             'entName' => trim($this->getRequestData('entName')),
             'version' => trim($this->getRequestData('version', 'A1')),
+            'page' => trim($this->getRequestData('page', '1')),
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
