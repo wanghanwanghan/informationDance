@@ -1525,8 +1525,6 @@ class LongXinService extends ServiceBase
             'pdate' => $data['pdate'] ?? '',
         ];
 
-        CommonService::getInstance()->log4PHP($arr, 'info', 'getJobInfo.log');
-
         $arr = array_filter($arr);
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);

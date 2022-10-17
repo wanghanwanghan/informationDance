@@ -1743,7 +1743,7 @@ class XinDongController extends ProvideBase
                 ->getJobInfo($postData);
         });
 
-        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        $res = CspService::getInstance()->exec($this->csp, 20);
 
         return $this->checkResponse($res);
     }
@@ -2288,7 +2288,7 @@ class XinDongController extends ProvideBase
     //淘数 龙盾 历史沿革
     function getHistoricalEvolution()
     {
-        $entName  = $this->request()->getRequestParam('entName') ?? '';
+        $entName = $this->request()->getRequestParam('entName') ?? '';
 
         $this->csp->add($this->cspKey, function () use ($entName) {
             return (new XinDongService())
