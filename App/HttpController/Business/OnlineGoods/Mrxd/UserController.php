@@ -438,6 +438,12 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             return $this->writeJson(201, null, [],  '验证码不正确或已过期');
         }
 
+        if(
+            OnlineGoodsUser::findByPhone($phone)
+        ){
+            return $this->writeJson(201, null, [],  '该手机已经被注册');
+        }
+
         $id = OnlineGoodsUser::addRecordV2(
             [
                 'source' => OnlineGoodsUser::$source_self_register,
