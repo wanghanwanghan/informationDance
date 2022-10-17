@@ -346,13 +346,195 @@ class FaHaiController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function getSifacdk(): bool
+    //查冻扣
+    function getSifacdkList(): bool
     {
         $entName = $this->getRequestData('entName');
         $page = $this->getRequestData('page', 1);
         $pageSize = $this->getRequestData('pageSize', 10);
 
         $docType = 'sifacdk';
+
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getList($this->listBaseUrl . 'sifa', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    //查冻扣
+    function getSifacdkDetail(): bool
+    {
+        $id = $this->getRequestData('id');
+
+        $docType = 'sifacdk';
+
+        $postData = [
+            'id' => $id,
+            'doc_type' => $docType,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData, $docType) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getDetail($this->detailBaseUrl . $docType, $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    //其他动产融资列表
+    function getCompanyZdwQtdcdsrList(): bool
+    {
+        $entName = $this->getRequestData('entName');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
+
+        $docType = 'company_zdw_qtdcdsr';
+
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getList($this->listBaseUrl . 'sifa', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    //其他动产融资详情
+    function getCompanyZdwQtdcdsrDetail(): bool
+    {
+        $id = $this->getRequestData('id');
+
+        $docType = 'company_zdw_qtdcdsr';
+
+        $postData = [
+            'id' => $id,
+            'doc_type' => $docType,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData, $docType) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getDetail($this->detailBaseUrl . $docType, $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    //仓单质押列表
+    function getCompanyZdwCdzydsrList(): bool
+    {
+        $entName = $this->getRequestData('entName');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
+
+        $docType = 'company_zdw_cdzydsr';
+
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getList($this->listBaseUrl . 'sifa', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    //仓单质押详情
+    function getCompanyZdwCdzydsrDetail(): bool
+    {
+        $entName = $this->getRequestData('entName');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
+
+        $docType = 'company_zdw_cdzydsr';
+
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getList($this->listBaseUrl . 'sifa', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    //保证金质押登记
+    function getCompanyZdwBzjzydsrList(): bool
+    {
+        $entName = $this->getRequestData('entName');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
+
+        $docType = 'company_zdw_bzjzydsr';
+
+        $postData = [
+            'doc_type' => $docType,
+            'keyword' => $entName,
+            'pageno' => $page,
+            'range' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new FaYanYuanService())
+                ->setCheckRespFlag(true)
+                ->getList($this->listBaseUrl . 'sifa', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    //保证金质押登记详情
+    function getCompanyZdwBzjzydsrDetail(): bool
+    {
+        $entName = $this->getRequestData('entName');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
+
+        $docType = 'company_zdw_bzjzydsr';
 
         $postData = [
             'doc_type' => $docType,

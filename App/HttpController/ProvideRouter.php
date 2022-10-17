@@ -36,7 +36,9 @@ class ProvideRouter
         $this->NanJingXiaoAnV1($routeCollector);
         $this->ShenZhouYunHeV1($routeCollector);
     }
-    private function ShenZhouYunHeV1(RouteCollector $routeCollector){
+
+    private function ShenZhouYunHeV1(RouteCollector $routeCollector)
+    {
         $prefix = '/Business/Provide/ShenZhouYunHe/ShenZhouYunHeController/';
         $routeCollector->addGroup('/szyh', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/invoices', $prefix . 'invoices');
@@ -44,6 +46,7 @@ class ProvideRouter
         });
         return true;
     }
+
     private function DianZiQianV1(RouteCollector $routeCollector)
     {
         $prefix = '/Business/Provide/DianziQian/DianZiQianController/';
@@ -62,7 +65,8 @@ class ProvideRouter
         return true;
     }
 
-    private function GuangZhouYinLianV1(RouteCollector $routeCollector){
+    private function GuangZhouYinLianV1(RouteCollector $routeCollector)
+    {
         $prefix = '/Business/Provide/GuangZhouYinLian/GuangZhouYinLianController/';
         $routeCollector->addGroup('/gzyl', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/queryUsedVehicleInfo', $prefix . 'queryUsedVehicleInfo');
@@ -71,7 +75,8 @@ class ProvideRouter
         return true;
     }
 
-    private function ChuangLanV1(RouteCollector $routeCollector){
+    private function ChuangLanV1(RouteCollector $routeCollector)
+    {
         $prefix = '/Business/Provide/ChuangLan/ChuangLanController/';
         $routeCollector->addGroup('/cl', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getCheckPhoneStatus', $prefix . 'getCheckPhoneStatus');
@@ -81,7 +86,8 @@ class ProvideRouter
         return true;
     }
 
-    private function ZhiChiRouterV1(RouteCollector $routeCollector){
+    private function ZhiChiRouterV1(RouteCollector $routeCollector)
+    {
         $prefix = '/Business/Provide/ZhiChi/ZhiChiController/';
         $routeCollector->addGroup('/zc', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/directUrl', $prefix . 'directUrl');
@@ -348,7 +354,14 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getCpws', $prefix . 'getCpws');
             $routeCollector->addRoute(['GET', 'POST'], '/getZxgg', $prefix . 'getZxgg');
             $routeCollector->addRoute(['GET', 'POST'], '/getShixin', $prefix . 'getShixin');
-            $routeCollector->addRoute(['GET', 'POST'], '/getSifacdk', $prefix . 'getSifacdk');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSifacdkList', $prefix . 'getSifacdkList');
+            $routeCollector->addRoute(['GET', 'POST'], '/getSifacdkDetail', $prefix . 'getSifacdkDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyZdwQtdcdsrList', $prefix . 'getCompanyZdwQtdcdsrList');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyZdwQtdcdsrDetail', $prefix . 'getCompanyZdwQtdcdsrDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyZdwCdzydsrList', $prefix . 'getCompanyZdwCdzydsrList');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyZdwCdzydsrDetail', $prefix . 'getCompanyZdwCdzydsrDetail');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyZdwBzjzydsrList', $prefix . 'getCompanyZdwBzjzydsrList');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyZdwBzjzydsrDetail', $prefix . 'getCompanyZdwBzjzydsrDetail');
             $routeCollector->addRoute(['GET', 'POST'], '/getJudicialSaleList', $prefix . 'getJudicialSaleList');
             $routeCollector->addRoute(['GET', 'POST'], '/getCpwsDetail', $prefix . 'getCpwsDetail');//裁判文书
             $routeCollector->addRoute(['GET', 'POST'], '/getShixinDetail', $prefix . 'getShixinDetail');//裁判文书

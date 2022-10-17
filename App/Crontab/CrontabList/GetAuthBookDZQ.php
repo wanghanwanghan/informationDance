@@ -89,14 +89,15 @@ Eof;
                 $url = [];
                 $fileData = [];
                 $flieDetail = [];
-                if (empty($DetailList)) {
+                if (empty($DetailList) || $oneEntInfo['dianZiQian_id'] >0) {
                     CommonService::getInstance()->log4PHP([$data], 'info', 'DZQemptyAntAuthSealDetail');
                     $u = $this->getDataSealUrl($oneEntInfo['dianZiQian_id']);
                     if(empty($u)){
                         continue;
                     }
                     $url['2'] = $u;
-                } else {
+                } else
+                {
                     $notNoodIsSeal = [];
                     $detailArr = [];
                     foreach ($DetailList as $value) {

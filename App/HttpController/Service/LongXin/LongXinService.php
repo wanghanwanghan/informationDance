@@ -194,13 +194,15 @@ class LongXinService extends ServiceBase
     {
         $entId = $this->getEntid($postData['entName']);
         $version = $postData['version'];
+        $page = $postData['page'];
 
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
 
         $arr = [
             'entid' => $entId,
             'version' => strtoupper($version),
-            'usercode' => $this->usercode
+            'usercode' => $this->usercode,
+            'pageIndex' => trim($page)
         ];
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
@@ -2789,17 +2791,17 @@ class LongXinService extends ServiceBase
             ['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn];
     }
 
-    public function getCompanyList($data): array
+    function getCompanyList($data): array
     {
         $arr = [
             'ENTNAME' => $data['entName'],
             'usercode' => $this->usercode,
-            'pageIndex' => $data['page'] - 0,
-            'pageSize' => 20,
+            'pageIndex' => trim($data['page']) ?? '1',
+            'pageSize' => '20',
         ];
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
-        CommonService::getInstance()->log4PHP([$this->baseUrl . 'company_list/', $arr, $this->sendHeaders], 'info', 'getCompanyList');
+
         $res = (new CoHttpClient())
             ->useCache(true)
             ->send($this->baseUrl . 'company_list/', $arr, $this->sendHeaders);
