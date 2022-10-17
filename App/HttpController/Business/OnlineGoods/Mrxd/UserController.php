@@ -767,7 +767,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 //收益金额
                 'income_money'=>  '1000',
                 //时间
-                'income_date'=>  '2022-10-09', 
+                'income_date'=>  '2022-10-09',
             ]
         ];
         $total = 100 ;
