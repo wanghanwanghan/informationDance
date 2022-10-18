@@ -34,7 +34,7 @@ class ServiceBase
         if ($e instanceof \Throwable) {
             $file = $e->getFile();
             $line = $e->getLine();
-            $msg = jsonEncode($e->getMessage(), false);
+            $msg = $e->getMessage();
             $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
         } else {
             $content = '$e类别不明';
