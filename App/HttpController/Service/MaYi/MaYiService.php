@@ -5247,17 +5247,16 @@ class MaYiService extends ServiceBase
                 $baiduApiRes['townCode'] = $baiduApi['result']['town_code'] ?? '';
             }
 
-            $id = AntAuthList::create()->data([
+            $created = [
                 'requestId' => $data['requestId'],
                 'entName' => $data['entName'],
                 'socialCredit' => $data['socialCredit'],
-                'legalPerson' => $data['legalPerson'],
-                'idCard' => $data['idCard'],
-                'phone' => $data['phone'],
+                'legalPerson' => $data['legalPerson'] ?? '',
+                'idCard' => $data['idCard'] ?? '',
+                'phone' => $data['phone'] ?? '',
                 'region' => $baiduApiRes['city'] ?? '',
                 'requestDate' => time(),
                 'belong' => $data['belong'],
-                'status' => self::STATUS_0,
                 'regAddress' => $baiduApiRes['regAddress'] ?? '',
                 'province' => $baiduApiRes['province'] ?? '',
                 'provinceCode' => $baiduApiRes['provinceCode'] ?? '',
@@ -5269,7 +5268,18 @@ class MaYiService extends ServiceBase
                 'townCode' => $baiduApiRes['townCode'] ?? '',
                 'orderNo' => $data['orderNo'] ?? '',
                 'getDataSource' => 2,
-            ])->save();
+            ];
+
+            $data['authorized'] === 'Y' ?
+                $created['status'] = self::STATUS_1 ://拿到授权书了
+                $created['status'] = self::STATUS_0;
+
+            if ($data['authorized'] === 'Y') {
+                $data['filePath'] = $data['fileUrl'];
+                $data['authDate'] = time();
+            }
+
+            $id = AntAuthList::create()->data($created)->save();
         } else {
             $id = $check->getAttr('id');
         }
