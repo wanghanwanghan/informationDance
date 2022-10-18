@@ -965,7 +965,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total' => $total,
                 'totalPage' => ceil( $total/ $pageSize ),
             ] ,
-            $exampleDatas
+            $inviters
             ,
             '成功',
             true,
