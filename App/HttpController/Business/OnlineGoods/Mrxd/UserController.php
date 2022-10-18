@@ -440,7 +440,12 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         if(
             OnlineGoodsUser::getRandomDigit($phone)!= $code
         ){
-            return $this->writeJson(201, null, [],  '验证码不正确或已过期');
+            if(
+                CommonService::IsProductionEnv()
+            ){
+                return $this->writeJson(201, null, [],  '验证码不正确或已过期');
+            }
+
         }
 
         if(

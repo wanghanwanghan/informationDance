@@ -30,11 +30,21 @@ class OnlineGoodsCommissions extends ModelBase
     static  $commission_state_seted  = 10;
     static  $commission_state_seted_cname  = '已设置分佣比例';
 
-
+    /**
+    信动给VIP分佣：信动—>A
+    VIP给邀请人分佣：信动—>A
+    邀请人给被邀请人分佣：C→D
+     */
+    static  $commission_data_type_xindong_to_vip  = 5;
+    static  $commission_data_type_xindong_to_vip_cname  = '信动给VIP分佣';
+    static  $commission_data_type_vip_to_invitor  = 10;
+    static  $commission_data_type_vip_to_invitor_cname  = 'VIP给邀请人分佣';
+    static  $commission_data_type_invitor_to_user  = 15;
+    static  $commission_data_type_invitor_to_user_cname  = '邀请人给被邀请人分佣';
 
 
     static  function  addRecordV2($info){
-        $oldRes = self::findByCommissionOrderId($info['commission_order_id'],$info['commission_type']);
+        $oldRes = self::findByCommissionOrderId($info['commission_order_id'],$info['commission_type'],$info['commission_data_type']);
         if(
             $oldRes
         ){
@@ -51,7 +61,9 @@ class OnlineGoodsCommissions extends ModelBase
            $res =  OnlineGoodsCommissions::create()->data([
                 'user_id' => $requestData['user_id'],
                 'commission_create_user_id' => $requestData['commission_create_user_id'],
+                'commission_owner' => $requestData['commission_owner'],
                 'commission_type' => $requestData['commission_type'],
+                'commission_data_type' => $requestData['commission_data_type'],
                 'comission_rate' => $requestData['comission_rate'],
                 'commission_order_id' => $requestData['commission_order_id'],
                 'state' => $requestData['state'],
@@ -137,10 +149,11 @@ class OnlineGoodsCommissions extends ModelBase
         return $res;
     }
 
-    public static function findByCommissionOrderId($commission_order_id,$commission_type){
+    public static function findByCommissionOrderId($commission_order_id,$commission_type,$commission_data_type){
         $res =  OnlineGoodsCommissions::create()
             ->where('commission_order_id',$commission_order_id)
             ->where('commission_type',$commission_type)
+            ->where('commission_data_type',$commission_data_type)
             ->get();
         return $res;
     }
