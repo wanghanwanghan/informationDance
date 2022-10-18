@@ -1623,7 +1623,7 @@ class XinDongController extends ProvideBase
         $postData = [
             'entName' => $this->getRequestData('entName'),
             'page' => $this->getRequestData('page', 1),
-            'pageSize' => 10,
+            'pageSize' => $this->getRequestData('pageSize', 10),
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
@@ -1659,7 +1659,7 @@ class XinDongController extends ProvideBase
         $postData = [
             'entName' => $this->getRequestData('entName'),
             'page' => $this->getRequestData('page', 1),
-            'pageSize' => 10,
+            'pageSize' => $this->getRequestData('pageSize', 10),
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
@@ -1743,7 +1743,7 @@ class XinDongController extends ProvideBase
                 ->getJobInfo($postData);
         });
 
-        $res = CspService::getInstance()->exec($this->csp, 20);
+        $res = CspService::getInstance()->exec($this->csp, 30);
 
         return $this->checkResponse($res);
     }
