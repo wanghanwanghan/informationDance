@@ -290,6 +290,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/applyWithdrawalRecords', $prefix . 'applyWithdrawalRecords');
             $routeCollector->addRoute(['GET', 'POST'], '/setApplyWithdrawalRes', $prefix . 'setApplyWithdrawalRes');
             $routeCollector->addRoute(['GET', 'POST'], '/daikuanBank', $prefix . 'daikuanBank');
+            $routeCollector->addRoute(['GET', 'POST'], '/ZhiJinFansOrderLists', $prefix . 'ZhiJinFansOrderLists');
         });
 
         return true;
