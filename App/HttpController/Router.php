@@ -284,11 +284,12 @@ class Router extends AbstractRouter
         $routeCollector->addGroup('/online_goods', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/sendSms', $prefix . 'sendSms');// sendSms
             $routeCollector->addRoute(['GET', 'POST'], '/login', $prefix . 'login');// login
-            $routeCollector->addRoute(['GET', 'POST'], '/register', $prefix . 'register');// login
+            $routeCollector->addRoute(['GET', 'POST'], '/registerZhiJin', $prefix . 'registerZhiJin');// login
             $routeCollector->addRoute(['GET', 'POST'], '/OnlineSignOut', $prefix . 'OnlineSignOut');// login
             $routeCollector->addRoute(['GET', 'POST'], '/OnlineLogOut', $prefix . 'OnlineLogOut');// login
             $routeCollector->addRoute(['GET', 'POST'], '/getInvitationCode', $prefix . 'getInvitationCode');// login
             $routeCollector->addRoute(['GET', 'POST'], '/loanOrderLists', $prefix . 'loanOrderLists');// login
+            $routeCollector->addRoute(['GET', 'POST'], '/baoxianOrderLists', $prefix . 'baoxianOrderLists');// login
             $routeCollector->addRoute(['GET', 'POST'], '/commissionLists', $prefix . 'commissionLists');// login
             $routeCollector->addRoute(['GET', 'POST'], '/zhiJinUserLists', $prefix . 'zhiJinUserLists');// login
             $routeCollector->addRoute(['GET', 'POST'], '/setCommisionRate', $prefix . 'setCommisionRate');// login
@@ -299,6 +300,9 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/ZhiJinAccountFlow', $prefix . 'ZhiJinAccountFlow');// login
             $routeCollector->addRoute(['GET', 'POST'], '/ZhiJinOrderLists', $prefix . 'ZhiJinOrderLists');// login
             $routeCollector->addRoute(['GET', 'POST'], '/ZhiJinFansOrderLists', $prefix . 'ZhiJinFansOrderLists');// login
+            $routeCollector->addRoute(['GET', 'POST'], '/incomeLists', $prefix . 'incomeLists');// login
+            $routeCollector->addRoute(['GET', 'POST'], '/baoxianOrderLists', $prefix . 'baoxianOrderLists');// login
+            $routeCollector->addRoute(['GET', 'POST'], '/daikuanOrderLists', $prefix . 'daikuanOrderLists');// login
         });
 
         return true;
