@@ -923,8 +923,11 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         foreach ($inviters as $inviterData){
             $tmpUserInfo = OnlineGoodsUser::findById($inviterData['user_id']);
             $tmpUserInfo = $tmpUserInfo->toArray();
+            $inviterData['user_commission_amount'] = 1000 ;
+            $inviterData['user_avatar'] = $tmpUserInfo['avatar'] ;
             $inviterData['user_name'] = $tmpUserInfo['user_name'] ;
-            
+            $inviterData['user_join_time'] = date('Y-m-d H:i:s',$tmpUserInfo['created_at']) ;
+
             $tmpUserInvoterInfo = OnlineGoodsUser::findById($inviterData['invite_by']);
             $tmpUserInvoterInfo = $tmpUserInvoterInfo->toArray();
             $inviterData['invite_user_name'] = $tmpUserInvoterInfo['user_name'] ;
