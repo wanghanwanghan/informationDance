@@ -262,7 +262,7 @@ class ZhiJinCommisionController extends ControllerBase
 
         $dataRes = OnlineGoodsDaikuanProducts::findByConditionV2([],1,100);
         $returnData = [];
-        foreach ($dataRes['data'] as $valueItem){
+        foreach ($dataRes['data'] as &$valueItem){
             $returnData[$valueItem['id']] = $valueItem['name'];
         }
 
