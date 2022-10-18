@@ -910,6 +910,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             []
         );
     }
+
+    //置金粉丝列表
     function ZhiJinFansLists(): bool
     {
         $requestData =  $this->getRequestData();

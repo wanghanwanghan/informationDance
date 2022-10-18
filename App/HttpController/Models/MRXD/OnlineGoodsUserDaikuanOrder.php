@@ -114,6 +114,57 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
         return $res;
     }
 
+    /**
+    根据订单添加分佣信息
+     * 1：直接邀请人可以分佣
+     * 2：VIP邀请人可以分佣
+     */
+    static function addCommissionInfoById($id){
+        /**
+        //产品
+        'product_id' => $requestData['product_id'],
+        //购买人
+        'purchaser_id' => $requestData['purchaser_id'],
+        'amount' => $requestData['price'],
+        'purchaser_name' => $requestData['purchaser_name'],
+        'purchaser_phone' => $requestData['purchaser_phone'],
+        'zhijin_phone' => $requestData['zhijin_phone'],
+        'xindong_commission_rate' => $requestData['xindong_commission_rate'],
+        'commission_rate' => $requestData['xindong_commission_rate'],
+        'order_date' => $requestData['order_date'],
+        'commission_date' => $requestData['commission_date'],
+        'remark' => $requestData['remark'],
+        'commission_set_state' => $requestData['commission_set_state'],
+        'commission_state' => $requestData['commission_state'],
+         */
+        $orderInfo = self::findById($id);
+        $orderInfo = $orderInfo->toArray();
+        // 基准金额  amount
+        // 置金用户
+        $zhiJinUserInfo = OnlineGoodsUser::findByPhone($orderInfo['zhijin_phone']);
+        $zhiJinUserInfo = $zhiJinUserInfo->toArray();
+         //直接邀请人
+        $directInvitorInfo = OnlineGoodsUserInviteRelation::getDirectInviterInfo($zhiJinUserInfo['id']);
+        //vip邀请人
+        $VipInvitorInfo = OnlineGoodsUserInviteRelation::getVipInviterInfo($zhiJinUserInfo['id']);
+        //设置直接邀请人分佣信息
+        if($directInvitorInfo){
+            OnlineGoodsCommissions::addRecordV2(
+                [
+                    'user_id' => $directInvitorInfo['id'],
+                    'commission_create_user_id' => $zhiJinUserInfo['id'],
+                    'comission_rate' => 15,
+                    'commission_type' => OnlineGoodsCommissions::$commission_type_dai_kuan,
+                    'commission_order_id' => $id,
+                    'remark' => '直接邀请人分佣信息',
+                ]
+            );
+        }
+
+        ;
+
+
+    }
 
     public static function findAllByCondition($whereArr){
         $res =  OnlineGoodsUserDaikuanOrder::create()

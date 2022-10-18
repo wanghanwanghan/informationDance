@@ -18,8 +18,10 @@ use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\MRXD\OnlineGoodsDaikuanBank;
 use App\HttpController\Models\MRXD\OnlineGoodsDaikuanProducts;
+use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\MRXD\OnlineGoodsUserBaoXianOrder;
 use App\HttpController\Models\MRXD\OnlineGoodsUserDaikuanOrder;
+use App\HttpController\Models\MRXD\OnlineGoodsUserInviteRelation;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Service\Common\CommonService;
@@ -402,6 +404,80 @@ class ZhiJinCommisionController extends ControllerBase
             []
         );
     }
+
+    //置金粉丝列表
+    function ZhiJinFansLists(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page =  $requestData['page']?:1;
+        $pageSize =  $requestData['pageSize']?:100;
+        $userInfo = $this->loginUserinfo;
+
+        //$isVip = OnlineGoodsUser::IsVipV2($userInfo['id']);
+        $isVip = OnlineGoodsUser::IsVipV2(1);
+        $inviters = OnlineGoodsUserInviteRelation::getVipsAllInvitedUser(1);
+        foreach ($inviters as $inviterData){
+            $tmpUserInfo = OnlineGoodsUser::findById($inviterData['user_id']);
+            $tmpUserInfo = $tmpUserInfo->toArray();
+            $inviterData['user_commission_amount'] = 1000 ;
+            $inviterData['user_avatar'] = $tmpUserInfo['avatar'] ;
+            $inviterData['user_name'] = $tmpUserInfo['user_name'] ;
+            $inviterData['user_join_time'] = date('Y-m-d H:i:s',$tmpUserInfo['created_at']) ;
+
+            $tmpUserInvoterInfo = OnlineGoodsUser::findById($inviterData['invite_by']);
+            $tmpUserInvoterInfo = $tmpUserInvoterInfo->toArray();
+            $inviterData['invite_user_name'] = $tmpUserInvoterInfo['user_name'] ;
+        }
+        //找到所有的粉丝
+        // vip 》粉丝》
+        CommonService::writeTestLog(
+            [
+                'ZhiJinFansLists'=>[
+                    $inviters
+                ]
+            ]
+        );
+
+        $exampleDatas = [
+            [
+                'id'=>1,
+                //用户姓名
+                'name'=>  '张三',
+                //邀请人姓名
+                'inviter'=>  '张大三',
+                //订单数量
+                'order_nums'=>  '100',
+                //累计收益
+                'total_income'=>  '1000',
+                //粉丝数量
+                'total_fan_nums'=>  '1000',
+
+                //头像
+                'avatar'=>  '/static/img/aaa.jpg',
+                //加入时间
+                'join_at'=>'2022-10-09',
+                'created_at'=>1665367946,
+                'state'=>1,
+                'state_cname'=> '',
+            ]
+        ];
+        $total = 100 ;
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' =>$pageSize,
+                'total' => $total,
+                'totalPage' => ceil( $total/ $pageSize ),
+            ] ,
+            $inviters
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
+
 
     function addLoanOrder(): bool
     {

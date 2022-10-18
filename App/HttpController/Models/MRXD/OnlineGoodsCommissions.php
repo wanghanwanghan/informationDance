@@ -13,31 +13,48 @@ use EasySwoole\RedisPool\Redis;
 
 // use App\HttpController\Models\AdminRole;
 
-class OnlineGoodsUserInviteRelation extends ModelBase
+class OnlineGoodsCommissions extends ModelBase
 {
 
-    protected $tableName = 'online_goods_user_invite_relation';
+    protected $tableName = 'online_goods_commissions';
+
+    static  $commission_type_bao_xian = 5;
+    static  $commission_type_bao_xian_cname = '保险';
+
+    static  $commission_type_dai_kuan  = 10;
+    static  $commission_type_dai_kuan_cname  = '贷款';
+
+    static  $commission_state_init  = 5;
+    static  $commission_state_init_cname  = '待设置分佣比例';
+
+    static  $commission_state_seted  = 10;
+    static  $commission_state_seted_cname  = '已设置分佣比例';
+
+
+
 
     static  function  addRecordV2($info){
-//        $oldRes = self::findByUserAndInvite($info['user_id'],$info['invite_by']);
-        $oldRes = self::findByUser($info['user_id']);
+        $oldRes = self::findByCommissionOrderId($info['commission_order_id'],$info['commission_type']);
         if(
             $oldRes
         ){
-            return  $oldRes->getAttr('id');
+           return  $oldRes->getAttr('id');
         }
 
-        return OnlineGoodsUserInviteRelation::addRecord(
+        return OnlineGoodsCommissions::addRecord(
             $info
         );
     }
 
     public static function addRecord($requestData){
-
         try {
-           $res =  OnlineGoodsUserInviteRelation::create()->data([
+           $res =  OnlineGoodsCommissions::create()->data([
                 'user_id' => $requestData['user_id'],
-                'invite_by' => $requestData['invite_by'],
+                'commission_create_user_id' => $requestData['commission_create_user_id'],
+                'commission_type' => $requestData['commission_type'],
+                'comission_rate' => $requestData['comission_rate'],
+                'commission_order_id' => $requestData['commission_order_id'],
+                'state' => $requestData['state'],
                 'remark' => $requestData['remark']?:'',
                'created_at' => time(),
                'updated_at' => time(),
@@ -48,8 +65,7 @@ class OnlineGoodsUserInviteRelation extends ModelBase
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'failed',
-                    '$requestData' => $requestData,
-                    'err_msg' => $e->getMessage(),
+                    '$requestData' => $requestData
                 ])
             );
         }
@@ -58,14 +74,14 @@ class OnlineGoodsUserInviteRelation extends ModelBase
 
 
     public static function findAllByCondition($whereArr){
-        $res =  OnlineGoodsUserInviteRelation::create()
+        $res =  OnlineGoodsCommissions::create()
             ->where($whereArr)
             ->all();
         return $res;
     }
 
     public static function setTouchTime($id,$touchTime){
-        $info = OnlineGoodsUserInviteRelation::findById($id);
+        $info = OnlineGoodsCommissions::findById($id);
 
         return $info->update([
             'touch_time' => $touchTime,
@@ -80,7 +96,7 @@ class OnlineGoodsUserInviteRelation extends ModelBase
     }
 
     public static function findByConditionWithCountInfo($whereArr,$page){
-        $model = OnlineGoodsUserInviteRelation::create()
+        $model = OnlineGoodsCommissions::create()
                 ->where($whereArr)
                 ->page($page)
                 ->order('id', 'DESC')
@@ -96,7 +112,7 @@ class OnlineGoodsUserInviteRelation extends ModelBase
     }
 
     public static function findByConditionV2($whereArr,$page){
-        $model = OnlineGoodsUserInviteRelation::create();
+        $model = OnlineGoodsCommissions::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -113,107 +129,47 @@ class OnlineGoodsUserInviteRelation extends ModelBase
         ];
     }
 
+
     public static function findById($id){
-        $res =  OnlineGoodsUserInviteRelation::create()
+        $res =  OnlineGoodsCommissions::create()
             ->where('id',$id)            
             ->get();  
         return $res;
     }
 
-    public static function findByUserAndInvite($user_id,$invite_by){
-        $res =  OnlineGoodsUserInviteRelation::create()
-            ->where('user_id',$user_id)
-            ->where('invite_by',$invite_by)
+    public static function findByCommissionOrderId($commission_order_id,$commission_type){
+        $res =  OnlineGoodsCommissions::create()
+            ->where('commission_order_id',$commission_order_id)
+            ->where('commission_type',$commission_type)
             ->get();
         return $res;
     }
 
-    public static function findByUser($user_id){
-        $res =  OnlineGoodsUserInviteRelation::create()
-            ->where('user_id',$user_id)
+    public static function findByPhone($phone){
+        $res =  OnlineGoodsCommissions::create()
+            ->where('phone',$phone)
             ->get();
         return $res;
     }
-
 
     public static function setData($id,$field,$value){
-        $info = OnlineGoodsUserInviteRelation::findById($id);
+        $info = OnlineGoodsCommissions::findById($id);
         return $info->update([
             "$field" => $value,
         ]);
     }
 
-    //获取所有非vip用户的邀请
-    static function getAllInvitedUser($userId){
-        $res = self::findAllByCondition([
-            'invite_by' =>$userId
-        ]);
-        return $res;
-    }
-
-    //获取所有vip用户的邀请
-    static function getVipsAllInvitedUser($userId){
-        $res = self::findAllByCondition([
-            'invite_by' =>$userId
-        ]);
-
-        $return = [];
-        while (!empty($res)){
-            foreach ($res as $value){
-                $return[] = $value;
-            }
-            $res = self::getAllInvitedUser($value['user_id']);
-        }
-
-        return $return;
-    }
-
-
     public static function findBySql($where){
         $Sql = " select *  
                             from  
-                        `online_goods_user` 
+                        `online_goods_commissions` 
                             $where
       " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }
 
-    // 获取直接邀请人
-    static function getDirectInviterInfo($userId){
-        $res = self::findByUser($userId);
-        if(empty($res)){
-            return  [];
-        }
-        $tmpUsersInfo = OnlineGoodsUser::findById($res->invite_by);
-        return $tmpUsersInfo?$tmpUsersInfo->toArray():[];
-    }
 
-    // 获取VIP邀请人
-    static function getVipInviterInfo($userId){
-        $res = self::findByUser($userId);
-        $topInvitor =  0 ;
-        while (true){
-            $tmpInfo = $res->toArray();
-            $res = self::findByUser($tmpInfo['invite_by']);
-            if(empty($res)){
-                $topInvitor = $tmpInfo['invite_by'];
-                break;
-            }
-        }
 
-        if($topInvitor <= 0 ){
-            return  [];
-        }
-
-        $topInvitorInfo = OnlineGoodsUser::findById($topInvitor);
-        $topInvitorInfo = $topInvitorInfo->toArray();
-        if(
-            OnlineGoodsUser::IsVip($topInvitorInfo)
-        ){
-            return  $topInvitorInfo;
-        };
-        return [];
-    }
 
 }
