@@ -405,6 +405,75 @@ class ZhiJinCommisionController extends ControllerBase
         );
     }
 
+    function incomeLists(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page =  $requestData['page']?:1;
+        $pageSize =  $requestData['pageSize']?:100;
+
+        $userInfo = $this->loginUserinfo;
+
+        CommonService::writeTestLog(
+            [
+                'getInvitationCode'=>[
+                    '$userInfo'=>[
+                        'id'=>$userInfo['id'],
+                        'user_name'=>$userInfo['user_name'],
+                        'phone'=>$userInfo['phone'],
+                    ],
+                ]
+            ]
+        );
+
+        $exampleDatas = [
+            [
+                'id'=>1,
+                //产品名称
+                'product_name'=>'美人贷',
+                'avatar'=>'/Static/Temp/img.img',
+                'purchaser_mobile'=>'132****6193',
+                //产品id
+                'product_id'=>1,
+                //购买人
+                'purchaser'=>'张小花',
+                //介绍人
+                'introducer'=>'张大花',
+                //介绍人所得分佣比例
+                'introducer_commision'=>'50%',
+                //订单金额
+                'price'=>10000,
+                //信动所得佣金 - 佣金表
+                'xindong_commission'=>500,
+                'commission'=>50,
+                //设置分佣状态
+                'commission_set_state_cname'=>'已设置分佣',
+                //分佣状态
+                'commission_state_cname'=>'已领取分佣',
+                //下单时间
+                'order_time'=>'2022-09-09',
+                'created_at'=>1665367946,
+                'state'=>1,
+                'state_cname'=> '已成交',
+            ]
+        ];
+        $total = 100 ;
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' =>$pageSize,
+                'total' => $total,
+                'totalPage' => ceil( $total/ $pageSize ),
+            ] ,
+            $exampleDatas
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
+
+
     function ZhiJinFansOrderLists(): bool
     {
         $requestData =  $this->getRequestData();
