@@ -919,7 +919,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
         //$isVip = OnlineGoodsUser::IsVipV2($userInfo['id']);
         $isVip = OnlineGoodsUser::IsVipV2(1);
-        $inviters = OnlineGoodsUser::getVipsAllInvitedUser($userInfo['id']);
+        $inviters = OnlineGoodsUserInviteRelation::getVipsAllInvitedUser(1);
         foreach ($inviters as $inviterData){
 
         }

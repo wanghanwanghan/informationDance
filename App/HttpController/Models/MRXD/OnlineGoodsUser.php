@@ -495,29 +495,6 @@ class OnlineGoodsUser extends ModelBase
 
     }
 
-    //获取所有非vip用户的邀请
-    static function getAllInvitedUser($userId){
-        $res = self::findAllByCondition([
-            'invite_by' =>$userId
-        ]);
-        return $res;
-    }
 
-    //获取所有vip用户的邀请
-    static function getVipsAllInvitedUser($userId){
-        $res = self::findAllByCondition([
-            'invite_by' =>$userId
-        ]);
-
-        $return = [];
-        while (!empty($res)){
-            foreach ($res as $value){
-                $return[] = $value;
-            }
-            $res = self::getAllInvitedUser($value['user_id']);
-        }
-
-        return $return;
-    }
 
 }
