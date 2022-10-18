@@ -360,6 +360,12 @@ class ZhiJinCommisionController extends ControllerBase
         $code = $requestData['code'] ;
 
         $dataRes = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProducts();
+        $returnRes = [
+            9999 => '车险分期',
+        ];
+        foreach ($dataRes['data'] as $valueItem){
+            $returnRes[$valueItem['id']] = $valueItem['title'];
+        }
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
@@ -369,12 +375,7 @@ class ZhiJinCommisionController extends ControllerBase
         return $this->writeJson(
             200,
             [ ] ,
-            [
-                1=>'保险A',
-                2=>'保险B',
-                3=>'保险C',
-                4=>'保险D',
-            ],
+            $returnRes,
             '成功',
             true,
             []
