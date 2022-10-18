@@ -17,6 +17,7 @@ use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\MRXD\OnlineGoodsDaikuanBank;
+use App\HttpController\Models\MRXD\OnlineGoodsDaikuanProducts;
 use App\HttpController\Models\MRXD\OnlineGoodsUserBaoXianOrder;
 use App\HttpController\Models\MRXD\OnlineGoodsUserDaikuanOrder;
 use App\HttpController\Models\RDS3\Company;
@@ -256,15 +257,16 @@ class ZhiJinCommisionController extends ControllerBase
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
 
+        $dataRes = OnlineGoodsDaikuanProducts::findByConditionV2([],1,100);
+        $returnData = [];
+        foreach ($dataRes['data'] as $valueItem){
+            $returnData[$valueItem['id']] = $valueItem['name'];
+        }
+
         return $this->writeJson(
             200,
             [ ] ,
-            [
-                1=>'贷款A',
-                2=>'贷款B',
-                3=>'贷款C',
-                4=>'贷款D',
-            ],
+            $returnData,
             '成功',
             true,
             []
@@ -357,6 +359,13 @@ class ZhiJinCommisionController extends ControllerBase
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
 
+        $dataRes = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProducts();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'getZhiJinBaoXianLists_$dataRes' => $dataRes
+            ])
+        );
         return $this->writeJson(
             200,
             [ ] ,
