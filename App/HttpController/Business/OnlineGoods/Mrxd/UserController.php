@@ -988,6 +988,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'id'=>1,
                 //产品名称
                 'product_name'=>'美人贷',
+                'avatar'=>'/Static/Temp/img.img',
+                'purchaser_mobile'=>'132****6193',
                 //产品id
                 'product_id'=>1,
                 //购买人
