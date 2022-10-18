@@ -36,7 +36,8 @@ class ReportWordService extends ServiceBase
         $email = $arr['email'];
         $type = 'xd';// 每日信动专用
         $options = [
-            'emailSubject' => '报告生成'
+            'emailSubject' => '报告生成',
+            'emailUrl' => $email
         ];
 
         ReportInfo::create()->data([

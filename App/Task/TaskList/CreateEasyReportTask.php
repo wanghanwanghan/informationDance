@@ -6,6 +6,8 @@ use App\Csp\Service\CspService;
 use App\HttpController\Models\Api\OcrQueue;
 use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Models\Api\User;
+use App\HttpController\Models\Provide\RequestApiInfo;
+use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
 use App\HttpController\Service\LongDun\LongDunService;
@@ -63,8 +65,6 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'EasyReportModel_1.docx');
 
-        $userInfo = User::create()->where('phone', $this->phone)->get();
-
         switch ($this->type) {
             case 'xd':
                 $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'xd_logo.png', 'width' => 200, 'height' => 40]);
@@ -78,7 +78,17 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
                 break;
         }
 
-        $tmp->setValue('createEnt', $userInfo->company);
+        // 对内的时候是手机号，对外的时候是appid
+        if (strlen($this->phone) === 11) {
+            $userInfo = User::create()->where('phone', $this->phone)->get();
+            $userEmail = User::create()->where('phone', $this->phone)->get();
+            $userEmail = $userEmail->getAttr('email');
+        } else {
+            $userInfo = RequestUserInfo::create()->where('appId', $this->phone)->get();
+            $userEmail = $this->baseOptions['emailUrl'];
+        }
+
+        $tmp->setValue('createEnt', $userInfo->getAttr('company') ?? $userInfo->getAttr('username'));
 
         $tmp->setValue('entName', $this->entName);
 
@@ -122,10 +132,8 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $info->update(['status' => 2]);
 
-        $userEmail = User::create()->where('phone', $this->phone)->get();
-
         CommonService::getInstance()->sendEmail(
-            $userEmail->getAttr('email'),
+            $userEmail,
             [REPORT_PATH . $this->reportNum . '.docx'],
             '02',
             [
