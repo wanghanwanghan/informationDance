@@ -47,7 +47,10 @@ class GetJinCaiTrace extends AbstractCronTask
             foreach ($list as $target) {
 
                 // 取数据之前要先验证企业是不是全电试点之类的
-                if (!is_numeric(mb_strpos($target->getAttr('isElectronics'), '税款所属期信息成功'))) {
+                if (!is_numeric(mb_strpos($target->getAttr('isElectronics'), '信息成功'))) {
+                    continue;
+                }
+                if (!is_numeric(mb_strpos($target->getAttr('isElectronics'), '属期成功'))) {
                     continue;
                 }
 
