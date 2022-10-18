@@ -269,7 +269,7 @@ class ZhiJinCommisionController extends ControllerBase
         return $this->writeJson(
             200,
             [ ] ,
-            $returnData,
+            $dataRes['data'],
             '成功',
             true,
             []
@@ -631,20 +631,21 @@ class ZhiJinCommisionController extends ControllerBase
                 ]
             ]
         );
-          OnlineGoodsUserDaikuanOrder::addRecordV2([
-              'product_id' => $requestData['product_id'],
-              'purchaser_id' =>intval( $requestData['purchaser_id']),
-              'remark' => $requestData['remark'],
-              'amount' => $requestData['amount'],
-              'purchaser_name' => $requestData['purchaser_name'],
-              'purchaser_phone' => $requestData['purchaser_phone'],
-              'zhijin_phone' => $requestData['zhijin_phone'],
-              'xindong_commission_rate' => $requestData['xindong_commission_rate'],
-              'commission_rate' => $requestData['commission_rate'],
-              'order_date' => $requestData['order_date'],
-              'commission_date' => $requestData['commission_date'],
-              'xindong_commission' => $requestData['xindong_commission'],
-          ]);
+
+      OnlineGoodsUserDaikuanOrder::addRecordV2([
+          'product_id' => $requestData['product_id'],
+          'purchaser_id' =>intval( $requestData['purchaser_id']),
+          'remark' => $requestData['remark'],
+          'amount' => $requestData['amount'],
+          'purchaser_name' => $requestData['purchaser_name'],
+          'purchaser_phone' => $requestData['purchaser_phone'],
+          'zhijin_phone' => $requestData['zhijin_phone'],
+          'xindong_commission_rate' => $requestData['xindong_commission_rate'],
+          'commission_rate' => $requestData['commission_rate'],
+          'order_date' => $requestData['order_date'],
+          'commission_date' => $requestData['commission_date'],
+          'xindong_commission' => $requestData['xindong_commission'],
+      ]);
         return $this->writeJson(
             200,
             [
