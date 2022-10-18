@@ -36,7 +36,8 @@ class ReportWordService extends ServiceBase
         $email = $arr['email'];
         $type = 'xd';// 每日信动专用
         $options = [
-            'emailSubject' => '报告生成'
+            'emailSubject' => '报告生成',
+            'emailUrl' => $email
         ];
 
         ReportInfo::create()->data([
@@ -57,7 +58,7 @@ class ReportWordService extends ServiceBase
             $entName, $reportNum, $appId, $type, $options
         ));
 
-        return $this->checkResp(200, null, null, '报告生成中');
+        return $this->checkResp(200, null, $reportNum, '报告生成中');
     }
 
 
