@@ -2305,7 +2305,6 @@ class XinDongController extends ProvideBase
             'appId' => trim($this->getRequestData('appId')),
             'email' => trim($this->getRequestData('email')),
         ];
-        CommonService::getInstance()->log4PHP($data, 'step1', __FUNCTION__);
         $this->csp->add($this->cspKey, function () use ($data) {
             return (new ReportWordService())->createEasy($data);
         });
