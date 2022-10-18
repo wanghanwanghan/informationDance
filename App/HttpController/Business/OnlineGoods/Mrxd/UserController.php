@@ -171,15 +171,15 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
 
+        $res = OnlineGoodsUser::findAllByCondition([]);
+        $returnDatas = [];
+        foreach ($res as $value){
+            $returnDatas[$value['id']] = $value['user_name'];
+        }
         return $this->writeJson(
             200,
             [ ] ,
-            [
-                1=>'宝花',
-                2=>'宝树',
-                3=>'小花',
-                4=>'小树',
-            ],
+            $returnDatas,
             '成功',
             true,
             []
@@ -910,6 +910,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             []
         );
     }
+
     function incomeLists(): bool
     {
         $requestData =  $this->getRequestData();

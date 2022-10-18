@@ -369,6 +369,7 @@ class OnlineGoodsUser extends ModelBase
         ];
     }
 
+
     public static function findById($id){
         $res =  OnlineGoodsUser::create()
             ->where('id',$id)            
