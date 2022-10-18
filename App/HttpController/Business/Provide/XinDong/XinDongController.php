@@ -9,6 +9,7 @@ use App\HttpController\Models\EntDb\EntDbEnt;
 use App\HttpController\Models\EntDb\EntDbFinance;
 use App\HttpController\Models\EntDb\EntDbTzList;
 use App\HttpController\Models\Provide\RequestRecode;
+use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
 use App\HttpController\Service\Common\CommonService;
@@ -1565,6 +1566,7 @@ class XinDongController extends ProvideBase
     //除了蚂蚁以外的发过来的企业五要素
     function invEntList(): bool
     {
+        $appId = $this->getRequestData('appId');
         $data['entName'] = $this->getRequestData('entName');
         $data['socialCredit'] = $this->getRequestData('socialCredit');
         $data['legalPerson'] = $this->getRequestData('legalPerson');
@@ -1574,7 +1576,9 @@ class XinDongController extends ProvideBase
         $data['fileUrl'] = $this->getRequestData('fileUrl');//有个合作公司不需要信动盖章
 
         $data['requestId'] = $this->requestId;
-        $data['belong'] = 1;//provide公司id
+
+        $userInfo = RequestUserInfo::create()->where('appId', $appId)->get();
+        $data['belong'] = $userInfo->getAttr('id');//provide公司id
 
         $this->csp->add($this->cspKey, function () use ($data) {
             return (new MaYiService())->authEnt($data);
