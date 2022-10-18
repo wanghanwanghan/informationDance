@@ -34,7 +34,7 @@ class ReportWordService extends ServiceBase
         $entName = $arr['entName'];
         $appId = $arr['appId'];
         $email = $arr['email'];
-        $type = 'xd';
+        $type = 'xd';// 每日信动专用
 
         ReportInfo::create()->data([
             'phone' => $appId,
