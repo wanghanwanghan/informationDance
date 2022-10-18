@@ -51,7 +51,8 @@ class CommonService extends ServiceBase
         return control::writeLog($content, LOG_PATH, $type, $filename);
     }
 
-    static function IsProductionEnv(){
+    static function IsProductionEnv()
+    {
         return EasySwooleEvent::IsProductionEnv();
     }
 
@@ -62,8 +63,8 @@ class CommonService extends ServiceBase
             $content = jsonEncode($content, false);
 
         //正式环境
-        if(self::IsProductionEnv()){
-           // return  true;
+        if (self::IsProductionEnv()) {
+            // return  true;
         }
 
         return control::writeLog($content, LOG_PATH, $type, $filename);
@@ -435,7 +436,8 @@ class CommonService extends ServiceBase
                 break;
             case '02':
                 //简版
-                $template = Template02::getInstance();
+                $template = Template02::getInstance()
+                    ->setSubject($options['entName'] . $options['emailSubject']);
                 break;
             case '03':
                 //深度
@@ -466,7 +468,7 @@ class CommonService extends ServiceBase
         return true;
     }
 
-    function sendEmailV2($sendTo, $title,$htmlbody,$addAttachment = []): bool
+    function sendEmailV2($sendTo, $title, $htmlbody, $addAttachment = []): bool
     {
         $config = new MailerConfig();
         $config->setServer(CreateConf::getInstance()->getConf('env.mailServer'));
@@ -540,49 +542,51 @@ class CommonService extends ServiceBase
         return implode($to, $arr);
     }
 
-    static function  generateTokenByParam($paramsArr){
+    static function generateTokenByParam($paramsArr)
+    {
         $str = "";
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'generateTokenByParam_$paramsArr' =>  $paramsArr
+                __CLASS__ . __FUNCTION__ . __LINE__,
+                'generateTokenByParam_$paramsArr' => $paramsArr
             ])
         );
         //按照key升序排序
         ksort($paramsArr);
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'generateTokenByParam_$paramsArr_sort' =>  $paramsArr
+                __CLASS__ . __FUNCTION__ . __LINE__,
+                'generateTokenByParam_$paramsArr_sort' => $paramsArr
             ])
         );
-        foreach ($paramsArr as $key => $value){
+        foreach ($paramsArr as $key => $value) {
             $str .= "<<$key&$value>>";
         }
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'generateTokenByParam_$paramsArr_sort_$str' =>  $str
+                __CLASS__ . __FUNCTION__ . __LINE__,
+                'generateTokenByParam_$paramsArr_sort_$str' => $str
             ])
         );
         $str .= "XinDongLe$2022";
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'generateTokenByParam_$paramsArr_sort_$str2' =>  $str
+                __CLASS__ . __FUNCTION__ . __LINE__,
+                'generateTokenByParam_$paramsArr_sort_$str2' => $str
             ])
         );
         $str = md5($str);
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'generateTokenByParam_$paramsArr_sort_$str3' =>  $str
+                __CLASS__ . __FUNCTION__ . __LINE__,
+                'generateTokenByParam_$paramsArr_sort_$str3' => $str
             ])
         );
-        return  md5($str);
+        return md5($str);
     }
 
-    static  function ClearHtml($content) {
+    static function ClearHtml($content)
+    {
 
         $content = preg_replace("/<a[^>]*>/i", "", $content);
 
@@ -595,54 +599,55 @@ class CommonService extends ServiceBase
         $content = preg_replace("/<!--[^>]*-->/i", "", $content);//注释内容
 
         //去除样式
-        $content = preg_replace("/style=.+?['|\"]/i",'',$content);
+        $content = preg_replace("/style=.+?['|\"]/i", '', $content);
 
         //去除样式
-        $content = preg_replace("/class=.+?['|\"]/i",'',$content);
+        $content = preg_replace("/class=.+?['|\"]/i", '', $content);
 
         //去除样式
-        $content = preg_replace("/id=.+?['|\"]/i",'',$content);
+        $content = preg_replace("/id=.+?['|\"]/i", '', $content);
 
         //去除样式
-        $content = preg_replace("/lang=.+?['|\"]/i",'',$content);
+        $content = preg_replace("/lang=.+?['|\"]/i", '', $content);
 
         //去除样式
-        $content = preg_replace("/width=.+?['|\"]/i",'',$content);
+        $content = preg_replace("/width=.+?['|\"]/i", '', $content);
 
         //去除样式
-        $content = preg_replace("/height=.+?['|\"]/i",'',$content);
+        $content = preg_replace("/height=.+?['|\"]/i", '', $content);
 
         //去除样式
-        $content = preg_replace("/border=.+?['|\"]/i",'',$content);
+        $content = preg_replace("/border=.+?['|\"]/i", '', $content);
 
         //去除样式
-        $content = preg_replace("/face=.+?['|\"]/i",'',$content);
+        $content = preg_replace("/face=.+?['|\"]/i", '', $content);
 
         //去除样式只允许小写正则匹配没有带 i 参数
-        $content = preg_replace("/face=.+?['|\"]/",'',$content);
+        $content = preg_replace("/face=.+?['|\"]/", '', $content);
 
         //去除style标签之间的内容
-        $content = self::strip_html_tags(['style'],$content,1);
+        $content = self::strip_html_tags(['style'], $content, 1);
 
         return $content;
 
     }
 
-    static function strip_html_tags($tags,$str,$content=false){
-        $html=array();
+    static function strip_html_tags($tags, $str, $content = false)
+    {
+        $html = array();
         foreach ($tags as $tag) {
-            if($content){
-                $html[]='/(<'.$tag.'.*?>[\s|\S]*?<\/'.$tag.'>)/';
-            }else{
-                $html[]="/(<(?:\/".$tag."|".$tag.")[^>]*>)/i";
+            if ($content) {
+                $html[] = '/(<' . $tag . '.*?>[\s|\S]*?<\/' . $tag . '>)/';
+            } else {
+                $html[] = "/(<(?:\/" . $tag . "|" . $tag . ")[^>]*>)/i";
             }
         }
-        $data=preg_replace($html, '', $str);
+        $data = preg_replace($html, '', $str);
 
         return $data;
     }
 
-    static  function encodeIdToInvitationCode($user_id)
+    static function encodeIdToInvitationCode($user_id)
     {
 
         // 多少进制
@@ -661,8 +666,7 @@ class CommonService extends ServiceBase
     }
 
 
-
-    static  function decodeInvitationCodeToId($code)
+    static function decodeInvitationCodeToId($code)
     {
 
 

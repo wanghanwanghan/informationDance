@@ -30,19 +30,21 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     private $phone;
     private $type;
     private $ocrDataInMysql;
+    private $baseOptions;
 
     private $fz = [];
     private $fx = [];
     private $fz_detail = [];
     private $fx_detail = [];
 
-    function __construct($entName, $reportNum, $phone, $type)
+    function __construct($entName, $reportNum, $phone, $type, $options = [])
     {
         $this->entName = $entName;
         $this->reportNum = $reportNum;
         $this->phone = $phone;
         $this->type = $type;
         $this->ocrDataInMysql = [];
+        $this->baseOptions = $options;
 
         return parent::__construct();
     }
@@ -122,7 +124,15 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
 
         $userEmail = User::create()->where('phone', $this->phone)->get();
 
-        CommonService::getInstance()->sendEmail($userEmail->email, [REPORT_PATH . $this->reportNum . '.docx'], '02', ['entName' => $this->entName]);
+        CommonService::getInstance()->sendEmail(
+            $userEmail->getAttr('email'),
+            [REPORT_PATH . $this->reportNum . '.docx'],
+            '02',
+            [
+                'entName' => $this->entName,
+                'emailSubject' => $this->baseOptions['emailSubject'] ?? '',
+            ]
+        );
 
         ProcessService::getInstance()->sendToProcess('docx2doc', $this->reportNum);
 
