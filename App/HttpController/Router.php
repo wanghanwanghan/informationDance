@@ -301,7 +301,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/ZhiJinOrderLists', $prefix . 'ZhiJinOrderLists');// login
             $routeCollector->addRoute(['GET', 'POST'], '/ZhiJinFansOrderLists', $prefix . 'ZhiJinFansOrderLists');// login
             $routeCollector->addRoute(['GET', 'POST'], '/incomeLists', $prefix . 'incomeLists');// login
-            $routeCollector->addRoute(['GET', 'POST'], '/baoxianOrderLists', $prefix . 'baoxianOrderLists');// login
+
             $routeCollector->addRoute(['GET', 'POST'], '/daikuanOrderLists', $prefix . 'daikuanOrderLists');// login
         });
 

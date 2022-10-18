@@ -382,6 +382,47 @@ class ZhiJinCommisionController extends ControllerBase
             ]
         );
 
+        // product_id
+        // purchaser_id
+        // price
+        // xindong_commission
+          OnlineGoodsUserDaikuanOrder::addRecordV2([
+              'product_id' => $requestData['product_id'],
+              'purchaser_id' => $requestData['purchaser_id'],
+              'price' => $requestData['price'],
+              'xindong_commission' => $requestData['xindong_commission'],
+          ]);
+        return $this->writeJson(
+            200,
+            [
+            ] ,
+           true
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
+    function addBaoXianOrder(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page =  $requestData['page']?:1;
+        $pageSize =  $requestData['pageSize']?:100;
+
+        $userInfo = $this->loginUserinfo;
+
+        CommonService::writeTestLog(
+            [
+                'getInvitationCode'=>[
+                    '$userInfo'=>[
+                        'id'=>$userInfo['id'],
+                        'user_name'=>$userInfo['user_name'],
+                        'phone'=>$userInfo['phone'],
+                    ],
+                ]
+            ]
+        );
+
 
         return $this->writeJson(
             200,
