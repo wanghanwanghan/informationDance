@@ -58,7 +58,7 @@ class ReportWordService extends ServiceBase
             $entName, $reportNum, $appId, $type, $options
         ));
 
-        return $this->checkResp(200, null, null, '报告生成中');
+        return $this->checkResp(200, null, $reportNum, '报告生成中');
     }
 
 
