@@ -249,6 +249,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/superSearch', $prefix . 'superSearch');
             $routeCollector->addRoute(['GET', 'POST'], '/logisticsSearch', $prefix . 'logisticsSearch');
             $routeCollector->addRoute(['GET', 'POST'], '/invEntList', $prefix . 'invEntList');//企业五要素
+            $routeCollector->addRoute(['GET', 'POST'], '/invEntListWithoutAuth', $prefix . 'invEntListWithoutAuth');//企业五要素
             $routeCollector->addRoute(['GET', 'POST'], '/getCpwsList', $prefix . 'getCpwsList');//裁判文书列表
             $routeCollector->addRoute(['GET', 'POST'], '/getCpwsDetail', $prefix . 'getCpwsDetail');//裁判文书详情
             $routeCollector->addRoute(['GET', 'POST'], '/getKtggList', $prefix . 'getKtggList');//开庭公告列表
