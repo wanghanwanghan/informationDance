@@ -14,6 +14,7 @@ use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\DaXiang\DaXiangService;
+use App\HttpController\Service\Export\Report\Word\ReportWordService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\FinanceRange;
@@ -26,7 +27,6 @@ use App\HttpController\Service\XinDong\XinDongService;
 use Carbon\Carbon;
 use EasySwoole\Redis\Redis;
 use wanghanwanghan\someUtils\control;
-use function GuzzleHttp\Psr7\uri_for;
 use EasySwoole\Component\Csp;
 
 class XinDongController extends ProvideBase
@@ -2286,17 +2286,32 @@ class XinDongController extends ProvideBase
     }
 
     //淘数 龙盾 历史沿革
-    function getHistoricalEvolution()
+    function getHistoricalEvolution(): bool
     {
-        $entName = $this->request()->getRequestParam('entName') ?? '';
-
+        $entName = trim($this->getRequestData('entName'));
         $this->csp->add($this->cspKey, function () use ($entName) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
                 ->getHistoricalEvolution($entName);
         });
-
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
+    function createEntReport(): bool
+    {
+        $data = [
+            'entName' => trim($this->getRequestData('entName')),
+            'appId' => trim($this->getRequestData('appId')),
+            'email' => trim($this->getRequestData('email')),
+        ];
+        CommonService::getInstance()->log4PHP($data, 'step1', __FUNCTION__);
+        $this->csp->add($this->cspKey, function () use ($data) {
+            return (new ReportWordService())->createEasy($data);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
+
 }

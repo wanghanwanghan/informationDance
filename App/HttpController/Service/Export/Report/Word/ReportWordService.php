@@ -27,7 +27,7 @@ class ReportWordService extends ServiceBase
         return Carbon::now()->format('YmdHis') . '_' . control::randNum(8);
     }
 
-    //生成一个简版报告
+    // 生成一个简版报告
     function createEasy(array $arr): array
     {
         $reportNum = $this->createReportNum();
@@ -35,6 +35,9 @@ class ReportWordService extends ServiceBase
         $appId = $arr['appId'];
         $email = $arr['email'];
         $type = 'xd';// 每日信动专用
+        $options = [
+            'emailSubject' => '报告生成'
+        ];
 
         ReportInfo::create()->data([
             'phone' => $appId,
@@ -50,7 +53,9 @@ class ReportWordService extends ServiceBase
         ])->save();
 
         //扔到task里
-        TaskService::getInstance()->create(new CreateEasyReportTask($entName, $reportNum, $appId, $type));
+        TaskService::getInstance()->create(new CreateEasyReportTask(
+            $entName, $reportNum, $appId, $type, $options
+        ));
 
         return $this->checkResp(200, null, null, '报告生成中');
     }

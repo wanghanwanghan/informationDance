@@ -8,14 +8,20 @@ class Template02
 {
     use Singleton;
 
-    function getSubject($entName)
-    {
-        $res = $entName . ' 律师自用版 生成完成';
+    private $subject = '';
 
-        return trim($res);
+    function setSubject($str): Template02
+    {
+        $this->subject = $str;
+        return $this;
     }
 
-    function getBody()
+    function getSubject($entName): string
+    {
+        return empty($this->subject) ? $entName . ' 律师自用版 生成完成' : $this->subject;
+    }
+
+    function getBody(): string
     {
         return '';
     }
