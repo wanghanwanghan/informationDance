@@ -189,8 +189,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
     function getBasicInfo(): bool
     {
         $requestData =  $this->getRequestData();
-        $phone = $requestData['phone'] ;
-        $code = $requestData['code'] ;
+//        $phone = $requestData['phone'] ;
+//        $code = $requestData['code'] ;
 
         return $this->writeJson(
             200,
