@@ -366,12 +366,12 @@ class ZhiJinCommisionController extends ControllerBase
         foreach ($dataRes['data'] as $valueItem){
             $returnRes[$valueItem['id']] = $valueItem['title'];
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'getZhiJinBaoXianLists_$dataRes' => $dataRes
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'getZhiJinBaoXianLists_$dataRes' => $dataRes
+//            ])
+//        );
         return $this->writeJson(
             200,
             [ ] ,
@@ -422,15 +422,18 @@ class ZhiJinCommisionController extends ControllerBase
                 ]
             ]
         );
-
-        // product_id
-        // purchaser_id
-        // price
-        // xindong_commission
           OnlineGoodsUserDaikuanOrder::addRecordV2([
               'product_id' => $requestData['product_id'],
-              'purchaser_id' => $requestData['purchaser_id'],
-              'price' => $requestData['price'],
+              'purchaser_id' =>intval( $requestData['purchaser_id']),
+              'remark' => $requestData['remark'],
+              'amount' => $requestData['amount'],
+              'purchaser_name' => $requestData['purchaser_name'],
+              'purchaser_phone' => $requestData['purchaser_phone'],
+              'zhijin_phone' => $requestData['zhijin_phone'],
+              'xindong_commission_rate' => $requestData['xindong_commission_rate'],
+              'commission_rate' => $requestData['commission_rate'],
+              'order_date' => $requestData['order_date'],
+              'commission_date' => $requestData['commission_date'],
               'xindong_commission' => $requestData['xindong_commission'],
           ]);
         return $this->writeJson(
