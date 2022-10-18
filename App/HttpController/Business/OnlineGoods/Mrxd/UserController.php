@@ -921,7 +921,13 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $isVip = OnlineGoodsUser::IsVipV2(1);
         $inviters = OnlineGoodsUserInviteRelation::getVipsAllInvitedUser(1);
         foreach ($inviters as $inviterData){
-
+            $tmpUserInfo = OnlineGoodsUser::findById($inviterData['user_id']);
+            $tmpUserInfo = $tmpUserInfo->toArray();
+            $inviterData['user_name'] = $tmpUserInfo['user_name'] ;
+            
+            $tmpUserInvoterInfo = OnlineGoodsUser::findById($inviterData['invite_by']);
+            $tmpUserInvoterInfo = $tmpUserInvoterInfo->toArray();
+            $inviterData['invite_user_name'] = $tmpUserInvoterInfo['user_name'] ;
         }
         //找到所有的粉丝
         // vip 》粉丝》
