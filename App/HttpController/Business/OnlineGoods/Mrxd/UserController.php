@@ -198,7 +198,12 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             [
                 'id' => 1,
                 'user_name' => '田大脚',
+                'total_income' => 1000,
+                'total_commission' => 1000,
+                'total_withdraw' => 1000,
+                'invite_code' => 1000,
                 'money' => 1000,
+                'avatar' => '/Static/Temp/XXX.img',
             ],
             '成功',
             true,
