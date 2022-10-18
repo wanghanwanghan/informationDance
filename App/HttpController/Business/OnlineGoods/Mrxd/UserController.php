@@ -933,16 +933,32 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $exampleDatas = [
             [
                 'id'=>1,
-                //用户姓名
-                'name'=>  '张三',
                 //产品名称
-                'product_name'=>  '产品A',
-                //定金金额
-                'order_money'=>  '1000',
-                //收益金额
-                'income_money'=>  '1000',
-                //时间
-                'income_date'=>  '2022-10-09',
+                'product_name'=>'美人贷',
+                'avatar'=>'/Static/Temp/img.img',
+                'purchaser_mobile'=>'132****6193',
+                //产品id
+                'product_id'=>1,
+                //购买人
+                'purchaser'=>'张小花',
+                //介绍人
+                'introducer'=>'张大花',
+                //介绍人所得分佣比例
+                'introducer_commision'=>'50%',
+                //订单金额
+                'price'=>10000,
+                //信动所得佣金 - 佣金表
+                'xindong_commission'=>500,
+                'commission'=>50,
+                //设置分佣状态
+                'commission_set_state_cname'=>'已设置分佣',
+                //分佣状态
+                'commission_state_cname'=>'已领取分佣',
+                //下单时间
+                'order_time'=>'2022-09-09',
+                'created_at'=>1665367946,
+                'state'=>1,
+                'state_cname'=> '已成交',
             ]
         ];
         $total = 100 ;
@@ -1002,6 +1018,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'price'=>10000,
                 //信动所得佣金 - 佣金表
                 'xindong_commission'=>500,
+                //所得佣金
+                'commission'=>500,
                 //设置分佣状态
                 'commission_set_state_cname'=>'已设置分佣',
                 //分佣状态
@@ -1055,6 +1073,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             []
         );
     }
+
 
 
     function OnlineSignOut(): bool
