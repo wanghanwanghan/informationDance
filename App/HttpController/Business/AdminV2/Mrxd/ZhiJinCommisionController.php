@@ -408,6 +408,8 @@ class ZhiJinCommisionController extends ControllerBase
     //置金粉丝列表
     function ZhiJinFansLists(): bool
     {
+
+        
         $requestData =  $this->getRequestData();
         $page =  $requestData['page']?:1;
         $pageSize =  $requestData['pageSize']?:100;
