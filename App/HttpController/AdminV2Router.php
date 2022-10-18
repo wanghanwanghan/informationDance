@@ -281,6 +281,8 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/uploadWeiXinFile', $prefix . 'uploadWeiXinFile');
             $routeCollector->addRoute(['GET', 'POST'], '/WeiXinFilesList', $prefix . 'WeiXinFilesList');
             $routeCollector->addRoute(['GET', 'POST'], '/loanOrderLists', $prefix . 'loanOrderLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/baoxianOrderLists', $prefix . 'baoxianOrderLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/daikuanOrderLists', $prefix . 'daikuanOrderLists');
             $routeCollector->addRoute(['GET', 'POST'], '/addLoanOrder', $prefix . 'addLoanOrder');
             $routeCollector->addRoute(['GET', 'POST'], '/addBaoXianOrder', $prefix . 'addBaoXianOrder');
             $routeCollector->addRoute(['GET', 'POST'], '/zhiJinUserLists', $prefix . 'zhiJinUserLists');

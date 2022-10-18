@@ -74,7 +74,7 @@ class ZhiJinCommisionController extends ControllerBase
         foreach ($datas['data'] as $dataValue){
 
         }
-        $retrundatas = $datas['data'] ;
+
         $retrundatas = [
             [
                 'id'=>1,
@@ -118,7 +118,8 @@ class ZhiJinCommisionController extends ControllerBase
             ]
         ];
         $total = 100;
-
+        $total = $datas['total'] ;
+        $retrundatas = $datas['data'] ;
         return $this->writeJson(
             200,
             [
