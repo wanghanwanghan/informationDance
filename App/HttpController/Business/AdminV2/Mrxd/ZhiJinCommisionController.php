@@ -16,6 +16,7 @@ use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\MailReceipt;
+use App\HttpController\Models\MRXD\OnlineGoodsDaikuanBank;
 use App\HttpController\Models\MRXD\OnlineGoodsUserBaoXianOrder;
 use App\HttpController\Models\MRXD\OnlineGoodsUserDaikuanOrder;
 use App\HttpController\Models\RDS3\Company;
@@ -130,6 +131,36 @@ class ZhiJinCommisionController extends ControllerBase
             []
         );
     }
+
+    //
+    function daikuanBank(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page =  $requestData['page']?:1;
+        $pageSize =  $requestData['pageSize']?:100;
+
+        $userInfo = $this->loginUserinfo;
+
+        $datas = OnlineGoodsDaikuanBank::findByConditionV2([],1,100);
+        $retrundatas =  [];
+        foreach ($datas['data'] as $dataItem){
+            $retrundatas[$dataItem['id']] = $dataItem['bank_cname'];
+        }
+
+
+        return $this->writeJson(
+            200,
+            [
+
+            ] ,
+            $retrundatas
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
+
     function baoxianOrderLists(): bool
     {
         $requestData =  $this->getRequestData();
