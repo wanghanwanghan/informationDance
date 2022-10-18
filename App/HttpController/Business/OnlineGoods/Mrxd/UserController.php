@@ -910,6 +910,68 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             []
         );
     }
+    function ZhiJinFansLists(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page =  $requestData['page']?:1;
+        $pageSize =  $requestData['pageSize']?:100;
+        $userInfo = $this->loginUserinfo;
+
+        //$isVip = OnlineGoodsUser::IsVipV2($userInfo['id']);
+        $isVip = OnlineGoodsUser::IsVipV2(1);
+        $inviters = OnlineGoodsUser::getVipsAllInvitedUser($userInfo['id']);
+        foreach ($inviters as $inviterData){
+
+        }
+        //找到所有的粉丝
+        // vip 》粉丝》
+        CommonService::writeTestLog(
+            [
+                'ZhiJinFansLists'=>[
+                    $inviters
+                ]
+            ]
+        );
+
+        $exampleDatas = [
+            [
+                'id'=>1,
+                //用户姓名
+                'name'=>  '张三',
+                //邀请人姓名
+                'inviter'=>  '张大三',
+                //订单数量
+                'order_nums'=>  '100',
+                //累计收益
+                'total_income'=>  '1000',
+                //粉丝数量
+                'total_fan_nums'=>  '1000',
+
+                //头像
+                'avatar'=>  '/static/img/aaa.jpg',
+                //加入时间
+                'join_at'=>'2022-10-09',
+                'created_at'=>1665367946,
+                'state'=>1,
+                'state_cname'=> '',
+            ]
+        ];
+        $total = 100 ;
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' =>$pageSize,
+                'total' => $total,
+                'totalPage' => ceil( $total/ $pageSize ),
+            ] ,
+            $exampleDatas
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
 
     function incomeLists(): bool
     {
