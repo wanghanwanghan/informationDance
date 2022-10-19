@@ -105,6 +105,13 @@ class OnlineGoodsUserBaoXianOrder extends ModelBase
     }
 
     public static function addRecord($requestData){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+
+                '$requestData' => $requestData, 
+            ])
+        );
         try {
            $res =  OnlineGoodsUserBaoXianOrder::create()->data([
                //产品
