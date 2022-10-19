@@ -183,7 +183,7 @@ class OnlineGoodsCommissions extends ModelBase
     }
 
     static function addCommissionInfoByOrderInfo($orderInfo){
-       
+
         // 基准金额  amount
         // 置金用户
         $zhiJinUserInfo = OnlineGoodsUser::findByPhone($orderInfo['zhijin_phone']);
@@ -201,7 +201,7 @@ class OnlineGoodsCommissions extends ModelBase
                 '$VipInvitorInfo' => $VipInvitorInfo,
             ])
         );
-        return ;
+
         //信动给VIP分佣
         if($VipInvitorInfo){
             $state = OnlineGoodsCommissions::$commission_state_seted;
@@ -217,7 +217,7 @@ class OnlineGoodsCommissions extends ModelBase
                     'commission_type' => OnlineGoodsCommissions::$commission_type_dai_kuan,
                     'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_xindong_to_vip,
                     'state' => $state,
-                    'commission_order_id' => $id,
+                    'commission_order_id' => $orderInfo['id'],
                     'remark' => '信动给VIP分佣',
                 ]
             );
@@ -237,7 +237,7 @@ class OnlineGoodsCommissions extends ModelBase
                     'commission_type' => OnlineGoodsCommissions::$commission_type_dai_kuan,
                     'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_vip_to_invitor,
                     'state' => $state,
-                    'commission_order_id' => $id,
+                    'commission_order_id' => $orderInfo['id'],
                     'remark' => 'VIP给邀请人分佣',
                 ]
             );
@@ -257,7 +257,7 @@ class OnlineGoodsCommissions extends ModelBase
                     'commission_type' => OnlineGoodsCommissions::$commission_type_dai_kuan,
                     'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_invitor_to_user,
                     'state' => $state,
-                    'commission_order_id' => $id,
+                    'commission_order_id' => $orderInfo['id'],
                     'remark' => 'VIP给邀请人分佣',
                 ]
             );
