@@ -81,8 +81,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
         // 对内的时候是手机号，对外的时候是appid
         if (strlen($this->phone) === 11) {
             $userInfo = User::create()->where('phone', $this->phone)->get();
-            $userEmail = User::create()->where('phone', $this->phone)->get();
-            $userEmail = $userEmail->getAttr('email');
+            $userEmail = $userInfo->getAttr('email');
         } else {
             $userInfo = RequestUserInfo::create()->where('appId', $this->phone)->get();
             $userEmail = $this->baseOptions['emailUrl'];
@@ -150,16 +149,16 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
         try {
-            $info = ReportInfo::create()->where('phone', $this->phone)->where('filename', $this->reportNum)->get();
-
+            $info = ReportInfo::create()
+                ->where('phone', $this->phone)
+                ->where('filename', $this->reportNum)
+                ->get();
             $file = $throwable->getFile();
             $line = $throwable->getLine();
             $msg = $throwable->getMessage();
-
             $content = "[file => {$file}] [line => {$line}] [msg => {$msg}]";
-
+            CommonService::getInstance()->log4PHP($content, 'info', 'EasyReport.log');
             $info->update(['status' => 1, 'errInfo' => $content]);
-
         } catch (\Throwable $e) {
 
         }

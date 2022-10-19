@@ -2305,7 +2305,7 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function createEntReport(): bool
+    function createEntReportE(): bool
     {
         $data = [
             'entName' => trim($this->getRequestData('entName')),
@@ -2314,6 +2314,21 @@ class XinDongController extends ProvideBase
         ];
         $this->csp->add($this->cspKey, function () use ($data) {
             return (new ReportWordService())->createEasy($data);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
+    function createEntReportD(): bool
+    {
+        $data = [
+            'entName' => trim($this->getRequestData('entName')),
+            'code' => trim($this->getRequestData('code')),
+            'appId' => trim($this->getRequestData('appId')),
+            'email' => trim($this->getRequestData('email')),
+        ];
+        $this->csp->add($this->cspKey, function () use ($data) {
+            return (new ReportWordService())->createDeep($data);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);

@@ -6,6 +6,7 @@ use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Service\Report\ReportService;
 use App\HttpController\Service\ServiceBase;
 use App\Task\Service\TaskService;
+use App\Task\TaskList\CreateDeepReportTask;
 use App\Task\TaskList\CreateEasyReportTask;
 use Carbon\Carbon;
 use wanghanwanghan\someUtils\control;
@@ -61,5 +62,39 @@ class ReportWordService extends ServiceBase
         return $this->checkResp(200, null, $reportNum, '报告生成中');
     }
 
+    // 生成一个深度报告
+    function createDeep(array $arr): array
+    {
+        $reportNum = $this->createReportNum();
+        $entName = $arr['entName'];
+        $code = $arr['code'];
+        $appId = $arr['appId'];
+        $email = $arr['email'];
+        $type = 'xd';// 每日信动专用
+        $options = [
+            'emailSubject' => '报告生成',
+            'emailUrl' => $email
+        ];
+
+        ReportInfo::create()->data([
+            'phone' => $appId,
+            'email' => $email,
+            'entName' => $entName,
+            'filename' => $reportNum,
+            'ext' => 'docx',
+            'type' => ReportService::REPORT_TYPE_50,
+            'status' => 3,//1是异常，2是完成，3是生成中
+            'errInfo' => '',
+            'belong' => $type,
+            'dataKey' => '',
+        ])->save();
+
+        //扔到task里
+        TaskService::getInstance()->create(new CreateDeepReportTask(
+            $entName, $code, $reportNum, $appId, $type, $options
+        ));
+
+        return $this->checkResp(200, null, $reportNum, '报告生成中');
+    }
 
 }

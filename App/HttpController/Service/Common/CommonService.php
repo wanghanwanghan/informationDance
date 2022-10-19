@@ -441,7 +441,8 @@ class CommonService extends ServiceBase
                 break;
             case '03':
                 //深度
-                $template = Template03::getInstance();
+                $template = Template03::getInstance()
+                    ->setSubject($options['entName'] . $options['emailSubject']);
                 break;
             case '04':
                 //两表
