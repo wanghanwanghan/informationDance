@@ -11,6 +11,7 @@ use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\EntDb\EntInvoice;
 use App\HttpController\Models\EntDb\EntInvoiceDetail;
+use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
@@ -37,6 +38,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     private $phone;
     private $type;
 
+    private $baseOptions;
+
     private $inDetail = [];
     private $outDetail = [];
 
@@ -45,13 +48,14 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     private $fz_detail = [];
     private $fx_detail = [];
 
-    function __construct($entName, $code, $reportNum, $phone, $type)
+    function __construct($entName, $code, $reportNum, $phone, $type, $options = [])
     {
         $this->entName = $entName;
         $this->code = $code;
         $this->reportNum = $reportNum;
         $this->phone = $phone;
         $this->type = $type;
+        $this->baseOptions = $options;
 
         return parent::__construct();
     }
@@ -86,7 +90,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             if (!empty($detail)) {
                 $mc = $detail->getAttr('mc');
                 $mc = current(array_filter(explode('*', $mc)));
-                empty($mc) ?: $mc = '';
+                !empty($mc) ?: $mc = '';
             }
             $one_in->goodsName = $mc;
         }
@@ -116,8 +120,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     {
         $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'DeepReportModel_1.docx');
 
-        $userInfo = User::create()->where('phone', $this->phone)->get();
-
         switch ($this->type) {
             case 'xd':
                 $tmp->setImageValue('Logo', ['path' => REPORT_IMAGE_PATH . 'xd_logo.png', 'width' => 200, 'height' => 40]);
@@ -132,7 +134,16 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 $tmp->setValue('selectMore', '如需更多信息登录 信动客动 查看');
         }
 
-        $tmp->setValue('createEnt', $userInfo->getAttr('company'));
+        // 对内的时候是手机号，对外的时候是appid
+        if (strlen($this->phone) === 11) {
+            $userInfo = User::create()->where('phone', $this->phone)->get();
+            $userEmail = $userInfo->getAttr('email');
+        } else {
+            $userInfo = RequestUserInfo::create()->where('appId', $this->phone)->get();
+            $userEmail = $this->baseOptions['emailUrl'];
+        }
+
+        $tmp->setValue('createEnt', $userInfo->getAttr('company') ?? $userInfo->getAttr('username'));
 
         $tmp->setValue('entName', $this->entName);
 
@@ -145,41 +156,53 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //取发票数据，以后切换成api的
         $this->getReceiptDataTest();
 
+        CommonService::getInstance()->log4PHP($this->inDetail, 'inDetail', 'DeepReportInfo.log');
+        CommonService::getInstance()->log4PHP($this->outDetail, 'outDetail', 'DeepReportInfo.log');
+
         //发票
         $invoiceObj = (new Invoice($this->inDetail, $this->outDetail));
 
         //5.2主营商品分析
         $zyspfx = $invoiceObj->zyspfx();
         $reportVal['re_fpxx']['zyspfx'] = $zyspfx;
+        CommonService::getInstance()->log4PHP($reportVal['re_fpxx']['zyspfx'], 'zyspfx', 'DeepReportInfo.log');
 
         //5.4主要成本分析
         $zycbfx = $invoiceObj->zycbfx();
         $reportVal['re_fpjx']['zycbfx'] = $zycbfx;
+        CommonService::getInstance()->log4PHP($reportVal['re_fpjx']['zycbfx'], 'zycbfx', 'DeepReportInfo.log');
         //各种费用在统计周期内合并
         $reportVal['re_fpjx']['zycbfx_new'] = $invoiceObj->zycbfx_new($zycbfx[1]);
+        CommonService::getInstance()->log4PHP($reportVal['re_fpjx']['zycbfx_new'], 'zycbfx_new', 'DeepReportInfo.log');
 
         //6.1企业开票情况汇总
         $qykpqkhz = $invoiceObj->qykpqkhz();
         $reportVal['re_fpxx']['qykpqkhz'] = $qykpqkhz;
+        CommonService::getInstance()->log4PHP($reportVal['re_fpre_fpxxjx']['qykpqkhz'], 'qykpqkhz', 'DeepReportInfo.log');
         //统计周期从这里拿
         $reportVal['commonData']['zhouqi'] = $qykpqkhz['zhouqi']['min'] . ' - ' . $qykpqkhz['zhouqi']['max'];
+        CommonService::getInstance()->log4PHP($reportVal['commonData']['zhouqi'], 'zhouqi', 'DeepReportInfo.log');
 
         //6.2.1年度销项发票情况汇总
         $ndxxfpqkhz = $invoiceObj->ndxxfpqkhz();
         $reportVal['re_fpxx']['ndxxfpqkhz'] = $ndxxfpqkhz;
+        CommonService::getInstance()->log4PHP($reportVal['re_fpxx']['ndxxfpqkhz'], 'ndxxfpqkhz', 'DeepReportInfo.log');
 
         //6.2.2月度销项发票分析
         $ydxxfpfx = $invoiceObj->ydxxfpfx();
         $reportVal['re_fpxx']['ydxxfpfx'] = $ydxxfpfx;
+        CommonService::getInstance()->log4PHP($reportVal['re_fpxx']['ydxxfpfx'], 'ydxxfpfx', 'DeepReportInfo.log');
 
         //6.2.5单张开票金额TOP10记录
         $dzkpjeTOP10jl_xx = $invoiceObj->dzkpjeTOP10jl_xx();
         $reportVal['re_fpxx']['dzkpjeTOP10jl_xx'] = $dzkpjeTOP10jl_xx;
+        CommonService::getInstance()->log4PHP($reportVal['re_fpxx']['dzkpjeTOP10jl_xx'], 'dzkpjeTOP10jl_xx', 'DeepReportInfo.log');
         empty($reportVal['re_fpxx']['dzkpjeTOP10jl_xx']) ?: $reportVal['re_fpxx']['dzkpjeTOP10jl_xx'] = control::sortArrByKey($reportVal['re_fpxx']['dzkpjeTOP10jl_xx'], 'totalAmount', true);
 
         //6.2.6累计开票金额TOP10企业汇总
         $ljkpjeTOP10qyhz_xx = $invoiceObj->ljkpjeTOP10qyhz_xx();
         $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'] = $ljkpjeTOP10qyhz_xx;
+        CommonService::getInstance()->log4PHP($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'], 'ljkpjeTOP10qyhz_xx', 'DeepReportInfo.log');
         empty($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx']) ?: $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'] = control::sortArrByKey($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'], 'total', true);
 
         //6.3.1下游客户稳定性分析
@@ -291,9 +314,15 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         $info->update(['status' => 2]);
 
-        $userEmail = User::create()->where('phone', $this->phone)->get();
-
-        CommonService::getInstance()->sendEmail($userEmail->email, [REPORT_PATH . $this->reportNum . '.docx'], '03', ['entName' => $this->entName]);
+        CommonService::getInstance()->sendEmail(
+            $userEmail,
+            [REPORT_PATH . $this->reportNum . '.docx'],
+            '03',
+            [
+                'entName' => $this->entName,
+                'emailSubject' => $this->baseOptions['emailSubject'] ?? '',
+            ]
+        );
 
         ProcessService::getInstance()->sendToProcess('docx2doc', $this->reportNum);
 
@@ -304,15 +333,12 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     {
         try {
             $info = ReportInfo::create()->where('phone', $this->phone)->where('filename', $this->reportNum)->get();
-
             $file = $throwable->getFile();
             $line = $throwable->getLine();
             $msg = $throwable->getMessage();
-
             $content = "[file => {$file}] [line => {$line}] [msg => {$msg}]";
-
+            CommonService::getInstance()->log4PHP($content, 'info', 'DeepReport.log');
             $info->update(['status' => 1, 'errInfo' => $content]);
-
         } catch (\Throwable $e) {
 
         }

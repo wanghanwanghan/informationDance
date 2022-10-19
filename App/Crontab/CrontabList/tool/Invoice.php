@@ -2285,9 +2285,7 @@ class Invoice
 
         $tmp['type2'] = $return;
 
-        $return = $tmp;
-
-        return $return;
+        return $tmp;
     }
 
     //信动指数-上下游
