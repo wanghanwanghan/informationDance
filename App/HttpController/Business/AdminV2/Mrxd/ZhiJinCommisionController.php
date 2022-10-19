@@ -275,7 +275,7 @@ class ZhiJinCommisionController extends ControllerBase
         return $this->writeJson(
             200,
             [ ] ,
-            $dataRes['data'],
+            $returnData,
             '成功',
             true,
             []
