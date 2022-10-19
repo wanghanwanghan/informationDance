@@ -193,7 +193,7 @@ Eof;
 
                 $body = [
                     'sealResultCode' => $authResultCode,
-                    'orderNo' => $orderNo . '',
+                    'orderNo' => $oneEntInfo['orderNo'],
                     'nsrsbh' => $oneEntInfo['socialCredit'],//授权的企业税号
                     'notifyType' => 'AGREEMENT', //通知类型
                     'fileData' => array_values($fileData),
@@ -250,12 +250,8 @@ Eof;
     public function getSealUrl($dianZiQian_id)
     {
         $data = DianZiQianAuth::create()->where(' id='.$dianZiQian_id)->get();
-        if($data->getAttr('entUrlResultCode') == 1){
-            if($data->getAttr('personalUrlResultCode')==1){
-                return $data->getAttr('url');
-            }elseif ($data->getAttr('personalUrlResultCode')==-1){
-                return $data->getAttr('url');
-            }
+        if(!empty($data->getAttr('url'))){
+            return $data->getAttr('url');
         }
         return '';
     }
