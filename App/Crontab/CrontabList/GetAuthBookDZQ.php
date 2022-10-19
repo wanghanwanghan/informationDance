@@ -250,12 +250,8 @@ Eof;
     public function getSealUrl($dianZiQian_id)
     {
         $data = DianZiQianAuth::create()->where(' id='.$dianZiQian_id)->get();
-        if($data->getAttr('entUrlResultCode') == 1){
-            if($data->getAttr('personalUrlResultCode')==1){
-                return $data->getAttr('url');
-            }elseif ($data->getAttr('personalUrlResultCode')==-1){
-                return $data->getAttr('url');
-            }
+        if(!empty($data->getAttr('url'))){
+            return $data->getAttr('url');
         }
         return '';
     }
