@@ -294,6 +294,8 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/daikuanBank', $prefix . 'daikuanBank');
             $routeCollector->addRoute(['GET', 'POST'], '/ZhiJinFansOrderLists', $prefix . 'ZhiJinFansOrderLists');
             $routeCollector->addRoute(['GET', 'POST'], '/incomeLists', $prefix . 'incomeLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/grantDaiKuanCommission', $prefix . 'grantDaiKuanCommission');
+            $routeCollector->addRoute(['GET', 'POST'], '/grantBaoXianCommission', $prefix . 'grantBaoXianCommission');
         });
 
         return true;

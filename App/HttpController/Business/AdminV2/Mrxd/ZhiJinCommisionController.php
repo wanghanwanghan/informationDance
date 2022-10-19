@@ -16,6 +16,7 @@ use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\MailReceipt;
+use App\HttpController\Models\MRXD\OnlineGoodsCommissions;
 use App\HttpController\Models\MRXD\OnlineGoodsDaikuanBank;
 use App\HttpController\Models\MRXD\OnlineGoodsDaikuanProducts;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
@@ -281,6 +282,32 @@ class ZhiJinCommisionController extends ControllerBase
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
+
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+
+            ],
+            '成功',
+            true,
+            []
+        );
+    }
+
+    /**
+        *  发放佣金
+        *  1: 生成分佣订单
+        *  2：实际发放
+     */
+    function grantDaiKuanCommission(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $code = $requestData['code'] ;
+        $id = $requestData['id'] ;
+
+        OnlineGoodsUserDaikuanOrder::addCommissionInfoById($id);
 
         return $this->writeJson(
             200,
