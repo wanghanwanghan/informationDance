@@ -263,7 +263,12 @@ class ZhiJinCommisionController extends ControllerBase
 
         $dataRes = OnlineGoodsDaikuanProducts::findByConditionV2([],1,100);
         $returnData = [];
-        foreach ($dataRes['data'] as &$valueItem){
+        foreach ($dataRes['data'] as $valueItem){
+            $bankRes = OnlineGoodsDaikuanBank::findById($valueItem['bank_id']);
+            if($bankRes){
+                $bankRes = $bankRes->toArray();
+                $valueItem['bank_cname'] = $bankRes['bank_cname'];
+            }
             $returnData[$valueItem['id']] = $valueItem['name'];
         }
 
@@ -684,6 +689,7 @@ class ZhiJinCommisionController extends ControllerBase
             []
         );
     }
+
     function addBaoXianOrder(): bool
     {
         $requestData =  $this->getRequestData();
