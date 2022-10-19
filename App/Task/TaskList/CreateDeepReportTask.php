@@ -90,7 +90,7 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             if (!empty($detail)) {
                 $mc = $detail->getAttr('mc');
                 $mc = current(array_filter(explode('*', $mc)));
-                empty($mc) ?: $mc = '';
+                !empty($mc) ?: $mc = '';
             }
             $one_in->goodsName = $mc;
         }
