@@ -183,7 +183,7 @@ class OnlineGoodsCommissions extends ModelBase
     }
 
     static function addCommissionInfoByOrderInfo($orderInfo){
-        $orderInfo = $orderInfo->toArray();
+       
         // 基准金额  amount
         // 置金用户
         $zhiJinUserInfo = OnlineGoodsUser::findByPhone($orderInfo['zhijin_phone']);
