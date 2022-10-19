@@ -96,7 +96,8 @@ Eof;
                         continue;
                     }
                     $url['2'] = $u;
-                } else
+                }
+                if(!empty($DetailList))
                 {
                     $notNoodIsSeal = [];
                     $detailArr = [];
