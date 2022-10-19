@@ -72,52 +72,9 @@ class ZhiJinCommisionController extends ControllerBase
 
         $datas = OnlineGoodsUserDaikuanOrder::findByConditionV2([],$page,$pageSize);
         $total = $datas['total'] ;
-        foreach ($datas['data'] as $dataValue){
+        foreach ($datas['data'] as &$dataValue){
 
         }
-
-        $retrundatas = [
-            [
-                'id'=>1,
-                //产品名称
-                'product_name'=>'美人贷',
-                //产品id
-                'product_id'=>1,
-                //购买人
-                'purchaser'=>'张小花',
-                //订单金额
-                'price'=>10000,
-                //信动所得佣金 - 佣金表
-                'xindong_commission'=>500,
-                //设置分佣状态
-                'commission_set_state_cname'=>'已设置分佣',
-                //分佣状态
-                'commission_state_cname'=>'已领取分佣',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '已成交',
-            ],
-            [
-                'id'=>2,
-                //产品名称
-                'product_name'=>'帅哥贷',
-                //产品id
-                'product_id'=>1,
-                //购买人
-                'purchaser'=>'张大锤',
-                //订单金额
-                'price'=>10000,
-                //信动所得佣金 - 佣金表
-                'xindong_commission'=>500,
-                //设置分佣状态
-                'commission_set_state_cname'=>'已设置分佣',
-                //分佣状态
-                'commission_state_cname'=>'已领取分佣',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '已成交',
-            ]
-        ];
         $total = 100;
         $total = $datas['total'] ;
         $retrundatas = $datas['data'] ;

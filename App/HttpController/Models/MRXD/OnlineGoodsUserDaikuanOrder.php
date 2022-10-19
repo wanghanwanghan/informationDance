@@ -91,6 +91,7 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
                'purchaser_phone' => $requestData['purchaser_phone']?:'',
                'zhijin_phone' => $requestData['zhijin_phone']?:'',
                'xindong_commission_rate' => $requestData['xindong_commission_rate']?:'',
+               'xindong_commission' => $requestData['xindong_commission']?:'',
                'commission_rate' => $requestData['xindong_commission_rate']?:'',
                'order_date' => $requestData['order_date']?:'',
                'commission_date' => $requestData['commission_date']?:'',
