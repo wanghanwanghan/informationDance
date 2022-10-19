@@ -19,7 +19,8 @@ class OnlineGoodsUserInviteRelation extends ModelBase
     protected $tableName = 'online_goods_user_invite_relation';
 
     static  function  addRecordV2($info){
-        $oldRes = self::findByUserAndInvite($info['user_id'],$info['invite_by']);
+//        $oldRes = self::findByUserAndInvite($info['user_id'],$info['invite_by']);
+        $oldRes = self::findByUser($info['user_id']);
         if(
             $oldRes
         ){
@@ -127,6 +128,13 @@ class OnlineGoodsUserInviteRelation extends ModelBase
         return $res;
     }
 
+    public static function findByUser($user_id){
+        $res =  OnlineGoodsUserInviteRelation::create()
+            ->where('user_id',$user_id)
+            ->get();
+        return $res;
+    }
+
 
     public static function setData($id,$field,$value){
         $info = OnlineGoodsUserInviteRelation::findById($id);
@@ -169,6 +177,43 @@ class OnlineGoodsUserInviteRelation extends ModelBase
       " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
+    }
+
+    // 获取直接邀请人
+    static function getDirectInviterInfo($userId){
+        $res = self::findByUser($userId);
+        if(empty($res)){
+            return  [];
+        }
+        $tmpUsersInfo = OnlineGoodsUser::findById($res->invite_by);
+        return $tmpUsersInfo?$tmpUsersInfo->toArray():[];
+    }
+
+    // 获取VIP邀请人
+    static function getVipInviterInfo($userId){
+        $res = self::findByUser($userId);
+        $topInvitor =  0 ;
+        while (true){
+            $tmpInfo = $res->toArray();
+            $res = self::findByUser($tmpInfo['invite_by']);
+            if(empty($res)){
+                $topInvitor = $tmpInfo['invite_by'];
+                break;
+            }
+        }
+
+        if($topInvitor <= 0 ){
+            return  [];
+        }
+
+        $topInvitorInfo = OnlineGoodsUser::findById($topInvitor);
+        $topInvitorInfo = $topInvitorInfo->toArray();
+        if(
+            OnlineGoodsUser::IsVip($topInvitorInfo)
+        ){
+            return  $topInvitorInfo;
+        };
+        return [];
     }
 
 }

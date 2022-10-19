@@ -281,14 +281,21 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/uploadWeiXinFile', $prefix . 'uploadWeiXinFile');
             $routeCollector->addRoute(['GET', 'POST'], '/WeiXinFilesList', $prefix . 'WeiXinFilesList');
             $routeCollector->addRoute(['GET', 'POST'], '/loanOrderLists', $prefix . 'loanOrderLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/baoxianOrderLists', $prefix . 'baoxianOrderLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/daikuanOrderLists', $prefix . 'daikuanOrderLists');
             $routeCollector->addRoute(['GET', 'POST'], '/addLoanOrder', $prefix . 'addLoanOrder');
             $routeCollector->addRoute(['GET', 'POST'], '/addBaoXianOrder', $prefix . 'addBaoXianOrder');
             $routeCollector->addRoute(['GET', 'POST'], '/zhiJinUserLists', $prefix . 'zhiJinUserLists');
             $routeCollector->addRoute(['GET', 'POST'], '/getZhiJinDaiKuanLists', $prefix . 'getZhiJinDaiKuanLists');
             $routeCollector->addRoute(['GET', 'POST'], '/getZhiJinBaoXianLists', $prefix . 'getZhiJinBaoXianLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/ZhiJinFansLists', $prefix . 'ZhiJinFansLists');
             $routeCollector->addRoute(['GET', 'POST'], '/applyWithdrawalRecords', $prefix . 'applyWithdrawalRecords');
             $routeCollector->addRoute(['GET', 'POST'], '/setApplyWithdrawalRes', $prefix . 'setApplyWithdrawalRes');
             $routeCollector->addRoute(['GET', 'POST'], '/daikuanBank', $prefix . 'daikuanBank');
+            $routeCollector->addRoute(['GET', 'POST'], '/ZhiJinFansOrderLists', $prefix . 'ZhiJinFansOrderLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/incomeLists', $prefix . 'incomeLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/grantDaiKuanCommission', $prefix . 'grantDaiKuanCommission');
+            $routeCollector->addRoute(['GET', 'POST'], '/grantBaoXianCommission', $prefix . 'grantBaoXianCommission');
         });
 
         return true;

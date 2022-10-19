@@ -440,7 +440,12 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         if(
             OnlineGoodsUser::getRandomDigit($phone)!= $code
         ){
-            return $this->writeJson(201, null, [],  '验证码不正确或已过期');
+            if(
+                CommonService::IsProductionEnv()
+            ){
+                return $this->writeJson(201, null, [],  '验证码不正确或已过期');
+            }
+
         }
 
         if(
@@ -460,18 +465,28 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'token' => '',
             ]
         );
+
+        //- 有邀请码的话 解析邀请码 设置邀请人
+        $invitation_code = trim($requestData['invitation_code']);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 'OnlineGoodsUser $id' => $id,
                 'OnlineGoodsUser $phone' => $phone,
+                'OnlineGoodsUser $invitation_code' => $invitation_code,
             ])
         );
-
-        //- 有邀请码的话 解析邀请码 设置邀请人
-        $invitation_code = trim($requestData['invitation_code']);
         if(($invitation_code)){
             $invitatedBy = CommonService::decodeInvitationCodeToId($invitation_code);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'OnlineGoodsUser $id' => $id,
+                    'OnlineGoodsUser $phone' => $phone,
+                    'OnlineGoodsUser $invitation_code' => $invitation_code,
+                    'OnlineGoodsUser $invitatedBy' => $invitatedBy,
+                ])
+            );
             OnlineGoodsUserInviteRelation::addRecordV2(
                 [
                     'user_id' => $this->loginUserinfo['id'],
@@ -484,13 +499,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $phone,
             $phone
         );
-
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'OnlineGoodsUser $newToken' => $newToken
-            ])
-        );
+ 
         $res = OnlineGoodsUser::findByPhone($phone);
         $res = $res->toArray();
         if($res['token']){
@@ -910,6 +919,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             []
         );
     }
+
+    //置金粉丝列表
     function ZhiJinFansLists(): bool
     {
         $requestData =  $this->getRequestData();

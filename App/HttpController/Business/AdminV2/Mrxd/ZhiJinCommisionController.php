@@ -16,10 +16,13 @@ use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\MailReceipt;
+use App\HttpController\Models\MRXD\OnlineGoodsCommissions;
 use App\HttpController\Models\MRXD\OnlineGoodsDaikuanBank;
 use App\HttpController\Models\MRXD\OnlineGoodsDaikuanProducts;
+use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\MRXD\OnlineGoodsUserBaoXianOrder;
 use App\HttpController\Models\MRXD\OnlineGoodsUserDaikuanOrder;
+use App\HttpController\Models\MRXD\OnlineGoodsUserInviteRelation;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Service\Common\CommonService;
@@ -72,7 +75,7 @@ class ZhiJinCommisionController extends ControllerBase
         foreach ($datas['data'] as $dataValue){
 
         }
-        $retrundatas = $datas['data'] ;
+
         $retrundatas = [
             [
                 'id'=>1,
@@ -116,7 +119,8 @@ class ZhiJinCommisionController extends ControllerBase
             ]
         ];
         $total = 100;
-
+        $total = $datas['total'] ;
+        $retrundatas = $datas['data'] ;
         return $this->writeJson(
             200,
             [
@@ -259,14 +263,14 @@ class ZhiJinCommisionController extends ControllerBase
 
         $dataRes = OnlineGoodsDaikuanProducts::findByConditionV2([],1,100);
         $returnData = [];
-        foreach ($dataRes['data'] as $valueItem){
+        foreach ($dataRes['data'] as &$valueItem){
             $returnData[$valueItem['id']] = $valueItem['name'];
         }
 
         return $this->writeJson(
             200,
             [ ] ,
-            $returnData,
+            $dataRes['data'],
             '成功',
             true,
             []
@@ -278,6 +282,32 @@ class ZhiJinCommisionController extends ControllerBase
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
+
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+
+            ],
+            '成功',
+            true,
+            []
+        );
+    }
+
+    /**
+        *  发放佣金
+        *  1: 生成分佣订单
+        *  2：实际发放
+     */
+    function grantDaiKuanCommission(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $code = $requestData['code'] ;
+        $id = $requestData['id'] ;
+
+        OnlineGoodsUserDaikuanOrder::addCommissionInfoById($id);
 
         return $this->writeJson(
             200,
@@ -403,6 +433,212 @@ class ZhiJinCommisionController extends ControllerBase
         );
     }
 
+    function incomeLists(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page =  $requestData['page']?:1;
+        $pageSize =  $requestData['pageSize']?:100;
+
+        $userInfo = $this->loginUserinfo;
+
+        CommonService::writeTestLog(
+            [
+                'getInvitationCode'=>[
+                    '$userInfo'=>[
+                        'id'=>$userInfo['id'],
+                        'user_name'=>$userInfo['user_name'],
+                        'phone'=>$userInfo['phone'],
+                    ],
+                ]
+            ]
+        );
+
+        $exampleDatas = [
+            [
+                'id'=>1,
+                //产品名称
+                'product_name'=>'美人贷',
+                'avatar'=>'/Static/Temp/img.img',
+                'purchaser_mobile'=>'132****6193',
+                //产品id
+                'product_id'=>1,
+                //购买人
+                'purchaser'=>'张小花',
+                //介绍人
+                'introducer'=>'张大花',
+                //介绍人所得分佣比例
+                'introducer_commision'=>'50%',
+                //订单金额
+                'price'=>10000,
+                //信动所得佣金 - 佣金表
+                'xindong_commission'=>500,
+                'commission'=>50,
+                //设置分佣状态
+                'commission_set_state_cname'=>'已设置分佣',
+                //分佣状态
+                'commission_state_cname'=>'已领取分佣',
+                //下单时间
+                'order_time'=>'2022-09-09',
+                'created_at'=>1665367946,
+                'state'=>1,
+                'state_cname'=> '已成交',
+            ]
+        ];
+        $total = 100 ;
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' =>$pageSize,
+                'total' => $total,
+                'totalPage' => ceil( $total/ $pageSize ),
+            ] ,
+            $exampleDatas
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
+
+
+
+    function ZhiJinFansOrderLists(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page =  $requestData['page']?:1;
+        $pageSize =  $requestData['pageSize']?:100;
+
+        $userInfo = $this->loginUserinfo;
+
+        CommonService::writeTestLog(
+            [
+                'getInvitationCode'=>[
+                    '$userInfo'=>[
+                        'id'=>$userInfo['id'],
+                        'user_name'=>$userInfo['user_name'],
+                        'phone'=>$userInfo['phone'],
+                    ],
+                ]
+            ]
+        );
+
+        $exampleDatas = [
+            [
+                'id'=>1,
+                //用户姓名
+                'name'=>  '张三',
+                //邀请人姓名
+                'inviter'=>  '张大三',
+                //订单数量
+                'order_nums'=>  '100',
+                //累计收益
+                'total_income'=>  '1000',
+                //粉丝数量
+                'total_fan_nums'=>  '1000',
+
+                //头像
+                'avatar'=>  '/static/img/aaa.jpg',
+                //加入时间
+                'join_at'=>'2022-10-09',
+                'created_at'=>1665367946,
+                'state'=>1,
+                'state_cname'=> '',
+            ]
+        ];
+        $total = 100 ;
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' =>$pageSize,
+                'total' => $total,
+                'totalPage' => ceil( $total/ $pageSize ),
+            ] ,
+            $exampleDatas
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
+
+    //置金粉丝列表
+    function ZhiJinFansLists(): bool
+    {
+
+
+        $requestData =  $this->getRequestData();
+        $page =  $requestData['page']?:1;
+        $pageSize =  $requestData['pageSize']?:100;
+        $userInfo = $this->loginUserinfo;
+
+        //$isVip = OnlineGoodsUser::IsVipV2($userInfo['id']);
+        $isVip = OnlineGoodsUser::IsVipV2(1);
+        $inviters = OnlineGoodsUserInviteRelation::getVipsAllInvitedUser(1);
+        foreach ($inviters as $inviterData){
+            $tmpUserInfo = OnlineGoodsUser::findById($inviterData['user_id']);
+            $tmpUserInfo = $tmpUserInfo->toArray();
+            $inviterData['user_commission_amount'] = 1000 ;
+            $inviterData['user_avatar'] = $tmpUserInfo['avatar'] ;
+            $inviterData['user_name'] = $tmpUserInfo['user_name'] ;
+            $inviterData['user_join_time'] = date('Y-m-d H:i:s',$tmpUserInfo['created_at']) ;
+
+            $tmpUserInvoterInfo = OnlineGoodsUser::findById($inviterData['invite_by']);
+            $tmpUserInvoterInfo = $tmpUserInvoterInfo->toArray();
+            $inviterData['invite_user_name'] = $tmpUserInvoterInfo['user_name'] ;
+        }
+        //找到所有的粉丝
+        // vip 》粉丝》
+        CommonService::writeTestLog(
+            [
+                'ZhiJinFansLists'=>[
+                    $inviters
+                ]
+            ]
+        );
+
+        $exampleDatas = [
+            [
+                'id'=>1,
+                //用户姓名
+                'name'=>  '张三',
+                //邀请人姓名
+                'inviter'=>  '张大三',
+                //订单数量
+                'order_nums'=>  '100',
+                //累计收益
+                'total_income'=>  '1000',
+                //粉丝数量
+                'total_fan_nums'=>  '1000',
+
+                //头像
+                'avatar'=>  '/static/img/aaa.jpg',
+                //加入时间
+                'join_at'=>'2022-10-09',
+                'created_at'=>1665367946,
+                'state'=>1,
+                'state_cname'=> '',
+            ]
+        ];
+        $total = 100 ;
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' =>$pageSize,
+                'total' => $total,
+                'totalPage' => ceil( $total/ $pageSize ),
+            ] ,
+            $inviters
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
+
+
     function addLoanOrder(): bool
     {
         $requestData =  $this->getRequestData();
@@ -422,20 +658,21 @@ class ZhiJinCommisionController extends ControllerBase
                 ]
             ]
         );
-          OnlineGoodsUserDaikuanOrder::addRecordV2([
-              'product_id' => $requestData['product_id'],
-              'purchaser_id' =>intval( $requestData['purchaser_id']),
-              'remark' => $requestData['remark'],
-              'amount' => $requestData['amount'],
-              'purchaser_name' => $requestData['purchaser_name'],
-              'purchaser_phone' => $requestData['purchaser_phone'],
-              'zhijin_phone' => $requestData['zhijin_phone'],
-              'xindong_commission_rate' => $requestData['xindong_commission_rate'],
-              'commission_rate' => $requestData['commission_rate'],
-              'order_date' => $requestData['order_date'],
-              'commission_date' => $requestData['commission_date'],
-              'xindong_commission' => $requestData['xindong_commission'],
-          ]);
+
+      OnlineGoodsUserDaikuanOrder::addRecordV2([
+          'product_id' => $requestData['product_id'],
+          'purchaser_id' =>intval( $requestData['purchaser_id']),
+          'remark' => $requestData['remark'],
+          'amount' => $requestData['amount'],
+          'purchaser_name' => $requestData['purchaser_name'],
+          'purchaser_phone' => $requestData['purchaser_phone'],
+          'zhijin_phone' => $requestData['zhijin_phone'],
+          'xindong_commission_rate' => $requestData['xindong_commission_rate'],
+          'commission_rate' => $requestData['commission_rate'],
+          'order_date' => $requestData['order_date'],
+          'commission_date' => $requestData['commission_date'],
+          'xindong_commission' => $requestData['xindong_commission'],
+      ]);
         return $this->writeJson(
             200,
             [
