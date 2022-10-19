@@ -82,7 +82,7 @@ class jincai_shoudong extends AbstractProcess
                         if (isset($addTaskInfo['code']) && strlen($addTaskInfo['code']) > 1) {
                             break;
                         }
-                        \co::sleep(5);
+                        \co::sleep(120);
                     }
                     JinCaiTrace::create()->data([
                         'entName' => $target->getAttr('entName'),
@@ -98,7 +98,7 @@ class jincai_shoudong extends AbstractProcess
                         'cxlx' => $cxlx,
                     ])->save();
                     // 还要间隔2分钟
-                    \co::sleep(5);
+                    \co::sleep(120);
                 } catch (\Throwable $e) {
                     $file = $e->getFile();
                     $line = $e->getLine();

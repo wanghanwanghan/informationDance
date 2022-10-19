@@ -31,7 +31,7 @@ class RunJinCaiShuKeRWH extends AbstractCronTask
 
     function run(int $taskId, int $workerIndex)
     {
-        (new JinCaiShuKeService())->setCheckRespFlag(true)->getRwhData();
+        // (new JinCaiShuKeService())->setCheckRespFlag(true)->getRwhData();
     }
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
