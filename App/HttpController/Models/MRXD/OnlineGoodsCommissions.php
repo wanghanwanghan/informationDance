@@ -188,6 +188,15 @@ class OnlineGoodsCommissions extends ModelBase
         // 置金用户
         $zhiJinUserInfo = OnlineGoodsUser::findByPhone($orderInfo['zhijin_phone']);
         $zhiJinUserInfo = $zhiJinUserInfo->toArray();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'addCommissionInfoByOrderInfo'=>[
+                    'zhijin_phone'=>$orderInfo['zhijin_phone'],
+                ],
+            ])
+        );
+
         //直接邀请人
         $directInvitorInfo = OnlineGoodsUserInviteRelation::getDirectInviterInfo($zhiJinUserInfo['id']);
         //vip邀请人
