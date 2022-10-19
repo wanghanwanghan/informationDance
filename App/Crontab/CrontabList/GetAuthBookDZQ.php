@@ -193,7 +193,7 @@ Eof;
 
                 $body = [
                     'sealResultCode' => $authResultCode,
-                    'orderNo' => $orderNo . '',
+                    'orderNo' => $oneEntInfo['orderNo'],
                     'nsrsbh' => $oneEntInfo['socialCredit'],//授权的企业税号
                     'notifyType' => 'AGREEMENT', //通知类型
                     'fileData' => array_values($fileData),
