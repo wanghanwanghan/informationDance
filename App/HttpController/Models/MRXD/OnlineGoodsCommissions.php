@@ -182,7 +182,80 @@ class OnlineGoodsCommissions extends ModelBase
         return $data;
     }
 
+    static function addCommissionInfoByOrderInfo($orderInfo){
+        $orderInfo = $orderInfo->toArray();
+        // 基准金额  amount
+        // 置金用户
+        $zhiJinUserInfo = OnlineGoodsUser::findByPhone($orderInfo['zhijin_phone']);
+        $zhiJinUserInfo = $zhiJinUserInfo->toArray();
+        //直接邀请人
+        $directInvitorInfo = OnlineGoodsUserInviteRelation::getDirectInviterInfo($zhiJinUserInfo['id']);
+        //vip邀请人
+        $VipInvitorInfo = OnlineGoodsUserInviteRelation::getVipInviterInfo($zhiJinUserInfo['id']);
 
+        //信动给VIP分佣
+        if($VipInvitorInfo){
+            $state = OnlineGoodsCommissions::$commission_state_seted;
+            OnlineGoodsCommissions::addRecordV2(
+                [
+                    //受益人
+                    'user_id' => $VipInvitorInfo['id'],
+                    //收益创造者
+                    'commission_create_user_id' => $zhiJinUserInfo['id'],
+                    //发放人
+                    'commission_owner' => 99999,
+                    'comission_rate' => 15,
+                    'commission_type' => OnlineGoodsCommissions::$commission_type_dai_kuan,
+                    'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_xindong_to_vip,
+                    'state' => $state,
+                    'commission_order_id' => $id,
+                    'remark' => '信动给VIP分佣',
+                ]
+            );
+        }
+        //VIP给邀请人分佣
+        if($VipInvitorInfo&&$directInvitorInfo){
+            $state = OnlineGoodsCommissions::$commission_state_init;
+            OnlineGoodsCommissions::addRecordV2(
+                [
+                    //受益人
+                    'user_id' => $directInvitorInfo['id'],
+                    //收益创造者
+                    'commission_create_user_id' => $zhiJinUserInfo['id'],
+                    //发放人
+                    'commission_owner' => $VipInvitorInfo['id'],
+                    'comission_rate' => 15,
+                    'commission_type' => OnlineGoodsCommissions::$commission_type_dai_kuan,
+                    'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_vip_to_invitor,
+                    'state' => $state,
+                    'commission_order_id' => $id,
+                    'remark' => 'VIP给邀请人分佣',
+                ]
+            );
+        }
+        //邀请人给被邀请人分佣
+        if($directInvitorInfo){
+            $state = OnlineGoodsCommissions::$commission_state_init;
+            OnlineGoodsCommissions::addRecordV2(
+                [
+                    //受益人
+                    'user_id' => $zhiJinUserInfo['id'],
+                    //收益创造者
+                    'commission_create_user_id' => $zhiJinUserInfo['id'],
+                    //发放人
+                    'commission_owner' => $directInvitorInfo['id'],
+                    'comission_rate' => 15,
+                    'commission_type' => OnlineGoodsCommissions::$commission_type_dai_kuan,
+                    'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_invitor_to_user,
+                    'state' => $state,
+                    'commission_order_id' => $id,
+                    'remark' => 'VIP给邀请人分佣',
+                ]
+            );
+        }
+
+        return true;
+    }
 
 
 }
