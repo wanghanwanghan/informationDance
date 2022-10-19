@@ -283,6 +283,27 @@ class ZhiJinCommisionController extends ControllerBase
         );
     }
 
+    function grantBaoXianCommission(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $code = $requestData['code'] ;
+        $id = $requestData['id'] ;
+
+        OnlineGoodsUserBaoXianOrder::addCommissionInfoById($id);
+
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+
+            ],
+            '成功',
+            true,
+            []
+        );
+    }
+
     function applyWithdrawalRecords(): bool
     {
         $requestData =  $this->getRequestData();
@@ -609,6 +630,30 @@ class ZhiJinCommisionController extends ControllerBase
 
         $userInfo = $this->loginUserinfo;
 
+        $checkRes = DataModelExample::checkField(
+            [
+                'id' => [
+                    'not_empty' => 1,
+                    'field_name' => 'zhijin_phone',
+                    'err_msg' => '请指定置金账号',
+                ],
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+
+        //校验置金手机号
+        if(
+            !OnlineGoodsUser::findByPhone($requestData['zhijin_phone'])
+        ){
+            return $this->writeJson(203,[ ] , [], '置金账号有问题', true, []);
+        };
+
         CommonService::writeTestLog(
             [
                 'getInvitationCode'=>[
@@ -654,6 +699,29 @@ class ZhiJinCommisionController extends ControllerBase
         $pageSize =  $requestData['pageSize']?:100;
 
         $userInfo = $this->loginUserinfo;
+
+        $checkRes = DataModelExample::checkField(
+            [
+                'id' => [
+                    'not_empty' => 1,
+                    'field_name' => 'zhijin_phone',
+                    'err_msg' => '请指定置金账号',
+                ],
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        //校验置金手机号
+        if(
+            !OnlineGoodsUser::findByPhone($requestData['zhijin_phone'])
+        ){
+            return $this->writeJson(203,[ ] , [], '置金账号有问题', true, []);
+        };
 
         CommonService::writeTestLog(
             [
