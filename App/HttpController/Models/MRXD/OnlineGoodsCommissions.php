@@ -180,14 +180,14 @@ class OnlineGoodsCommissions extends ModelBase
     public static function grantByCommissionOrderId($orderInfo){
 
         $res =  OnlineGoodsCommissions::create()
-            ->where('commission_order_id',$orderInfo['commission_order_id'])
+            ->where('commission_order_id',$orderInfo['id'])
             ->where('state',self::$commission_state_seted)
             ->all();
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 'grantByCommissionOrderId'=>[
-                    'commission_order_id'=>$orderInfo['commission_order_id'],
+                    'commission_order_id'=>$orderInfo['id'],
                     'datas'=>count($res),
                 ],
             ])

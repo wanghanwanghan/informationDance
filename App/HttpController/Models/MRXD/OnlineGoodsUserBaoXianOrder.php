@@ -110,7 +110,11 @@ class OnlineGoodsUserBaoXianOrder extends ModelBase
     //发放佣金
     static function grantCommissionInfoById($id){
         $orderInfo = self::findById($id);
+        if(empty($orderInfo)){
+            return  false;
+        }
         $orderInfo = $orderInfo->toArray();
+
         return  OnlineGoodsCommissions::grantByCommissionOrderId($orderInfo);
     }
 
