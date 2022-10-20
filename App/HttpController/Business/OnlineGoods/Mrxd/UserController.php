@@ -356,7 +356,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $code = $requestData['code'] ;
 
         $userInfo = $this->loginUserinfo;
-
+        $userInfo['id'] = 1;
+        
         if(
             $requestData['real']
         ){
