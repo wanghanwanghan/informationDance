@@ -708,12 +708,14 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 //分佣的用户
                 'user_id' => $requestData['fans_id'],
                 'commission_owner' => $uid,
+                'state' => OnlineGoodsCommissions::$commission_state_init,
             ]);
             CommonService::writeTestLog(
                 [
                     'baoxianOrderLists findAllByCondition'=>[
                         'user_id' => $requestData['fans_id'],
                         'commission_owner' => $uid,
+                        'state' => OnlineGoodsCommissions::$commission_state_init,
                     ]
                 ]
             );
