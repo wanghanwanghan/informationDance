@@ -183,7 +183,15 @@ class OnlineGoodsCommissions extends ModelBase
             ->where('commission_order_id',$orderInfo['commission_order_id'])
             ->where('state',self::$commission_state_seted)
             ->all();
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'grantByCommissionOrderId'=>[
+                    'commission_order_id'=>$orderInfo['commission_order_id'],
+                    'datas'=>count($res),
+                ],
+            ])
+        );
         foreach ($res as $resValue){
             $commission =  $orderInfo['amount']*$resValue['comission_rate'];
             CommonService::getInstance()->log4PHP(
