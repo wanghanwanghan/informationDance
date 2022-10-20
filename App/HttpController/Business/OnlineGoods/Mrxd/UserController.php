@@ -16,6 +16,7 @@ use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\InsuranceData;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\Api\User;
+use App\HttpController\Models\MRXD\OnlineGoodsCommissions;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\MRXD\OnlineGoodsUserInviteRelation;
 use App\HttpController\Models\RDS3\Company;
@@ -699,6 +700,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $pageSize =  $requestData['pageSize']?:100;
 
         $userInfo = $this->loginUserinfo;
+        $uid = $userInfo['id'];
+        $uid = 11;
 
         CommonService::writeTestLog(
             [
@@ -713,7 +716,25 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
 
         if($requestData['real']){
-
+            $commissions = OnlineGoodsCommissions::findAllByCondition([
+                //分佣的用户
+                'user_id' => $requestData['fans_id'],
+                'commission_owner' => $uid,
+            ]);
+            return $this->writeJson(
+                200,
+                [
+                    'page' => $page,
+                    'pageSize' =>$pageSize,
+                    'total' => $total,
+                    'totalPage' => ceil( $total/ $pageSize ),
+                ] ,
+                $commissions
+                ,
+                '成功',
+                true,
+                []
+            );
         }
 
         $exampleDatas = [
