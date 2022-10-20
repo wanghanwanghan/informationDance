@@ -101,6 +101,14 @@ class OnlineGoodsCommissions extends ModelBase
         return $res;
     }
 
+    public static function findOneByCondition($whereArr){
+        $res =  OnlineGoodsCommissions::create()
+            ->where($whereArr)
+            ->get();
+        return $res;
+    }
+
+
     public static function setTouchTime($id,$touchTime){
         $info = OnlineGoodsCommissions::findById($id);
 

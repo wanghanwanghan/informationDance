@@ -355,6 +355,39 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
 
+        $userInfo = $this->loginUserinfo;
+
+        if(
+            $requestData['real']
+        ){
+            $commissionInfo = OnlineGoodsCommissions::findOneByCondition([
+                'id' => $requestData['id'],
+                'commission_owner' => $userInfo['id'],
+            ]);
+
+            if(empty($commissionInfo)){
+                return $this->writeJson(
+                    203,
+                    [ ] ,
+                    [
+
+                    ],
+                    '没权限设置该订单',
+                    true,
+                    []
+                );
+            }
+
+            //改为已设置成功
+            OnlineGoodsCommissions::updateById($commissionInfo->id,
+                [
+                    'state' => OnlineGoodsCommissions::$commission_state_seted
+                ]
+            );
+            //发放
+            OnlineGoodsCommissions::grantByCommissionOrderId($commissionInfo->toArray());
+        }
+
         return $this->writeJson(
             200,
             [ ] ,
