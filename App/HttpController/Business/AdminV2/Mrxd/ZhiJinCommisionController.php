@@ -16,6 +16,7 @@ use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\MailReceipt;
+use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\MRXD\OnlineGoodsCommissions;
 use App\HttpController\Models\MRXD\OnlineGoodsDaikuanBank;
 use App\HttpController\Models\MRXD\OnlineGoodsDaikuanProducts;
@@ -256,6 +257,38 @@ class ZhiJinCommisionController extends ControllerBase
             []
         );
     }
+
+    public function zhiJinUploadeFiles(){
+        $requestData =  $this->getRequestData();
+
+        $files = $this->request()->getUploadedFiles();
+
+        $succeedNums = 0;
+        $datas = [];
+        foreach ($files as $key => $oneFile) {
+            try {
+                $fileName = $oneFile->getClientFilename();
+                $path = OTHER_FILE_PATH . $fileName;
+                if(file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件已存在！');;
+                }
+
+                $res = $oneFile->moveTo($path);
+                if(!file_exists($path)){
+                    CommonService::getInstance()->log4PHP( json_encode(['uploadeFiles   file_not_exists moveTo false ', 'params $path '=> $path,  ]) );
+                    return $this->writeJson(203, [], [],'文件移动失败！');
+                }
+
+                $succeedNums ++;
+                $datas[] = '/Static/OtherFile/'.$fileName;
+            } catch (\Throwable $e) {
+                return $this->writeJson(202, [], [],'导入失败'.$e->getMessage());
+            }
+        }
+
+        return $this->writeJson(200, [], $datas,'导入成功 入库文件数量:'.$succeedNums);
+    }
+
 
     /**
         *  发放佣金
