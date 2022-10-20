@@ -98,6 +98,9 @@ class OnlineGoodsUserBaoXianOrder extends ModelBase
     static function addCommissionInfoById($id){
 
         $orderInfo = self::findById($id);
+        if(empty($orderInfo)){
+            return  false;
+        }
         $orderInfo = $orderInfo->toArray();
         OnlineGoodsCommissions::addCommissionInfoByOrderInfo($orderInfo);
 

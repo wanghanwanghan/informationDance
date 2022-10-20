@@ -268,6 +268,9 @@ class OnlineGoodsCommissions extends ModelBase
         // 基准金额  amount
         // 置金用户
         $zhiJinUserInfo = OnlineGoodsUser::findByPhone($orderInfo['zhijin_phone']);
+        if(empty($zhiJinUserInfo)){
+            return  false;
+        }
         $zhiJinUserInfo = $zhiJinUserInfo->toArray();
 
         //直接邀请人
