@@ -145,8 +145,6 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
         $orderInfo = self::findById($id);
         $orderInfo = $orderInfo->toArray();
         return  OnlineGoodsCommissions::grantByCommissionOrderId($orderInfo);
-
-
     }
 
     public static function findAllByCondition($whereArr){

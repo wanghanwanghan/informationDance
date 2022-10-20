@@ -104,6 +104,14 @@ class OnlineGoodsUserBaoXianOrder extends ModelBase
         return true;
     }
 
+    //发放佣金
+    static function grantCommissionInfoById($id){
+        $orderInfo = self::findById($id);
+        $orderInfo = $orderInfo->toArray();
+        return  OnlineGoodsCommissions::grantByCommissionOrderId($orderInfo);
+    }
+
+
     public static function addRecord($requestData){
 
         try {

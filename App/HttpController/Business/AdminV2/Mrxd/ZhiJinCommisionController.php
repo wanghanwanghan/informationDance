@@ -321,7 +321,10 @@ class ZhiJinCommisionController extends ControllerBase
         $code = $requestData['code'] ;
         $id = $requestData['id'] ;
 
+        //先添加佣金记录
         OnlineGoodsUserDaikuanOrder::addCommissionInfoById($id);
+        //发放佣金
+        OnlineGoodsUserDaikuanOrder::grantCommissionInfoById($id);
 
         return $this->writeJson(
             200,

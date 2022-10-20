@@ -30,6 +30,10 @@ class OnlineGoodsCommissions extends ModelBase
     static  $commission_state_seted  = 10;
     static  $commission_state_seted_cname  = '已设置分佣比例';
 
+    static  $commission_state_granted  = 15;
+    static  $commission_state_granted_cname  = '已发放';
+
+
     static $xin_dong_account_id = 99999;
 
     /**
@@ -46,6 +50,9 @@ class OnlineGoodsCommissions extends ModelBase
 
 
     static  function  addRecordV2($info){
+        //commission_order_id 订单id
+        //commission_type 保险还是贷款
+        //commission_data_type 谁分给谁的
         $oldRes = self::findByCommissionOrderId($info['commission_order_id'],$info['commission_type'],$info['commission_data_type']);
         if(
             $oldRes
@@ -177,10 +184,23 @@ class OnlineGoodsCommissions extends ModelBase
             ->where('state',self::$commission_state_seted)
             ->all();
 
-        //
         foreach ($res as $resValue){
             $commission =  $orderInfo['amount']*$resValue['comission_rate'];
-
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'grantByCommissionOrderId'=>[
+                        'user_id' => $resValue['user_id'],
+                        'commission_create_user_id' => $resValue['commission_create_user_id'],
+                        'commission_order_id' => $resValue['commission_order_id'],
+                        'commission_type' => $resValue['commission_type'],
+                        'commission_owner' => $resValue['commission_owner'],
+                        'comission_rate' => $resValue['comission_rate'],
+                        '$commission' => $commission,
+                    ],
+                ])
+            );
+            
             //发放佣金-从原账户扣除
             if($resValue['commission_owner'] != self::$xin_dong_account_id){
                 $changeRes = OnlineGoodsUser::changeBalance(
@@ -193,6 +213,7 @@ class OnlineGoodsCommissions extends ModelBase
                 }
             }
 
+            //发放佣金-
             $changeRes = OnlineGoodsUser::changeBalance(
                 $resValue['user_id'],
                 $commission,
@@ -202,6 +223,7 @@ class OnlineGoodsCommissions extends ModelBase
                 return false;
             }
 
+            self::updateById($resValue['id'],['state'=>self::$commission_state_granted]);
            // $resValue['commission_create_user_id']; //产生分佣的用户
 
             //$resValue['commission_order_id']; //对应的分佣订单id
