@@ -401,7 +401,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 ]
             );
             //发放
-            OnlineGoodsCommissions::grantByCommissionOrderId($commissionInfo->toArray());
+            OnlineGoodsCommissions::grantByItem($commissionInfo->toArray(),$amount) ;
         }
 
         return $this->writeJson(

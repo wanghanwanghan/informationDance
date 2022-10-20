@@ -200,57 +200,58 @@ class OnlineGoodsCommissions extends ModelBase
                 ],
             ])
         );
+
         foreach ($res as $resValue){
-            $commission =  $orderInfo['amount']*$resValue['comission_rate'];
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'grantByCommissionOrderId'=>[
-                        'user_id' => $resValue['user_id'],
-                        'commission_create_user_id' => $resValue['commission_create_user_id'],
-                        'commission_order_id' => $resValue['commission_order_id'],
-                        'commission_type' => $resValue['commission_type'],
-                        'commission_owner' => $resValue['commission_owner'],
-                        'comission_rate' => $resValue['comission_rate'],
-                        '$commission' => $commission,
-                    ],
-                ])
-            );
-
-            //发放佣金-从原账户扣除
-            if($resValue['commission_owner'] != self::$xin_dong_account_id){
-                $changeRes = OnlineGoodsUser::changeBalance(
-                    $resValue['commission_owner'],
-                    $commission,
-                    OnlineGoodsUser::$banlance_type_zeng_jia
-                );
-                if(!$changeRes){
-                    return false;
-                }
+            $changeRes = self::grantByItem($resValue,$orderInfo['amount']);
+            if(!$changeRes){
+                return false;
             }
+        }
 
-            //发放佣金-
+        return $res;
+
+    }
+    public static function grantByItem($resValue,$amount){
+        $commission =  $amount*$resValue['comission_rate'];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'grantByCommissionOrderId'=>[
+                    'user_id' => $resValue['user_id'],
+                    'commission_create_user_id' => $resValue['commission_create_user_id'],
+                    'commission_order_id' => $resValue['commission_order_id'],
+                    'commission_type' => $resValue['commission_type'],
+                    'commission_owner' => $resValue['commission_owner'],
+                    'comission_rate' => $resValue['comission_rate'],
+                    '$commission' => $commission,
+                ],
+            ])
+        );
+
+        //发放佣金-从原账户扣除
+        if($resValue['commission_owner'] != self::$xin_dong_account_id){
             $changeRes = OnlineGoodsUser::changeBalance(
-                $resValue['user_id'],
+                $resValue['commission_owner'],
                 $commission,
                 OnlineGoodsUser::$banlance_type_zeng_jia
             );
             if(!$changeRes){
                 return false;
             }
-
-            self::updateById($resValue['id'],['state'=>self::$commission_state_granted]);
-           // $resValue['commission_create_user_id']; //产生分佣的用户
-
-            //$resValue['commission_order_id']; //对应的分佣订单id
-
-            ; //comission_rate
-
-            //$resValue['commission_owner']; //commission_owner
-
         }
 
-        return $res;
+        //发放佣金-
+        $changeRes = OnlineGoodsUser::changeBalance(
+            $resValue['user_id'],
+            $commission,
+            OnlineGoodsUser::$banlance_type_zeng_jia
+        );
+        if(!$changeRes){
+            return false;
+        }
+
+
+        return  self::updateById($resValue['id'],['state'=>self::$commission_state_granted]);
     }
 
 
