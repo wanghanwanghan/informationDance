@@ -342,7 +342,7 @@ class OnlineGoodsCommissions extends ModelBase
                     'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_invitor_to_user,
                     'state' => $state,
                     'commission_order_id' => $orderInfo['id'],
-                    'remark' => 'VIP给邀请人分佣',
+                    'remark' => '邀请人给用户分佣',
                 ]
             );
         }
