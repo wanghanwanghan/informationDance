@@ -321,10 +321,14 @@ class ZhiJinCommisionController extends ControllerBase
         $code = $requestData['code'] ;
         $id = $requestData['id'] ;
 
-        //先添加佣金记录
-        OnlineGoodsUserDaikuanOrder::addCommissionInfoById($id);
-        //发放佣金
-        OnlineGoodsUserDaikuanOrder::grantCommissionInfoById($id);
+        if($requestData['real']){
+            //先添加佣金记录
+            OnlineGoodsUserDaikuanOrder::addCommissionInfoById($id);
+            //发放佣金
+            OnlineGoodsUserDaikuanOrder::grantCommissionInfoById($id);
+        }
+
+
 
         return $this->writeJson(
             200,
@@ -345,7 +349,11 @@ class ZhiJinCommisionController extends ControllerBase
         $code = $requestData['code'] ;
         $id = $requestData['id'] ;
 
-        OnlineGoodsUserBaoXianOrder::addCommissionInfoById($id);
+        if($requestData['real']){
+            OnlineGoodsUserBaoXianOrder::addCommissionInfoById($id);
+            OnlineGoodsUserBaoXianOrder::grantCommissionInfoById($id);
+        }
+
 
         return $this->writeJson(
             200,

@@ -200,7 +200,7 @@ class OnlineGoodsCommissions extends ModelBase
                     ],
                 ])
             );
-            
+
             //发放佣金-从原账户扣除
             if($resValue['commission_owner'] != self::$xin_dong_account_id){
                 $changeRes = OnlineGoodsUser::changeBalance(
