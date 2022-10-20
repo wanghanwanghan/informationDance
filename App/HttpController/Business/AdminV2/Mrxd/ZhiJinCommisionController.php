@@ -258,6 +258,25 @@ class ZhiJinCommisionController extends ControllerBase
         );
     }
 
+    function offlinePay(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $code = $requestData['code'] ;
+
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+
+            ],
+            '成功',
+            true,
+            []
+        );
+    }
+
+
     public function zhiJinUploadeFiles(){
         $requestData =  $this->getRequestData();
 

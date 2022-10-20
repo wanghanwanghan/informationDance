@@ -291,6 +291,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/ZhiJinFansLists', $prefix . 'ZhiJinFansLists');
             $routeCollector->addRoute(['GET', 'POST'], '/applyWithdrawalRecords', $prefix . 'applyWithdrawalRecords');
             $routeCollector->addRoute(['GET', 'POST'], '/setApplyWithdrawalRes', $prefix . 'setApplyWithdrawalRes');
+            $routeCollector->addRoute(['GET', 'POST'], '/offlinePay', $prefix . 'offlinePay');
             $routeCollector->addRoute(['GET', 'POST'], '/daikuanBank', $prefix . 'daikuanBank');
             $routeCollector->addRoute(['GET', 'POST'], '/ZhiJinFansOrderLists', $prefix . 'ZhiJinFansOrderLists');
             $routeCollector->addRoute(['GET', 'POST'], '/incomeLists', $prefix . 'incomeLists');

@@ -20,10 +20,10 @@ use Vtiful\Kernel\Format;
 
 // use App\HttpController\Models\AdminRole;
 
-class OnlineGoodsUserDaikuanOrder extends ModelBase
+class OnlineGoodsAccountLiuShui extends ModelBase
 {
 
-    protected $tableName = 'online_goods_user_daikuan_order';
+    protected $tableName = 'online_goods_account_liu_shui';
 
     static  $state_del = 1;
     static  $state_del_cname =  '已删除';
@@ -32,6 +32,13 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
 
     static $status_init = 0;
     static $status_init_cname =  '初始';
+
+    // data_type
+    static  $data_type_fen_yong_ru_zhang = 5 ;
+    static  $data_type_fen_yong_ru_zhang_cname = '分佣（收入）' ;
+    static  $data_type_fen_yong_zhi_chu = 10 ;
+    static  $data_type_fen_yong_zhi_chu_cname = '分佣（支出）' ;
+    static  $data_type_ti_xian = 15 ;
 
     static function getDelStateMap(){
         return [
@@ -74,30 +81,23 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
     }
 
     static  function  addRecordV2($info){
-        return OnlineGoodsUserDaikuanOrder::addRecord(
+        return OnlineGoodsAccountLiuShui::addRecord(
             $info
         );
     }
 
+
     public static function addRecord($requestData){
         try {
-           $res =  OnlineGoodsUserDaikuanOrder::create()->data([
-               //产品
-               'product_id' => intval($requestData['product_id']),
-               //购买人
-               'purchaser_id' => intval($requestData['purchaser_id']),
+           $res =  OnlineGoodsAccountLiuShui::create()->data([
+               'user_id' => $requestData['user_id'],
+               'old_balance' => $requestData['old_balance'],
+               'new_balance' => $requestData['new_balance'],
                'amount' => $requestData['amount']?:0,
-               'purchaser_name' => $requestData['purchaser_name']?:'',
-               'purchaser_phone' => $requestData['purchaser_phone']?:'',
-               'zhijin_phone' => $requestData['zhijin_phone']?:'',
-               'xindong_commission_rate' => $requestData['xindong_commission_rate']?:'',
-               'xindong_commission' => $requestData['xindong_commission']?:'',
-               'commission_rate' => $requestData['xindong_commission_rate']?:'',
-               'order_date' => $requestData['order_date']?:'',
-               'commission_date' => $requestData['commission_date']?:'',
+               'type' => $requestData['type'],
+               'data_type' => $requestData['data_type'],
+               'state' => $requestData['state'],
                'remark' => $requestData['remark']?:'',
-                'commission_set_state' => intval($requestData['commission_set_state']),
-                'commission_state' => intval($requestData['commission_state']),
                'created_at' => time(),
                'updated_at' => time(),
            ])->save();
@@ -144,20 +144,20 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
     static function grantCommissionInfoById($id){
         $orderInfo = self::findById($id);
         $orderInfo = $orderInfo->toArray();
-        return  OnlineGoodsCommissions::grantByCommissionOrderId($orderInfo);
+        OnlineGoodsCommissions::findAllByCommissionOrderId($orderInfo);
 
-
+        return true;
     }
 
     public static function findAllByCondition($whereArr){
-        $res =  OnlineGoodsUserDaikuanOrder::create()
+        $res =  OnlineGoodsAccountLiuShui::create()
             ->where($whereArr)
             ->all();
         return $res;
     }
 
     public static function setTouchTime($id,$touchTime){
-        $info = OnlineGoodsUserDaikuanOrder::findById($id);
+        $info = OnlineGoodsAccountLiuShui::findById($id);
 
         return $info->update([
             'touch_time' => $touchTime,
@@ -166,7 +166,7 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
 
     //软删除
     public static function delRecord($id){
-        $info = OnlineGoodsUserDaikuanOrder::findById($id);
+        $info = OnlineGoodsAccountLiuShui::findById($id);
         return $info->update([
             'is_del' => self::$state_del,
         ]);
@@ -181,7 +181,7 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
     }
 
     public static function findByConditionWithCountInfo($whereArr,$page){
-        $model = OnlineGoodsUserDaikuanOrder::create()
+        $model = OnlineGoodsAccountLiuShui::create()
                 ->where($whereArr)
                 ->page($page)
                 ->order('id', 'DESC')
@@ -197,7 +197,7 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
     }
 
     public static function findByConditionV2($whereArr,$page, $size){
-        $model = OnlineGoodsUserDaikuanOrder::create();
+        $model = OnlineGoodsAccountLiuShui::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -215,21 +215,21 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
     }
 
     public static function findById($id){
-        $res =  OnlineGoodsUserDaikuanOrder::create()
+        $res =  OnlineGoodsAccountLiuShui::create()
             ->where('id',$id)            
             ->get();  
         return $res;
     }
 
     public static function findAllByUserId($userId){
-        $res =  OnlineGoodsUserDaikuanOrder::create()
+        $res =  OnlineGoodsAccountLiuShui::create()
             ->where('user_id',$userId)
             ->all();
         return $res;
     }
 
     public static function findAllByUserIdV2($userId){
-        $res =  OnlineGoodsUserDaikuanOrder::create()
+        $res =  OnlineGoodsAccountLiuShui::create()
             ->where('user_id',$userId)
             ->where('is_del',0)
             ->all();
@@ -237,7 +237,7 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
     }
 
     public static function findByEntName($user_id,$ent_name){
-        $res =  OnlineGoodsUserDaikuanOrder::create()
+        $res =  OnlineGoodsAccountLiuShui::create()
             ->where('user_id',$user_id)
             ->where('ent_name',$ent_name)
             ->get();
@@ -245,7 +245,7 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
     }
 
     public static function findByUser($user_id){
-        $res =  OnlineGoodsUserDaikuanOrder::create()
+        $res =  OnlineGoodsAccountLiuShui::create()
             ->where('user_id',$user_id)
             ->where('is_del',0)
             ->get();
@@ -254,7 +254,7 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
 
 
     public static function findByEntNameV2($user_id,$ent_name){
-        $res =  OnlineGoodsUserDaikuanOrder::create()
+        $res =  OnlineGoodsAccountLiuShui::create()
             ->where('user_id',$user_id)
             ->where('ent_name',$ent_name)
             ->where('is_del',0)
@@ -263,7 +263,7 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
     }
 
     public static function findByEntNameV3($user_id,$ent_name){
-        $res =  OnlineGoodsUserDaikuanOrder::create()
+        $res =  OnlineGoodsAccountLiuShui::create()
             ->where('user_id',$user_id)
             ->where('ent_name',$ent_name)
             ->where('is_del',1)
@@ -272,7 +272,7 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
     }
 
     public static function setData($id,$field,$value){
-        $info = OnlineGoodsUserDaikuanOrder::findById($id);
+        $info = OnlineGoodsAccountLiuShui::findById($id);
         return $info->update([
             "$field" => $value,
         ]);
@@ -281,7 +281,7 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
     public static function findBySql($where){
         $Sql = " select *  
                             from  
-                        `online_goods_user_daikuan_order` 
+                        `online_goods_account_liu_shui` 
                             $where
       " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
