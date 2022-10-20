@@ -929,6 +929,14 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $useId = $userInfo['id'];
         $returnDatas = [];
         $useId = 1;
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'ZhiJinFansOrderLists'=>[
+                    'real'=>$requestData['real'],
+                ],
+            ])
+        );
         if($requestData['real']){
             //如果是VIP 可以设置全部粉丝
             if(
@@ -939,7 +947,14 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             else{
                 $returnDatas = OnlineGoodsUserInviteRelation::getAllInvitedUser($useId);
             }
-
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'ZhiJinFansOrderLists'=>[
+                        '$returnDatas'=>$returnDatas,
+                    ],
+                ])
+            );
             return $this->writeJson(
                 200,
                 [
