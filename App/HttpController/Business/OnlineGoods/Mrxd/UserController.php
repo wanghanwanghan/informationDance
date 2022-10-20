@@ -712,6 +712,10 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             ]
         );
 
+        if($requestData['real']){
+
+        }
+
         $exampleDatas = [
             [
                 'id'=>1,
@@ -922,6 +926,34 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $pageSize =  $requestData['pageSize']?:100;
 
         $userInfo = $this->loginUserinfo;
+        $useId = $userInfo['id'];
+        $returnDatas = [];
+        if($requestData['real']){
+            //如果是VIP 可以设置全部粉丝
+            if(
+                OnlineGoodsUser::IsVipV2($useId)
+            ){
+                $returnDatas = OnlineGoodsUserInviteRelation::getVipsAllInvitedUser($useId);
+            }
+            else{
+                $returnDatas = OnlineGoodsUserInviteRelation::getAllInvitedUser($useId);
+            }
+
+            return $this->writeJson(
+                200,
+                [
+                    'page' => $page,
+                    'pageSize' =>$pageSize,
+                    'total' => $total,
+                    'totalPage' => ceil( $total/ $pageSize ),
+                ] ,
+                $returnDatas
+                ,
+                '成功',
+                true,
+                []
+            );
+        }
 
         CommonService::writeTestLog(
             [
