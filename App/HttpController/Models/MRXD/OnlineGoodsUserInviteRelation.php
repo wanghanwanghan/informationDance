@@ -191,7 +191,18 @@ class OnlineGoodsUserInviteRelation extends ModelBase
 
     // 获取VIP邀请人
     static function getVipInviterInfo($userId){
+        //先检查自己是不是vip
+        $tmpUser = OnlineGoodsUser::findById($userId);
+        $tmpUser = $tmpUser->toArray();
+        if(
+            OnlineGoodsUser::IsVip($tmpUser)
+        ){
+            return  $tmpUser;
+        };
+
+
         $res = self::findByUser($userId);
+
         $topInvitor =  0 ;
         while (true){
             $tmpInfo = $res->toArray();
