@@ -39,7 +39,7 @@ class OnlineGoodsUser extends ModelBase
 
 
     static  function  changeBalance($userId,$amount,$type){
-        $userInfo = self::findById();
+        $userInfo = self::findById($userId);
         $oldBalance = $userInfo->money;
         $newBalance = $oldBalance;
         if($type == self::$banlance_type_zeng_jia){
