@@ -364,7 +364,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             true,
             []
         );
-    } 
+    }
     function setDaiKuanCommisionRate(): bool
     {
         $requestData =  $this->getRequestData();
@@ -382,7 +382,28 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             []
         );
     }
+    function fansBasicInfo(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $code = $requestData['code'] ;
 
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+                'name'=>'张大炮',
+                'zhi_jin_account'=>'置金账户',
+                'commission_order_nums'=>'自购产品列表',
+                'invitor'=>'李大炮',
+                'invitor_mobile'=>'1326976192',
+            ],
+            '成功',
+            true,
+            []
+        );
+    }
+    //
     function shareIncome(): bool
     {
         $requestData =  $this->getRequestData();
