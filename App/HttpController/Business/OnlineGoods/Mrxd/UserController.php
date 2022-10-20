@@ -357,14 +357,29 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
         $userInfo = $this->loginUserinfo;
         $userInfo['id'] = 1;
-        
+
         if(
             $requestData['real']
         ){
             $commissionInfo = OnlineGoodsCommissions::findOneByCondition([
                 'id' => $requestData['id'],
                 'commission_owner' => $userInfo['id'],
+                'state' => OnlineGoodsCommissions::$commission_state_init
             ]);
+
+
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        'id' => $requestData['id'],
+                        'commission_owner' => $userInfo['id'],
+                        'state' => OnlineGoodsCommissions::$commission_state_init
+                    ]
+                ])
+            );
+
+
 
             if(empty($commissionInfo)){
                 return $this->writeJson(
