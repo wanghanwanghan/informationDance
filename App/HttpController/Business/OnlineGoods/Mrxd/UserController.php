@@ -703,24 +703,20 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $uid = $userInfo['id'];
         $uid = 11;
 
-        CommonService::writeTestLog(
-            [
-                'getInvitationCode'=>[
-                    '$userInfo'=>[
-                        'id'=>$userInfo['id'],
-                        'user_name'=>$userInfo['user_name'],
-                        'phone'=>$userInfo['phone'],
-                    ],
-                ]
-            ]
-        );
-
         if($requestData['real']){
             $commissions = OnlineGoodsCommissions::findAllByCondition([
                 //分佣的用户
                 'user_id' => $requestData['fans_id'],
                 'commission_owner' => $uid,
             ]);
+            CommonService::writeTestLog(
+                [
+                    'baoxianOrderLists findAllByCondition'=>[
+                        'user_id' => $requestData['fans_id'],
+                        'commission_owner' => $uid,
+                    ]
+                ]
+            );
             return $this->writeJson(
                 200,
                 [
