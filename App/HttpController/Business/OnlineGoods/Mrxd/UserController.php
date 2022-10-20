@@ -928,6 +928,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $userInfo = $this->loginUserinfo;
         $useId = $userInfo['id'];
         $returnDatas = [];
+        $useId = 1;
         if($requestData['real']){
             //如果是VIP 可以设置全部粉丝
             if(
