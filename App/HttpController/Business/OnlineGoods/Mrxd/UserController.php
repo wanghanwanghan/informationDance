@@ -139,8 +139,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
     function getBasicInfo(): bool
     {
         $requestData =  $this->getRequestData();
-//        $phone = $requestData['phone'] ;
-//        $code = $requestData['code'] ;
+        $userInfo = $this->loginUserinfo;
 
         return $this->writeJson(
             200,
@@ -153,7 +152,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total_withdraw' => 1000,
                 'invite_code' => 1000,
                 'money' => 1000,
-                'avatar' => '/Static/Temp/XXX.img',
+                'avatar' => '/Static/OtherFile/default_avater.png',
             ],
             '成功',
             true,
@@ -513,7 +512,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         if(
             OnlineGoodsUser::getRandomDigit($phone)!= $code
         ){
-            return $this->writeJson(201, null, [],  '验证码不正确或已过期'); 
+            return $this->writeJson(201, null, [],  '验证码不正确或已过期');
         }
 
         $userInfo = OnlineGoodsUser::findByPhone($phone);
@@ -526,12 +525,6 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $newToken = UserService::getInstance()->createAccessToken(
             $phone,
             $phone
-        );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'OnlineGoodsUser——login $newToken' => $newToken
-            ])
         );
 
         $res = OnlineGoodsUser::findByPhone($phone);
