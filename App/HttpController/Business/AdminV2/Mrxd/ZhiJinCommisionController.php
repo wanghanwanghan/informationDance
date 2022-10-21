@@ -4,6 +4,7 @@ namespace App\HttpController\Business\AdminV2\Mrxd;
 
 use App\ElasticSearch\Service\ElasticSearchService;
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
+use App\HttpController\Business\OnlineGoods\Mrxd\DaiKuanController;
 use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminUserBussinessOpportunityUploadRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
@@ -45,8 +46,6 @@ class ZhiJinCommisionController extends ControllerBase
 
     /**
 
-     loan-order
-     loan-order
 
      */
 
@@ -58,24 +57,25 @@ class ZhiJinCommisionController extends ControllerBase
 
         $userInfo = $this->loginUserinfo;
 
-        CommonService::writeTestLog(
-            [
-                'getInvitationCode'=>[
-                    '$userInfo'=>[
-                        'id'=>$userInfo['id'],
-                        'user_name'=>$userInfo['user_name'],
-                        'phone'=>$userInfo['phone'],
-                    ],
-                ]
-            ]
-        );
+//        CommonService::writeTestLog(
+//            [
+//                'getInvitationCode'=>[
+//                    '$userInfo'=>[
+//                        'id'=>$userInfo['id'],
+//                        'user_name'=>$userInfo['user_name'],
+//                        'phone'=>$userInfo['phone'],
+//                    ],
+//                ]
+//            ]
+//        );
 
 
 
         $datas = OnlineGoodsUserDaikuanOrder::findByConditionV2([],$page,$pageSize);
         $total = $datas['total'] ;
         foreach ($datas['data'] as &$dataValue){
-
+            $productInfo = OnlineGoodsDaikuanProducts::findById($dataValue['product_id']); 
+            $dataValue['product_name'] = $productInfo?$productInfo->name:'';
         }
         $total = 100;
         $total = $datas['total'] ;
@@ -690,12 +690,24 @@ class ZhiJinCommisionController extends ControllerBase
         );
     }
 
-
+    /**
+    product_id: 3
+    purchaser_id:
+    phone: 18618457910
+    purchaser_name: 张老大
+    purchaser_phone: 132697777
+    zhijin_phone: 13269706193
+    amount: 500
+    xindong_commission:
+    xindong_commission_rate: 20
+    commission_rate: 15
+    order_date: 2022-10-20T16:00:00.000Z
+    commission_date: 2022-10-20T16:00:00.000Z
+    remark:
+     */
     function addLoanOrder(): bool
     {
         $requestData =  $this->getRequestData();
-        $page =  $requestData['page']?:1;
-        $pageSize =  $requestData['pageSize']?:100;
 
         $userInfo = $this->loginUserinfo;
 
