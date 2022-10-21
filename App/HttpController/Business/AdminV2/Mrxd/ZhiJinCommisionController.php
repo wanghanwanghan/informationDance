@@ -74,8 +74,11 @@ class ZhiJinCommisionController extends ControllerBase
         $datas = OnlineGoodsUserDaikuanOrder::findByConditionV2([],$page,$pageSize);
         $total = $datas['total'] ;
         foreach ($datas['data'] as &$dataValue){
-            $productInfo = OnlineGoodsDaikuanProducts::findById($dataValue['product_id']); 
+            $productInfo = OnlineGoodsDaikuanProducts::findById($dataValue['product_id']);
             $dataValue['product_name'] = $productInfo?$productInfo->name:'';
+            // bank_name
+            $bankInfo = $productInfo? OnlineGoodsDaikuanBank::findById($productInfo->bank_id):'';
+            $dataValue['bank_name'] = $bankInfo?$bankInfo->bank_name:''; 
         }
         $total = 100;
         $total = $datas['total'] ;
