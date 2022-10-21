@@ -157,15 +157,10 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         $tmp->setValue('time', Carbon::now()->format('Y年m月d日'));
 
-        // $reportVal = $this->cspHandleData();
+        $reportVal = $this->cspHandleData();
 
         //取发票数据，以后切换成api的
         $this->getReceiptDataTest();
-
-        CommonService::getInstance()->log4PHP($this->inDetail, 'inDetail', 'DeepReportInfo.log');
-        CommonService::getInstance()->log4PHP($this->outDetail, 'outDetail', 'DeepReportInfo.log');
-
-        return;
 
         //发票
         $invoiceObj = (new Invoice($this->inDetail, $this->outDetail));
@@ -4170,7 +4165,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $postData = ['searchKey' => $this->entName];
 
             $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'CompanyFinancingSearch/GetList', $postData);//BusinessStateV4/SearchCompanyFinancings
-            CommonService::getInstance()->log4PHP($res, 'info', 'CompanyFinancingSearch_GetList');
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result']['Data'] : $res = null;
 
