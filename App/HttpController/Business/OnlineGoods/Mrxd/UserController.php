@@ -632,7 +632,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
     }
 
-    function registerZhiJin(): bool
+    //register
+    function register(): bool
     {
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
