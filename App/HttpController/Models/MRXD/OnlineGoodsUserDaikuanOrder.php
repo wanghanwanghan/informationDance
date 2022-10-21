@@ -33,6 +33,21 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
     static $status_init = 0;
     static $status_init_cname =  '初始';
 
+    static $commission_set_state_init = 5;
+    static $commission_set_state_init_cname = '待设置';
+
+    static $commission_set_state_succeed = 10;
+    static $commission_set_state_succeed_cname = '已设置';
+
+    static $commission_state_init = 5;
+    static $commission_state_init_cname = '未发放';
+
+    static $commission_state_succeed = 10;
+    static $commission_state_succeed_cname = '已发放';
+
+    // 运营提需求： 1：邮件 建议-调整为线上 加一大项类：待确认需求池  @琦哥 废弃  需求调研 需求原型确定中  项目推进中 节点
+    // 中台项目-上线后回归
+
     static function getDelStateMap(){
         return [
             self::$state_del =>self::$state_del_cname,
