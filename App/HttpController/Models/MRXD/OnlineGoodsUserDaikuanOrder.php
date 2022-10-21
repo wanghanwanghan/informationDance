@@ -158,8 +158,11 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
 
         $orderInfo = self::findById($id);
         $orderInfo = $orderInfo->toArray();
-        OnlineGoodsCommissions::addCommissionInfoByOrderInfo($orderInfo);
-
+        //新加分佣信息
+        $res = OnlineGoodsCommissions::addCommissionInfoByOrderInfo($orderInfo,OnlineGoodsCommissions::$commission_type_dai_kuan);
+        if(!$res){
+            return  false;
+        }
         return true;
     }
 
@@ -170,7 +173,14 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
             return  false;
         }
         $orderInfo = $orderInfo->toArray();
-        return  OnlineGoodsCommissions::grantByCommissionOrderId($orderInfo);
+        $res =   OnlineGoodsCommissions::grantByCommissionOrderId($orderInfo);
+        if(!$res){
+            return  false;
+        }
+
+        return  self::updateById($id,[
+            'commission_state'=>self::$commission_state_succeed
+        ]);
     }
 
     public static function findAllByCondition($whereArr){

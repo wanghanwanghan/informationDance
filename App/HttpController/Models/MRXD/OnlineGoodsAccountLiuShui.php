@@ -115,39 +115,6 @@ class OnlineGoodsAccountLiuShui extends ModelBase
         return $res;
     }
 
-    /**
-    点击发放佣金》生成需分佣的记录》已经设置晚比例的 自动发到账上
-
-    根据订单添加分佣信息
-    [VIP-A]—邀请—>[B]—[B下单￥]
-    分佣：
-    信动给VIP分佣：信动—>A
-    邀请人给被邀请人分佣：A→B
-    邀请人给被邀请人分佣：
-
-    [VIP-A]—邀请—>[B]—邀请—>[C]—邀请—>[D]—[D下单￥]
-    分佣：
-    信动给VIP分佣：信动—>A
-    VIP给邀请人分佣：信动—>A
-    邀请人给被邀请人分佣：C→D
-     */
-    static function addCommissionInfoById($id){
-
-        $orderInfo = self::findById($id);
-        $orderInfo = $orderInfo->toArray();
-        OnlineGoodsCommissions::addCommissionInfoByOrderInfo($orderInfo);
-
-        return true;
-    }
-
-    //发放佣金
-    static function grantCommissionInfoById($id){
-        $orderInfo = self::findById($id);
-        $orderInfo = $orderInfo->toArray();
-        OnlineGoodsCommissions::findAllByCommissionOrderId($orderInfo);
-
-        return true;
-    }
 
     public static function findAllByCondition($whereArr){
         $res =  OnlineGoodsAccountLiuShui::create()

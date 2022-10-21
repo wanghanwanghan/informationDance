@@ -55,7 +55,7 @@ class ZhiJinCommisionController extends ControllerBase
         $page =  $requestData['page']?:1;
         $pageSize =  $requestData['pageSize']?:100;
 
-        $userInfo = $this->loginUserinfo; 
+        $userInfo = $this->loginUserinfo;
 
         $datas = OnlineGoodsUserDaikuanOrder::findByConditionV2([],$page,$pageSize);
         foreach ($datas['data'] as &$dataValue){
@@ -351,14 +351,36 @@ class ZhiJinCommisionController extends ControllerBase
         $code = $requestData['code'] ;
         $id = $requestData['id'] ;
 
-        if($requestData['real']){
-            //先添加佣金记录
-            OnlineGoodsUserDaikuanOrder::addCommissionInfoById($id);
-            //发放佣金
-            OnlineGoodsUserDaikuanOrder::grantCommissionInfoById($id);
+        $checkRes = DataModelExample::checkField(
+            [
+                'id' => [
+                    'not_empty' => 1,
+                    'field_name' => 'id',
+                    'err_msg' => '请指定置订单',
+                ],
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
         }
 
-
+        //先添加佣金记录
+        $res = OnlineGoodsUserDaikuanOrder::addCommissionInfoById($id);
+        if(
+            !$res
+        ){
+            return $this->writeJson(203,[ ] , [], '添加佣金记录失败', true, []);
+        }
+        //发放佣金
+        $res =  OnlineGoodsUserDaikuanOrder::grantCommissionInfoById($id);
+        if(
+            !$res
+        ){
+            return $this->writeJson(203,[ ] , [], '发放佣金失败', true, []);
+        }
 
         return $this->writeJson(
             200,
@@ -379,11 +401,34 @@ class ZhiJinCommisionController extends ControllerBase
         $code = $requestData['code'] ;
         $id = $requestData['id'] ;
 
-        if($requestData['real']){
-            OnlineGoodsUserBaoXianOrder::addCommissionInfoById($id);
-            OnlineGoodsUserBaoXianOrder::grantCommissionInfoById($id);
+        $checkRes = DataModelExample::checkField(
+            [
+                'id' => [
+                    'not_empty' => 1,
+                    'field_name' => 'id',
+                    'err_msg' => '请指定置订单',
+                ],
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
         }
 
+        $res = OnlineGoodsUserBaoXianOrder::addCommissionInfoById($id);
+        if(
+            !$res
+        ){
+            return $this->writeJson(203,[ ] , [], '添加佣金失败', true, []);
+        }
+        $res = OnlineGoodsUserBaoXianOrder::grantCommissionInfoById($id);
+        if(
+            !$res
+        ){
+            return $this->writeJson(203,[ ] , [], '发放佣金失败', true, []);
+        }
 
         return $this->writeJson(
             200,
