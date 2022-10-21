@@ -43,68 +43,6 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         parent::afterAction($actionName);
     }
 
-    function loginExample(): bool
-    {
-        $phone = $this->request()->getRequestParam('phone') ?? '';
-        $vCode = $this->request()->getRequestParam('vCode') ?? '';
-        $password = $this->request()->getRequestParam('password') ?? '';
-
-        if (empty($phone) || (empty($vCode) && empty($password)))
-            return $this->writeJson(201, null, null, '手机号或密码或验证码不能是空');
-
-        try {
-            $userInfo = User::create()->where('phone', $phone)->get();
-        } catch (\Throwable $e) {
-            return $this->writeErr($e, __FUNCTION__);
-        }
-
-        if (empty($userInfo)) return $this->writeJson(201, null, null, '手机号不存在');
-
-        if ($userInfo->getAttr('isDestroy') == 1) return $this->writeJson(201, null, null, '手机号已注销');
-
-        $redis = Redis::defer('redis');
-        $redis->select(14);
-
-        $index = $phone . '_login_key';
-        $loginNum = $redis->get($index);
-
-        if (!empty($loginNum) && $loginNum - 0 >= 5) {
-            return $this->writeJson(201, null, null, '已登录失败5次,1小时内禁止登录');
-        }
-
-        //密码或者验证码登录
-        if (!empty($vCode)) {
-            $vCodeInRedis = $redis->get($phone . 'login');
-            if (!is_numeric($vCodeInRedis) || $vCodeInRedis <= 1000) {
-                $vCodeInRedis = $redis->get($phone . 'reg');
-            }
-            if ((int)$vCodeInRedis !== (int)$vCode) return $this->writeJson(201, null, null, '验证码错误');
-        } elseif (!empty($password)) {
-            $password = trim($password);
-            $mysql_pwd = trim($userInfo->getAttr('password'));
-            empty($loginNum) ? $redis->set($index, 1, 3600) : $redis->incr($index);
-            if ($password !== $mysql_pwd) return $this->writeJson(201, null, null, '密码错误');
-        } else {
-            //连续输入错误 5 次，禁止登录 1 小时
-            empty($loginNum) ? $redis->set($index, 1, 3600) : $redis->incr($index);
-            return $this->writeJson(201, null, null, '登录失败');
-        }
-
-        $newToken = UserService::getInstance()->createAccessToken(
-            $userInfo->getAttr('phone'), $userInfo->getAttr('password')
-        );
-
-        try {
-            User::create()->get($userInfo->getAttr('id'))->update(['token' => $newToken]);
-        } catch (\Throwable $e) {
-            return $this->writeErr($e, __FUNCTION__);
-        }
-
-        $userInfo->setAttr('newToken', $newToken);
-
-        return $this->writeJson(200, null, $userInfo, '登录成功');
-    }
-
     function sendSms(): bool
     {
         $requestData =  $this->getRequestData();
@@ -575,28 +513,16 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         if(
             OnlineGoodsUser::getRandomDigit($phone)!= $code
         ){
-            return $this->writeJson(201, null, [],  '验证码不正确或已过期');
-
+            return $this->writeJson(201, null, [],  '验证码不正确或已过期'); 
         }
 
-        $id = OnlineGoodsUser::addRecordV2(
-            [
-                'source' => OnlineGoodsUser::$source_self_register,
-                'user_name' => $phone,
-                'phone' => $phone,
-                'password' => '',
-                'email' => '',
-                'money' => '',
-                'token' => '',
-            ]
-        );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'OnlineGoodsUser $id' => $id,
-                'OnlineGoodsUser $phone' => $phone,
-            ])
-        );
+        $userInfo = OnlineGoodsUser::findByPhone($phone);
+        if(
+            !$userInfo
+        ){
+            return $this->writeJson(201, null, [],  '请先注册');
+        }
+
         $newToken = UserService::getInstance()->createAccessToken(
             $phone,
             $phone
@@ -604,9 +530,10 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'OnlineGoodsUser $newToken' => $newToken
+                'OnlineGoodsUser——login $newToken' => $newToken
             ])
         );
+
         $res = OnlineGoodsUser::findByPhone($phone);
         $res = $res->toArray();
         if($res['token']){
@@ -619,7 +546,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         }
 
         OnlineGoodsUser::updateById(
-            $id,
+            $userInfo->id,
             [
                 'token'=>$newToken
             ]
