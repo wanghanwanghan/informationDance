@@ -55,12 +55,9 @@ class ZhiJinCommisionController extends ControllerBase
         $page =  $requestData['page']?:1;
         $pageSize =  $requestData['pageSize']?:100;
 
-        $userInfo = $this->loginUserinfo;
-
-
+        $userInfo = $this->loginUserinfo; 
 
         $datas = OnlineGoodsUserDaikuanOrder::findByConditionV2([],$page,$pageSize);
-        $total = $datas['total'] ;
         foreach ($datas['data'] as &$dataValue){
             $productInfo = OnlineGoodsDaikuanProducts::findById($dataValue['product_id']);
             $dataValue['product_name'] = $productInfo?$productInfo->name:'';
@@ -75,7 +72,7 @@ class ZhiJinCommisionController extends ControllerBase
             $dataValue['commission_money'] = number_format(($dataValue['amount']*$dataValue['commission_rate'])/100,2);
 
         }
-        $total = 100;
+
         $total = $datas['total'] ;
         $retrundatas = $datas['data'] ;
         return $this->writeJson(
