@@ -48,10 +48,17 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
     // 运营提需求： 1：邮件 建议-调整为线上 加一大项类：待确认需求池  @琦哥 废弃  需求调研 需求原型确定中  项目推进中 节点
     // 中台项目-上线后回归
 
-    static function getDelStateMap(){
+    static function getCommissionSetStateMap(){
         return [
-            self::$state_del =>self::$state_del_cname,
-            self::$state_ok =>self::$state_ok_cname,
+            self::$commission_set_state_init =>self::$commission_set_state_init_cname,
+            self::$commission_set_state_succeed =>self::$commission_set_state_succeed_cname,
+        ];
+    }
+
+    static function getCommissionStateMap(){
+        return [
+            self::$commission_state_init =>self::$commission_state_init_cname,
+            self::$commission_state_succeed =>self::$commission_state_succeed_cname,
         ];
     }
 

@@ -68,7 +68,8 @@ class ZhiJinCommisionController extends ControllerBase
             $bankInfo = OnlineGoodsDaikuanBank::findById($productInfo->bank_id);
             $dataValue['bank_name'] = $bankInfo?$bankInfo->bank_cname:'';
             $dataValue['zhijin_account'] = $dataValue['zhijin_phone'];
-            $dataValue['commission_state_cname'] = '未分佣';
+            $dataValue['commission_set_state_cname'] = OnlineGoodsUserDaikuanOrder::getCommissionSetStateMap()[$dataValue['commission_set_state_cname']];
+            $dataValue['commission_state_cname'] = OnlineGoodsUserDaikuanOrder::getCommissionStateMap()[$dataValue['commission_state_cname']];
             $dataValue['zhijin_account'] = $dataValue['zhijin_phone'];
             $dataValue['created_at'] = date('Y-m-d H:i:s',$dataValue['created_at']);
             $dataValue['commission_money'] = number_format(($dataValue['amount']*$dataValue['commission_rate'])/100,2);
@@ -756,6 +757,8 @@ class ZhiJinCommisionController extends ControllerBase
           'xindong_commission_rate' => $requestData['xindong_commission_rate'],
           'commission_rate' => $requestData['commission_rate'],
           'order_date' => $requestData['order_date'],
+          'commission_set_state' => OnlineGoodsUserDaikuanOrder::$commission_set_state_succeed,
+          'commission_state' => OnlineGoodsUserDaikuanOrder::$commission_state_init,
           'commission_date' => $requestData['commission_date'],
           'xindong_commission' => $requestData['xindong_commission'],
       ]);
