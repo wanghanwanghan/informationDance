@@ -683,7 +683,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             );
             OnlineGoodsUserInviteRelation::addRecordV2(
                 [
-                    'user_id' => $this->loginUserinfo['id'],
+                    'user_id' => $id,
                     'invite_by' => $invitatedBy,
                 ]
             );
