@@ -168,44 +168,35 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         //5.2主营商品分析
         $zyspfx = $invoiceObj->zyspfx();
         $reportVal['re_fpxx']['zyspfx'] = $zyspfx;
-        CommonService::getInstance()->log4PHP($reportVal['re_fpxx']['zyspfx'], 'zyspfx', 'DeepReportInfo.log');
 
         //5.4主要成本分析
         $zycbfx = $invoiceObj->zycbfx();
         $reportVal['re_fpjx']['zycbfx'] = $zycbfx;
-        CommonService::getInstance()->log4PHP($reportVal['re_fpjx']['zycbfx'], 'zycbfx', 'DeepReportInfo.log');
         //各种费用在统计周期内合并
         $reportVal['re_fpjx']['zycbfx_new'] = $invoiceObj->zycbfx_new($zycbfx[1]);
-        CommonService::getInstance()->log4PHP($reportVal['re_fpjx']['zycbfx_new'], 'zycbfx_new', 'DeepReportInfo.log');
 
         //6.1企业开票情况汇总
         $qykpqkhz = $invoiceObj->qykpqkhz();
         $reportVal['re_fpxx']['qykpqkhz'] = $qykpqkhz;
-        CommonService::getInstance()->log4PHP($reportVal['re_fpre_fpxxjx']['qykpqkhz'], 'qykpqkhz', 'DeepReportInfo.log');
         //统计周期从这里拿
         $reportVal['commonData']['zhouqi'] = $qykpqkhz['zhouqi']['min'] . ' - ' . $qykpqkhz['zhouqi']['max'];
-        CommonService::getInstance()->log4PHP($reportVal['commonData']['zhouqi'], 'zhouqi', 'DeepReportInfo.log');
 
         //6.2.1年度销项发票情况汇总
         $ndxxfpqkhz = $invoiceObj->ndxxfpqkhz();
         $reportVal['re_fpxx']['ndxxfpqkhz'] = $ndxxfpqkhz;
-        CommonService::getInstance()->log4PHP($reportVal['re_fpxx']['ndxxfpqkhz'], 'ndxxfpqkhz', 'DeepReportInfo.log');
 
         //6.2.2月度销项发票分析
         $ydxxfpfx = $invoiceObj->ydxxfpfx();
         $reportVal['re_fpxx']['ydxxfpfx'] = $ydxxfpfx;
-        CommonService::getInstance()->log4PHP($reportVal['re_fpxx']['ydxxfpfx'], 'ydxxfpfx', 'DeepReportInfo.log');
 
         //6.2.5单张开票金额TOP10记录
         $dzkpjeTOP10jl_xx = $invoiceObj->dzkpjeTOP10jl_xx();
         $reportVal['re_fpxx']['dzkpjeTOP10jl_xx'] = $dzkpjeTOP10jl_xx;
-        CommonService::getInstance()->log4PHP($reportVal['re_fpxx']['dzkpjeTOP10jl_xx'], 'dzkpjeTOP10jl_xx', 'DeepReportInfo.log');
         empty($reportVal['re_fpxx']['dzkpjeTOP10jl_xx']) ?: $reportVal['re_fpxx']['dzkpjeTOP10jl_xx'] = control::sortArrByKey($reportVal['re_fpxx']['dzkpjeTOP10jl_xx'], 'totalAmount', true);
 
         //6.2.6累计开票金额TOP10企业汇总
         $ljkpjeTOP10qyhz_xx = $invoiceObj->ljkpjeTOP10qyhz_xx();
         $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'] = $ljkpjeTOP10qyhz_xx;
-        CommonService::getInstance()->log4PHP($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'], 'ljkpjeTOP10qyhz_xx', 'DeepReportInfo.log');
         empty($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx']) ?: $reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'] = control::sortArrByKey($reportVal['re_fpxx']['ljkpjeTOP10qyhz_xx'], 'total', true);
 
         //6.3.1下游客户稳定性分析
