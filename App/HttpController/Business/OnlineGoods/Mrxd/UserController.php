@@ -659,7 +659,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $id = OnlineGoodsUser::addRecordV2(
             [
                 'source' => OnlineGoodsUser::$source_self_register,
-                'user_name' => $phone,
+                'user_name' => $requestData['name'],
                 'phone' => $phone,
                 'password' => '',
                 'email' => '',
