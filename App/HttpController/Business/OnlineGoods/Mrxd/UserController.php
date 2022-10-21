@@ -19,6 +19,7 @@ use App\HttpController\Models\Api\User;
 use App\HttpController\Models\MRXD\OnlineGoodsCommissions;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\MRXD\OnlineGoodsUserBaoXianOrder;
+use App\HttpController\Models\MRXD\OnlineGoodsUserDaikuanOrder;
 use App\HttpController\Models\MRXD\OnlineGoodsUserInviteRelation;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
@@ -430,6 +431,64 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
+
+        $userInfo = $this->loginUserinfo;
+        $userInfo['id'] = 1;
+
+        if(
+            $requestData['real']
+        ){
+            $commissionInfo = OnlineGoodsCommissions::findOneByCondition([
+                'id' => $requestData['id'],
+                'commission_owner' => $userInfo['id'],
+                'state' => OnlineGoodsCommissions::$commission_state_init
+            ]);
+
+
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        'id' => $requestData['id'],
+                        'commission_owner' => $userInfo['id'],
+                        'state' => OnlineGoodsCommissions::$commission_state_init
+                    ]
+                ])
+            );
+
+
+            if(empty($commissionInfo)){
+                return $this->writeJson(
+                    203,
+                    [ ] ,
+                    [
+
+                    ],
+                    '没权限设置该订单',
+                    true,
+                    []
+                );
+            }
+
+            //改为已设置成功
+            OnlineGoodsCommissions::updateById($commissionInfo->id,
+                [
+                    'state' => OnlineGoodsCommissions::$commission_state_seted
+                ]
+            );
+
+            //发放 金额
+            $OrderInfo = OnlineGoodsUserDaikuanOrder::findById($commissionInfo->commission_order_id);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        'setDaiKuanCommisionRate_amount' =>  $OrderInfo->amount
+                    ]
+                ])
+            );
+            OnlineGoodsCommissions::grantByItem($commissionInfo->toArray(),$OrderInfo->amount) ;
+        }
 
         return $this->writeJson(
             200,
