@@ -69,21 +69,25 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         ];
 
         $in = EntInvoice::create()
-            ->addSuffix($this->code)
+            ->addSuffix($this->code, 'test')
             ->field($field)
-            ->where(['nsrsbh' => $this->code, 'direction' => '01'])->all();
+            ->where(['nsrsbh' => $this->code, 'direction' => '01'])
+            ->where('fplx', '14', '<>')
+            ->all();
 
         $out = EntInvoice::create()
-            ->addSuffix($this->code)
+            ->addSuffix($this->code, 'test')
             ->field($field)
-            ->where(['nsrsbh' => $this->code, 'direction' => '02'])->all();
+            ->where(['nsrsbh' => $this->code, 'direction' => '02'])
+            ->where('fplx', '14', '<>')
+            ->all();
 
         //从详情里拿 商品名称
         foreach ($in as $one_in) {
             $fpdm = $one_in->getAttr('invoiceCode');
             $fphm = $one_in->getAttr('invoiceNumber');
             $detail = EntInvoiceDetail::create()
-                ->addSuffix($fpdm, $fphm, '')
+                ->addSuffix($fpdm, $fphm, 'test')
                 ->field('mc')
                 ->where(['fpdm' => $fpdm, 'fphm' => $fphm])->get();
             $mc = '';
@@ -100,14 +104,14 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $fpdm = $one_in->getAttr('invoiceCode');
             $fphm = $one_in->getAttr('invoiceNumber');
             $detail = EntInvoiceDetail::create()
-                ->addSuffix($fpdm, $fphm, '')
+                ->addSuffix($fpdm, $fphm, 'test')
                 ->field('mc')
                 ->where(['fpdm' => $fpdm, 'fphm' => $fphm])->get();
             $mc = '';
             if (!empty($detail)) {
                 $mc = $detail->getAttr('mc');
                 $mc = current(array_filter(explode('*', $mc)));
-                empty($mc) ?: $mc = '';
+                !empty($mc) ?: $mc = '';
             }
             $one_in->goodsName = $mc;
         }
