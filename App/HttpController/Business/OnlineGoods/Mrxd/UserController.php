@@ -407,7 +407,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     [
-                        'setBaoXianCommisionRate' =>  $OrderInfo->amount
+                        'setBaoXianCommisionRate_amount' =>  $OrderInfo->amount
                     ]
                 ])
             );
