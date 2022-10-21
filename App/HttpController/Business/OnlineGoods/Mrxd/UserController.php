@@ -681,12 +681,16 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                     'registerZhiJin $invitatedBy' => $invitatedBy,
                 ])
             );
-            OnlineGoodsUserInviteRelation::addRecordV2(
+            $res1 = OnlineGoodsUserInviteRelation::addRecordV2(
                 [
                     'user_id' => $id,
                     'invite_by' => $invitatedBy,
                 ]
             );
+            if(   !$res1   ){
+                return $this->writeJson(201, null, [],  '系统错误！请联系管理员');
+            }
+
         }
 
         $newToken = UserService::getInstance()->createAccessToken(
