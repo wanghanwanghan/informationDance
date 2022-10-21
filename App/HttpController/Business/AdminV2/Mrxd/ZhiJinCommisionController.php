@@ -57,18 +57,6 @@ class ZhiJinCommisionController extends ControllerBase
 
         $userInfo = $this->loginUserinfo;
 
-//        CommonService::writeTestLog(
-//            [
-//                'getInvitationCode'=>[
-//                    '$userInfo'=>[
-//                        'id'=>$userInfo['id'],
-//                        'user_name'=>$userInfo['user_name'],
-//                        'phone'=>$userInfo['phone'],
-//                    ],
-//                ]
-//            ]
-//        );
-
 
 
         $datas = OnlineGoodsUserDaikuanOrder::findByConditionV2([],$page,$pageSize);
@@ -78,7 +66,8 @@ class ZhiJinCommisionController extends ControllerBase
             $dataValue['product_name'] = $productInfo?$productInfo->name:'';
             // bank_name
             $bankInfo = OnlineGoodsDaikuanBank::findById($productInfo->bank_id);
-            $dataValue['bank_name'] = $bankInfo?$bankInfo->bank_name:'';
+            $dataValue['bank_name'] = $bankInfo?$bankInfo->bank_cname:'';
+            
         }
         $total = 100;
         $total = $datas['total'] ;
