@@ -639,6 +639,8 @@ class Invoice
             $return['zhouqi']['jxJine'] += abs($one['totalTax']);
         }
 
+        CommonService::getInstance()->log4PHP($return, 'info', 'ganggangcuowude.log');
+
         //其次处理销项数据
         foreach ($this->out as $one) {
             isset($return['zhouqi']['jxNum']) ?: $return['zhouqi']['jxNum'] = 0;
@@ -672,6 +674,8 @@ class Invoice
             $return['qita'][$year]['xxJine'] += abs($one['totalTax']);
         }
 
+        CommonService::getInstance()->log4PHP($return, 'info', 'ganggangcuowude.log');
+
         //金额变万元
         foreach ($return as $key => &$one) {
             if ($key == 'qita') {
@@ -685,6 +689,8 @@ class Invoice
             }
         }
         unset($one);
+
+        CommonService::getInstance()->log4PHP($return, 'info', 'ganggangcuowude.log');
 
         return $return;
     }
