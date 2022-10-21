@@ -20,6 +20,7 @@ use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\MRXD\OnlineGoodsCommissions;
 use App\HttpController\Models\MRXD\OnlineGoodsDaikuanBank;
 use App\HttpController\Models\MRXD\OnlineGoodsDaikuanProducts;
+use App\HttpController\Models\MRXD\OnlineGoodsTiXianJiLu;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\MRXD\OnlineGoodsUserBaoXianOrder;
 use App\HttpController\Models\MRXD\OnlineGoodsUserDaikuanOrder;
@@ -371,58 +372,28 @@ class ZhiJinCommisionController extends ControllerBase
     {
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
+        $page = $requestData['page'] ;
+        $pageSize = $requestData['pageSize'] ;
         $code = $requestData['code'] ;
+
+        //提现审核列表
+        $res = OnlineGoodsTiXianJiLu::findByConditionWithCountInfo(
+            [
+
+            ],
+            $page,
+            $pageSize
+        );
 
         return $this->writeJson(
             200,
-            [ ] ,
             [
-                [
-                    'id'=>1,
-                    'money'=>1000,
-                    'state_cname' => '审核中',
-                    'pay_state_cname' => '待打款',
-                    'user_id' => 1,
-                    'user_name' =>  '李循环',
-                    'user_money' =>  100,
-                    // 详情
-                    'details' => '',
-                    'created_at'=>1665367946,
-                    'attaches'=>[],
-                    'pass_date'=> '2022-09-10 10:00:00',
-                    'pay_date'=> '2022-09-10 10:00:00',
-                ],
-                [
-                    'id'=>2,
-                    'money'=>1000,
-                    'state_cname' => '审核中',
-                    'pay_state_cname' => '待打款',
-                    'user_id' => 1,
-                    'user_name' =>  '李循环',
-                    'user_money' =>  100,
-                    // 详情
-                    'details' => '',
-                    'created_at'=>1665367946,
-                    'attaches'=>[],
-                    'pass_date'=> '2022-09-10 10:00:00',
-                    'pay_date'=> '2022-09-10 10:00:00',
-                ],
-                [
-                    'id'=>3,
-                    'money'=>1000,
-                    'state_cname' => '审核中',
-                    'pay_state_cname' => '待打款',
-                    'user_id' => 1,
-                    'user_name' =>  '李循环',
-                    'user_money' =>  100,
-                    // 详情
-                    'details' => '',
-                    'created_at'=>1665367946,
-                    'attaches'=>[],
-                    'pass_date'=> '2022-09-10 10:00:00',
-                    'pay_date'=> '2022-09-10 10:00:00',
-                ]
+                'page' => $page,
+                'pageSize' => $pageSize,
+                'total' => $res['total'],
+                'totalPage' => ceil($res['total']/$pageSize) ,
             ],
+            $res['data'],
             '成功',
             true,
             []

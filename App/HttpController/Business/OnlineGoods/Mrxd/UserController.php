@@ -236,7 +236,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             'da_kuan_type' => OnlineGoodsTiXianJiLu::$pay_type_bank,
             'kai_hu_hang' => $requestData['kai_hu_hang'],
             'kai_hu_ming' => $requestData['kai_hu_ming'],
-            'yin_hang_ka_hao' => $requestData['yin_hang_ka_hao'], 
+            'yin_hang_ka_hao' => $requestData['yin_hang_ka_hao'],
         ]);
         return $this->writeJson(
             200,
