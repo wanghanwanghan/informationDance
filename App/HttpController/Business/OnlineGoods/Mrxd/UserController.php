@@ -17,6 +17,7 @@ use App\HttpController\Models\AdminV2\InsuranceData;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\MRXD\OnlineGoodsCommissions;
+use App\HttpController\Models\MRXD\OnlineGoodsTiXianJiLu;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\MRXD\OnlineGoodsUserBaoXianOrder;
 use App\HttpController\Models\MRXD\OnlineGoodsUserDaikuanOrder;
@@ -214,12 +215,29 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
     }
 
+
+    //申请提现
     function applyForWithdrawal(): bool
     {
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
-
+        $userInfo = $this->loginUserinfo;
+        $uid = $userInfo['id'];
+        $uid = 1 ;
+        OnlineGoodsTiXianJiLu::addRecordV2([
+            'user_id' => $uid,
+            'amount' => $requestData['money'],
+            'remark' => $requestData['remark']?:'',
+            'audit_state' => OnlineGoodsTiXianJiLu::$audit_state_init,
+            'audit_details' => '',
+            'pay_state' => OnlineGoodsTiXianJiLu::$pay_state_init,
+            'pay_details' => '',
+            'da_kuan_type' => OnlineGoodsTiXianJiLu::$pay_type_bank,
+            'kai_hu_hang' => $requestData['kai_hu_hang'],
+            'kai_hu_ming' => $requestData['kai_hu_ming'],
+            'yin_hang_ka_hao' => $requestData['yin_hang_ka_hao'], 
+        ]);
         return $this->writeJson(
             200,
             [ ] ,

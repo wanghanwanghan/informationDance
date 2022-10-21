@@ -18,21 +18,34 @@ class OnlineGoodsTiXianJiLu extends ModelBase
 
     protected $tableName = 'online_goods_ti_xian_ji_lu';
 
+    static $audit_state_init  =  5;
+    static $audit_state_init_cname  =  '待审核';
+
+    static $audit_state_pass  =  10;
+    static $audit_state_pass_cname  =  '审核通过';
+
+    static $audit_state_refuse  =  15;
+    static $audit_state_refuse_cname  =  '审核拒绝';
+
+    static $pay_state_init  =  5;
+    static $pay_state_init_cname  =  '待打款';
+
+    static $pay_state_succeed  =  10;
+    static  $pay_state_succeed_cname  =  '打款成功';
+
+    static $pay_state_failed  =  15;
+    static  $pay_state_failed_cname  =  '打款失败';
+
+    static $pay_type_bank  =  5;
+    static $pay_type_bank_cname  =  '打款类型-银行卡';
+
 
     static  function  addRecordV2($info){
-        $oldRes = self::findByPhone($info['phone']);
-        if(
-            $oldRes
-        ){
-            return  $oldRes->getAttr('id');
-        }
 
         return OnlineGoodsTiXianJiLu::addRecord(
             $info
         );
     }
-
-
 
     public static function addRecord($requestData){
         try {
