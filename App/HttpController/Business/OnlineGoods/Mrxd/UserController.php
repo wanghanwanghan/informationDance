@@ -18,6 +18,7 @@ use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\MRXD\OnlineGoodsCommissions;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
+use App\HttpController\Models\MRXD\OnlineGoodsUserBaoXianOrder;
 use App\HttpController\Models\MRXD\OnlineGoodsUserInviteRelation;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
@@ -380,7 +381,6 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             );
 
 
-
             if(empty($commissionInfo)){
                 return $this->writeJson(
                     203,
@@ -400,8 +400,18 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                     'state' => OnlineGoodsCommissions::$commission_state_seted
                 ]
             );
-            //发放
-            OnlineGoodsCommissions::grantByItem($commissionInfo->toArray(),$amount) ;
+
+            //发放 金额
+            $OrderInfo = OnlineGoodsUserBaoXianOrder::findById($commissionInfo->commission_order_id);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        'setBaoXianCommisionRate' =>  $OrderInfo->amount
+                    ]
+                ])
+            );
+            OnlineGoodsCommissions::grantByItem($commissionInfo->toArray(),$OrderInfo->amount) ;
         }
 
         return $this->writeJson(
