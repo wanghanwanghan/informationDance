@@ -65,8 +65,8 @@ class ZhiJinCommisionController extends ControllerBase
             $bankInfo = OnlineGoodsDaikuanBank::findById($productInfo->bank_id);
             $dataValue['bank_name'] = $bankInfo?$bankInfo->bank_cname:'';
             $dataValue['zhijin_account'] = $dataValue['zhijin_phone'];
-            $dataValue['commission_set_state_cname'] = OnlineGoodsUserDaikuanOrder::getCommissionSetStateMap()[$dataValue['commission_set_state_cname']];
-            $dataValue['commission_state_cname'] = OnlineGoodsUserDaikuanOrder::getCommissionStateMap()[$dataValue['commission_state_cname']];
+            $dataValue['commission_set_state_cname'] = OnlineGoodsUserDaikuanOrder::getCommissionSetStateMap()[$dataValue['commission_set_state']];
+            $dataValue['commission_state_cname'] = OnlineGoodsUserDaikuanOrder::getCommissionStateMap()[$dataValue['commission_state']];
             $dataValue['zhijin_account'] = $dataValue['zhijin_phone'];
             $dataValue['created_at'] = date('Y-m-d H:i:s',$dataValue['created_at']);
             $dataValue['commission_money'] = number_format(($dataValue['amount']*$dataValue['commission_rate'])/100,2);
@@ -731,18 +731,18 @@ class ZhiJinCommisionController extends ControllerBase
     }
 
     /**
-    product_id: 3
+    product_id: 2
     purchaser_id:
     phone: 18618457910
-    purchaser_name: 张老大
-    purchaser_phone: 132697777
+    purchaser_name: a
+    purchaser_phone: a
     zhijin_phone: 13269706193
     amount: 500
     xindong_commission:
     xindong_commission_rate: 20
     commission_rate: 15
-    order_date: 2022-10-20T16:00:00.000Z
-    commission_date: 2022-10-20T16:00:00.000Z
+    order_date: 2022-10-09T16:00:00.000Z
+    commission_date: 2022-09-25T16:00:00.000Z
     remark:
      */
     function addLoanOrder(): bool
