@@ -89,7 +89,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $detail = EntInvoiceDetail::create()
                 ->addSuffix($fpdm, $fphm, 'test')
                 ->field('mc')
-                ->where(['fpdm' => $fpdm, 'fphm' => $fphm])->get();
+                ->where(['fpdm' => $fpdm, 'fphm' => $fphm])
+                ->get();
             $mc = '';
             if (!empty($detail)) {
                 $mc = $detail->getAttr('mc');
@@ -106,7 +107,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $detail = EntInvoiceDetail::create()
                 ->addSuffix($fpdm, $fphm, 'test')
                 ->field('mc')
-                ->where(['fpdm' => $fpdm, 'fphm' => $fphm])->get();
+                ->where(['fpdm' => $fpdm, 'fphm' => $fphm])
+                ->get();
             $mc = '';
             if (!empty($detail)) {
                 $mc = $detail->getAttr('mc');
