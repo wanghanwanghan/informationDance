@@ -152,7 +152,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total_withdraw' => 1000,
                 'invite_code' => 1000,
                 'money' => 1000,
-                'avatar' => '/Static/OtherFile/default_avater.png',
+                'avatar' => 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png',
             ],
             '成功',
             true,
