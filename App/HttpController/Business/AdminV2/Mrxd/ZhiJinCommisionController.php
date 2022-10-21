@@ -296,7 +296,7 @@ class ZhiJinCommisionController extends ControllerBase
         }
         //如果是打款成功 变更账户余额
         if($requestData['res'] == 5){
-            OnlineGoodsUser::changeBalance($uid,$TiXianJiLu->amount,OnlineGoodsUser::$banlance_type_jian_shao); 
+            OnlineGoodsUser::changeBalance($uid,$TiXianJiLu->amount,OnlineGoodsUser::$banlance_type_jian_shao);
         }
 
         return $this->writeJson(

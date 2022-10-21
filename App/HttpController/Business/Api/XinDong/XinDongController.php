@@ -4691,6 +4691,20 @@ eof;
         }
 
         if(
+            $this->getRequestData('encodeIdToInvitationCode')
+        ){
+
+
+            return $this->writeJson(
+                200,[ ] ,
+                CommonService::encodeIdToInvitationCode($this->getRequestData('encodeIdToInvitationCode')),
+                '成功',
+                true,
+                []
+            );
+        }
+
+        if(
             $this->getRequestData('sMembers')
         ){
 
