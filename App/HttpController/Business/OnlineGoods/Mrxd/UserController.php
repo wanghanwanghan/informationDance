@@ -669,23 +669,15 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
         //- 有邀请码的话 解析邀请码 设置邀请人
         $invitation_code = trim($requestData['invitation_code']);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'OnlineGoodsUser $id' => $id,
-                'OnlineGoodsUser $phone' => $phone,
-                'OnlineGoodsUser $invitation_code' => $invitation_code,
-            ])
-        );
         if(($invitation_code)){
             $invitatedBy = CommonService::decodeInvitationCodeToId($invitation_code);
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'OnlineGoodsUser $id' => $id,
-                    'OnlineGoodsUser $phone' => $phone,
-                    'OnlineGoodsUser $invitation_code' => $invitation_code,
-                    'OnlineGoodsUser $invitatedBy' => $invitatedBy,
+                    'registerZhiJin $uid' => $id,
+                    'registerZhiJin $phone' => $phone,
+                    'registerZhiJin $invitation_code' => $invitation_code,
+                    'registerZhiJin $invitatedBy' => $invitatedBy,
                 ])
             );
             OnlineGoodsUserInviteRelation::addRecordV2(
