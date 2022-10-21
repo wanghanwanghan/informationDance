@@ -86,6 +86,7 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
                'product_id' => intval($requestData['product_id']),
                //购买人
                'purchaser_id' => intval($requestData['purchaser_id']),
+               'input_person' => intval($requestData['input_person']),
                'amount' => $requestData['amount']?:0,
                'purchaser_name' => $requestData['purchaser_name']?:'',
                'purchaser_phone' => $requestData['purchaser_phone']?:'',

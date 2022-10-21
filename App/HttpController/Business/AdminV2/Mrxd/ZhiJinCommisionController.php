@@ -746,6 +746,7 @@ class ZhiJinCommisionController extends ControllerBase
       OnlineGoodsUserDaikuanOrder::addRecordV2([
           'product_id' => $requestData['product_id'],
           'purchaser_id' =>intval( $requestData['purchaser_id']),
+          'input_person' =>$this->loginUserinfo['id'],
           'remark' => $requestData['remark'],
           'amount' => $requestData['amount'],
           'purchaser_name' => $requestData['purchaser_name'],
