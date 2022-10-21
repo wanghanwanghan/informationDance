@@ -509,7 +509,7 @@ class ZhiJinCommisionController extends ControllerBase
                 'id'=>1,
                 //产品名称
                 'product_name'=>'美人贷',
-                'avatar'=>'/Static/Temp/img.img',
+                'avatar'=>'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png',
                 'purchaser_mobile'=>'132****6193',
                 //产品id
                 'product_id'=>1,
@@ -589,7 +589,7 @@ class ZhiJinCommisionController extends ControllerBase
                 'total_fan_nums'=>  '1000',
 
                 //头像
-                'avatar'=>  '/static/img/aaa.jpg',
+                'avatar'=> 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png',
                 //加入时间
                 'join_at'=>'2022-10-09',
                 'created_at'=>1665367946,
@@ -631,7 +631,8 @@ class ZhiJinCommisionController extends ControllerBase
             $tmpUserInfo = OnlineGoodsUser::findById($inviterData['user_id']);
             $tmpUserInfo = $tmpUserInfo->toArray();
             $inviterData['user_commission_amount'] = 1000 ;
-            $inviterData['user_avatar'] = $tmpUserInfo['avatar'] ;
+            //$inviterData['user_avatar'] = $tmpUserInfo['avatar'] ;
+            $inviterData['user_avatar'] = 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png' ;
             $inviterData['user_name'] = $tmpUserInfo['user_name'] ;
             $inviterData['user_join_time'] = date('Y-m-d H:i:s',$tmpUserInfo['created_at']) ;
 
@@ -664,7 +665,7 @@ class ZhiJinCommisionController extends ControllerBase
                 'total_fan_nums'=>  '1000',
 
                 //头像
-                'avatar'=>  '/static/img/aaa.jpg',
+                'avatar'=>  'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png',
                 //加入时间
                 'join_at'=>'2022-10-09',
                 'created_at'=>1665367946,
