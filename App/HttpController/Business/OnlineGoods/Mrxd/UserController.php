@@ -134,9 +134,17 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $digit = OnlineGoodsUser::createRandomDigit();
 
        //发短信
-        $res = (new AliSms())->sendByTempleteV2($phone, 'SMS_218160347',[
-            'code' => $digit,
-        ]);
+        if(
+            CommonService::IsProductionEnv()
+        ){
+            $res = (new AliSms())->sendByTempleteV2($phone, 'SMS_218160347',[
+                'code' => $digit,
+            ]);
+        }
+        else{
+            $res = true;
+        }
+
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
@@ -632,6 +640,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         if(
             OnlineGoodsUser::getRandomDigit($phone)!= $code
         ){
+            //测试环境不发
             if(
                 CommonService::IsProductionEnv()
             ){
