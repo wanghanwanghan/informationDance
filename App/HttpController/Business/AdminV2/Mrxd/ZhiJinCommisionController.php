@@ -68,6 +68,8 @@ class ZhiJinCommisionController extends ControllerBase
             $bankInfo = OnlineGoodsDaikuanBank::findById($productInfo->bank_id);
             $dataValue['bank_name'] = $bankInfo?$bankInfo->bank_cname:'';
             $dataValue['zhijin_account'] = $dataValue['zhijin_phone'];
+            $dataValue['zhijin_account'] = $dataValue['zhijin_phone'];
+            $dataValue['created_at'] = date('Y-m-d H:i:s',$dataValue['created_at']);
             $dataValue['commission_money'] = number_format(($dataValue['amount']*$dataValue['commission_rate'])/100,2);
 
         }
