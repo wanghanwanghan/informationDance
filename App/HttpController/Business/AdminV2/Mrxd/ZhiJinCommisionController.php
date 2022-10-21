@@ -273,6 +273,15 @@ class ZhiJinCommisionController extends ControllerBase
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
 
+        OnlineGoodsTiXianJiLu::updateById(
+            $requestData['id'],
+            [
+                'pay_state' => $requestData['res'],
+                'pay_details' => $requestData['details']?:'',
+                'attaches' => $requestData['pay_attaches']?:'',
+            ]
+        );
+
         return $this->writeJson(
             200,
             [ ] ,

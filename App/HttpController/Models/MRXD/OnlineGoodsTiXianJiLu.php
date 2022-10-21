@@ -57,6 +57,7 @@ class OnlineGoodsTiXianJiLu extends ModelBase
                 'audit_details' => $requestData['audit_details']?:'',
                 'pay_state' => $requestData['pay_state']?:0,
                 'pay_details' => $requestData['pay_details']?:'',
+                'pay_attaches' => $requestData['pay_attaches']?:'',
                 'da_kuan_type' => $requestData['da_kuan_type']?:5,
                 'kai_hu_hang' => $requestData['kai_hu_hang'],
                 'kai_hu_ming' => $requestData['kai_hu_ming'],
