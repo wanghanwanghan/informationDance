@@ -859,9 +859,10 @@ class ZhiJinCommisionController extends ControllerBase
             ]
         );
 
-        OnlineGoodsUserBaoXianOrder::addRecordV2([
+        OnlineGoodsUserBaoXianOrder::addRecordV2([ 
             'product_id' => $requestData['product_id'],
             'purchaser_id' =>intval( $requestData['purchaser_id']),
+            'input_person' =>$this->loginUserinfo['id'],
             'remark' => $requestData['remark'],
             'amount' => $requestData['amount'],
             'purchaser_name' => $requestData['purchaser_name'],
@@ -870,6 +871,8 @@ class ZhiJinCommisionController extends ControllerBase
             'xindong_commission_rate' => $requestData['xindong_commission_rate'],
             'commission_rate' => $requestData['commission_rate'],
             'order_date' => $requestData['order_date'],
+            'commission_set_state' => OnlineGoodsUserBaoXianOrder::$commission_set_state_succeed,
+            'commission_state' => OnlineGoodsUserBaoXianOrder::$commission_state_init,
             'commission_date' => $requestData['commission_date'],
             'xindong_commission' => $requestData['xindong_commission'],
         ]);
