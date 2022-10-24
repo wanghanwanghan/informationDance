@@ -460,7 +460,10 @@ class ZhiJinCommisionController extends ControllerBase
             $page,
             $pageSize
         );
-
+        foreach ($res['data'] as  &$dataItem){
+            $dataItem['account_type'];
+            $dataItem['account_type'];
+        }
         return $this->writeJson(
             200,
             [

@@ -172,7 +172,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $code = $requestData['code'] ;
         $userInfo = $this->loginUserinfo;
         $uid = $userInfo['id'];
-        $uid = 1 ;
+        
         OnlineGoodsTiXianJiLu::addRecordV2([
             'user_id' => $uid,
             'amount' => $requestData['money'],
