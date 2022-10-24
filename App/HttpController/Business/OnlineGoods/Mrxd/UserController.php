@@ -800,16 +800,16 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $conditions['state'] = $requestData['commision_set_state'];
         }
 
-        $allCommissions = OnlineGoodsCommissions::findAllByCondition(
-            $conditions
+        $allCommissions = OnlineGoodsCommissions::findByConditionWithCountInfo(
+            $conditions,$page,$pageSize
         );
         $returnDatas = [];
         $prodcutsRes = \App\HttpController\Service\BaoYa\BaoYaService::getProductsV2();
-        foreach ($allCommissions as $commissionItem){
+        foreach ($allCommissions['data'] as $commissionItem){
             $orderInfo = OnlineGoodsUserBaoXianOrder::findById($commissionItem['commission_order_id']);
             $orderInfo = $orderInfo->toArray();
             $orderInfo['product_name'] = $prodcutsRes[$commissionItem['product_id']];
-            $returnDatas[$commissionItem['product_id']] = $orderInfo ;
+            $returnDatas[] = $orderInfo ;
         }
         //======================================
 
@@ -827,7 +827,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
 
 
-        $total = count($returnDatas) ;
+        $total = $allCommissions['total'] ;
         return $this->writeJson(
             200,
             [
@@ -864,18 +864,18 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $conditions['state'] = $requestData['commision_set_state'];
         }
 
-        $allCommissions = OnlineGoodsCommissions::findAllByCondition(
-            $conditions
+        $allCommissions = OnlineGoodsCommissions::findByConditionWithCountInfo(
+            $conditions,$page,$pageSize
         );
         $returnDatas = [];
-        foreach ($allCommissions as $commissionItem){
+        foreach ($allCommissions['data'] as $commissionItem){
 
 
             $orderInfo = OnlineGoodsUserDaikuanOrder::findById($commissionItem['commission_order_id']);
             $orderInfo = $orderInfo->toArray();
             $tmpProduct  = OnlineGoodsDaikuanProducts::findById($orderInfo['product_id']);
             $orderInfo['product_name'] = $tmpProduct->name;
-            $returnDatas[$commissionItem['product_id']] = $orderInfo ;
+            $returnDatas[] = $orderInfo ;
         }
         //======================================
 
@@ -890,10 +890,9 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                     ],
                 ]
             ]
-        );
+        ); 
 
-
-        $total = count($returnDatas) ;
+        $total = $allCommissions['total'] ;
         return $this->writeJson(
             200,
             [
