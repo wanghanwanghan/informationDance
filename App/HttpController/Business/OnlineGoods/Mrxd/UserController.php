@@ -914,8 +914,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $conditions = [
             'zhijin_phone' => $fansUser->phone,
         ];
-        if($requestData['commission_set_state']){
-            $conditions[] =  $requestData['commission_set_state'];
+        if($requestData['commision_set_state']){
+            $conditions[] = [ 'commission_set_state'=>$requestData['commision_set_state']];
         }
         CommonService::getInstance()->log4PHP(
             json_encode([
