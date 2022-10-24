@@ -237,63 +237,54 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
     }
 
-
+    //提现列表
     function applyWithdrawalRecords(): bool
     {
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
+        $requestData =  $this->getRequestData();
+        $phone = $requestData['phone'] ;
+        $page = $requestData['page']?:1;
+        $pageSize = $requestData['pageSize']?:20 ;
+        $code = $requestData['code'] ;
+
+        //提现审核列表
+        $res = OnlineGoodsTiXianJiLu::findByConditionWithCountInfo(
+            [
+                'user_id'=>$this->loginUserinfo['id']
+            ],
+            $page,
+            $pageSize
+        );
+        foreach ($res['data'] as  &$dataItem){
+            $userInfo = OnlineGoodsUser::findById($dataItem['user_id']);
+            $userInfo = $userInfo->toArray();
+            $dataItem['account_type'] = '普通账户';
+            if(OnlineGoodsUser::IsVip($userInfo)){
+                $dataItem['account_type'] = 'VIP账户';
+            }
+            $dataItem['name'] = $userInfo['user_name'];
+            $dataItem['zhi_jin_account'] = $userInfo['phone'];
+            $dataItem['total_withdraw'] = '';
+            $dataItem['total_income'] = '';
+            $dataItem['money'] = $dataItem['amount'];
+            $dataItem['user_money'] = $userInfo['money'];
+            $dataItem['pass_date'] = $dataItem['audit_date'];
+            $dataItem['audit_state_cname'] =  OnlineGoodsTiXianJiLu::getAuditStateMap()[$dataItem['audit_state']];
+            $dataItem['pay_state_cname'] =  OnlineGoodsTiXianJiLu::getPayStateMap()[$dataItem['pay_state']];
+            $dataItem['apply_date'] = date('Y-m-d H:i:s',$dataItem['created_at']);
+
+        }
 
         return $this->writeJson(
             200,
-            [ ] ,
-            [
-                [
-                    'id'=>1,
-                    'money'=>1000,
-                    'state_cname' => '审核中',
-                    'pay_state_cname' => '待打款',
-                    'user_id' => 1,
-                    'user_name' =>  '李循环',
-                    'user_money' =>  100,
-                    // 详情
-                    'details' => '',
-                    'created_at'=>1665367946,
-                    'attaches'=>[],
-                    'pass_date'=> '2022-09-10 10:00:00',
-                    'pay_date'=> '2022-09-10 10:00:00',
-                ],
-                [
-                    'id'=>2,
-                    'money'=>1000,
-                    'state_cname' => '审核中',
-                    'pay_state_cname' => '待打款',
-                    'user_id' => 1,
-                    'user_name' =>  '李循环',
-                    'user_money' =>  100,
-                    // 详情
-                    'details' => '',
-                    'created_at'=>1665367946,
-                    'attaches'=>[],
-                    'pass_date'=> '2022-09-10 10:00:00',
-                    'pay_date'=> '2022-09-10 10:00:00',
-                ],
-                [
-                    'id'=>3,
-                    'money'=>1000,
-                    'state_cname' => '审核中',
-                    'pay_state_cname' => '待打款',
-                    'user_id' => 1,
-                    'user_name' =>  '李循环',
-                    'user_money' =>  100,
-                    // 详情
-                    'details' => '',
-                    'created_at'=>1665367946,
-                    'attaches'=>[],
-                    'pass_date'=> '2022-09-10 10:00:00',
-                    'pay_date'=> '2022-09-10 10:00:00',
-                ]
-            ],
+            [  'page' => $page,
+                'pageSize' => $pageSize,
+                'total' => $res['total'],
+                'totalPage' => ceil($res['total']/$pageSize) ,
+            ] ,
+            $res['data'],
             '成功',
             true,
             []
