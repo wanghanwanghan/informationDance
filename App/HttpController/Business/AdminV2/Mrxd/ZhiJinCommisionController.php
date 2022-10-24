@@ -442,12 +442,14 @@ class ZhiJinCommisionController extends ControllerBase
         );
     }
 
+
+    //后台-提现审核列表
     function applyWithdrawalRecords(): bool
     {
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
-        $page = $requestData['page'] ;
-        $pageSize = $requestData['pageSize'] ;
+        $page = $requestData['page']?:1;
+        $pageSize = $requestData['pageSize']?:20 ;
         $code = $requestData['code'] ;
 
         //提现审核列表
