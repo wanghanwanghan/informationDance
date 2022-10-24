@@ -461,8 +461,20 @@ class ZhiJinCommisionController extends ControllerBase
             $pageSize
         );
         foreach ($res['data'] as  &$dataItem){
-            $dataItem['account_type'];
-            $dataItem['account_type'];
+            $userInfo = OnlineGoodsUser::findById($dataItem['user_id']);
+            $userInfo = $userInfo->toArray();
+            $dataItem['account_type'] = '普通账户';
+            if(OnlineGoodsUser::IsVipV2($userInfo)){
+                $dataItem['account_type'] = 'VIP账户';
+            }
+            $dataItem['name'] = $userInfo['user_name'];
+            $dataItem['zhi_jin_account'] = $userInfo['phone'];
+            $dataItem['total_withdraw'] = '';
+            $dataItem['total_income'] = '';
+            $dataItem['money'] = $dataItem['amount'];
+            $dataItem['user_money'] = $userInfo['money'];
+            $dataItem['pass_date'] = $userInfo['audit_date'];
+            $dataItem['apply_date'] = date('Y-m-d H:i:s',$userInfo['created_at']);
         }
         return $this->writeJson(
             200,
