@@ -794,7 +794,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         //
         $conditions = [
             'user_id' =>$requestData['fans_id'],
-            'commission_data_type' =>OnlineGoodsCommissions::$commission_type_bao_xian,
+            'commission_type' =>OnlineGoodsCommissions::$commission_type_bao_xian,
             'commission_owner' =>$this->loginUserinfo['id'],
         ];
         if($requestData['commision_set_state']){
@@ -859,7 +859,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         //
         $conditions = [
             'user_id' =>$requestData['fans_id'],
-            'commission_data_type' =>OnlineGoodsCommissions::$commission_type_dai_kuan,
+            'commission_type' =>OnlineGoodsCommissions::$commission_type_dai_kuan,
             'commission_owner' =>$this->loginUserinfo['id'],
         ];
         if($requestData['commision_set_state']){
