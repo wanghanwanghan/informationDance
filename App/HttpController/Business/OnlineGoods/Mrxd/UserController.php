@@ -491,7 +491,9 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
         $userInfo = OnlineGoodsUser::findById($fans_id);
         $invitorUserInfo = OnlineGoodsUserInviteRelation::findByUser($fans_id);
-
+        if($invitorUserInfo){
+            $invitorUserInfo = OnlineGoodsUser::findById($invitorUserInfo->invite_by);
+        }
         return $this->writeJson(
             200,
             [ ] ,
@@ -499,8 +501,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'name'=>$userInfo->user_name,
                 'zhi_jin_account'=>$userInfo->phone,
                 'commission_order_nums'=>'',
-                'invitor'=> $invitorUserInfo->user_name,
-                'invitor_mobile'=> $invitorUserInfo->phone,
+                'invitor'=> $invitorUserInfo?$invitorUserInfo->user_name:'',
+                'invitor_mobile'=> $invitorUserInfo?$invitorUserInfo->phone:'',
             ],
             '成功',
             true,
