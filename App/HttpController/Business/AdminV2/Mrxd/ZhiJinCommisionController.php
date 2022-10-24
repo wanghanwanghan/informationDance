@@ -464,7 +464,7 @@ class ZhiJinCommisionController extends ControllerBase
             $userInfo = OnlineGoodsUser::findById($dataItem['user_id']);
             $userInfo = $userInfo->toArray();
             $dataItem['account_type'] = '普通账户';
-            if(OnlineGoodsUser::IsVipV2($userInfo)){
+            if(OnlineGoodsUser::IsVip($userInfo)){
                 $dataItem['account_type'] = 'VIP账户';
             }
             $dataItem['name'] = $userInfo['user_name'];
