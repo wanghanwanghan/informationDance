@@ -251,6 +251,7 @@ class ZhiJinCommisionController extends ControllerBase
             $requestData['id'],
             [
                 'audit_state' => $state,
+                'audit_date' => date('Y-m-d H:i:s'),
                 'audit_details' => $requestData['details']?:'',
             ]
         );
@@ -284,6 +285,7 @@ class ZhiJinCommisionController extends ControllerBase
             $requestData['id'],
             [
                 'pay_state' => $state,
+                'pay_date' => date('Y-m-d H:i:s'),
                 'pay_details' => $requestData['details']?:'',
                 'attaches' => $requestData['pay_attaches']?:'',
             ]
