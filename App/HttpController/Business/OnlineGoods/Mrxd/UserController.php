@@ -1234,7 +1234,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $userInfo = OnlineGoodsUser::findById($orderInfo['commission_create_user_id']);
             $value['purchaser_mobile'] = $userInfo->phone;
             $value['purchaser'] = $userInfo->user_name;
-            $value['commission'] = number_format($value['comission_rate']*$orderInfo['amount']/100,2);
+            $value['commission'] = number_format($comiissionInfo['comission_rate']*$orderInfo['amount']/100,2);
 
         }
 
