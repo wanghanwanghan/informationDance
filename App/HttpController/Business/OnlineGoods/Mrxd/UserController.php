@@ -942,7 +942,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $daiKuanOrders['data']
             ,
             '成功',
-            true,
+            false,
             []
         );
     }
