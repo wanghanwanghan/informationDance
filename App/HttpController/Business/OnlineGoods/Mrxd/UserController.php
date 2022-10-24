@@ -1142,6 +1142,10 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $value['avatar'] = 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png';
             $orderInfo = $orderInfo->toArray();
 
+            // purchaser_mobile
+            $userInfo = OnlineGoodsUser::findById($value['user_id']);
+            $value['purchaser_mobile'] = $userInfo->phone;
+
             // product_name
         }
 //        CommonService::writeTestLog(
