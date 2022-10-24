@@ -1111,10 +1111,96 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $pageSize =  $requestData['pageSize']?:100;
 
         $userInfo = $this->loginUserinfo;
+        $conditions = [
+            [
+                //$model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+                'field' => 'user_id',
+                'value' => $userInfo['id'],
+                'operate' => '=',
+            ],
+            [
+                //$model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+                'field' => 'state',
+                'value' => OnlineGoodsCommissions::$commission_state_granted,
+                'operate' => '=',
+            ],
+            [
+                //$model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+                'field' => 'commission_data_type',
+                'value' => [
+                        OnlineGoodsCommissions::$commission_data_type_xindong_to_vip,
+                        OnlineGoodsCommissions::$commission_data_type_invitor_to_user,
+                    ],
+                'operate' => '=',
+            ]
+        ];
+        $res = OnlineGoodsCommissions::findByConditionV2(
+            $conditions,
+            $page,
+            $pageSize
+        );
+        //
+        $prodcutsRes = \App\HttpController\Service\BaoYa\BaoYaService::getProductsV2();
+        foreach ($res['data'] as &$value){
+            if(
+                $value['commission_type'] == OnlineGoodsCommissions::$commission_type_bao_xian
+            ){
+                $orderInfo =  OnlineGoodsUserBaoXianOrder::findById($value['commission_order_id']);
+                $value['product_name'] = $prodcutsRes[$orderInfo->product_id]?:'';
+            }
+            if(
+                $value['commission_type'] == OnlineGoodsCommissions::$commission_type_dai_kuan
+            ){
+
+                $orderInfo =  OnlineGoodsUserDaikuanOrder::findById($value['commission_order_id']);
+                $productInfo = OnlineGoodsDaikuanProducts::findById($orderInfo->product_id);
+                $value['product_name'] = $productInfo?$productInfo->name:'';
+
+            }
+
+            //XXX
+            $value['avatar'] = 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png';
+            $orderInfo = $orderInfo->toArray();
+
+            // purchaser_mobile
+            $userInfo = OnlineGoodsUser::findById($value['commission_create_user_id']);
+            $value['purchaser_mobile'] = $userInfo->phone;
+            $value['purchaser'] = $userInfo->user_name;
+            $value['commission'] = number_format($value['comission_rate']*$orderInfo['amount']/100,2);
+
+        }
+
+
+        $total = $res['total'] ;
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' =>$pageSize,
+                'total' => $total,
+                'totalPage' => ceil( $total/ $pageSize ),
+            ] ,
+            $res['data']
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
+
+    //前台-我的分佣列表
+    function commissionLists(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page =  $requestData['page']?:1;
+        $pageSize =  $requestData['pageSize']?:100;
+
+        $userInfo = $this->loginUserinfo;
         $res = OnlineGoodsCommissions::findByConditionWithCountInfo(
             [
                 'user_id' => $userInfo['id'],
                 'state' => OnlineGoodsCommissions::$commission_state_granted,
+                'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_vip_to_invitor,
             ],
             $page,
             $pageSize
@@ -1148,19 +1234,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $value['purchaser'] = $userInfo->user_name;
             $value['commission'] = number_format($value['comission_rate']*$orderInfo['amount']/100,2);
 
-            // product_name
         }
-//        CommonService::writeTestLog(
-//            [
-//                'getInvitationCode'=>[
-//                    '$userInfo'=>[
-//                        'id'=>$userInfo['id'],
-//                        'user_name'=>$userInfo['user_name'],
-//                        'phone'=>$userInfo['phone'],
-//                    ],
-//                ]
-//            ]
-//        );
 
 
         $total = $res['total'] ;
@@ -1173,102 +1247,6 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'totalPage' => ceil( $total/ $pageSize ),
             ] ,
             $res['data']
-            ,
-            '成功',
-            true,
-            []
-        );
-    }
-
-    //前台-我的分佣列表
-    function commissionLists(): bool
-    {
-        $requestData =  $this->getRequestData();
-        $page =  $requestData['page']?:1;
-        $pageSize =  $requestData['pageSize']?:100;
-
-        $userInfo = $this->loginUserinfo;
-
-        CommonService::writeTestLog(
-            [
-                'getInvitationCode'=>[
-                    '$userInfo'=>[
-                        'id'=>$userInfo['id'],
-                        'user_name'=>$userInfo['user_name'],
-                        'phone'=>$userInfo['phone'],
-                    ],
-                ]
-            ]
-        );
-
-        $exampleDatas = [
-            [
-                'id'=>1,
-                //产品名称
-                'product_name'=>'美人贷',
-                'avatar'=> 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png',
-                'purchaser_mobile'=>'132****6193',
-                //产品id
-                'product_id'=>1,
-                //购买人
-                'purchaser'=>'张小花',
-                //介绍人
-                'introducer'=>'张大花',
-                //介绍人所得分佣比例
-                'introducer_commision'=>'50%',
-                //订单金额
-                'price'=>10000,
-                //信动所得佣金 - 佣金表
-                'xindong_commission'=>500,
-                //所得佣金
-                'commission'=>500,
-                //设置分佣状态
-                'commission_set_state_cname'=>'已设置分佣',
-                //分佣状态
-                'commission_state_cname'=>'已领取分佣',
-                //下单时间
-                'order_time'=>'2022-09-09',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '已成交',
-            ],
-            [
-                'id' => 2,
-                //产品名称
-                'product_name' => '美人贷',
-                //产品id
-                'product_id'=>1,
-                //购买人
-                'purchaser'=>'张小花',
-                //介绍人
-                'introducer'=>'张大花',
-                //介绍人所得分佣比例
-                'introducer_commision'=>'50%',
-                //订单金额
-                'price'=>10000,
-                //信动所得佣金 - 佣金表
-                'xindong_commission'=>500,
-                //设置分佣状态
-                'commission_set_state_cname'=>'已设置分佣',
-                //分佣状态
-                'commission_state_cname'=>'已领取分佣',
-                //下单时间
-                'order_time'=>'2022-09-09',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '已成交',
-            ],
-        ];
-        $total = 100 ;
-        return $this->writeJson(
-            200,
-            [
-                'page' => $page,
-                'pageSize' =>$pageSize,
-                'total' => $total,
-                'totalPage' => ceil( $total/ $pageSize ),
-            ] ,
-            $exampleDatas
             ,
             '成功',
             true,

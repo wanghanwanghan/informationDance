@@ -141,12 +141,12 @@ class OnlineGoodsCommissions extends ModelBase
         ];
     }
 
-    public static function findByConditionV2($whereArr,$page){
+    public static function findByConditionV2($whereArr,$page,$pageSize){
         $model = OnlineGoodsCommissions::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
-        $model->page($page)
+        $model->page($page,$pageSize)
             ->order('id', 'DESC')
             ->withTotalCount();
 
@@ -239,7 +239,24 @@ class OnlineGoodsCommissions extends ModelBase
             if(!$changeRes){
                 return false;
             }
+
+            OnlineGoodsCommissionGrantDetails::addRecordV2([
+                'user_id' => $resValue['commission_owner'] ,
+                'commission_id' => $resValue['id'],
+                'amount' => $commission,
+                'commission_create_user_id' => $resValue['commission_create_user_id'],
+                'commission_owner' => $resValue['commission_owner'],
+                'type' => OnlineGoodsCommissionGrantDetails::$input_type_out,
+                'state' => 0,
+                'remark' => '',
+            ]);
+
         }
+        else{
+
+        }
+
+
 
         //发放佣金-
         $changeRes = OnlineGoodsUser::changeBalance(
@@ -250,7 +267,16 @@ class OnlineGoodsCommissions extends ModelBase
         if(!$changeRes){
             return false;
         }
-
+        OnlineGoodsCommissionGrantDetails::addRecordV2([
+            'user_id' => $resValue['user_id'] ,
+            'commission_id' => $resValue['id'],
+            'amount' => $commission,
+            'commission_create_user_id' => $resValue['commission_create_user_id'],
+            'commission_owner' => $resValue['commission_owner'],
+            'type' => OnlineGoodsCommissionGrantDetails::$input_type_in,
+            'state' => 0,
+            'remark' => '',
+        ]);
 
         return  self::updateById($resValue['id'],['state'=>self::$commission_state_granted]);
     }
