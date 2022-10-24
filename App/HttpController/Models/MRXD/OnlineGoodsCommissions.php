@@ -385,7 +385,7 @@ class OnlineGoodsCommissions extends ModelBase
         }
 
 
-        //邀请人给被邀请人分佣
+        //邀请人给用户分佣
         if($directInvitorInfo){
             $res = OnlineGoodsCommissions::addRecordV2(
                 [
@@ -398,7 +398,7 @@ class OnlineGoodsCommissions extends ModelBase
                     'comission_rate' => empty($VipInvitorInfo)?15:0,
                     'commission_type' => $type,
                     'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_invitor_to_user,
-                    'state' => empty($VipInvitorInfo)?OnlineGoodsCommissions::$commission_state_seted:OnlineGoodsCommissions::$commission_state_init,
+                    'state' => OnlineGoodsCommissions::$commission_state_init,
                     'commission_order_id' => $orderInfo['id'],
                     'remark' => '邀请人给用户分佣',
                 ]

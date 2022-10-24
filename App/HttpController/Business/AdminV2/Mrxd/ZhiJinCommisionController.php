@@ -859,7 +859,7 @@ class ZhiJinCommisionController extends ControllerBase
             ]
         );
 
-        OnlineGoodsUserBaoXianOrder::addRecordV2([ 
+        OnlineGoodsUserBaoXianOrder::addRecordV2([
             'product_id' => $requestData['product_id'],
             'purchaser_id' =>intval( $requestData['purchaser_id']),
             'input_person' =>$this->loginUserinfo['id'],
