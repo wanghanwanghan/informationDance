@@ -249,7 +249,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
         //提现审核列表
         $conditions = [
-            //'user_id'=>$this->loginUserinfo['id']
+            'user_id'=>$this->loginUserinfo['id']
         ];
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -911,7 +911,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             'zhijin_phone' => $fansUser->phone,
         ];
         if($requestData['commision_set_state']){
-            $conditions[] = [ 'commission_set_state'=>$requestData['commision_set_state']];
+            $conditions['commission_set_state'] = $requestData['commision_set_state'];
         }
         CommonService::getInstance()->log4PHP(
             json_encode([
