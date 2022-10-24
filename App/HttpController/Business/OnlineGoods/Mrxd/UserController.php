@@ -797,7 +797,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             'commission_owner' =>$this->loginUserinfo['id'],
         ];
         if($requestData['commision_set_state']){
-            $conditions['commission_set_state'] = $requestData['commision_set_state'];
+            $conditions['state'] = $requestData['commision_set_state'];
         }
 
         $allCommissions = OnlineGoodsCommissions::findAllByCondition(
@@ -861,7 +861,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             'commission_owner' =>$this->loginUserinfo['id'],
         ];
         if($requestData['commision_set_state']){
-            $conditions['commission_set_state'] = $requestData['commision_set_state'];
+            $conditions['state'] = $requestData['commision_set_state'];
         }
 
         $allCommissions = OnlineGoodsCommissions::findAllByCondition(
