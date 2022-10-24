@@ -43,12 +43,12 @@ class BaoYaService extends ServiceBase
     static function getProductsV2(){
         $dataRes = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProducts();
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'getProductsV2' => $dataRes
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'getProductsV2' => $dataRes
+//            ])
+//        );
 
         $returnRes = [
             9999 => '车险分期',
