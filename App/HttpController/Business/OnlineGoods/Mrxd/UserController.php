@@ -16,6 +16,7 @@ use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\InsuranceData;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\Api\User;
+use App\HttpController\Models\MRXD\OnlineGoodsCommissionGrantDetails;
 use App\HttpController\Models\MRXD\OnlineGoodsCommissions;
 use App\HttpController\Models\MRXD\OnlineGoodsDaikuanProducts;
 use App\HttpController\Models\MRXD\OnlineGoodsTiXianJiLu;
@@ -1104,7 +1105,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
 
     //收益记录
-    function incomeLists(): bool
+    function incomeListsbak(): bool
     {
         $requestData =  $this->getRequestData();
         $page =  $requestData['page']?:1;
@@ -1164,6 +1165,73 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
             // purchaser_mobile
             $userInfo = OnlineGoodsUser::findById($value['commission_create_user_id']);
+            $value['purchaser_mobile'] = $userInfo->phone;
+            $value['purchaser'] = $userInfo->user_name;
+            $value['commission'] = number_format($value['comission_rate']*$orderInfo['amount']/100,2);
+
+        }
+
+
+        $total = $res['total'] ;
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' =>$pageSize,
+                'total' => $total,
+                'totalPage' => ceil( $total/ $pageSize ),
+            ] ,
+            $res['data']
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
+    function incomeLists(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page =  $requestData['page']?:1;
+        $pageSize =  $requestData['pageSize']?:100;
+
+        $userInfo = $this->loginUserinfo;
+
+        $res = OnlineGoodsCommissionGrantDetails::findByConditionWithCountInfo(
+            [
+                'user_id'=>$userInfo['id'],
+                'type'=>OnlineGoodsCommissionGrantDetails::$input_type_in,
+            ],
+            $page,
+            $pageSize
+        );
+        //
+        $prodcutsRes = \App\HttpController\Service\BaoYa\BaoYaService::getProductsV2();
+        foreach ($res['data'] as &$value){
+
+            $comiissionInfo = OnlineGoodsCommissions::findById($value['commission_id']);
+            $comiissionInfo = $comiissionInfo->toArray();
+            if(
+                $comiissionInfo['commission_type'] == OnlineGoodsCommissions::$commission_type_bao_xian
+            ){
+                $orderInfo =  OnlineGoodsUserBaoXianOrder::findById($value['commission_order_id']);
+                $value['product_name'] = $prodcutsRes[$orderInfo->product_id]?:'';
+            }
+            if(
+                $comiissionInfo['commission_type'] == OnlineGoodsCommissions::$commission_type_dai_kuan
+            ){
+
+                $orderInfo =  OnlineGoodsUserDaikuanOrder::findById($value['commission_order_id']);
+                $productInfo = OnlineGoodsDaikuanProducts::findById($orderInfo->product_id);
+                $value['product_name'] = $productInfo?$productInfo->name:'';
+
+            }
+
+            //XXX
+            $value['avatar'] = 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png';
+            $orderInfo = $orderInfo->toArray();
+
+            // purchaser_mobile
+            $userInfo = OnlineGoodsUser::findById($orderInfo['commission_create_user_id']);
             $value['purchaser_mobile'] = $userInfo->phone;
             $value['purchaser'] = $userInfo->user_name;
             $value['commission'] = number_format($value['comission_rate']*$orderInfo['amount']/100,2);
