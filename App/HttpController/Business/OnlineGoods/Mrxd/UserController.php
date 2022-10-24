@@ -17,6 +17,7 @@ use App\HttpController\Models\AdminV2\InsuranceData;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\MRXD\OnlineGoodsCommissions;
+use App\HttpController\Models\MRXD\OnlineGoodsDaikuanProducts;
 use App\HttpController\Models\MRXD\OnlineGoodsTiXianJiLu;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\MRXD\OnlineGoodsUserBaoXianOrder;
@@ -918,6 +919,10 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $conditions,$page,$pageSize
         );
 
+        foreach ($daiKuanOrders['data'] as &$dataItem){ 
+            $tmpProduct  = OnlineGoodsDaikuanProducts::findById($dataItem['product_id']);
+            $dataItem['product_name'] = $tmpProduct->name;
+        }
         //product_name
 
 
