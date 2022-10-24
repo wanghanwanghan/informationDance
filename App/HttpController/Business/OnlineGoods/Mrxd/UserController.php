@@ -790,6 +790,30 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $userInfo = $this->loginUserinfo;
         $fansUser = OnlineGoodsUser::findById($requestData['fans_id']);
 
+        //======================================
+        //
+        $conditions = [
+            'user_id' =>$requestData['fans_id'],
+            'commission_owner' =>$this->loginUserinfo['id'],
+        ];
+        if($requestData['commision_set_state']){
+            $conditions['commission_set_state'] = $requestData['commision_set_state'];
+        }
+
+        $allCommissions = OnlineGoodsCommissions::findAllByCondition(
+            $conditions
+        );
+        $returnDatas = [];
+        $prodcutsRes = \App\HttpController\Service\BaoYa\BaoYaService::getProductsV2();
+        foreach ($allCommissions as $commissionItem){
+            $orderInfo = OnlineGoodsUserBaoXianOrder::findById($commissionItem['commission_order_id']);
+            $orderInfo = $orderInfo->toArray();
+            $orderInfo['product_name'] = $prodcutsRes[$commissionItem['product_id']];
+            $returnDatas[$commissionItem['product_id']] = $orderInfo ;
+        }
+        //======================================
+
+
         CommonService::writeTestLog(
             [
                 'getInvitationCode'=>[
@@ -802,31 +826,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             ]
         );
 
-        //贷款订单
-        $conditions = [
-            'zhijin_phone' => $fansUser->phone,
-        ];
-        if($requestData['commision_set_state']){
-            $conditions['commission_set_state'] = $requestData['commision_set_state'];
-        }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'daikuanOrderLists——$conditions'=>$conditions,
-            ])
-        );
-        $daiKuanOrders = OnlineGoodsUserBaoXianOrder::findByConditionWithCountInfo(
-            $conditions,$page,$pageSize
-        );
 
-        $prodcutsRes = \App\HttpController\Service\BaoYa\BaoYaService::getProductsV2();
-        foreach ($daiKuanOrders['data'] as &$dataItem){
-            $dataItem['product_name'] = $prodcutsRes[$dataItem['product_id']];
-        }
-
-        //product_name
-
-        $total = $daiKuanOrders['total'] ;
+        $total = count($returnDatas) ;
         return $this->writeJson(
             200,
             [
@@ -835,7 +836,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total' => $total,
                 'totalPage' => ceil( $total/ $pageSize ),
             ] ,
-            $daiKuanOrders['data']
+            $returnDatas
             ,
             '成功',
             false,
@@ -853,6 +854,32 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $userInfo = $this->loginUserinfo;
         $fansUser = OnlineGoodsUser::findById($requestData['fans_id']);
 
+        //======================================
+        //
+        $conditions = [
+            'user_id' =>$requestData['fans_id'],
+            'commission_owner' =>$this->loginUserinfo['id'],
+        ];
+        if($requestData['commision_set_state']){
+            $conditions['commission_set_state'] = $requestData['commision_set_state'];
+        }
+
+        $allCommissions = OnlineGoodsCommissions::findAllByCondition(
+            $conditions
+        );
+        $returnDatas = [];
+        foreach ($allCommissions as $commissionItem){
+
+
+            $orderInfo = OnlineGoodsUserDaikuanOrder::findById($commissionItem['commission_order_id']);
+            $orderInfo = $orderInfo->toArray();
+            $tmpProduct  = OnlineGoodsDaikuanProducts::findById($orderInfo['product_id']);
+            $orderInfo['product_name'] = $tmpProduct->name;
+            $returnDatas[$commissionItem['product_id']] = $orderInfo ;
+        }
+        //======================================
+
+
         CommonService::writeTestLog(
             [
                 'getInvitationCode'=>[
@@ -865,31 +892,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             ]
         );
 
-        //贷款订单
-        $conditions = [
-            'zhijin_phone' => $fansUser->phone,
-        ];
-        if($requestData['commision_set_state']){
-            $conditions['commission_set_state'] = $requestData['commision_set_state'];
-        }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'daikuanOrderLists——$conditions'=>$conditions,
-            ])
-        );
-        $daiKuanOrders = OnlineGoodsUserDaikuanOrder::findByConditionWithCountInfo(
-            $conditions,$page,$pageSize
-        );
 
-        foreach ($daiKuanOrders['data'] as &$dataItem){
-            $tmpProduct  = OnlineGoodsDaikuanProducts::findById($dataItem['product_id']);
-            $dataItem['product_name'] = $tmpProduct->name;
-        }
-        //product_name
-
-
-        $total = $daiKuanOrders['total'] ;
+        $total = count($returnDatas) ;
         return $this->writeJson(
             200,
             [
@@ -898,12 +902,15 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total' => $total,
                 'totalPage' => ceil( $total/ $pageSize ),
             ] ,
-            $daiKuanOrders['data']
+            $returnDatas
             ,
             '成功',
             false,
             []
         );
+
+        //=========================
+
     }
     function ZhiJinOrderLists(): bool
     {
