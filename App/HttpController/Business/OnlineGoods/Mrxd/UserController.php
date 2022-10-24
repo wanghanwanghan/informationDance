@@ -883,6 +883,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             []
         );
     }
+
+    // 贷款分佣订单
     function daikuanOrderLists(): bool
     {
         $requestData =  $this->getRequestData();
@@ -890,6 +892,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $pageSize =  $requestData['pageSize']?:100;
 
         $userInfo = $this->loginUserinfo;
+        $fansUser = OnlineGoodsUser::findById($requestData['fans_id']);
 
         CommonService::writeTestLog(
             [
@@ -903,53 +906,18 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             ]
         );
 
-        $exampleDatas = [
-            [
-                'id'=>1,
-                //产品名称
-                'product_name'=>'美人贷',
-                //产品id
-                'product_id'=>1,
-                //购买人
-                'purchaser'=>'张小花',
-                //订单金额
-                'price'=>10000,
-                //信动所得佣金 - 佣金表
-                'xindong_commission'=>500,
-                //设置分佣状态
-                'commission_set_state_cname'=>'已设置分佣',
-                //分佣状态
-                'commission_state_cname'=>'已领取分佣',
-                //下单时间
-                'order_time'=>'2022-09-09',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '已成交',
-            ],
-            [
-                'id'=>2,
-                //产品名称
-                'product_name'=>'帅哥贷',
-                //产品id
-                'product_id'=>1,
-                //购买人
-                'purchaser'=>'张大锤',
-                //订单金额
-                'price'=>10000,
-                //信动所得佣金 - 佣金表
-                'xindong_commission'=>500,
-                //设置分佣状态
-                'commission_set_state_cname'=>'已设置分佣',
-                //分佣状态
-                'commission_state_cname'=>'已领取分佣',
-                //下单时间
-                'order_time'=>'2022-09-09',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '已成交',
-            ]
+        //贷款订单
+        $conditions = [
+            'zhijin_phone' => $fansUser->phone,
         ];
-        $total = 100 ;
+        if($requestData['commission_set_state']){
+            $conditions[] =  $requestData['commission_set_state'];
+        }
+
+        $daiKuanOrders = OnlineGoodsUserDaikuanOrder::findByConditionWithCountInfo(
+            $conditions,$page,$pageSize
+        ); 
+        $total = $daiKuanOrders['total'] ;
         return $this->writeJson(
             200,
             [
@@ -958,7 +926,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total' => $total,
                 'totalPage' => ceil( $total/ $pageSize ),
             ] ,
-            $exampleDatas
+            $daiKuanOrders['data']
             ,
             '成功',
             true,
