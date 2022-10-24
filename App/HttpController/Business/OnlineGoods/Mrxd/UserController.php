@@ -392,17 +392,21 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             []
         );
     }
+
+    //设置佣金金额
     function setDaiKuanCommisionRate(): bool
     {
         $requestData =  $this->getRequestData();
-        $phone = $requestData['phone'] ;
+
+        $id = $requestData['id'] ;
         $code = $requestData['code'] ;
 
         $userInfo = $this->loginUserinfo;
         $userInfo['id'] = 1;
-        //校验权限：校验设置人
+
+        //贷款订单 //校验权限：校验设置人
         $commissionInfo = OnlineGoodsCommissions::findOneByCondition([
-            'id' => $requestData['id'],
+            'commission_order_id' => $requestData['id'],
             'commission_owner' => $userInfo['id'],
             'state' => OnlineGoodsCommissions::$commission_state_init
         ]);
@@ -452,7 +456,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 ]
             ])
         );
-        OnlineGoodsCommissions::grantByItem($commissionInfo->toArray(),$OrderInfo->amount) ; 
+        OnlineGoodsCommissions::grantByItem($commissionInfo->toArray(),$OrderInfo->amount) ;
 
         return $this->writeJson(
             200,
