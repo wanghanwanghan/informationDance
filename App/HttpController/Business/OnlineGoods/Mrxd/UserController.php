@@ -1119,6 +1119,28 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $page,
             $pageSize
         );
+        //
+        $prodcutsRes = \App\HttpController\Service\BaoYa\BaoYaService::getProductsV2();
+        foreach ($res['data'] as &$value){
+            if(
+                $value['commission_type'] == OnlineGoodsCommissions::$commission_type_bao_xian
+            ){
+                $orderInfo =  OnlineGoodsUserBaoXianOrder::findById($value['commission_order_id']);
+                $value['product_name'] = $prodcutsRes[$orderInfo->product_id]?:'';
+            }
+            if(
+                $value['commission_type'] == OnlineGoodsCommissions::$commission_type_dai_kuan
+            ){
+
+                $orderInfo =  OnlineGoodsUserDaikuanOrder::findById($value['commission_order_id']);
+                $productInfo = OnlineGoodsDaikuanProducts::findById($orderInfo->product_id);
+                $value['product_name'] = $productInfo?$productInfo->name:'';
+            }
+
+            $orderInfo = $orderInfo->toArray();
+
+            // product_name
+        }
 //        CommonService::writeTestLog(
 //            [
 //                'getInvitationCode'=>[
