@@ -1213,14 +1213,14 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             if(
                 $comiissionInfo['commission_type'] == OnlineGoodsCommissions::$commission_type_bao_xian
             ){
-                $orderInfo =  OnlineGoodsUserBaoXianOrder::findById($value['commission_order_id']);
+                $orderInfo =  OnlineGoodsUserBaoXianOrder::findById($comiissionInfo['commission_order_id']);
                 $value['product_name'] = $prodcutsRes[$orderInfo->product_id]?:'';
             }
             if(
                 $comiissionInfo['commission_type'] == OnlineGoodsCommissions::$commission_type_dai_kuan
             ){
 
-                $orderInfo =  OnlineGoodsUserDaikuanOrder::findById($value['commission_order_id']);
+                $orderInfo =  OnlineGoodsUserDaikuanOrder::findById($comiissionInfo['commission_order_id']);
                 $productInfo = OnlineGoodsDaikuanProducts::findById($orderInfo->product_id);
                 $value['product_name'] = $productInfo?$productInfo->name:'';
 
