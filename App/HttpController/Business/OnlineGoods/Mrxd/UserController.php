@@ -870,7 +870,6 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $returnDatas = [];
         foreach ($allCommissions['data'] as $commissionItem){
 
-
             $orderInfo = OnlineGoodsUserDaikuanOrder::findById($commissionItem['commission_order_id']);
             $orderInfo = $orderInfo->toArray();
             $tmpProduct  = OnlineGoodsDaikuanProducts::findById($orderInfo['product_id']);
@@ -890,7 +889,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                     ],
                 ]
             ]
-        ); 
+        );
 
         $total = $allCommissions['total'] ;
         return $this->writeJson(
