@@ -153,7 +153,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total_commission' => 0,
                 'total_withdraw' => 0,
                 'invite_code' =>  CommonService::encodeIdToInvitationCode($userInfo['id']),
-                'money' => $userInfo['money'], 
+                'money' => $userInfo['money'],
                 'avatar' => 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png',
             ],
             '成功',
@@ -1011,16 +1011,35 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $userInfo = $this->loginUserinfo;
         $useId = $userInfo['id'];
         $returnDatas = [];
-        $useId = 1;
 
         //如果是VIP 可以设置全部粉丝
         if(
             OnlineGoodsUser::IsVipV2($useId)
         ){
             $returnDatas = OnlineGoodsUserInviteRelation::getVipsAllInvitedUser($useId);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'ZhiJinFansOrderLists'=>[
+                        'uid'=>$useId,
+                        'IsVipV2'=>true,
+                        '$returnDatas'=>$returnDatas,
+                    ],
+                ])
+            );
         }
         else{
             $returnDatas = OnlineGoodsUserInviteRelation::getAllInvitedUser($useId);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'ZhiJinFansOrderLists'=>[
+                        'uid'=>$useId,
+                        'IsVipV2'=>false,
+                        '$returnDatas'=>$returnDatas,
+                    ],
+                ])
+            );
         }
 
         foreach ($returnDatas as &$valueData){
@@ -1031,15 +1050,6 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $valueData['order_nums'] =  '' ;
             $valueData['join_at'] = date('Y-m-d H:i:s',$userInfo['created_at']);
         }
-
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'ZhiJinFansOrderLists'=>[
-                    '$returnDatas'=>$returnDatas,
-                ],
-            ])
-        );
         $total = count($returnDatas);
         return $this->writeJson(
             200,
