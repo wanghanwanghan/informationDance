@@ -1011,86 +1011,34 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $returnDatas = [];
         $useId = 1;
 
-        if($requestData['real']){
-            //如果是VIP 可以设置全部粉丝
-            if(
-                OnlineGoodsUser::IsVipV2($useId)
-            ){
-                $returnDatas = OnlineGoodsUserInviteRelation::getVipsAllInvitedUser($useId);
-            }
-            else{
-                $returnDatas = OnlineGoodsUserInviteRelation::getAllInvitedUser($useId);
-            }
-
-            foreach ($returnDatas as &$valueData){
-                $userInfo = $valueData['user_id'];
-                $valueData['name'] = $userInfo['user_name'];
-                $valueData['mobile'] = $userInfo['phone'];
-                $valueData['total_fan_nums'] =  '' ;
-                $valueData['order_nums'] =  '' ;
-                $valueData['join_at'] = date('Y-m-d H:i:s',$userInfo['created_at']);
-            }
-
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'ZhiJinFansOrderLists'=>[
-                        '$returnDatas'=>$returnDatas,
-                    ],
-                ])
-            );
-            return $this->writeJson(
-                200,
-                [
-                    'page' => $page,
-                    'pageSize' =>$pageSize,
-                    'total' => $total,
-                    'totalPage' => ceil( $total/ $pageSize ),
-                ] ,
-                $returnDatas
-                ,
-                '成功',
-                true,
-                []
-            );
+        //如果是VIP 可以设置全部粉丝
+        if(
+            OnlineGoodsUser::IsVipV2($useId)
+        ){
+            $returnDatas = OnlineGoodsUserInviteRelation::getVipsAllInvitedUser($useId);
+        }
+        else{
+            $returnDatas = OnlineGoodsUserInviteRelation::getAllInvitedUser($useId);
         }
 
-        CommonService::writeTestLog(
-            [
-                'getInvitationCode'=>[
-                    '$userInfo'=>[
-                        'id'=>$userInfo['id'],
-                        'user_name'=>$userInfo['user_name'],
-                        'phone'=>$userInfo['phone'],
-                    ],
-                ]
-            ]
+        foreach ($returnDatas as &$valueData){
+            $userInfo = $valueData['user_id'];
+            $valueData['name'] = $userInfo['user_name'];
+            $valueData['mobile'] = $userInfo['phone'];
+            $valueData['total_fan_nums'] =  '' ;
+            $valueData['order_nums'] =  '' ;
+            $valueData['join_at'] = date('Y-m-d H:i:s',$userInfo['created_at']);
+        }
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'ZhiJinFansOrderLists'=>[
+                    '$returnDatas'=>$returnDatas,
+                ],
+            ])
         );
-
-        $exampleDatas = [
-            [
-                'id'=>1,
-                //用户姓名
-                'name'=>  '张三',
-                //邀请人姓名
-                'inviter'=>  '张大三',
-                //订单数量
-                'order_nums'=>  '100',
-                //累计收益
-                'total_income'=>  '1000',
-                //粉丝数量
-                'total_fan_nums'=>  '1000',
-
-                //头像
-                'avatar'=>  'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png',
-                //加入时间
-                'join_at'=>'2022-10-09',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '',
-            ]
-        ];
-        $total = 100 ;
+        $total = count($returnDatas);
         return $this->writeJson(
             200,
             [
@@ -1099,12 +1047,12 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total' => $total,
                 'totalPage' => ceil( $total/ $pageSize ),
             ] ,
-            $exampleDatas
+            $returnDatas
             ,
             '成功',
             true,
             []
-        );
+        ); 
     }
 
     //置金粉丝列表

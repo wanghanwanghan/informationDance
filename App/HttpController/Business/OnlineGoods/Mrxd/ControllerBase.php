@@ -29,7 +29,7 @@ class ControllerBase extends Index
             'getProducts',
             'getProductDetail',
 
-        ]; 
+        ];
 
         CommonService::getInstance()->log4PHP(
             json_encode([
