@@ -244,16 +244,21 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
         $requestData =  $this->getRequestData();
-        $phone = $requestData['phone'] ;
         $page = $requestData['page']?:1;
         $pageSize = $requestData['pageSize']?:20 ;
-        $code = $requestData['code'] ;
 
         //提现审核列表
+        $conditions = [
+            'user_id'=>$this->loginUserinfo['id']
+        ];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'applyWithdrawalRecords $conditions'=>$conditions
+            ])
+        );
         $res = OnlineGoodsTiXianJiLu::findByConditionWithCountInfo(
-            [
-                'user_id'=>$this->loginUserinfo['id']
-            ],
+            $conditions,
             $page,
             $pageSize
         );
