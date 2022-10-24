@@ -1135,8 +1135,11 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 $orderInfo =  OnlineGoodsUserDaikuanOrder::findById($value['commission_order_id']);
                 $productInfo = OnlineGoodsDaikuanProducts::findById($orderInfo->product_id);
                 $value['product_name'] = $productInfo?$productInfo->name:'';
+
             }
 
+            //XXX
+            $value['avatar'] = 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png';
             $orderInfo = $orderInfo->toArray();
 
             // product_name
