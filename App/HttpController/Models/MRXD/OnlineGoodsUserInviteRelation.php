@@ -236,7 +236,7 @@ class OnlineGoodsUserInviteRelation extends ModelBase
             OnlineGoodsUser::IsVip($topInvitorInfo)
         ){
             return  $topInvitorInfo;
-        };
+        }
         return [];
     }
 

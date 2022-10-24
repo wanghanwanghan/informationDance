@@ -86,7 +86,8 @@ class OnlineGoodsCommissions extends ModelBase
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'failed',
-                    '$requestData' => $requestData
+                    '$requestData' => $requestData,
+                    'getMessage' => $e->getMessage(),
                 ])
             );
         }
@@ -292,6 +293,9 @@ class OnlineGoodsCommissions extends ModelBase
 
         //直接邀请人
         $directInvitorInfo = OnlineGoodsUserInviteRelation::getDirectInviterInfo($zhiJinUserInfo['id']);
+        if(empty($directInvitorInfo)){
+            return false;
+        }
         //vip邀请人
         $VipInvitorInfo = OnlineGoodsUserInviteRelation::getVipInviterInfo($zhiJinUserInfo['id']);
 
@@ -305,8 +309,17 @@ class OnlineGoodsCommissions extends ModelBase
             ])
         );
 
-        //信动给VIP分佣
-        if($VipInvitorInfo){
+        /**
+        如果有VIP :
+        :信动给VIP分佣
+        :VIP给邀请人分佣
+        :邀请人给被邀请人分佣
+        没有VIP
+        :信动给邀请人分佣
+        :邀请人给被邀请人分佣
+         */
+        if(!empty($VipInvitorInfo)){
+            //信动给VIP分佣
             $res = OnlineGoodsCommissions::addRecordV2(
                 [
                     //受益人
@@ -326,10 +339,8 @@ class OnlineGoodsCommissions extends ModelBase
             if(empty($res)){
                 return  false;
             }
-        }
-        //VIP给邀请人分佣
-        if($VipInvitorInfo&&$directInvitorInfo){
 
+            //VIP给邀请人分佣
             $res = OnlineGoodsCommissions::addRecordV2(
                 [
                     //受益人
@@ -350,6 +361,30 @@ class OnlineGoodsCommissions extends ModelBase
                 return  false;
             }
         }
+        else{
+            //信动给邀请人分佣
+            $res = OnlineGoodsCommissions::addRecordV2(
+                [
+                    //受益人
+                    'user_id' => $directInvitorInfo['id'],
+                    //收益创造者
+                    'commission_create_user_id' => $zhiJinUserInfo['id'],
+                    //发放人
+                    'commission_owner' => self::$xin_dong_account_id,
+                    'comission_rate' => $orderInfo['commission_rate'],
+                    'commission_type' => $type,
+                    'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_xindong_to_vip,
+                    'state' => OnlineGoodsCommissions::$commission_state_seted,
+                    'commission_order_id' => $orderInfo['id'],
+                    'remark' => '信动给邀请人分佣',
+                ]
+            );
+            if(empty($res)){
+                return  false;
+            }
+        }
+
+
         //邀请人给被邀请人分佣
         if($directInvitorInfo){
             $res = OnlineGoodsCommissions::addRecordV2(
@@ -360,10 +395,10 @@ class OnlineGoodsCommissions extends ModelBase
                     'commission_create_user_id' => $zhiJinUserInfo['id'],
                     //发放人
                     'commission_owner' => $directInvitorInfo['id'],
-                    'comission_rate' => 0,
+                    'comission_rate' => empty($VipInvitorInfo)?15:0,
                     'commission_type' => $type,
                     'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_invitor_to_user,
-                    'state' => OnlineGoodsCommissions::$commission_state_init,
+                    'state' => empty($VipInvitorInfo)?OnlineGoodsCommissions::$commission_state_seted:OnlineGoodsCommissions::$commission_state_init,
                     'commission_order_id' => $orderInfo['id'],
                     'remark' => '邀请人给用户分佣',
                 ]

@@ -79,7 +79,7 @@ class OnlineGoodsUser extends ModelBase
 
     // 是否vip
     static function IsVip($userInfo){
-        return $userInfo['level'] == self::$level_vip;
+        return $userInfo['level'] == self::$level_vip?1:0;
     }
 
     // 是否vip
