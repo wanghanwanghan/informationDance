@@ -809,14 +809,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         foreach ($allCommissions['data'] as $commissionItem){
             $orderInfo = OnlineGoodsUserBaoXianOrder::findById($commissionItem['commission_order_id']);
             $orderInfo = $orderInfo->toArray();
-            $orderInfo['product_name'] = $prodcutsRes[$commissionItem['product_id']];
-            CommonService::writeTestLog(
-                [
-                    'product_name'=>$prodcutsRes[$commissionItem['product_id']],
-                    'product_id'=>$commissionItem['product_id'],
-                    'commission_order_id'=>$commissionItem['commission_order_id'],
-                ]
-            );
+            $orderInfo['product_name'] = $prodcutsRes[$orderInfo['product_id']];
+
             $returnDatas[] = $orderInfo ;
         }
         //======================================
