@@ -1131,7 +1131,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                         OnlineGoodsCommissions::$commission_data_type_xindong_to_vip,
                         OnlineGoodsCommissions::$commission_data_type_invitor_to_user,
                     ],
-                'operate' => '=',
+                'operate' => 'IN',
             ]
         ];
         $res = OnlineGoodsCommissions::findByConditionV2(
