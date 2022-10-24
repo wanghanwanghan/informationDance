@@ -141,17 +141,19 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $requestData =  $this->getRequestData();
         $userInfo = $this->loginUserinfo;
 
+
+
         return $this->writeJson(
             200,
             [ ] ,
             [
                 'id' => 1,
-                'user_name' => '田大脚',
-                'total_income' => 1000,
-                'total_commission' => 1000,
-                'total_withdraw' => 1000,
-                'invite_code' => 1000,
-                'money' => 1000,
+                'user_name' => $userInfo['user_name'],
+                'total_income' => 0,
+                'total_commission' => 0,
+                'total_withdraw' => 0,
+                'invite_code' =>  CommonService::encodeIdToInvitationCode($userInfo['id']),
+                'money' => $userInfo['money'], 
                 'avatar' => 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png',
             ],
             '成功',
@@ -1052,7 +1054,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             '成功',
             true,
             []
-        ); 
+        );
     }
 
     //置金粉丝列表
