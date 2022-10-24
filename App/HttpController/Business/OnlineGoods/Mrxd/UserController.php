@@ -917,7 +917,12 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         if($requestData['commission_set_state']){
             $conditions[] =  $requestData['commission_set_state'];
         }
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'daikuanOrderLists——$conditions'=>$conditions,
+            ])
+        );
         $daiKuanOrders = OnlineGoodsUserDaikuanOrder::findByConditionWithCountInfo(
             $conditions,$page,$pageSize
         );
