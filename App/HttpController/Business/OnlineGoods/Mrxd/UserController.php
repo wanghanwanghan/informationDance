@@ -316,66 +316,67 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
     function setBaoXianCommisionRate(): bool
     {
         $requestData =  $this->getRequestData();
-        $phone = $requestData['phone'] ;
+
+        $id = $requestData['id'] ;
         $code = $requestData['code'] ;
 
         $userInfo = $this->loginUserinfo;
-        $userInfo['id'] = 1;
 
-        if(
-            $requestData['real']
-        ){
-            $commissionInfo = OnlineGoodsCommissions::findOneByCondition([
-                'id' => $requestData['id'],
-                'commission_owner' => $userInfo['id'],
-                'state' => OnlineGoodsCommissions::$commission_state_init
-            ]);
+        //贷款订单 //校验权限：校验设置人
+        $commissionInfo = OnlineGoodsCommissions::findOneByCondition([
+            'id' => $requestData['id'],
+            'commission_owner' => $userInfo['id'],
+            'state' => OnlineGoodsCommissions::$commission_state_init
+        ]);
 
-
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        'id' => $requestData['id'],
-                        'commission_owner' => $userInfo['id'],
-                        'state' => OnlineGoodsCommissions::$commission_state_init
-                    ]
-                ])
-            );
-
-
-            if(empty($commissionInfo)){
-                return $this->writeJson(
-                    203,
-                    [ ] ,
-                    [
-
-                    ],
-                    '没权限设置该订单',
-                    true,
-                    []
-                );
-            }
-
-            //改为已设置成功
-            OnlineGoodsCommissions::updateById($commissionInfo->id,
+        //todo：校验  rate 不能超出信动给的rate
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
                 [
-                    'state' => OnlineGoodsCommissions::$commission_state_seted
+                    'id' => $requestData['id'],
+                    'commission_owner' => $userInfo['id'],
+                    'state' => OnlineGoodsCommissions::$commission_state_init
                 ]
-            );
+            ])
+        );
 
-            //发放 金额
-            $OrderInfo = OnlineGoodsUserBaoXianOrder::findById($commissionInfo->commission_order_id);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        'setBaoXianCommisionRate_amount' =>  $OrderInfo->amount
-                    ]
-                ])
+
+        if(empty($commissionInfo)){
+            return $this->writeJson(
+                203,
+                [ ] ,
+                [
+
+                ],
+                '没权限设置该订单',
+                true,
+                []
             );
-            OnlineGoodsCommissions::grantByItem($commissionInfo->toArray(),$OrderInfo->amount) ;
         }
+
+        //改为已设置成功
+        OnlineGoodsCommissions::updateById($commissionInfo->id,
+            [
+                'state' => OnlineGoodsCommissions::$commission_state_seted,
+                'comission_rate' => $requestData['rate'],
+            ]
+        );
+        $commissionInfo = OnlineGoodsCommissions::findById($commissionInfo->id);
+
+        //发放 金额
+        $OrderInfo = OnlineGoodsUserBaoXianOrder::findById($commissionInfo->commission_order_id);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'setDaiKuanCommisionRate_amount' =>  $OrderInfo->amount
+                ]
+            ])
+        );
+
+
+        OnlineGoodsCommissions::grantByItem($commissionInfo->toArray(),$OrderInfo->amount) ;
 
         return $this->writeJson(
             200,
@@ -386,7 +387,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             '成功',
             true,
             []
-        );
+        ); 
     }
 
     //设置佣金金额
@@ -401,7 +402,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
         //贷款订单 //校验权限：校验设置人
         $commissionInfo = OnlineGoodsCommissions::findOneByCondition([
-            'commission_order_id' => $requestData['id'],
+            'id' => $requestData['id'],
             'commission_owner' => $userInfo['id'],
             'state' => OnlineGoodsCommissions::$commission_state_init
         ]);
@@ -810,7 +811,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $orderInfo = OnlineGoodsUserBaoXianOrder::findById($commissionItem['commission_order_id']);
             $orderInfo = $orderInfo->toArray();
             $orderInfo['product_name'] = $prodcutsRes[$orderInfo['product_id']];
-
+            $orderInfo['id'] = $commissionItem['id'];
             $returnDatas[] = $orderInfo ;
         }
         //======================================
@@ -864,6 +865,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $orderInfo = $orderInfo->toArray();
             $tmpProduct  = OnlineGoodsDaikuanProducts::findById($orderInfo['product_id']);
             $orderInfo['product_name'] = $tmpProduct->name;
+            $orderInfo['id'] = $commissionItem['id'];
             $returnDatas[] = $orderInfo ;
         }
         //======================================
