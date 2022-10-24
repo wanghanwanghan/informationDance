@@ -39,6 +39,25 @@ class BaoYaService extends ServiceBase
         return $this->get($url,'');
     }
 
+    static function getProductsV2(){
+        $dataRes = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProducts();
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'getProductsV2' => $dataRes
+            ])
+        );
+
+        $returnRes = [
+            9999 => '车险分期',
+        ];
+        foreach ($dataRes['data'] as $valueItem){
+            $returnRes[$valueItem['id']] = $valueItem['title'];
+        }
+        return $returnRes;
+    }
+
     function getProductDetail($id){
         $url =  CreateConf::getInstance()->getConf('baoya.products_detail_url').'/'.$id;
         if($this->debug){

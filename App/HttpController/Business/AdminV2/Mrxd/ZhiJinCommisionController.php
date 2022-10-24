@@ -120,6 +120,7 @@ class ZhiJinCommisionController extends ControllerBase
         );
     }
 
+    //保险列表
     function baoxianOrderLists(): bool
     {
         $requestData =  $this->getRequestData();
@@ -128,69 +129,27 @@ class ZhiJinCommisionController extends ControllerBase
 
         $userInfo = $this->loginUserinfo;
 
-        CommonService::writeTestLog(
-            [
-                'getInvitationCode'=>[
-                    '$userInfo'=>[
-                        'id'=>$userInfo['id'],
-                        'user_name'=>$userInfo['user_name'],
-                        'phone'=>$userInfo['phone'],
-                    ],
-                ]
-            ]
-        );
-
-
-
         $datas = OnlineGoodsUserBaoXianOrder::findByConditionV2([],$page,$pageSize);
-        $total = $datas['total'] ;
-        foreach ($datas['data'] as $dataValue){
+
+        //XXXXXX
+        $prodcutsRes = \App\HttpController\Service\BaoYa\BaoYaService::getProductsV2();
+
+        foreach ($datas['data'] as &$dataValue){
+            $dataValue['product_name'] = $prodcutsRes[$dataValue['product_id']]?:'';
+            // bank_name
+            $bankInfo = OnlineGoodsDaikuanBank::findById($productInfo->bank_id);
+            $dataValue['bank_name'] = $bankInfo?$bankInfo->bank_cname:'';
+            $dataValue['zhijin_account'] = $dataValue['zhijin_phone'];
+            $dataValue['commission_set_state_cname'] = OnlineGoodsUserDaikuanOrder::getCommissionSetStateMap()[$dataValue['commission_set_state']];
+            $dataValue['commission_state_cname'] = OnlineGoodsUserDaikuanOrder::getCommissionStateMap()[$dataValue['commission_state']];
+            $dataValue['zhijin_account'] = $dataValue['zhijin_phone'];
+            $dataValue['created_at'] = date('Y-m-d H:i:s',$dataValue['created_at']);
+            $dataValue['commission_money'] = number_format(($dataValue['amount']*$dataValue['commission_rate'])/100,2);
 
         }
+
+        $total = $datas['total'] ;
         $retrundatas = $datas['data'] ;
-        $retrundatas = [
-            [
-                'id'=>1,
-                //产品名称
-                'product_name'=>'美人贷',
-                //产品id
-                'product_id'=>1,
-                //购买人
-                'purchaser'=>'张小花',
-                //订单金额
-                'price'=>10000,
-                //信动所得佣金 - 佣金表
-                'xindong_commission'=>500,
-                //设置分佣状态
-                'commission_set_state_cname'=>'已设置分佣',
-                //分佣状态
-                'commission_state_cname'=>'已领取分佣',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '已成交',
-            ],
-            [
-                'id'=>2,
-                //产品名称
-                'product_name'=>'帅哥贷',
-                //产品id
-                'product_id'=>1,
-                //购买人
-                'purchaser'=>'张大锤',
-                //订单金额
-                'price'=>10000,
-                //信动所得佣金 - 佣金表
-                'xindong_commission'=>500,
-                //设置分佣状态
-                'commission_set_state_cname'=>'已设置分佣',
-                //分佣状态
-                'commission_state_cname'=>'已领取分佣',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '已成交',
-            ]
-        ];
-        $total = 100;
 
         return $this->writeJson(
             200,
@@ -508,19 +467,16 @@ class ZhiJinCommisionController extends ControllerBase
         );
     }
 
+
+
     function getZhiJinBaoXianLists(): bool
     {
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
 
-        $dataRes = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProducts();
-        $returnRes = [
-            9999 => '车险分期',
-        ];
-        foreach ($dataRes['data'] as $valueItem){
-            $returnRes[$valueItem['id']] = $valueItem['title'];
-        }
+        $dataRes = \App\HttpController\Service\BaoYa\BaoYaService::getProductsV2();
+
 //        CommonService::getInstance()->log4PHP(
 //            json_encode([
 //                __CLASS__.__FUNCTION__ .__LINE__,
@@ -530,7 +486,7 @@ class ZhiJinCommisionController extends ControllerBase
         return $this->writeJson(
             200,
             [ ] ,
-            $returnRes,
+            $dataRes,
             '成功',
             true,
             []
