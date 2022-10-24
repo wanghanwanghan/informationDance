@@ -134,14 +134,24 @@ class ZhiJinCommisionController extends ControllerBase
         //XXXXXX
         $prodcutsRes = \App\HttpController\Service\BaoYa\BaoYaService::getProductsV2();
 
+        /**
+        {
+        "id": 29,
+        "title": "中路物流责任险年单",
+        "category": "WLZRX",
+        "company": {
+        "flag": "ZL",
+        "name": "中路"
+        },
+        "description": "港、澳、台、新疆（不包括乌鲁木齐）、西藏（不包括拉萨）、青海地区除外，仅适用河北山东地区物流企业投保。",
+        "logo": "http:\/\/www.51baoya.com\/uploads\/product_briefs\/BlJgIwwvlgyw5IlaHvWolDU2o.jpg"
+        }
+         */
         foreach ($datas['data'] as &$dataValue){
             $dataValue['product_name'] = $prodcutsRes[$dataValue['product_id']]?:'';
-            // bank_name
-            $bankInfo = OnlineGoodsDaikuanBank::findById($productInfo->bank_id);
-            $dataValue['bank_name'] = $bankInfo?$bankInfo->bank_cname:'';
             $dataValue['zhijin_account'] = $dataValue['zhijin_phone'];
-            $dataValue['commission_set_state_cname'] = OnlineGoodsUserDaikuanOrder::getCommissionSetStateMap()[$dataValue['commission_set_state']];
-            $dataValue['commission_state_cname'] = OnlineGoodsUserDaikuanOrder::getCommissionStateMap()[$dataValue['commission_state']];
+            $dataValue['commission_set_state_cname'] = OnlineGoodsUserBaoXianOrder::getCommissionSetStateMap()[$dataValue['commission_set_state']];
+            $dataValue['commission_state_cname'] = OnlineGoodsUserBaoXianOrder::getCommissionStateMap()[$dataValue['commission_state']];
             $dataValue['zhijin_account'] = $dataValue['zhijin_phone'];
             $dataValue['created_at'] = date('Y-m-d H:i:s',$dataValue['created_at']);
             $dataValue['commission_money'] = number_format(($dataValue['amount']*$dataValue['commission_rate'])/100,2);
@@ -468,7 +478,7 @@ class ZhiJinCommisionController extends ControllerBase
     }
 
 
-
+    //
     function getZhiJinBaoXianLists(): bool
     {
         $requestData =  $this->getRequestData();
