@@ -473,8 +473,11 @@ class ZhiJinCommisionController extends ControllerBase
             $dataItem['total_income'] = '';
             $dataItem['money'] = $dataItem['amount'];
             $dataItem['user_money'] = $userInfo['money'];
-            $dataItem['pass_date'] = $userInfo['audit_date'];
-            $dataItem['apply_date'] = date('Y-m-d H:i:s',$userInfo['created_at']);
+            $dataItem['pass_date'] = $dataItem['audit_date'];
+            $dataItem['audit_state_cname'] =  OnlineGoodsTiXianJiLu::getAuditStateMap()[$dataItem['audit_state']];
+            $dataItem['pay_state_cname'] =  OnlineGoodsTiXianJiLu::getPayStateMap()[$dataItem['pay_state']];
+            $dataItem['apply_date'] = date('Y-m-d H:i:s',$dataItem['created_at']);
+
         }
         return $this->writeJson(
             200,

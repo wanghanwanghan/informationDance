@@ -39,6 +39,21 @@ class OnlineGoodsTiXianJiLu extends ModelBase
     static $pay_type_bank  =  5;
     static $pay_type_bank_cname  =  '打款类型-银行卡';
 
+    static function getAuditStateMap(){
+        return [
+           self::$audit_state_init =>self:: $audit_state_init_cname,
+           self::$audit_state_pass =>self:: $audit_state_pass_cname,
+           self::$audit_state_refuse =>self:: $audit_state_refuse_cname,
+        ];
+    }
+
+    static function getPayStateMap(){
+        return [
+            self::$pay_state_init =>self:: $pay_state_init_cname,
+            self::$pay_state_succeed =>self:: $pay_state_succeed_cname,
+            self::$pay_state_failed =>self:: $pay_state_failed_cname,
+        ];
+    }
 
     static  function  addRecordV2($info){
 
