@@ -213,7 +213,7 @@ class OnlineGoodsCommissions extends ModelBase
 
     }
     public static function grantByItem($resValue,$amount){
-        $commission =  $amount*$resValue['comission_rate'];
+        $commission =  number_format($amount*$resValue['comission_rate']/100,2);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
