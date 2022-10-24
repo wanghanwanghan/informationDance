@@ -242,10 +242,15 @@ class ZhiJinCommisionController extends ControllerBase
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
 
+        // 5通过  10 拒绝
+        $state = OnlineGoodsTiXianJiLu::$audit_state_refuse;
+        if($requestData['res'] == 5 ){
+            $state = OnlineGoodsTiXianJiLu::$audit_state_pass;
+        }
         OnlineGoodsTiXianJiLu::updateById(
             $requestData['id'],
             [
-                'audit_state' => $requestData['res'],
+                'audit_state' => $state,
                 'audit_details' => $requestData['details']?:'',
             ]
         );
