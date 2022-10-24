@@ -401,7 +401,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $id = $requestData['id'] ;
         $code = $requestData['code'] ;
 
-        $userInfo = $this->loginUserinfo; 
+        $userInfo = $this->loginUserinfo;
 
         //贷款订单 //校验权限：校验设置人
         $commissionInfo = OnlineGoodsCommissions::findOneByCondition([
@@ -411,7 +411,6 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         ]);
 
         //todo：校验  rate 不能超出信动给的rate
-
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
@@ -444,6 +443,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'comission_rate' => $requestData['rate'],
             ]
         );
+        $commissionInfo = OnlineGoodsCommissions::findById($commissionInfo->id);
 
         //发放 金额
         $OrderInfo = OnlineGoodsUserDaikuanOrder::findById($commissionInfo->commission_order_id);
@@ -455,6 +455,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 ]
             ])
         );
+
+
         OnlineGoodsCommissions::grantByItem($commissionInfo->toArray(),$OrderInfo->amount) ;
 
         return $this->writeJson(
