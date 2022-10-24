@@ -400,61 +400,59 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
         $userInfo = $this->loginUserinfo;
         $userInfo['id'] = 1;
+        //校验权限：校验设置人
+        $commissionInfo = OnlineGoodsCommissions::findOneByCondition([
+            'id' => $requestData['id'],
+            'commission_owner' => $userInfo['id'],
+            'state' => OnlineGoodsCommissions::$commission_state_init
+        ]);
 
-        if(
-            $requestData['real']
-        ){
-            $commissionInfo = OnlineGoodsCommissions::findOneByCondition([
-                'id' => $requestData['id'],
-                'commission_owner' => $userInfo['id'],
-                'state' => OnlineGoodsCommissions::$commission_state_init
-            ]);
+        //todo：校验  rate 不能超出信动给的rate
 
-
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        'id' => $requestData['id'],
-                        'commission_owner' => $userInfo['id'],
-                        'state' => OnlineGoodsCommissions::$commission_state_init
-                    ]
-                ])
-            );
-
-
-            if(empty($commissionInfo)){
-                return $this->writeJson(
-                    203,
-                    [ ] ,
-                    [
-
-                    ],
-                    '没权限设置该订单',
-                    true,
-                    []
-                );
-            }
-
-            //改为已设置成功
-            OnlineGoodsCommissions::updateById($commissionInfo->id,
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
                 [
-                    'state' => OnlineGoodsCommissions::$commission_state_seted
+                    'id' => $requestData['id'],
+                    'commission_owner' => $userInfo['id'],
+                    'state' => OnlineGoodsCommissions::$commission_state_init
                 ]
-            );
+            ])
+        );
 
-            //发放 金额
-            $OrderInfo = OnlineGoodsUserDaikuanOrder::findById($commissionInfo->commission_order_id);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        'setDaiKuanCommisionRate_amount' =>  $OrderInfo->amount
-                    ]
-                ])
+
+        if(empty($commissionInfo)){
+            return $this->writeJson(
+                203,
+                [ ] ,
+                [
+
+                ],
+                '没权限设置该订单',
+                true,
+                []
             );
-            OnlineGoodsCommissions::grantByItem($commissionInfo->toArray(),$OrderInfo->amount) ;
         }
+
+        //改为已设置成功
+        OnlineGoodsCommissions::updateById($commissionInfo->id,
+            [
+                'state' => OnlineGoodsCommissions::$commission_state_seted,
+                'comission_rate' => $requestData['rate'],
+            ]
+        );
+
+        //发放 金额
+        $OrderInfo = OnlineGoodsUserDaikuanOrder::findById($commissionInfo->commission_order_id);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'setDaiKuanCommisionRate_amount' =>  $OrderInfo->amount
+                ]
+            ])
+        );
+        OnlineGoodsCommissions::grantByItem($commissionInfo->toArray(),$OrderInfo->amount) ; 
 
         return $this->writeJson(
             200,
@@ -919,7 +917,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $conditions,$page,$pageSize
         );
 
-        foreach ($daiKuanOrders['data'] as &$dataItem){ 
+        foreach ($daiKuanOrders['data'] as &$dataItem){
             $tmpProduct  = OnlineGoodsDaikuanProducts::findById($dataItem['product_id']);
             $dataItem['product_name'] = $tmpProduct->name;
         }
