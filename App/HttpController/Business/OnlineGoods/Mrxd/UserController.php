@@ -466,21 +466,41 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             []
         );
     }
+
+    //粉丝基本信息
     function fansBasicInfo(): bool
     {
         $requestData =  $this->getRequestData();
-        $phone = $requestData['phone'] ;
-        $code = $requestData['code'] ;
+        $fans_id = $requestData['fans_id'] ;
+        //fans_id
+        //先看是否是粉丝
+//        if(
+//         !OnlineGoodsUserInviteRelation::IsFans($fans_id,$this->loginUserinfo['id'])
+//        ){
+//            return $this->writeJson(
+//                200,
+//                [ ] ,
+//                [
+//
+//                ],
+//                '没权限',
+//                true,
+//                []
+//            );
+//        }
+
+        $userInfo = OnlineGoodsUser::findById($fans_id);
+        $invitorUserInfo = OnlineGoodsUserInviteRelation::findByUser($fans_id);
 
         return $this->writeJson(
             200,
             [ ] ,
             [
-                'name'=>'张大炮',
-                'zhi_jin_account'=>'置金账户',
-                'commission_order_nums'=>'自购产品列表',
-                'invitor'=>'李大炮',
-                'invitor_mobile'=>'1326976192',
+                'name'=>$userInfo->user_name,
+                'zhi_jin_account'=>$userInfo->phone,
+                'commission_order_nums'=>'',
+                'invitor'=> $invitorUserInfo->user_name,
+                'invitor_mobile'=> $invitorUserInfo->phone,
             ],
             '成功',
             true,

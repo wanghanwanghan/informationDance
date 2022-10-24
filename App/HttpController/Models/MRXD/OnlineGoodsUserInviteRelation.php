@@ -64,6 +64,13 @@ class OnlineGoodsUserInviteRelation extends ModelBase
         return $res;
     }
 
+    static function IsFans($fans_id,$uid){
+        return self::findAllByCondition([
+            'user_id'=>$fans_id,
+            'invite_by'=>$uid,
+        ]);
+    }
+
     public static function setTouchTime($id,$touchTime){
         $info = OnlineGoodsUserInviteRelation::findById($id);
 
