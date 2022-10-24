@@ -234,7 +234,7 @@ class OnlineGoodsCommissions extends ModelBase
             $changeRes = OnlineGoodsUser::changeBalance(
                 $resValue['commission_owner'],
                 $commission,
-                OnlineGoodsUser::$banlance_type_zeng_jia
+                OnlineGoodsUser::$banlance_type_jian_shao
             );
             if(!$changeRes){
                 return false;
