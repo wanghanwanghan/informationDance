@@ -401,8 +401,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $id = $requestData['id'] ;
         $code = $requestData['code'] ;
 
-        $userInfo = $this->loginUserinfo;
-        $userInfo['id'] = 1;
+        $userInfo = $this->loginUserinfo; 
 
         //贷款订单 //校验权限：校验设置人
         $commissionInfo = OnlineGoodsCommissions::findOneByCondition([
