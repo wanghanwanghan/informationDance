@@ -5270,11 +5270,11 @@ class MaYiService extends ServiceBase
                 'getDataSource' => 2,
             ];
 
-            $data['authorized'] === 'Y' ?
+            (isset($data['authorized']) && $data['authorized'] === 'Y') ?
                 $created['status'] = self::STATUS_1 ://拿到授权书了
                 $created['status'] = self::STATUS_0;
 
-            if ($data['authorized'] === 'Y') {
+            if (isset($data['authorized']) && $data['authorized'] === 'Y') {
                 $data['filePath'] = $data['fileUrl'];
                 $data['authDate'] = time();
             }
