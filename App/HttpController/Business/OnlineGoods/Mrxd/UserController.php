@@ -916,7 +916,11 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
         $daiKuanOrders = OnlineGoodsUserDaikuanOrder::findByConditionWithCountInfo(
             $conditions,$page,$pageSize
-        ); 
+        );
+
+        //product_name
+
+
         $total = $daiKuanOrders['total'] ;
         return $this->writeJson(
             200,
