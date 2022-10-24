@@ -814,6 +814,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 [
                     'product_name'=>$prodcutsRes[$commissionItem['product_id']],
                     'product_id'=>$commissionItem['product_id'],
+                    'commission_order_id'=>$commissionItem['commission_order_id'],
                 ]
             );
             $returnDatas[] = $orderInfo ;
