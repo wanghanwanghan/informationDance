@@ -272,8 +272,9 @@ class ZhiJinCommisionController extends ControllerBase
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
-        $uid = $this->loginUserinfo['id'];
+
         $TiXianJiLu = OnlineGoodsTiXianJiLu::findById($requestData['id']);
+        $uid = $TiXianJiLu->user_id;
         // 5成功 10失败
         $state = OnlineGoodsTiXianJiLu::$pay_state_failed;
         if($requestData['res'] == 5){
