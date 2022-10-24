@@ -267,9 +267,9 @@ class ZhiJinCommisionController extends ControllerBase
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
-        $uid = 1;
+        $uid = $this->loginUserinfo['id'];
         $TiXianJiLu = OnlineGoodsTiXianJiLu::findById($requestData['id']);
-       $res =  OnlineGoodsTiXianJiLu::updateById(
+        $res =  OnlineGoodsTiXianJiLu::updateById(
             $requestData['id'],
             [
                 'pay_state' => $requestData['res'],
@@ -289,6 +289,7 @@ class ZhiJinCommisionController extends ControllerBase
                 []
             );
         }
+        $TiXianJiLu = OnlineGoodsTiXianJiLu::findById($requestData['id']);
         //如果是打款成功 变更账户余额
         if($requestData['res'] == 5){
             OnlineGoodsUser::changeBalance($uid,$TiXianJiLu->amount,OnlineGoodsUser::$banlance_type_jian_shao);
