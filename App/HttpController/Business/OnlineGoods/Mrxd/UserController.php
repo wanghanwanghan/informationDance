@@ -1264,11 +1264,11 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $pageSize =  $requestData['pageSize']?:100;
 
         $userInfo = $this->loginUserinfo;
-        $res = OnlineGoodsCommissions::findByConditionWithCountInfo(
+
+        $res = OnlineGoodsCommissionGrantDetails::findByConditionWithCountInfo(
             [
-                'user_id' => $userInfo['id'],
-                'state' => OnlineGoodsCommissions::$commission_state_granted,
-                'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_vip_to_invitor,
+                'user_id'=>$userInfo['id'],
+                'type'=>OnlineGoodsCommissionGrantDetails::$input_type_out,
             ],
             $page,
             $pageSize
@@ -1276,17 +1276,20 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         //
         $prodcutsRes = \App\HttpController\Service\BaoYa\BaoYaService::getProductsV2();
         foreach ($res['data'] as &$value){
+
+            $comiissionInfo = OnlineGoodsCommissions::findById($value['commission_id']);
+            $comiissionInfo = $comiissionInfo->toArray();
             if(
-                $value['commission_type'] == OnlineGoodsCommissions::$commission_type_bao_xian
+                $comiissionInfo['commission_type'] == OnlineGoodsCommissions::$commission_type_bao_xian
             ){
-                $orderInfo =  OnlineGoodsUserBaoXianOrder::findById($value['commission_order_id']);
+                $orderInfo =  OnlineGoodsUserBaoXianOrder::findById($comiissionInfo['commission_order_id']);
                 $value['product_name'] = $prodcutsRes[$orderInfo->product_id]?:'';
             }
             if(
-                $value['commission_type'] == OnlineGoodsCommissions::$commission_type_dai_kuan
+                $comiissionInfo['commission_type'] == OnlineGoodsCommissions::$commission_type_dai_kuan
             ){
 
-                $orderInfo =  OnlineGoodsUserDaikuanOrder::findById($value['commission_order_id']);
+                $orderInfo =  OnlineGoodsUserDaikuanOrder::findById($comiissionInfo['commission_order_id']);
                 $productInfo = OnlineGoodsDaikuanProducts::findById($orderInfo->product_id);
                 $value['product_name'] = $productInfo?$productInfo->name:'';
 
@@ -1297,10 +1300,10 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $orderInfo = $orderInfo->toArray();
 
             // purchaser_mobile
-            $userInfo = OnlineGoodsUser::findById($value['commission_create_user_id']);
+            $userInfo = OnlineGoodsUser::findById($comiissionInfo['commission_create_user_id']);
             $value['purchaser_mobile'] = $userInfo->phone;
             $value['purchaser'] = $userInfo->user_name;
-            $value['commission'] = number_format($value['comission_rate']*$orderInfo['amount']/100,2);
+            $value['commission'] = number_format($comiissionInfo['comission_rate']*$orderInfo['amount']/100,2);
 
         }
 
