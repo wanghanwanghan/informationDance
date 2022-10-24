@@ -1042,13 +1042,15 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             );
         }
 
+        //XXXXX
         foreach ($returnDatas as &$valueData){
-            $userInfo = $valueData['user_id'];
-            $valueData['name'] = $userInfo['user_name'];
-            $valueData['mobile'] = $userInfo['phone'];
+            $userInfo = OnlineGoodsUser::findById($valueData['user_id']);
+            $valueData['name'] = $userInfo->user_name;
+            $valueData['mobile'] = $userInfo->phone;
             $valueData['total_fan_nums'] =  '' ;
             $valueData['order_nums'] =  '' ;
-            $valueData['join_at'] = date('Y-m-d H:i:s',$userInfo['created_at']);
+            $valueData['join_at'] = date('Y-m-d H:i:s',$userInfo->created_at);
+            $valueData['avatar'] = 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png' ;
         }
         $total = count($returnDatas);
         return $this->writeJson(
