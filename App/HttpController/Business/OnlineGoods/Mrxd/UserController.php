@@ -810,22 +810,15 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $orderInfo = OnlineGoodsUserBaoXianOrder::findById($commissionItem['commission_order_id']);
             $orderInfo = $orderInfo->toArray();
             $orderInfo['product_name'] = $prodcutsRes[$commissionItem['product_id']];
+            CommonService::writeTestLog(
+                [
+                    'product_name'=>$prodcutsRes[$commissionItem['product_id']],
+                    'product_id'=>$commissionItem['product_id'],
+                ]
+            );
             $returnDatas[] = $orderInfo ;
         }
         //======================================
-
-
-        CommonService::writeTestLog(
-            [
-                'getInvitationCode'=>[
-                    '$userInfo'=>[
-                        'id'=>$userInfo['id'],
-                        'user_name'=>$userInfo['user_name'],
-                        'phone'=>$userInfo['phone'],
-                    ],
-                ]
-            ]
-        );
 
 
         $total = $allCommissions['total'] ;
