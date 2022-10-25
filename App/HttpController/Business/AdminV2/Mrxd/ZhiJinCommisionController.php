@@ -227,7 +227,12 @@ class ZhiJinCommisionController extends ControllerBase
 
         //===========================================
 
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'OnlineGoodsUserBaoXianOrder $whereArr' => $whereArr
+            ])
+        );
         $datas = OnlineGoodsUserBaoXianOrder::findByConditionV2($whereArr,$page,$pageSize);
 
         $prodcutsRes = \App\HttpController\Service\BaoYa\BaoYaService::getProductsV2();
