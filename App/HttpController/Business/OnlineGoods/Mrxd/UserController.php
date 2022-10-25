@@ -851,7 +851,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $orderInfo['product_name'] = $prodcutsRes[$orderInfo['product_id']];
             $orderInfo['id'] = $commissionItem['id'];
             $orderInfo['commission_state_cname'] =OnlineGoodsCommissions::getStateCnameMap()[ $commissionItem['state']];
-            $orderInfo['commission_amount'] = number_format($orderInfo['comission_rate']*$orderInfo['amount']/100,2);
+            $orderInfo['commission_amount'] = number_format($orderInfo['commission_rate']*$orderInfo['amount']/100,2);
             $returnDatas[] = $orderInfo ;
         }
         //======================================
@@ -907,7 +907,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $orderInfo['product_name'] = $tmpProduct->name;
             $orderInfo['id'] = $commissionItem['id'];
             $orderInfo['commission_state_cname'] =OnlineGoodsCommissions::getStateCnameMap()[ $commissionItem['state']];
-            $orderInfo['commission_amount'] = number_format($orderInfo['comission_rate']*$orderInfo['amount']/100,2);
+            $orderInfo['commission_amount'] = number_format($orderInfo['commission_rate']*$orderInfo['amount']/100,2);
             $returnDatas[] = $orderInfo ;
             //XXXXXX
         }
