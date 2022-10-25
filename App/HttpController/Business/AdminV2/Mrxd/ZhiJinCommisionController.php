@@ -708,15 +708,18 @@ class ZhiJinCommisionController extends ControllerBase
                 'operate' => '<=',
             ];
         }
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'OnlineGoodsTiXianJiLu $whereArr'  => $whereArr
+            ])
+        );
 
         //=================================================
 
         //提现审核列表
         $res = OnlineGoodsTiXianJiLu::findByConditionV2(
-            [
-
-            ],
+            $whereArr,
             $page,
             $pageSize
         );
