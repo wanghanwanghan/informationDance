@@ -74,6 +74,7 @@ class ZhiJinCommisionController extends ControllerBase
             $vipInvitorInfo =  OnlineGoodsUserInviteRelation::getVipInviterInfo($buyerInfo->id);
             $dataValue['invite_name'] = $invitorInfo['user_name'];
             $dataValue['vip_invite_name'] = $vipInvitorInfo['user_name'];
+
             $dataValue['created_at'] = date('Y-m-d H:i:s',$dataValue['created_at']);
             $dataValue['created_at'] = date('Y-m-d H:i:s',$dataValue['created_at']);
             $dataValue['commission_money'] = number_format(($dataValue['amount']*$dataValue['commission_rate'])/100,2);
@@ -162,6 +163,14 @@ class ZhiJinCommisionController extends ControllerBase
             $dataValue['zhijin_account'] = $dataValue['zhijin_phone'];
             $dataValue['created_at'] = date('Y-m-d H:i:s',$dataValue['created_at']);
             $dataValue['commission_money'] = number_format(($dataValue['amount']*$dataValue['commission_rate'])/100,2);
+
+            //邀请人
+            $buyerInfo = OnlineGoodsUser::findByPhone($dataValue['zhijin_account']);
+            $invitorInfo =  OnlineGoodsUserInviteRelation::getDirectInviterInfo($buyerInfo->id);
+            $vipInvitorInfo =  OnlineGoodsUserInviteRelation::getVipInviterInfo($buyerInfo->id);
+            $dataValue['invite_name'] = $invitorInfo['user_name'];
+            $dataValue['vip_invite_name'] = $vipInvitorInfo['user_name'];
+
 
         }
 
