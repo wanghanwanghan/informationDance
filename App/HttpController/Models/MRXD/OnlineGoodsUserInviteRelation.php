@@ -39,7 +39,7 @@ class OnlineGoodsUserInviteRelation extends ModelBase
             OnlineGoodsUser::IsVip($userInfo)
         ){
 
-            $invitors = OnlineGoodsUserInviteRelation::getDirectInviterInfo($userInfo['id']);
+            $invitors = OnlineGoodsUserInviteRelation::getVipsAllInvitedUser($userInfo['id']);
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
@@ -52,7 +52,7 @@ class OnlineGoodsUserInviteRelation extends ModelBase
                 ])
             );
         }else{
-            $invitors =  OnlineGoodsUserInviteRelation::getVipsAllInvitedUser($userInfo['id']);
+            $invitors =  OnlineGoodsUserInviteRelation::getDirectInviterInfo($userInfo['id']);
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
