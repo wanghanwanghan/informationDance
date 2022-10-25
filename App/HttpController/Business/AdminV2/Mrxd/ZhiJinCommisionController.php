@@ -18,6 +18,7 @@ use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
+use App\HttpController\Models\MRXD\OnlineGoodsCommissionGrantDetails;
 use App\HttpController\Models\MRXD\OnlineGoodsCommissions;
 use App\HttpController\Models\MRXD\OnlineGoodsDaikuanBank;
 use App\HttpController\Models\MRXD\OnlineGoodsDaikuanProducts;
@@ -764,8 +765,14 @@ class ZhiJinCommisionController extends ControllerBase
             }
             $dataItem['name'] = $userInfo['user_name'];
             $dataItem['zhi_jin_account'] = $userInfo['phone'];
-            $dataItem['total_withdraw'] = '';
-            $dataItem['total_income'] = '';
+
+            //=======
+            $totalInomes = OnlineGoodsCommissionGrantDetails::getTotalIncomes($dataItem['user_id']);
+            $totalCommission = OnlineGoodsCommissionGrantDetails::getTotalComission($dataItem['user_id']);
+            $totalTiXianMoney = OnlineGoodsCommissionGrantDetails::getTotalTiXian($dataItem['user_id']);
+            //=======
+            $dataItem['total_withdraw'] = $totalTiXianMoney;
+            $dataItem['total_income'] = $totalInomes;
             $dataItem['money'] = $dataItem['amount'];
             $dataItem['user_money'] = $userInfo['money'];
             $dataItem['pass_date'] = $dataItem['audit_date'];
