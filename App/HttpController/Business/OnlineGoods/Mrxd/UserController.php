@@ -875,7 +875,9 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $tmpProduct  = OnlineGoodsDaikuanProducts::findById($orderInfo['product_id']);
             $orderInfo['product_name'] = $tmpProduct->name;
             $orderInfo['id'] = $commissionItem['id'];
+            $orderInfo['commission_state_cname'] =OnlineGoodsCommissions::getStateCnameMap()[ $commissionItem['state']];
             $returnDatas[] = $orderInfo ;
+            //XXXXXX
         }
         //======================================
 

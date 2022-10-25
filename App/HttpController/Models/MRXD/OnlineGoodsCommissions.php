@@ -33,7 +33,13 @@ class OnlineGoodsCommissions extends ModelBase
     static  $commission_state_granted  = 15;
     static  $commission_state_granted_cname  = '已发放';
 
-
+    static  function  getStateCnameMap(){
+        return [
+            self::$commission_state_init=>self::$commission_state_init_cname,
+            self::$commission_state_seted=>self::$commission_state_seted_cname,
+            self::$commission_state_granted=>self::$commission_state_granted_cname,
+        ];
+    }
     static $xin_dong_account_id = 99999;
 
     /**
