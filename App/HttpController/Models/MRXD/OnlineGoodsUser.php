@@ -38,7 +38,7 @@ class OnlineGoodsUser extends ModelBase
     static $banlance_type_jian_shao_cname = '减少';
 
 
-    static  function  changeBalance($userId,$amount,$type){
+    static  function  changeBalance($userId,$amount,$type,$remark= ''){
         $userInfo = self::findById($userId);
         $oldBalance = $userInfo->money;
         $newBalance = $oldBalance;
@@ -67,7 +67,7 @@ class OnlineGoodsUser extends ModelBase
                 'new_balance' => $newBalance,
                 'amount' => $amount?:0,
                 'type' => $type,
-                'remark' => '',
+                'remark'=>$remark,
             ]
         );
     }

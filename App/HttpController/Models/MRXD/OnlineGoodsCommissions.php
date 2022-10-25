@@ -254,7 +254,8 @@ class OnlineGoodsCommissions extends ModelBase
             $changeRes = OnlineGoodsUser::changeBalance(
                 $resValue['commission_owner'],
                 $commission,
-                OnlineGoodsUser::$banlance_type_jian_shao
+                OnlineGoodsUser::$banlance_type_jian_shao,
+                '给用户'.$resValue['user_id'].'发放佣金_commission_id_'.$resValue['id']
             );
             if(!$changeRes){
                 return false;
@@ -268,7 +269,7 @@ class OnlineGoodsCommissions extends ModelBase
                 'commission_owner' => $resValue['commission_owner'],
                 'type' => OnlineGoodsCommissionGrantDetails::$input_type_out,
                 'state' => 0,
-                'remark' => '',
+                'remark' => '给用户'.$resValue['user_id'].'发放佣金',
             ]);
 
         }
@@ -282,7 +283,8 @@ class OnlineGoodsCommissions extends ModelBase
         $changeRes = OnlineGoodsUser::changeBalance(
             $resValue['user_id'],
             $commission,
-            OnlineGoodsUser::$banlance_type_zeng_jia
+            OnlineGoodsUser::$banlance_type_zeng_jia,
+            '收到佣金_commission_id_'.$resValue['id']
         );
         if(!$changeRes){
             return false;
@@ -295,7 +297,7 @@ class OnlineGoodsCommissions extends ModelBase
             'commission_owner' => $resValue['commission_owner'],
             'type' => OnlineGoodsCommissionGrantDetails::$input_type_in,
             'state' => 0,
-            'remark' => '',
+            'remark' => '收到佣金',
         ]);
 
         return  self::updateById($resValue['id'],['state'=>self::$commission_state_granted]);

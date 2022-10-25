@@ -290,7 +290,12 @@ class ZhiJinCommisionController extends ControllerBase
         $TiXianJiLu = OnlineGoodsTiXianJiLu::findById($requestData['id']);
         //如果是打款成功 变更账户余额
         if($requestData['res'] == 5){
-            OnlineGoodsUser::changeBalance($uid,$TiXianJiLu->amount,OnlineGoodsUser::$banlance_type_jian_shao);
+            OnlineGoodsUser::changeBalance(
+                $uid,
+                $TiXianJiLu->amount,
+                OnlineGoodsUser::$banlance_type_jian_shao,
+                '申请提现('.$requestData['id'].')_线下打款成功'
+            );
         }
 
         return $this->writeJson(
