@@ -151,7 +151,7 @@ class ZhiJinCommisionController extends ControllerBase
          */
         $whereArr = [];
         if (
-            $requestData['commision_set_state'] >= 0
+            $requestData['commision_set_state'] > 0
         ) {
 
             $whereArr[] = [
@@ -162,7 +162,7 @@ class ZhiJinCommisionController extends ControllerBase
         }
 
         if (
-            $requestData['product_name'] >= 0
+            $requestData['product_name'] > 0
         ) {
 
             $whereArr[] = [
@@ -172,7 +172,7 @@ class ZhiJinCommisionController extends ControllerBase
             ];
         }
         if (
-            $requestData['min_money'] >= 0
+            $requestData['min_money'] > 0
         ) {
 
             $whereArr[] = [
@@ -183,7 +183,7 @@ class ZhiJinCommisionController extends ControllerBase
         }
 
         if (
-            $requestData['max_money'] >= 0
+            $requestData['max_money'] > 0
         ) {
 
             $whereArr[] = [
@@ -194,7 +194,7 @@ class ZhiJinCommisionController extends ControllerBase
         }
 
         if (
-             $requestData['min_order_date'] >= 0
+             $requestData['min_order_date'] > 0
         ) {
 
             $whereArr[] = [
@@ -204,7 +204,7 @@ class ZhiJinCommisionController extends ControllerBase
             ];
         }
         if (
-            $requestData['max_order_date'] >= 0
+            $requestData['max_order_date'] > 0
         ) {
 
             $whereArr[] = [
@@ -215,7 +215,7 @@ class ZhiJinCommisionController extends ControllerBase
         }
 
         if (
-            $requestData['purchaser_mobile'] >= 0
+            $requestData['purchaser_mobile'] > 0
         ) {
 
             $whereArr[] = [
