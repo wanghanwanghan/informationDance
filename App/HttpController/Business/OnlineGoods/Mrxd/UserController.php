@@ -152,16 +152,38 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $invitors =  OnlineGoodsUserInviteRelation::getVipsAllInvitedUser($userInfo['id']);
         }
 
+        $incomes = OnlineGoodsCommissionGrantDetails::findByUserId($userInfo['id'],OnlineGoodsCommissionGrantDetails::$input_type_in);
+        $totalInomes = 0 ;
+        foreach ($incomes as $incomeItem){
+            $totalInomes +=$incomeItem['amount'];
+        }
+
+        $incomes = OnlineGoodsCommissionGrantDetails::findByUserId($userInfo['id'],OnlineGoodsCommissionGrantDetails::$input_type_out);
+        $totalCommission = 0 ;
+        foreach ($incomes as $incomeItem){
+            $totalCommission +=$incomeItem['amount'];
+        }
+
+        $tiXian = OnlineGoodsTiXianJiLu::findAllByCondition(
+            [
+                'user_id' => $userInfo['id'],
+                'pay_state' => OnlineGoodsTiXianJiLu::$pay_state_failed,
+            ]
+        );
+        $totalTiXianMoney = 0;
+        foreach ($tiXian as $incomeItem){
+            $totalTiXianMoney +=$incomeItem['amount'];
+        }
         return $this->writeJson(
             200,
             [ ] ,
             [
                 'id' => 1,
                 'user_name' => $userInfo['user_name'],
-                'total_income' => 0,
+                'total_income' => $totalInomes,
                 'total_fans_num' => count($invitors),
-                'total_commission' => 0,
-                'total_withdraw' => 0,
+                'total_commission' => $totalCommission,
+                'total_withdraw' => $tiXian,
                 'invite_code' =>  CommonService::encodeIdToInvitationCode($userInfo['id']),
                 'money' => $userInfo['money'],
                 'avatar' => 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png',

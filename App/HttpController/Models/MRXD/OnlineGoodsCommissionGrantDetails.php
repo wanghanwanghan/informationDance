@@ -161,10 +161,11 @@ class OnlineGoodsCommissionGrantDetails extends ModelBase
         return $res;
     }
 
-    public static function findByPhone($phone){
+    public static function findByUserId($user_id,$type){
         $res =  OnlineGoodsCommissionGrantDetails::create()
-            ->where('phone',$phone)
-            ->get();
+            ->where('user_id',$user_id)
+            ->where('type',$type)
+            ->all();
         return $res;
     }
 
