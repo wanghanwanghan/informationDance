@@ -55,8 +55,99 @@ class ZhiJinCommisionController extends ControllerBase
         $page =  $requestData['page']?:1;
         $pageSize =  $requestData['pageSize']?:100;
 
+        //===========================================
+        /**
+        purchaser_mobile: 132
+        min_money: 132
+        max_money: 132
+        product_name: 14
+        commision_set_state: 5
+        min_order_date: 2022-09-25
+        max_order_date: 2022-12-03
+        invitation_code: 132
+        updated[]: 2022-09-25
+        updated[]: 2022-12-03
+         */
+        $whereArr = [];
+        if (
+            $requestData['commision_set_state'] > 0
+        ) {
+
+            $whereArr[] = [
+                'field' => 'commission_set_state',
+                'value' => $requestData['commision_set_state'],
+                'operate' => '=',
+            ];
+        }
+
+        if (
+            $requestData['product_name'] > 0
+        ) {
+
+            $whereArr[] = [
+                'field' => 'product_id',
+                'value' => $requestData['product_name'],
+                'operate' => '=',
+            ];
+        }
+        if (
+            $requestData['min_money'] > 0
+        ) {
+
+            $whereArr[] = [
+                'field' => 'amount',
+                'value' => $requestData['min_money'],
+                'operate' => '>=',
+            ];
+        }
+
+        if (
+            $requestData['max_money'] > 0
+        ) {
+
+            $whereArr[] = [
+                'field' => 'amount',
+                'value' => $requestData['max_money'],
+                'operate' => '<=',
+            ];
+        }
+
+        if (
+            $requestData['min_order_date'] > 0
+        ) {
+
+            $whereArr[] = [
+                'field' => 'order_date',
+                'value' => $requestData['min_order_date'],
+                'operate' => '>=',
+            ];
+        }
+        if (
+            $requestData['max_order_date'] > 0
+        ) {
+
+            $whereArr[] = [
+                'field' => 'order_date',
+                'value' => $requestData['max_order_date'],
+                'operate' => '<=',
+            ];
+        }
+
+        if (
+            $requestData['purchaser_mobile'] > 0
+        ) {
+
+            $whereArr[] = [
+                'field' => 'purchaser_phone',
+                'value' => ''.$requestData['purchaser_mobile'].'%',
+                'operate' => 'like',
+            ];
+        }
+
+        //===========================================
+
         $userInfo = $this->loginUserinfo;
-        $datas = OnlineGoodsUserDaikuanOrder::findByConditionV2([],$page,$pageSize);
+        $datas = OnlineGoodsUserDaikuanOrder::findByConditionV2($whereArr,$page,$pageSize);
         foreach ($datas['data'] as &$dataValue){
             $productInfo = OnlineGoodsDaikuanProducts::findById($dataValue['product_id']);
             $dataValue['product_name'] = $productInfo?$productInfo->name:'';
