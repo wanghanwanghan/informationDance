@@ -65,6 +65,20 @@ class OnlineGoodsCommissions extends ModelBase
         );
     }
 
+    static  function getOrderNums($uid,$ownerId){
+        //自购产品数量-
+        $conditions = [
+            'user_id' =>$uid,
+            'commission_owner' => $ownerId,
+            'state' => OnlineGoodsCommissions::$commission_state_init,
+        ];
+
+        $allCommissions = OnlineGoodsCommissions::findAllByCondition(
+            $conditions
+        );
+        return count($allCommissions) ;
+    }
+
     public static function addRecord($requestData){
         try {
            $res =  OnlineGoodsCommissions::create()->data([

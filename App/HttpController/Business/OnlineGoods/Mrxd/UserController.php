@@ -507,7 +507,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             [
                 'name'=>$userInfo->user_name,
                 'zhi_jin_account'=>$userInfo->phone,
-                'commission_order_nums'=>'',
+                'commission_order_nums'=>  OnlineGoodsCommissions::getOrderNums($fans_id,$this->loginUserinfo['id']),
                 'invitor'=> $invitorUserInfo?$invitorUserInfo->user_name:'',
                 'invitor_mobile'=> $invitorUserInfo?$invitorUserInfo->phone:'',
             ],
@@ -1020,21 +1020,13 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $totalTiXianMoney = OnlineGoodsCommissionGrantDetails::getTotalTiXian($userInfoArr['id']);
 
             //自购产品数量-
-            $conditions = [
-                'user_id' =>$userInfo['id'],
-                'commission_owner' => $useId,
-                'state' => OnlineGoodsCommissions::$commission_state_init,
-            ];
-
-            $allCommissions = OnlineGoodsCommissions::findAllByCondition(
-                $conditions
-            );
+            $orderNums = OnlineGoodsCommissions::getOrderNums($userInfo['id'],$useId);
 
             $valueData['name'] = $userInfo->user_name;
             $valueData['mobile'] = $userInfo->phone;
             $valueData['total_fan_nums'] =  OnlineGoodsUserInviteRelation::getFansNums($userInfoArr) ;
             $valueData['total_income'] =  $totalInomes ;
-            $valueData['order_nums'] =  count($allCommissions) ;
+            $valueData['order_nums'] =  $orderNums;
             $valueData['join_at'] = date('Y-m-d H:i:s',$userInfo->created_at);
             $valueData['avatar'] = 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png' ;
         }
