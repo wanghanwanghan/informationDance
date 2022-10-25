@@ -155,7 +155,7 @@ class ZhiJinCommisionController extends ControllerBase
         ) {
 
             $whereArr[] = [
-                'field' => 'commision_set_state',
+                'field' => 'commission_set_state',
                 'value' => $requestData['commision_set_state'],
                 'operate' => '=',
             ];
