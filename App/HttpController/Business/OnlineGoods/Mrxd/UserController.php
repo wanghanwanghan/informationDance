@@ -142,8 +142,15 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
     {
         $requestData =  $this->getRequestData();
         $userInfo = $this->loginUserinfo;
+        //VIP
+        if(
+            OnlineGoodsUser::IsVip($userInfo)
+        ){
 
-
+            $invitors = OnlineGoodsUserInviteRelation::getDirectInviterInfo($userInfo['id']);
+        }else{
+            $invitors =  OnlineGoodsUserInviteRelation::getVipsAllInvitedUser($userInfo['id']);
+        }
 
         return $this->writeJson(
             200,
@@ -152,6 +159,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'id' => 1,
                 'user_name' => $userInfo['user_name'],
                 'total_income' => 0,
+                'total_fans_num' => count($invitors),
                 'total_commission' => 0,
                 'total_withdraw' => 0,
                 'invite_code' =>  CommonService::encodeIdToInvitationCode($userInfo['id']),
