@@ -179,6 +179,20 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $userInfo = $this->loginUserinfo;
         $uid = $userInfo['id'];
 
+        if(
+            $requestData['money']> $userInfo['money']
+        ){
+            return $this->writeJson(
+                203,
+                [ ] ,
+                [
+
+                ],
+                '您的余额不足',
+                true,
+                []
+            );
+        }
         OnlineGoodsTiXianJiLu::addRecordV2([
             'user_id' => $uid,
             'amount' => $requestData['money'],
