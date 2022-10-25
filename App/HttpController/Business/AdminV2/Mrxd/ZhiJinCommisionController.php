@@ -803,6 +803,10 @@ class ZhiJinCommisionController extends ControllerBase
             ]
         );
 
+        if($requestData['xindong_commission_rate'] < $requestData['commission_rate']){
+            return $this->writeJson(203,[ ] , [], '用户佣金比例不能大于信动佣金比例', true, []);
+        }
+
       OnlineGoodsUserDaikuanOrder::addRecordV2([
           'product_id' => $requestData['product_id'],
           'purchaser_id' =>intval( $requestData['purchaser_id']),
