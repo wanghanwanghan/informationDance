@@ -361,6 +361,21 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             );
         }
 
+        //设置的佣金比例 不能超出最大值
+
+        $OrderInfo = OnlineGoodsUserBaoXianOrder::findById($commissionInfo->commission_order_id);
+        if($requestData['rate']>$OrderInfo->commission_rate){
+            return $this->writeJson(
+                203,
+                [ ] ,
+                [
+
+                ],
+                '佣金比例过大',
+                true,
+                []
+            );
+        }
         //改为已设置成功
         OnlineGoodsCommissions::updateById($commissionInfo->id,
             [
@@ -371,7 +386,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $commissionInfo = OnlineGoodsCommissions::findById($commissionInfo->id);
 
         //发放 金额
-        $OrderInfo = OnlineGoodsUserBaoXianOrder::findById($commissionInfo->commission_order_id);
+
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
@@ -440,6 +455,20 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         }
 
         //改为已设置成功
+        $OrderInfo = OnlineGoodsUserDaikuanOrder::findById($commissionInfo->commission_order_id);
+        if($requestData['rate']>$OrderInfo->commission_rate){
+            return $this->writeJson(
+                203,
+                [ ] ,
+                [
+
+                ],
+                '佣金比例过大',
+                true,
+                []
+            );
+        }
+
         OnlineGoodsCommissions::updateById($commissionInfo->id,
             [
                 'state' => OnlineGoodsCommissions::$commission_state_seted,
@@ -449,7 +478,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $commissionInfo = OnlineGoodsCommissions::findById($commissionInfo->id);
 
         //发放 金额
-        $OrderInfo = OnlineGoodsUserDaikuanOrder::findById($commissionInfo->commission_order_id);
+
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
