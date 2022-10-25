@@ -367,25 +367,30 @@ class OnlineGoodsCommissions extends ModelBase
             }
 
             //VIP给邀请人分佣
-            $res = OnlineGoodsCommissions::addRecordV2(
-                [
-                    //受益人
-                    'user_id' => $directInvitorInfo['id'],
-                    //收益创造者
-                    'commission_create_user_id' => $zhiJinUserInfo['id'],
-                    //发放人
-                    'commission_owner' => $VipInvitorInfo['id'],
-                    'comission_rate' => 0,
-                    'commission_type' => $type,
-                    'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_vip_to_invitor,
-                    'state' => OnlineGoodsCommissions::$commission_state_init,
-                    'commission_order_id' => $orderInfo['id'],
-                    'remark' => 'VIP给邀请人分佣',
-                ]
-            );
-            if(empty($res)){
-                return  false;
+            if(
+                $directInvitorInfo['id'] != $VipInvitorInfo['id']
+            ){
+                $res = OnlineGoodsCommissions::addRecordV2(
+                    [
+                        //受益人
+                        'user_id' => $directInvitorInfo['id'],
+                        //收益创造者
+                        'commission_create_user_id' => $zhiJinUserInfo['id'],
+                        //发放人
+                        'commission_owner' => $VipInvitorInfo['id'],
+                        'comission_rate' => 0,
+                        'commission_type' => $type,
+                        'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_vip_to_invitor,
+                        'state' => OnlineGoodsCommissions::$commission_state_init,
+                        'commission_order_id' => $orderInfo['id'],
+                        'remark' => 'VIP给邀请人分佣',
+                    ]
+                );
+                if(empty($res)){
+                    return  false;
+                }
             }
+
         }
         else{
             //信动给邀请人分佣
