@@ -32,6 +32,20 @@ class OnlineGoodsUserInviteRelation extends ModelBase
         );
     }
 
+    static function getFansNums($userInfo){
+
+        //VIP
+        if(
+            OnlineGoodsUser::IsVip($userInfo)
+        ){
+            $invitors = OnlineGoodsUserInviteRelation::getDirectInviterInfo($userInfo['id']);
+        }else{
+            $invitors =  OnlineGoodsUserInviteRelation::getVipsAllInvitedUser($userInfo['id']);
+        }
+
+        return count($invitors);
+    }
+
     public static function addRecord($requestData){
 
         try {

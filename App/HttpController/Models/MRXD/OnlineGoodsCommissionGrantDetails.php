@@ -169,6 +169,41 @@ class OnlineGoodsCommissionGrantDetails extends ModelBase
         return $res;
     }
 
+    static function getTotalIncomes($uid){
+        $incomes = OnlineGoodsCommissionGrantDetails::findByUserId($uid, OnlineGoodsCommissionGrantDetails::$input_type_in);
+        $totalInomes = 0 ;
+        foreach ($incomes as $incomeItem){
+            $totalInomes +=$incomeItem['amount'];
+        }
+
+        return $totalInomes;
+    }
+
+    static function getTotalComission($uid){
+        $incomes = OnlineGoodsCommissionGrantDetails::findByUserId($uid, OnlineGoodsCommissionGrantDetails::$input_type_out);
+        $totalInomes = 0 ;
+        foreach ($incomes as $incomeItem){
+            $totalInomes +=$incomeItem['amount'];
+        }
+
+        return $totalInomes;
+    }
+
+    static function getTotalTiXian($uid){
+        $tiXian = OnlineGoodsTiXianJiLu::findAllByCondition(
+            [
+                'user_id' => $uid,
+                'pay_state' => OnlineGoodsTiXianJiLu::$pay_state_succeed,
+            ]
+        );
+        $totalTiXianMoney = 0;
+        foreach ($tiXian as $incomeItem){
+            $totalTiXianMoney +=$incomeItem['amount'];
+        }
+
+        return $totalTiXianMoney;
+    }
+
     public static function setData($id,$field,$value){
         $info = OnlineGoodsCommissionGrantDetails::findById($id);
         return $info->update([

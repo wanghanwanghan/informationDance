@@ -142,38 +142,11 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
     {
         $requestData =  $this->getRequestData();
         $userInfo = $this->loginUserinfo;
-        //VIP
-        if(
-            OnlineGoodsUser::IsVip($userInfo)
-        ){
 
-            $invitors = OnlineGoodsUserInviteRelation::getDirectInviterInfo($userInfo['id']);
-        }else{
-            $invitors =  OnlineGoodsUserInviteRelation::getVipsAllInvitedUser($userInfo['id']);
-        }
+        $totalInomes = OnlineGoodsCommissionGrantDetails::getTotalIncomes($userInfo['id']);
+        $totalCommission = OnlineGoodsCommissionGrantDetails::getTotalComission($userInfo['id']);
+        $totalTiXianMoney = OnlineGoodsCommissionGrantDetails::getTotalTiXian($userInfo['id']);
 
-        $incomes = OnlineGoodsCommissionGrantDetails::findByUserId($userInfo['id'],OnlineGoodsCommissionGrantDetails::$input_type_in);
-        $totalInomes = 0 ;
-        foreach ($incomes as $incomeItem){
-            $totalInomes +=$incomeItem['amount'];
-        }
-
-        $incomes = OnlineGoodsCommissionGrantDetails::findByUserId($userInfo['id'],OnlineGoodsCommissionGrantDetails::$input_type_out);
-        $totalCommission = 0 ;
-        foreach ($incomes as $incomeItem){
-            $totalCommission +=$incomeItem['amount'];
-        }
-
-        $tiXian = OnlineGoodsTiXianJiLu::findAllByCondition(
-            [
-                'user_id' => $userInfo['id'],
-                'pay_state' => OnlineGoodsTiXianJiLu::$pay_state_succeed,
-            ]
-        );
-        $totalTiXianMoney = 0;
-        foreach ($tiXian as $incomeItem){
-            $totalTiXianMoney +=$incomeItem['amount'];
-        }
         return $this->writeJson(
             200,
             [ ] ,
@@ -181,7 +154,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'id' => 1,
                 'user_name' => $userInfo['user_name'],
                 'total_income' => $totalInomes,
-                'total_fans_num' => count($invitors),
+                'total_fans_num' => OnlineGoodsUserInviteRelation::getFansNums($userInfo),
                 'total_commission' => $totalCommission,
                 'total_withdraw' => $totalTiXianMoney,
                 'invite_code' =>  CommonService::encodeIdToInvitationCode($userInfo['id']),
@@ -1035,10 +1008,28 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         //XXXXX
         foreach ($returnDatas as &$valueData){
             $userInfo = OnlineGoodsUser::findById($valueData['user_id']);
+            $userInfoArr = $userInfo->toArray();
+
+            $totalInomes = OnlineGoodsCommissionGrantDetails::getTotalIncomes($userInfoArr['id']);
+            $totalCommission = OnlineGoodsCommissionGrantDetails::getTotalComission($userInfoArr['id']);
+            $totalTiXianMoney = OnlineGoodsCommissionGrantDetails::getTotalTiXian($userInfoArr['id']);
+
+            //自购产品数量-
+            $conditions = [
+                'user_id' =>$userInfo['id'],
+                'commission_owner' => $useId,
+                'state' => OnlineGoodsCommissions::$commission_state_init,
+            ];
+
+            $allCommissions = OnlineGoodsCommissions::findAllByCondition(
+                $conditions
+            );
+
             $valueData['name'] = $userInfo->user_name;
             $valueData['mobile'] = $userInfo->phone;
-            $valueData['total_fan_nums'] =  '' ;
-            $valueData['order_nums'] =  '' ;
+            $valueData['total_fan_nums'] =  OnlineGoodsUserInviteRelation::getFansNums($userInfoArr) ;
+            $valueData['total_income'] =  $totalInomes ;
+            $valueData['order_nums'] =  count($allCommissions) ;
             $valueData['join_at'] = date('Y-m-d H:i:s',$userInfo->created_at);
             $valueData['avatar'] = 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png' ;
         }
