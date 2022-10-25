@@ -657,13 +657,45 @@ class ZhiJinCommisionController extends ControllerBase
         /**
         page: 1
         pageSize: 10
-        sq_status: 1待审核 2已付款  3付款中 审核失败
+        sq_status: 1待审核 2已付款  3付款中 4审核失败
         sh_time: 2022-09-26T16:00:00.000Z 审核时间
         sq_time: 2022-09-26T16:00:00.000Z 申请时间
         mobile: 132
          */
 
         $whereArr = [];
+
+        //  状态：sq_status  1待审核
+        if (
+            $requestData['sq_status']  == 1
+        ) {
+            $whereArr[] = [
+                'field' => 'audit_state',
+                'value' => OnlineGoodsTiXianJiLu::$audit_state_init,
+                'operate' => '=',
+            ];
+        }
+        //  状态：sq_status  2已付款
+        if (
+            $requestData['sq_status']  == 2
+        ) {
+            $whereArr[] = [
+                'field' => 'pay_state',
+                'value' => OnlineGoodsTiXianJiLu::$pay_state_succeed,
+                'operate' => '=',
+            ];
+        }
+        //  状态：4审核失败
+        if (
+            $requestData['sq_status']  == 4
+        ) {
+            $whereArr[] = [
+                'field' => 'audit_state',
+                'value' => OnlineGoodsTiXianJiLu::$audit_state_refuse,
+                'operate' => '=',
+            ];
+        }
+
 
         if (
             $requestData['mobile'] > 0
