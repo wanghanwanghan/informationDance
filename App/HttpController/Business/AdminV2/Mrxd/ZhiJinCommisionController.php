@@ -716,15 +716,18 @@ class ZhiJinCommisionController extends ControllerBase
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
 
+        $returnDatas = [];
+        $allUsers = OnlineGoodsUser::findAllByCondition([
+
+        ]);
+        foreach ($allUsers as $userItem){
+            $returnDatas[$userItem['id']] = $userItem['user_name'];
+        }
+
         return $this->writeJson(
             200,
             [ ] ,
-            [
-                1=>'宝花',
-                2=>'宝树',
-                3=>'小花',
-                4=>'小树',
-            ],
+            $returnDatas,
             '成功',
             true,
             []
