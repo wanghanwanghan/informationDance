@@ -52,7 +52,7 @@ class OnlineGoodsUserInviteRelation extends ModelBase
                 ])
             );
         }else{
-            $invitors =  OnlineGoodsUserInviteRelation::getDirectInviterInfo($userInfo['id']);
+            $invitors =  OnlineGoodsUserInviteRelation::getAllInvitedUser($userInfo['id']);
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
