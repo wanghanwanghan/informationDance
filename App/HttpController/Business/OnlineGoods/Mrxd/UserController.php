@@ -821,6 +821,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $orderInfo = $orderInfo->toArray();
             $orderInfo['product_name'] = $prodcutsRes[$orderInfo['product_id']];
             $orderInfo['id'] = $commissionItem['id'];
+            $orderInfo['commission_state_cname'] =OnlineGoodsCommissions::getStateCnameMap()[ $commissionItem['state']];
             $returnDatas[] = $orderInfo ;
         }
         //======================================
