@@ -70,6 +70,17 @@ class ZhiJinCommisionController extends ControllerBase
          */
         $whereArr = [];
         if (
+            $requestData['purchaser'] > 0
+        ) {
+            $zhiJinUser = OnlineGoodsUser::findById($requestData['purchaser']);
+            $whereArr[] = [
+                'field' => 'purchaser_phone',
+                'value' => $zhiJinUser->phone,
+                'operate' => '=',
+            ];
+        }
+
+        if (
             $requestData['commision_set_state'] > 0
         ) {
 
