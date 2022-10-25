@@ -151,7 +151,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             200,
             [ ] ,
             [
-                'id' => 1,
+                'id' => $userInfo['id'],
                 'user_name' => $userInfo['user_name'],
                 'mobile' => $userInfo['phone'],
                 'phone' => $userInfo['phone'],
