@@ -179,7 +179,6 @@ class ZhiJinCommisionController extends ControllerBase
             $dataValue['vip_invite_name'] = $vipInvitorInfo['user_name'];
 
             $dataValue['created_at'] = date('Y-m-d H:i:s',$dataValue['created_at']);
-            $dataValue['created_at'] = date('Y-m-d H:i:s',$dataValue['created_at']);
             $dataValue['commission_money'] = number_format(($dataValue['amount']*$dataValue['commission_rate'])/100,2);
 
         }
