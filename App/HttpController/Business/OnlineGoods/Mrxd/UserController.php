@@ -167,7 +167,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $tiXian = OnlineGoodsTiXianJiLu::findAllByCondition(
             [
                 'user_id' => $userInfo['id'],
-                'pay_state' => OnlineGoodsTiXianJiLu::$pay_state_failed,
+                'pay_state' => OnlineGoodsTiXianJiLu::$pay_state_succeed,
             ]
         );
         $totalTiXianMoney = 0;
