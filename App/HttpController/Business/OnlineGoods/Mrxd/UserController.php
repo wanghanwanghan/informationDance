@@ -183,7 +183,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total_income' => $totalInomes,
                 'total_fans_num' => count($invitors),
                 'total_commission' => $totalCommission,
-                'total_withdraw' => $tiXian,
+                'total_withdraw' => $totalTiXianMoney,
                 'invite_code' =>  CommonService::encodeIdToInvitationCode($userInfo['id']),
                 'money' => $userInfo['money'],
                 'avatar' => 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png',
