@@ -154,6 +154,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'id' => 1,
                 'user_name' => $userInfo['user_name'],
                 'mobile' => $userInfo['phone'],
+                'phone' => $userInfo['phone'],
                 'total_income' => $totalInomes,
                 'total_fans_num' => OnlineGoodsUserInviteRelation::getFansNums($userInfo),
                 'total_commission' => $totalCommission,
