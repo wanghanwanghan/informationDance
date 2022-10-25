@@ -653,8 +653,67 @@ class ZhiJinCommisionController extends ControllerBase
         $pageSize = $requestData['pageSize']?:20 ;
         $code = $requestData['code'] ;
 
+        //=================================================
+        /**
+        page: 1
+        pageSize: 10
+        sq_status: 1待审核 2已付款  3付款中 审核失败
+        sh_time: 2022-09-26T16:00:00.000Z 审核时间
+        sq_time: 2022-09-26T16:00:00.000Z 申请时间
+        mobile: 132
+         */
+
+        $whereArr = [];
+
+        if (
+            $requestData['mobile'] > 0
+        ) {
+
+//            $whereArr[] = [
+//                'field' => 'created_at',
+//                'value' => $requestData['mobile'].'%',
+//                'operate' => 'like',
+//            ];
+
+        }
+
+        if (
+            $requestData['sq_time'] > 0
+        ) {
+
+            $whereArr[] = [
+                'field' => 'created_at',
+                'value' => strtotime(date('Y-m-d 00:00:00',strtotime($requestData['sq_time']))),
+                'operate' => '>=',
+            ];
+            $whereArr[] = [
+                'field' => 'created_at',
+                'value' => strtotime(date('Y-m-d 23:59:59',strtotime($requestData['sq_time']))),
+                'operate' => '<=',
+            ];
+        }
+
+        if (
+            $requestData['sh_time'] > 0
+        ) {
+
+            $whereArr[] = [
+                'field' => 'audit_date',
+                'value' => date('Y-m-d 00:00:00',strtotime($requestData['sh_time'])),
+                'operate' => '>=',
+            ];
+            $whereArr[] = [
+                'field' => 'audit_date',
+                'value' => date('Y-m-d 23:59:59',strtotime($requestData['sh_time'])),
+                'operate' => '<=',
+            ];
+        }
+
+
+        //=================================================
+
         //提现审核列表
-        $res = OnlineGoodsTiXianJiLu::findByConditionWithCountInfo(
+        $res = OnlineGoodsTiXianJiLu::findByConditionV2(
             [
 
             ],
