@@ -38,9 +38,32 @@ class OnlineGoodsUserInviteRelation extends ModelBase
         if(
             OnlineGoodsUser::IsVip($userInfo)
         ){
+
             $invitors = OnlineGoodsUserInviteRelation::getDirectInviterInfo($userInfo['id']);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'getFansNums' => [
+                        'uid'=>$userInfo['id'],
+                        'uname'=>$userInfo['user_name'],
+                        'IsVip'=>true,
+                        '$invitors'=>count($invitors),
+                    ]
+                ])
+            );
         }else{
             $invitors =  OnlineGoodsUserInviteRelation::getVipsAllInvitedUser($userInfo['id']);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'getFansNums' => [
+                        'uid'=>$userInfo['id'],
+                        'uname'=>$userInfo['user_name'],
+                        'IsVip'=>false,
+                        '$invitors'=>count($invitors),
+                    ]
+                ])
+            );
         }
 
         return count($invitors);
