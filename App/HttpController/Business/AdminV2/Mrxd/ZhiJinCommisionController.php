@@ -56,7 +56,6 @@ class ZhiJinCommisionController extends ControllerBase
         $pageSize =  $requestData['pageSize']?:100;
 
         $userInfo = $this->loginUserinfo;
-
         $datas = OnlineGoodsUserDaikuanOrder::findByConditionV2([],$page,$pageSize);
         foreach ($datas['data'] as &$dataValue){
             $productInfo = OnlineGoodsDaikuanProducts::findById($dataValue['product_id']);
@@ -68,6 +67,14 @@ class ZhiJinCommisionController extends ControllerBase
             $dataValue['commission_set_state_cname'] = OnlineGoodsUserDaikuanOrder::getCommissionSetStateMap()[$dataValue['commission_set_state']];
             $dataValue['commission_state_cname'] = OnlineGoodsUserDaikuanOrder::getCommissionStateMap()[$dataValue['commission_state']];
             $dataValue['zhijin_account'] = $dataValue['zhijin_phone'];
+
+            //邀请人
+            $buyerInfo = OnlineGoodsUser::findByPhone($dataValue['zhijin_account']);
+            $invitorInfo =  OnlineGoodsUserInviteRelation::getDirectInviterInfo($buyerInfo->id);
+            $vipInvitorInfo =  OnlineGoodsUserInviteRelation::getVipInviterInfo($buyerInfo->id);
+            $dataValue['invite_name'] = $invitorInfo['user_name'];
+            $dataValue['vip_invite_name'] = $vipInvitorInfo['user_name'];
+            $dataValue['created_at'] = date('Y-m-d H:i:s',$dataValue['created_at']);
             $dataValue['created_at'] = date('Y-m-d H:i:s',$dataValue['created_at']);
             $dataValue['commission_money'] = number_format(($dataValue['amount']*$dataValue['commission_rate'])/100,2);
 
