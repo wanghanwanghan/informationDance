@@ -57,12 +57,12 @@ class BaoYaService extends ServiceBase
             $returnRes[$valueItem['id']] = $valueItem['title'];
         }
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'getProductsV2$returnRes' => $returnRes
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'getProductsV2$returnRes' => $returnRes
+//            ])
+//        );
         return $returnRes;
     }
 
