@@ -132,7 +132,7 @@ class ToolsController extends ControllerBase
                         'file_name' => $fileName,
                         'new_file_name' => '',
                         'remark' => $requestData['remark']?:'',
-                        'type' => $requestData['type']?:'',
+                        'type' => ToolsFileLists::$type_bu_quan_zi_duan,
                         'state' => $requestData['state']?:'',
                         'touch_time' => $requestData['touch_time']?:'',
                     ]
