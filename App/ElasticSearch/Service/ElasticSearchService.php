@@ -148,6 +148,9 @@ class ElasticSearchService extends ServiceBase
     {
         $boolQuery = [];
         foreach ($valueArr as $value) {
+            if(empty(trim($value))){
+                continue;
+            }
             $boolQuery['bool']['should'][] =
                 ['match_phrase' => [$field => $value]];
         }
