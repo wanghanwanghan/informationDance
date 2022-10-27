@@ -481,27 +481,34 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             // 找到上传的文件路径
             self::setworkPath( $rawDataItem['file_path'] );
             $companyDatas = self::getYieldData($rawDataItem['name']);
+            $i = 1;
             foreach ($companyDatas as $companyDataItem){
+                $i ++ ;
 
-                //企业 税号 电话 微信名
+                //企业 税号 电话 微信名 性别
                 $companyName = $companyDataItem[0];
                 $companyCode = $companyDataItem[1];
                 $phone = $companyDataItem[2];
                 $wechat = $companyDataItem[3];
+                $sex = $companyDataItem[4];
 
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        [
-                            'addWeChatInfo'=>[
-                                '$companyDataItem' => $companyDataItem ,
-                                '$companyCode' => $companyCode ,
-                                '$phone' => $phone ,
-                                '$wechat' => $wechat ,
+                if($i%100==0){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            [
+                                'addWeChatInfo'=>[
+                                    //  '$companyDataItem' => $companyDataItem ,
+                                    //  '$companyCode' => $companyCode ,
+                                    '$phone' => $phone ,
+                                    '$wechat' => $wechat ,
+                                    '$i' => $i ,
+                                ]
                             ]
-                        ]
-                    ])
-                );
+                        ])
+                    );
+                }
+
 
                 if(empty($phone)){
                     continue;
@@ -517,7 +524,8 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 $phone_aes = \wanghanwanghan\someUtils\control::aesEncode($phone, $created_at . '');
                 $phone_md5 = md5($phone);
                 $insert = [
-                    'code' => $companyCode,
+                    'code' => $companyCode?:'',
+                    'sex' => $sex?:'',
                     'phone' => $phone_aes,
                     'phone_md5' => $phone_md5,
                     'nickname' => $wechat,

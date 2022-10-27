@@ -1572,19 +1572,19 @@ class XinDongService extends ServiceBase
                     ],
                 ],
             ],
-            [
-                'pid' => 100,
-                'desc' => '营收剔除负值',
-                'detail' => '',
-                'key' => 'ying_shou_gui_mo',
-                'type' => 'select',
-                'data' => [
-                    10 => [
-                        'cname' => '是',
-                        'detail' => '',
-                    ],
-                ],
-            ],
+//            [
+//                'pid' => 100,
+//                'desc' => '营收剔除负值',
+//                'detail' => '',
+//                'key' => 'ying_shou_gui_mo',
+//                'type' => 'select',
+//                'data' => [
+//                    10 => [
+//                        'cname' => '是',
+//                        'detail' => '',
+//                    ],
+//                ],
+//            ],
         ];
     }
 

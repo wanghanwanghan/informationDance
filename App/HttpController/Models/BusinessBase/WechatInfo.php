@@ -38,7 +38,7 @@ class WechatInfo extends ModelBase
     public static function addRecord($requestData){
         try {
             $res =  WechatInfo::create()->data([
-                'code' => $requestData['code'],
+                'code' => $requestData['code']?:'',
                 'phone' => $requestData['phone'],
                 'phone_md5' => $requestData['phone_md5'],
                 'sex' => $requestData['sex']?:'',
