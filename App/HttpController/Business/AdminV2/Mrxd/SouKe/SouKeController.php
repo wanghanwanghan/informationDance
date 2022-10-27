@@ -2265,65 +2265,7 @@ class SouKeController extends ControllerBase
         ConfigInfo::removeRedisNx('exportEntData');
         return $this->writeJson(200,[ ] , [], '已发起下载，请去我的下载中查看', true, []);
     }
-    function exportEntDataOld(): bool
-    {
-        if(
-            !ConfigInfo::setRedisNx('exportEntData',5)
-        ){
-            return $this->writeJson(201, null, [],  '请勿重复提交');
-        }
 
-        $requestData =  $this->getRequestData();
-        if(substr($requestData['basic_nicid'], -1) == ','){
-            $requestData['basic_nicid'] = rtrim($requestData['basic_nicid'], ",");
-        }
-
-        if(substr($requestData['basic_regionid'], -1) == ','){
-            $requestData['basic_regionid'] = rtrim($requestData['basic_regionid'], ",");
-        }
-
-        if(substr($requestData['basic_jlxxcyid'], -1) == ','){
-            $requestData['basic_jlxxcyid'] = rtrim($requestData['basic_jlxxcyid'], ",");
-        }
-
-
-        $checkRes = DataModelExample::checkField(
-            [
-
-                'total_nums' => [
-                    'bigger_than' => 0,
-                    'less_than' => 1000000,
-                    'field_name' => 'total_nums',
-                    'err_msg' => '总数不对！必须大于0且小于100万',
-                ]
-            ],
-            $requestData
-        );
-        if(
-            !$checkRes['res']
-        ){
-            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
-        }
-
-        //下载
-        DownloadSoukeHistory::addRecord(
-            [
-                'admin_id' => $this->loginUserinfo['id'],
-                'entName' => $requestData['entName'],
-                //选择的哪些条件
-                'feature' => json_encode($requestData),
-                //标题
-                'title' => $requestData['title'],
-                'remark' => $requestData['remark'],
-                'total_nums' => $requestData['total_nums'],
-                'status' => DeliverHistory::$state_init,
-                'type' => $requestData['type']?:1,
-            ]
-        );
-
-        ConfigInfo::removeRedisNx('exportEntData');
-        return $this->writeJson(200,[ ] , [], '已发起下载，请去我的下载中查看', true, []);
-    }
 
     /*
      * 获取导出列表

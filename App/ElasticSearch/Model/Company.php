@@ -424,7 +424,8 @@ class Company extends ServiceBase
             $matchedCnames = array_column($siJiFenLeiDatas, 'nic_id');
             CommonService::getInstance()->log4PHP('matchedCnames '.json_encode($matchedCnames));
 
-            $this->es->addMustShouldPhraseQuery( 'si_ji_fen_lei_code' , $matchedCnames) ;
+            //$this->es->addMustShouldPhraseQuery( 'si_ji_fen_lei_code' , $matchedCnames) ;
+            $this->es->addMustShouldPhraseQuery( 'NIC_ID' , $matchedCnames) ;
 
         }
         return $this;
