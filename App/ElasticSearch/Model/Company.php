@@ -330,7 +330,8 @@ class Company extends ServiceBase
                     }
                 }
                 CommonService::getInstance()->log4PHP($nicIds);
-                $this->es->addMustShouldPhrasePrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ;
+                //$this->es->addMustShouldPhrasePrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ;
+                $this->es->addMustShouldPhrasePrefixQuery( 'NIC_ID' , $nicIds) ;
             }
         }
 
