@@ -806,7 +806,7 @@ eof;
         }
         $companyEsModel
             //经营范围
-            ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('OPSCOPE'),"OPSCOPE"))
+            ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')),"OPSCOPE")
             //数字经济及其核心产业
             ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
             // 搜索文案 智能搜索
@@ -967,7 +967,7 @@ eof;
 
         $companyEsModel
             //经营范围
-            ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('OPSCOPE'),"OPSCOPE"))
+            ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')),"OPSCOPE")
             //数字经济及其核心产业
             ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
             // 搜索文案 智能搜索
@@ -1017,7 +1017,7 @@ eof;
 
 //        $companyEsModel
 //            //经营范围
-//            ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('OPSCOPE'),"OPSCOPE"))
+//            ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')),"OPSCOPE")
 //            //数字经济及其核心产业
 //            ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
 //            // 搜索文案 智能搜索
