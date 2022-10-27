@@ -404,47 +404,38 @@ class RunDealToolsFile extends AbstractCronTask
         $nums = 1;
 
         $allFields = AdminUserSoukeConfig::getAllFieldsV2();
-//        $noNeedFeilds = [
-//            'ENTNAME',
-//            'companyid',
-//        ];
-        foreach ($allFields as $field=>$cname){
-//            if(
-//                in_array($field,$noNeedFeilds)
-//            ){
-//                continue;
-//            }
 
+
+        foreach ($allFields as $field=>$cname){
             $title[] = $cname ;
         }
 
 
         while (true) {
             if($nums == 1){
-                yield $datas[] =  $title;
                 $nums ++;
-                continue;
+                yield $datas[] =  $title;
             }
+            else{
+                if($nums%100==0){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            'getYieldDataForCompleteCompanyInfo $xlsx_name'=>$xlsx_name,
+                            'getYieldDataForCompleteCompanyInfo $nums'=>$nums,
+                        ])
+                    );
+                }
+                $one = $excel_read->nextRow([
+                    \Vtiful\Kernel\Excel::TYPE_STRING,
+                    \Vtiful\Kernel\Excel::TYPE_STRING,
+                    \Vtiful\Kernel\Excel::TYPE_STRING,
+                ]);
 
-            if($nums%100==0){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        'getYieldDataForCompleteCompanyInfo $xlsx_name'=>$xlsx_name,
-                        'getYieldDataForCompleteCompanyInfo $nums'=>$nums,
-                    ])
-                );
-            }
-            $one = $excel_read->nextRow([
-                \Vtiful\Kernel\Excel::TYPE_STRING,
-                \Vtiful\Kernel\Excel::TYPE_STRING,
-                \Vtiful\Kernel\Excel::TYPE_STRING,
-            ]);
+                if (empty($one)) {
+                    break;
+                }
 
-            if (empty($one)) {
-                break;
-            }
-
-            //第一行是标题  不是数据
+                //第一行是标题  不是数据
 //            if($nums==1){
 //
 //                yield $datas[] = [
@@ -456,111 +447,107 @@ class RunDealToolsFile extends AbstractCronTask
 //                continue;
 //            }
 
-            //字段Name
-            $value0 = self::strtr_func($one[0]);
-            //Code
-            $value1 = self::strtr_func($one[1]);
-            //需要补全字段
-            if($value1){
-                $res = (new XinDongService())->getEsBasicInfoV3($value1,'UNISCID');
-            }
-            else{
-                $res = (new XinDongService())->getEsBasicInfoV3($value0,'ENTNAME');
-            }
-
-            foreach ($allFields as $field=>$cname){
-//                if(
-//                    in_array($field,$noNeedFeilds)
-//                ){
-//                    continue;
-//                }
-
-                if($field=='ENTTYPE'){
-                    $cname =   CodeCa16::findByCode($res['ENTTYPE']);
-                    $res['ENTTYPE'] =  $cname?$cname->getAttr('name'):'';
+                //字段Name
+                $value0 = self::strtr_func($one[0]);
+                //Code
+                $value1 = self::strtr_func($one[1]);
+                //需要补全字段
+                if($value1){
+                    $res = (new XinDongService())->getEsBasicInfoV3($value1,'UNISCID');
                 }
-                if($field=='ENTSTATUS'){
-                    $cname =   CodeEx02::findByCode($res['ENTSTATUS']);
-                    $res['ENTSTATUS'] =  $cname?$cname->getAttr('name'):'';
+                else{
+                    $res = (new XinDongService())->getEsBasicInfoV3($value0,'ENTNAME');
                 }
 
-                //地区
-                if(
-                    $field=='DOMDISTRICT' &&
-                    $res['DOMDISTRICT'] >0
-                ){
+                foreach ($allFields as $field=>$cname){
+
+                    if($field=='ENTTYPE'){
+                        $cname =   CodeCa16::findByCode($res['ENTTYPE']);
+                        $res['ENTTYPE'] =  $cname?$cname->getAttr('name'):'';
+                    }
+                    if($field=='ENTSTATUS'){
+                        $cname =   CodeEx02::findByCode($res['ENTSTATUS']);
+                        $res['ENTSTATUS'] =  $cname?$cname->getAttr('name'):'';
+                    }
+
+                    //地区
+                    if(
+                        $field=='DOMDISTRICT' &&
+                        $res['DOMDISTRICT'] >0
+                    ){
 //                    $regionRes = CompanyBasic::findRegion($res['DOMDISTRICT']);
 //                    $res['DOMDISTRICT'] =  $regionRes['name'];
-                    $res['DOMDISTRICT'] =  $res['DOM'];
-                }
+                        $res['DOMDISTRICT'] =  $res['DOM'];
+                    }
 
-                //行业分类代码  findNICID
-                if(
-                    $field=='NIC_ID' &&
-                    !empty( $res['NIC_ID'])
-                ){
+                    //行业分类代码  findNICID
+                    if(
+                        $field=='NIC_ID' &&
+                        !empty( $res['NIC_ID'])
+                    ){
 //                    $nicRes = NicCode::findNICID($res['NIC_ID']);
 //                    CommonService::getInstance()->log4PHP(json_encode([
 //                        'NIC_ID'=>$res['NIC_ID'],
 //                        '$nicRes'=>$nicRes,
 //                    ]));nic_full_name
 //                    $res['NIC_ID'] =  $nicRes['industry'];
-                    $res['NIC_ID'] =  $res['nic_full_name'];
+                        $res['NIC_ID'] =  $res['nic_full_name'];
+                    }
+
+                    //一般人
+                    if(
+                        $field=='yi_ban_ren'
+                    ){
+                        $res['yi_ban_ren'] =  $res['yi_ban_ren']?'有':'无';
+                    }
+
+                    //战略新兴产业
+                    if(
+                        $field=='zlxxcy'
+                    ){
+                        $res['zlxxcy'] =  $res['zlxxcy']?'有':'无';
+                    }
+
+                    //数字经济产业
+                    if(
+                        $field=='szjjcy'
+                    ){
+                        $res['szjjcy'] =  $res['szjjcy']?'有':'无';
+                    }
+
+
+                    if(
+                        $field=='jin_chu_kou'
+                    ){
+                        $res['jin_chu_kou'] =  $res['jin_chu_kou']?'有':'无';
+                    }
+
+
+                    if(
+                        $field=='iso'
+                    ){
+                        $res['iso'] =  $res['iso']?'有':'无';
+                    }
+
+                    // 高新技术
+                    if(
+                        $field=='gao_xin_ji_shu'
+                    ){
+                        $res['gao_xin_ji_shu'] =  $res['gao_xin_ji_shu']?'有':'无';
+                    }
+
+                    if(
+                        is_array($res[$field])
+                    ){
+                        $baseArr[] = empty($res[$field])?'无':'有' ;
+                    }else{
+
+                        $baseArr[] = str_split ( $res[$field], 32766 )[0] ;
+                    }
                 }
-
-                //一般人
-                if(
-                    $field=='yi_ban_ren'
-                ){
-                    $res['yi_ban_ren'] =  $res['yi_ban_ren']?'有':'无';
-                }
-
-                //战略新兴产业
-                if(
-                    $field=='zlxxcy'
-                ){
-                    $res['zlxxcy'] =  $res['zlxxcy']?'有':'无';
-                }
-
-                //数字经济产业
-                if(
-                    $field=='szjjcy'
-                ){
-                    $res['szjjcy'] =  $res['szjjcy']?'有':'无';
-                }
-
-
-                if(
-                    $field=='jin_chu_kou'
-                ){
-                    $res['jin_chu_kou'] =  $res['jin_chu_kou']?'有':'无';
-                }
-
-
-                if(
-                    $field=='iso'
-                ){
-                    $res['iso'] =  $res['iso']?'有':'无';
-                }
-
-                // 高新技术
-                if(
-                    $field=='gao_xin_ji_shu'
-                ){
-                    $res['gao_xin_ji_shu'] =  $res['gao_xin_ji_shu']?'有':'无';
-                }
-
-                if(
-                    is_array($res[$field])
-                ){
-                    $baseArr[] = empty($res[$field])?'无':'有' ;
-                }else{
-
-                    $baseArr[] = str_split ( $res[$field], 32766 )[0] ;
-                }
+                $nums ++;
+                yield $datas[] = $baseArr;
             }
-            $nums ++;
-            yield $datas[] = $baseArr;
         }
     }
 
