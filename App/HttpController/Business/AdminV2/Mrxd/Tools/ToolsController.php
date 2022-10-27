@@ -93,6 +93,7 @@ class ToolsController extends ControllerBase
         foreach ($res['data'] as &$dataItem ){
             $adminInfo = \App\HttpController\Models\AdminV2\AdminNewUser::findById($dataItem['admin_id']);
             $dataItem['admin_id_cname'] = $adminInfo->user_name;
+            $dataItem['new_file_path'] = '/Static/OtherFile/'.$dataItem['new_file_name'];
             $dataItem['state_cname'] = ToolsFileLists::stateMaps()[$dataItem['state']];
         }
         $total = $res['total'];
