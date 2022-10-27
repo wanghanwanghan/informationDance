@@ -112,6 +112,7 @@ class ToolsController extends ControllerBase
         foreach ($files as $key => $oneFile) {
             try {
                 $fileName = $oneFile->getClientFilename();
+                $fileName = date('Y_m_d_H_i',time()).$fileName;
                 $path = TEMP_FILE_PATH . $fileName;
                 if(file_exists($path)){
                     return $this->writeJson(203, [], [],'文件已存在！');;
