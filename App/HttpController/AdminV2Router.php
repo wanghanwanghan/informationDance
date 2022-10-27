@@ -205,6 +205,8 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/uploadeTemplateLists', $prefix . 'uploadeTemplateLists');
             //上传文件
             $routeCollector->addRoute(['GET', 'POST'], '/uploadeFiles', $prefix . 'uploadeFiles');
+            $routeCollector->addRoute(['GET', 'POST'], '/buQuanZiDuanList', $prefix . 'buQuanZiDuanList');
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadeBuQuanZiDuanFiles', $prefix . 'uploadeBuQuanZiDuanFiles');
             //获取上传列表
             $routeCollector->addRoute(['GET', 'POST'], '/getUploadLists', $prefix . 'getUploadLists'); //
             //获取上传文件类型

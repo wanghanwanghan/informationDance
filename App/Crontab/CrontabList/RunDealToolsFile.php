@@ -404,10 +404,6 @@ class RunDealToolsFile extends AbstractCronTask
         $nums = 1;
 
         $allFields = AdminUserSoukeConfig::getAllFieldsV2();
-        foreach ($allFields as $field=>$cname){
-            $title[] = $cname ;
-        }
-
 
         while (true) {
             if($nums%100==0){
@@ -529,7 +525,6 @@ class RunDealToolsFile extends AbstractCronTask
 
             $nums ++;
             yield $datas[] = $baseArr;
-
         }
     }
     static function  getYieldHeaderForCompleteCompanyInfo($xlsx_name){

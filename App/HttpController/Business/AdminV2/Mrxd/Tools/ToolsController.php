@@ -80,8 +80,49 @@ class ToolsController extends ControllerBase
         ],'');
     }
 
-    /*
+    public function buQuanZiDuanList(){
+        $requestData =  $this->getRequestData();
+        $page =$requestData['page']?:1;
+        $pageSize =$requestData['pageSize']?:20;
+        $total = 1;
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' =>$pageSize,
+            'total' => $total,
+            'totalPage' =>  ceil( $total/ $pageSize ),
+        ],
+            [
+                [
+                    'id' => 1,
+                    'admin_id_cname' => '操作人',
+                    'new_file_name' => '文件名称',
+                    'new_file_path' => '文件下载地址/Static/Temp/XXX.csv',
+                    'remark' => '备注',
+                    'state_cname' => '状态',
+                    'created_at' => '上传时间',
+                ]
 
+            ],'');
+    }
+
+    public function uploadeBuQuanZiDuanFiles(){
+        $requestData =  $this->getRequestData();
+        $page =$requestData['page']?:1;
+        $pageSize =$requestData['pageSize']?:20;
+        $total = 1;
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' =>$pageSize,
+            'total' => $total,
+            'totalPage' =>  ceil( $total/ $pageSize ),
+        ],
+            [
+
+            ],'成功');
+    }
+
+
+    /*
       type: 5 url补全
       type: 10 微信匹配
       type: 15 模糊匹配企业名称
