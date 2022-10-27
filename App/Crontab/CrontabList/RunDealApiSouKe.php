@@ -139,7 +139,8 @@ class RunDealApiSouKe extends AbstractCronTask
             // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
             ->SetQueryByYingShouGuiMo($searchOption)
             //四级分类 basic_nicid: A0111,A0112,A0113,
-            ->SetQueryBySiJiFenLei(    $requestDataArr['basic_nicid'] )
+            //->SetQueryBySiJiFenLei(    $requestDataArr['basic_nicid'] )
+            ->SetQueryBySiJiFenLeiV2(    $requestDataArr['basic_nicid'] )
             // 地区 basic_regionid: 110101,110102,
             ->SetQueryByBasicRegionid(   $requestDataArr['basic_regionid']  )
             ->addSize($size)
@@ -276,7 +277,8 @@ class RunDealApiSouKe extends AbstractCronTask
                 // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
                 ->SetQueryByYingShouGuiMo($searchOption)
                 //四级分类 basic_nicid: A0111,A0112,A0113,
-                ->SetQueryBySiJiFenLei(    $requestDataArr['basic_nicid'] )
+                //->SetQueryBySiJiFenLei(    $requestDataArr['basic_nicid'] )
+                ->SetQueryBySiJiFenLeiV2(    $requestDataArr['basic_nicid'] )
                 // 地区 basic_regionid: 110101,110102,
                 ->SetQueryByBasicRegionid(   $requestDataArr['basic_regionid']  )
                 ->addSize($size)
@@ -377,7 +379,8 @@ class RunDealApiSouKe extends AbstractCronTask
             $companyEsModel = new \App\ElasticSearch\Model\Company();
             $companyEsModel
                 //经营范围
-                ->SetQueryBySiJiFenLei($tmpSiji)
+                //->SetQueryBySiJiFenLei($tmpSiji)
+                ->SetQueryBySiJiFenLeiV2($tmpSiji)
                 ->addSize($size)
                 ->addSort('_id',"asc")
                 ->setSource($fieldsArr)

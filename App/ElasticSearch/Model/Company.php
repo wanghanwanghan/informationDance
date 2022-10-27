@@ -1021,7 +1021,8 @@ class Company extends ServiceBase
                 // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
                 ->SetQueryByYingShouGuiMo($searchOption)
                 //四级分类 basic_nicid: A0111,A0112,A0113,
-                ->SetQueryBySiJiFenLei(trim($requestDataArr['basic_nicid']),'NIC_ID')
+                //->SetQueryBySiJiFenLei(trim($requestDataArr['basic_nicid']),'NIC_ID')
+                ->SetQueryBySiJiFenLeiV2(trim($requestDataArr['basic_nicid']),'NIC_ID')
                 //公司类型
                 ->SetQueryByCompanyType(trim($requestDataArr['ENTTYPE']))
                 //公司状态
@@ -1201,7 +1202,8 @@ class Company extends ServiceBase
             // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
             ->SetQueryByYingShouGuiMo($searchOptionArr)
             //四级分类 basic_nicid: A0111,A0112,A0113,
-            ->SetQueryBySiJiFenLei(trim($requestData['basic_nicid']),'NIC_ID')
+            //->SetQueryBySiJiFenLei(trim($requestData['basic_nicid']),'NIC_ID')
+            ->SetQueryBySiJiFenLeiV2(trim($requestData['basic_nicid']),'NIC_ID')
             //公司类型
             ->SetQueryByCompanyType(trim($requestData['ENTTYPE']))
             //公司状态
@@ -1352,7 +1354,8 @@ class Company extends ServiceBase
                 // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
                 ->SetQueryByYingShouGuiMo($searchOption)
                 //四级分类 basic_nicid: A0111,A0112,A0113,
-                ->SetQueryBySiJiFenLei($requestDataArr['basic_nicid'],'NIC_ID')
+                //->SetQueryBySiJiFenLei($requestDataArr['basic_nicid'],'NIC_ID')
+                ->SetQueryBySiJiFenLeiV2($requestDataArr['basic_nicid'],'NIC_ID')
                 //公司类型
                 ->SetQueryByCompanyType(trim($requestDataArr['ENTTYPE']))
                 //公司状态
@@ -1525,7 +1528,8 @@ class Company extends ServiceBase
                 // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
                 ->SetQueryByYingShouGuiMo($searchOption)
                 //四级分类 basic_nicid: A0111,A0112,A0113,
-                ->SetQueryBySiJiFenLei($requestDataArr['basic_nicid'],'NIC_ID')
+                //->SetQueryBySiJiFenLei($requestDataArr['basic_nicid'],'NIC_ID')
+                ->SetQueryBySiJiFenLeiV2($requestDataArr['basic_nicid'],'NIC_ID')
                 //公司类型
                 ->SetQueryByCompanyType(trim($requestDataArr['ENTTYPE']))
                 //公司状态
