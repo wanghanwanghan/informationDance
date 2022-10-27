@@ -183,6 +183,68 @@ class XinDongService extends ServiceBase
 
     }
 
+    /**
+    "1": {
+    "cname": "在营（开业）",
+    "detail": ""
+    },
+    "2": {
+    "cname": "吊销",
+    "detail": ""
+    },
+    "3": {
+    "cname": "注销",
+    "detail": ""
+    },
+    "4": {
+    "cname": "迁出",
+    "detail": ""
+    },
+    "8": {
+    "cname": "停业",
+    "detail": ""
+    },
+    "9": {
+    "cname": "其他",
+    "detail": ""
+    }
+    1	在营（开业）
+    2	吊销
+    21	吊销，未注销
+    22	吊销，已注销
+    3	注销
+    4	迁出
+    5	撤销
+    6	临时(个体工商户使用)
+    8	停业
+    9	其他
+    9_01	撤销
+    9_02	待迁入
+    9_03	经营期限届满
+    9_04	清算中
+    9_05	停业
+    9_06	拟注销
+    9_07	非正常户
+    30	正在注销
+    !	-
+     */
+    function getRegStatusV2($getAll = false)
+    {
+        $map = [
+            1  =>  $this->reg_status_cunxu_des,
+            $this->reg_status_zaiye  =>  $this->reg_status_zaiye_des,
+            $this->reg_status_diaoxiao  =>  $this->reg_status_diaoxiao_des,
+            $this->reg_status_zhuxiao  =>  $this->reg_status_zhuxiao_des,
+            $this->reg_status_tingye  =>  $this->reg_status_tingye_des,
+        ];
+
+        if ($getAll) {
+            return array_merge($map,[0 => '全部']);
+        }
+        return $map;
+
+    }
+
     // 获取企业成立年限
     function getEstiblishYear($getAll = false)
     {

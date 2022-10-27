@@ -629,7 +629,8 @@ class Company extends ServiceBase
 
         $matchedCnames = [];
         foreach($reg_status_values as $item){
-            $item && $matchedCnames[] = (new XinDongService())->getRegStatus()[$item];
+            //$item && $matchedCnames[] = (new XinDongService())->getRegStatus()[$item];
+            $item && $matchedCnames[] = $item;
         }
         (!empty($matchedCnames)) && $this->es->addMustShouldPhraseQuery( 'ENTSTATUS' , $matchedCnames) ;
 
