@@ -107,7 +107,6 @@ class ToolsController extends ControllerBase
     public function uploadeBuQuanZiDuanFiles(){
         $requestData =  $this->getRequestData();
         $succeedFiels = [];
-
         $files = $this->request()->getUploadedFiles();
         foreach ($files as $key => $oneFile) {
             try {
@@ -170,11 +169,6 @@ class ToolsController extends ControllerBase
         }
 
         return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
-
-        return $this->writeJson(200, [  ],
-            [
-
-            ],'成功');
     }
 
 
