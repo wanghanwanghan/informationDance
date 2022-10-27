@@ -3150,7 +3150,7 @@ eof;
 
             // 20220922161425_测试下上传
             return $this->writeJson(200,[ ] ,
-                RunDealQueueLists::runByItem($res)
+                RunDealQueueLists::runByItem($res,true)
                 , '成功', true, []);
         }
 

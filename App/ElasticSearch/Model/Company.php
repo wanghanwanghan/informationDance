@@ -953,6 +953,70 @@ class Company extends ServiceBase
             $InitData['id'],DownloadSoukeHistory::$state_file_succeed
         );
     }
+    /**
+    事件里执行的
+     */
+    static function exportCompanyDataToCsv($paramsData){
+        $startMemory = memory_get_usage();
+        $InitData =  DownloadSoukeHistory::findById( $paramsData['data_id'] );
+        if(empty($InitData)){
+            return [
+                'msg' => 'wrong id',
+                'data_id' => $paramsData['data_id'],
+                '$paramsData' => $paramsData,
+            ];
+        }
+
+        $InitData =  DownloadSoukeHistory::findById( $paramsData['data_id'] );
+        $filename = '搜客导出_'.date('YmdHis').'.csv';
+        $f = fopen(OTHER_FILE_PATH.$filename, "w");
+        fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+        $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArrayV2($InitData['admin_id']);
+        array_unshift($fieldsArr, 'companyid');  //在数组开头插入
+
+        $filedCname = ['companyid'];
+        $allFields = AdminUserSoukeConfig::getAllFieldsV2();
+        foreach ($fieldsArr as $field){
+            if($allFields[$field]){
+                $filedCname[] = $allFields[$field];
+            }
+        }
+        fputcsv($f, $filedCname);
+
+        $featureArr = json_decode($InitData['feature'],true);
+
+        $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
+
+        foreach ($tmpXlsxDatas as $dataItem){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$dataItem' => $dataItem
+                ])
+            );
+            $tmp = [ ];
+            foreach ($fieldsArr as $field){
+                $tmp[$field] = $dataItem[$field];
+            }
+            fputcsv($f, $tmp);
+        }
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+            ])
+        );
+
+        //更新文件地址
+        DownloadSoukeHistory::setFilePath($InitData['id'],'/Static/OtherFile/',$filename);
+
+        //设置状态
+        DownloadSoukeHistory::setStatus(
+            $InitData['id'],DownloadSoukeHistory::$state_file_succeed
+        );
+    }
 
     static function getYieldDataForSouKe($totalNums,$requestDataArr,$fieldsArr){
 
@@ -995,7 +1059,7 @@ class Company extends ServiceBase
             $companyEsModel = new \App\ElasticSearch\Model\Company();
             $companyEsModel
                 //经营范围
-                ->SetQueryByBusinessScope(trim($requestDataArr['OPSCOPE']),"OPSCOPE")
+                ->SetQueryByBusinessScope(trim($requestDataArr['basic_opscope']),"OPSCOPE")
                 //数字经济及其核心产业
                 ->SetQueryByBasicSzjjid(trim($requestDataArr['basic_szjjid']))
                 // 搜索文案 智能搜索
