@@ -2759,12 +2759,12 @@ eof;
         foreach ($menus as $child_menu) {
             if ($child_menu['parent'] == $pid) {
                 $item = [
-                    'id' => $child_menu['id'],
+                    'id' => $child_menu['code'],
                     'label' => $child_menu['label'],
                     'cond' => $child_menu['cond'] ?? '',
                     'children' => []
                 ];
-                self::traverseMenu($menus, $item['children'], $child_menu['id']);
+                self::traverseMenu($menus, $item['children'], $child_menu['code']);
                 $result[] = $item;
             }
         }
@@ -2780,21 +2780,21 @@ eof;
         ){
 
             $menu = [
-                ['id' => 1, 'parent' => 0, 'label' => '您要查询哪个行业？'],
-                ['id' => 2, 'parent' => 1, 'label' => '物流'],
-                ['id' => 3, 'parent' => 2, 'label' => '企业名称中含有？'],
-                ['id' => 4, 'parent' => 3, 'label' => '物流', 'cond' => 'basic_entname|物流'],
-                ['id' => 5, 'parent' => 3, 'label' => '货运', 'cond' => 'basic_entname|货运'],
-                ['id' => 6, 'parent' => 3, 'label' => '普通货运', 'cond' => 'basic_entname|普通货运'],
-                ['id' => 7, 'parent' => 2, 'label' => '经营范围含有？'],
-                ['id' => 8, 'parent' => 7, 'label' => '普通货运', 'cond' => 'basic_opscope|普通货运'],
-                ['id' => 9, 'parent' => 7, 'label' => '不普通货运', 'cond' => 'basic_opscope|不普通货运'],
-                ['id' => 10, 'parent' => 2, 'label' => '经营状态是？'],
-                ['id' => 11, 'parent' => 10, 'label' => '开业', 'cond' => 'basic_status|1'],
-                ['id' => 12, 'parent' => 10, 'label' => '吊销', 'cond' => 'basic_status|2'],
-                ['id' => 13, 'parent' => 10, 'label' => '注销', 'cond' => 'basic_status|3'],
+                ['code' => 1, 'parent' => 0, 'label' => '您要查询哪个行业？'],
+                ['code' => 2, 'parent' => 1, 'label' => '物流'],
+                ['code' => 3, 'parent' => 2, 'label' => '企业名称中含有？'],
+                ['code' => 4, 'parent' => 3, 'label' => '物流', 'cond' => 'basic_entname|物流'],
+                ['code' => 5, 'parent' => 3, 'label' => '货运', 'cond' => 'basic_entname|货运'],
+                ['code' => 6, 'parent' => 3, 'label' => '普通货运', 'cond' => 'basic_entname|普通货运'],
+                ['code' => 7, 'parent' => 2, 'label' => '经营范围含有？'],
+                ['code' => 8, 'parent' => 7, 'label' => '普通货运', 'cond' => 'basic_opscope|普通货运'],
+                ['code' => 9, 'parent' => 7, 'label' => '不普通货运', 'cond' => 'basic_opscope|不普通货运'],
+                ['code' => 10, 'parent' => 2, 'label' => '经营状态是？'],
+                ['code' => 11, 'parent' => 10, 'label' => '开业', 'cond' => 'basic_status|1'],
+                ['code' => 12, 'parent' => 10, 'label' => '吊销', 'cond' => 'basic_status|2'],
+                ['code' => 13, 'parent' => 10, 'label' => '注销', 'cond' => 'basic_status|3'],
 
-                ['id' => 14, 'pid' => 2, 'label' => '行业类型是？'],
+                ['code' => 14, 'pid' => 2, 'label' => '行业类型是？'],
             ];
 
             $res = [];
