@@ -404,8 +404,6 @@ class RunDealToolsFile extends AbstractCronTask
         $nums = 1;
 
         $allFields = AdminUserSoukeConfig::getAllFieldsV2();
-
-
         foreach ($allFields as $field=>$cname){
             $title[] = $cname ;
         }
@@ -429,18 +427,6 @@ class RunDealToolsFile extends AbstractCronTask
             if (empty($one)) {
                 break;
             }
-
-            //第一行是标题  不是数据
-//            if($nums==1){
-//
-//                yield $datas[] = [
-//                    '企业模糊名称',
-//                    '匹配结果1',
-//                    '匹配结果2',
-//                    '匹配结果3',
-//                ];
-//                continue;
-//            }
 
             //字段Name
             $value0 = self::strtr_func($one[0]);
@@ -541,12 +527,25 @@ class RunDealToolsFile extends AbstractCronTask
                 }
             }
 
-            if($nums == 1 ){
-                yield $datas[] = $title;
-            }
-            yield $datas[] = $baseArr;
             $nums ++;
+            yield $datas[] = $baseArr;
+
         }
+    }
+    static function  getYieldHeaderForCompleteCompanyInfo($xlsx_name){
+        $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
+        $excel_read->openFile($xlsx_name)->openSheet();
+
+        $datas = [];
+        $nums = 1;
+
+        $allFields = AdminUserSoukeConfig::getAllFieldsV2();
+        foreach ($allFields as $field=>$cname){
+            $title[] = $cname ;
+        }
+
+        return $title;
+
     }
 
     //生成下载文件
@@ -573,28 +572,33 @@ class RunDealToolsFile extends AbstractCronTask
                 $InitData['type'] == 5
             ){
                 $tmpXlsxDatas = self::getYieldDataForUrl($InitData['upload_file_name']);
+                $tmpXlsxHeaders = [];
             }
             if(
                 $InitData['type'] == 10
             ){
                 $tmpXlsxDatas = self::getYieldDataForWeinXin($InitData['upload_file_name']);
+                $tmpXlsxHeaders = [];
             }
             if(
                 $InitData['type'] == 15
             ){
                 $tmpXlsxDatas = self::getYieldDataForFuzzyMatch($InitData['upload_file_name']);
+                $tmpXlsxHeaders = [];
             }
 
             if(
                 $InitData['type'] == 20
             ){
                 $tmpXlsxDatas = self::getYieldDataForSplite($InitData['upload_file_name']);
+                $tmpXlsxHeaders = [];
             }
 
             if(
                 $InitData['type'] == 25
             ){
                 $tmpXlsxDatas = self::getYieldDataForCompleteCompanyInfo($InitData['upload_file_name']);
+                $tmpXlsxHeaders = self::getYieldHeaderForCompleteCompanyInfo($InitData['upload_file_name']);
             }
 
 
@@ -618,10 +622,15 @@ class RunDealToolsFile extends AbstractCronTask
                 ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
                 ->toResource();
 
+            $header = [];
             $fileObject
                 ->defaultFormat($colorStyle)
                 ->defaultFormat($alignStyle)
             ;
+            if(!empty($tmpXlsxHeaders)){
+                $fileObject ->header($tmpXlsxHeaders)
+                ;
+            }
             foreach ($tmpXlsxDatas as $dataItem){
                 $fileObject ->data([$dataItem]);
             }
