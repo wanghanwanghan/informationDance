@@ -2760,7 +2760,7 @@ eof;
             if ($child_menu['parent'] == $pid) {
                 $item = [
                     'id' => $child_menu['code'],
-                    'label' => $child_menu['label'],
+                    'label' => $child_menu['name'],
                     'cond' => $child_menu['cond'] ?? '',
                     'children' => []
                 ];
