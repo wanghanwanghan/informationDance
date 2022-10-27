@@ -802,6 +802,9 @@ class Company extends ServiceBase
 
     // addMustShouldPhrasePrefixQuery
     function SetQueryBySiJiFenLei($siJiFenLeiStrs,$field = 'si_ji_fen_lei_code'){
+        if(substr($siJiFenLeiStrs, -1) == ','){
+            $siJiFenLeiStrs = rtrim($siJiFenLeiStrs, ",");
+        }
         $siJiFenLeiStrs && $siJiFenLeiArr = explode(',', $siJiFenLeiStrs);
         if(!empty($siJiFenLeiArr)){
             $this->es->addMustShouldPhraseQuery( $field , $siJiFenLeiArr) ;
@@ -810,6 +813,9 @@ class Company extends ServiceBase
     }
 
     function SetQueryBySiJiFenLeiV2($nicIdStr,$field = 'NIC_ID'){
+        if(substr($nicIdStr, -1) == ','){
+            $nicIdStr = rtrim($nicIdStr, ",");
+        }
         $nicIdStr && $nicIdArr = explode(',', $nicIdStr);
         if(!empty($nicIdArr)){
             $this->es->addMustShouldPhrasePrefixQuery( $field , $nicIdArr) ;
@@ -819,6 +825,9 @@ class Company extends ServiceBase
 
 
     function SetQueryByCompanyStatus($companyStatus){
+        if(substr($companyStatus, -1) == ','){
+            $companyStatus = rtrim($companyStatus, ",");
+        }
         $companyStatus && $siJiFenLeiArr = explode(',', $companyStatus);
         if(!empty($siJiFenLeiArr)){
             $this->es->addMustShouldPhraseQuery( 'ENTTYPE' , $siJiFenLeiArr) ;
@@ -828,7 +837,12 @@ class Company extends ServiceBase
     }
 
     function SetQueryByCompanyType($companyType){
+        if(substr($companyType, -1) == ','){
+            $companyType = rtrim($companyType, ",");
+        }
         $companyType && $siJiFenLeiArr = explode(',', $companyType);
+
+
         if(!empty($siJiFenLeiArr)){
             $this->es->addMustShouldPhraseQuery( 'ENTTYPE' , $siJiFenLeiArr) ;
         }
@@ -836,6 +850,9 @@ class Company extends ServiceBase
     }
     //function SetQueryByBasicRegionid($basiRegionidStr,$fieldName = 'reg_number'){
     function SetQueryByBasicRegionid($basiRegionidStr,$fieldName = 'DOMDISTRICT'){
+        if(substr($basiRegionidStr, -1) == ','){
+            $basiRegionidStr = rtrim($basiRegionidStr, ",");
+        }
         $basiRegionidStr && $basiRegionidArr = explode(',',$basiRegionidStr);
         if(!empty($basiRegionidArr)){
             $this->es->addMustShouldPrefixQuery( $fieldName, $basiRegionidArr) ;
