@@ -52,27 +52,48 @@ class jincai_shoudong extends AbstractProcess
 
     protected function run($arg)
     {
-        $str = 'eyJjcmVhdGVUaW1lIjoiMjAyMi0xMC0yMSAxMzo0NzozNCIsIm5zcnNiaCI6IjkxMzQwNzAwTUEyVEdEREo4WCIsInByb3ZpbmNlIjoiYW5odWkiLCJ0YXNrQ29kZSI6IkEwMDIiLCJ0YXNrU3RhdHVzIjowLCJ0cmFjZU5vIjoiOTEzNDA3MDBNQTJUR0RESjhYMTY2NjMzMTI1NDkyNCIsInl3Qm9keSI6eyJuc3JzYmgiOiI5MTM0MDcwME1BMlRHRERKOFgiLCJrcHJxcSI6IjIwMjAtMTEtMDEiLCJrcHJxeiI6IjIwMjItMDktMzAifX0=';
-        $str = base64_decode($str);
-        $arr = jsonDecode($str);
-        $traceNo = $arr['traceNo'];
-        echo $traceNo . PHP_EOL;
-        $rwh_info = (new JinCaiShuKeService())
-            ->obtainResultTraceNo($traceNo);
-        // main
-        foreach ($rwh_info['result'] as $key => $rwh) {
-            //$main = (new JinCaiShuKeService())
-            //    ->obtainFpInfo('91340700MA2TGDDJ8X', 'anhui', $rwh['wupanTraceNo']);
-            //$this->handleMain($main);
+        $list = JinCaiTrace::create()->all();
+
+        foreach ($list as $index => $one) {
+            $rwh_list = (new JinCaiShuKeService())
+                ->obtainResultTraceNo($one->getAttr('traceNo'));
+            $timeout = time() - $one->getAttr('updated_at');
+            foreach ($rwh_list['result'] as $rwh) {
+                $province = $one->getAttr('province');
+                $socialCredit = $one->getAttr('socialCredit');
+                $retry = $rwh['retry'];
+                $taskStatus = $rwh['taskStatus'] - 0;
+                $traceNo = $rwh['traceNo'];
+                $wupanTraceNo = $rwh['wupanTraceNo'];
+                if ($taskStatus !== 2 && $timeout > 3600) {
+                    echo $socialCredit . PHP_EOL;
+                    break;
+//                    $check = $this->refreshTask($traceNo);
+//                    if (!$check) {
+//                        dd($traceNo);
+//                    }
+//                    echo $socialCredit . '|||' . $index . PHP_EOL;
+//                    break;
+                }
+            }
         }
-        // detail
-        foreach ($rwh_info['result'] as $key => $rwh) {
-            echo $key . PHP_EOL;
-            $detail = (new JinCaiShuKeService())
-                ->obtainFpDetailInfo('91340700MA2TGDDJ8X', 'anhui', $rwh['wupanTraceNo']);
-            $this->handleDetail($detail);
+
+        dd('呵呵');
+
+
+    }
+
+    function refreshTask($traceNo): bool
+    {
+        $refreshTask = (new JinCaiShuKeService())->refreshTask($traceNo);
+        if ($refreshTask['result'] === '重置任务成功') {
+            $ret = JinCaiTrace::create()
+                ->where('traceNo', $traceNo)
+                ->update(['isComplete' => 0]);
+        } else {
+            $ret = false;
         }
-        dd('完成了');
+        return $ret;
     }
 
     function handleMain($main)
@@ -288,82 +309,64 @@ class jincai_shoudong extends AbstractProcess
     function addTask()
     {
         $list = \App\HttpController\Models\Api\AntAuthList::create()
-            ->where('getDataSource', 2)
-            ->where('status', 3)
-            ->where('isElectronics', '%信息成功%', 'like')
+            ->where('id', $all, 'IN')
             ->all();
-
         foreach ($list as $target) {
-
             // 开票日期止
             $kprqz = Carbon::now()->subMonths(1)->endOfMonth()->timestamp;
-
             // 最大取票月份
             $big_kprq = $target->getAttr('big_kprq');
-
             // 本月取过了 不取了
             if ($kprqz === $big_kprq) {
                 continue;
             }
-
             // 开票日期起
             if ($big_kprq - 0 === 0) {
                 $kprqq = Carbon::now()->subMonths(23)->startOfMonth()->timestamp;
             } else {
                 $kprqq = Carbon::createFromTimestamp($big_kprq)->subMonths(1)->startOfMonth()->timestamp;
             }
-
             // 拼task请求参数
-            for ($cxlx = 2; $cxlx--;) {
-
-                $ywBody = [
-                    'cxlx' => trim($cxlx),// 查询类型 0销项 1 进项
-                    'kprqq' => date('Y-m-d', $kprqq),// 开票日期起
-                    'kprqz' => date('Y-m-d', $kprqz),// 开票日期止
-                    'nsrsbh' => $target->getAttr('socialCredit'),// 纳税人识别号
-                ];
-
-                try {
-                    for ($try = 3; $try--;) {
-                        // 发送 试3次
-                        $addTaskInfo = (new JinCaiShuKeService())->addTask(
-                            $target->getAttr('socialCredit'),
-                            $target->getAttr('province'),
-                            $target->getAttr('city'),
-                            $ywBody
-                        );
-                        if (isset($addTaskInfo['code']) && strlen($addTaskInfo['code']) > 1) {
-                            break;
-                        }
-                        \co::sleep(120);
+            $ywBody = [
+                'kprqq' => date('Y-m-d', $kprqq),// 开票日期起
+                'kprqz' => date('Y-m-d', $kprqz),// 开票日期止
+                'nsrsbh' => $target->getAttr('socialCredit'),// 纳税人识别号
+            ];
+            try {
+                for ($try = 3; $try--;) {
+                    // 发送 试3次
+                    $addTaskInfo = (new JinCaiShuKeService())->addTask(
+                        $target->getAttr('socialCredit'),
+                        $target->getAttr('province'),
+                        $target->getAttr('city'),
+                        $ywBody
+                    );
+                    if (isset($addTaskInfo['code']) && strlen($addTaskInfo['code']) > 1) {
+                        break;
                     }
-                    JinCaiTrace::create()->data([
-                        'entName' => $target->getAttr('entName'),
-                        'socialCredit' => $target->getAttr('socialCredit'),
-                        'code' => $addTaskInfo['code'] ?? '未返回',
-                        'type' => 1,// 无盘
-                        'province' => $addTaskInfo['result']['province'] ?? '未返回',
-                        'taskCode' => $addTaskInfo['result']['taskCode'] ?? '未返回',
-                        'taskStatus' => $addTaskInfo['result']['taskStatus'] ?? '未返回',
-                        'traceNo' => $addTaskInfo['result']['traceNo'] ?? '未返回',
-                        'kprqq' => $kprqq,
-                        'kprqz' => $kprqz,
-                        'cxlx' => $cxlx,
-                    ])->save();
-                    // 还要间隔2分钟
                     \co::sleep(120);
-                } catch (\Throwable $e) {
-                    $file = $e->getFile();
-                    $line = $e->getLine();
-                    $msg = $e->getMessage();
-                    $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-                    CommonService::getInstance()->log4PHP($content, 'try-catch', 'GetJinCaiTrace.log');
-                    continue;
                 }
-
+                JinCaiTrace::create()->data([
+                    'entName' => $target->getAttr('entName'),
+                    'socialCredit' => $target->getAttr('socialCredit'),
+                    'code' => $addTaskInfo['code'] ?? '未返回',
+                    'type' => 1,// 无盘
+                    'province' => $addTaskInfo['result']['province'] ?? '未返回',
+                    'taskCode' => $addTaskInfo['result']['taskCode'] ?? '未返回',
+                    'taskStatus' => $addTaskInfo['result']['taskStatus'] ?? '未返回',
+                    'traceNo' => $addTaskInfo['result']['traceNo'] ?? '未返回',
+                    'kprqq' => $kprqq,
+                    'kprqz' => $kprqz,
+                ])->save();
+            } catch (\Throwable $e) {
+                $file = $e->getFile();
+                $line = $e->getLine();
+                $msg = $e->getMessage();
+                $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+                CommonService::getInstance()->log4PHP($content, 'try-catch', 'GetJinCaiTrace.log');
             }
-
         }
+        dd('完成');
     }
 
     function addTaskOne($id)
