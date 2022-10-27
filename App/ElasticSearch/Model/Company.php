@@ -823,6 +823,17 @@ class Company extends ServiceBase
         return $this;
     }
 
+    function SetQueryByQiYeLeiXing($Str,$field = 'ENTTYPE'){
+        if(substr($Str, -1) == ','){
+            $Str = rtrim($Str, ",");
+        }
+        $Str && $Arr = explode(',', $Str);
+        if(!empty($Arr)){
+            $this->es->addMustShouldPhrasePrefixQuery( $field , $Arr) ;
+        }
+        return $this;
+    }
+
 
     function SetQueryByCompanyStatus($companyStatus){
         if(substr($companyStatus, -1) == ','){

@@ -180,6 +180,8 @@ class SouKeController extends ControllerBase
             //四级分类 basic_nicid: A0111,A0112,A0113,
             //->SetQueryBySiJiFenLei(trim($this->request()->getRequestParam('basic_nicid')))
             ->SetQueryBySiJiFenLeiV2(trim($this->request()->getRequestParam('basic_nicid')))
+            //企业类型
+            ->SetQueryByQiYeLeiXing(trim($this->request()->getRequestParam('company_type')))
             //公司类型
             ->SetQueryByCompanyType(trim($this->request()->getRequestParam('ENTTYPE')))
             //公司状态
