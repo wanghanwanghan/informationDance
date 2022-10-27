@@ -179,7 +179,7 @@ class ToolsFileLists extends ModelBase
            }
            fputcsv($f, $title);
 
-           $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH); 
+           $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
            foreach ($yieldDatas as $dataItem) {
                //需要补全字段
                if($dataItem[1]){
@@ -274,7 +274,8 @@ class ToolsFileLists extends ModelBase
            }
 
            self::updateById($filesData['id'],[
-               'new_file_name' => $fileName.".csv"
+               'new_file_name' => $fileName.".csv",
+               'state' => self::$state_succeed,
            ]);
        }
     }
