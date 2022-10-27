@@ -404,16 +404,16 @@ class RunDealToolsFile extends AbstractCronTask
         $nums = 1;
 
         $allFields = AdminUserSoukeConfig::getAllFieldsV2();
-        $noNeedFeilds = [
-            'ENTNAME',
-            'companyid',
-        ];
+//        $noNeedFeilds = [
+//            'ENTNAME',
+//            'companyid',
+//        ];
         foreach ($allFields as $field=>$cname){
-            if(
-                in_array($field,$noNeedFeilds)
-            ){
-                continue;
-            }
+//            if(
+//                in_array($field,$noNeedFeilds)
+//            ){
+//                continue;
+//            }
 
             $title[] = $cname ;
         }
@@ -422,9 +422,10 @@ class RunDealToolsFile extends AbstractCronTask
         while (true) {
             if($nums == 1){
                 yield $datas[] =  $title;
+                $nums ++;
+                continue;
             }
 
-            $nums ++;
             if($nums%100==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
@@ -468,11 +469,11 @@ class RunDealToolsFile extends AbstractCronTask
             }
 
             foreach ($allFields as $field=>$cname){
-                if(
-                    in_array($field,$noNeedFeilds)
-                ){
-                    continue;
-                }
+//                if(
+//                    in_array($field,$noNeedFeilds)
+//                ){
+//                    continue;
+//                }
 
                 if($field=='ENTTYPE'){
                     $cname =   CodeCa16::findByCode($res['ENTTYPE']);
@@ -558,6 +559,7 @@ class RunDealToolsFile extends AbstractCronTask
                     $baseArr[] = str_split ( $res[$field], 32766 )[0] ;
                 }
             }
+            $nums ++;
             yield $datas[] = $baseArr;
         }
     }
