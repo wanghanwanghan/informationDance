@@ -833,7 +833,8 @@ class Company extends ServiceBase
         }
         return $this;
     }
-    function SetQueryByBasicRegionid($basiRegionidStr,$fieldName = 'reg_number'){
+    //function SetQueryByBasicRegionid($basiRegionidStr,$fieldName = 'reg_number'){
+    function SetQueryByBasicRegionid($basiRegionidStr,$fieldName = 'DOMDISTRICT'){
         $basiRegionidStr && $basiRegionidArr = explode(',',$basiRegionidStr);
         if(!empty($basiRegionidArr)){
             $this->es->addMustShouldPrefixQuery( $fieldName, $basiRegionidArr) ;
