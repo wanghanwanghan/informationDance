@@ -171,7 +171,7 @@ class ToolsFileLists extends ModelBase
            foreach ($yieldDatas as $dataItem) {
                fputcsv($f, $dataItem);
            }
-           self::setData($filesData['id'],[
+           self::updateById($filesData['id'],[
                'new_file_name' => $fileName.".csv"
            ]);
        }

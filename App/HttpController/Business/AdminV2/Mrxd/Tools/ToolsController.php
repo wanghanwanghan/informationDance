@@ -86,111 +86,90 @@ class ToolsController extends ControllerBase
         $requestData =  $this->getRequestData();
         $page =$requestData['page']?:1;
         $pageSize =$requestData['pageSize']?:20;
-        $total = 1;
-        if($requestData['real']){
-            $res = ToolsFileLists::findByConditionWithCountInfo(
-                [],$page
-            );
-            foreach ($res['data'] as &$dataItem ){
-                $adminInfo = \App\HttpController\Models\AdminV2\AdminNewUser::findById($dataItem['admin_id']);
-                $dataItem['admin_id_cname'] = $adminInfo->user_name;
-                $dataItem['state_cname'] = ToolsFileLists::stateMaps()[$dataItem['state']];
-            }
-            $total = $res['total'];
-            return $this->writeJson(200, [
-                'page' => $page,
-                'pageSize' =>$pageSize,
-                'total' => $total,
-                'totalPage' =>  ceil( $total/ $pageSize ),
-            ],  $res['data'],'');
+
+        $res = ToolsFileLists::findByConditionWithCountInfo(
+            [],$page
+        );
+        foreach ($res['data'] as &$dataItem ){
+            $adminInfo = \App\HttpController\Models\AdminV2\AdminNewUser::findById($dataItem['admin_id']);
+            $dataItem['admin_id_cname'] = $adminInfo->user_name;
+            $dataItem['state_cname'] = ToolsFileLists::stateMaps()[$dataItem['state']];
         }
+        $total = $res['total'];
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' =>$pageSize,
             'total' => $total,
             'totalPage' =>  ceil( $total/ $pageSize ),
-        ],
-            [
-                [
-                    'id' => 1,
-                    'admin_id_cname' => '操作人',
-                    'new_file_name' => '文件名称',
-                    'new_file_path' => '文件下载地址/Static/Temp/XXX.csv',
-                    'remark' => '备注',
-                    'state_cname' => '状态',
-                    'created_at' => '上传时间',
-                ]
-
-            ],'');
+        ],  $res['data'],'');
     }
 
     public function uploadeBuQuanZiDuanFiles(){
         $requestData =  $this->getRequestData();
         $succeedFiels = [];
-        if($requestData['real']){
-            $files = $this->request()->getUploadedFiles();
-            foreach ($files as $key => $oneFile) {
-                try {
-                    $fileName = $oneFile->getClientFilename();
-                    $fileInfo = pathinfo($fileName);
-                    if($fileInfo['extension']!='xlsx'){
-                        return $this->writeJson(203, [], [],'暂时只支持xlsx文件！');
-                    }
-                    $fileName = date('Y_m_d_H_i',time()).$fileName;
-                    $path = OTHER_FILE_PATH . $fileName;
-                    if(file_exists($path)){
-                        return $this->writeJson(203, [], [],'文件已存在！');
-                    }
 
-                    $res = $oneFile->moveTo($path);
-                    if(!file_exists($path)){
-                        return $this->writeJson(203, [], [],'文件移动失败！');
-                    }
+        $files = $this->request()->getUploadedFiles();
+        foreach ($files as $key => $oneFile) {
+            try {
+                $fileName = $oneFile->getClientFilename();
+                $fileInfo = pathinfo($fileName);
+                if($fileInfo['extension']!='xlsx'){
+                    return $this->writeJson(203, [], [],'暂时只支持xlsx文件！');
+                }
+                $fileName = date('Y_m_d_H_i',time()).$fileName;
+                $path = OTHER_FILE_PATH . $fileName;
+                if(file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件已存在！');
+                }
 
-                    $UploadRecordRes =  ToolsFileLists::addRecordV2(
+                $res = $oneFile->moveTo($path);
+                if(!file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件移动失败！');
+                }
+
+                $UploadRecordRes =  ToolsFileLists::addRecordV2(
+                    [
+                        'admin_id' => $this->loginUserinfo['id'],
+                        'file_name' => $fileName,
+                        'new_file_name' => '',
+                        'remark' => $requestData['remark']?:'',
+                        'type' => $requestData['type']?:'',
+                        'state' => $requestData['state']?:'',
+                        'touch_time' => $requestData['touch_time']?:'',
+                    ]
+                );
+                if(!$UploadRecordRes){
+                    return $this->writeJson(203, [], [],'文件上传失败');
+                }
+
+                    $res = QueueLists::addRecord(
                         [
-                            'admin_id' => $this->loginUserinfo['id'],
-                            'file_name' => $fileName,
-                            'new_file_name' => '',
-                            'remark' => $requestData['remark']?:'',
-                            'type' => $requestData['type']?:'',
-                            'state' => $requestData['state']?:'',
-                            'touch_time' => $requestData['touch_time']?:'',
+                            'name' => '',
+                            'desc' => '',
+                            'func_info_json' => json_encode(
+                                [
+                                    'class' => '\App\HttpController\Models\MRXD\ToolsFileLists',
+                                    'static_func'=> 'buQuanZiDuan',
+                                ]
+                            ),
+                            'params_json' => json_encode([
+
+                            ]),
+                            'type' => QueueLists::$typle_finance,
+                            'remark' => '',
+                            'begin_date' => NULL,
+                            'msg' => '',
+                            'status' => QueueLists::$status_init,
                         ]
                     );
-                    if(!$UploadRecordRes){
-                        return $this->writeJson(203, [], [],'文件上传失败');
-                    }
 
-//                    $res = QueueLists::addRecord(
-//                        [
-//                            'name' => '',
-//                            'desc' => '',
-//                            'func_info_json' => json_encode(
-//                                [
-//                                    'class' => '\App\HttpController\Models\MRXD\ToolsFileLists',
-//                                    'static_func'=> 'buQuanZiDuan',
-//                                ]
-//                            ),
-//                            'params_json' => json_encode([
-//
-//                            ]),
-//                            'type' => QueueLists::$typle_finance,
-//                            'remark' => '',
-//                            'begin_date' => NULL,
-//                            'msg' => '',
-//                            'status' => QueueLists::$status_init,
-//                        ]
-//                    );
-
-                    $succeedFiels[] = $fileName;
-                } catch (\Throwable $e) {
-                    return $this->writeJson(202, [], [],'导入失败'.$e->getMessage());
-                }
+                $succeedFiels[] = $fileName;
+            } catch (\Throwable $e) {
+                return $this->writeJson(202, [], [],'导入失败'.$e->getMessage());
             }
-
-            return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
         }
+
+        return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
 
         return $this->writeJson(200, [  ],
             [
