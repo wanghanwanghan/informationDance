@@ -2798,8 +2798,10 @@ eof;
             ];
 
             $res = [];
+            $Sql = "select id,`code`,name,parent,`level` from code_ca16 " ;
+            $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_hd_saic'));
 
-            self::traverseMenu($menu, $res, 0);
+            self::traverseMenu($data, $res, '');
 
             return $this->writeJson(200, null, $res);
         }
