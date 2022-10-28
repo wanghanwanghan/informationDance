@@ -33,6 +33,7 @@ use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\MRXD\InsuranceDataHuiZhong;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
+use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\MRXD\XinDongKeDongFrontEndAnalyzeList;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
@@ -2774,7 +2775,12 @@ eof;
     function testExport()
     {
         $requestData =  $this->getRequestData();
-
+        if(
+            $this->getRequestData('buQuanZiDuan')
+        ){
+            ToolsFileLists::buQuanZiDuan();
+            return $this->writeJson(200, null, $res);
+        }
         if(
             $this->getRequestData('chuangLian')
         ){
