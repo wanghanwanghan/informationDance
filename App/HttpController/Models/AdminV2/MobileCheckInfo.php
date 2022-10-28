@@ -137,15 +137,18 @@ class MobileCheckInfo extends ModelBase
 //            ])
 //        );
         $mobilesArr = explode(',',$mobileStr);
+        //需要重新调取接口检测的号码集合
         $needsCheckMobiles =  [];
+        //无效的号码集合
         $invalidMobiles =  [];
+        //检测结果（新加旧）
         $newCheckRes = [];
 
         foreach ($mobilesArr as $mobile){
             if($mobile < 0 ){
                 continue ;
             }
-            //校验号码有效性
+            //校验号码有效性 无效的号码 直接设置结果
             if( !self::checkIfIsMobile($mobile) ){
                  $invalidMobiles[] = $mobile;
                 $newCheckRes[] = [
@@ -166,7 +169,7 @@ class MobileCheckInfo extends ModelBase
                  continue;
              }
 
-            //取旧的结果
+            //从库里/redis里取旧的结果
             $tmpRes = self::findResByMobile($mobile);
             if(!empty($tmpRes)){
                 $newCheckRes[] = $tmpRes;
@@ -182,7 +185,7 @@ class MobileCheckInfo extends ModelBase
                 continue;
             }
 
-            //没有旧的结果
+            //之前没检测过 需要重新检测的
             $needsCheckMobiles[$mobile] = $mobile;
 //            CommonService::getInstance()->log4PHP(
 //                json_encode([
@@ -194,7 +197,7 @@ class MobileCheckInfo extends ModelBase
 //            );
         }
 
-        //需要查询的
+        //需要调取api拉取结果的
         if(
             !empty($needsCheckMobiles)
         ){
@@ -211,7 +214,7 @@ class MobileCheckInfo extends ModelBase
 //                    ]
 //                ])
 //            );
-            //全部都是无效的
+            //接口错误|或者全部是异常的
             if (empty($newMobilesCheckRes['data'])){
                 foreach ($needsCheckMobiles as $needsCheckMobile){
                     $tmpRes = [
@@ -235,6 +238,7 @@ class MobileCheckInfo extends ModelBase
 //                    );
                 }
             }
+            //接口正常返回的
             else{
                 foreach($newMobilesCheckRes['data'] as $dataItem){
                     $tmpRes = [
