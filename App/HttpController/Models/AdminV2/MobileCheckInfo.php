@@ -128,14 +128,14 @@ class MobileCheckInfo extends ModelBase
     }
 
 
-    //简版  不加redis
+    //简版
     static function  checkMobilesByChuangLan($mobileStr){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'checkMobilesByChuangLan $mobileStr ' => $mobileStr
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'checkMobilesByChuangLan $mobileStr ' => $mobileStr
+//            ])
+//        );
         $mobilesArr = explode(',',$mobileStr);
         $needsCheckMobiles =  [];
         $invalidMobiles =  [];
@@ -157,12 +157,12 @@ class MobileCheckInfo extends ModelBase
                     'lastTime'=> '',
                     'remark'=> '号码无效',
                 ];
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'checkMobilesByChuangLan mobile invalid  ' => $mobile
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        'checkMobilesByChuangLan mobile invalid  ' => $mobile
+//                    ])
+//                );
                  continue;
              }
 
@@ -170,28 +170,28 @@ class MobileCheckInfo extends ModelBase
             $tmpRes = self::findResByMobile($mobile);
             if(!empty($tmpRes)){
                 $newCheckRes[] = $tmpRes;
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'checkMobilesByChuangLan mobile has  old res    ' => [
-                            '$mobile' => $mobile,
-                            '$tmpRes' => $tmpRes,
-                        ]
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        'checkMobilesByChuangLan mobile has  old res    ' => [
+//                            '$mobile' => $mobile,
+//                            '$tmpRes' => $tmpRes,
+//                        ]
+//                    ])
+//                );
                 continue;
             }
 
             //没有旧的结果
             $needsCheckMobiles[$mobile] = $mobile;
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'checkMobilesByChuangLan mobile has no old res .needs check    ' => [
-                        '$mobile' => $mobile,
-                    ]
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    'checkMobilesByChuangLan mobile has no old res .needs check    ' => [
+//                        '$mobile' => $mobile,
+//                    ]
+//                ])
+//            );
         }
 
         //需要查询的
@@ -199,18 +199,18 @@ class MobileCheckInfo extends ModelBase
             !empty($needsCheckMobiles)
         ){
             $newMobileStr = join(',',$needsCheckMobiles);
-            $newMobilesCheckRes = (new ChuangLanService())->getCheckPhoneStatus([
+            $newMobilesCheckRes = (new ChuangLanService())->getCheckPhoneStatusV2([
                 'mobiles' => $newMobileStr,
             ]);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'checkMobilesByChuangLan mobile needs check mobiles   ' => [
-                        '$needsCheckMobiles' => $needsCheckMobiles,
-                        '$newMobilesCheckRes' => $newMobilesCheckRes,
-                    ]
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    'checkMobilesByChuangLan mobile needs check mobiles   ' => [
+//                        '$needsCheckMobiles' => $needsCheckMobiles,
+//                        '$newMobilesCheckRes' => $newMobilesCheckRes,
+//                    ]
+//                ])
+//            );
             //全部都是无效的
             if (empty($newMobilesCheckRes['data'])){
                 foreach ($needsCheckMobiles as $needsCheckMobile){
@@ -225,14 +225,14 @@ class MobileCheckInfo extends ModelBase
                     ];
                     self::addRecordV2($tmpRes);
                     $newCheckRes[] = $tmpRes;
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            __CLASS__.__FUNCTION__ .__LINE__,
-                            'checkMobilesByChuangLan mobile . new check return false   ' => [
-                                '$needsCheckMobile' => $needsCheckMobile,
-                            ]
-                        ])
-                    );
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode([
+//                            __CLASS__.__FUNCTION__ .__LINE__,
+//                            'checkMobilesByChuangLan mobile . new check return false   ' => [
+//                                '$needsCheckMobile' => $needsCheckMobile,
+//                            ]
+//                        ])
+//                    );
                 }
             }
             else{
@@ -248,29 +248,29 @@ class MobileCheckInfo extends ModelBase
                     ];
                     self::addRecordV2($tmpRes);
                     $newCheckRes[] = $tmpRes;
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            __CLASS__.__FUNCTION__ .__LINE__,
-                            'checkMobilesByChuangLan mobile . new check return     ' => [
-                                '$needsCheckMobile' => $dataItem['mobile'],
-                                '$dataItem' => $dataItem,
-                            ]
-                        ])
-                    );
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode([
+//                            __CLASS__.__FUNCTION__ .__LINE__,
+//                            'checkMobilesByChuangLan mobile . new check return     ' => [
+//                                '$needsCheckMobile' => $dataItem['mobile'],
+//                                '$dataItem' => $dataItem,
+//                            ]
+//                        ])
+//                    );
                 }
             }
         }
 
         $returnData = self::formatReturnData($newCheckRes);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'checkMobilesByChuangLan mobile .  return     ' => [
-                    '$newCheckRes' => $newCheckRes,
-                    '$returnData' => $returnData,
-                ]
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'checkMobilesByChuangLan mobile .  return     ' => [
+//                    '$newCheckRes' => $newCheckRes,
+//                    '$returnData' => $returnData,
+//                ]
+//            ])
+//        );
 
         return $returnData;
     }

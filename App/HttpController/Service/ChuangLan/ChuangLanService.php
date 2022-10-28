@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\ChuangLan;
 
+use App\HttpController\Models\AdminV2\MobileCheckInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -59,6 +60,8 @@ class ChuangLanService extends ServiceBase
      */
     function getCheckPhoneStatus($param)
     {
+        return MobileCheckInfo::checkMobilesByChuangLan($param['mobiles']);
+
         $url = 'https://api.253.com/open/unn/batch-ucheck';
 
         $data = [
@@ -73,6 +76,24 @@ class ChuangLanService extends ServiceBase
             ->useCache(true)
             ->send($url, $data);
     }
+
+    function getCheckPhoneStatusV2($param)
+    {
+        $url = 'https://api.253.com/open/unn/batch-ucheck';
+
+        $data = [
+            'appId' => $this->appId,
+            'appKey' => $this->appKey,
+            'mobiles' => $param['mobiles'], // 检测手机号，多个手机号码用英文半角逗号隔开，仅支持国内号码
+            'type' => 0,
+        ];
+
+        return (new CoHttpClient())
+//            ->useCache(false)
+            ->useCache(true)
+            ->send($url, $data);
+    }
+
 
     function mobileNetStatus($param)
     {
