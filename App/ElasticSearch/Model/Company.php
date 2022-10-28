@@ -361,6 +361,7 @@ class Company extends ServiceBase
         }
         return $this;
     }
+
     function SetQueryBySearchTextV3($searchText,$fileds = [
         'ENTNAME',
         'shang_pin_data.name',
@@ -368,15 +369,42 @@ class Company extends ServiceBase
     ]){
         if($searchText){
             $matchedCnames = [
-                [ 'field'=>'ENTNAME' ,'value'=> $searchText],
-                [ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
-                [ 'field'=>'OPSCOPE' ,'value'=> $searchText]
+//                [ 'field'=>'ENTNAME' ,'value'=> $searchText],
+//                [ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
+//                [ 'field'=>'OPSCOPE' ,'value'=> $searchText]
             ];
 
             foreach ($fileds as $filed){
                 $matchedCnames[] =  [ 'field'=>$filed ,'value'=> $searchText];
             }
             $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
+        }
+        return $this;
+    }
+
+    function SetQueryBySearchTextV4($searchText,$fileds = [
+        'ENTNAME',
+        'shang_pin_data.name',
+        'OPSCOPE.name',
+    ]){
+        if($searchText){
+            $matchedCnames = [
+//                [ 'field'=>'ENTNAME' ,'value'=> $searchText],
+//                [ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
+//                [ 'field'=>'OPSCOPE' ,'value'=> $searchText]
+            ];
+
+            foreach ($fileds as $filed){
+                $this->es->addMustNotTermQuery($filed,$searchText) ;
+            }
+
+        }
+        return $this;
+    }
+
+    function SetQueryBySearchTextV5($searchText,$filed){
+        if($searchText){
+            $this->es->addMustNotTermQuery($filed,$searchText) ;
         }
         return $this;
     }
@@ -395,6 +423,7 @@ class Company extends ServiceBase
         }
         return $this;
     }
+
 
 
     function SetQueryByBusinessScope($basic_opscope,$business_scope_field_name = "business_scope"){

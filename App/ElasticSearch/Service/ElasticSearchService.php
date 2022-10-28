@@ -170,6 +170,7 @@ class ElasticSearchService extends ServiceBase
         $this->query['query']['bool']['must'][] = $boolQuery;
     }
 
+
     function addMustTermQuery($field, $value)
     {
         $this->query['query']['bool']['must'][] = ['term' => [$field => $value]];

@@ -148,12 +148,21 @@ class SouKeController extends ControllerBase
             }
         }
         $companyEsModel
+
             //经营范围
             ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')),"OPSCOPE")
             //数字经济及其核心产业
             ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
             // 搜索文案 智能搜索
             ->SetQueryBySearchTextV2( trim($this->request()->getRequestParam('searchText')))
+            //不包含名称
+            ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_name')),'ENTNAME')
+            //不包含经营范围
+            ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_basic_opscope')),'OPSCOPE')
+            //不包含简介
+            ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_jiejian')),'gong_si_jian_jie')
+            //不包含简介
+            ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_app')),'app')
             // 搜索战略新兴产业
             ->SetQueryByBasicJlxxcyid(trim($this->request()->getRequestParam('basic_jlxxcyid')))
             // 搜索shang_pin_data 商品信息 appStr:五香;农庄
