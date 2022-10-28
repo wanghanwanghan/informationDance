@@ -5,6 +5,7 @@ namespace App\HttpController\Models\MRXD;
 use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\Api\FinancesSearch;
+use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
@@ -312,11 +313,12 @@ class ToolsFileLists extends ModelBase
                            __CLASS__.__FUNCTION__ .__LINE__,
                            [
                                'addWeChatInfo'=>[
-                                   //  '$companyDataItem' => $companyDataItem ,
-                                   //  '$companyCode' => $companyCode ,
-                                   '$phone' => $phone ,
-                                   '$wechat' => $wechat ,
-                                   '$i' => $i ,
+                                    '$companyDataItem' => $companyName ,
+                                    '$companyCode' => $companyCode ,
+                                    '$phone' => $phone ,
+                                    '$wechat' => $wechat ,
+                                    '$sex' => $sex ,
+                                    '$i' => $i ,
                                ]
                            ]
                        ])
@@ -324,9 +326,10 @@ class ToolsFileLists extends ModelBase
                }
 
 
-               if(empty($phone)){
+               if($phone<=0){
                    continue;
                }
+
                if(empty($wechat)){
                    continue;
                }
@@ -346,12 +349,19 @@ class ToolsFileLists extends ModelBase
                    'created_at' => $created_at,
                    'updated_at' => $created_at,
                ];
-               CommonService    ::getInstance()->log4PHP(
-                   json_encode([
-                       __CLASS__.__FUNCTION__ .__LINE__,
-                       $insert
-                   ])
+
+               WechatInfo::addRecordV2(
+                   $insert
                );
+               if($i%100==0){
+                   CommonService    ::getInstance()->log4PHP(
+                       json_encode([
+                           __CLASS__.__FUNCTION__ .__LINE__,
+                           $insert
+                       ])
+                   );
+               }
+
            }
 
            self::updateById($filesData['id'],[
