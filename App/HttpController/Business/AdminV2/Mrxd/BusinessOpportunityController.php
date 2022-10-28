@@ -151,8 +151,17 @@ class BusinessOpportunityController extends ControllerBase
         $page = $requestData['page']?:1;
         $pageSize = $requestData['pageSize']?:10;
 
-        $datas = WechatInfo::findByConditionWithCountInfo(
-            [],$page,$pageSize
+        $conditions = [];
+        if($requestData['nickname']){
+            $conditions[]  =  [
+                'field' =>'nickname',
+                'value' =>$requestData['nickname'].'%',
+                'operate' =>'like',
+            ];
+
+        }
+        $datas = WechatInfo::findByConditionV2(
+            $conditions,$page,$pageSize
         );
 
         foreach ($datas['data'] as &$dataItem){
@@ -163,7 +172,7 @@ class BusinessOpportunityController extends ControllerBase
             }
             $phone_res = \wanghanwanghan\someUtils\control::aesDecode($dataItem['phone'], $dataItem['created_at']);
             $dataItem['phone_res'] = $phone_res;
-        } 
+        }
 
         return $this->writeJson(200, [
             'page' => $page,
