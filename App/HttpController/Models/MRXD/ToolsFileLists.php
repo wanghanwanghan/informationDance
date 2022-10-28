@@ -193,7 +193,7 @@ class ToolsFileLists extends ModelBase
                foreach ($allFields as $field=>$cname){
                    if($field=='UNISCID'){
 
-                       $res['UNISCID'] = ''.$res['UNISCID'].'    ';
+                       $res['UNISCID'] = ''.$res['UNISCID'].'\t    ';
                    }
                    if($field=='ENTTYPE'){
                        $cname =   CodeCa16::findByCode($res['ENTTYPE']);
