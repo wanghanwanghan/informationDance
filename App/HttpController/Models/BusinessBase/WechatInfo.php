@@ -85,10 +85,10 @@ class WechatInfo extends ModelBase
         return $info->update($data);
     }
 
-    public static function findByConditionWithCountInfo($whereArr,$page){
+    public static function findByConditionWithCountInfo($whereArr,$page,$pageSize){
         $model = WechatInfo::create()
             ->where($whereArr)
-            ->page($page)
+            ->page($page,$pageSize)
             ->order('id', 'DESC')
             ->withTotalCount();
 

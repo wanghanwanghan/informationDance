@@ -16,9 +16,12 @@ use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\MailReceipt;
+use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
 
@@ -146,27 +149,28 @@ class BusinessOpportunityController extends ControllerBase
     public function WeiXinFilesList(){
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
-        $size = $requestData['pageSize']?:10;
-        $records = AdminUserWechatInfoUploadRecord::findByConditionV2(
-            [ ],
-            $page
+        $pageSize = $requestData['pageSize']?:10;
+
+        $datas = WechatInfo::findByConditionWithCountInfo(
+            [],$page,$pageSize
         );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '$records'   => $records
-            ])
-        );
-        foreach ($records['data'] as &$dataitem){
-            $dataitem['status_cname'] = AdminUserWechatInfoUploadRecord::getStatusMap()[$dataitem['status']];
-            $dataitem['size'] = self::convert($dataitem['size']) ;
-        }
+
+        foreach ($datas['data'] as &$dataItem){
+            if($dataItem['code']){
+                $companyRes = CompanyBasic::findByCode($dataItem['code']);
+                $companyRes = $companyRes?$companyRes->toArray():[];
+                $dataItem['ENTNAME'] = $companyRes['ENTNAME'];
+            }
+            $phone_res = \wanghanwanghan\someUtils\control::aesDecode($dataItem['phone'], $dataItem['created_at']);
+            $dataItem['phone_res'] = $phone_res;
+        } 
+
         return $this->writeJson(200, [
             'page' => $page,
-            'pageSize' => $size,
-            'total' => $records['total'],
-            'totalPage' => ceil($records['total']/$size) ,
-        ],  $records['data'],'成功');
+            'pageSize' => $pageSize,
+            'total' => $datas['total'],
+            'totalPage' => ceil($datas['total']/$pageSize) ,
+        ],  $datas['data'],'成功');
     }
 
 
