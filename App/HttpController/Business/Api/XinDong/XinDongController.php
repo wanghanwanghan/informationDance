@@ -23,6 +23,7 @@ use App\HttpController\Models\AdminV2\CarInsuranceInstallment;
 use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\InsuranceData;
 use App\HttpController\Models\AdminV2\MailReceipt;
+use App\HttpController\Models\AdminV2\MobileCheckInfo;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\AdminV2\InvoiceTask;
@@ -2789,10 +2790,13 @@ eof;
             $res = (new ChuangLanService())->getCheckPhoneStatus([
                 'mobiles' => $mobileStr,
             ]);
+            $res2 = MobileCheckInfo::checkMobilesByChuangLan($mobileStr);
 
 
-
-            return $this->writeJson(200, null, $res);
+            return $this->writeJson(200, null, [
+                $res,
+                $res2,
+            ]);
         }
         if(
             $this->getRequestData('traverseMenu')

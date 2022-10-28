@@ -90,12 +90,21 @@ class MobileCheckInfo extends ModelBase
 
     //简版  不加redis
     static function  checkMobilesByChuangLan($mobileStr){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'checkMobilesByChuangLan $mobileStr ' => $mobileStr
+            ])
+        );
         $mobilesArr = explode(',',$mobileStr);
         $needsCheckMobiles =  [];
         $invalidMobiles =  [];
         $newCheckRes = [];
 
         foreach ($mobilesArr as $mobile){
+            if($mobile < 0 ){
+                continue ;
+            }
             //校验号码有效性
             if( !self::checkIfIsMobile($mobile) ){
                  $invalidMobiles[] = $mobile;
@@ -108,6 +117,12 @@ class MobileCheckInfo extends ModelBase
                     'lastTime'=> '',
                     'remark'=> '号码无效',
                 ];
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'checkMobilesByChuangLan mobile invalid  ' => $mobile
+                    ])
+                );
                  continue;
              }
 
@@ -115,11 +130,28 @@ class MobileCheckInfo extends ModelBase
             $tmpRes = self::findResByMobile($mobile);
             if(!empty($tmpRes)){
                 $newCheckRes[] = $tmpRes;
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'checkMobilesByChuangLan mobile has  old res    ' => [
+                            '$mobile' => $mobile,
+                            '$tmpRes' => $tmpRes,
+                        ]
+                    ])
+                );
                 continue;
             }
 
             //没有旧的结果
             $needsCheckMobiles[$mobile] = $mobile;
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'checkMobilesByChuangLan mobile has no old res .needs check    ' => [
+                        '$mobile' => $mobile,
+                    ]
+                ])
+            );
         }
 
         //需要查询的
@@ -127,12 +159,20 @@ class MobileCheckInfo extends ModelBase
             !empty($needsCheckMobiles)
         ){
             $newMobileStr = join(',',$needsCheckMobiles);
-            $newCheckRes = (new ChuangLanService())->getCheckPhoneStatus([
+            $newMobilesCheckRes = (new ChuangLanService())->getCheckPhoneStatus([
                 'mobiles' => $newMobileStr,
             ]);
-
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'checkMobilesByChuangLan mobile needs check mobiles   ' => [
+                        '$needsCheckMobiles' => $needsCheckMobiles,
+                        '$newMobilesCheckRes' => $newMobilesCheckRes,
+                    ]
+                ])
+            );
             //全部都是无效的
-            if (empty($newCheckRes['data'])){
+            if (empty($newMobilesCheckRes['data'])){
                 foreach ($needsCheckMobiles as $needsCheckMobile){
                     $tmpRes = [
                         'mobile'=>$needsCheckMobile,
@@ -141,14 +181,22 @@ class MobileCheckInfo extends ModelBase
                         'numberType'=> '',
                         'chargesStatus'=> 1,
                         'lastTime'=> '',
-                        'raw_return'=> json_encode($newCheckRes) ,
+                        'raw_return'=> json_encode($newMobilesCheckRes) ,
                     ];
                     self::addRecordV2($tmpRes);
                     $newCheckRes[] = $tmpRes;
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            'checkMobilesByChuangLan mobile . new check return false   ' => [
+                                '$needsCheckMobile' => $needsCheckMobile,
+                            ]
+                        ])
+                    );
                 }
             }
             else{
-                foreach($newCheckRes['data'] as $dataItem){
+                foreach($newMobilesCheckRes['data'] as $dataItem){
                     $tmpRes = [
                         'mobile'=>$dataItem['mobile'],
                         'status'=> $dataItem['status'],
@@ -156,15 +204,35 @@ class MobileCheckInfo extends ModelBase
                         'numberType'=> $dataItem['numberType'],
                         'chargesStatus'=> $dataItem['chargesStatus'] ,
                         'lastTime'=> $dataItem['lastTime'],
-                        'raw_return'=> json_encode($newCheckRes) ,
+                        'raw_return'=> json_encode($newMobilesCheckRes) ,
                     ];
                     self::addRecordV2($tmpRes);
                     $newCheckRes[] = $tmpRes;
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            'checkMobilesByChuangLan mobile . new check return     ' => [
+                                '$needsCheckMobile' => $dataItem['mobile'],
+                                '$dataItem' => $dataItem,
+                            ]
+                        ])
+                    );
                 }
             }
         }
 
-        return self::formatReturnData($newCheckRes);
+        $returnData = self::formatReturnData($newCheckRes);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'checkMobilesByChuangLan mobile .  return     ' => [
+                    '$newCheckRes' => $newCheckRes,
+                    '$returnData' => $returnData,
+                ]
+            ])
+        );
+
+        return $returnData;
     }
 
     static function formatReturnData($datasArr){
