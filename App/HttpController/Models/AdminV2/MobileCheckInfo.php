@@ -78,16 +78,18 @@ class MobileCheckInfo extends ModelBase
         $redisKey =  'chuang_lan_mobile_'.$mobileStr;
         $redisRes = self::takeResult($redisKey);
         if(!empty($redisRes)){
+            $redisArr = json_decode($redisRes,true);
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'findResByMobile from redis ' => [
                         '$mobileStr' =>$mobileStr,
                         '$redisRes' =>$redisRes,
+                        '$redisArr' =>$redisArr,
                     ]
                 ])
             );
-            return  $redisRes;
+            return  $redisArr;
         }
 
         $dbInfo = self::findByMobileV2($mobileStr);
@@ -100,7 +102,7 @@ class MobileCheckInfo extends ModelBase
                 "chargesStatus"=>$dbInfo['chargesStatus'],
                 "status"=>$dbInfo['status'],
             ];
-            self::storeResult($redisKey,$dbRes);
+            self::storeResult($redisKey,json_encode($dbRes));
             return $dbRes;
         }
         return [];
