@@ -2776,6 +2776,14 @@ eof;
         $requestData =  $this->getRequestData();
 
         if(
+            $this->getRequestData('chuangLian')
+        ){
+            $res = (new ChuangLanService())->getCheckPhoneStatus([
+                'mobiles' => '13269706193,13269706194',
+            ]);
+            return $this->writeJson(200, null, $res);
+        }
+        if(
             $this->getRequestData('traverseMenu')
         ){
 

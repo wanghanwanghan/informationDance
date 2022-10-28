@@ -74,37 +74,7 @@ class MobileCheckInfo extends ModelBase
     }
 
     static function  checkMobilesByChuangLan($mobileStr){
-        // 库里存不存在
-        $allMobiles  = explode(',',$mobileStr);
-        $checkedMobiles = [];
-        $unCheckedMobiles = [];
-        foreach ($allMobiles as $mobile){
-            $tmp = self::findByMobileAndType($mobile,self::$type_online_status);
-            if($tmp){
-                $tmpRes = $tmp->toArray();
-                $checkedMobiles[$mobile] = $tmpRes;
-            }
-            else{
-                $unCheckedMobiles[$mobile] = $mobile;
-            }
-        }
 
-        if(!empty($unCheckedMobiles)){
-            $uncheckMobilesStr = join(',',$unCheckedMobiles);
-            $res = (new ChuangLanService())->getCheckPhoneStatus([
-                'mobiles' => $mobileStr,
-            ]);
-        }
-
-
-            // $res['data'] = LongXinService::shiftArrayKeys($res['data'], 'mobile');
-            if (!empty($res['data'])){// $res['data']还能是空呢?
-                foreach($res['data'] as $dataItem){
-                    if($dataItem['status'] == 1){
-                        $newmobileStr .= $dataItem["mobile"].';';
-                    }
-                }
-            }
     }
 
     public static function findAllByCondition($whereArr){
