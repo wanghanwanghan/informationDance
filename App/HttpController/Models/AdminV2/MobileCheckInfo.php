@@ -75,18 +75,55 @@ class MobileCheckInfo extends ModelBase
     }
 
     static function  findResByMobile($mobileStr){
+        $redisKey =  'chuang_lan_mobile_'.$mobileStr;
+        $redisRes = self::takeResult($redisKey);
+        if(!empty($redisRes)){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'findResByMobile from redis ' => [
+                        '$mobileStr' =>$mobileStr,
+                        '$redisRes' =>$redisRes,
+                    ]
+                ])
+            );
+            return  $redisRes;
+        }
 
         $dbInfo = self::findByMobileV2($mobileStr);
-        return  !empty($dbInfo)?[
-            "mobile"=>$dbInfo['mobile'],
-            "lastTime"=>$dbInfo['lastTime'],
-            "area"=>$dbInfo['area'],
-            "numberType"=>$dbInfo['numberType'],
-            "chargesStatus"=>$dbInfo['chargesStatus'],
-            "status"=>$dbInfo['status'],
-        ]:[];
+        if(!empty($dbInfo)){
+            $dbRes = [
+                "mobile"=>$dbInfo['mobile'],
+                "lastTime"=>$dbInfo['lastTime'],
+                "area"=>$dbInfo['area'],
+                "numberType"=>$dbInfo['numberType'],
+                "chargesStatus"=>$dbInfo['chargesStatus'],
+                "status"=>$dbInfo['status'],
+            ];
+            self::storeResult($redisKey,$dbRes);
+            return $dbRes;
+        }
+        return [];
 
     }
+
+    static function storeResult($key, $result): void
+    {
+
+        Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($key, $result) {
+            $redis->select(CreateConf::getInstance()->getConf('env.coHttpCacheRedisDB'));
+            return $redis->setEx($key, CreateConf::getInstance()->getConf('env.coHttpCacheDay') * 86400, $result);
+        });
+    }
+
+    static function takeResult($key)
+    {
+        return Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($key) {
+            $redis->select(CreateConf::getInstance()->getConf('env.coHttpCacheRedisDB'));
+            return $redis->get($key);
+        });
+    }
+
 
     //简版  不加redis
     static function  checkMobilesByChuangLan($mobileStr){
