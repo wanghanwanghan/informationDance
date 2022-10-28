@@ -32,6 +32,9 @@ class ToolsFileLists extends ModelBase
     static  $type_bu_quan_zi_duan =  5 ;
     static  $type_bu_quan_zi_duan_cname =  '补全字段' ;
 
+    static  $type_upload_weixin =  10 ;
+    static  $type_upload_weixin_cname =  '上传微信' ;
+
     static  function  stateMaps(){
 
         return [
@@ -279,6 +282,80 @@ class ToolsFileLists extends ModelBase
 
            self::updateById($filesData['id'],[
                'new_file_name' => $fileName.".csv",
+               'state' => self::$state_succeed,
+           ]);
+       }
+    }
+    static function shangChuanWeiXinHao(){
+       $filesDatas = self::findBySql("
+            WHERE touch_time < 1
+            AND type = 10 
+            AND state = 0 
+            LIMIT 3 
+       ");
+       foreach ($filesDatas as $filesData){
+           self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
+
+           $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
+           $i = 1;
+           foreach ($yieldDatas as $dataItem) {
+               //企业 税号 电话 微信名 性别
+               $companyName = $dataItem[0];
+               $companyCode = $dataItem[1];
+               $phone = $dataItem[2];
+               $wechat = $dataItem[3];
+               $sex = $dataItem[4];
+
+               if($i%100==0){
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           __CLASS__.__FUNCTION__ .__LINE__,
+                           [
+                               'addWeChatInfo'=>[
+                                   //  '$companyDataItem' => $companyDataItem ,
+                                   //  '$companyCode' => $companyCode ,
+                                   '$phone' => $phone ,
+                                   '$wechat' => $wechat ,
+                                   '$i' => $i ,
+                               ]
+                           ]
+                       ])
+                   );
+               }
+
+
+               if(empty($phone)){
+                   continue;
+               }
+               if(empty($wechat)){
+                   continue;
+               }
+               if(strlen($phone) !== 11){
+                   continue;
+               }
+
+               $created_at = time();
+               $phone_aes = \wanghanwanghan\someUtils\control::aesEncode($phone, $created_at . '');
+               $phone_md5 = md5($phone);
+               $insert = [
+                   'code' => $companyCode?:'',
+                   'sex' => $sex?:'',
+                   'phone' => $phone_aes,
+                   'phone_md5' => $phone_md5,
+                   'nickname' => $wechat,
+                   'created_at' => $created_at,
+                   'updated_at' => $created_at,
+               ];
+               CommonService    ::getInstance()->log4PHP(
+                   json_encode([
+                       __CLASS__.__FUNCTION__ .__LINE__,
+                       $insert
+                   ])
+               );
+           }
+
+           self::updateById($filesData['id'],[
+               'new_file_name' => "",
                'state' => self::$state_succeed,
            ]);
        }

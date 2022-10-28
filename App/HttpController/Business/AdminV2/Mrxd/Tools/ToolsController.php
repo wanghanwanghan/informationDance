@@ -88,7 +88,9 @@ class ToolsController extends ControllerBase
         $pageSize =$requestData['pageSize']?:20;
 
         $res = ToolsFileLists::findByConditionWithCountInfo(
-            [],$page
+            [
+                'type' =>ToolsFileLists::$type_bu_quan_zi_duan,
+            ],$page
         );
         foreach ($res['data'] as &$dataItem ){
             $adminInfo = \App\HttpController\Models\AdminV2\AdminNewUser::findById($dataItem['admin_id']);

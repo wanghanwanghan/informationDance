@@ -16,7 +16,9 @@ use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\MailReceipt;
+use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\BusinessBase\WechatInfo;
+use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
@@ -104,7 +106,74 @@ class BusinessOpportunityController extends ControllerBase
     }
 
     public function uploadWeiXinFile(){
+
         $requestData =  $this->getRequestData();
+        $succeedFiels = [];
+        $files = $this->request()->getUploadedFiles();
+        foreach ($files as $key => $oneFile) {
+            try {
+                $fileName = $oneFile->getClientFilename();
+                $fileInfo = pathinfo($fileName);
+                if($fileInfo['extension']!='xlsx'){
+                    return $this->writeJson(203, [], [],'暂时只支持xlsx文件！');
+                }
+                $fileName = date('Y_m_d_H_i',time()).$fileName;
+                $path = OTHER_FILE_PATH . $fileName;
+                if(file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件已存在！');
+                }
+
+                $res = $oneFile->moveTo($path);
+                if(!file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件移动失败！');
+                }
+
+                $UploadRecordRes =  ToolsFileLists::addRecordV2(
+                    [
+                        'admin_id' => $this->loginUserinfo['id'],
+                        'file_name' => $fileName,
+                        'new_file_name' => '',
+                        'remark' => $requestData['remark']?:'',
+                        'type' => ToolsFileLists::$type_upload_weixin,
+                        'state' => $requestData['state']?:'',
+                        'touch_time' => $requestData['touch_time']?:'',
+                    ]
+                );
+                if(!$UploadRecordRes){
+                    return $this->writeJson(203, [], [],'文件上传失败');
+                }
+
+                $res = QueueLists::addRecord(
+                    [
+                        'name' => '',
+                        'desc' => '',
+                        'func_info_json' => json_encode(
+                            [
+                                'class' => '\App\HttpController\Models\MRXD\ToolsFileLists',
+                                'static_func'=> 'shangChuanWeiXinHao',
+                            ]
+                        ),
+                        'params_json' => json_encode([
+
+                        ]),
+                        'type' => ToolsFileLists::$type_upload_weixin,
+                        'remark' => '',
+                        'begin_date' => NULL,
+                        'msg' => '',
+                        'status' => QueueLists::$status_init,
+                    ]
+                );
+
+                $succeedFiels[] = $fileName;
+            } catch (\Throwable $e) {
+                return $this->writeJson(202, [], [],'导入失败'.$e->getMessage());
+            }
+        }
+
+        return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
+
+        return ;
+        $requestData =  $this->getRequestData(); ;
         $files = $this->request()->getUploadedFiles();
         //return $this->writeJson(200, [], [],'导入成功 入库文件数量:');
         $succeedNums = 0;
