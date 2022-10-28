@@ -1472,7 +1472,7 @@ class SouKeController extends ControllerBase
             ])
         );
 
-        $sqlWhere = " WHERE user_id =  ".$this->loginUserinfo['id'];
+        $sqlWhere = " WHERE userid =  ".$this->loginUserinfo['id'];
 
         // searchText
         if(!empty($requestData['searchText'])){
