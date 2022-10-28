@@ -8,7 +8,8 @@ use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongXin\LongXinService;
-
+use EasySwoole\HttpClient\HttpClient;
+use EasySwoole\RedisPool\Redis;
 
 // use App\HttpController\Models\AdminRole;
 
