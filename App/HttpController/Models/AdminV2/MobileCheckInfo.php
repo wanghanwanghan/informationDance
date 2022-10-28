@@ -26,6 +26,7 @@ class MobileCheckInfo extends ModelBase
     static $source_chuang_lan  =  1;
     static $source_chuang_lan_cname  =  '创蓝';
 
+    static  $redis_prex = 'store_mobile_check_res_';
 
     public static function getStatusMap(){
         return ChuangLanService::getStatusCnameMap();
@@ -75,6 +76,25 @@ class MobileCheckInfo extends ModelBase
 
     static function  checkMobilesByChuangLan($mobileStr){
 
+    }
+
+
+    static function storeResult($mobile,$resArr): void
+    {
+        $key = self::$redis_prex.$mobile;
+        Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($key,$resArr) {
+            $redis->select(CreateConf::getInstance()->getConf('env.coHttpCacheRedisDB'));
+            return $redis->setEx($key, CreateConf::getInstance()->getConf('env.coHttpCacheDay') * 86400, $resArr);
+        });
+    }
+
+    static function takeResult($mobile)
+    {
+        $key = self::$redis_prex.$mobile;
+        return Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($key) {
+            $redis->select(CreateConf::getInstance()->getConf('env.coHttpCacheRedisDB'));
+            return $redis->get($key);
+        });
     }
 
     public static function findAllByCondition($whereArr){
