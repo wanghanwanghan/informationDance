@@ -191,6 +191,10 @@ class ToolsFileLists extends ModelBase
                $baseArr = [];
                //====================================
                foreach ($allFields as $field=>$cname){
+                   if($field=='UNISCID'){
+
+                       $res['UNISCID'] = ''.$res['UNISCID'].'    ';
+                   }
                    if($field=='ENTTYPE'){
                        $cname =   CodeCa16::findByCode($res['ENTTYPE']);
                        $res['ENTTYPE'] =  $cname?$cname->getAttr('name'):'';

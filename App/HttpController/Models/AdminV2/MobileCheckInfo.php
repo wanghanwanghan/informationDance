@@ -15,27 +15,18 @@ use App\HttpController\Service\LongXin\LongXinService;
 class MobileCheckInfo extends ModelBase
 {
 
-    protected $tableName = 'mobile_check_info';
+    //
+    protected $tableName = 'mobile_check_info_chuang_lan';
 
-    static  $type_online_time = 1;
-    static  $type_online_time_cname =  '检测在网时长';
 
-    static  $type_online_status = 5;
-    static  $type_online_status_cname =  '检测状态';
-
-    static $source_chuang_lan  =  1;
-    static $source_chuang_lan_cname  =  '创蓝';
-
-    static  $redis_prex = 'store_mobile_check_res_';
 
     public static function getStatusMap(){
         return ChuangLanService::getStatusCnameMap();
     }
 
     static  function  addRecordV2($info){
-        $oldRes =  self::findByMobileAndType(
-            $info['batch'],
-            $info['type']
+        $oldRes =  self::findByMobile(
+            $info['mobile']
         );
         if( $oldRes  ){
             return  self::updateById(
@@ -52,12 +43,14 @@ class MobileCheckInfo extends ModelBase
     public static function addRecord($requestData){
         try {
            $res =  MobileCheckInfo::create()->data([
-                'phone' => $requestData['phone'],
+                'mobile' => $requestData['mobile'],
                 'status' => $requestData['status'],
-                'type' => $requestData['type'],
-                'source' => $requestData['source'],
-                'raw_return' => $requestData['raw_return'],
-                'remark' => $requestData['remark'],
+                'area' => $requestData['area']?:'',
+                'numberType' => $requestData['numberType']?:'',
+                'chargesStatus' => $requestData['chargesStatus'],
+                'lastTime' => $requestData['lastTime'],
+                'raw_return' => $requestData['raw_return']?:'',
+                'remark' => $requestData['remark']?:'',
                'created_at' => time(),
                'updated_at' => time(),
            ])->save();
@@ -74,28 +67,117 @@ class MobileCheckInfo extends ModelBase
         return $res;
     }
 
+    static function  checkIfIsMobile($mobileStr){
+        if(preg_match("/^1[34578]\d{9}$/", $mobileStr)){
+           return true;
+        }
+        return false;
+    }
+
+    static function  findResByMobile($mobileStr){
+
+        $dbInfo = self::findByMobileV2($mobileStr);
+        return  !empty($dbInfo)?[
+            "mobile"=>$dbInfo['mobile'],
+            "lastTime"=>$dbInfo['lastTime'],
+            "area"=>$dbInfo['area'],
+            "numberType"=>$dbInfo['numberType'],
+            "chargesStatus"=>$dbInfo['chargesStatus'],
+            "status"=>$dbInfo['status'],
+        ]:[];
+
+    }
+
+    //简版  不加redis
     static function  checkMobilesByChuangLan($mobileStr){
+        $mobilesArr = explode(',',$mobileStr);
+        $needsCheckMobiles =  [];
+        $invalidMobiles =  [];
+        $newCheckRes = [];
 
+        foreach ($mobilesArr as $mobile){
+            //校验号码有效性
+            if( !self::checkIfIsMobile($mobile) ){
+                 $invalidMobiles[] = $mobile;
+                $newCheckRes[] = [
+                    'mobile'=>$mobile,
+                    'status'=> '',
+                    'area'=> '',
+                    'numberType'=> '',
+                    'chargesStatus'=> 1,
+                    'lastTime'=> '',
+                    'remark'=> '号码无效',
+                ];
+                 continue;
+             }
+
+            //取旧的结果
+            $tmpRes = self::findResByMobile($mobile);
+            if(!empty($tmpRes)){
+                $newCheckRes[] = $tmpRes;
+                continue;
+            }
+
+            //没有旧的结果
+            $needsCheckMobiles[$mobile] = $mobile;
+        }
+
+        //需要查询的
+        if(
+            !empty($needsCheckMobiles)
+        ){
+            $newMobileStr = join(',',$needsCheckMobiles);
+            $newCheckRes = (new ChuangLanService())->getCheckPhoneStatus([
+                'mobiles' => $newMobileStr,
+            ]);
+
+            //全部都是无效的
+            if (empty($newCheckRes['data'])){
+                foreach ($needsCheckMobiles as $needsCheckMobile){
+                    $tmpRes = [
+                        'mobile'=>$needsCheckMobile,
+                        'status'=> 999,
+                        'area'=> '',
+                        'numberType'=> '',
+                        'chargesStatus'=> 1,
+                        'lastTime'=> '',
+                        'raw_return'=> json_encode($newCheckRes) ,
+                    ];
+                    self::addRecordV2($tmpRes);
+                    $newCheckRes[] = $tmpRes;
+                }
+            }
+            else{
+                foreach($newCheckRes['data'] as $dataItem){
+                    $tmpRes = [
+                        'mobile'=>$dataItem['mobile'],
+                        'status'=> $dataItem['status'],
+                        'area'=> $dataItem['area'],
+                        'numberType'=> $dataItem['numberType'],
+                        'chargesStatus'=> $dataItem['chargesStatus'] ,
+                        'lastTime'=> $dataItem['lastTime'],
+                        'raw_return'=> json_encode($newCheckRes) ,
+                    ];
+                    self::addRecordV2($tmpRes);
+                    $newCheckRes[] = $tmpRes;
+                }
+            }
+        }
+
+        return self::formatReturnData($newCheckRes);
+    }
+
+    static function formatReturnData($datasArr){
+        return [
+            'code'=> 200000,
+            'chargeStatus'=>1,
+            'chargeCount'=>1,
+            'message'=>"成功",
+            "data" => $datasArr
+        ];
     }
 
 
-    static function storeResult($mobile,$resArr): void
-    {
-        $key = self::$redis_prex.$mobile;
-        Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($key,$resArr) {
-            $redis->select(CreateConf::getInstance()->getConf('env.coHttpCacheRedisDB'));
-            return $redis->setEx($key, CreateConf::getInstance()->getConf('env.coHttpCacheDay') * 86400, $resArr);
-        });
-    }
-
-    static function takeResult($mobile)
-    {
-        $key = self::$redis_prex.$mobile;
-        return Redis::invoke('redis', function (\EasySwoole\Redis\Redis $redis) use ($key) {
-            $redis->select(CreateConf::getInstance()->getConf('env.coHttpCacheRedisDB'));
-            return $redis->get($key);
-        });
-    }
 
     public static function findAllByCondition($whereArr){
         $res =  MobileCheckInfo::create()
@@ -159,12 +241,18 @@ class MobileCheckInfo extends ModelBase
         return $res;
     }
 
-    public static function findByMobileAndType($mobile,$type){
+    public static function findByMobile($mobile){
         $res =  MobileCheckInfo::create()
-            ->where('phone',$mobile)
-            ->where('type',$type)
+            ->where('mobile',$mobile)
             ->get();
         return $res;
+    }
+
+    public static function findByMobileV2($mobile){
+        $res =  MobileCheckInfo::create()
+            ->where('mobile',$mobile)
+            ->get();
+        return $res ?$res->toArray():[];
     }
 
 
@@ -179,7 +267,7 @@ class MobileCheckInfo extends ModelBase
     public static function findBySql($where){
         $Sql = " select *  
                             from  
-                        `mobile_check_info` 
+                        `mobile_check_info_chuang_lan` 
                             $where
       " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
