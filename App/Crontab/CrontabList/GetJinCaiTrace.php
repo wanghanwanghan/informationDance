@@ -84,7 +84,8 @@ class GetJinCaiTrace extends AbstractCronTask
                         if (isset($addTaskInfo['code']) && strlen($addTaskInfo['code']) > 1) {
                             break;
                         }
-                        \co::sleep(5);
+                        // 还要间隔2分钟
+                        \co::sleep(120);
                     }
                     JinCaiTrace::create()->data([
                         'entName' => $target->getAttr('entName'),
