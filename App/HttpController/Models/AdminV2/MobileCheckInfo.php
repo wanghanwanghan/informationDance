@@ -75,23 +75,26 @@ class MobileCheckInfo extends ModelBase
         return false;
     }
 
-    static function  findResByMobile($mobileStr){
+    static function  findResByMobile($mobileStr,$use_last_redis_res = true){
         $redisKey =  'chuang_lan_mobile_'.$mobileStr;
         $redisRes = self::takeResult($redisKey);
-        if(!empty($redisRes)){
-            $redisArr = json_decode($redisRes,true);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'findResByMobile from redis ' => [
-                        '$mobileStr' =>$mobileStr,
-                        '$redisRes' =>$redisRes,
-                        '$redisArr' =>$redisArr,
-                    ]
-                ])
-            );
-            return  $redisArr;
+        if($use_last_redis_res){
+            if(!empty($redisRes)){
+                $redisArr = json_decode($redisRes,true);
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'findResByMobile from redis ' => [
+                            '$mobileStr' =>$mobileStr,
+                            '$redisRes' =>$redisRes,
+                            '$redisArr' =>$redisArr,
+                        ]
+                    ])
+                );
+                return  $redisArr;
+            }
         }
+
 
         $dbInfo = self::findByMobileV2($mobileStr);
         if(!empty($dbInfo)){
@@ -131,6 +134,7 @@ class MobileCheckInfo extends ModelBase
         $all = self::findAllByCondition($condtion);
         foreach ($all as $dataItem){
             self::checkMobilesByChuangLan($dataItem['mobile'],false);
+            self::findResByMobile($dataItem['mobile'],false);
         }
         return true;
     }
