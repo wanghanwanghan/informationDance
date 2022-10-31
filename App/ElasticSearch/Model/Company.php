@@ -1095,20 +1095,79 @@ class Company extends ServiceBase
 
             $tmp = [ ];
             foreach ($fieldsArr as $field){
+                //==========================================
+                if($field=='ENTTYPE'){
+                    $cname =   CodeCa16::findByCode($dataItem['ENTTYPE']);
+                    $dataItem[$field] =  $cname?$cname->getAttr('name'):'';
+                }
+                if($field=='ENTSTATUS'){
+                    $cname =   CodeEx02::findByCode($dataItem['ENTSTATUS']);
+                    $dataItem[$field] =  $cname?$cname->getAttr('name'):'';
+                }
 
+                //地区
+                if(
+                    $field=='DOMDISTRICT' &&
+                    $dataItem['DOMDISTRICT'] >0
+                ){
+                    $dataItem[$field] =  $dataItem['DOM'];
+                }
+
+                //行业分类代码  findNICID
+                if(
+                    $field=='NIC_ID' &&
+                    !empty( $dataItem['NIC_ID'])
+                ){
+                    $dataItem[$field] =  $dataItem['nic_full_name'];
+                }
+
+                //一般人
+                if(
+                    $field=='yi_ban_ren'
+                ){
+                    $dataItem[$field] =  $dataItem['yi_ban_ren']?'有':'无';
+                }
+
+                //战略新兴产业
+                if(
+                    $field=='zlxxcy'
+                ){
+                    $dataItem['zlxxcy'] =  $dataItem['zlxxcy']?'有':'无';
+                }
+
+                //数字经济产业
+                if(
+                    $field=='szjjcy'
+                ){
+                    $dataItem['szjjcy'] =  $dataItem['szjjcy']?'有':'无';
+                }
+
+
+                if(
+                    $field=='jin_chu_kou'
+                ){
+                    $dataItem['jin_chu_kou'] =  $dataItem['jin_chu_kou']?'有':'无';
+                }
+
+
+                if(
+                    $field=='iso'
+                ){
+                    $dataItem['iso'] =  $dataItem['iso']?'有':'无';
+                }
+
+                // 高新技术
+                if(
+                    $field=='gao_xin_ji_shu'
+                ){
+                    $dataItem['gao_xin_ji_shu'] =  $dataItem['gao_xin_ji_shu']?'有':'无';
+                }
+ 
+                //==========================================
                 $dataItem[$field] =    str_replace(",","，",$dataItem[$field]);
-               // $tmp[$field] = iconv("UTF-8", "GB2312//IGNORE", $dataItem[$field]). "\t";
+                $dataItem[$field] =    str_split ( $dataItem[$field], 32766 )[0];
                 $tmp[$field] = iconv("UTF-8", "GB2312//IGNORE", $dataItem[$field]). "\t";
-                //$tmp[$field] = $dataItem[$field]. "\t";;
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '$field' =>[
-                            '1'=> $dataItem[$field],
-                            '2'=> $dataItem[$field]. "\t"
-                        ]
-                    ])
-                );
+
             }
             fputcsv($f, $tmp);
         }
