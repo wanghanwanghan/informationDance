@@ -2799,6 +2799,7 @@ eof;
             return $this->writeJson(200, null, [
                 $res,
                 $res2,
+                $res3
             ]);
         }
         if(
