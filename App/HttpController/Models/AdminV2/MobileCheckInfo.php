@@ -127,9 +127,16 @@ class MobileCheckInfo extends ModelBase
         });
     }
 
+    static function reCheck($condtion){
+        $all = self::findAllByCondition($condtion);
+        foreach ($all as $dataItem){
+            self::checkMobilesByChuangLan($dataItem['mobile'],false);
+        }
+        return true;
+    }
 
     //简版
-    static function  checkMobilesByChuangLan($mobileStr){
+    static function  checkMobilesByChuangLan($mobileStr,$userCache = true){
 //        CommonService::getInstance()->log4PHP(
 //            json_encode([
 //                __CLASS__.__FUNCTION__ .__LINE__,
@@ -170,9 +177,10 @@ class MobileCheckInfo extends ModelBase
              }
 
             //从库里/redis里取旧的结果
-            $tmpRes = self::findResByMobile($mobile);
-            if(!empty($tmpRes)){
-                $newCheckRes[] = $tmpRes;
+            if($userCache){
+                $tmpRes = self::findResByMobile($mobile);
+                if(!empty($tmpRes)){
+                    $newCheckRes[] = $tmpRes;
 //                CommonService::getInstance()->log4PHP(
 //                    json_encode([
 //                        __CLASS__.__FUNCTION__ .__LINE__,
@@ -182,7 +190,8 @@ class MobileCheckInfo extends ModelBase
 //                        ]
 //                    ])
 //                );
-                continue;
+                    continue;
+                }
             }
 
             //之前没检测过 需要重新检测的

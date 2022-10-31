@@ -2782,6 +2782,24 @@ eof;
             ToolsFileLists::buQuanZiDuan();
             return $this->writeJson(200, null, $res);
         }
+
+        if(
+            $this->getRequestData('recheck_chuangLian_id')
+        ){
+
+            $res2 = MobileCheckInfo::reCheck([
+                'id' =>$this->getRequestData('recheck_chuangLian_id'),
+            ]);
+            $res = (new ChuangLanService())->getCheckPhoneStatus([
+                'mobiles' => $this->getRequestData('recheck_chuangLian_mobile'),
+            ]);
+
+            return $this->writeJson(200, null, [
+                $res,
+                $res2,
+            ]);
+        }
+
         if(
             $this->getRequestData('chuangLian')
         ){
