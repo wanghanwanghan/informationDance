@@ -1226,7 +1226,7 @@ class Company extends ServiceBase
                 ->formatEsMoney();
 
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-                if($nums%100==0){
+                if($nums%500==0){
                     CommonService::getInstance()->log4PHP(json_encode(
                             [
                                 'getYieldDataForSouKe' => [
@@ -1269,7 +1269,7 @@ class Company extends ServiceBase
                     'generate data  done . costs seconds '=>microtime(true) - $start
                 ]
             ]
-        )); 
+        ));
     }
 
     static  function  getNamesByText($page,$size,$searchText,$returnFullField = false){
