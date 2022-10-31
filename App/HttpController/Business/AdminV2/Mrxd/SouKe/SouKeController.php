@@ -2193,8 +2193,8 @@ class SouKeController extends ControllerBase
 
         $res = QueueLists::addRecord(
             [
-                'name' => 'sou_ke_export',
-                'desc' => '后台-搜客-交付',
+                'name' => 'sou_ke_jiao_fu',
+                'desc' => '搜客-交付',
                 'func_info_json' => json_encode(
                     [
                         'class' => '\App\ElasticSearch\Model\Company',
@@ -2213,7 +2213,15 @@ class SouKeController extends ControllerBase
             ]
         );
 
-        return $this->writeJson(200,  [], [],'成功');
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'deliverCompany' => [
+                    '$res'=>$res
+                ]
+            ])
+        );
+        return $this->writeJson(200,  [], [],'成功('.$res.')');
     }
 
     /*
