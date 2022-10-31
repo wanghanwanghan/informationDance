@@ -155,14 +155,6 @@ class SouKeController extends ControllerBase
             ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
             // 搜索文案 智能搜索
             ->SetQueryBySearchTextV2( trim($this->request()->getRequestParam('searchText')))
-            //不包含名称
-            ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_name')),'ENTNAME')
-            //不包含经营范围
-            ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_basic_opscope')),'OPSCOPE')
-            //不包含简介
-            ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_jiejian')),'gong_si_jian_jie')
-            //不包含简介
-            ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_app')),'app')
             // 搜索战略新兴产业
             ->SetQueryByBasicJlxxcyid(trim($this->request()->getRequestParam('basic_jlxxcyid')))
             // 搜索shang_pin_data 商品信息 appStr:五香;农庄
@@ -197,6 +189,14 @@ class SouKeController extends ControllerBase
             ->SetQueryByCompanyStatus(trim($this->request()->getRequestParam('ENTSTATUS')))
             // 地区 basic_regionid: 110101,110102,
             ->SetQueryByBasicRegionid(trim($this->request()->getRequestParam('basic_regionid')))
+            //不包含名称
+            ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_name')),'ENTNAME')
+            //不包含经营范围
+            ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_basic_opscope')),'OPSCOPE')
+            //不包含简介
+            ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_jiejian')),'gong_si_jian_jie')
+            //不包含简介
+            ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_app')),'app')
             ->addSize($size)
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
