@@ -2804,9 +2804,9 @@ eof;
             $res = (new ChuangLanService())->getCheckPhoneStatus([
                 'mobiles' => $mobileStr,
             ]);
-            $res3 = (new ChuangLanService())->getCheckPhoneStatusV2([
-                'mobiles' => $mobileStr,
-            ]);
+//            $res3 = (new ChuangLanService())->getCheckPhoneStatusV2([
+//                'mobiles' => $mobileStr,
+//            ]);
             $res2 = MobileCheckInfo::checkMobilesByChuangLan($mobileStr);
 
 
