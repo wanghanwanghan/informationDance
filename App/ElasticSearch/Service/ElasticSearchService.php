@@ -288,8 +288,8 @@ class ElasticSearchService extends ServiceBase
         ) {
             $this->query =
                 //'{"size":"'.$this->query['size'].'","from":'.$this->query['from'].',"sort":[{"_id":{"order":"desc"}}],"query":{"bool":{"must":[{"match_all":{}}]}}}';
-                '{"size":'.$size.',"from":'.$from.',"sort":[{"_id":{"order":"desc"}}],"query":{"bool":{"must":[{"match_all":{}}]}}}';
-                //'{"size":' . $size . ',"from":' . $from . ',"query":{"bool":{"must":[{"match_all":{}}]}}}';
+                //'{"size":'.$size.',"from":'.$from.',"sort":[{"_id":{"order":"desc"}}],"query":{"bool":{"must":[{"match_all":{}}]}}}';
+                '{"size":' . $size . ',"from":' . $from . ',"query":{"bool":{"must":[{"match_all":{}}]}}}';
         }
     }
 
