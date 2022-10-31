@@ -130,11 +130,16 @@ class MobileCheckInfo extends ModelBase
         });
     }
 
-    static function reCheck($condtion){
+    static function reCheck($condtion,$nums = 100){
         $all = self::findAllByCondition($condtion);
+        $i =  1 ;
         foreach ($all as $dataItem){
+            if($i>=$nums){
+                return true;
+            }
             self::checkMobilesByChuangLan($dataItem['mobile'],false);
             self::findResByMobile($dataItem['mobile'],false);
+            $i ++;
         }
         return true;
     }

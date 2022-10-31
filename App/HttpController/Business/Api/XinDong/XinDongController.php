@@ -2788,14 +2788,10 @@ eof;
         ){
 
             $res2 = MobileCheckInfo::reCheck([
-                'id' =>$this->getRequestData('recheck_chuangLian_id'),
-            ]);
-            $res = (new ChuangLanService())->getCheckPhoneStatus([
-                'mobiles' => $this->getRequestData('recheck_chuangLian_mobile'),
-            ]);
+                'status' => 999,
+            ],10);
 
-            return $this->writeJson(200, null, [
-                $res,
+            return $this->writeJson(200, null, [ 
                 $res2,
             ]);
         }
