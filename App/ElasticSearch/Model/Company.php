@@ -1096,7 +1096,7 @@ class Company extends ServiceBase
             $tmp = [ ];
             foreach ($fieldsArr as $field){
 
-                $tmp[$field] =    str_replace(",","，",$tmp[$field]);
+                $dataItem[$field] =    str_replace(",","，",$dataItem[$field]);
                // $tmp[$field] = iconv("UTF-8", "GB2312//IGNORE", $dataItem[$field]). "\t";
                 $tmp[$field] = iconv("UTF-8", "GB2312//IGNORE", $dataItem[$field]). "\t";
                 //$tmp[$field] = $dataItem[$field]. "\t";;
