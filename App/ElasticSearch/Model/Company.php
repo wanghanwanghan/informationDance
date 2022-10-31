@@ -1059,7 +1059,7 @@ class Company extends ServiceBase
         $InitData =  DownloadSoukeHistory::findById( $paramsData['data_id'] );
         $filename = '搜客导出_'.date('YmdHis').'.csv';
         $f = fopen(OTHER_FILE_PATH.$filename, "w");
-        fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+        //fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
 
         $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArrayV2($InitData['admin_id']);
         array_unshift($fieldsArr, 'companyid');  //在数组开头插入
@@ -1103,7 +1103,8 @@ class Company extends ServiceBase
                         ]
                     ])
                 );
-                $tmp[$field] = $dataItem[$field]. "\t";;
+                $tmp[$field] = iconv("UTF-8", "GB2312//IGNORE", $dataItem[$field]). "\t";;
+                //$tmp[$field] = $dataItem[$field]. "\t";;
             }
             fputcsv($f, $tmp);
         }
