@@ -198,6 +198,7 @@ class SouKeController extends ControllerBase
             //不包含简介
             ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_app')),'app')
             ->addSize($size)
+            ->addSort("_id","desc")
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
