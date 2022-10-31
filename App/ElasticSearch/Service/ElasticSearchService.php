@@ -93,6 +93,14 @@ class ElasticSearchService extends ServiceBase
     function addMustNotMatchQuery($field, $value)
     {
         $this->query['query']['bool']['must_not'][] = ['match' => [$field => $value]];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'SetQueryBySearchTextV5'  =>  [
+                    'query'=>$this->query,
+                ],
+            ])
+        );
     }
 
     function addMustMatchPhraseQuery($field, $value)
