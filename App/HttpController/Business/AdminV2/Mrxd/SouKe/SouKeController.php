@@ -2361,7 +2361,7 @@ class SouKeController extends ControllerBase
 
         //补全数据
         foreach ($res['data'] as &$value){
-            
+
         }
         return $this->writeJson(200,  [
             'page' => $page,
