@@ -1069,7 +1069,7 @@ class Company extends ServiceBase
         foreach ($fieldsArr as $field){
             if($allFields[$field]){
                 $filedCname[] = iconv("UTF-8", "GB2312//IGNORE", $allFields[$field]). "\t";
-                $filedCname[] = $allFields[$field];
+                //$filedCname[] = $allFields[$field];
             }
         }
         fputcsv($f, $filedCname);
@@ -1095,6 +1095,11 @@ class Company extends ServiceBase
 
             $tmp = [ ];
             foreach ($fieldsArr as $field){
+
+                $tmp[$field] =    str_replace(",","，",$tmp[$field]);
+               // $tmp[$field] = iconv("UTF-8", "GB2312//IGNORE", $dataItem[$field]). "\t";
+                $tmp[$field] = iconv("UTF-8", "GB2312//IGNORE", $dataItem[$field]). "\t";
+                //$tmp[$field] = $dataItem[$field]. "\t";;
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
@@ -1104,10 +1109,6 @@ class Company extends ServiceBase
                         ]
                     ])
                 );
-                $tmp[$field] =    str_replace(",","，",$tmp[$field]);
-                $tmp[$field] = iconv("UTF-8", "GB2312//IGNORE", $dataItem[$field]). "\t";
-                $tmp[$field] = iconv("UTF-8", "GB2312//IGNORE", $dataItem[$field]). "\t";
-                //$tmp[$field] = $dataItem[$field]. "\t";;
             }
             fputcsv($f, $tmp);
         }
