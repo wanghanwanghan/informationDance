@@ -1080,7 +1080,7 @@ class Company extends ServiceBase
         $i = 1;
         foreach ($tmpXlsxDatas as $dataItem){
             $i++;
-            if($i%100==0){
+            if($i%300==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
@@ -1227,15 +1227,15 @@ class Company extends ServiceBase
 
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
                 if($nums%500==0){
-                    CommonService::getInstance()->log4PHP(json_encode(
-                            [
-                                'getYieldDataForSouKe' => [
-                                    'read from es $nums'=>$nums,
-                                    '$searchOption'=> $searchOption,
-                                    '$totalNums'=> $totalNums,
-                                ]
-                            ]
-                    ));
+//                    CommonService::getInstance()->log4PHP(json_encode(
+//                            [
+//                                'getYieldDataForSouKe' => [
+//                                    'read from es $nums'=>$nums,
+//                                    '$searchOption'=> $searchOption,
+//                                    '$totalNums'=> $totalNums,
+//                                ]
+//                            ]
+//                    ));
                 }
                 $lastId = $dataItem['_id'];
                 $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
