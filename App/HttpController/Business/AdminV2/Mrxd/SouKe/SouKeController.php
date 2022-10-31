@@ -2198,11 +2198,11 @@ class SouKeController extends ControllerBase
                 'func_info_json' => json_encode(
                     [
                         'class' => '\App\ElasticSearch\Model\Company',
-                        'static_func'=> 'exportCompanyDataToCsv',
+                        'static_func'=> 'deliverCompany',
                     ]
                 ),
                 'params_json' => json_encode([
-                    'data_id'=>$id
+                    'data_id'=>$requestData['id']
                 ]),
                 'type' => QueueLists::$typle_finance,
                 'user_id' => $this->loginUserinfo['id'],
