@@ -1944,7 +1944,7 @@ class SouKeController extends ControllerBase
                 'func_info_json' => json_encode(
                     [
                         'class' => '\App\ElasticSearch\Model\Company',
-                        'static_func'=> 'exportCompanyData',
+                        'static_func'=> 'exportCompanyDataToCsv',
                     ]
                 ),
                 'params_json' => json_encode([
