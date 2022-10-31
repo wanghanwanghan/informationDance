@@ -65,21 +65,16 @@ class jincai_shoudong extends AbstractProcess
                 $taskStatus = $rwh['taskStatus'] - 0;
                 $traceNo = $rwh['traceNo'];
                 $wupanTraceNo = $rwh['wupanTraceNo'];
-                if ($taskStatus !== 2 && $timeout > 3600) {
-                    echo $socialCredit . PHP_EOL;
-                    break;
+                if ($taskStatus !== 2) {
 //                    $check = $this->refreshTask($traceNo);
 //                    if (!$check) {
 //                        dd($traceNo);
 //                    }
-//                    echo $socialCredit . '|||' . $index . PHP_EOL;
-//                    break;
+                    echo $socialCredit . PHP_EOL;
+                    break;
                 }
             }
         }
-
-        dd('呵呵');
-
 
     }
 
@@ -396,53 +391,47 @@ class jincai_shoudong extends AbstractProcess
             }
 
             // 拼task请求参数
-            for ($cxlx = 2; $cxlx--;) {
+            $ywBody = [
+                'kprqq' => date('Y-m-d', $kprqq),// 开票日期起
+                'kprqz' => date('Y-m-d', $kprqz),// 开票日期止
+                'nsrsbh' => $target->getAttr('socialCredit'),// 纳税人识别号
+            ];
 
-                $ywBody = [
-                    'cxlx' => trim($cxlx),// 查询类型 0销项 1 进项
-                    'kprqq' => date('Y-m-d', $kprqq),// 开票日期起
-                    'kprqz' => date('Y-m-d', $kprqz),// 开票日期止
-                    'nsrsbh' => $target->getAttr('socialCredit'),// 纳税人识别号
-                ];
-
-                try {
-                    for ($try = 3; $try--;) {
-                        // 发送 试3次
-                        $addTaskInfo = (new JinCaiShuKeService())->addTask(
-                            $target->getAttr('socialCredit'),
-                            $target->getAttr('province'),
-                            $target->getAttr('city'),
-                            $ywBody
-                        );
-                        if (isset($addTaskInfo['code']) && strlen($addTaskInfo['code']) > 1) {
-                            break;
-                        }
-                        \co::sleep(5);
+            try {
+                for ($try = 3; $try--;) {
+                    // 发送 试3次
+                    $addTaskInfo = (new JinCaiShuKeService())->addTask(
+                        $target->getAttr('socialCredit'),
+                        $target->getAttr('province'),
+                        $target->getAttr('city'),
+                        $ywBody
+                    );
+                    if (isset($addTaskInfo['code']) && strlen($addTaskInfo['code']) > 1) {
+                        break;
                     }
-                    JinCaiTrace::create()->data([
-                        'entName' => $target->getAttr('entName'),
-                        'socialCredit' => $target->getAttr('socialCredit'),
-                        'code' => $addTaskInfo['code'] ?? '未返回',
-                        'type' => 1,// 无盘
-                        'province' => $addTaskInfo['result']['province'] ?? '未返回',
-                        'taskCode' => $addTaskInfo['result']['taskCode'] ?? '未返回',
-                        'taskStatus' => $addTaskInfo['result']['taskStatus'] ?? '未返回',
-                        'traceNo' => $addTaskInfo['result']['traceNo'] ?? '未返回',
-                        'kprqq' => $kprqq,
-                        'kprqz' => $kprqz,
-                        'cxlx' => $cxlx,
-                    ])->save();
-                    // 还要间隔2分钟
                     \co::sleep(5);
-                } catch (\Throwable $e) {
-                    $file = $e->getFile();
-                    $line = $e->getLine();
-                    $msg = $e->getMessage();
-                    $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-                    CommonService::getInstance()->log4PHP($content, 'try-catch', 'GetJinCaiTrace.log');
-                    continue;
                 }
-
+                JinCaiTrace::create()->data([
+                    'entName' => $target->getAttr('entName'),
+                    'socialCredit' => $target->getAttr('socialCredit'),
+                    'code' => $addTaskInfo['code'] ?? '未返回',
+                    'type' => 1,// 无盘
+                    'province' => $addTaskInfo['result']['province'] ?? '未返回',
+                    'taskCode' => $addTaskInfo['result']['taskCode'] ?? '未返回',
+                    'taskStatus' => $addTaskInfo['result']['taskStatus'] ?? '未返回',
+                    'traceNo' => $addTaskInfo['result']['traceNo'] ?? '未返回',
+                    'kprqq' => $kprqq,
+                    'kprqz' => $kprqz,
+                ])->save();
+                // 还要间隔2分钟
+                \co::sleep(120);
+            } catch (\Throwable $e) {
+                $file = $e->getFile();
+                $line = $e->getLine();
+                $msg = $e->getMessage();
+                $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+                CommonService::getInstance()->log4PHP($content, 'try-catch', 'GetJinCaiTrace.log');
+                continue;
             }
 
         }
