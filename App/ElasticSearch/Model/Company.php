@@ -1094,6 +1094,15 @@ class Company extends ServiceBase
 
             $tmp = [ ];
             foreach ($fieldsArr as $field){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '$field' =>[
+                            '1'=> $dataItem[$field],
+                            '2'=> $dataItem[$field]. "\t"
+                        ]
+                    ])
+                );
                 $tmp[$field] = $dataItem[$field]. "\t";;
             }
             fputcsv($f, $tmp);
