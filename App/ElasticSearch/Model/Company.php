@@ -275,18 +275,20 @@ class Company extends ServiceBase
     }
 
 
-    function searchFromEs($index = 'company_202207')
+    function searchFromEs($index = 'company_202207',$showLog = false)
     {
 
         $responseJson = (new XinDongService())->advancedSearch($this->es,$index);
         $responseArr = @json_decode($responseJson,true);
         $this->setReturnData($responseArr);
-        CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
-                [
-                    // 'hits' => $responseArr['hits']['hits'],
-                    'es_query' => $this->es->query,
-                ]
-        ));
+        if($showLog){
+            CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
+                    [
+                        'hits' => count($responseArr['hits']['hits']),
+                        'es_query' => $this->es->query,
+                    ]
+            ));
+        }
         return $this;
     }
 
@@ -1118,18 +1120,21 @@ class Company extends ServiceBase
     }
 
     static function getYieldDataForSouKe($totalNums,$requestDataArr,$fieldsArr){
-
         $startMemory = memory_get_usage();
         $start = microtime(true);
         $searchOption = json_decode($requestDataArr['searchOption'],true);
-        $datas = [];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'getYieldDataForSouKe' =>[
+                    '$searchOption'=> $searchOption,
+                    '$totalNums'=> $totalNums,
+                    'start'=> 'start',
+                ]
+            ])
+        );
 
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                __CLASS__.__FUNCTION__ .__LINE__,
-//                '$datas' => $datas
-//            ])
-//        );
+        $datas = [];
 
         $size = 3500;
         $offset = 0;
@@ -1195,49 +1200,49 @@ class Company extends ServiceBase
                 ->SetQueryByCompanyStatus(trim($requestDataArr['ENTSTATUS']))
                 // 地区 basic_regionid: 110101,110102,
                 ->SetQueryByBasicRegionid(trim($requestDataArr['basic_regionid']) ,'DOMDISTRICT')
+                //不包含名称
+                ->SetQueryBySearchTextV5( trim($requestDataArr['un_name']),'ENTNAME')
+                //不包含经营范围
+                ->SetQueryBySearchTextV5( trim($requestDataArr['un_basic_opscope']),'OPSCOPE')
+                //不包含简介
+                ->SetQueryBySearchTextV5( trim($requestDataArr['un_jiejian']),'gong_si_jian_jie')
+                //不包含简介
+                ->SetQueryBySearchTextV5( trim($requestDataArr['un_app']),'app')
                 ->addSize($size)
                 ->setSource($fieldsArr)
-
-                //->addSize($size)
-                //->addFrom($offset)
-                //设置默认值 不传任何条件 搜全部
-                //->setDefault()
-                //->searchFromEs('company_202209')
-                // 格式化下日期和时间
-                //->formatEsDate()
-                // 格式化下金额
-                //->formatEsMoney('REGCAP')
             ;
 
 
             if($lastId>0){
                 $companyEsModel->addSearchAfterV1($lastId);
             }
-            // 格式化下日期和时间
+
+            $showLog = true;
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202209')
+                ->searchFromEs('company_202209',$showLog)
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();
 
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+                if($nums%100==0){
+                    CommonService::getInstance()->log4PHP(json_encode(
+                            [
+                                'getYieldDataForSouKe' => [
+                                    'read from es $nums'=>$nums,
+                                    '$searchOption'=> $searchOption,
+                                    '$totalNums'=> $totalNums,
+                                ]
+                            ]
+                    ));
+                }
                 $lastId = $dataItem['_id'];
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        '$lastId' => $lastId
-//                    ])
-//                );
-
-
                 $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
                 $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
                 $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
 
-
                 $nums ++;
-
                 // 官网
                 $webStr = trim($dataItem['_source']['web']);
                 if(!$webStr){
@@ -1253,13 +1258,18 @@ class Company extends ServiceBase
             $totalNums -= $size;
             $offset +=$size;
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
-                'generate data  done . costs seconds '=>microtime(true) - $start
-            ])
-        );
+
+        CommonService::getInstance()->log4PHP(json_encode(
+            [
+                'getYieldDataForSouKe' => [
+                    'read from es $nums'=>$nums,
+                    '$searchOption'=> $searchOption,
+                    '$totalNums'=> $totalNums,
+                    'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+                    'generate data  done . costs seconds '=>microtime(true) - $start
+                ]
+            ]
+        )); 
     }
 
     static  function  getNamesByText($page,$size,$searchText,$returnFullField = false){
