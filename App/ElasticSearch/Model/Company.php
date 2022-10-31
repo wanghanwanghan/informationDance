@@ -1208,6 +1208,7 @@ class Company extends ServiceBase
                 ->SetQueryBySearchTextV5( trim($requestDataArr['un_jiejian']),'gong_si_jian_jie')
                 //不包含简介
                 ->SetQueryBySearchTextV5( trim($requestDataArr['un_app']),'app')
+                ->addSort("_id","desc")
                 ->addSize($size)
                 ->setSource($fieldsArr)
             ;
