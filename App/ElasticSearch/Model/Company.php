@@ -351,11 +351,22 @@ class Company extends ServiceBase
     }
 
     function SetQueryBySearchTextV2($searchText){
+        /**
+        ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_name')),'ENTNAME')
+        //不包含经营范围
+        ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_basic_opscope')),'OPSCOPE')
+        //不包含简介
+        ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_jiejian')),'gong_si_jian_jie')
+        //不包含简介
+        ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_app')),'app')
+         */
         if($searchText){
             $matchedCnames = [
                 [ 'field'=>'ENTNAME' ,'value'=> $searchText],
-                [ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
-                [ 'field'=>'OPSCOPE' ,'value'=> $searchText]
+                //[ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
+                [ 'field'=>'OPSCOPE' ,'value'=> $searchText],
+                [ 'field'=>'gong_si_jian_jie' ,'value'=> $searchText],
+                [ 'field'=>'app' ,'value'=> $searchText],
             ];
             $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
         }
