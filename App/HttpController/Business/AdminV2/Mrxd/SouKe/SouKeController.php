@@ -221,7 +221,7 @@ class SouKeController extends ControllerBase
             $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
             $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
             $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntIdV2($dataItem['_source']['companyid']);
-
+            $dataItem['_source']['app'] =    str_replace("&&&",",",$dataItem['_source']['app']);
             // 添加tag
             $dataItem['_source']['tags'] = array_values(
                 (new XinDongService())::getAllTagesByData(
