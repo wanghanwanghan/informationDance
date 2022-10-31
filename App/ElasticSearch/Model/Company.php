@@ -395,7 +395,7 @@ class Company extends ServiceBase
             ];
 
             foreach ($fileds as $filed){
-                $this->es->addMustNotTermQuery($filed,$searchText) ;
+                $this->es->addMustNotMatchQuery($filed,$searchText) ;
             }
 
         }
@@ -403,8 +403,17 @@ class Company extends ServiceBase
     }
 
     function SetQueryBySearchTextV5($searchText,$filed){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'SetQueryBySearchTextV5'  =>  [
+                    '$searchText'=>$searchText,
+                    '$filed'=>$filed,
+                ],
+            ])
+        );
         if($searchText){
-            $this->es->addMustNotTermQuery($filed,$searchText) ;
+            $this->es->addMustNotMatchQuery($filed,$searchText) ;
         }
         return $this;
     }

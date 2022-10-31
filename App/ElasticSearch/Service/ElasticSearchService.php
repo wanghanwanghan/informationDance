@@ -90,6 +90,10 @@ class ElasticSearchService extends ServiceBase
     {
         $this->query['query']['bool']['must_not'][] = ['term' => [$field => $value]];
     }
+    function addMustNotMatchQuery($field, $value)
+    {
+        $this->query['query']['bool']['must_not'][] = ['match' => [$field => $value]];
+    }
 
     function addMustMatchPhraseQuery($field, $value)
     {
