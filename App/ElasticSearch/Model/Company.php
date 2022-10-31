@@ -4,6 +4,8 @@ namespace App\ElasticSearch\Model;
 
 use App\ElasticSearch\Service\ElasticSearchService;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
+use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
+use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
@@ -1023,6 +1025,89 @@ class Company extends ServiceBase
             $InitData['id'],DownloadSoukeHistory::$state_file_succeed
         );
     }
+
+    /**
+    事件里执行的
+     */
+    static function  deliverCompany($paramsData){
+        $limit = 3 ;
+        $where = " WHERE status = ".DeliverHistory::$state_init.
+            " AND touch_time IS NULL LIMIT $limit ";
+        $allInitDatas =  DeliverHistory::findBySql(
+            $where
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'deliverCompany' => [
+                    'start'=>true,
+                    '$paramsData'=>$paramsData,
+                    '$where'=>$where,
+                    '$allInitDatas'=>count($allInitDatas),
+                ]
+            ])
+        );
+        foreach($allInitDatas as $InitData){
+            DeliverHistory::setTouchTime(
+                $InitData['id'],date('Y-m-d H:i:s')
+            );
+
+            //各项筛选条件
+            $featureArr = json_decode($InitData['feature'],true);
+            $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArray($InitData['admin_id']);
+            array_unshift($fieldsArr, 'companyid');  //在数组开头插入
+            $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
+            $nums = 1;
+            foreach ($tmpXlsxDatas as $dataItem){
+                //第一列是标题
+                if($nums == 1 ){
+                    $nums ++;
+                    continue;
+                }
+                $historeyId = DeliverDetailsHistory::addRecordV2(
+                    [
+                        //用户
+                        'admin_id' => $InitData['admin_id'],
+                        //交付记录id
+                        'deliver_id' => $InitData['id'],
+                        //企业id
+                        'ent_id' => $dataItem['companyid'],
+                        //企业名称
+                        'entName' => $dataItem['ENTNAME'],
+                        //备注
+                        'remark' => '',
+                        'status' => DeliverDetailsHistory::$state_init,
+                    ]
+                );
+                if($nums%200 == 0 ){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            'deliverCompany' => [
+                                'start'=>true,
+                                '$paramsData'=>$paramsData,
+                                '$nums'=>$nums,
+                                '$historeyId'=>$historeyId,
+                            ]
+                        ])
+                    );
+                } 
+                $nums ++;
+            }
+
+            //设置状态
+            DeliverHistory::setStatus(
+                $InitData['id'],DeliverHistory::$state_succeed
+            );
+            DeliverHistory::setTouchTime(
+                $InitData['id'],NULL
+            );
+        }
+
+        return true;
+    }
+
+
     /**
     事件里执行的
      */
@@ -1162,7 +1247,7 @@ class Company extends ServiceBase
                 ){
                     $dataItem['gao_xin_ji_shu'] =  $dataItem['gao_xin_ji_shu']?'有':'无';
                 }
- 
+
                 //==========================================
                 $dataItem[$field] =    str_replace(",","，",$dataItem[$field]);
                 $dataItem[$field] =    str_split ( $dataItem[$field], 32766 )[0];

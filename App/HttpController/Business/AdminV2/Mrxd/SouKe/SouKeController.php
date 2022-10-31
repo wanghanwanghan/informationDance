@@ -2125,7 +2125,7 @@ class SouKeController extends ControllerBase
     }
 
     /*
-     * 确认使用该文件
+     * 确认使用该文件  XXXXXX
      * */
     public function deliverCustomerRoster(){
         $requestData =  $this->getRequestData();
@@ -2188,6 +2188,28 @@ class SouKeController extends ControllerBase
                 'status' => DeliverHistory::$state_init,
                 'type' => 1,
                 'is_destroy' => 0,
+            ]
+        );
+
+        $res = QueueLists::addRecord(
+            [
+                'name' => 'sou_ke_export',
+                'desc' => '后台-搜客-导出',
+                'func_info_json' => json_encode(
+                    [
+                        'class' => '\App\ElasticSearch\Model\Company',
+                        'static_func'=> 'exportCompanyDataToCsv',
+                    ]
+                ),
+                'params_json' => json_encode([
+                    'data_id'=>$id
+                ]),
+                'type' => QueueLists::$typle_finance,
+                'user_id' => $this->loginUserinfo['id'],
+                'remark' => '',
+                'begin_date' => NULL,
+                'msg' => '',
+                'status' => QueueLists::$status_init,
             ]
         );
 
