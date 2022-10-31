@@ -2311,6 +2311,7 @@ class SouKeController extends ControllerBase
 
     public function getDeliverDetails(){
         $page = $this->request()->getRequestParam('page')??1;
+        $pageSize = $this->request()->getRequestParam('pageSize')??20;
 
         $requestData =  $this->getRequestData();
 
@@ -2344,18 +2345,27 @@ class SouKeController extends ControllerBase
             'value' => $requestData['id'],
             'operate' => '=',
         ];
+        if($requestData['company_name']){
+            $whereArr[] =   [
+                'field' => 'entName',
+                'value' => '%'.$requestData['company_name'].'%',
+                'operate' => 'like',
+            ];
+        }
         $res = DeliverDetailsHistory::findByConditionV2(
 
             $whereArr,
-            $page
+            $page,
+            $pageSize
         );
 
         //补全数据
         foreach ($res['data'] as &$value){
+            
         }
         return $this->writeJson(200,  [
             'page' => $page,
-            'pageSize' =>10,
+            'pageSize' =>$pageSize,
             'total' => $res['total'],
             'totalPage' =>  ceil( $res['total']/ 10 ),
         ], $res['data'],'成功');

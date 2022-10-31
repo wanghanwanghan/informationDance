@@ -1079,7 +1079,7 @@ class Company extends ServiceBase
                         'status' => DeliverDetailsHistory::$state_init,
                     ]
                 );
-                if($nums%200 == 0 ){
+                if($nums%500 == 0 ){
                     CommonService::getInstance()->log4PHP(
                         json_encode([
                             __CLASS__.__FUNCTION__ .__LINE__,
@@ -1166,7 +1166,7 @@ class Company extends ServiceBase
         $i = 1;
         foreach ($tmpXlsxDatas as $dataItem){
             $i++;
-            if($i%300==0){
+            if($i%500==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
