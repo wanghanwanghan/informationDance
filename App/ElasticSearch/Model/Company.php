@@ -1068,6 +1068,7 @@ class Company extends ServiceBase
         $allFields = AdminUserSoukeConfig::getAllFieldsV2();
         foreach ($fieldsArr as $field){
             if($allFields[$field]){
+                $filedCname[] = iconv("UTF-8", "GB2312//IGNORE", $allFields[$field]). "\t";
                 $filedCname[] = $allFields[$field];
             }
         }
@@ -1103,7 +1104,9 @@ class Company extends ServiceBase
                         ]
                     ])
                 );
-                $tmp[$field] = iconv("UTF-8", "GB2312//IGNORE", $dataItem[$field]). "\t";;
+                $tmp[$field] =    str_replace(",","，",$tmp[$field]);
+                $tmp[$field] = iconv("UTF-8", "GB2312//IGNORE", $dataItem[$field]). "\t";
+                $tmp[$field] = iconv("UTF-8", "GB2312//IGNORE", $dataItem[$field]). "\t";
                 //$tmp[$field] = $dataItem[$field]. "\t";;
             }
             fputcsv($f, $tmp);
