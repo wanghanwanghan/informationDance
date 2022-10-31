@@ -1025,9 +1025,28 @@ class Company extends ServiceBase
     事件里执行的
      */
     static function exportCompanyDataToCsv($paramsData){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sou_ke_exportCompanyDataToCsv' =>[
+                    'data_id'=> $paramsData['data_id'],
+                    'start'=> 'start ',
+                ]
+            ])
+        );
         $startMemory = memory_get_usage();
         $InitData =  DownloadSoukeHistory::findById( $paramsData['data_id'] );
         if(empty($InitData)){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'sou_ke_exportCompanyDataToCsv' => [
+                        'data_id'=> $paramsData['data_id'],
+                        'return_false'=> 'empty data ',
+                    ]
+                ])
+            );
+
             return [
                 'msg' => 'wrong id',
                 'data_id' => $paramsData['data_id'],
@@ -1056,16 +1075,24 @@ class Company extends ServiceBase
 
         $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
 
+        $i = 1;
         foreach ($tmpXlsxDatas as $dataItem){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$dataItem' => $dataItem
-                ])
-            );
+            $i++;
+            if($i%100==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'sou_ke_exportCompanyDataToCsv' =>[
+                            'data_id'=> $paramsData['data_id'],
+                            'generate_data_$i'=> $i,
+                        ]
+                    ])
+                );
+            }
+
             $tmp = [ ];
             foreach ($fieldsArr as $field){
-                $tmp[$field] = $dataItem[$field];
+                $tmp[$field] = $dataItem[$field]. "\t";;
             }
             fputcsv($f, $tmp);
         }
@@ -1073,7 +1100,11 @@ class Company extends ServiceBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+                'sou_ke_exportCompanyDataToCsv' =>[
+                    'data_id'=> $paramsData['data_id'],
+                    'generate_data_$i'=> $i,
+                    'memory use'=> round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+                ]
             ])
         );
 
