@@ -1097,7 +1097,7 @@ class Company extends ServiceBase
 
             //设置状态
             DeliverHistory::setStatus(
-                $InitData['id'],DeliverHistory::$state_delivering
+                $InitData['id'],DeliverHistory::$state_succeed
             );
             DeliverHistory::setTouchTime(
                 $InitData['id'],NULL
