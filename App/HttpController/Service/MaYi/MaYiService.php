@@ -5205,8 +5205,6 @@ class MaYiService extends ServiceBase
             return $this->check(605, null, null, '统一社会信用代码必须18位');
         }
 
-        CommonService::getInstance()->log4PHP($data, 'info', 'leishizhaoming.log');
-
         $postData = ['entName' => $data['entName']];
 
         $res = (new TaoShuService())
@@ -5272,13 +5270,13 @@ class MaYiService extends ServiceBase
                 'getDataSource' => 2,
             ];
 
-            (isset($data['authorized']) && $data['authorized'] === 'Y') ?
+            $data['authorized'] === 'Y' ?
                 $created['status'] = self::STATUS_1 ://拿到授权书了
                 $created['status'] = self::STATUS_0;
 
-            if (isset($data['authorized']) && $data['authorized'] === 'Y') {
-                $data['filePath'] = $data['fileUrl'];
-                $data['authDate'] = time();
+            if ($data['authorized'] === 'Y') {
+                $created['filePath'] = $data['fileUrl'];
+                $created['authDate'] = time();
             }
 
             $id = AntAuthList::create()->data($created)->save();
