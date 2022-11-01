@@ -243,10 +243,17 @@ class ToolsController extends ControllerBase
 
         return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
     }
+
+    /**
+        上传公开联系人文件
+     *
+     */
+
     public function uploadeGongKaiContactFiles(){
         $requestData =  $this->getRequestData();
         $succeedFiels = [];
         $files = $this->request()->getUploadedFiles();
+        return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
         foreach ($files as $key => $oneFile) {
             try {
                 $fileName = $oneFile->getClientFilename();
@@ -271,7 +278,7 @@ class ToolsController extends ControllerBase
                         'file_name' => $fileName,
                         'new_file_name' => '',
                         'remark' => $requestData['remark']?:'',
-                        'type' => ToolsFileLists::$type_bu_quan_zi_duan,
+                        'type' => ToolsFileLists::$type_upload_pull_gong_kai_contact,
                         'state' => $requestData['state']?:'',
                         'touch_time' => $requestData['touch_time']?:'',
                     ]
@@ -287,13 +294,13 @@ class ToolsController extends ControllerBase
                             'func_info_json' => json_encode(
                                 [
                                     'class' => '\App\HttpController\Models\MRXD\ToolsFileLists',
-                                    'static_func'=> 'buQuanZiDuan',
+                                    'static_func'=> 'pullGongKaiContacts',
                                 ]
                             ),
                             'params_json' => json_encode([
 
                             ]),
-                            'type' => QueueLists::$typle_finance,
+                            'type' => ToolsFileLists::$type_upload_pull_gong_kai_contact,
                             'remark' => '',
                             'begin_date' => NULL,
                             'msg' => '',
@@ -313,6 +320,7 @@ class ToolsController extends ControllerBase
         $requestData =  $this->getRequestData();
         $succeedFiels = [];
         $files = $this->request()->getUploadedFiles();
+        return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
         foreach ($files as $key => $oneFile) {
             try {
                 $fileName = $oneFile->getClientFilename();

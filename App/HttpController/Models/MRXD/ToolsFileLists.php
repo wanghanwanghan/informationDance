@@ -166,8 +166,8 @@ class ToolsFileLists extends ModelBase
         return $data;
     }
 
-
-    static function buQuanZiDuan(){
+    //补全联系人
+    static function buQuanZiDuan($params){
        $filesDatas = self::findBySql("
             WHERE touch_time < 1
             AND type = 5 
@@ -293,7 +293,142 @@ class ToolsFileLists extends ModelBase
            ]);
        }
     }
-    static function shangChuanWeiXinHao(){
+
+    //上传公开联系人
+    static function pullGongKaiContacts($params){
+        //
+        $dbId = $params['db_id'];
+
+
+       $filesDatas = self::findBySql("
+            WHERE touch_time < 1
+            AND type = ".self::$type_upload_pull_gong_kai_contact." 
+            AND state = 0 
+            LIMIT 3 
+       ");
+       foreach ($filesDatas as $filesData){
+           self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
+
+           //写到csv里
+           $fileName = pathinfo($filesData['file_name'])['filename'];
+           $f = fopen(OTHER_FILE_PATH.$fileName.".csv", "w");
+           fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+           //插入表头
+           $allFields = AdminUserSoukeConfig::getAllFieldsV2();
+           foreach ($allFields as $field=>$cname){
+               $title[] = $cname ;
+           }
+           fputcsv($f, $title);
+
+           //插入数据
+           $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
+           foreach ($yieldDatas as $dataItem) {
+               //需要补全字段
+               if($dataItem[1]){
+                   $res = (new XinDongService())->getEsBasicInfoV3($dataItem[1],'UNISCID');
+               }
+               else{
+                   $res = (new XinDongService())->getEsBasicInfoV3($dataItem[0],'ENTNAME');
+               }
+               $baseArr = [];
+               //====================================
+               foreach ($allFields as $field=>$cname){
+                   if($field=='UNISCID'){
+
+                       $res['UNISCID'] = ''.$res['UNISCID']. "\t";
+                   }
+                   if($field=='ENTTYPE'){
+                       $cname =   CodeCa16::findByCode($res['ENTTYPE']);
+                       $res['ENTTYPE'] =  $cname?$cname->getAttr('name'):'';
+                   }
+                   if($field=='ENTSTATUS'){
+                       $cname =   CodeEx02::findByCode($res['ENTSTATUS']);
+                       $res['ENTSTATUS'] =  $cname?$cname->getAttr('name'):'';
+                   }
+
+                   //地区
+                   if(
+                       $field=='DOMDISTRICT' &&
+                       $res['DOMDISTRICT'] >0
+                   ){
+                       $res['DOMDISTRICT'] =  $res['DOM'];
+                   }
+
+                   //行业分类代码  findNICID
+                   if(
+                       $field=='NIC_ID' &&
+                       !empty( $res['NIC_ID'])
+                   ){
+                       $res['NIC_ID'] =  $res['nic_full_name'];
+                   }
+
+                   //一般人
+                   if(
+                       $field=='yi_ban_ren'
+                   ){
+                       $res['yi_ban_ren'] =  $res['yi_ban_ren']?'有':'无';
+                   }
+
+                   //战略新兴产业
+                   if(
+                       $field=='zlxxcy'
+                   ){
+                       $res['zlxxcy'] =  $res['zlxxcy']?'有':'无';
+                   }
+
+                   //数字经济产业
+                   if(
+                       $field=='szjjcy'
+                   ){
+                       $res['szjjcy'] =  $res['szjjcy']?'有':'无';
+                   }
+
+
+                   if(
+                       $field=='jin_chu_kou'
+                   ){
+                       $res['jin_chu_kou'] =  $res['jin_chu_kou']?'有':'无';
+                   }
+
+
+                   if(
+                       $field=='iso'
+                   ){
+                       $res['iso'] =  $res['iso']?'有':'无';
+                   }
+
+                   // 高新技术
+                   if(
+                       $field=='gao_xin_ji_shu'
+                   ){
+                       $res['gao_xin_ji_shu'] =  $res['gao_xin_ji_shu']?'有':'无';
+                   }
+
+                   if(
+                       is_array($res[$field])
+                   ){
+                       $baseArr[] = empty($res[$field])?'无':'有' ;
+                   }else{
+
+                       $baseArr[] = str_split ( $res[$field], 32766 )[0] ;
+                   }
+               }
+
+               //====================================
+
+               fputcsv($f, $baseArr);
+           }
+
+           self::updateById($filesData['id'],[
+               'new_file_name' => $fileName.".csv",
+               'state' => self::$state_succeed,
+           ]);
+       }
+    }
+
+    //上传微信联系人
+    static function shangChuanWeiXinHao($params){
        $filesDatas = self::findBySql("
             WHERE touch_time < 1
             AND type = 10 
