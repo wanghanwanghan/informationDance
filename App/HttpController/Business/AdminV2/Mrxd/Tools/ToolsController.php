@@ -106,6 +106,30 @@ class ToolsController extends ControllerBase
             'totalPage' =>  ceil( $total/ $pageSize ),
         ],  $res['data'],'');
     }
+    public function pullGongKaiContact(){
+        $requestData =  $this->getRequestData();
+        $page =$requestData['page']?:1;
+        $pageSize =$requestData['pageSize']?:20;
+
+        $res = ToolsFileLists::findByConditionWithCountInfo(
+            [
+                'type' =>ToolsFileLists::$type_bu_quan_zi_duan,
+            ],$page
+        );
+        foreach ($res['data'] as &$dataItem ){
+            $adminInfo = \App\HttpController\Models\AdminV2\AdminNewUser::findById($dataItem['admin_id']);
+            $dataItem['admin_id_cname'] = $adminInfo->user_name;
+            $dataItem['new_file_path'] = '/Static/OtherFile/'.$dataItem['new_file_name'];
+            $dataItem['state_cname'] = ToolsFileLists::stateMaps()[$dataItem['state']];
+        }
+        $total = $res['total'];
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' =>$pageSize,
+            'total' => $total,
+            'totalPage' =>  ceil( $total/ $pageSize ),
+        ],  $res['data'],'');
+    }
 
     public function uploadeBuQuanZiDuanFiles(){
         $requestData =  $this->getRequestData();
