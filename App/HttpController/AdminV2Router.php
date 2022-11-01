@@ -207,6 +207,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/uploadeFiles', $prefix . 'uploadeFiles');
             $routeCollector->addRoute(['GET', 'POST'], '/buQuanZiDuanList', $prefix . 'buQuanZiDuanList');
             $routeCollector->addRoute(['GET', 'POST'], '/pullGongKaiContact', $prefix . 'pullGongKaiContact');
+            $routeCollector->addRoute(['GET', 'POST'], '/pullFeiGongKaiContact', $prefix . 'pullFeiGongKaiContact');
             $routeCollector->addRoute(['GET', 'POST'], '/uploadeBuQuanZiDuanFiles', $prefix . 'uploadeBuQuanZiDuanFiles');
             //获取上传列表
             $routeCollector->addRoute(['GET', 'POST'], '/getUploadLists', $prefix . 'getUploadLists'); //
