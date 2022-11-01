@@ -450,7 +450,7 @@ class JinCaiShuKeService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(true)
-            ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken], [], 'postjson');
+            ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken, 'cliTimeout' => 120], [], 'postjson');
 
         return $this->checkResp($res, 'wupan');
     }
@@ -472,7 +472,7 @@ class JinCaiShuKeService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(true)
-            ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken], [], 'postjson');
+            ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken, 'cliTimeout' => 120], [], 'postjson');
 
         return $this->checkResp($res, 'wupan');
     }

@@ -52,30 +52,93 @@ class jincai_shoudong extends AbstractProcess
 
     protected function run($arg)
     {
+        // $this->addTaskOne(394);// 381 394
+
+        // 这6个有问题
+        $error_list = [
+            '91320106339391784W',// 部分任务超2000
+            '91510107MA65XA3Y77',// 四川的
+            '91510105MA66072L7N',// 四川的
+            '9133020431684033X3',// 部分任务超2000
+            '91330382725250541E',// 部分任务超2000
+            '91211022MA0U95ER7Y',// 部分任务超2000
+        ];
+
         $list = JinCaiTrace::create()->all();
 
+        $continue_at = 0;
+        $wupan_continue_at = 0;
+
         foreach ($list as $index => $one) {
+
+
+            // ================================================================================================
+            $socialCredit = $one->getAttr('socialCredit');
+            if ($socialCredit !== '91330782677218351Y' && $continue_at === 0) {
+                continue;
+            }
+            // ================================================================================================
+
+
             $rwh_list = (new JinCaiShuKeService())
                 ->obtainResultTraceNo($one->getAttr('traceNo'));
             $timeout = time() - $one->getAttr('updated_at');
             foreach ($rwh_list['result'] as $rwh) {
                 $province = $one->getAttr('province');
                 $socialCredit = $one->getAttr('socialCredit');
+                if (in_array($socialCredit, $error_list)) {
+                    continue;
+                }
                 $retry = $rwh['retry'];
                 $taskStatus = $rwh['taskStatus'] - 0;
                 $traceNo = $rwh['traceNo'];
                 $wupanTraceNo = $rwh['wupanTraceNo'];
+
+
+                // ================================================================================================
+                if ($wupanTraceNo !== '91330782677218351Y1666684625288' && $wupan_continue_at === 0) {
+                    continue;
+                }
+                $wupan_continue_at = 1;
+                // ================================================================================================
+
+
                 if ($taskStatus !== 2) {
-//                    $check = $this->refreshTask($traceNo);
-//                    if (!$check) {
-//                        dd($traceNo);
-//                    }
+                    //$check = $this->refreshTask($traceNo);
+                    //if (!$check) {
+                    //    dd($traceNo);
+                    //}
                     echo $socialCredit . PHP_EOL;
                     break;
                 }
+
+                // 取数
+                $w = [
+                    $socialCredit,
+                    Carbon::now()->format('H:i:s'),
+                    $province,
+                    $wupanTraceNo
+                ];
+
+                echo jsonEncode($w, false) . PHP_EOL;
+
+                $this->getData($socialCredit, $province, $wupanTraceNo);
+
+                $continue_at = 1;
+
+                sleep(2);
+
             }
         }
 
+    }
+
+    function getData(string $nsrsbh, string $province, string $traceNo)
+    {
+        $res = (new JinCaiShuKeService())->obtainFpInfo($nsrsbh, $province, $traceNo);
+        $this->handleMain($res);
+        $res = (new JinCaiShuKeService())->obtainFpDetailInfo($nsrsbh, $province, $traceNo);
+        $this->handleDetail($res);
     }
 
     function refreshTask($traceNo): bool
@@ -125,7 +188,7 @@ class jincai_shoudong extends AbstractProcess
                 // 全空就不入库了
                 $check = array_filter($insert);
                 if (!empty($check)) {
-                    $this->mainStoreMysql($insert, '91340700MA2TGDDJ8X', $cxlx, $fplx);
+                    $this->mainStoreMysql($insert, $nsrsbh, $cxlx, $fplx);
                 }
             }
         }
@@ -240,7 +303,6 @@ class jincai_shoudong extends AbstractProcess
                     }
                     if (!in_array(jsonEncode($index, false), self::$hahaha)) {
                         self::$hahaha[] = jsonEncode($index, false);
-                        dump(self::$hahaha);
                     }
                     continue;
                 }
@@ -252,7 +314,7 @@ class jincai_shoudong extends AbstractProcess
                     foreach ($model as $key_en => $key_cn) {
                         array_key_exists($key_cn, $temp) ? $insert[$key_en] = $temp[$key_cn] : $insert[$key_en] = '';
                     }
-                    $this->detailStoreMysql($insert, '91340700MA2TGDDJ8X', $cxlx, $fplx);
+                    $this->detailStoreMysql($insert, $nsrsbh, $cxlx, $fplx);
                 }
             }
         }

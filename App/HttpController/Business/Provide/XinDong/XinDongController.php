@@ -1572,7 +1572,7 @@ class XinDongController extends ProvideBase
         $data['legalPerson'] = $this->getRequestData('legalPerson');
         $data['idCard'] = $this->getRequestData('idCard');
         $data['phone'] = $this->getRequestData('phone');
-        $data['authorized'] = strtoupper($this->getRequestData('auth'));//有个合作公司不需要信动盖章
+        $data['authorized'] = strtoupper($this->getRequestData('authorized'));//有个合作公司不需要信动盖章
         $data['fileUrl'] = $this->getRequestData('fileUrl');//有个合作公司不需要信动盖章
 
         $data['requestId'] = $this->requestId;
