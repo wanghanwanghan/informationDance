@@ -154,6 +154,28 @@ class ToolsController extends ControllerBase
             'totalPage' =>  ceil( $total/ $pageSize ),
         ],  $res['data'],'');
     }
+    public function rePullFeiGongKaiContact(){
+        $requestData =  $this->getRequestData();
+        $page =$requestData['page']?:1;
+        $pageSize =$requestData['pageSize']?:20;
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' =>$pageSize,
+            'total' => $total,
+            'totalPage' =>  ceil( $total/ $pageSize ),
+        ],  $res['data'],'');
+    }
+    public function rePullGongKaiContact(){
+        $requestData =  $this->getRequestData();
+        $page =$requestData['page']?:1;
+        $pageSize =$requestData['pageSize']?:20;
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' =>$pageSize,
+            'total' => $total,
+            'totalPage' =>  ceil( $total/ $pageSize ),
+        ],  $res['data'],'');
+    }
 
     public function uploadeBuQuanZiDuanFiles(){
         $requestData =  $this->getRequestData();
