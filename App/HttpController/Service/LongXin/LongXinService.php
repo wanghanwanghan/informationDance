@@ -957,6 +957,7 @@ class LongXinService extends ServiceBase
     }
 
     /*
+
     补充下联系人职位信息 ： 接口返回的联系人职位信息 并不怎么全
      
     */

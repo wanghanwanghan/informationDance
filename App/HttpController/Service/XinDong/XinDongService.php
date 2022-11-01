@@ -1559,19 +1559,19 @@ class XinDongService extends ServiceBase
                     ],
                 ],
             ],
-            [
-                'pid' => 90,
-                'desc' => '是否物流',
-                'detail' => '',
-                'key' => 'wu_liu_xin_xi',
-                'type' => 'select',
-                'data' => [
-                    10 => [
-                        'cname' => '是',
-                        'detail' => '',
-                    ],
-                ],
-            ],
+//            [
+//                'pid' => 90,
+//                'desc' => '是否物流',
+//                'detail' => '',
+//                'key' => 'wu_liu_xin_xi',
+//                'type' => 'select',
+//                'data' => [
+//                    10 => [
+//                        'cname' => '是',
+//                        'detail' => '',
+//                    ],
+//                ],
+//            ],
 //            [
 //                'pid' => 100,
 //                'desc' => '营收剔除负值',

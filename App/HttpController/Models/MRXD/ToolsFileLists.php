@@ -36,6 +36,12 @@ class ToolsFileLists extends ModelBase
     static  $type_upload_weixin =  10 ;
     static  $type_upload_weixin_cname =  '上传微信' ;
 
+    static  $type_upload_pull_gong_kai_contact =  15 ;
+    static  $type_upload_pull_gong_kai_contact_cname =  '拉取公开联系人' ;
+
+    static  $type_upload_pull_fei_gong_kai_contact =  20 ;
+    static  $type_upload_pull_fei_gong_kai_contact_cname =  '拉取非公开联系人' ;
+
     static  function  stateMaps(){
 
         return [
