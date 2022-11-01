@@ -5205,6 +5205,8 @@ class MaYiService extends ServiceBase
             return $this->check(605, null, null, '统一社会信用代码必须18位');
         }
 
+        CommonService::getInstance()->log4PHP($data, 'info', 'leishizhaoming.log');
+
         $postData = ['entName' => $data['entName']];
 
         $res = (new TaoShuService())
