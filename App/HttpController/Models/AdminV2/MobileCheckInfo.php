@@ -81,16 +81,16 @@ class MobileCheckInfo extends ModelBase
         if($use_last_redis_res){
             if(!empty($redisRes)){
                 $redisArr = json_decode($redisRes,true);
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'findResByMobile from redis ' => [
-                            '$mobileStr' =>$mobileStr,
-                            '$redisRes' =>$redisRes,
-                            '$redisArr' =>$redisArr,
-                        ]
-                    ])
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        __CLASS__.__FUNCTION__ .__LINE__,
+//                        'findResByMobile from redis ' => [
+//                            '$mobileStr' =>$mobileStr,
+//                            '$redisRes' =>$redisRes,
+//                            '$redisArr' =>$redisArr,
+//                        ]
+//                    ])
+//                );
                 return  $redisArr;
             }
         }
