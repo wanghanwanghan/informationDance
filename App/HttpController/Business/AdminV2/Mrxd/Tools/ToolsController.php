@@ -113,7 +113,7 @@ class ToolsController extends ControllerBase
 
         $res = ToolsFileLists::findByConditionWithCountInfo(
             [
-                'type' =>ToolsFileLists::$type_bu_quan_zi_duan,
+                'type' =>ToolsFileLists::$type_upload_pull_gong_kai_contact,
             ],$page
         );
         foreach ($res['data'] as &$dataItem ){
@@ -137,7 +137,7 @@ class ToolsController extends ControllerBase
 
         $res = ToolsFileLists::findByConditionWithCountInfo(
             [
-                'type' =>ToolsFileLists::$type_bu_quan_zi_duan,
+                'type' =>ToolsFileLists::$type_upload_pull_fei_gong_kai_contact,
             ],$page
         );
         foreach ($res['data'] as &$dataItem ){
