@@ -2982,7 +2982,7 @@ class XinDongService extends ServiceBase
         $res = $this->matchNamesByEqual($tobeMatch,$target);
         if($res){
             return [
-                'type' => '精准匹配',
+                'type' => '完全匹配',
                 'details' => '名称完全匹配',
                 'res' => '成功',
                 'percentage' => '',
@@ -3007,7 +3007,7 @@ class XinDongService extends ServiceBase
                 $str2 == $target
             ){
                 return [
-                    'type' => '精准匹配',
+                    'type' => '完全匹配',
                     'details' => '拼音相等',
                     'res' => '成功',
                     'percentage' => '',
@@ -3034,7 +3034,7 @@ class XinDongService extends ServiceBase
                 $str6 == $target
             ){
                 return [
-                    'type' => '精准匹配',
+                    'type' => '完全匹配',
                     'details' => '拼音相等',
                     'res' => '成功',
                     'percentage' => '',
@@ -3057,7 +3057,7 @@ class XinDongService extends ServiceBase
                 $str2 == $target
             ){
                 return [
-                    'type' => '精准匹配',
+                    'type' => '完全匹配',
                     'details' => '拼音首字母相等',
                     'res' => '成功',
                     'percentage' => '',
@@ -3090,7 +3090,7 @@ class XinDongService extends ServiceBase
                 $str6 == $target
             ){
                 return [
-                    'type' => '精准匹配',
+                    'type' => '完全匹配',
                     'details' => '拼音首字母相等',
                     'res' => '成功',
                     'percentage' => '',
@@ -3106,7 +3106,7 @@ class XinDongService extends ServiceBase
         $res = $this->checkIfArrayEqual($tobeMatchArr,$targetArr);
         if($res){
             return [
-                'type' => '精准匹配',
+                'type' => '近似匹配',
                 'details' => '多音字匹配',
                 'res' => '成功',
                 'percentage' => '',
@@ -3118,7 +3118,7 @@ class XinDongService extends ServiceBase
 
         if($res){
             return [
-                'type' => '精准匹配',
+                'type' => '近似匹配',
                 'details' => '中文包含匹配',
                 'res' => '成功',
                 'percentage' => '',
@@ -3129,7 +3129,7 @@ class XinDongService extends ServiceBase
         $res = $this->matchNamesByToBeContain($tobeMatch,$target);
         if($res){
             return [
-                'type' => '精准匹配',
+                'type' => '近似匹配',
                 'details' => '中文被包含匹配',
                 'res' => '成功',
                 'percentage' => '',
@@ -3141,10 +3141,10 @@ class XinDongService extends ServiceBase
         $res = array_intersect($tobeMatchArr,$targetArr);
         if(
             !empty($res) &&
-            $perc >= 50
+            $perc >= 90
         ){
             return [
-                'type' => '模糊匹配',
+                'type' => '近似匹配',
                 'details' => '拼音包含匹配',
                 'res' => '成功',
                 'percentage' => number_format($perc,2),
@@ -3153,9 +3153,9 @@ class XinDongService extends ServiceBase
 
         //文本匹配度  张三0808    张三
         similar_text($tobeMatch, $target, $perc);
-        if($perc > 70){
+        if($perc > 80){
             return [
-                'type' => '模糊匹配',
+                'type' => '近似匹配',
                 'details' => '中文相似度匹配',
                 'res' =>  '成功'  ,
                 'percentage' => number_format($perc,2),
@@ -3164,9 +3164,9 @@ class XinDongService extends ServiceBase
 
         //拼音相似度匹配  张三0808    张三
         similar_text(PinYinService::getPinyin($tobeMatch), PinYinService::getPinyin($target), $perc);
-        if($perc >= 80 ){
+        if($perc >= 90 ){
             return [
-                'type' => '模糊匹配',
+                'type' => '近似匹配',
                 'details' => '拼音相似度匹配',
                 'res' =>  '成功'  ,
                 'percentage' =>  number_format($perc,2),
