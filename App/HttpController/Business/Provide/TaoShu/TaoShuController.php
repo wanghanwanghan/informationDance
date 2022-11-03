@@ -154,7 +154,7 @@ class TaoShuController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-
+        CommonService::getInstance()->log4PHP($res,'info','taoshu_post_ret_wai2');
         return $this->checkResponse($res);
     }
 
