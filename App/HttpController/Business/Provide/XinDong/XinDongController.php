@@ -12,6 +12,7 @@ use App\HttpController\Models\Provide\RequestRecode;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
+use App\HttpController\Models\RDS3\HdSaicExtension\AggreListedH;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\DaXiang\DaXiangService;
@@ -29,6 +30,7 @@ use Carbon\Carbon;
 use EasySwoole\Redis\Redis;
 use wanghanwanghan\someUtils\control;
 use EasySwoole\Component\Csp;
+use wanghanwanghan\someUtils\moudles\resp\create;
 
 class XinDongController extends ProvideBase
 {
@@ -2334,5 +2336,45 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+
+    //企业基本信息
+    function getEntMarketInfo(): bool
+    {
+        $UNISCID = $this->getRequestData('UNISCID', '');
+        if (empty($UNISCID)) {
+            return $this->writeJson(201, null, null, '参数缺失(统一社会信用代码)');
+        }
+        $this->csp->add($this->cspKey, function () use ($UNISCID) {
+            $info = CompanyBasic::create()->where(['UNISCID'=>$UNISCID])->get();
+            $list = AggreListedH::create()->where(['companyid'=>$info->getAttr('companyid')])->all();
+            $data = [];
+            foreach ($list as $val){
+                $v = [
+                    'SEC_CODE' => $val->getAttr('SEC_CODE'),
+                    'SEC_SNAME' => $val->getAttr('SEC_SNAME'),
+                    'SEC_STYPE' => $val->getAttr('SEC_STYPE'),
+                    'MKT_TYPE' => $val->getAttr('MKT_TYPE'),
+                    'LIST_STATUS' => $val->getAttr('LIST_STATUS'),
+                    'LIST_SECTOR' => $val->getAttr('LIST_SECTOR'),
+                    'LIST_DATE' => $val->getAttr('LIST_DATE'),
+                    'LIST_ENDDATE' => $val->getAttr('LIST_ENDDATE'),
+                    'ISIN' => $val->getAttr('ISIN'),
+                    'nic_csrc' => $val->getAttr('nic_csrc'),
+                    'nic_cf' => $val->getAttr('nic_cf'),
+                    'nic_sws' => $val->getAttr('nic_sws'),
+                    'nic_gisc' => $val->getAttr('nic_gisc'),
+                    'EMPNUM' => $val->getAttr('EMPNUM'),
+                    'TSTAFFNUM' => $val->getAttr('TSTAFFNUM'),
+                ];
+                $data[] = $v;
+            }
+
+            return $data;
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 
 }
