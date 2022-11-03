@@ -11,6 +11,7 @@ use App\HttpController\Models\Api\ReportInfo;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\EntDb\EntInvoice;
 use App\HttpController\Models\EntDb\EntInvoiceDetail;
+use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateTable\CreateTableService;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
@@ -37,6 +38,8 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     private $phone;
     private $type;
 
+    private $baseOptions;
+
     private $inDetail = [];
     private $outDetail = [];
 
@@ -45,13 +48,14 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     private $fz_detail = [];
     private $fx_detail = [];
 
-    function __construct($entName, $code, $reportNum, $phone, $type)
+    function __construct($entName, $code, $reportNum, $phone, $type, $options = [])
     {
         $this->entName = $entName;
         $this->code = $code;
         $this->reportNum = $reportNum;
         $this->phone = $phone;
         $this->type = $type;
+        $this->baseOptions = $options;
 
         return parent::__construct();
     }
@@ -65,28 +69,33 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
         ];
 
         $in = EntInvoice::create()
-            ->addSuffix($this->code)
+            ->addSuffix($this->code, 'test')
             ->field($field)
-            ->where(['nsrsbh' => $this->code, 'direction' => '01'])->all();
+            ->where(['nsrsbh' => $this->code, 'direction' => '01'])
+            ->where('fplx', '14', '<>')
+            ->all();
 
         $out = EntInvoice::create()
-            ->addSuffix($this->code)
+            ->addSuffix($this->code, 'test')
             ->field($field)
-            ->where(['nsrsbh' => $this->code, 'direction' => '02'])->all();
+            ->where(['nsrsbh' => $this->code, 'direction' => '02'])
+            ->where('fplx', '14', '<>')
+            ->all();
 
         //从详情里拿 商品名称
         foreach ($in as $one_in) {
             $fpdm = $one_in->getAttr('invoiceCode');
             $fphm = $one_in->getAttr('invoiceNumber');
             $detail = EntInvoiceDetail::create()
-                ->addSuffix($fpdm, $fphm, '')
+                ->addSuffix($fpdm, $fphm, 'test')
                 ->field('mc')
-                ->where(['fpdm' => $fpdm, 'fphm' => $fphm])->get();
+                ->where(['fpdm' => $fpdm, 'fphm' => $fphm])
+                ->get();
             $mc = '';
             if (!empty($detail)) {
                 $mc = $detail->getAttr('mc');
                 $mc = current(array_filter(explode('*', $mc)));
-                empty($mc) ?: $mc = '';
+                !empty($mc) ?: $mc = '';
             }
             $one_in->goodsName = $mc;
         }
@@ -96,14 +105,15 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $fpdm = $one_in->getAttr('invoiceCode');
             $fphm = $one_in->getAttr('invoiceNumber');
             $detail = EntInvoiceDetail::create()
-                ->addSuffix($fpdm, $fphm, '')
+                ->addSuffix($fpdm, $fphm, 'test')
                 ->field('mc')
-                ->where(['fpdm' => $fpdm, 'fphm' => $fphm])->get();
+                ->where(['fpdm' => $fpdm, 'fphm' => $fphm])
+                ->get();
             $mc = '';
             if (!empty($detail)) {
                 $mc = $detail->getAttr('mc');
                 $mc = current(array_filter(explode('*', $mc)));
-                empty($mc) ?: $mc = '';
+                !empty($mc) ?: $mc = '';
             }
             $one_in->goodsName = $mc;
         }
@@ -115,8 +125,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     function run(int $taskId, int $workerIndex)
     {
         $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'DeepReportModel_1.docx');
-
-        $userInfo = User::create()->where('phone', $this->phone)->get();
 
         switch ($this->type) {
             case 'xd':
@@ -132,7 +140,16 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
                 $tmp->setValue('selectMore', '如需更多信息登录 信动客动 查看');
         }
 
-        $tmp->setValue('createEnt', $userInfo->getAttr('company'));
+        // 对内的时候是手机号，对外的时候是appid
+        if (strlen($this->phone) === 11) {
+            $userInfo = User::create()->where('phone', $this->phone)->get();
+            $userEmail = $userInfo->getAttr('email');
+        } else {
+            $userInfo = RequestUserInfo::create()->where('appId', $this->phone)->get();
+            $userEmail = $this->baseOptions['emailUrl'];
+        }
+
+        $tmp->setValue('createEnt', $userInfo->getAttr('company') ?? $userInfo->getAttr('username'));
 
         $tmp->setValue('entName', $this->entName);
 
@@ -291,9 +308,15 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
 
         $info->update(['status' => 2]);
 
-        $userEmail = User::create()->where('phone', $this->phone)->get();
-
-        CommonService::getInstance()->sendEmail($userEmail->email, [REPORT_PATH . $this->reportNum . '.docx'], '03', ['entName' => $this->entName]);
+        CommonService::getInstance()->sendEmail(
+            $userEmail,
+            [REPORT_PATH . $this->reportNum . '.docx'],
+            '03',
+            [
+                'entName' => $this->entName,
+                'emailSubject' => $this->baseOptions['emailSubject'] ?? '',
+            ]
+        );
 
         ProcessService::getInstance()->sendToProcess('docx2doc', $this->reportNum);
 
@@ -304,15 +327,12 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
     {
         try {
             $info = ReportInfo::create()->where('phone', $this->phone)->where('filename', $this->reportNum)->get();
-
             $file = $throwable->getFile();
             $line = $throwable->getLine();
             $msg = $throwable->getMessage();
-
             $content = "[file => {$file}] [line => {$line}] [msg => {$msg}]";
-
+            CommonService::getInstance()->log4PHP($content, 'info', 'DeepReport.log');
             $info->update(['status' => 1, 'errInfo' => $content]);
-
         } catch (\Throwable $e) {
 
         }
@@ -4136,7 +4156,6 @@ class CreateDeepReportTask extends TaskBase implements TaskInterface
             $postData = ['searchKey' => $this->entName];
 
             $res = (new LongDunService())->setCheckRespFlag(true)->get($this->ldUrl . 'CompanyFinancingSearch/GetList', $postData);//BusinessStateV4/SearchCompanyFinancings
-            CommonService::getInstance()->log4PHP($res, 'info', 'CompanyFinancingSearch_GetList');
 
             ($res['code'] === 200 && !empty($res['result'])) ? $res = $res['result']['Data'] : $res = null;
 

@@ -16,7 +16,13 @@ use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\InsuranceData;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\Api\User;
+use App\HttpController\Models\MRXD\OnlineGoodsCommissionGrantDetails;
+use App\HttpController\Models\MRXD\OnlineGoodsCommissions;
+use App\HttpController\Models\MRXD\OnlineGoodsDaikuanProducts;
+use App\HttpController\Models\MRXD\OnlineGoodsTiXianJiLu;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
+use App\HttpController\Models\MRXD\OnlineGoodsUserBaoXianOrder;
+use App\HttpController\Models\MRXD\OnlineGoodsUserDaikuanOrder;
 use App\HttpController\Models\MRXD\OnlineGoodsUserInviteRelation;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
@@ -37,68 +43,6 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
     function afterAction(?string $actionName): void
     {
         parent::afterAction($actionName);
-    }
-
-    function loginExample(): bool
-    {
-        $phone = $this->request()->getRequestParam('phone') ?? '';
-        $vCode = $this->request()->getRequestParam('vCode') ?? '';
-        $password = $this->request()->getRequestParam('password') ?? '';
-
-        if (empty($phone) || (empty($vCode) && empty($password)))
-            return $this->writeJson(201, null, null, '手机号或密码或验证码不能是空');
-
-        try {
-            $userInfo = User::create()->where('phone', $phone)->get();
-        } catch (\Throwable $e) {
-            return $this->writeErr($e, __FUNCTION__);
-        }
-
-        if (empty($userInfo)) return $this->writeJson(201, null, null, '手机号不存在');
-
-        if ($userInfo->getAttr('isDestroy') == 1) return $this->writeJson(201, null, null, '手机号已注销');
-
-        $redis = Redis::defer('redis');
-        $redis->select(14);
-
-        $index = $phone . '_login_key';
-        $loginNum = $redis->get($index);
-
-        if (!empty($loginNum) && $loginNum - 0 >= 5) {
-            return $this->writeJson(201, null, null, '已登录失败5次,1小时内禁止登录');
-        }
-
-        //密码或者验证码登录
-        if (!empty($vCode)) {
-            $vCodeInRedis = $redis->get($phone . 'login');
-            if (!is_numeric($vCodeInRedis) || $vCodeInRedis <= 1000) {
-                $vCodeInRedis = $redis->get($phone . 'reg');
-            }
-            if ((int)$vCodeInRedis !== (int)$vCode) return $this->writeJson(201, null, null, '验证码错误');
-        } elseif (!empty($password)) {
-            $password = trim($password);
-            $mysql_pwd = trim($userInfo->getAttr('password'));
-            empty($loginNum) ? $redis->set($index, 1, 3600) : $redis->incr($index);
-            if ($password !== $mysql_pwd) return $this->writeJson(201, null, null, '密码错误');
-        } else {
-            //连续输入错误 5 次，禁止登录 1 小时
-            empty($loginNum) ? $redis->set($index, 1, 3600) : $redis->incr($index);
-            return $this->writeJson(201, null, null, '登录失败');
-        }
-
-        $newToken = UserService::getInstance()->createAccessToken(
-            $userInfo->getAttr('phone'), $userInfo->getAttr('password')
-        );
-
-        try {
-            User::create()->get($userInfo->getAttr('id'))->update(['token' => $newToken]);
-        } catch (\Throwable $e) {
-            return $this->writeErr($e, __FUNCTION__);
-        }
-
-        $userInfo->setAttr('newToken', $newToken);
-
-        return $this->writeJson(200, null, $userInfo, '登录成功');
     }
 
     function sendSms(): bool
@@ -130,9 +74,17 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $digit = OnlineGoodsUser::createRandomDigit();
 
        //发短信
-        $res = (new AliSms())->sendByTempleteV2($phone, 'SMS_218160347',[
-            'code' => $digit,
-        ]);
+        if(
+            CommonService::IsProductionEnv()
+        ){
+            $res = (new AliSms())->sendByTempleteV2($phone, 'SMS_218160347',[
+                'code' => $digit,
+            ]);
+        }
+        else{
+            $res = true;
+        }
+
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
@@ -189,21 +141,27 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
     function getBasicInfo(): bool
     {
         $requestData =  $this->getRequestData();
-//        $phone = $requestData['phone'] ;
-//        $code = $requestData['code'] ;
+        $userInfo = $this->loginUserinfo;
+
+        $totalInomes = OnlineGoodsCommissionGrantDetails::getTotalIncomes($userInfo['id']);
+        $totalCommission = OnlineGoodsCommissionGrantDetails::getTotalComission($userInfo['id']);
+        $totalTiXianMoney = OnlineGoodsCommissionGrantDetails::getTotalTiXian($userInfo['id']);
 
         return $this->writeJson(
             200,
             [ ] ,
             [
-                'id' => 1,
-                'user_name' => '田大脚',
-                'total_income' => 1000,
-                'total_commission' => 1000,
-                'total_withdraw' => 1000,
-                'invite_code' => 1000,
-                'money' => 1000,
-                'avatar' => '/Static/Temp/XXX.img',
+                'id' => $userInfo['id'],
+                'user_name' => $userInfo['user_name'],
+                'mobile' => $userInfo['phone'],
+                'phone' => $userInfo['phone'],
+                'total_income' => $totalInomes,
+                'total_fans_num' => OnlineGoodsUserInviteRelation::getFansNums($userInfo),
+                'total_commission' => $totalCommission,
+                'total_withdraw' => $totalTiXianMoney,
+                'invite_code' =>  CommonService::encodeIdToInvitationCode($userInfo['id']),
+                'money' => $userInfo['money'],
+                'avatar' => 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png',
             ],
             '成功',
             true,
@@ -211,12 +169,43 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
     }
 
+
+    //申请提现
     function applyForWithdrawal(): bool
     {
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
+        $userInfo = $this->loginUserinfo;
+        $uid = $userInfo['id'];
 
+        if(
+            $requestData['money']> $userInfo['money']
+        ){
+            return $this->writeJson(
+                203,
+                [ ] ,
+                [
+
+                ],
+                '您的余额不足',
+                true,
+                []
+            );
+        }
+        OnlineGoodsTiXianJiLu::addRecordV2([
+            'user_id' => $uid,
+            'amount' => $requestData['money'],
+            'remark' => $requestData['remark']?:'',
+            'audit_state' => OnlineGoodsTiXianJiLu::$audit_state_init,
+            'audit_details' => '',
+            'pay_state' => OnlineGoodsTiXianJiLu::$pay_state_init,
+            'pay_details' => '',
+            'da_kuan_type' => OnlineGoodsTiXianJiLu::$pay_type_bank,
+            'kai_hu_hang' => $requestData['kai_hu_hang'],
+            'kai_hu_ming' => $requestData['kai_hu_ming'],
+            'yin_hang_ka_hao' => $requestData['yin_hang_ka_hao'],
+        ]);
         return $this->writeJson(
             200,
             [ ] ,
@@ -268,63 +257,59 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
     }
 
-
+    //提现列表
     function applyWithdrawalRecords(): bool
     {
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
+        $requestData =  $this->getRequestData();
+        $page = $requestData['page']?:1;
+        $pageSize = $requestData['pageSize']?:20 ;
+
+        //提现审核列表
+        $conditions = [
+            'user_id'=>$this->loginUserinfo['id']
+        ];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'applyWithdrawalRecords $conditions'=>$conditions
+            ])
+        );
+        $res = OnlineGoodsTiXianJiLu::findByConditionWithCountInfo(
+            $conditions,
+            $page,
+            $pageSize
+        );
+        foreach ($res['data'] as  &$dataItem){
+            $userInfo = OnlineGoodsUser::findById($dataItem['user_id']);
+            $userInfo = $userInfo->toArray();
+            $dataItem['account_type'] = '普通账户';
+            if(OnlineGoodsUser::IsVip($userInfo)){
+                $dataItem['account_type'] = 'VIP账户';
+            }
+            $dataItem['name'] = $userInfo['user_name'];
+            $dataItem['zhi_jin_account'] = $userInfo['phone'];
+            $dataItem['total_withdraw'] = '';
+            $dataItem['total_income'] = '';
+            $dataItem['money'] = $dataItem['amount'];
+            $dataItem['user_money'] = $userInfo['money'];
+            $dataItem['pass_date'] = $dataItem['audit_date'];
+            $dataItem['audit_state_cname'] =  OnlineGoodsTiXianJiLu::getAuditStateMap()[$dataItem['audit_state']];
+            $dataItem['pay_state_cname'] =  OnlineGoodsTiXianJiLu::getPayStateMap()[$dataItem['pay_state']];
+            $dataItem['apply_date'] = date('Y-m-d H:i:s',$dataItem['created_at']);
+
+        }
 
         return $this->writeJson(
             200,
-            [ ] ,
-            [
-                [
-                    'id'=>1,
-                    'money'=>1000,
-                    'state_cname' => '审核中',
-                    'pay_state_cname' => '待打款',
-                    'user_id' => 1,
-                    'user_name' =>  '李循环',
-                    'user_money' =>  100,
-                    // 详情
-                    'details' => '',
-                    'created_at'=>1665367946,
-                    'attaches'=>[],
-                    'pass_date'=> '2022-09-10 10:00:00',
-                    'pay_date'=> '2022-09-10 10:00:00',
-                ],
-                [
-                    'id'=>2,
-                    'money'=>1000,
-                    'state_cname' => '审核中',
-                    'pay_state_cname' => '待打款',
-                    'user_id' => 1,
-                    'user_name' =>  '李循环',
-                    'user_money' =>  100,
-                    // 详情
-                    'details' => '',
-                    'created_at'=>1665367946,
-                    'attaches'=>[],
-                    'pass_date'=> '2022-09-10 10:00:00',
-                    'pay_date'=> '2022-09-10 10:00:00',
-                ],
-                [
-                    'id'=>3,
-                    'money'=>1000,
-                    'state_cname' => '审核中',
-                    'pay_state_cname' => '待打款',
-                    'user_id' => 1,
-                    'user_name' =>  '李循环',
-                    'user_money' =>  100,
-                    // 详情
-                    'details' => '',
-                    'created_at'=>1665367946,
-                    'attaches'=>[],
-                    'pass_date'=> '2022-09-10 10:00:00',
-                    'pay_date'=> '2022-09-10 10:00:00',
-                ]
-            ],
+            [  'page' => $page,
+                'pageSize' => $pageSize,
+                'total' => $res['total'],
+                'totalPage' => ceil($res['total']/$pageSize) ,
+            ] ,
+            $res['data'],
             '成功',
             true,
             []
@@ -348,7 +333,233 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             []
         );
     }
+    function setBaoXianCommisionRate(): bool
+    {
+        $requestData =  $this->getRequestData();
 
+        $id = $requestData['id'] ;
+        $code = $requestData['code'] ;
+
+        $userInfo = $this->loginUserinfo;
+
+        //贷款订单 //校验权限：校验设置人
+        $commissionInfo = OnlineGoodsCommissions::findOneByCondition([
+            'id' => $requestData['id'],
+            'commission_owner' => $userInfo['id'],
+            'state' => OnlineGoodsCommissions::$commission_state_init
+        ]);
+
+        //todo：校验  rate 不能超出信动给的rate
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'id' => $requestData['id'],
+                    'commission_owner' => $userInfo['id'],
+                    'state' => OnlineGoodsCommissions::$commission_state_init
+                ]
+            ])
+        );
+
+
+        if(empty($commissionInfo)){
+            return $this->writeJson(
+                203,
+                [ ] ,
+                [
+
+                ],
+                '没权限设置该订单',
+                true,
+                []
+            );
+        }
+
+        //设置的佣金比例 不能超出最大值
+
+        $OrderInfo = OnlineGoodsUserBaoXianOrder::findById($commissionInfo->commission_order_id);
+        if($requestData['rate']>$OrderInfo->commission_rate){
+            return $this->writeJson(
+                203,
+                [ ] ,
+                [
+
+                ],
+                '佣金比例过大',
+                true,
+                []
+            );
+        }
+        //改为已设置成功
+        OnlineGoodsCommissions::updateById($commissionInfo->id,
+            [
+                'state' => OnlineGoodsCommissions::$commission_state_seted,
+                'comission_rate' => $requestData['rate'],
+            ]
+        );
+        $commissionInfo = OnlineGoodsCommissions::findById($commissionInfo->id);
+
+        //发放 金额
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'setDaiKuanCommisionRate_amount' =>  $OrderInfo->amount
+                ]
+            ])
+        );
+
+
+        OnlineGoodsCommissions::grantByItem($commissionInfo->toArray(),$OrderInfo->amount) ;
+
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+
+            ],
+            '成功',
+            true,
+            []
+        );
+    }
+
+    //设置佣金金额
+    function setDaiKuanCommisionRate(): bool
+    {
+        $requestData =  $this->getRequestData();
+
+        $id = $requestData['id'] ;
+        $code = $requestData['code'] ;
+
+        $userInfo = $this->loginUserinfo;
+
+        //贷款订单 //校验权限：校验设置人
+        $commissionInfo = OnlineGoodsCommissions::findOneByCondition([
+            'id' => $requestData['id'],
+            'commission_owner' => $userInfo['id'],
+            'state' => OnlineGoodsCommissions::$commission_state_init
+        ]);
+
+        //todo：校验  rate 不能超出信动给的rate
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'id' => $requestData['id'],
+                    'commission_owner' => $userInfo['id'],
+                    'state' => OnlineGoodsCommissions::$commission_state_init
+                ]
+            ])
+        );
+
+
+        if(empty($commissionInfo)){
+            return $this->writeJson(
+                203,
+                [ ] ,
+                [
+
+                ],
+                '没权限设置该订单',
+                true,
+                []
+            );
+        }
+
+        //改为已设置成功
+        $OrderInfo = OnlineGoodsUserDaikuanOrder::findById($commissionInfo->commission_order_id);
+        if($requestData['rate']>$OrderInfo->commission_rate){
+            return $this->writeJson(
+                203,
+                [ ] ,
+                [
+
+                ],
+                '佣金比例过大',
+                true,
+                []
+            );
+        }
+
+        OnlineGoodsCommissions::updateById($commissionInfo->id,
+            [
+                'state' => OnlineGoodsCommissions::$commission_state_seted,
+                'comission_rate' => $requestData['rate'],
+            ]
+        );
+        $commissionInfo = OnlineGoodsCommissions::findById($commissionInfo->id);
+
+        //发放 金额
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'setDaiKuanCommisionRate_amount' =>  $OrderInfo->amount
+                ]
+            ])
+        );
+
+
+        OnlineGoodsCommissions::grantByItem($commissionInfo->toArray(),$OrderInfo->amount) ;
+
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+
+            ],
+            '成功',
+            true,
+            []
+        );
+    }
+
+    //粉丝基本信息
+    function fansBasicInfo(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $fans_id = $requestData['fans_id'] ;
+        //fans_id
+        //先看是否是粉丝
+//        if(
+//         !OnlineGoodsUserInviteRelation::IsFans($fans_id,$this->loginUserinfo['id'])
+//        ){
+//            return $this->writeJson(
+//                200,
+//                [ ] ,
+//                [
+//
+//                ],
+//                '没权限',
+//                true,
+//                []
+//            );
+//        }
+
+        $userInfo = OnlineGoodsUser::findById($fans_id);
+        $invitorUserInfo = OnlineGoodsUserInviteRelation::findByUser($fans_id);
+        if($invitorUserInfo){
+            $invitorUserInfo = OnlineGoodsUser::findById($invitorUserInfo->invite_by);
+        }
+        return $this->writeJson(
+            200,
+            [ ] ,
+            [
+                'name'=>$userInfo->user_name,
+                'zhi_jin_account'=>$userInfo->phone,
+                'commission_order_nums'=>  OnlineGoodsCommissions::getOrderNums($fans_id,$this->loginUserinfo['id']),
+                'invitor'=> $invitorUserInfo?$invitorUserInfo->user_name:'',
+                'invitor_mobile'=> $invitorUserInfo?$invitorUserInfo->phone:'',
+            ],
+            '成功',
+            true,
+            []
+        );
+    }
+    //
     function shareIncome(): bool
     {
         $requestData =  $this->getRequestData();
@@ -376,37 +587,20 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             OnlineGoodsUser::getRandomDigit($phone)!= $code
         ){
             return $this->writeJson(201, null, [],  '验证码不正确或已过期');
-
         }
 
-        $id = OnlineGoodsUser::addRecordV2(
-            [
-                'source' => OnlineGoodsUser::$source_self_register,
-                'user_name' => $phone,
-                'phone' => $phone,
-                'password' => '',
-                'email' => '',
-                'money' => '',
-                'token' => '',
-            ]
-        );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'OnlineGoodsUser $id' => $id,
-                'OnlineGoodsUser $phone' => $phone,
-            ])
-        );
+        $userInfo = OnlineGoodsUser::findByPhone($phone);
+        if(
+            !$userInfo
+        ){
+            return $this->writeJson(201, null, [],  '请先注册');
+        }
+
         $newToken = UserService::getInstance()->createAccessToken(
             $phone,
             $phone
         );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'OnlineGoodsUser $newToken' => $newToken
-            ])
-        );
+
         $res = OnlineGoodsUser::findByPhone($phone);
         $res = $res->toArray();
         if($res['token']){
@@ -419,7 +613,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         }
 
         OnlineGoodsUser::updateById(
-            $id,
+            $userInfo->id,
             [
                 'token'=>$newToken
             ]
@@ -432,7 +626,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
     }
 
-    function registerZhiJin(): bool
+    //register
+    function register(): bool
     {
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
@@ -440,6 +635,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         if(
             OnlineGoodsUser::getRandomDigit($phone)!= $code
         ){
+            //测试环境不发
             if(
                 CommonService::IsProductionEnv()
             ){
@@ -457,7 +653,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $id = OnlineGoodsUser::addRecordV2(
             [
                 'source' => OnlineGoodsUser::$source_self_register,
-                'user_name' => $phone,
+                'user_name' => $requestData['name'],
                 'phone' => $phone,
                 'password' => '',
                 'email' => '',
@@ -468,31 +664,30 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
         //- 有邀请码的话 解析邀请码 设置邀请人
         $invitation_code = trim($requestData['invitation_code']);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'OnlineGoodsUser $id' => $id,
-                'OnlineGoodsUser $phone' => $phone,
-                'OnlineGoodsUser $invitation_code' => $invitation_code,
-            ])
-        );
         if(($invitation_code)){
             $invitatedBy = CommonService::decodeInvitationCodeToId($invitation_code);
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'OnlineGoodsUser $id' => $id,
-                    'OnlineGoodsUser $phone' => $phone,
-                    'OnlineGoodsUser $invitation_code' => $invitation_code,
-                    'OnlineGoodsUser $invitatedBy' => $invitatedBy,
+                    'registerZhiJin $uid' => $id,
+                    'registerZhiJin $phone' => $phone,
+                    'registerZhiJin $invitation_code' => $invitation_code,
+                    'registerZhiJin $invitatedBy' => $invitatedBy,
                 ])
             );
-            OnlineGoodsUserInviteRelation::addRecordV2(
-                [
-                    'user_id' => $this->loginUserinfo['id'],
-                    'invite_by' => $invitatedBy,
-                ]
-            );
+            if($invitatedBy>0){
+                $res1 = OnlineGoodsUserInviteRelation::addRecordV2(
+                    [
+                        'user_id' => $id,
+                        'invite_by' => $invitatedBy,
+                    ]
+                );
+                if(   !$res1   ){
+                    return $this->writeJson(201, null, [],  '系统错误！请联系管理员');
+                }
+            }
+
+
         }
 
         $newToken = UserService::getInstance()->createAccessToken(
@@ -637,6 +832,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             []
         );
     }
+
+    //保险订单
     function baoxianOrderLists(): bool
     {
         $requestData =  $this->getRequestData();
@@ -644,66 +841,37 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $pageSize =  $requestData['pageSize']?:100;
 
         $userInfo = $this->loginUserinfo;
+        $fansUser = OnlineGoodsUser::findById($requestData['fans_id']);
 
-        CommonService::writeTestLog(
-            [
-                'getInvitationCode'=>[
-                    '$userInfo'=>[
-                        'id'=>$userInfo['id'],
-                        'user_name'=>$userInfo['user_name'],
-                        'phone'=>$userInfo['phone'],
-                    ],
-                ]
-            ]
-        );
-
-        $exampleDatas = [
-            [
-                'id'=>1,
-                //产品名称
-                'product_name'=>'美人贷',
-                //产品id
-                'product_id'=>1,
-                //购买人
-                'purchaser'=>'张小花',
-                //订单金额
-                'price'=>10000,
-                //信动所得佣金 - 佣金表
-                'xindong_commission'=>500,
-                //设置分佣状态
-                'commission_set_state_cname'=>'已设置分佣',
-                //分佣状态
-                'commission_state_cname'=>'已领取分佣',
-                //下单时间
-                'order_time'=>'2022-09-09',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '已成交',
-            ],
-            [
-                'id'=>2,
-                //产品名称
-                'product_name'=>'帅哥贷',
-                //产品id
-                'product_id'=>1,
-                //购买人
-                'purchaser'=>'张大锤',
-                //订单金额
-                'price'=>10000,
-                //信动所得佣金 - 佣金表
-                'xindong_commission'=>500,
-                //设置分佣状态
-                'commission_set_state_cname'=>'已设置分佣',
-                //分佣状态
-                'commission_state_cname'=>'已领取分佣',
-                //下单时间
-                'order_time'=>'2022-09-09',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '已成交',
-            ]
+        //======================================
+        //
+        $conditions = [
+            'user_id' =>$requestData['fans_id'],
+            'commission_type' =>OnlineGoodsCommissions::$commission_type_bao_xian,
+            'commission_owner' =>$this->loginUserinfo['id'],
         ];
-        $total = 100 ;
+        if($requestData['commision_set_state']){
+            $conditions['state'] = $requestData['commision_set_state'];
+        }
+
+        $allCommissions = OnlineGoodsCommissions::findByConditionWithCountInfo(
+            $conditions,$page,$pageSize
+        );
+        $returnDatas = [];
+        $prodcutsRes = \App\HttpController\Service\BaoYa\BaoYaService::getProductsV2();
+        foreach ($allCommissions['data'] as $commissionItem){
+            $orderInfo = OnlineGoodsUserBaoXianOrder::findById($commissionItem['commission_order_id']);
+            $orderInfo = $orderInfo->toArray();
+            $orderInfo['product_name'] = $prodcutsRes[$orderInfo['product_id']];
+            $orderInfo['id'] = $commissionItem['id'];
+            $orderInfo['commission_state_cname'] =OnlineGoodsCommissions::getStateCnameMap()[ $commissionItem['state']];
+            $orderInfo['commission_amount'] = number_format($orderInfo['commission_rate']*$orderInfo['amount']/100,2);
+            $returnDatas[] = $orderInfo ;
+        }
+        //======================================
+
+
+        $total = $allCommissions['total'] ;
         return $this->writeJson(
             200,
             [
@@ -712,13 +880,15 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total' => $total,
                 'totalPage' => ceil( $total/ $pageSize ),
             ] ,
-            $exampleDatas
+            $returnDatas
             ,
             '成功',
-            true,
+            false,
             []
         );
     }
+
+    // 贷款分佣订单
     function daikuanOrderLists(): bool
     {
         $requestData =  $this->getRequestData();
@@ -726,6 +896,37 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $pageSize =  $requestData['pageSize']?:100;
 
         $userInfo = $this->loginUserinfo;
+        //$fansUser = OnlineGoodsUser::findById($requestData['fans_id']);
+
+        //======================================
+        //
+        $conditions = [
+            'user_id' =>$requestData['fans_id'],
+            'commission_type' =>OnlineGoodsCommissions::$commission_type_dai_kuan,
+            'commission_owner' =>$this->loginUserinfo['id'],
+        ];
+        if($requestData['commision_set_state']){
+            $conditions['state'] = $requestData['commision_set_state'];
+        }
+
+        $allCommissions = OnlineGoodsCommissions::findByConditionWithCountInfo(
+            $conditions,$page,$pageSize
+        );
+        $returnDatas = [];
+        foreach ($allCommissions['data'] as $commissionItem){
+
+            $orderInfo = OnlineGoodsUserDaikuanOrder::findById($commissionItem['commission_order_id']);
+            $orderInfo = $orderInfo->toArray();
+            $tmpProduct  = OnlineGoodsDaikuanProducts::findById($orderInfo['product_id']);
+            $orderInfo['product_name'] = $tmpProduct->name;
+            $orderInfo['id'] = $commissionItem['id'];
+            $orderInfo['commission_state_cname'] =OnlineGoodsCommissions::getStateCnameMap()[ $commissionItem['state']];
+            $orderInfo['commission_amount'] = number_format($orderInfo['commission_rate']*$orderInfo['amount']/100,2);
+            $returnDatas[] = $orderInfo ;
+            //XXXXXX
+        }
+        //======================================
+
 
         CommonService::writeTestLog(
             [
@@ -739,53 +940,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             ]
         );
 
-        $exampleDatas = [
-            [
-                'id'=>1,
-                //产品名称
-                'product_name'=>'美人贷',
-                //产品id
-                'product_id'=>1,
-                //购买人
-                'purchaser'=>'张小花',
-                //订单金额
-                'price'=>10000,
-                //信动所得佣金 - 佣金表
-                'xindong_commission'=>500,
-                //设置分佣状态
-                'commission_set_state_cname'=>'已设置分佣',
-                //分佣状态
-                'commission_state_cname'=>'已领取分佣',
-                //下单时间
-                'order_time'=>'2022-09-09',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '已成交',
-            ],
-            [
-                'id'=>2,
-                //产品名称
-                'product_name'=>'帅哥贷',
-                //产品id
-                'product_id'=>1,
-                //购买人
-                'purchaser'=>'张大锤',
-                //订单金额
-                'price'=>10000,
-                //信动所得佣金 - 佣金表
-                'xindong_commission'=>500,
-                //设置分佣状态
-                'commission_set_state_cname'=>'已设置分佣',
-                //分佣状态
-                'commission_state_cname'=>'已领取分佣',
-                //下单时间
-                'order_time'=>'2022-09-09',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '已成交',
-            ]
-        ];
-        $total = 100 ;
+        $total = $allCommissions['total'] ;
         return $this->writeJson(
             200,
             [
@@ -794,12 +949,15 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total' => $total,
                 'totalPage' => ceil( $total/ $pageSize ),
             ] ,
-            $exampleDatas
+            $returnDatas
             ,
             '成功',
-            true,
+            false,
             []
         );
+
+        //=========================
+
     }
     function ZhiJinOrderLists(): bool
     {
@@ -836,7 +994,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total_fan_nums'=>  '1000',
 
                 //头像
-                'avatar'=>  '/static/img/aaa.jpg',
+                'avatar'=>  'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png',
                 //加入时间
                 'join_at'=>'2022-10-09',
                 'created_at'=>1665367946,
@@ -867,43 +1025,60 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $pageSize =  $requestData['pageSize']?:100;
 
         $userInfo = $this->loginUserinfo;
+        $useId = $userInfo['id'];
+        $returnDatas = [];
 
-        CommonService::writeTestLog(
-            [
-                'getInvitationCode'=>[
-                    '$userInfo'=>[
-                        'id'=>$userInfo['id'],
-                        'user_name'=>$userInfo['user_name'],
-                        'phone'=>$userInfo['phone'],
+        //如果是VIP 可以设置全部粉丝
+        if(
+            OnlineGoodsUser::IsVipV2($useId)
+        ){
+            $returnDatas = OnlineGoodsUserInviteRelation::getVipsAllInvitedUser($useId);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'ZhiJinFansOrderLists'=>[
+                        'uid'=>$useId,
+                        'IsVipV2'=>true,
+                        '$returnDatas'=>$returnDatas,
                     ],
-                ]
-            ]
-        );
+                ])
+            );
+        }
+        else{
+            $returnDatas = OnlineGoodsUserInviteRelation::getAllInvitedUser($useId);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'ZhiJinFansOrderLists'=>[
+                        'uid'=>$useId,
+                        'IsVipV2'=>false,
+                        '$returnDatas'=>$returnDatas,
+                    ],
+                ])
+            );
+        }
 
-        $exampleDatas = [
-            [
-                'id'=>1,
-                //用户姓名
-                'name'=>  '张三',
-                //邀请人姓名
-                'inviter'=>  '张大三',
-                //订单数量
-                'order_nums'=>  '100',
-                //累计收益
-                'total_income'=>  '1000',
-                //粉丝数量
-                'total_fan_nums'=>  '1000',
+        //XXXXX
+        foreach ($returnDatas as &$valueData){
+            $userInfo = OnlineGoodsUser::findById($valueData['user_id']);
+            $userInfoArr = $userInfo->toArray();
 
-                //头像
-                'avatar'=>  '/static/img/aaa.jpg',
-                //加入时间
-                'join_at'=>'2022-10-09',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '',
-            ]
-        ];
-        $total = 100 ;
+            $totalInomes = OnlineGoodsCommissionGrantDetails::getTotalIncomes($userInfoArr['id']);
+            $totalCommission = OnlineGoodsCommissionGrantDetails::getTotalComission($userInfoArr['id']);
+            $totalTiXianMoney = OnlineGoodsCommissionGrantDetails::getTotalTiXian($userInfoArr['id']);
+
+            //自购产品数量-
+            $orderNums = OnlineGoodsCommissions::getOrderNums($userInfo['id'],$useId);
+
+            $valueData['name'] = $userInfo->user_name;
+            $valueData['mobile'] = $userInfo->phone;
+            $valueData['total_fan_nums'] =  OnlineGoodsUserInviteRelation::getFansNums($userInfoArr) ;
+            $valueData['total_income'] =  $totalInomes ;
+            $valueData['order_nums'] =  $orderNums;
+            $valueData['join_at'] = date('Y-m-d H:i:s',$userInfo->created_at);
+            $valueData['avatar'] = 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png' ;
+        }
+        $total = count($returnDatas);
         return $this->writeJson(
             200,
             [
@@ -912,7 +1087,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total' => $total,
                 'totalPage' => ceil( $total/ $pageSize ),
             ] ,
-            $exampleDatas
+            $returnDatas
             ,
             '成功',
             true,
@@ -935,7 +1110,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $tmpUserInfo = OnlineGoodsUser::findById($inviterData['user_id']);
             $tmpUserInfo = $tmpUserInfo->toArray();
             $inviterData['user_commission_amount'] = 1000 ;
-            $inviterData['user_avatar'] = $tmpUserInfo['avatar'] ;
+            //$inviterData['user_avatar'] = $tmpUserInfo['avatar'] ;
+            $inviterData['user_avatar'] = 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png' ;
             $inviterData['user_name'] = $tmpUserInfo['user_name'] ;
             $inviterData['user_join_time'] = date('Y-m-d H:i:s',$tmpUserInfo['created_at']) ;
 
@@ -968,7 +1144,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total_fan_nums'=>  '1000',
 
                 //头像
-                'avatar'=>  '/static/img/aaa.jpg',
+                'avatar'=>  'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png',
                 //加入时间
                 'join_at'=>'2022-10-09',
                 'created_at'=>1665367946,
@@ -993,58 +1169,76 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         );
     }
 
-    function incomeLists(): bool
+
+    //收益记录
+    function incomeListsbak(): bool
     {
         $requestData =  $this->getRequestData();
         $page =  $requestData['page']?:1;
         $pageSize =  $requestData['pageSize']?:100;
 
         $userInfo = $this->loginUserinfo;
-
-        CommonService::writeTestLog(
+        $conditions = [
             [
-                'getInvitationCode'=>[
-                    '$userInfo'=>[
-                        'id'=>$userInfo['id'],
-                        'user_name'=>$userInfo['user_name'],
-                        'phone'=>$userInfo['phone'],
+                //$model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+                'field' => 'user_id',
+                'value' => $userInfo['id'],
+                'operate' => '=',
+            ],
+            [
+                //$model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+                'field' => 'state',
+                'value' => OnlineGoodsCommissions::$commission_state_granted,
+                'operate' => '=',
+            ],
+            [
+                //$model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+                'field' => 'commission_data_type',
+                'value' => [
+                        OnlineGoodsCommissions::$commission_data_type_xindong_to_vip,
+                        OnlineGoodsCommissions::$commission_data_type_invitor_to_user,
                     ],
-                ]
-            ]
-        );
-
-        $exampleDatas = [
-            [
-                'id'=>1,
-                //产品名称
-                'product_name'=>'美人贷',
-                'avatar'=>'/Static/Temp/img.img',
-                'purchaser_mobile'=>'132****6193',
-                //产品id
-                'product_id'=>1,
-                //购买人
-                'purchaser'=>'张小花',
-                //介绍人
-                'introducer'=>'张大花',
-                //介绍人所得分佣比例
-                'introducer_commision'=>'50%',
-                //订单金额
-                'price'=>10000,
-                //信动所得佣金 - 佣金表
-                'xindong_commission'=>500,
-                'commission'=>50,
-                //设置分佣状态
-                'commission_set_state_cname'=>'已设置分佣',
-                //分佣状态
-                'commission_state_cname'=>'已领取分佣',
-                //下单时间
-                'order_time'=>'2022-09-09',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '已成交',
+                'operate' => 'IN',
             ]
         ];
-        $total = 100 ;
+        $res = OnlineGoodsCommissions::findByConditionV2(
+            $conditions,
+            $page,
+            $pageSize
+        );
+        //
+        $prodcutsRes = \App\HttpController\Service\BaoYa\BaoYaService::getProductsV2();
+        foreach ($res['data'] as &$value){
+            if(
+                $value['commission_type'] == OnlineGoodsCommissions::$commission_type_bao_xian
+            ){
+                $orderInfo =  OnlineGoodsUserBaoXianOrder::findById($value['commission_order_id']);
+                $value['product_name'] = $prodcutsRes[$orderInfo->product_id]?:'';
+            }
+            if(
+                $value['commission_type'] == OnlineGoodsCommissions::$commission_type_dai_kuan
+            ){
+
+                $orderInfo =  OnlineGoodsUserDaikuanOrder::findById($value['commission_order_id']);
+                $productInfo = OnlineGoodsDaikuanProducts::findById($orderInfo->product_id);
+                $value['product_name'] = $productInfo?$productInfo->name:'';
+
+            }
+
+            //XXX
+            $value['avatar'] = 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png';
+            $orderInfo = $orderInfo->toArray();
+
+            // purchaser_mobile
+            $userInfo = OnlineGoodsUser::findById($value['commission_create_user_id']);
+            $value['purchaser_mobile'] = $userInfo->phone;
+            $value['purchaser'] = $userInfo->user_name;
+            $value['commission'] = number_format($value['comission_rate']*$orderInfo['amount']/100,2);
+
+        }
+
+
+        $total = $res['total'] ;
         return $this->writeJson(
             200,
             [
@@ -1053,7 +1247,75 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total' => $total,
                 'totalPage' => ceil( $total/ $pageSize ),
             ] ,
-            $exampleDatas
+            $res['data']
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
+    function incomeLists(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page =  $requestData['page']?:1;
+        $pageSize =  $requestData['pageSize']?:100;
+
+        $userInfo = $this->loginUserinfo;
+
+        $res = OnlineGoodsCommissionGrantDetails::findByConditionWithCountInfo(
+            [
+                'user_id'=>$userInfo['id'],
+                'type'=>OnlineGoodsCommissionGrantDetails::$input_type_in,
+            ],
+            $page,
+            $pageSize
+        );
+        //
+        $prodcutsRes = \App\HttpController\Service\BaoYa\BaoYaService::getProductsV2();
+        foreach ($res['data'] as &$value){
+
+            $comiissionInfo = OnlineGoodsCommissions::findById($value['commission_id']);
+            $comiissionInfo = $comiissionInfo->toArray();
+            if(
+                $comiissionInfo['commission_type'] == OnlineGoodsCommissions::$commission_type_bao_xian
+            ){
+                $orderInfo =  OnlineGoodsUserBaoXianOrder::findById($comiissionInfo['commission_order_id']);
+                $value['product_name'] = $prodcutsRes[$orderInfo->product_id]?:'';
+            }
+            if(
+                $comiissionInfo['commission_type'] == OnlineGoodsCommissions::$commission_type_dai_kuan
+            ){
+
+                $orderInfo =  OnlineGoodsUserDaikuanOrder::findById($comiissionInfo['commission_order_id']);
+                $productInfo = OnlineGoodsDaikuanProducts::findById($orderInfo->product_id);
+                $value['product_name'] = $productInfo?$productInfo->name:'';
+
+            }
+
+            //XXX
+            $value['avatar'] = 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png';
+            $orderInfo = $orderInfo->toArray();
+
+            // purchaser_mobile
+            $userInfo = OnlineGoodsUser::findById($comiissionInfo['commission_create_user_id']);
+            $value['purchaser_mobile'] = $userInfo->phone;
+            $value['purchaser'] = $userInfo->user_name;
+            $value['order_date'] = $orderInfo['order_date'];
+            $value['commission'] = number_format($comiissionInfo['comission_rate']*$orderInfo['amount']/100,2);
+
+        }
+
+
+        $total = $res['total'] ;
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' =>$pageSize,
+                'total' => $total,
+                'totalPage' => ceil( $total/ $pageSize ),
+            ] ,
+            $res['data']
             ,
             '成功',
             true,
@@ -1070,77 +1332,51 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
         $userInfo = $this->loginUserinfo;
 
-        CommonService::writeTestLog(
+        $res = OnlineGoodsCommissionGrantDetails::findByConditionWithCountInfo(
             [
-                'getInvitationCode'=>[
-                    '$userInfo'=>[
-                        'id'=>$userInfo['id'],
-                        'user_name'=>$userInfo['user_name'],
-                        'phone'=>$userInfo['phone'],
-                    ],
-                ]
-            ]
+                'user_id'=>$userInfo['id'],
+                'type'=>OnlineGoodsCommissionGrantDetails::$input_type_out,
+            ],
+            $page,
+            $pageSize
         );
+        //
+        $prodcutsRes = \App\HttpController\Service\BaoYa\BaoYaService::getProductsV2();
+        foreach ($res['data'] as &$value){
 
-        $exampleDatas = [
-            [
-                'id'=>1,
-                //产品名称
-                'product_name'=>'美人贷',
-                'avatar'=>'/Static/Temp/img.img',
-                'purchaser_mobile'=>'132****6193',
-                //产品id
-                'product_id'=>1,
-                //购买人
-                'purchaser'=>'张小花',
-                //介绍人
-                'introducer'=>'张大花',
-                //介绍人所得分佣比例
-                'introducer_commision'=>'50%',
-                //订单金额
-                'price'=>10000,
-                //信动所得佣金 - 佣金表
-                'xindong_commission'=>500,
-                //所得佣金
-                'commission'=>500,
-                //设置分佣状态
-                'commission_set_state_cname'=>'已设置分佣',
-                //分佣状态
-                'commission_state_cname'=>'已领取分佣',
-                //下单时间
-                'order_time'=>'2022-09-09',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '已成交',
-            ],
-            [
-                'id' => 2,
-                //产品名称
-                'product_name' => '美人贷',
-                //产品id
-                'product_id'=>1,
-                //购买人
-                'purchaser'=>'张小花',
-                //介绍人
-                'introducer'=>'张大花',
-                //介绍人所得分佣比例
-                'introducer_commision'=>'50%',
-                //订单金额
-                'price'=>10000,
-                //信动所得佣金 - 佣金表
-                'xindong_commission'=>500,
-                //设置分佣状态
-                'commission_set_state_cname'=>'已设置分佣',
-                //分佣状态
-                'commission_state_cname'=>'已领取分佣',
-                //下单时间
-                'order_time'=>'2022-09-09',
-                'created_at'=>1665367946,
-                'state'=>1,
-                'state_cname'=> '已成交',
-            ],
-        ];
-        $total = 100 ;
+            $comiissionInfo = OnlineGoodsCommissions::findById($value['commission_id']);
+            $comiissionInfo = $comiissionInfo->toArray();
+            if(
+                $comiissionInfo['commission_type'] == OnlineGoodsCommissions::$commission_type_bao_xian
+            ){
+                $orderInfo =  OnlineGoodsUserBaoXianOrder::findById($comiissionInfo['commission_order_id']);
+                $value['product_name'] = $prodcutsRes[$orderInfo->product_id]?:'';
+            }
+            if(
+                $comiissionInfo['commission_type'] == OnlineGoodsCommissions::$commission_type_dai_kuan
+            ){
+
+                $orderInfo =  OnlineGoodsUserDaikuanOrder::findById($comiissionInfo['commission_order_id']);
+                $productInfo = OnlineGoodsDaikuanProducts::findById($orderInfo->product_id);
+                $value['product_name'] = $productInfo?$productInfo->name:'';
+
+            }
+
+            //XXX
+            $value['avatar'] = 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png';
+            $orderInfo = $orderInfo->toArray();
+
+            // purchaser_mobile
+            $userInfo = OnlineGoodsUser::findById($comiissionInfo['commission_create_user_id']);
+            $value['purchaser_mobile'] = $userInfo->phone;
+            $value['purchaser'] = $userInfo->user_name;
+            $value['order_date'] = $orderInfo['order_date'];
+            $value['commission'] = number_format($comiissionInfo['comission_rate']*$orderInfo['amount']/100,2);
+
+        }
+
+
+        $total = $res['total'] ;
         return $this->writeJson(
             200,
             [
@@ -1149,7 +1385,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total' => $total,
                 'totalPage' => ceil( $total/ $pageSize ),
             ] ,
-            $exampleDatas
+            $res['data']
             ,
             '成功',
             true,

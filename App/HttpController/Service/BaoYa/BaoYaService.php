@@ -3,6 +3,7 @@
 namespace App\HttpController\Service\BaoYa;
 
 use App\HttpController\Models\AdminV2\OperatorLog;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -37,6 +38,32 @@ class BaoYaService extends ServiceBase
             $url =  CreateConf::getInstance()->getConf('baoya.products_url_test');
         }
         return $this->get($url,'');
+    }
+
+    static function getProductsV2(){
+        $dataRes = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProducts();
+
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'getProductsV2' => $dataRes
+//            ])
+//        );
+
+        $returnRes = [
+            9999 => '车险分期',
+        ];
+        foreach ($dataRes['data'] as $valueItem){
+            $returnRes[$valueItem['id']] = $valueItem['title'];
+        }
+
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'getProductsV2$returnRes' => $returnRes
+//            ])
+//        );
+        return $returnRes;
     }
 
     function getProductDetail($id){

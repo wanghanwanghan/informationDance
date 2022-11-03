@@ -14,8 +14,10 @@ use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
+use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
+use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
@@ -75,12 +77,315 @@ class ToolsController extends ControllerBase
                 10  =>  '补全联系人姓名职位等信息(主要基于微信名和联系人库)',
                 15  =>  '模糊匹配企业名称',
                 20  =>  '将表格根据手机号拆分成多行',
+                25  =>  '补全企业字段',
 
         ],'');
     }
 
-    /*
+    public function buQuanZiDuanList(){
+        $requestData =  $this->getRequestData();
+        $page =$requestData['page']?:1;
+        $pageSize =$requestData['pageSize']?:20;
 
+        $res = ToolsFileLists::findByConditionWithCountInfo(
+            [
+                'type' =>ToolsFileLists::$type_bu_quan_zi_duan,
+            ],$page
+        );
+        foreach ($res['data'] as &$dataItem ){
+            $adminInfo = \App\HttpController\Models\AdminV2\AdminNewUser::findById($dataItem['admin_id']);
+            $dataItem['admin_id_cname'] = $adminInfo->user_name;
+            $dataItem['new_file_path'] = '/Static/OtherFile/'.$dataItem['new_file_name'];
+            $dataItem['state_cname'] = ToolsFileLists::stateMaps()[$dataItem['state']];
+        }
+        $total = $res['total'];
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' =>$pageSize,
+            'total' => $total,
+            'totalPage' =>  ceil( $total/ $pageSize ),
+        ],  $res['data'],'');
+    }
+    public function pullGongKaiContact(){
+        $requestData =  $this->getRequestData();
+        $page =$requestData['page']?:1;
+        $pageSize =$requestData['pageSize']?:20;
+
+        $res = ToolsFileLists::findByConditionWithCountInfo(
+            [
+                'type' =>ToolsFileLists::$type_bu_quan_zi_duan,
+            ],$page
+        );
+        foreach ($res['data'] as &$dataItem ){
+            $adminInfo = \App\HttpController\Models\AdminV2\AdminNewUser::findById($dataItem['admin_id']);
+            $dataItem['admin_id_cname'] = $adminInfo->user_name;
+            $dataItem['new_file_path'] = '/Static/OtherFile/'.$dataItem['new_file_name'];
+            $dataItem['state_cname'] = ToolsFileLists::stateMaps()[$dataItem['state']];
+        }
+        $total = $res['total'];
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' =>$pageSize,
+            'total' => $total,
+            'totalPage' =>  ceil( $total/ $pageSize ),
+        ],  $res['data'],'');
+    }
+    public function pullFeiGongKaiContact(){
+        $requestData =  $this->getRequestData();
+        $page =$requestData['page']?:1;
+        $pageSize =$requestData['pageSize']?:20;
+
+        $res = ToolsFileLists::findByConditionWithCountInfo(
+            [
+                'type' =>ToolsFileLists::$type_bu_quan_zi_duan,
+            ],$page
+        );
+        foreach ($res['data'] as &$dataItem ){
+            $adminInfo = \App\HttpController\Models\AdminV2\AdminNewUser::findById($dataItem['admin_id']);
+            $dataItem['admin_id_cname'] = $adminInfo->user_name;
+            $dataItem['new_file_path'] = '/Static/OtherFile/'.$dataItem['new_file_name'];
+            $dataItem['state_cname'] = ToolsFileLists::stateMaps()[$dataItem['state']];
+        }
+        $total = $res['total'];
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' =>$pageSize,
+            'total' => $total,
+            'totalPage' =>  ceil( $total/ $pageSize ),
+        ],  $res['data'],'');
+    }
+    public function rePullFeiGongKaiContact(){
+        $requestData =  $this->getRequestData();
+        $page =$requestData['page']?:1;
+        $pageSize =$requestData['pageSize']?:20;
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' =>$pageSize,
+            'total' => $total,
+            'totalPage' =>  ceil( $total/ $pageSize ),
+        ],  $res['data'],'');
+    }
+    public function rePullGongKaiContact(){
+        $requestData =  $this->getRequestData();
+        $page =$requestData['page']?:1;
+        $pageSize =$requestData['pageSize']?:20;
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' =>$pageSize,
+            'total' => $total,
+            'totalPage' =>  ceil( $total/ $pageSize ),
+        ],  $res['data'],'');
+    }
+
+    public function uploadeBuQuanZiDuanFiles(){
+        $requestData =  $this->getRequestData();
+        $succeedFiels = [];
+        $files = $this->request()->getUploadedFiles();
+        foreach ($files as $key => $oneFile) {
+            try {
+                $fileName = $oneFile->getClientFilename();
+                $fileInfo = pathinfo($fileName);
+                if($fileInfo['extension']!='xlsx'){
+                    return $this->writeJson(203, [], [],'暂时只支持xlsx文件！');
+                }
+                $fileName = date('Y_m_d_H_i',time()).$fileName;
+                $path = OTHER_FILE_PATH . $fileName;
+                if(file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件已存在！');
+                }
+
+                $res = $oneFile->moveTo($path);
+                if(!file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件移动失败！');
+                }
+
+                $UploadRecordRes =  ToolsFileLists::addRecordV2(
+                    [
+                        'admin_id' => $this->loginUserinfo['id'],
+                        'file_name' => $fileName,
+                        'new_file_name' => '',
+                        'remark' => $requestData['remark']?:'',
+                        'type' => ToolsFileLists::$type_bu_quan_zi_duan,
+                        'state' => $requestData['state']?:'',
+                        'touch_time' => $requestData['touch_time']?:'',
+                    ]
+                );
+                if(!$UploadRecordRes){
+                    return $this->writeJson(203, [], [],'文件上传失败');
+                }
+
+                    $res = QueueLists::addRecord(
+                        [
+                            'name' => '',
+                            'desc' => '',
+                            'func_info_json' => json_encode(
+                                [
+                                    'class' => '\App\HttpController\Models\MRXD\ToolsFileLists',
+                                    'static_func'=> 'buQuanZiDuan',
+                                ]
+                            ),
+                            'params_json' => json_encode([
+
+                            ]),
+                            'type' => QueueLists::$typle_finance,
+                            'remark' => '',
+                            'begin_date' => NULL,
+                            'msg' => '',
+                            'status' => QueueLists::$status_init,
+                        ]
+                    );
+
+                $succeedFiels[] = $fileName;
+            } catch (\Throwable $e) {
+                return $this->writeJson(202, [], [],'导入失败'.$e->getMessage());
+            }
+        }
+
+        return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
+    }
+
+    /**
+        上传公开联系人文件
+     *
+     */
+
+    public function uploadeGongKaiContactFiles(){
+        $requestData =  $this->getRequestData();
+        $succeedFiels = [];
+        $files = $this->request()->getUploadedFiles();
+        return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
+        foreach ($files as $key => $oneFile) {
+            try {
+                $fileName = $oneFile->getClientFilename();
+                $fileInfo = pathinfo($fileName);
+                if($fileInfo['extension']!='xlsx'){
+                    return $this->writeJson(203, [], [],'暂时只支持xlsx文件！');
+                }
+                $fileName = date('Y_m_d_H_i',time()).$fileName;
+                $path = OTHER_FILE_PATH . $fileName;
+                if(file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件已存在！');
+                }
+
+                $res = $oneFile->moveTo($path);
+                if(!file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件移动失败！');
+                }
+
+                $UploadRecordRes =  ToolsFileLists::addRecordV2(
+                    [
+                        'admin_id' => $this->loginUserinfo['id'],
+                        'file_name' => $fileName,
+                        'new_file_name' => '',
+                        'remark' => $requestData['remark']?:'',
+                        'type' => ToolsFileLists::$type_upload_pull_gong_kai_contact,
+                        'state' => $requestData['state']?:'',
+                        'touch_time' => $requestData['touch_time']?:'',
+                    ]
+                );
+                if(!$UploadRecordRes){
+                    return $this->writeJson(203, [], [],'文件上传失败');
+                }
+
+                    $res = QueueLists::addRecord(
+                        [
+                            'name' => '',
+                            'desc' => '',
+                            'func_info_json' => json_encode(
+                                [
+                                    'class' => '\App\HttpController\Models\MRXD\ToolsFileLists',
+                                    'static_func'=> 'pullGongKaiContacts',
+                                ]
+                            ),
+                            'params_json' => json_encode([
+
+                            ]),
+                            'type' => ToolsFileLists::$type_upload_pull_gong_kai_contact,
+                            'remark' => '',
+                            'begin_date' => NULL,
+                            'msg' => '',
+                            'status' => QueueLists::$status_init,
+                        ]
+                    );
+
+                $succeedFiels[] = $fileName;
+            } catch (\Throwable $e) {
+                return $this->writeJson(202, [], [],'导入失败'.$e->getMessage());
+            }
+        }
+
+        return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
+    }
+    public function uploadeFeiGongKaiContactFiles(){
+        $requestData =  $this->getRequestData();
+        $succeedFiels = [];
+        $files = $this->request()->getUploadedFiles();
+        return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
+        foreach ($files as $key => $oneFile) {
+            try {
+                $fileName = $oneFile->getClientFilename();
+                $fileInfo = pathinfo($fileName);
+                if($fileInfo['extension']!='xlsx'){
+                    return $this->writeJson(203, [], [],'暂时只支持xlsx文件！');
+                }
+                $fileName = date('Y_m_d_H_i',time()).$fileName;
+                $path = OTHER_FILE_PATH . $fileName;
+                if(file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件已存在！');
+                }
+
+                $res = $oneFile->moveTo($path);
+                if(!file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件移动失败！');
+                }
+
+                $UploadRecordRes =  ToolsFileLists::addRecordV2(
+                    [
+                        'admin_id' => $this->loginUserinfo['id'],
+                        'file_name' => $fileName,
+                        'new_file_name' => '',
+                        'remark' => $requestData['remark']?:'',
+                        'type' => ToolsFileLists::$type_bu_quan_zi_duan,
+                        'state' => $requestData['state']?:'',
+                        'touch_time' => $requestData['touch_time']?:'',
+                    ]
+                );
+                if(!$UploadRecordRes){
+                    return $this->writeJson(203, [], [],'文件上传失败');
+                }
+
+                    $res = QueueLists::addRecord(
+                        [
+                            'name' => '',
+                            'desc' => '',
+                            'func_info_json' => json_encode(
+                                [
+                                    'class' => '\App\HttpController\Models\MRXD\ToolsFileLists',
+                                    'static_func'=> 'buQuanZiDuan',
+                                ]
+                            ),
+                            'params_json' => json_encode([
+
+                            ]),
+                            'type' => QueueLists::$typle_finance,
+                            'remark' => '',
+                            'begin_date' => NULL,
+                            'msg' => '',
+                            'status' => QueueLists::$status_init,
+                        ]
+                    );
+
+                $succeedFiels[] = $fileName;
+            } catch (\Throwable $e) {
+                return $this->writeJson(202, [], [],'导入失败'.$e->getMessage());
+            }
+        }
+
+        return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
+    }
+
+
+    /*
       type: 5 url补全
       type: 10 微信匹配
       type: 15 模糊匹配企业名称
@@ -111,6 +416,7 @@ class ToolsController extends ControllerBase
         foreach ($files as $key => $oneFile) {
             try {
                 $fileName = $oneFile->getClientFilename();
+                $fileName = date('Y_m_d_H_i',time()).$fileName;
                 $path = TEMP_FILE_PATH . $fileName;
                 if(file_exists($path)){
                     return $this->writeJson(203, [], [],'文件已存在！');;

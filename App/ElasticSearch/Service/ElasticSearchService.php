@@ -90,6 +90,18 @@ class ElasticSearchService extends ServiceBase
     {
         $this->query['query']['bool']['must_not'][] = ['term' => [$field => $value]];
     }
+    function addMustNotMatchQuery($field, $value)
+    {
+        $this->query['query']['bool']['must_not'][] = ['match' => [$field => $value]];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'SetQueryBySearchTextV5'  =>  [
+                    'query'=>$this->query,
+                ],
+            ])
+        );
+    }
 
     function addMustMatchPhraseQuery($field, $value)
     {
@@ -148,6 +160,9 @@ class ElasticSearchService extends ServiceBase
     {
         $boolQuery = [];
         foreach ($valueArr as $value) {
+            if(empty(trim($value))){
+                continue;
+            }
             $boolQuery['bool']['should'][] =
                 ['match_phrase' => [$field => $value]];
         }
@@ -166,6 +181,7 @@ class ElasticSearchService extends ServiceBase
 
         $this->query['query']['bool']['must'][] = $boolQuery;
     }
+
 
     function addMustTermQuery($field, $value)
     {
@@ -266,7 +282,10 @@ class ElasticSearchService extends ServiceBase
     {
         $size = $this->query['size'] ?: 10;
         $from = $this->query['from'] ?: 0;
-        if (empty($this->query['query']['bool']['must'])) {
+        if (
+            empty($this->query['query']['bool']['must']) &&
+            empty($this->query['query']['bool']['must_not'])
+        ) {
             $this->query =
                 //'{"size":"'.$this->query['size'].'","from":'.$this->query['from'].',"sort":[{"_id":{"order":"desc"}}],"query":{"bool":{"must":[{"match_all":{}}]}}}';
                 //'{"size":'.$size.',"from":'.$from.',"sort":[{"_id":{"order":"desc"}}],"query":{"bool":{"must":[{"match_all":{}}]}}}';
@@ -295,12 +314,12 @@ class ElasticSearchService extends ServiceBase
                 ]
             ]
         ];
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__ . __FUNCTION__ . __LINE__,
-                '$this->query' => $this->query
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__ . __FUNCTION__ . __LINE__,
+//                '$this->query' => $this->query
+//            ])
+//        );
     }
 
     function addGeoShapWithinV2($arrays, $filed = 'location')

@@ -32,6 +32,43 @@ class OnlineGoodsUserInviteRelation extends ModelBase
         );
     }
 
+    static function getFansNums($userInfo){
+
+        //VIP
+        if(
+            OnlineGoodsUser::IsVip($userInfo)
+        ){
+
+            $invitors = OnlineGoodsUserInviteRelation::getVipsAllInvitedUser($userInfo['id']);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'getFansNums' => [
+                        'uid'=>$userInfo['id'],
+                        'uname'=>$userInfo['user_name'],
+                        'IsVip'=>true,
+                        '$invitors'=>count($invitors),
+                    ]
+                ])
+            );
+        }else{
+            $invitors =  OnlineGoodsUserInviteRelation::getAllInvitedUser($userInfo['id']);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'getFansNums' => [
+                        'uid'=>$userInfo['id'],
+                        'uname'=>$userInfo['user_name'],
+                        'IsVip'=>false,
+                        '$invitors'=>count($invitors),
+                    ]
+                ])
+            );
+        }
+
+        return count($invitors);
+    }
+
     public static function addRecord($requestData){
 
         try {
@@ -62,6 +99,13 @@ class OnlineGoodsUserInviteRelation extends ModelBase
             ->where($whereArr)
             ->all();
         return $res;
+    }
+
+    static function IsFans($fans_id,$uid){
+        return self::findAllByCondition([
+            'user_id'=>$fans_id,
+            'invite_by'=>$uid,
+        ]);
     }
 
     public static function setTouchTime($id,$touchTime){
@@ -191,7 +235,25 @@ class OnlineGoodsUserInviteRelation extends ModelBase
 
     // 获取VIP邀请人
     static function getVipInviterInfo($userId){
+        //先检查自己是不是vip
+        $tmpUser = OnlineGoodsUser::findById($userId);
+        $tmpUser = $tmpUser->toArray();
+        if(
+            OnlineGoodsUser::IsVip($tmpUser)
+        ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'getVipInviterInfo_$userId'=>$userId,
+                    'IsVip'=>true,
+                ])
+            );
+            return  $tmpUser;
+        };
+
+
         $res = self::findByUser($userId);
+
         $topInvitor =  0 ;
         while (true){
             $tmpInfo = $res->toArray();
@@ -201,7 +263,13 @@ class OnlineGoodsUserInviteRelation extends ModelBase
                 break;
             }
         }
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'getVipInviterInfo_$userId'=>$userId,
+                '$topInvitor'=>$topInvitor,
+            ])
+        );
         if($topInvitor <= 0 ){
             return  [];
         }
@@ -212,7 +280,7 @@ class OnlineGoodsUserInviteRelation extends ModelBase
             OnlineGoodsUser::IsVip($topInvitorInfo)
         ){
             return  $topInvitorInfo;
-        };
+        }
         return [];
     }
 

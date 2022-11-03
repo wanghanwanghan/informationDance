@@ -107,131 +107,6 @@ class SouKeController extends ControllerBase
     }
 
 
-    /*
-     * 高级搜索
-     * */
-    function advancedSearchold(): bool
-    {
-        $requestData =  $this->getRequestData();
-
-        if(substr($requestData['basic_nicid'], -1) == ','){
-            $requestData['basic_nicid'] = rtrim($requestData['basic_nicid'], ",");
-        }
-
-        if(substr($requestData['basic_regionid'], -1) == ','){
-            $requestData['basic_regionid'] = rtrim($requestData['basic_regionid'], ",");
-        }
-
-        if(substr($requestData['basic_jlxxcyid'], -1) == ','){
-            $requestData['basic_jlxxcyid'] = rtrim($requestData['basic_jlxxcyid'], ",");
-        }
- 
-
-        $companyEsModel = new \App\ElasticSearch\Model\Company();
-
-        //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
-        $searchOptionStr =  trim($this->request()->getRequestParam('searchOption'));
-        $searchOptionArr = json_decode($searchOptionStr, true);
-
-        $size = $this->request()->getRequestParam('size')??20;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;
-
-        //区域搜索
-        $areas_arr  = json_decode($requestData['areas'],true) ;
-         if(!empty($areas_arr)){
-
-             //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
-             $first = $areas_arr[0];;
-             $last =  end($areas_arr);
-             if(
-                 strval($first[0])!= strval($last[0]) ||
-                 strval($first[1])!= strval($last[1])
-             ){
-                 $areas_arr[] = $first;
-             }else{
-
-             }
-         }
-        $companyEsModel
-            //经营范围
-            ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')))
-            //数字经济及其核心产业
-            ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
-            // 搜索文案 智能搜索
-            ->SetQueryBySearchText( trim($this->request()->getRequestParam('searchText')))
-            // 搜索战略新兴产业
-            ->SetQueryByBasicJlxxcyid(trim($this->request()->getRequestParam('basic_jlxxcyid')))
-            // 搜索shang_pin_data 商品信息 appStr:五香;农庄
-            ->SetQueryByShangPinData( trim($this->request()->getRequestParam('appStr')))
-            //必须存在官网
-            ->SetQueryByWeb($searchOptionArr)
-            ->SetAreaQueryV3($areas_arr,$requestData['areas_type']?:1)
-            //必须存在APP
-            ->SetQueryByApp($searchOptionArr)
-            //必须是物流企业
-            ->SetQueryByWuLiuQiYe($searchOptionArr)
-            // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
-            ->SetQueryByCompanyOrgType($searchOptionArr)
-            // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
-            ->SetQueryByEstiblishTime($searchOptionArr)
-            // 营业状态   传过来的是 10  20  转换成文案后 去匹配
-            ->SetQueryByRegStatus($searchOptionArr)
-            // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
-            ->SetQueryByRegCaptial($searchOptionArr)
-            // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
-            ->SetQueryByTuanDuiRenShu($searchOptionArr)
-            // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
-            ->SetQueryByYingShouGuiMo($searchOptionArr)
-            //四级分类 basic_nicid: A0111,A0112,A0113,
-            ->SetQueryBySiJiFenLei(trim($this->request()->getRequestParam('basic_nicid')))
-            // 地区 basic_regionid: 110101,110102,
-            ->SetQueryByBasicRegionid( trim($this->request()->getRequestParam('basic_regionid')))
-            ->addSize($size)
-            ->addFrom($offset)
-            //设置默认值 不传任何条件 搜全部
-            ->setDefault()
-            ->searchFromEs()
-            // 格式化下日期和时间
-            ->formatEsDate()
-            // 格式化下金额
-            ->formatEsMoney()
-        ;
-
-        foreach($companyEsModel->return_data['hits']['hits'] as &$dataItem){
-            $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmail($dataItem);
-            $dataItem['_source']['last_postal_address'] = $addresAndEmailData['last_postal_address'];
-            $dataItem['_source']['last_email'] = $addresAndEmailData['last_email'];
-
-            $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntId($dataItem['_source']['xd_id']);
-
-            // 添加tag
-            $dataItem['_source']['tags'] = array_values(
-                (new XinDongService())::getAllTagesByData(
-                    $dataItem['_source']
-                )
-            );
-
-            // 官网
-            $webStr = trim($dataItem['_source']['web']);
-            if(!$webStr){
-                continue;
-            }
-            $webArr = explode('&&&', $webStr);
-            !empty($webArr) && $dataItem['_source']['web'] = end($webArr);
-        }
-
-        return $this->writeJson(200,
-            [
-                'page' => $page,
-                'pageSize' =>$size,
-                'total' => intval($companyEsModel->return_data['hits']['total']['value']),
-                'totalPage' => (int)floor(intval($companyEsModel->return_data['hits']['total']['value'])/
-                    ($size)),
-
-            ]
-            , $companyEsModel->return_data['hits']['hits'], '成功', true, []);
-    }
     function advancedSearch(): bool
     {
         $requestData =  $this->getRequestData();
@@ -273,8 +148,9 @@ class SouKeController extends ControllerBase
             }
         }
         $companyEsModel
+
             //经营范围
-            ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('OPSCOPE'),"OPSCOPE"))
+            ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')),"OPSCOPE")
             //数字经济及其核心产业
             ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
             // 搜索文案 智能搜索
@@ -303,18 +179,30 @@ class SouKeController extends ControllerBase
             // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
             ->SetQueryByYingShouGuiMo($searchOptionArr)
             //四级分类 basic_nicid: A0111,A0112,A0113,
-            ->SetQueryBySiJiFenLei(trim($this->request()->getRequestParam('basic_nicid')))
+            //->SetQueryBySiJiFenLei(trim($this->request()->getRequestParam('basic_nicid')))
+            ->SetQueryBySiJiFenLeiV2(trim($this->request()->getRequestParam('basic_nicid')))
+            //企业类型
+            ->SetQueryByQiYeLeiXing(trim($this->request()->getRequestParam('company_type')))
             //公司类型
             ->SetQueryByCompanyType(trim($this->request()->getRequestParam('ENTTYPE')))
             //公司状态
             ->SetQueryByCompanyStatus(trim($this->request()->getRequestParam('ENTSTATUS')))
             // 地区 basic_regionid: 110101,110102,
             ->SetQueryByBasicRegionid(trim($this->request()->getRequestParam('basic_regionid')))
+            //不包含名称
+            ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_name')),'ENTNAME')
+            //不包含经营范围
+            ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_basic_opscope')),'OPSCOPE')
+            //不包含简介
+            ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_jiejian')),'gong_si_jian_jie')
+            //不包含简介
+            ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_app')),'app')
             ->addSize($size)
+            ->addSort("_id","desc")
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202209')
+            ->searchFromEs('company_202209',true)
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
@@ -334,7 +222,7 @@ class SouKeController extends ControllerBase
             $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
             $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
             $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntIdV2($dataItem['_source']['companyid']);
-
+            $dataItem['_source']['app'] =    str_replace("&&&",",",$dataItem['_source']['app']);
             // 添加tag
             $dataItem['_source']['tags'] = array_values(
                 (new XinDongService())::getAllTagesByData(
@@ -382,588 +270,12 @@ class SouKeController extends ControllerBase
             ]
             , $companyEsModel->return_data['hits']['hits'], '成功', true, []);
     }
-    function advancedSearchOptionold(): bool
-    {
-        $requestData =  $this->getRequestData();
 
-        if(substr($requestData['basic_nicid'], -1) == ','){
-            $requestData['basic_nicid'] = rtrim($requestData['basic_nicid'], ",");
-        }
-
-        if(substr($requestData['basic_regionid'], -1) == ','){
-            $requestData['basic_regionid'] = rtrim($requestData['basic_regionid'], ",");
-        }
-
-        if(substr($requestData['basic_jlxxcyid'], -1) == ','){
-            $requestData['basic_jlxxcyid'] = rtrim($requestData['basic_jlxxcyid'], ",");
-        }
-
-
-        $companyEsModel = new \App\ElasticSearch\Model\Company();
-
-        //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
-        $searchOptionStr =  trim($this->request()->getRequestParam('searchOption'));
-        $searchOptionArr = json_decode($searchOptionStr, true);
-
-        $size = $this->request()->getRequestParam('size')??10;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;
-        //区域搜索
-        $areas_arr  = json_decode($requestData['areas'],true) ;
-        if(!empty($areas_arr)){
-
-
-            //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
-            $first = $areas_arr[0];;
-            $last =  end($areas_arr);
-            if(
-                strval($first[0])!= strval($last[0]) ||
-                strval($first[1])!= strval($last[1])
-            ){
-                $areas_arr[] = $first;
-
-            }else{
-
-            }
-        }
-        $companyEsModel
-            //经营范围
-            ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')))
-            //数字经济及其核心产业
-            ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
-            // 搜索文案 智能搜索
-            ->SetQueryBySearchText( trim($this->request()->getRequestParam('searchText')))
-            // 搜索战略新兴产业
-            ->SetQueryByBasicJlxxcyid(trim($this->request()->getRequestParam('basic_jlxxcyid')))
-            // 搜索shang_pin_data 商品信息 appStr:五香;农庄
-            ->SetQueryByShangPinData( trim($this->request()->getRequestParam('appStr')))
-            //必须存在官网
-            ->SetQueryByWeb($searchOptionArr)
-            ->SetAreaQueryV3($areas_arr,$requestData['areas_type']?:1)
-            //必须存在APP
-            ->SetQueryByApp($searchOptionArr)
-            //必须是物流企业
-            ->SetQueryByWuLiuQiYe($searchOptionArr)
-            // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
-            ->SetQueryByCompanyOrgType($searchOptionArr)
-            // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
-            ->SetQueryByEstiblishTime($searchOptionArr)
-            // 营业状态   传过来的是 10  20  转换成文案后 去匹配
-            ->SetQueryByRegStatus($searchOptionArr)
-            // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
-            ->SetQueryByRegCaptial($searchOptionArr)
-            // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
-            ->SetQueryByTuanDuiRenShu($searchOptionArr)
-            // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
-            ->SetQueryByYingShouGuiMo($searchOptionArr)
-            //四级分类 basic_nicid: A0111,A0112,A0113,
-            ->SetQueryBySiJiFenLei(trim($this->request()->getRequestParam('basic_nicid')))
-            // 地区 basic_regionid: 110101,110102,
-            ->SetQueryByBasicRegionid( trim($this->request()->getRequestParam('basic_regionid')))
-            //->addSize($size)
-            //->addFrom($offset)
-            //设置默认值 不传任何条件 搜全部
-            ->setDefault()
-            ->searchFromEs()
-            // 格式化下日期和时间
-            ->formatEsDate()
-            // 格式化下金额
-            ->formatEsMoney()
-        ;
-
-        $rawOptions = (new XinDongService())->getSearchOption();
-        $newOptions = [];
-
-        foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-            $has_web = $dataItem['_source']['web']?'有':'无';
-
-            $has_app = $dataItem['_source']['app']?'有':'无';
-
-            $has_wu_liu_xin_xi = $dataItem['_source']['wu_liu_xin_xi']?'是':'否';
-
-            foreach ($rawOptions as $key => $configs){
-                $newOptions[$key]['pid'] = $configs['pid']; //
-                $newOptions[$key]['desc'] = $configs['desc']; //
-                $newOptions[$key]['detail'] = $configs['detail']; //
-                $newOptions[$key]['key'] = $configs['key']; //
-                $newOptions[$key]['type'] = $configs['type']; //
-                // 企业类型
-                if($configs['pid'] == 10){
-                    foreach ($configs['data'] as $subKey => $item){
-                        if($item['cname'] == $dataItem['_source']['company_org_type']){
-                            $newOptions[$key]['data'][$subKey] = $item;
-
-                        }
-                        else{
-
-                        }
-                    };
-                }
-                //营业状态
-                if($configs['pid'] == 30){
-                    foreach ($configs['data'] as $subKey => $item){
-
-                        if(strpos($dataItem['_source']['reg_status'],$item['cname']) !== false ){
-                            $newOptions[$key]['data'][$subKey] = $item;
-
-                        }
-                        else{
-
-                        }
-                    };
-                }
-                //官网
-                if($configs['pid'] == 70){
-                    foreach ($configs['data'] as $subKey => $item){
-                        if($item['cname'] == $has_web){
-                            $newOptions[$key]['data'][$subKey] = $item;
-
-                        }
-                        else{
-
-                        }
-                    };
-                }
-
-                //有无APP
-                if($configs['pid'] == 80){
-                    foreach ($configs['data'] as $subKey => $item){
-                        if($item['cname'] == $has_app){
-                            $newOptions[$key]['data'][$subKey] = $item;
-
-                        }else{
-
-                        }
-
-                    };
-                }
-                //是否物流企业
-                if($configs['pid'] == 90){
-                    foreach ($configs['data'] as $subKey => $item){
-                        if($item['cname'] == $has_wu_liu_xin_xi){
-                            $newOptions[$key]['data'][$subKey] = $item;
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'wu_liu_xin_xi matched' => true,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'cname'=>$item['cname'],
-                                    'wu_liu_xin_xi'=>$dataItem['_source']['wu_liu_xin_xi'],
-                                    'name'=>$dataItem['_source']['name'],
-                                ])
-                            );
-                            // break;
-                        }
-                        else{
-
-                        }
-                    }
-                }
-
-                //成立年限
-                if($configs['pid'] == 20){
-                    foreach ($configs['data'] as $subKey => $item){
-                        if($dataItem['_source']['estiblish_time'] <= 1){
-                            continue;
-                        }
-
-                        $yearsNums = date('Y') - date('Y',strtotime($dataItem['_source']['estiblish_time']));
-                        if(
-                            $yearsNums >= $item['min'] &&
-                            $yearsNums <  $item['max']
-                        ){
-                            $newOptions[$key]['data'][$subKey] = $item;
-
-                        }
-                        else{
-
-                        }
-                    };
-                }
-
-                //注册资本
-                if($configs['pid'] == 40){
-                    foreach ($configs['data'] as $subKey => $item){
-                        if(
-                            $dataItem['_source']['reg_capital'] >= $item['min'] &&
-                            $dataItem['_source']['reg_capital'] <  $item['max']
-                        ){
-                            $newOptions[$key]['data'][$subKey] = $item;
-
-                        }
-                        else{
-
-                        }
-                    };
-                }
-                //营收规模
-                if($configs['pid'] == 50){
-                    foreach ($configs['data'] as $subKey => $item){
-                        if( !$dataItem['_source']['ying_shou_gui_mo']){
-                            continue;
-                        }
-                        $yingshouguimomap = XinDongService::getYingShouGuiMoMapV2();
-                        $yingshouguimoItem = $yingshouguimomap[$dataItem['_source']['ying_shou_gui_mo']];
-                        if(
-                            $yingshouguimoItem['min'] >= $item['min'] &&
-                            $yingshouguimoItem['max'] <  $item['max']
-                        ){
-                            $newOptions[$key]['data'][$subKey] = $item;
-
-                        }
-                        else{
-
-                        }
-                    };
-                }
-                //企业规模
-                if($configs['pid'] == 60){
-                    foreach ($configs['data'] as $subKey => $item){
-                        if(
-                            $dataItem['_source']['tuan_dui_ren_shu'] >= $item['min'] &&
-                            $dataItem['_source']['tuan_dui_ren_shu'] <  $item['max']
-                        ){
-                            $newOptions[$key]['data'][$subKey] = $item;
-
-                        }
-                        else{
-
-                        }
-                    };
-                }
-            }
-        }
-
-        $newOptionsV2 = [];
-        foreach ($newOptions as $option){
-            if(empty($option['data'])){
-                continue;
-            }
-            $newOptionsV2[] = $option;
-        }
-        return $this->writeJson(200,
-            [  ]
-            , $newOptionsV2, '成功', true, []);
-    }
     function advancedSearchOption(): bool
     {
         return $this->writeJson(200,
             [  ]
             , (new XinDongService())->getSearchOption(), '成功', true, []);
-        $requestData =  $this->getRequestData();
-
-        if(substr($requestData['basic_nicid'], -1) == ','){
-            $requestData['basic_nicid'] = rtrim($requestData['basic_nicid'], ",");
-        }
-
-        if(substr($requestData['basic_regionid'], -1) == ','){
-            $requestData['basic_regionid'] = rtrim($requestData['basic_regionid'], ",");
-        }
-
-        if(substr($requestData['basic_jlxxcyid'], -1) == ','){
-            $requestData['basic_jlxxcyid'] = rtrim($requestData['basic_jlxxcyid'], ",");
-        }
-
-
-        $companyEsModel = new \App\ElasticSearch\Model\Company();
-
-        //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
-        $searchOptionStr =  trim($this->request()->getRequestParam('searchOption'));
-        $searchOptionArr = json_decode($searchOptionStr, true);
-
-        $size = $this->request()->getRequestParam('size')??10;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;
-        $size = 500;
-        //区域搜索
-        $areas_arr  = json_decode($requestData['areas'],true) ;
-        if(!empty($areas_arr)){
-
-
-            //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
-            $first = $areas_arr[0];;
-            $last =  end($areas_arr);
-            if(
-                strval($first[0])!= strval($last[0]) ||
-                strval($first[1])!= strval($last[1])
-            ){
-                $areas_arr[] = $first;
-
-            }else{
-
-            }
-        }
-
-        $companyEsModel
-            //经营范围
-            ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('OPSCOPE'),"OPSCOPE"))
-            //数字经济及其核心产业
-            ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
-            // 搜索文案 智能搜索
-            ->SetQueryBySearchTextV2( trim($this->request()->getRequestParam('searchText')))
-            // 搜索战略新兴产业
-            ->SetQueryByBasicJlxxcyid(trim($this->request()->getRequestParam('basic_jlxxcyid')))
-            // 搜索shang_pin_data 商品信息 appStr:五香;农庄
-            ->SetQueryByShangPinData( trim($this->request()->getRequestParam('appStr')))
-            //必须存在官网
-            ->SetQueryByWeb($searchOptionArr)
-            ->SetAreaQueryV5($areas_arr,$requestData['areas_type']?:1)
-            //必须存在APP
-            ->SetQueryByApp($searchOptionArr)
-            //必须是物流企业
-            ->SetQueryByWuLiuQiYe($searchOptionArr)
-            // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
-            ->SetQueryByCompanyOrgType($searchOptionArr)
-            // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
-            ->SetQueryByEstiblishTime($searchOptionArr)
-            // 营业状态   传过来的是 10  20  转换成文案后 去匹配
-            ->SetQueryByRegStatus($searchOptionArr)
-            // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
-            ->SetQueryByRegCaptial($searchOptionArr)
-            // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
-            ->SetQueryByTuanDuiRenShu($searchOptionArr)
-            // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
-            ->SetQueryByYingShouGuiMo($searchOptionArr)
-            //四级分类 basic_nicid: A0111,A0112,A0113,
-            ->SetQueryBySiJiFenLei(trim($this->request()->getRequestParam('basic_nicid')))
-            //公司类型
-            ->SetQueryByCompanyType(trim($this->request()->getRequestParam('ENTTYPE')))
-            //公司状态
-            ->SetQueryByCompanyStatus(trim($this->request()->getRequestParam('ENTSTATUS')))
-            // 地区 basic_regionid: 110101,110102,
-            ->SetQueryByBasicRegionid(trim($this->request()->getRequestParam('basic_regionid')))
-            ->addSize($size)
-            //->addFrom($offset)
-            //设置默认值 不传任何条件 搜全部
-            ->setDefault()
-            ->searchFromEs('company_202209')
-            // 格式化下日期和时间
-            ->formatEsDate()
-            // 格式化下金额
-            ->formatEsMoney('REGCAP')
-        ;
-
-//        $companyEsModel
-//            //经营范围
-//            ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('OPSCOPE'),"OPSCOPE"))
-//            //数字经济及其核心产业
-//            ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
-//            // 搜索文案 智能搜索
-//            ->SetQueryBySearchTextV2( trim($this->request()->getRequestParam('searchText')))
-//            // 搜索战略新兴产业
-//            ->SetQueryByBasicJlxxcyid(trim($this->request()->getRequestParam('basic_jlxxcyid')))
-//            // 搜索shang_pin_data 商品信息 appStr:五香;农庄
-//            ->SetQueryByShangPinData( trim($this->request()->getRequestParam('appStr')))
-//            //必须存在官网
-//            ->SetQueryByWeb($searchOptionArr)
-//            ->SetAreaQueryV5($areas_arr,$requestData['areas_type']?:1)
-//            //必须存在APP
-//            ->SetQueryByApp($searchOptionArr)
-//            //必须是物流企业
-//            ->SetQueryByWuLiuQiYe($searchOptionArr)
-//            // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
-//            ->SetQueryByCompanyOrgType($searchOptionArr)
-//            // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
-//            ->SetQueryByEstiblishTime($searchOptionArr)
-//            // 营业状态   传过来的是 10  20  转换成文案后 去匹配
-//            ->SetQueryByRegStatus($searchOptionArr)
-//            // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
-//            ->SetQueryByRegCaptial($searchOptionArr)
-//            // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
-//            ->SetQueryByTuanDuiRenShu($searchOptionArr)
-//            // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
-//            ->SetQueryByYingShouGuiMo($searchOptionArr)
-//            //四级分类 basic_nicid: A0111,A0112,A0113,
-//            ->SetQueryBySiJiFenLei(trim($this->request()->getRequestParam('basic_nicid')))
-//            // 地区 basic_regionid: 110101,110102,
-//            ->SetQueryByBasicRegionid( trim($this->request()->getRequestParam('basic_regionid')))
-//            //->addSize($size)
-//            //->addFrom($offset)
-//            //设置默认值 不传任何条件 搜全部
-//            ->setDefault()
-//            ->searchFromEs('company_202209')
-//            // 格式化下日期和时间
-//            ->formatEsDate()
-//            // 格式化下金额
-//            ->formatEsMoney()
-//        ;
-
-
-        $rawOptions = (new XinDongService())->getSearchOption();
-        $newOptions = [];
-
-        foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-            $has_web = $dataItem['_source']['web']?'有':'无';
-
-            $has_app = $dataItem['_source']['app']?'有':'无';
-
-            $has_wu_liu_xin_xi = $dataItem['_source']['wu_liu_xin_xi']?'是':'否';
-
-            foreach ($rawOptions as $key => $configs){
-                $newOptions[$key]['pid'] = $configs['pid']; //
-                $newOptions[$key]['desc'] = $configs['desc']; //
-                $newOptions[$key]['detail'] = $configs['detail']; //
-                $newOptions[$key]['key'] = $configs['key']; //
-                $newOptions[$key]['type'] = $configs['type']; //
-                // 企业类型
-                if($configs['pid'] == 10){
-                    foreach ($configs['data'] as $subKey => $item){
-                        if($item['cname'] == $dataItem['_source']['company_org_type']){
-                            $newOptions[$key]['data'][$subKey] = $item;
-
-                        }
-                        else{
-
-                        }
-                    };
-                }
-                //营业状态
-                if($configs['pid'] == 30){
-                    foreach ($configs['data'] as $subKey => $item){
-
-                        if(strpos($dataItem['_source']['reg_status'],$item['cname']) !== false ){
-                            $newOptions[$key]['data'][$subKey] = $item;
-
-                        }
-                        else{
-
-                        }
-                    };
-                }
-                //官网
-                if($configs['pid'] == 70){
-                    foreach ($configs['data'] as $subKey => $item){
-                        if($item['cname'] == $has_web){
-                            $newOptions[$key]['data'][$subKey] = $item;
-
-                        }
-                        else{
-
-                        }
-                    };
-                }
-
-                //有无APP
-                if($configs['pid'] == 80){
-                    foreach ($configs['data'] as $subKey => $item){
-                        if($item['cname'] == $has_app){
-                            $newOptions[$key]['data'][$subKey] = $item;
-
-                        }else{
-
-                        }
-
-                    };
-                }
-                //是否物流企业
-                if($configs['pid'] == 90){
-                    foreach ($configs['data'] as $subKey => $item){
-                        if($item['cname'] == $has_wu_liu_xin_xi){
-                            $newOptions[$key]['data'][$subKey] = $item;
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'wu_liu_xin_xi matched' => true,
-                                    '$subKey' => $subKey,
-                                    '$item' => $item,
-                                    'cname'=>$item['cname'],
-                                    'wu_liu_xin_xi'=>$dataItem['_source']['wu_liu_xin_xi'],
-                                    'name'=>$dataItem['_source']['name'],
-                                ])
-                            );
-                            // break;
-                        }
-                        else{
-
-                        }
-                    }
-                }
-
-                //成立年限
-                if($configs['pid'] == 20){
-                    foreach ($configs['data'] as $subKey => $item){
-                        if($dataItem['_source']['estiblish_time'] <= 1){
-                            continue;
-                        }
-
-                        $yearsNums = date('Y') - date('Y',strtotime($dataItem['_source']['estiblish_time']));
-                        if(
-                            $yearsNums >= $item['min'] &&
-                            $yearsNums <  $item['max']
-                        ){
-                            $newOptions[$key]['data'][$subKey] = $item;
-
-                        }
-                        else{
-
-                        }
-                    };
-                }
-
-                //注册资本
-                if($configs['pid'] == 40){
-                    foreach ($configs['data'] as $subKey => $item){
-                        if(
-                            $dataItem['_source']['reg_capital'] >= $item['min'] &&
-                            $dataItem['_source']['reg_capital'] <  $item['max']
-                        ){
-                            $newOptions[$key]['data'][$subKey] = $item;
-
-                        }
-                        else{
-
-                        }
-                    };
-                }
-                //营收规模
-                if($configs['pid'] == 50){
-                    foreach ($configs['data'] as $subKey => $item){
-                        if( !$dataItem['_source']['ying_shou_gui_mo']){
-                            continue;
-                        }
-                        $yingshouguimomap = XinDongService::getYingShouGuiMoMapV2();
-                        $yingshouguimoItem = $yingshouguimomap[$dataItem['_source']['ying_shou_gui_mo']];
-                        if(
-                            $yingshouguimoItem['min'] >= $item['min'] &&
-                            $yingshouguimoItem['max'] <  $item['max']
-                        ){
-                            $newOptions[$key]['data'][$subKey] = $item;
-
-                        }
-                        else{
-
-                        }
-                    };
-                }
-                //企业规模
-                if($configs['pid'] == 60){
-                    foreach ($configs['data'] as $subKey => $item){
-                        if(
-                            $dataItem['_source']['tuan_dui_ren_shu'] >= $item['min'] &&
-                            $dataItem['_source']['tuan_dui_ren_shu'] <  $item['max']
-                        ){
-                            $newOptions[$key]['data'][$subKey] = $item;
-
-                        }
-                        else{
-
-                        }
-                    };
-                }
-            }
-        }
-
-        $newOptionsV2 = [];
-        foreach ($newOptions as $option){
-            if(empty($option['data'])){
-                continue;
-            }
-            $newOptionsV2[] = $option;
-        }
-        return $this->writeJson(200,
-            [  ]
-            , $newOptionsV2, '成功', true, []);
     }
 
     function getStaffInfo(): bool
@@ -2170,7 +1482,7 @@ class SouKeController extends ControllerBase
             ])
         );
 
-        $sqlWhere = " WHERE 1 = 1 ";
+        $sqlWhere = " WHERE userid =  ".$this->loginUserinfo['id'];
 
         // searchText
         if(!empty($requestData['searchText'])){
@@ -2633,7 +1945,7 @@ class SouKeController extends ControllerBase
                 'func_info_json' => json_encode(
                     [
                         'class' => '\App\ElasticSearch\Model\Company',
-                        'static_func'=> 'exportCompanyData',
+                        'static_func'=> 'exportCompanyDataToCsv',
                     ]
                 ),
                 'params_json' => json_encode([
@@ -2651,65 +1963,7 @@ class SouKeController extends ControllerBase
         ConfigInfo::removeRedisNx('exportEntData');
         return $this->writeJson(200,[ ] , [], '已发起下载，请去我的下载中查看', true, []);
     }
-    function exportEntDataOld(): bool
-    {
-        if(
-            !ConfigInfo::setRedisNx('exportEntData',5)
-        ){
-            return $this->writeJson(201, null, [],  '请勿重复提交');
-        }
 
-        $requestData =  $this->getRequestData();
-        if(substr($requestData['basic_nicid'], -1) == ','){
-            $requestData['basic_nicid'] = rtrim($requestData['basic_nicid'], ",");
-        }
-
-        if(substr($requestData['basic_regionid'], -1) == ','){
-            $requestData['basic_regionid'] = rtrim($requestData['basic_regionid'], ",");
-        }
-
-        if(substr($requestData['basic_jlxxcyid'], -1) == ','){
-            $requestData['basic_jlxxcyid'] = rtrim($requestData['basic_jlxxcyid'], ",");
-        }
-
-
-        $checkRes = DataModelExample::checkField(
-            [
-
-                'total_nums' => [
-                    'bigger_than' => 0,
-                    'less_than' => 1000000,
-                    'field_name' => 'total_nums',
-                    'err_msg' => '总数不对！必须大于0且小于100万',
-                ]
-            ],
-            $requestData
-        );
-        if(
-            !$checkRes['res']
-        ){
-            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
-        }
-
-        //下载
-        DownloadSoukeHistory::addRecord(
-            [
-                'admin_id' => $this->loginUserinfo['id'],
-                'entName' => $requestData['entName'],
-                //选择的哪些条件
-                'feature' => json_encode($requestData),
-                //标题
-                'title' => $requestData['title'],
-                'remark' => $requestData['remark'],
-                'total_nums' => $requestData['total_nums'],
-                'status' => DeliverHistory::$state_init,
-                'type' => $requestData['type']?:1,
-            ]
-        );
-
-        ConfigInfo::removeRedisNx('exportEntData');
-        return $this->writeJson(200,[ ] , [], '已发起下载，请去我的下载中查看', true, []);
-    }
 
     /*
      * 获取导出列表
@@ -2871,7 +2125,7 @@ class SouKeController extends ControllerBase
     }
 
     /*
-     * 确认使用该文件
+     * 确认使用该文件  XXXXXX
      * */
     public function deliverCustomerRoster(){
         $requestData =  $this->getRequestData();
@@ -2937,7 +2191,37 @@ class SouKeController extends ControllerBase
             ]
         );
 
-        return $this->writeJson(200,  [], [],'成功');
+        $res = QueueLists::addRecord(
+            [
+                'name' => 'sou_ke_jiao_fu',
+                'desc' => '搜客-交付',
+                'func_info_json' => json_encode(
+                    [
+                        'class' => '\App\ElasticSearch\Model\Company',
+                        'static_func'=> 'deliverCompany',
+                    ]
+                ),
+                'params_json' => json_encode([
+                    'data_id'=>$requestData['id']
+                ]),
+                'type' => QueueLists::$typle_finance,
+                'user_id' => $this->loginUserinfo['id'],
+                'remark' => '',
+                'begin_date' => NULL,
+                'msg' => '',
+                'status' => QueueLists::$status_init,
+            ]
+        );
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'deliverCompany' => [
+                    '$res'=>$res
+                ]
+            ])
+        );
+        return $this->writeJson(200,  [], [],'成功('.$res.')');
     }
 
     /*
@@ -3027,6 +2311,7 @@ class SouKeController extends ControllerBase
 
     public function getDeliverDetails(){
         $page = $this->request()->getRequestParam('page')??1;
+        $pageSize = $this->request()->getRequestParam('pageSize')??20;
 
         $requestData =  $this->getRequestData();
 
@@ -3060,18 +2345,27 @@ class SouKeController extends ControllerBase
             'value' => $requestData['id'],
             'operate' => '=',
         ];
+        if($requestData['company_name']){
+            $whereArr[] =   [
+                'field' => 'entName',
+                'value' => '%'.$requestData['company_name'].'%',
+                'operate' => 'like',
+            ];
+        }
         $res = DeliverDetailsHistory::findByConditionV2(
 
             $whereArr,
-            $page
+            $page,
+            $pageSize
         );
 
         //补全数据
         foreach ($res['data'] as &$value){
+
         }
         return $this->writeJson(200,  [
             'page' => $page,
-            'pageSize' =>10,
+            'pageSize' =>$pageSize,
             'total' => $res['total'],
             'totalPage' =>  ceil( $res['total']/ 10 ),
         ], $res['data'],'成功');

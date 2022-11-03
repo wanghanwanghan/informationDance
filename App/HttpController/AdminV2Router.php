@@ -205,6 +205,14 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/uploadeTemplateLists', $prefix . 'uploadeTemplateLists');
             //上传文件
             $routeCollector->addRoute(['GET', 'POST'], '/uploadeFiles', $prefix . 'uploadeFiles');
+            $routeCollector->addRoute(['GET', 'POST'], '/buQuanZiDuanList', $prefix . 'buQuanZiDuanList');
+            $routeCollector->addRoute(['GET', 'POST'], '/pullGongKaiContact', $prefix . 'pullGongKaiContact');
+            $routeCollector->addRoute(['GET', 'POST'], '/pullFeiGongKaiContact', $prefix . 'pullFeiGongKaiContact');
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadeGongKaiContactFiles', $prefix . 'uploadeGongKaiContactFiles');
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadeFeiGongKaiContactFiles', $prefix . 'uploadeFeiGongKaiContactFiles');
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadeBuQuanZiDuanFiles', $prefix . 'uploadeBuQuanZiDuanFiles');
+            $routeCollector->addRoute(['GET', 'POST'], '/rePullFeiGongKaiContact', $prefix . 'rePullFeiGongKaiContact');
+            $routeCollector->addRoute(['GET', 'POST'], '/rePullGongKaiContact', $prefix . 'rePullGongKaiContact');
             //获取上传列表
             $routeCollector->addRoute(['GET', 'POST'], '/getUploadLists', $prefix . 'getUploadLists'); //
             //获取上传文件类型
@@ -291,11 +299,13 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/ZhiJinFansLists', $prefix . 'ZhiJinFansLists');
             $routeCollector->addRoute(['GET', 'POST'], '/applyWithdrawalRecords', $prefix . 'applyWithdrawalRecords');
             $routeCollector->addRoute(['GET', 'POST'], '/setApplyWithdrawalRes', $prefix . 'setApplyWithdrawalRes');
+            $routeCollector->addRoute(['GET', 'POST'], '/offlinePay', $prefix . 'offlinePay');
             $routeCollector->addRoute(['GET', 'POST'], '/daikuanBank', $prefix . 'daikuanBank');
             $routeCollector->addRoute(['GET', 'POST'], '/ZhiJinFansOrderLists', $prefix . 'ZhiJinFansOrderLists');
             $routeCollector->addRoute(['GET', 'POST'], '/incomeLists', $prefix . 'incomeLists');
             $routeCollector->addRoute(['GET', 'POST'], '/grantDaiKuanCommission', $prefix . 'grantDaiKuanCommission');
             $routeCollector->addRoute(['GET', 'POST'], '/grantBaoXianCommission', $prefix . 'grantBaoXianCommission');
+            $routeCollector->addRoute(['GET', 'POST'], '/zhiJinUploadeFiles', $prefix . 'zhiJinUploadeFiles');
         });
 
         return true;

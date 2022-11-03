@@ -30,9 +30,56 @@ class OnlineGoodsUser extends ModelBase
     static $level_vip = 1 ;
     static $level_vip_cname =  'vip客户' ;
 
+    //
+
+    static $banlance_type_zeng_jia = 5;
+    static $banlance_type_zeng_jia_cname = '增加';
+    static $banlance_type_jian_shao = 10;
+    static $banlance_type_jian_shao_cname = '减少';
+
+
+    static  function  changeBalance($userId,$amount,$type,$remark= ''){
+        $userInfo = self::findById($userId);
+        $oldBalance = $userInfo->money;
+        $newBalance = $oldBalance;
+        if($type == self::$banlance_type_zeng_jia){
+            $newBalance += $amount;
+        }
+        if($type == self::$banlance_type_jian_shao){
+            $newBalance -= $amount;
+        }
+        $changeRes =  self::updateById($userId,
+            [
+                'id'=>$userId,
+                'money'=>$newBalance,
+            ]
+        );
+
+        if(!$changeRes){
+            return  false;
+        }
+
+        //添加流水记录
+        return OnlineGoodsAccountLiuShui::addRecordV2(
+            [
+                'user_id' => $userId,
+                'old_balance' => $oldBalance,
+                'new_balance' => $newBalance,
+                'amount' => $amount?:0,
+                'type' => $type,
+                'remark'=>$remark,
+            ]
+        );
+    }
+
+    //减少金额的时候 需要
+    static  function  checkBalance($userId,$amount){
+        $userInfo = self::findById();
+    }
+
     // 是否vip
     static function IsVip($userInfo){
-        return $userInfo['level'] == self::$level_vip;
+        return $userInfo['level'] == self::$level_vip?1:0;
     }
 
     // 是否vip
@@ -40,37 +87,6 @@ class OnlineGoodsUser extends ModelBase
         $userDataModel = self::findById($id);
         $userInfo = $userDataModel->toArray();
         return  self::IsVip($userInfo);
-    }
-
-    static function  addDailySmsNums($phone,$prx = "daily_online_sendSms_"){
-        //每日发送次数限制
-        $daily_limit_key = $prx.$phone;
-        $nums =  ConfigInfo::getRedisBykey($daily_limit_key);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'addDailySmsNums_$nums'=>$nums,
-                'addDailySmsNums_$daily_limit_key' => $daily_limit_key,
-            ])
-        );
-        if($nums <= 0 ){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'addDailySmsNums_setRedisBykey = '=>1,
-                ])
-            );
-            return ConfigInfo::setRedisBykey($daily_limit_key,intval($nums) + 1,60*60*24);
-        }
-        else{
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'addDailySmsNums_setRedisBykey +='=>1,
-                ])
-            );
-            return ConfigInfo::incrRedisBykey($daily_limit_key);
-        }
     }
 
     static function  addDailySmsNumsV2($phone,$prx = "daily_online_sendSms_"){
@@ -284,6 +300,8 @@ class OnlineGoodsUser extends ModelBase
             $info
         );
     }
+
+
 
     public static function addRecord($requestData){
 

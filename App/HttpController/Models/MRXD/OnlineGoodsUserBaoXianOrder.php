@@ -25,18 +25,33 @@ class OnlineGoodsUserBaoXianOrder extends ModelBase
 
     protected $tableName = 'online_goods_user_baoxian_order';
 
-    static  $state_del = 1;
-    static  $state_del_cname =  '已删除';
-    static  $state_ok = 0;
-    static  $state_ok_cname =  '正常';
 
     static $status_init = 0;
     static $status_init_cname =  '初始';
 
-    static function getDelStateMap(){
+    static $commission_set_state_init = 5;
+    static $commission_set_state_init_cname = '待设置';
+
+    static $commission_set_state_succeed = 10;
+    static $commission_set_state_succeed_cname = '已设置';
+
+    static $commission_state_init = 5;
+    static $commission_state_init_cname = '未发放';
+
+    static $commission_state_succeed = 10;
+    static $commission_state_succeed_cname = '已发放';
+
+    static function getCommissionSetStateMap(){
         return [
-            self::$state_del =>self::$state_del_cname,
-            self::$state_ok =>self::$state_ok_cname,
+            self::$commission_set_state_init =>self::$commission_set_state_init_cname,
+            self::$commission_set_state_succeed =>self::$commission_set_state_succeed_cname,
+        ];
+    }
+
+    static function getCommissionStateMap(){
+        return [
+            self::$commission_state_init =>self::$commission_state_init_cname,
+            self::$commission_state_succeed =>self::$commission_state_succeed_cname,
         ];
     }
 
@@ -98,21 +113,57 @@ class OnlineGoodsUserBaoXianOrder extends ModelBase
     static function addCommissionInfoById($id){
 
         $orderInfo = self::findById($id);
+        if(empty($orderInfo)){
+            return  false;
+        }
         $orderInfo = $orderInfo->toArray();
-        OnlineGoodsCommissions::addCommissionInfoByOrderInfo($orderInfo);
-
+        $res = OnlineGoodsCommissions::addCommissionInfoByOrderInfo($orderInfo,OnlineGoodsCommissions::$commission_type_bao_xian);
+        if(!$res){
+            return  false;
+        }
         return true;
     }
 
+    //发放佣金
+    static function grantCommissionInfoById($id){
+        $orderInfo = self::findById($id);
+        if(empty($orderInfo)){
+            return  false;
+        }
+        $orderInfo = $orderInfo->toArray();
+
+        $res =   OnlineGoodsCommissions::grantByCommissionOrderId($orderInfo);
+        if(!$res){
+            return  false;
+        }
+
+        return  self::updateById($id,[
+            'commission_state'=>self::$commission_state_succeed
+        ]);
+
+    }
+
+
     public static function addRecord($requestData){
+
         try {
            $res =  OnlineGoodsUserBaoXianOrder::create()->data([
-                'product_id' => $requestData['product_id'],
-                'purchaser_id' => $requestData['purchaser_id'],
-                'price' => $requestData['price'],
-                'xindong_commission' => $requestData['xindong_commission'],
-                'commission_set_state' => $requestData['commission_set_state'],
-                'commission_state' => $requestData['commission_state'],
+               //产品
+               'product_id' => intval($requestData['product_id']),
+               //购买人
+               'purchaser_id' => intval($requestData['purchaser_id']),
+               'amount' => $requestData['amount']?:0,
+               'purchaser_name' => $requestData['purchaser_name']?:'',
+               'purchaser_phone' => $requestData['purchaser_phone']?:'',
+               'zhijin_phone' => $requestData['zhijin_phone']?:'',
+               'xindong_commission_rate' => $requestData['xindong_commission_rate']?:'',
+               'xindong_commission' => $requestData['xindong_commission']?:'',
+               'commission_rate' => $requestData['commission_rate']?:'',
+               'order_date' => $requestData['order_date']?:'',
+               'commission_date' => $requestData['commission_date']?:'',
+               'remark' => $requestData['remark']?:'',
+               'commission_set_state' => intval($requestData['commission_set_state']),
+               'commission_state' => intval($requestData['commission_state']),
                'created_at' => time(),
                'updated_at' => time(),
            ])->save();
@@ -162,10 +213,10 @@ class OnlineGoodsUserBaoXianOrder extends ModelBase
         return $info->update($data);
     }
 
-    public static function findByConditionWithCountInfo($whereArr,$page){
+    public static function findByConditionWithCountInfo($whereArr,$page,$pageSize){
         $model = OnlineGoodsUserBaoXianOrder::create()
                 ->where($whereArr)
-                ->page($page)
+                ->page($page,$pageSize)
                 ->order('id', 'DESC')
                 ->withTotalCount();
 

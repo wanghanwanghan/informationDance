@@ -4,6 +4,8 @@ namespace App\ElasticSearch\Model;
 
 use App\ElasticSearch\Service\ElasticSearchService;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
+use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
+use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
@@ -179,12 +181,12 @@ class Company extends ServiceBase
 
     function SetAreaQueryV5($areasLocations,$type =1 )
     {
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'SetAreaQueryV5' =>  $areasLocations
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'SetAreaQueryV5' =>  $areasLocations
+//            ])
+//        );
         (!empty($areasLocations)) &&  $this->es->addGeoShapWithinV2( $areasLocations) ;
         // $this->query['query']['bool']['must'][]
         return $this;
@@ -275,18 +277,20 @@ class Company extends ServiceBase
     }
 
 
-    function searchFromEs($index = 'company_202207')
+    function searchFromEs($index = 'company_202207',$showLog = false)
     {
 
         $responseJson = (new XinDongService())->advancedSearch($this->es,$index);
         $responseArr = @json_decode($responseJson,true);
         $this->setReturnData($responseArr);
-        CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
-                [
-                    // 'hits' => $responseArr['hits']['hits'],
-                    'es_query' => $this->es->query,
-                ]
-        ));
+        if($showLog){
+            CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
+                    [
+                        'hits' => count($responseArr['hits']['hits']),
+                        'es_query' => $this->es->query,
+                    ]
+            ));
+        }
         return $this;
     }
 
@@ -330,7 +334,8 @@ class Company extends ServiceBase
                     }
                 }
                 CommonService::getInstance()->log4PHP($nicIds);
-                $this->es->addMustShouldPhrasePrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ;
+                //$this->es->addMustShouldPhrasePrefixQuery( 'si_ji_fen_lei_code' , $nicIds) ;
+                $this->es->addMustShouldPhrasePrefixQuery( 'NIC_ID' , $nicIds) ;
             }
         }
 
@@ -350,16 +355,28 @@ class Company extends ServiceBase
     }
 
     function SetQueryBySearchTextV2($searchText){
+        /**
+        ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_name')),'ENTNAME')
+        //不包含经营范围
+        ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_basic_opscope')),'OPSCOPE')
+        //不包含简介
+        ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_jiejian')),'gong_si_jian_jie')
+        //不包含简介
+        ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_app')),'app')
+         */
         if($searchText){
             $matchedCnames = [
                 [ 'field'=>'ENTNAME' ,'value'=> $searchText],
-                [ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
-                [ 'field'=>'OPSCOPE' ,'value'=> $searchText]
+                //[ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
+                [ 'field'=>'OPSCOPE' ,'value'=> $searchText],
+                [ 'field'=>'gong_si_jian_jie' ,'value'=> $searchText],
+                [ 'field'=>'app' ,'value'=> $searchText],
             ];
             $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
         }
         return $this;
     }
+
     function SetQueryBySearchTextV3($searchText,$fileds = [
         'ENTNAME',
         'shang_pin_data.name',
@@ -367,15 +384,42 @@ class Company extends ServiceBase
     ]){
         if($searchText){
             $matchedCnames = [
-                [ 'field'=>'ENTNAME' ,'value'=> $searchText],
-                [ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
-                [ 'field'=>'OPSCOPE' ,'value'=> $searchText]
+//                [ 'field'=>'ENTNAME' ,'value'=> $searchText],
+//                [ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
+//                [ 'field'=>'OPSCOPE' ,'value'=> $searchText]
             ];
 
             foreach ($fileds as $filed){
                 $matchedCnames[] =  [ 'field'=>$filed ,'value'=> $searchText];
             }
             $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
+        }
+        return $this;
+    }
+
+    function SetQueryBySearchTextV4($searchText,$fileds = [
+        'ENTNAME',
+        'shang_pin_data.name',
+        'OPSCOPE.name',
+    ]){
+        if($searchText){
+            $matchedCnames = [
+//                [ 'field'=>'ENTNAME' ,'value'=> $searchText],
+//                [ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
+//                [ 'field'=>'OPSCOPE' ,'value'=> $searchText]
+            ];
+
+            foreach ($fileds as $filed){
+                $this->es->addMustNotMatchQuery($filed,$searchText) ;
+            }
+
+        }
+        return $this;
+    }
+
+    function SetQueryBySearchTextV5($searchText,$filed){
+        if($searchText){
+            $this->es->addMustNotMatchQuery($filed,$searchText) ;
         }
         return $this;
     }
@@ -394,6 +438,7 @@ class Company extends ServiceBase
         }
         return $this;
     }
+
 
 
     function SetQueryByBusinessScope($basic_opscope,$business_scope_field_name = "business_scope"){
@@ -424,7 +469,8 @@ class Company extends ServiceBase
             $matchedCnames = array_column($siJiFenLeiDatas, 'nic_id');
             CommonService::getInstance()->log4PHP('matchedCnames '.json_encode($matchedCnames));
 
-            $this->es->addMustShouldPhraseQuery( 'si_ji_fen_lei_code' , $matchedCnames) ;
+            //$this->es->addMustShouldPhraseQuery( 'si_ji_fen_lei_code' , $matchedCnames) ;
+            $this->es->addMustShouldPhraseQuery( 'NIC_ID' , $matchedCnames) ;
 
         }
         return $this;
@@ -629,7 +675,8 @@ class Company extends ServiceBase
 
         $matchedCnames = [];
         foreach($reg_status_values as $item){
-            $item && $matchedCnames[] = (new XinDongService())->getRegStatus()[$item];
+            //$item && $matchedCnames[] = (new XinDongService())->getRegStatus()[$item];
+            $item && $matchedCnames[] = $item;
         }
         (!empty($matchedCnames)) && $this->es->addMustShouldPhraseQuery( 'ENTSTATUS' , $matchedCnames) ;
 
@@ -799,6 +846,9 @@ class Company extends ServiceBase
 
     // addMustShouldPhrasePrefixQuery
     function SetQueryBySiJiFenLei($siJiFenLeiStrs,$field = 'si_ji_fen_lei_code'){
+        if(substr($siJiFenLeiStrs, -1) == ','){
+            $siJiFenLeiStrs = rtrim($siJiFenLeiStrs, ",");
+        }
         $siJiFenLeiStrs && $siJiFenLeiArr = explode(',', $siJiFenLeiStrs);
         if(!empty($siJiFenLeiArr)){
             $this->es->addMustShouldPhraseQuery( $field , $siJiFenLeiArr) ;
@@ -807,6 +857,9 @@ class Company extends ServiceBase
     }
 
     function SetQueryBySiJiFenLeiV2($nicIdStr,$field = 'NIC_ID'){
+        if(substr($nicIdStr, -1) == ','){
+            $nicIdStr = rtrim($nicIdStr, ",");
+        }
         $nicIdStr && $nicIdArr = explode(',', $nicIdStr);
         if(!empty($nicIdArr)){
             $this->es->addMustShouldPhrasePrefixQuery( $field , $nicIdArr) ;
@@ -814,8 +867,22 @@ class Company extends ServiceBase
         return $this;
     }
 
+    function SetQueryByQiYeLeiXing($Str,$field = 'ENTTYPE'){
+        if(substr($Str, -1) == ','){
+            $Str = rtrim($Str, ",");
+        }
+        $Str && $Arr = explode(',', $Str);
+        if(!empty($Arr)){
+            $this->es->addMustShouldPhrasePrefixQuery( $field , $Arr) ;
+        }
+        return $this;
+    }
+
 
     function SetQueryByCompanyStatus($companyStatus){
+        if(substr($companyStatus, -1) == ','){
+            $companyStatus = rtrim($companyStatus, ",");
+        }
         $companyStatus && $siJiFenLeiArr = explode(',', $companyStatus);
         if(!empty($siJiFenLeiArr)){
             $this->es->addMustShouldPhraseQuery( 'ENTTYPE' , $siJiFenLeiArr) ;
@@ -825,13 +892,22 @@ class Company extends ServiceBase
     }
 
     function SetQueryByCompanyType($companyType){
+        if(substr($companyType, -1) == ','){
+            $companyType = rtrim($companyType, ",");
+        }
         $companyType && $siJiFenLeiArr = explode(',', $companyType);
+
+
         if(!empty($siJiFenLeiArr)){
             $this->es->addMustShouldPhraseQuery( 'ENTTYPE' , $siJiFenLeiArr) ;
         }
         return $this;
     }
-    function SetQueryByBasicRegionid($basiRegionidStr,$fieldName = 'reg_number'){
+    //function SetQueryByBasicRegionid($basiRegionidStr,$fieldName = 'reg_number'){
+    function SetQueryByBasicRegionid($basiRegionidStr,$fieldName = 'DOMDISTRICT'){
+        if(substr($basiRegionidStr, -1) == ','){
+            $basiRegionidStr = rtrim($basiRegionidStr, ",");
+        }
         $basiRegionidStr && $basiRegionidArr = explode(',',$basiRegionidStr);
         if(!empty($basiRegionidArr)){
             $this->es->addMustShouldPrefixQuery( $fieldName, $basiRegionidArr) ;
@@ -950,19 +1026,273 @@ class Company extends ServiceBase
         );
     }
 
-    static function getYieldDataForSouKe($totalNums,$requestDataArr,$fieldsArr){
+    /**
+    事件里执行的
+     */
+    static function  deliverCompany($paramsData){
+        $limit = 3 ;
+        $where = " WHERE status = ".DeliverHistory::$state_init.
+            " AND touch_time IS NULL LIMIT $limit ";
+        $allInitDatas =  DeliverHistory::findBySql(
+            $where
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'deliverCompany' => [
+                    'start'=>true,
+                    '$paramsData'=>$paramsData,
+                    '$where'=>$where,
+                    '$allInitDatas'=>count($allInitDatas),
+                ]
+            ])
+        );
+        foreach($allInitDatas as $InitData){
+            DeliverHistory::setTouchTime(
+                $InitData['id'],date('Y-m-d H:i:s')
+            );
 
+            //各项筛选条件
+            $featureArr = json_decode($InitData['feature'],true);
+            $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArray($InitData['admin_id']);
+            array_unshift($fieldsArr, 'companyid');  //在数组开头插入
+            $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
+            $nums = 1;
+            foreach ($tmpXlsxDatas as $dataItem){
+                //第一列是标题
+                if($nums == 1 ){
+                    $nums ++;
+                    continue;
+                }
+                $historeyId = DeliverDetailsHistory::addRecordV2(
+                    [
+                        //用户
+                        'admin_id' => $InitData['admin_id'],
+                        //交付记录id
+                        'deliver_id' => $InitData['id'],
+                        //企业id
+                        'ent_id' => $dataItem['companyid'],
+                        //企业名称
+                        'entName' => $dataItem['ENTNAME'],
+                        //备注
+                        'remark' => '',
+                        'status' => DeliverDetailsHistory::$state_init,
+                    ]
+                );
+                if($nums%500 == 0 ){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            'deliverCompany' => [
+                                'start'=>true,
+                                '$paramsData'=>$paramsData,
+                                '$nums'=>$nums,
+                                '$historeyId'=>$historeyId,
+                            ]
+                        ])
+                    );
+                }
+                $nums ++;
+            }
+
+            //设置状态
+            DeliverHistory::setStatus(
+                $InitData['id'],DeliverHistory::$state_succeed
+            );
+            DeliverHistory::setTouchTime(
+                $InitData['id'],NULL
+            );
+        }
+
+        return true;
+    }
+
+
+    /**
+    事件里执行的
+     */
+    static function exportCompanyDataToCsv($paramsData){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sou_ke_exportCompanyDataToCsv' =>[
+                    'data_id'=> $paramsData['data_id'],
+                    'start'=> 'start ',
+                ]
+            ])
+        );
+        $startMemory = memory_get_usage();
+        $InitData =  DownloadSoukeHistory::findById( $paramsData['data_id'] );
+        if(empty($InitData)){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'sou_ke_exportCompanyDataToCsv' => [
+                        'data_id'=> $paramsData['data_id'],
+                        'return_false'=> 'empty data ',
+                    ]
+                ])
+            );
+
+            return [
+                'msg' => 'wrong id',
+                'data_id' => $paramsData['data_id'],
+                '$paramsData' => $paramsData,
+            ];
+        }
+
+        $InitData =  DownloadSoukeHistory::findById( $paramsData['data_id'] );
+        $filename = '搜客导出_'.date('YmdHis').'.csv';
+        $f = fopen(OTHER_FILE_PATH.$filename, "w");
+        //fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+        $fieldsArr = AdminUserSoukeConfig::getAllowedFieldsArrayV2($InitData['admin_id']);
+        array_unshift($fieldsArr, 'companyid');  //在数组开头插入
+
+        $filedCname = ['companyid'];
+        $allFields = AdminUserSoukeConfig::getAllFieldsV2();
+        foreach ($fieldsArr as $field){
+            if($allFields[$field]){
+                $filedCname[] = iconv("UTF-8", "GB2312//IGNORE", $allFields[$field]). "\t";
+                //$filedCname[] = $allFields[$field];
+            }
+        }
+        fputcsv($f, $filedCname);
+
+        $featureArr = json_decode($InitData['feature'],true);
+
+        $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
+
+        $i = 1;
+        foreach ($tmpXlsxDatas as $dataItem){
+            $i++;
+            if($i%500==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'sou_ke_exportCompanyDataToCsv' =>[
+                            'data_id'=> $paramsData['data_id'],
+                            'generate_data_$i'=> $i,
+                        ]
+                    ])
+                );
+            }
+
+            $tmp = [ ];
+            foreach ($fieldsArr as $field){
+                //==========================================
+                if($field=='ENTTYPE'){
+                    $cname =   CodeCa16::findByCode($dataItem['ENTTYPE']);
+                    $dataItem[$field] =  $cname?$cname->getAttr('name'):'';
+                }
+                if($field=='ENTSTATUS'){
+                    $cname =   CodeEx02::findByCode($dataItem['ENTSTATUS']);
+                    $dataItem[$field] =  $cname?$cname->getAttr('name'):'';
+                }
+
+                //地区
+                if(
+                    $field=='DOMDISTRICT' &&
+                    $dataItem['DOMDISTRICT'] >0
+                ){
+                    $dataItem[$field] =  $dataItem['DOM'];
+                }
+
+                //行业分类代码  findNICID
+                if(
+                    $field=='NIC_ID' &&
+                    !empty( $dataItem['NIC_ID'])
+                ){
+                    $dataItem[$field] =  $dataItem['nic_full_name'];
+                }
+
+                //一般人
+                if(
+                    $field=='yi_ban_ren'
+                ){
+                    $dataItem[$field] =  $dataItem['yi_ban_ren']?'有':'无';
+                }
+
+                //战略新兴产业
+                if(
+                    $field=='zlxxcy'
+                ){
+                    $dataItem['zlxxcy'] =  $dataItem['zlxxcy']?'有':'无';
+                }
+
+                //数字经济产业
+                if(
+                    $field=='szjjcy'
+                ){
+                    $dataItem['szjjcy'] =  $dataItem['szjjcy']?'有':'无';
+                }
+
+
+                if(
+                    $field=='jin_chu_kou'
+                ){
+                    $dataItem['jin_chu_kou'] =  $dataItem['jin_chu_kou']?'有':'无';
+                }
+
+
+                if(
+                    $field=='iso'
+                ){
+                    $dataItem['iso'] =  $dataItem['iso']?'有':'无';
+                }
+
+                // 高新技术
+                if(
+                    $field=='gao_xin_ji_shu'
+                ){
+                    $dataItem['gao_xin_ji_shu'] =  $dataItem['gao_xin_ji_shu']?'有':'无';
+                }
+
+                //==========================================
+                $dataItem[$field] =    str_replace(",","，",$dataItem[$field]);
+                $dataItem[$field] =    str_split ( $dataItem[$field], 32766 )[0];
+                $tmp[$field] = iconv("UTF-8", "GB2312//IGNORE", $dataItem[$field]). "\t";
+
+            }
+            fputcsv($f, $tmp);
+        }
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sou_ke_exportCompanyDataToCsv' =>[
+                    'data_id'=> $paramsData['data_id'],
+                    'generate_data_$i'=> $i,
+                    'memory use'=> round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+                ]
+            ])
+        );
+
+        //更新文件地址
+        DownloadSoukeHistory::setFilePath($InitData['id'],'/Static/OtherFile/',$filename);
+
+        //设置状态
+        DownloadSoukeHistory::setStatus(
+            $InitData['id'],DownloadSoukeHistory::$state_file_succeed
+        );
+    }
+
+    static function getYieldDataForSouKe($totalNums,$requestDataArr,$fieldsArr){
         $startMemory = memory_get_usage();
         $start = microtime(true);
         $searchOption = json_decode($requestDataArr['searchOption'],true);
-        $datas = [];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'getYieldDataForSouKe' =>[
+                    '$searchOption'=> $searchOption,
+                    '$totalNums'=> $totalNums,
+                    'start'=> 'start',
+                ]
+            ])
+        );
 
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                __CLASS__.__FUNCTION__ .__LINE__,
-//                '$datas' => $datas
-//            ])
-//        );
+        $datas = [];
 
         $size = 3500;
         $offset = 0;
@@ -991,7 +1321,7 @@ class Company extends ServiceBase
             $companyEsModel = new \App\ElasticSearch\Model\Company();
             $companyEsModel
                 //经营范围
-                ->SetQueryByBusinessScope(trim($requestDataArr['OPSCOPE']),"OPSCOPE")
+                ->SetQueryByBusinessScope(trim($requestDataArr['basic_opscope']),"OPSCOPE")
                 //数字经济及其核心产业
                 ->SetQueryByBasicSzjjid(trim($requestDataArr['basic_szjjid']))
                 // 搜索文案 智能搜索
@@ -1020,56 +1350,58 @@ class Company extends ServiceBase
                 // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
                 ->SetQueryByYingShouGuiMo($searchOption)
                 //四级分类 basic_nicid: A0111,A0112,A0113,
-                ->SetQueryBySiJiFenLei(trim($requestDataArr['basic_nicid']),'NIC_ID')
+                //->SetQueryBySiJiFenLei(trim($requestDataArr['basic_nicid']),'NIC_ID')
+                ->SetQueryBySiJiFenLeiV2(trim($requestDataArr['basic_nicid']),'NIC_ID')
                 //公司类型
                 ->SetQueryByCompanyType(trim($requestDataArr['ENTTYPE']))
                 //公司状态
                 ->SetQueryByCompanyStatus(trim($requestDataArr['ENTSTATUS']))
                 // 地区 basic_regionid: 110101,110102,
                 ->SetQueryByBasicRegionid(trim($requestDataArr['basic_regionid']) ,'DOMDISTRICT')
+                //不包含名称
+                ->SetQueryBySearchTextV5( trim($requestDataArr['un_name']),'ENTNAME')
+                //不包含经营范围
+                ->SetQueryBySearchTextV5( trim($requestDataArr['un_basic_opscope']),'OPSCOPE')
+                //不包含简介
+                ->SetQueryBySearchTextV5( trim($requestDataArr['un_jiejian']),'gong_si_jian_jie')
+                //不包含简介
+                ->SetQueryBySearchTextV5( trim($requestDataArr['un_app']),'app')
+                ->addSort("_id","desc")
                 ->addSize($size)
                 ->setSource($fieldsArr)
-
-                //->addSize($size)
-                //->addFrom($offset)
-                //设置默认值 不传任何条件 搜全部
-                //->setDefault()
-                //->searchFromEs('company_202209')
-                // 格式化下日期和时间
-                //->formatEsDate()
-                // 格式化下金额
-                //->formatEsMoney('REGCAP')
             ;
 
 
             if($lastId>0){
                 $companyEsModel->addSearchAfterV1($lastId);
             }
-            // 格式化下日期和时间
+
+            $showLog = true;
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202209')
+                ->searchFromEs('company_202209',$showLog)
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();
 
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+                if($nums%500==0){
+//                    CommonService::getInstance()->log4PHP(json_encode(
+//                            [
+//                                'getYieldDataForSouKe' => [
+//                                    'read from es $nums'=>$nums,
+//                                    '$searchOption'=> $searchOption,
+//                                    '$totalNums'=> $totalNums,
+//                                ]
+//                            ]
+//                    ));
+                }
                 $lastId = $dataItem['_id'];
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        '$lastId' => $lastId
-//                    ])
-//                );
-
-
                 $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
                 $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
                 $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
 
-
                 $nums ++;
-
                 // 官网
                 $webStr = trim($dataItem['_source']['web']);
                 if(!$webStr){
@@ -1085,13 +1417,18 @@ class Company extends ServiceBase
             $totalNums -= $size;
             $offset +=$size;
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
-                'generate data  done . costs seconds '=>microtime(true) - $start
-            ])
-        );
+
+        CommonService::getInstance()->log4PHP(json_encode(
+            [
+                'getYieldDataForSouKe' => [
+                    'read from es $nums'=>$nums,
+                    '$searchOption'=> $searchOption,
+                    '$totalNums'=> $totalNums,
+                    'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+                    'generate data  done . costs seconds '=>microtime(true) - $start
+                ]
+            ]
+        ));
     }
 
     static  function  getNamesByText($page,$size,$searchText,$returnFullField = false){
@@ -1200,7 +1537,8 @@ class Company extends ServiceBase
             // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
             ->SetQueryByYingShouGuiMo($searchOptionArr)
             //四级分类 basic_nicid: A0111,A0112,A0113,
-            ->SetQueryBySiJiFenLei(trim($requestData['basic_nicid']),'NIC_ID')
+            //->SetQueryBySiJiFenLei(trim($requestData['basic_nicid']),'NIC_ID')
+            ->SetQueryBySiJiFenLeiV2(trim($requestData['basic_nicid']),'NIC_ID')
             //公司类型
             ->SetQueryByCompanyType(trim($requestData['ENTTYPE']))
             //公司状态
@@ -1351,7 +1689,8 @@ class Company extends ServiceBase
                 // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
                 ->SetQueryByYingShouGuiMo($searchOption)
                 //四级分类 basic_nicid: A0111,A0112,A0113,
-                ->SetQueryBySiJiFenLei($requestDataArr['basic_nicid'],'NIC_ID')
+                //->SetQueryBySiJiFenLei($requestDataArr['basic_nicid'],'NIC_ID')
+                ->SetQueryBySiJiFenLeiV2($requestDataArr['basic_nicid'],'NIC_ID')
                 //公司类型
                 ->SetQueryByCompanyType(trim($requestDataArr['ENTTYPE']))
                 //公司状态
@@ -1524,7 +1863,8 @@ class Company extends ServiceBase
                 // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
                 ->SetQueryByYingShouGuiMo($searchOption)
                 //四级分类 basic_nicid: A0111,A0112,A0113,
-                ->SetQueryBySiJiFenLei($requestDataArr['basic_nicid'],'NIC_ID')
+                //->SetQueryBySiJiFenLei($requestDataArr['basic_nicid'],'NIC_ID')
+                ->SetQueryBySiJiFenLeiV2($requestDataArr['basic_nicid'],'NIC_ID')
                 //公司类型
                 ->SetQueryByCompanyType(trim($requestDataArr['ENTTYPE']))
                 //公司状态

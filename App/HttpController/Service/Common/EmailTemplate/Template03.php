@@ -8,14 +8,20 @@ class Template03
 {
     use Singleton;
 
-    function getSubject($entName)
-    {
-        $res = $entName . ' 尽调版 生成完成';
+    private $subject = '';
 
-        return trim($res);
+    function setSubject($str): Template03
+    {
+        $this->subject = $str;
+        return $this;
     }
 
-    function getBody()
+    function getSubject($entName): string
+    {
+        return empty($this->subject) ? $entName . ' 尽调版 生成完成' : $this->subject;
+    }
+
+    function getBody(): string
     {
         return '';
     }

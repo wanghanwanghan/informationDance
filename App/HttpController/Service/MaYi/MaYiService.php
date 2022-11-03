@@ -5275,8 +5275,8 @@ class MaYiService extends ServiceBase
                 $created['status'] = self::STATUS_0;
 
             if ($data['authorized'] === 'Y') {
-                $data['filePath'] = $data['fileUrl'];
-                $data['authDate'] = time();
+                $created['filePath'] = $data['fileUrl'];
+                $created['authDate'] = time();
             }
 
             $id = AntAuthList::create()->data($created)->save();

@@ -284,6 +284,7 @@ class Router extends AbstractRouter
         $routeCollector->addGroup('/online_goods', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/sendSms', $prefix . 'sendSms');// sendSms
             $routeCollector->addRoute(['GET', 'POST'], '/login', $prefix . 'login');// login
+            $routeCollector->addRoute(['GET', 'POST'], '/register', $prefix . 'register');// login
             $routeCollector->addRoute(['GET', 'POST'], '/registerZhiJin', $prefix . 'registerZhiJin');// login
             $routeCollector->addRoute(['GET', 'POST'], '/OnlineSignOut', $prefix . 'OnlineSignOut');// login
             $routeCollector->addRoute(['GET', 'POST'], '/OnlineLogOut', $prefix . 'OnlineLogOut');// login
@@ -293,6 +294,9 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/commissionLists', $prefix . 'commissionLists');// login
             $routeCollector->addRoute(['GET', 'POST'], '/zhiJinUserLists', $prefix . 'zhiJinUserLists');// login
             $routeCollector->addRoute(['GET', 'POST'], '/setCommisionRate', $prefix . 'setCommisionRate');// login
+            $routeCollector->addRoute(['GET', 'POST'], '/setBaoXianCommisionRate', $prefix . 'setBaoXianCommisionRate');// login
+            $routeCollector->addRoute(['GET', 'POST'], '/setDaiKuanCommisionRate', $prefix . 'setDaiKuanCommisionRate');// login
+            $routeCollector->addRoute(['GET', 'POST'], '/fansBasicInfo', $prefix . 'fansBasicInfo');// login
             $routeCollector->addRoute(['GET', 'POST'], '/shareIncome', $prefix . 'shareIncome');// login
             $routeCollector->addRoute(['GET', 'POST'], '/getBasicInfo', $prefix . 'getBasicInfo');// login
             $routeCollector->addRoute(['GET', 'POST'], '/applyForWithdrawal', $prefix . 'applyForWithdrawal');// login

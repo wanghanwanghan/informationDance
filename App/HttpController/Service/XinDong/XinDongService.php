@@ -183,6 +183,68 @@ class XinDongService extends ServiceBase
 
     }
 
+    /**
+    "1": {
+    "cname": "在营（开业）",
+    "detail": ""
+    },
+    "2": {
+    "cname": "吊销",
+    "detail": ""
+    },
+    "3": {
+    "cname": "注销",
+    "detail": ""
+    },
+    "4": {
+    "cname": "迁出",
+    "detail": ""
+    },
+    "8": {
+    "cname": "停业",
+    "detail": ""
+    },
+    "9": {
+    "cname": "其他",
+    "detail": ""
+    }
+    1	在营（开业）
+    2	吊销
+    21	吊销，未注销
+    22	吊销，已注销
+    3	注销
+    4	迁出
+    5	撤销
+    6	临时(个体工商户使用)
+    8	停业
+    9	其他
+    9_01	撤销
+    9_02	待迁入
+    9_03	经营期限届满
+    9_04	清算中
+    9_05	停业
+    9_06	拟注销
+    9_07	非正常户
+    30	正在注销
+    !	-
+     */
+    function getRegStatusV2($getAll = false)
+    {
+        $map = [
+            1  =>  $this->reg_status_cunxu_des,
+            $this->reg_status_zaiye  =>  $this->reg_status_zaiye_des,
+            $this->reg_status_diaoxiao  =>  $this->reg_status_diaoxiao_des,
+            $this->reg_status_zhuxiao  =>  $this->reg_status_zhuxiao_des,
+            $this->reg_status_tingye  =>  $this->reg_status_tingye_des,
+        ];
+
+        if ($getAll) {
+            return array_merge($map,[0 => '全部']);
+        }
+        return $map;
+
+    }
+
     // 获取企业成立年限
     function getEstiblishYear($getAll = false)
     {
@@ -1171,6 +1233,8 @@ class XinDongService extends ServiceBase
 //                    ],
 //                ],
 //            ],
+
+
              [
                 'pid' => 20,
                 'desc' => '成立年限',
@@ -1495,19 +1559,32 @@ class XinDongService extends ServiceBase
                     ],
                 ],
             ],
-            [
-                'pid' => 90,
-                'desc' => '是否物流',
-                'detail' => '',
-                'key' => 'wu_liu_xin_xi',
-                'type' => 'select',
-                'data' => [
-                    10 => [
-                        'cname' => '是',
-                        'detail' => '',
-                    ],
-                ],
-            ],
+//            [
+//                'pid' => 90,
+//                'desc' => '是否物流',
+//                'detail' => '',
+//                'key' => 'wu_liu_xin_xi',
+//                'type' => 'select',
+//                'data' => [
+//                    10 => [
+//                        'cname' => '是',
+//                        'detail' => '',
+//                    ],
+//                ],
+//            ],
+//            [
+//                'pid' => 100,
+//                'desc' => '营收剔除负值',
+//                'detail' => '',
+//                'key' => 'ying_shou_gui_mo',
+//                'type' => 'select',
+//                'data' => [
+//                    10 => [
+//                        'cname' => '是',
+//                        'detail' => '',
+//                    ],
+//                ],
+//            ],
         ];
     }
 
@@ -2905,7 +2982,7 @@ class XinDongService extends ServiceBase
         $res = $this->matchNamesByEqual($tobeMatch,$target);
         if($res){
             return [
-                'type' => '精准匹配',
+                'type' => '完全匹配',
                 'details' => '名称完全匹配',
                 'res' => '成功',
                 'percentage' => '',
@@ -2930,7 +3007,7 @@ class XinDongService extends ServiceBase
                 $str2 == $target
             ){
                 return [
-                    'type' => '精准匹配',
+                    'type' => '完全匹配',
                     'details' => '拼音相等',
                     'res' => '成功',
                     'percentage' => '',
@@ -2957,7 +3034,7 @@ class XinDongService extends ServiceBase
                 $str6 == $target
             ){
                 return [
-                    'type' => '精准匹配',
+                    'type' => '完全匹配',
                     'details' => '拼音相等',
                     'res' => '成功',
                     'percentage' => '',
@@ -2980,7 +3057,7 @@ class XinDongService extends ServiceBase
                 $str2 == $target
             ){
                 return [
-                    'type' => '精准匹配',
+                    'type' => '完全匹配',
                     'details' => '拼音首字母相等',
                     'res' => '成功',
                     'percentage' => '',
@@ -3013,7 +3090,7 @@ class XinDongService extends ServiceBase
                 $str6 == $target
             ){
                 return [
-                    'type' => '精准匹配',
+                    'type' => '完全匹配',
                     'details' => '拼音首字母相等',
                     'res' => '成功',
                     'percentage' => '',
@@ -3029,7 +3106,7 @@ class XinDongService extends ServiceBase
         $res = $this->checkIfArrayEqual($tobeMatchArr,$targetArr);
         if($res){
             return [
-                'type' => '精准匹配',
+                'type' => '近似匹配',
                 'details' => '多音字匹配',
                 'res' => '成功',
                 'percentage' => '',
@@ -3041,7 +3118,7 @@ class XinDongService extends ServiceBase
 
         if($res){
             return [
-                'type' => '精准匹配',
+                'type' => '近似匹配',
                 'details' => '中文包含匹配',
                 'res' => '成功',
                 'percentage' => '',
@@ -3052,7 +3129,7 @@ class XinDongService extends ServiceBase
         $res = $this->matchNamesByToBeContain($tobeMatch,$target);
         if($res){
             return [
-                'type' => '精准匹配',
+                'type' => '近似匹配',
                 'details' => '中文被包含匹配',
                 'res' => '成功',
                 'percentage' => '',
@@ -3064,10 +3141,10 @@ class XinDongService extends ServiceBase
         $res = array_intersect($tobeMatchArr,$targetArr);
         if(
             !empty($res) &&
-            $perc >= 50
+            $perc >= 90
         ){
             return [
-                'type' => '模糊匹配',
+                'type' => '近似匹配',
                 'details' => '拼音包含匹配',
                 'res' => '成功',
                 'percentage' => number_format($perc,2),
@@ -3076,9 +3153,9 @@ class XinDongService extends ServiceBase
 
         //文本匹配度  张三0808    张三
         similar_text($tobeMatch, $target, $perc);
-        if($perc > 70){
+        if($perc > 80){
             return [
-                'type' => '模糊匹配',
+                'type' => '近似匹配',
                 'details' => '中文相似度匹配',
                 'res' =>  '成功'  ,
                 'percentage' => number_format($perc,2),
@@ -3087,9 +3164,9 @@ class XinDongService extends ServiceBase
 
         //拼音相似度匹配  张三0808    张三
         similar_text(PinYinService::getPinyin($tobeMatch), PinYinService::getPinyin($target), $perc);
-        if($perc >= 80 ){
+        if($perc >= 90 ){
             return [
-                'type' => '模糊匹配',
+                'type' => '近似匹配',
                 'details' => '拼音相似度匹配',
                 'res' =>  '成功'  ,
                 'percentage' =>  number_format($perc,2),

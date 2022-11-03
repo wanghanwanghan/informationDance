@@ -1572,7 +1572,7 @@ class XinDongController extends ProvideBase
         $data['legalPerson'] = $this->getRequestData('legalPerson');
         $data['idCard'] = $this->getRequestData('idCard');
         $data['phone'] = $this->getRequestData('phone');
-        $data['authorized'] = strtoupper($this->getRequestData('auth'));//有个合作公司不需要信动盖章
+        $data['authorized'] = strtoupper($this->getRequestData('authorized'));//有个合作公司不需要信动盖章
         $data['fileUrl'] = $this->getRequestData('fileUrl');//有个合作公司不需要信动盖章
 
         $data['requestId'] = $this->requestId;
@@ -2305,7 +2305,7 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    function createEntReport(): bool
+    function createEntReportE(): bool
     {
         $data = [
             'entName' => trim($this->getRequestData('entName')),
@@ -2314,6 +2314,21 @@ class XinDongController extends ProvideBase
         ];
         $this->csp->add($this->cspKey, function () use ($data) {
             return (new ReportWordService())->createEasy($data);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
+    function createEntReportD(): bool
+    {
+        $data = [
+            'entName' => trim($this->getRequestData('entName')),
+            'code' => trim($this->getRequestData('code')),
+            'appId' => trim($this->getRequestData('appId')),
+            'email' => trim($this->getRequestData('email')),
+        ];
+        $this->csp->add($this->cspKey, function () use ($data) {
+            return (new ReportWordService())->createDeep($data);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);

@@ -38,7 +38,7 @@ class WechatInfo extends ModelBase
     public static function addRecord($requestData){
         try {
             $res =  WechatInfo::create()->data([
-                'code' => $requestData['code'],
+                'code' => $requestData['code']?:'',
                 'phone' => $requestData['phone'],
                 'phone_md5' => $requestData['phone_md5'],
                 'sex' => $requestData['sex']?:'',
@@ -85,10 +85,10 @@ class WechatInfo extends ModelBase
         return $info->update($data);
     }
 
-    public static function findByConditionWithCountInfo($whereArr,$page){
+    public static function findByConditionWithCountInfo($whereArr,$page,$pageSize){
         $model = WechatInfo::create()
             ->where($whereArr)
-            ->page($page)
+            ->page($page,$pageSize)
             ->order('id', 'DESC')
             ->withTotalCount();
 

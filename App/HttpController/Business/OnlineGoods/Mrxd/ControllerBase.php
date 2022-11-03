@@ -20,26 +20,33 @@ class ControllerBase extends Index
     }
     function needsCheckToken(){
 
-        $set = ConfigInfo::sMembers('online_needs_login');
+        //$set = ConfigInfo::sMembers('online_needs_login');
+        $noNeedsLoginAtions = [
+            'login',
+            'sendSms',
+            'register',
+            'getSearchOption',
+            'getProducts',
+            'getProductDetail',
+
+        ];
+
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'needsCheckToken set ' => $set,
+                'noNeedsCheckToken set ' => $noNeedsLoginAtions,
                 'actionName'=>$this->actionName
             ])
         );
-        if(empty($set)){
-            //redis 异常了 先锁住
-            return true;
-        }
+
         if(
             in_array(
-                $this->actionName,$set
+                $this->actionName,$noNeedsLoginAtions
             )
         ){
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
     function getNoNeedCheckMethods(){
         // 需要加层缓存
