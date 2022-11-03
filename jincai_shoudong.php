@@ -74,7 +74,7 @@ class jincai_shoudong extends AbstractProcess
 
             // ================================================================================================
             $socialCredit = $one->getAttr('socialCredit');
-            if ($socialCredit !== '91330782677218351Y' && $continue_at === 0) {
+            if ($socialCredit !== '91330382145505130Q' && $continue_at === 0) {
                 continue;
             }
             // ================================================================================================
@@ -96,7 +96,7 @@ class jincai_shoudong extends AbstractProcess
 
 
                 // ================================================================================================
-                if ($wupanTraceNo !== '91330782677218351Y1666684625288' && $wupan_continue_at === 0) {
+                if ($wupanTraceNo !== '91330382145505130Q1666686248077' && $wupan_continue_at === 0) {
                     continue;
                 }
                 $wupan_continue_at = 1;
@@ -136,6 +136,7 @@ class jincai_shoudong extends AbstractProcess
     function getData(string $nsrsbh, string $province, string $traceNo)
     {
         $res = (new JinCaiShuKeService())->obtainFpInfo($nsrsbh, $province, $traceNo);
+        dd($res);
         $this->handleMain($res);
         $res = (new JinCaiShuKeService())->obtainFpDetailInfo($nsrsbh, $province, $traceNo);
         $this->handleDetail($res);
