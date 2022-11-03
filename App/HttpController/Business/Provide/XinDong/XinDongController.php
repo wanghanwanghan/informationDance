@@ -2341,7 +2341,7 @@ class XinDongController extends ProvideBase
     function getEntMarketInfo(): bool
     {
         $code = $this->getRequestData('code', '');
-        if (empty($UNISCID)) {
+        if (empty($code)) {
             return $this->writeJson(201, null, null, '参数缺失(统一社会信用代码)');
         }
         $this->csp->add($this->cspKey, function () use ($code) {
