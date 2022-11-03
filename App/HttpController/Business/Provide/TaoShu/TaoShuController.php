@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\TaoShu;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\TaoShu\TaoShuTwoService;
@@ -146,6 +147,8 @@ class TaoShuController extends ProvideBase
                 ->setCheckRespFlag(true)
                 ->post($postData, 'getRegisterInfo');
             CommonService::getInstance()->log4PHP($data,'info','taoshu_post_ret_wai');
+            $info = CompanyBasic::create()->where(['UNISCID'=>$data['result']['SHXYDM']])->get();
+            CommonService::getInstance()->log4PHP($info,'info','taoshu_post_ret_wai_info');
             return $data;
         });
 
