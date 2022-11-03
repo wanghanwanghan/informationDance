@@ -12,6 +12,7 @@ use App\HttpController\Models\Provide\RequestRecode;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
+use App\HttpController\Models\RDS3\HdSaicExtension\AggreListedH;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\DaXiang\DaXiangService;
@@ -29,6 +30,7 @@ use Carbon\Carbon;
 use EasySwoole\Redis\Redis;
 use wanghanwanghan\someUtils\control;
 use EasySwoole\Component\Csp;
+use wanghanwanghan\someUtils\moudles\resp\create;
 
 class XinDongController extends ProvideBase
 {
@@ -2334,5 +2336,23 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+
+    //企业基本信息
+    function getEntMarketInfo(): bool
+    {
+        $code = $this->getRequestData('code', '');
+        if (empty($code)) {
+            return $this->writeJson(201, null, null, '参数缺失(统一社会信用代码)');
+        }
+        $this->csp->add($this->cspKey, function () use ($code) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getEntMarketInfo($code);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 
 }

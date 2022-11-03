@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\TaoShu;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\TaoShu\TaoShuTwoService;
@@ -142,13 +143,18 @@ class TaoShuController extends ProvideBase
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new TaoShuService())
+             $data = (new TaoShuService())
                 ->setCheckRespFlag(true)
                 ->post($postData, 'getRegisterInfo');
+            $info = CompanyBasic::create()->where(['UNISCID'=>$data['result']['0']['SHXYDM']])->get();
+            $data['result']['0']['RECCAP'] = $info->getAttr('RECCAP');//实收注册资金
+//            $data['result']['0']['ENTTYPE'] = $info->getAttr('ENTTYPE');//公司类型编码
+            CommonService::getInstance()->log4PHP([$data,$info],'info','taoshu_post_ret_wai');
+            return $data;
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-
+        CommonService::getInstance()->log4PHP($res,'info','taoshu_post_ret_wai2');
         return $this->checkResponse($res);
     }
 
