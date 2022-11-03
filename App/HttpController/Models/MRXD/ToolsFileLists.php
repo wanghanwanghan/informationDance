@@ -372,7 +372,7 @@ class ToolsFileLists extends ModelBase
                            __CLASS__.__FUNCTION__ .__LINE__,
                            'pullGongKaiContacts_$i' => $i
                        ])
-                   ); 
+                   );
                //}
 
 
@@ -442,25 +442,25 @@ class ToolsFileLists extends ModelBase
                    ];
 
                    //通过手机号补全微信信息
-                   $matchedWeiXinName = WechatInfo::findByPhoneV2(($tmpDataItem['lianxi']));
+                   $matchedWeiXinName = WechatInfo::findByPhoneV2(($datautem['lianxi']));
                    CommonService::getInstance()->log4PHP(
                        json_encode([
                            __CLASS__.__FUNCTION__ .__LINE__,
                            'pullGongKaiContacts_fill_weixin_by_phone' => [
-                               'lianxi' => $tmpDataItem['lianxi'],
+                               'lianxi' => $datautem['lianxi'],
                                '$matchedWeiXinName'=>$matchedWeiXinName,
                            ]
                        ])
                    );
 
                    if(empty($matchedWeiXinName)){
-                        $tmpDataItem['weixin_name'] = '';//'联系人名称(疑似/通过微信名匹配)',
+                        $tmpDataItem[] = '';//'联系人名称(疑似/通过微信名匹配)',
                         fputcsv($f, $tmpDataItem);
 
                        continue;
                    }
 
-                   $tmpDataItem['weixin_name'] = $matchedWeiXinName['nickname'];//'联系人名称(疑似/通过微信名匹配)',
+                   $tmpDataItem[] = $matchedWeiXinName['nickname'];//'联系人名称(疑似/通过微信名匹配)',
 
                    //用微信名匹配联系人职位信息
                    $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV3($entname, $matchedWeiXinName['nickname']);
@@ -474,10 +474,10 @@ class ToolsFileLists extends ModelBase
                        ])
                    );
 
-                   $tmpDataItem['matched_stff_name'] =  $tmpRes['data']['POSITION'];//'职位(疑似/通过微信名匹配)',
-                   $tmpDataItem['match_type'] =  $tmpRes['match_res']['type'];//'微信匹配类型',
-                   $tmpDataItem['match_typedetails'] =  $tmpRes['match_res']['details'];//'微信匹配子类型',
-                   $tmpDataItem['match_percentage'] =  $tmpRes['match_res']['percentage'];// '微信匹配值',
+                   $tmpDataItem[] =  $tmpRes['data']['POSITION'];//'职位(疑似/通过微信名匹配)',
+                   $tmpDataItem[] =  $tmpRes['match_res']['type'];//'微信匹配类型',
+                   $tmpDataItem[] =  $tmpRes['match_res']['details'];//'微信匹配子类型',
+                   $tmpDataItem[] =  $tmpRes['match_res']['percentage'];// '微信匹配值',
 
                    fputcsv($f, $tmpDataItem);
                }
