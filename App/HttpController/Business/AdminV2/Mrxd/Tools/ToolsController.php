@@ -246,14 +246,21 @@ class ToolsController extends ControllerBase
 
     /**
         上传公开联系人文件
-     *
+    http://api.test.meirixindong.com/admin/v2/tools/uploadeGongKaiContactFiles
+    phone:
+    18618457910
+    get_zhiwei:true
+    get_wxname:true
+    get_namezhiwei:true
+    file:
+    (二进制)
      */
 
     public function uploadeGongKaiContactFiles(){
         $requestData =  $this->getRequestData();
         $succeedFiels = [];
         $files = $this->request()->getUploadedFiles();
-        return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
+        //return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
         foreach ($files as $key => $oneFile) {
             try {
                 $fileName = $oneFile->getClientFilename();
@@ -298,7 +305,9 @@ class ToolsController extends ControllerBase
                                 ]
                             ),
                             'params_json' => json_encode([
-
+                                'fill_position_by_name' => intval($requestData['get_zhiwei']),
+                                'fill_weixin_by_phone' => intval($requestData['get_wxname']),
+                                'fill_name_and_position_by_weixin' => intval($requestData['get_namezhiwei']),
                             ]),
                             'type' => ToolsFileLists::$type_upload_pull_gong_kai_contact,
                             'remark' => '',

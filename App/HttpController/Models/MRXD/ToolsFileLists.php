@@ -294,11 +294,54 @@ class ToolsFileLists extends ModelBase
        }
     }
 
-    //上传公开联系人
-    static function pullGongKaiContacts($params){
-        //
-        $dbId = $params['db_id'];
+    /**
+    上传公开联系人
+    'fill_position_by_name' => intval($requestData['get_zhiwei']),
+    'fill_weixin' => intval($requestData['get_wxname']),
+    'fill_name_and_position_by_weixin' => intval($requestData['get_namezhiwei']),
 
+    {
+    "duty": "公司最高代表",
+    "source": "企查查",
+    "lid": 380325846,
+    "ltype": "1",
+    "name": "--",
+    "idx": "S",
+    "quhao": "河北省廊坊市",
+    "url": "--",
+    "lianxi": "13031482555",
+    "lianxitype": "手机",
+    "mobile_check_res": "1",
+    "mobile_check_res_cname": "正常",
+    "staff_position": "--"
+    }
+     */
+    //TODO:上传文件格式文案：企业名称
+    static function pullGongKaiContacts($params){
+        $title = [
+            "企业名称",
+            '联系人职位',
+            '联系方式来源',
+            '联系人姓名',
+            '手机归属地/座机区号',
+            '联系方式来源网页链接',
+            '联系方式',
+            '联系方式类型(手机/座机/邮箱)',
+            '手机号码状态',
+            '手机微信号',
+            '联系人名称(疑似/通过微信名匹配)',
+            '职位(疑似/通过微信名匹配)',
+            '微信匹配类型',
+            '微信匹配子类型',
+            '微信匹配值',
+        ];
+
+        //通过联系人名称 补全职位信息
+        $fill_position_by_name = $params['fill_position_by_name'];
+        //补全微信名称
+        $fill_weixin_by_phone = $params['fill_weixin_by_phone'];
+        //通过微信补全联系人姓名和职位
+        $fill_name_and_position_by_weixin = $params['fill_name_and_position_by_weixin'];
 
        $filesDatas = self::findBySql("
             WHERE touch_time < 1
@@ -315,109 +358,129 @@ class ToolsFileLists extends ModelBase
            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
 
            //插入表头
-           $allFields = AdminUserSoukeConfig::getAllFieldsV2();
-           foreach ($allFields as $field=>$cname){
-               $title[] = $cname ;
-           }
            fputcsv($f, $title);
 
            //插入数据
            $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
+
+           $i = 0;
            foreach ($yieldDatas as $dataItem) {
-               //需要补全字段
-               if($dataItem[1]){
-                   $res = (new XinDongService())->getEsBasicInfoV3($dataItem[1],'UNISCID');
-               }
-               else{
-                   $res = (new XinDongService())->getEsBasicInfoV3($dataItem[0],'ENTNAME');
-               }
-               $baseArr = [];
-               //====================================
-               foreach ($allFields as $field=>$cname){
-                   if($field=='UNISCID'){
-
-                       $res['UNISCID'] = ''.$res['UNISCID']. "\t";
-                   }
-                   if($field=='ENTTYPE'){
-                       $cname =   CodeCa16::findByCode($res['ENTTYPE']);
-                       $res['ENTTYPE'] =  $cname?$cname->getAttr('name'):'';
-                   }
-                   if($field=='ENTSTATUS'){
-                       $cname =   CodeEx02::findByCode($res['ENTSTATUS']);
-                       $res['ENTSTATUS'] =  $cname?$cname->getAttr('name'):'';
-                   }
-
-                   //地区
-                   if(
-                       $field=='DOMDISTRICT' &&
-                       $res['DOMDISTRICT'] >0
-                   ){
-                       $res['DOMDISTRICT'] =  $res['DOM'];
-                   }
-
-                   //行业分类代码  findNICID
-                   if(
-                       $field=='NIC_ID' &&
-                       !empty( $res['NIC_ID'])
-                   ){
-                       $res['NIC_ID'] =  $res['nic_full_name'];
-                   }
-
-                   //一般人
-                   if(
-                       $field=='yi_ban_ren'
-                   ){
-                       $res['yi_ban_ren'] =  $res['yi_ban_ren']?'有':'无';
-                   }
-
-                   //战略新兴产业
-                   if(
-                       $field=='zlxxcy'
-                   ){
-                       $res['zlxxcy'] =  $res['zlxxcy']?'有':'无';
-                   }
-
-                   //数字经济产业
-                   if(
-                       $field=='szjjcy'
-                   ){
-                       $res['szjjcy'] =  $res['szjjcy']?'有':'无';
-                   }
+               $i++;
+               //if($i%100==0){
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           __CLASS__.__FUNCTION__ .__LINE__,
+                           'pullGongKaiContacts_$i' => $i
+                       ])
+                   ); 
+               //}
 
 
-                   if(
-                       $field=='jin_chu_kou'
-                   ){
-                       $res['jin_chu_kou'] =  $res['jin_chu_kou']?'有':'无';
-                   }
-
-
-                   if(
-                       $field=='iso'
-                   ){
-                       $res['iso'] =  $res['iso']?'有':'无';
-                   }
-
-                   // 高新技术
-                   if(
-                       $field=='gao_xin_ji_shu'
-                   ){
-                       $res['gao_xin_ji_shu'] =  $res['gao_xin_ji_shu']?'有':'无';
-                   }
-
-                   if(
-                       is_array($res[$field])
-                   ){
-                       $baseArr[] = empty($res[$field])?'无':'有' ;
-                   }else{
-
-                       $baseArr[] = str_split ( $res[$field], 32766 )[0] ;
-                   }
+               // 企业名称：$dataItem[0]
+               $entname = $dataItem[0];
+               if(empty($entname)){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            'pullGongKaiContacts_empty_ent_name' => [
+                                '$entname' => $entname,
+                            ]
+                        ])
+                    );
+                   continue;
                }
 
-               //====================================
+               //取公开联系人信息
+               $retData =  (new LongXinService())
+                   ->setCheckRespFlag(true)
+                   ->getEntLianXi([
+                       'entName' => $entname,
+                   ])['result'];
+               CommonService::getInstance()->log4PHP(
+                   json_encode([
+                       __CLASS__.__FUNCTION__ .__LINE__,
+                       'pullGongKaiContacts_pull_url_contact' => [
+                           '$retData' => $retData,
+                           'entName' => $entname,
+                       ]
+                   ])
+               );
+               //手机号状态检测 一次网络请求
+               $retData = LongXinService::complementEntLianXiMobileState($retData);
+               CommonService::getInstance()->log4PHP(
+                   json_encode([
+                       __CLASS__.__FUNCTION__ .__LINE__,
+                       'pullGongKaiContacts_check_url_contact' => [
+                           '$retData' => $retData,
+                       ]
+                   ])
+               );
 
-               fputcsv($f, $baseArr);
+               //通过名称补全联系人职位信息 两次db请求：查询company_basic 查询 company_manager
+               $retData = LongXinService::complementEntLianXiPositionV2($retData, $entname);
+               CommonService::getInstance()->log4PHP(
+                   json_encode([
+                       __CLASS__.__FUNCTION__ .__LINE__,
+                       'pullGongKaiContacts_fill_position_by_name' => [
+                           '$retData' => $retData,
+                       ]
+                   ])
+               );
+
+               foreach($retData as $datautem){
+                   $tmpDataItem = [
+                       $entname,
+                       $datautem['duty'],//'公开联系人职位',
+                       $datautem['source'],//'公开联系方式来源',
+                       $datautem['name'],//'公开联系人姓名',
+                       $datautem['quhao'],//'公开手机归属地/座机区号',
+                       $datautem['url'],//'公开联系方式来源网页链接',
+                       $datautem['lianxi'],//'公开联系方式',
+                       $datautem['lianxitype'],//'公开联系方式类型(手机/座机/邮箱)',
+                       $datautem['mobile_check_res_cname'].'('.$dataItem['mobile_check_res'].')',//'公开手机号码状态',
+                       $datautem['lianxitype'],//'公开手机微信号码',
+                   ];
+
+                   //通过手机号补全微信信息
+                   $matchedWeiXinName = WechatInfo::findByPhoneV2(($tmpDataItem['lianxi']));
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           __CLASS__.__FUNCTION__ .__LINE__,
+                           'pullGongKaiContacts_fill_weixin_by_phone' => [
+                               'lianxi' => $tmpDataItem['lianxi'],
+                               '$matchedWeiXinName'=>$matchedWeiXinName,
+                           ]
+                       ])
+                   );
+
+                   if(empty($matchedWeiXinName)){
+                        $tmpDataItem['weixin_name'] = '';//'联系人名称(疑似/通过微信名匹配)',
+                        fputcsv($f, $tmpDataItem);
+
+                       continue;
+                   }
+
+                   $tmpDataItem['weixin_name'] = $matchedWeiXinName['nickname'];//'联系人名称(疑似/通过微信名匹配)',
+
+                   //用微信名匹配联系人职位信息
+                   $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV3($entname, $matchedWeiXinName['nickname']);
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           __CLASS__.__FUNCTION__ .__LINE__,
+                           'pullGongKaiContacts_fill_name_and_position_by_weixin' => [
+                               'nickname' => $matchedWeiXinName['nickname'],
+                               '$tmpRes'=>$tmpRes,
+                           ]
+                       ])
+                   );
+
+                   $tmpDataItem['matched_stff_name'] =  $tmpRes['data']['POSITION'];//'职位(疑似/通过微信名匹配)',
+                   $tmpDataItem['match_type'] =  $tmpRes['match_res']['type'];//'微信匹配类型',
+                   $tmpDataItem['match_typedetails'] =  $tmpRes['match_res']['details'];//'微信匹配子类型',
+                   $tmpDataItem['match_percentage'] =  $tmpRes['match_res']['percentage'];// '微信匹配值',
+
+                   fputcsv($f, $tmpDataItem);
+               }
            }
 
            self::updateById($filesData['id'],[
@@ -425,6 +488,7 @@ class ToolsFileLists extends ModelBase
                'state' => self::$state_succeed,
            ]);
        }
+
     }
 
     //上传微信联系人

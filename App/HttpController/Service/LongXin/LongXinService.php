@@ -4,6 +4,9 @@ namespace App\HttpController\Service\LongXin;
 
 use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\EntDb\EntDbEnt;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Models\RDS3\HdSaic\CompanyInv;
+use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -989,6 +992,37 @@ class LongXinService extends ServiceBase
         return $apiResluts;
     }
 
+    /*
+
+    补充下联系人职位信息 ： 接口返回的联系人职位信息 并不怎么全
+
+    */
+    static function complementEntLianXiPositionV2($apiResluts, $entName)
+    {
+        //获取对应的联系人信息
+        $staffsDatas = self::getLianXiByNameV2($entName);
+        if (empty($staffsDatas)) {
+            return $apiResluts;
+        }
+
+        foreach ($apiResluts as &$lianXiData) {
+            //联系人姓名
+            $name = trim($lianXiData['name']);
+            if (empty($name)) {
+                $lianXiData['staff_position'] = '';
+                continue;
+            }
+
+            if (empty($staffsDatas[$name])) {
+                $lianXiData['staff_position'] = '';
+                continue;
+            }
+            $lianXiData['staff_position'] = $staffsDatas[$name]['POSITION'];
+        }
+
+        return $apiResluts;
+    }
+
     static function getLianXiByName($entName)
     {
 
@@ -1031,6 +1065,26 @@ class LongXinService extends ServiceBase
 
         return $staffsDatas;
     }
+    static function getLianXiByNameV2($entName)
+    {
+
+        $companyDataObj = CompanyBasic::findByName($entName);
+
+        $returnData = [];
+
+        //管理人
+        $allManages = CompanyManager::findByCompanyId($companyDataObj->companyid);
+        foreach ($allManages as $Manage){
+            if(
+                !empty($Manage['POSITION']) &&
+                !empty($Manage['NAME'])
+            ){
+                $returnData[$Manage['NAME']] = $Manage;
+            }
+        }
+
+        return $returnData;
+    }
 
     //check 是否中文名
     static function isChineseName($name)
@@ -1057,6 +1111,7 @@ class LongXinService extends ServiceBase
                 $needsCheckMobileLists[$lianXiData['lianxi']] = $lianXiData['lid'];
             }
         }
+
         if (empty($needsCheckMobileLists)) {
             foreach ($apiResluts as &$dataItem) {
                 $dataItem['mobile_check_res'] = '';

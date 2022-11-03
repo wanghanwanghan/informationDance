@@ -16,6 +16,7 @@ use App\HttpController\Models\EntDb\EntDbNacaoBasic;
 use App\HttpController\Models\EntDb\EntDbNacaoClass;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggreListedH;
+use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggrePicsH;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -3351,6 +3352,31 @@ class XinDongService extends ServiceBase
             if(!$tmpName){
                 continue;
             };
+            $res = (new XinDongService())->matchNamesV2($tmpName,$WeiXin);
+            if($res['res'] == '成功'){
+//                CommonService::getInstance()->log4PHP(
+//                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin
+//                );
+                return [
+                    'data' => $staffsDataItem,
+                    'match_res' => $res
+                ];
+            }
+        }
+
+          return [];
+    }
+    function matchContactNameByWeiXinNameV3($entName,$WeiXin){
+
+        //获取所有联系人
+        $staffsDatas = LongXinService::getLianXiByNameV2($entName);
+
+        foreach($staffsDatas as $staffsDataItem){
+            $tmpName= trim($staffsDataItem['NAME']);
+            if(!$tmpName){
+                continue;
+            };
+
             $res = (new XinDongService())->matchNamesV2($tmpName,$WeiXin);
             if($res['res'] == '成功'){
 //                CommonService::getInstance()->log4PHP(
