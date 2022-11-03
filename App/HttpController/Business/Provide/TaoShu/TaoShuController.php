@@ -147,7 +147,7 @@ class TaoShuController extends ProvideBase
                 ->setCheckRespFlag(true)
                 ->post($postData, 'getRegisterInfo');
             CommonService::getInstance()->log4PHP($data,'info','taoshu_post_ret_wai');
-            $info = CompanyBasic::create()->where(['UNISCID'=>$data['result']['SHXYDM']])->get();
+            $info = CompanyBasic::create()->where(['UNISCID'=>$data['result']['0']['SHXYDM']])->get();
             CommonService::getInstance()->log4PHP([$info,['UNISCID'=>$data['result']['0']['SHXYDM']]],'info','taoshu_post_ret_wai_info');
             return $data;
         });
