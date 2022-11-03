@@ -147,8 +147,8 @@ class TaoShuController extends ProvideBase
                 ->setCheckRespFlag(true)
                 ->post($postData, 'getRegisterInfo');
             $info = CompanyBasic::create()->where(['UNISCID'=>$data['result']['0']['SHXYDM']])->get();
-            $data['result']['0']['RECCAP'] = $info->getAttr('RECCAP');//公司类型编码
-            $data['result']['0']['ENTTYPE'] = $info->getAttr('ENTTYPE');//实收注册资金
+            $data['result']['0']['RECCAP'] = $info->getAttr('RECCAP');//实收注册资金
+//            $data['result']['0']['ENTTYPE'] = $info->getAttr('ENTTYPE');//公司类型编码
             CommonService::getInstance()->log4PHP([$data,$info],'info','taoshu_post_ret_wai');
             return $data;
         });
