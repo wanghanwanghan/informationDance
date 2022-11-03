@@ -950,4 +950,91 @@ class TaoShuController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getOperatingExceptionRota()
+    {
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+
+        $postData = [
+            'entName' => $entName,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            $res = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getOperatingExceptionRota');
+
+            return  $res;
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+    //企业股权出质详情
+    function getEquityPledgedDetailInfo()
+    {
+        $id = $this->request()->getRequestParam('id') ?? '';
+
+        $postData = [
+            'rowKey' => $id,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            $res = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getEquityPledgedDetailInfo');
+
+            return  $res;
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+    //企业股权出质列表
+    function getEquityPledgedInfo()
+    {
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            $res = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getEquityPledgedInfo');
+
+            return  $res;
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+    //企业动产抵押详情
+    function getChattelMortgageDetailInfo()
+    {
+        $id = $this->request()->getRequestParam('id') ?? '';
+
+        $postData = [
+            'rowKey' => $id,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getChattelMortgageDetailInfo');
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+    //企业动产抵押列表
+    function getChattelMortgageInfo()
+    {
+        $entName = $this->request()->getRequestParam('entName') ?? '';
+        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData = [
+            'entName' => $entName,
+            'pageNo' => $pageNo,
+            'pageSize' => $pageSize,
+        ];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getChattelMortgageInfo');
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
 }

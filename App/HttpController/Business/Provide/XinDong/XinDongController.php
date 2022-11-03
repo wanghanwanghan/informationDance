@@ -2351,7 +2351,7 @@ class XinDongController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-
+        CommonService::getInstance()->log4PHP($res, 'info', 'getEntMarketInfo');
         return $this->checkResponse($res);
     }
 
