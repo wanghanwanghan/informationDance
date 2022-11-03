@@ -165,7 +165,11 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getRegisterChangeInfo', $prefix . 'getRegisterChangeInfo');//企业变更信息
             $routeCollector->addRoute(['GET', 'POST'], '/getShareHolderInfo', $prefix . 'getShareHolderInfo');//企业股东及出资信息
             $routeCollector->addRoute(['GET', 'POST'], '/dongChanDiYa', $prefix . 'dongChanDiYa');//企业股东及出资信息
-
+            $routeCollector->addRoute(['GET', 'POST'], '/getOperatingExceptionRota', $prefix . 'getOperatingExceptionRota');// 企业经营异常
+            $routeCollector->addRoute(['GET', 'POST'], '/getEquityPledgedDetailInfo', $prefix . 'getEquityPledgedDetailInfo');//  企业股权出质详情
+            $routeCollector->addRoute(['GET', 'POST'], '/getEquityPledgedInfo', $prefix . 'getEquityPledgedInfo');//  企业股权出质列表
+            $routeCollector->addRoute(['GET', 'POST'], '/getChattelMortgageDetailInfo', $prefix . 'getChattelMortgageDetailInfo');//  企业动产抵押详情
+            $routeCollector->addRoute(['GET', 'POST'], '/getChattelMortgageInfo', $prefix . 'getChattelMortgageInfo');//  企业动产抵押列表
         });
 
         return true;
