@@ -442,6 +442,15 @@ class ToolsFileLists extends ModelBase
                    ];
 
                    //通过手机号补全微信信息
+                   if(
+                       $datautem['lianxitype']!= '手机'
+                   ){
+                       $tmpDataItem[] = '';//'联系人名称(疑似/通过微信名匹配)',
+                       fputcsv($f, $tmpDataItem);
+
+                       continue;
+                   }
+                   
                    $matchedWeiXinName = WechatInfo::findByPhoneV2(($datautem['lianxi']));
                    CommonService::getInstance()->log4PHP(
                        json_encode([
