@@ -32,6 +32,7 @@ use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
+use App\HttpController\Models\BusinessBase\CompanyClue;
 use App\HttpController\Models\MRXD\InsuranceDataHuiZhong;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\MRXD\ToolsFileLists;
@@ -2927,6 +2928,15 @@ eof;
             // 20220922161425_测试下上传
             return $this->writeJson(200,[ ] ,
                 RunDealQueueLists::runByItem($res,true)
+                , '成功', true, []);
+        }
+
+        if(
+            $this->getRequestData('getAllContactByCode')
+        ){
+            $all =   CompanyClue::getAllContactByCode($this->getRequestData('getAllContactByCode'));
+            return $this->writeJson(200,[ ] ,
+                $all
                 , '成功', true, []);
         }
 
