@@ -4432,7 +4432,7 @@ class XinDongService extends ServiceBase
         return $this->checkResp(200, null, $res, '查询成功');
     }
 
-    public function getEntMarketInfo($UNISCID)
+    function getEntMarketInfo($UNISCID): array
     {
         $info = CompanyBasic::create()->where(['UNISCID' => $UNISCID])->get();
         $data = [];
