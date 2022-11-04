@@ -288,6 +288,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/createEntReportE', $prefix . 'createEntReportE');//对外报告
             $routeCollector->addRoute(['GET', 'POST'], '/createEntReportD', $prefix . 'createEntReportD');//对外报告
             $routeCollector->addRoute(['GET', 'POST'], '/getEntMarketInfo', $prefix . 'getEntMarketInfo');//企业上市信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getEntLiquidation', $prefix . 'getEntLiquidation');//清算
         });
 
         return true;
