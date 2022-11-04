@@ -437,8 +437,7 @@ class ToolsFileLists extends ModelBase
                        $datautem['url'],//'公开联系方式来源网页链接',
                        $datautem['lianxi'],//'公开联系方式',
                        $datautem['lianxitype'],//'公开联系方式类型(手机/座机/邮箱)',
-                       $datautem['mobile_check_res_cname'].'('.$dataItem['mobile_check_res'].')',//'公开手机号码状态',
-
+                       $datautem['mobile_check_res_cname'].''.$dataItem['mobile_check_res'].'',//'公开手机号码状态', 
                    ];
 
                    //通过手机号补全微信信息
