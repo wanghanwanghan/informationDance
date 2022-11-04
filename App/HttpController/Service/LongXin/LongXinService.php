@@ -1128,6 +1128,16 @@ class LongXinService extends ServiceBase
         ];
 
         $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'complementEntLianXiMobileState'=>[
+                        '$res'=>$res
+                    ]
+                ]
+            ])
+        );
         if ($res['message'] != '成功') {
             foreach ($apiResluts as &$dataItem) {
                 $dataItem['mobile_check_res'] = '';
