@@ -24,11 +24,11 @@ class CompanyClue extends ModelBase
 
     static  function  addRecordV2($info){
 
-        if(
-            self::findByPhoneV2($info['phone'])
-        ){
-            return  true;
-        }
+//        if(
+//            self::findByPhoneV2($info['phone'])
+//        ){
+//            return  true;
+//        }
 
         return CompanyClue::addRecord(
             $info
@@ -37,15 +37,21 @@ class CompanyClue extends ModelBase
 
     public static function addRecord($requestData){
         try {
+            /**
+            `entname` varchar(100) NOT NULL DEFAULT '',
+            `code` varchar(100) NOT NULL DEFAULT '',
+            `fr` varchar(100) NOT NULL DEFAULT '',
+            `qcc` text NOT NULL,
+            `pub` text NOT NULL,
+            `pri` text NOT NULL,
+             */
             $res =  CompanyClue::create()->data([
-                'code' => $requestData['code']?:'',
-                'phone' => $requestData['phone'],
-                'phone_md5' => $requestData['phone_md5'],
-                'sex' => $requestData['sex']?:'',
-                'nickname' => $requestData['nickname']?:'',
-                'signature' => $requestData['signature']?:'',
-                'province' => $requestData['province']?:'',
-                'city' => $requestData['city']?:'',
+                'entname' => $requestData['entname']?:'',
+                'code' => $requestData['code'],
+                'fr' => $requestData['fr'],
+                'qcc' => $requestData['qcc'],
+                'pub' => $requestData['pub'],
+                'pri' => $requestData['pri'],
                 'created_at' => $requestData['created_at'],
                 'updated_at' => $requestData['updated_at'],
             ])->save();

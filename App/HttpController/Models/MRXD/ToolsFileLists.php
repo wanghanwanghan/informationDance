@@ -773,19 +773,21 @@ class ToolsFileLists extends ModelBase
             AND state = 0 
             LIMIT 3 
        ");
+
        foreach ($filesDatas as $filesData){
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
 
            $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
            $i = 1;
 
-           $companysContacts= [];
+           $companysContacts = [];
 
            foreach ($yieldDatas as $dataItem) {
                //企业 税号 电话 微信名 性别
                //$companyName = $dataItem[0];
                //$companyCode = $dataItem[1];
                $companyCode = $dataItem[0];
+
                $phone = $dataItem[1];
                if($phone<=0){
                    continue;
@@ -812,7 +814,19 @@ class ToolsFileLists extends ModelBase
            }
 
            foreach ($companysContacts as $code => $phonesArr){
-
+                $str = count($phonesArr)."@".join(";",$phonesArr);
+                $time = time();
+                //XXXX
+//                CompanyClue::addRecordV2([
+//                    'entname' => '',
+//                    'code' => $companyCode,
+//                    'fr' => '',
+//                    'qcc' =>     \wanghanwanghan\someUtils\control::aesEncode($phone, $time . ''),
+//                    'pub' => '',
+//                    'pri' => '',
+//                    'created_at' => $time,
+//                    'updated_at' => $time,
+//                ]);
            }
 
 
