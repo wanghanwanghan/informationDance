@@ -5,10 +5,12 @@ namespace App\HttpController\Models\MRXD;
 use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\Api\FinancesSearch;
+use App\HttpController\Models\BusinessBase\CompanyClue;
 use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -528,7 +530,7 @@ class ToolsFileLists extends ModelBase
 
        $filesDatas = self::findBySql("
             WHERE touch_time < 1
-            AND type = ".self::$type_upload_pull_gong_kai_contact." 
+            AND type = ".self::$type_upload_pull_fei_gong_kai_contact." 
             AND state = 0 
             LIMIT 3 
        ");
@@ -553,7 +555,7 @@ class ToolsFileLists extends ModelBase
                    CommonService::getInstance()->log4PHP(
                        json_encode([
                            __CLASS__.__FUNCTION__ .__LINE__,
-                           'pullGongKaiContacts_$i' => $i
+                           'pullFeiGongKaiContacts' => $i
                        ])
                    );
                //}
@@ -565,7 +567,7 @@ class ToolsFileLists extends ModelBase
 //                    CommonService::getInstance()->log4PHP(
 //                        json_encode([
 //                            __CLASS__.__FUNCTION__ .__LINE__,
-//                            'pullGongKaiContacts_empty_ent_name' => [
+//                            'pullFeiGongKaiContacts_empty_ent_name' => [
 //                                '$entname' => $entname,
 //                            ]
 //                        ])
@@ -574,6 +576,12 @@ class ToolsFileLists extends ModelBase
                }
 
                //取公开联系人信息
+               $companyModel = CompanyBasic::findByName($entname);
+               if(empty($companyModel)){
+                   continue;
+               }
+               CompanyClue::getAllContactByCode($companyModel->UNISCID);
+
                $retData =  (new LongXinService())
                    ->setCheckRespFlag(true)
                    ->getEntLianXi([
@@ -582,7 +590,7 @@ class ToolsFileLists extends ModelBase
                CommonService::getInstance()->log4PHP(
                    json_encode([
                        __CLASS__.__FUNCTION__ .__LINE__,
-                       'pullGongKaiContacts_pull_url_contact' => [
+                       'pullFeiGongKaiContacts_pull_url_contact' => [
                            '$retData_nums' => count($retData),
                            'entName' => $entname,
                        ]
@@ -593,7 +601,7 @@ class ToolsFileLists extends ModelBase
 //               CommonService::getInstance()->log4PHP(
 //                   json_encode([
 //                       __CLASS__.__FUNCTION__ .__LINE__,
-//                       'pullGongKaiContacts_check_url_contact' => [
+//                       'pullFeiGongKaiContacts_check_url_contact' => [
 //                           '$retData' => $retData,
 //                       ]
 //                   ])
@@ -604,7 +612,7 @@ class ToolsFileLists extends ModelBase
 //               CommonService::getInstance()->log4PHP(
 //                   json_encode([
 //                       __CLASS__.__FUNCTION__ .__LINE__,
-//                       'pullGongKaiContacts_fill_position_by_name' => [
+//                       'pullFeiGongKaiContacts_fill_position_by_name' => [
 //                           '$retData' => $retData,
 //                       ]
 //                   ])
@@ -638,7 +646,7 @@ class ToolsFileLists extends ModelBase
                    CommonService::getInstance()->log4PHP(
                        json_encode([
                            __CLASS__.__FUNCTION__ .__LINE__,
-                           'pullGongKaiContacts_fill_weixin_by_phone' => [
+                           'pullFeiGongKaiContactss_fill_weixin_by_phone' => [
                                'lianxi' => $datautem['lianxi'],
                                '$matchedWeiXinName'=>$matchedWeiXinName,
                            ]
@@ -659,7 +667,7 @@ class ToolsFileLists extends ModelBase
                    CommonService::getInstance()->log4PHP(
                        json_encode([
                            __CLASS__.__FUNCTION__ .__LINE__,
-                           'pullGongKaiContacts_fill_name_and_position_by_weixin' => [
+                           'pullFeiGongKaiContacts_fill_name_and_position_by_weixin' => [
                                'nickname' => $matchedWeiXinName['nickname'],
                                '$tmpRes'=>$tmpRes,
                            ]

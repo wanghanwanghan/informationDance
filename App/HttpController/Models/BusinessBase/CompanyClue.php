@@ -10,7 +10,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\XinDong\XinDongService;
 
-class WechatInfo extends ModelBase
+class CompanyClue extends ModelBase
 {
     protected $tableName = 'company_clue';
     protected $autoTimeStamp = false;
@@ -61,6 +61,47 @@ class WechatInfo extends ModelBase
             );
         }
         return $res;
+    }
+
+    static function getAllContactByCode($code){
+        $all = self::findAllByCondition(['code'=>$code]);
+        $pub = $pri = $qcc = [];
+
+        foreach ($all as $one) {
+            if (strpos($one['pub'], '@')) {
+                $_pub = explode(';', \wanghanwanghan\someUtils\control::aesDecode(
+                    substr($one['pub'], strpos($one['pub'], '@') + 1), $one['created_at'] . ''
+                ));
+            } else {
+                $_pub = [];
+            }
+
+            if (strpos($one['pri'], '@')) {
+                $_pri = explode(';', \wanghanwanghan\someUtils\control::aesDecode(
+                    substr($one['pri'], strpos($one['pri'], '@') + 1), $one['created_at'] . ''
+                ));
+            } else {
+                $_pri = [];
+            }
+
+            if (strpos($one['qcc'], '@')) {
+                $_qcc = explode(';', \wanghanwanghan\someUtils\control::aesDecode(
+                    substr($one['qcc'], strpos($one['qcc'], '@') + 1), $one['created_at'] . ''
+                ));
+            } else {
+                $_qcc = [];
+            }
+
+            $pub = array_merge($pub, $_pub);
+            $pri = array_merge($pri, $_pri);
+            $qcc = array_merge($qcc, $_qcc);
+
+        }
+
+        $xn = array_values(array_unique(array_merge($pub, $pri, $qcc)));
+
+        sort($xn);
+        return $xn;
     }
 
     public static function findAllByCondition($whereArr){
