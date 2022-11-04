@@ -45,6 +45,9 @@ class ToolsFileLists extends ModelBase
     static  $type_upload_pull_fei_gong_kai_contact =  20 ;
     static  $type_upload_pull_fei_gong_kai_contact_cname =  '拉取非公开联系人' ;
 
+    static  $type_upload_gong_kai_contact =  25 ;
+    static  $type_upload_gong_kai_contact_cname =  '上传非公开联系人' ;
+
     static  function  stateMaps(){
 
         return [
@@ -754,6 +757,64 @@ class ToolsFileLists extends ModelBase
                }
 
            }
+
+           self::updateById($filesData['id'],[
+               'new_file_name' => "",
+               'state' => self::$state_succeed,
+           ]);
+       }
+    }
+
+    //上传公开联系人
+    static function shangChuanGongKaiContact($params){
+       $filesDatas = self::findBySql("
+            WHERE touch_time < 1
+            AND type = 25 
+            AND state = 0 
+            LIMIT 3 
+       ");
+       foreach ($filesDatas as $filesData){
+           self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
+
+           $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
+           $i = 1;
+
+           $companysContacts= [];
+
+           foreach ($yieldDatas as $dataItem) {
+               //企业 税号 电话 微信名 性别
+               //$companyName = $dataItem[0];
+               //$companyCode = $dataItem[1];
+               $companyCode = $dataItem[0];
+               $phone = $dataItem[1];
+               if($phone<=0){
+                   continue;
+               }
+
+               $companysContacts[$companyCode][$phone] = $phone;
+               if($i%100==0){
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           __CLASS__.__FUNCTION__ .__LINE__,
+                           [
+                               'addWeChatInfo'=>[
+                                    '$companyDataItem' => $companyName ,
+                                    '$companyCode' => $companyCode ,
+                                    '$phone' => $phone ,
+                                    '$wechat' => $wechat ,
+                                    '$sex' => $sex ,
+                                    '$i' => $i ,
+                               ]
+                           ]
+                       ])
+                   );
+               }
+           }
+
+           foreach ($companysContacts as $code => $phonesArr){
+
+           }
+
 
            self::updateById($filesData['id'],[
                'new_file_name' => "",
