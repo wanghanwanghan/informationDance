@@ -34,6 +34,7 @@ class ChuangLanService extends ServiceBase
             8 => '销号/未启用',
             9 => '服务器异常',
             10 => '查询失败',
+            999 => '其他错误',
         ];
     }
 
