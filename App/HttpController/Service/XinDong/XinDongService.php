@@ -15,6 +15,7 @@ use App\HttpController\Models\EntDb\EntDbNacao;
 use App\HttpController\Models\EntDb\EntDbNacaoBasic;
 use App\HttpController\Models\EntDb\EntDbNacaoClass;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggreListedH;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggrePicsH;
@@ -4466,12 +4467,14 @@ class XinDongService extends ServiceBase
 
     function getEntLiquidation($UNISCID): array
     {
+        CommonService::getInstance()->log4PHP($UNISCID, 'step2', 'getEntLiquidation');
         $info = CompanyBasic::create()
             ->where('UNISCID', $UNISCID)
             ->get();
+        CommonService::getInstance()->log4PHP($info, 'step3', 'getEntLiquidation');
         $list = [];
         if (!empty($info)) {
-            $list = AggreListedH::create()
+            $list = CompanyLiquidation::create()
                 ->where('companyid', $info->getAttr('companyid'))
                 ->field([
                     'PUBLISH_DATE',

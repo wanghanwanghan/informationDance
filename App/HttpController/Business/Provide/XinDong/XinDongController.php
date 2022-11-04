@@ -2358,6 +2358,7 @@ class XinDongController extends ProvideBase
     function getEntLiquidation(): bool
     {
         $code = $this->getRequestData('code', '');
+        CommonService::getInstance()->log4PHP($code, 'step1', 'getEntLiquidation');
         if (empty($code)) {
             return $this->writeJson(201, null, null, '参数缺失(统一社会信用代码)');
         }
@@ -2367,7 +2368,7 @@ class XinDongController extends ProvideBase
                 ->getEntLiquidation($code);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-        CommonService::getInstance()->log4PHP($res, 'info', 'getEntLiquidation');
+        CommonService::getInstance()->log4PHP($res, 'final', 'getEntLiquidation');
         return $this->checkResponse($res);
     }
 
