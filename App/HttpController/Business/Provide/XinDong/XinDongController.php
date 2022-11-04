@@ -2336,7 +2336,6 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-
     //企业基本信息
     function getEntMarketInfo(): bool
     {
@@ -2354,5 +2353,22 @@ class XinDongController extends ProvideBase
         CommonService::getInstance()->log4PHP($res, 'info', 'getEntMarketInfo');
         return $this->checkResponse($res);
     }
+
+    //清算信息接口
+    function getEntLiquidation(): bool
+    {
+        $code = $this->getRequestData('code', '');
+        if (empty($code)) {
+            return $this->writeJson(201, null, null, '参数缺失(统一社会信用代码)');
+        }
+        $this->csp->add($this->cspKey, function () use ($code) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getEntLiquidation($code);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
 
 }
