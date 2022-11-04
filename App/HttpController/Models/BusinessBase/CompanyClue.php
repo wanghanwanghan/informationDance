@@ -101,7 +101,12 @@ class CompanyClue extends ModelBase
         $xn = array_values(array_unique(array_merge($pub, $pri, $qcc)));
 
         sort($xn);
-        return $xn;
+        return [
+            'pub' =>$pub,
+            'pri' =>$pri,
+            'qcc' =>$qcc,
+            'xn' =>$xn,
+        ];
     }
 
     public static function findAllByCondition($whereArr){
