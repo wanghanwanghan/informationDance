@@ -4467,11 +4467,9 @@ class XinDongService extends ServiceBase
 
     function getEntLiquidation($UNISCID): array
     {
-        CommonService::getInstance()->log4PHP($UNISCID, 'step2', 'getEntLiquidation');
         $info = CompanyBasic::create()
             ->where('UNISCID', $UNISCID)
             ->get();
-        CommonService::getInstance()->log4PHP($info, 'step3', 'getEntLiquidation');
         $list = [];
         if (!empty($info)) {
             $list = CompanyLiquidation::create()
