@@ -1133,7 +1133,8 @@ class LongXinService extends ServiceBase
                 __CLASS__.__FUNCTION__ .__LINE__,
                 [
                     'complementEntLianXiMobileState'=>[
-                        '$res'=>$res
+                        'message'=>$res['message'],
+                        'data'=>$res['data'],
                     ]
                 ]
             ])
