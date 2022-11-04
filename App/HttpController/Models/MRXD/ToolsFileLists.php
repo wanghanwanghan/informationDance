@@ -610,7 +610,7 @@ class ToolsFileLists extends ModelBase
                foreach($allConatcts['xn'] as $item){
                    $tmpDataItem = [
                        $entname,//企业名称
-                       $companyRes->UNISCID,//信用代码
+                       $companyRes->UNISCID."\t",//信用代码
                        $item,//手机号
                        ChuangLanService::getStatusCnameMap()[$mobilesRes[$item]['status']].$mobilesRes[$item]['status'],//手机号状态
                    ];
