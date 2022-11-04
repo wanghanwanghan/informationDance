@@ -379,14 +379,14 @@ class ToolsFileLists extends ModelBase
                // 企业名称：$dataItem[0]
                $entname = $dataItem[0];
                if(empty($entname)){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            __CLASS__.__FUNCTION__ .__LINE__,
-                            'pullGongKaiContacts_empty_ent_name' => [
-                                '$entname' => $entname,
-                            ]
-                        ])
-                    );
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode([
+//                            __CLASS__.__FUNCTION__ .__LINE__,
+//                            'pullGongKaiContacts_empty_ent_name' => [
+//                                '$entname' => $entname,
+//                            ]
+//                        ])
+//                    );
                    continue;
                }
 
@@ -400,32 +400,32 @@ class ToolsFileLists extends ModelBase
                    json_encode([
                        __CLASS__.__FUNCTION__ .__LINE__,
                        'pullGongKaiContacts_pull_url_contact' => [
-                           '$retData' => $retData,
+                           '$retData_nums' => count($retData),
                            'entName' => $entname,
                        ]
                    ])
                );
                //手机号状态检测 一次网络请求
                $retData = LongXinService::complementEntLianXiMobileState($retData);
-               CommonService::getInstance()->log4PHP(
-                   json_encode([
-                       __CLASS__.__FUNCTION__ .__LINE__,
-                       'pullGongKaiContacts_check_url_contact' => [
-                           '$retData' => $retData,
-                       ]
-                   ])
-               );
+//               CommonService::getInstance()->log4PHP(
+//                   json_encode([
+//                       __CLASS__.__FUNCTION__ .__LINE__,
+//                       'pullGongKaiContacts_check_url_contact' => [
+//                           '$retData' => $retData,
+//                       ]
+//                   ])
+//               );
 
                //通过名称补全联系人职位信息 两次db请求：查询company_basic 查询 company_manager
                $retData = LongXinService::complementEntLianXiPositionV2($retData, $entname);
-               CommonService::getInstance()->log4PHP(
-                   json_encode([
-                       __CLASS__.__FUNCTION__ .__LINE__,
-                       'pullGongKaiContacts_fill_position_by_name' => [
-                           '$retData' => $retData,
-                       ]
-                   ])
-               );
+//               CommonService::getInstance()->log4PHP(
+//                   json_encode([
+//                       __CLASS__.__FUNCTION__ .__LINE__,
+//                       'pullGongKaiContacts_fill_position_by_name' => [
+//                           '$retData' => $retData,
+//                       ]
+//                   ])
+//               );
 
                foreach($retData as $datautem){
                    $tmpDataItem = [
@@ -470,7 +470,7 @@ class ToolsFileLists extends ModelBase
                        continue;
                    }
 
-                   $tmpDataItem[] = $matchedWeiXinName['nickname'];//'公开手机微信号码', 
+                   $tmpDataItem[] = $matchedWeiXinName['nickname'];//'公开手机微信号码',
 
                    //用微信名匹配联系人职位信息
                    $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV3($entname, $matchedWeiXinName['nickname']);
