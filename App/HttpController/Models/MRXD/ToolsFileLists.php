@@ -438,13 +438,14 @@ class ToolsFileLists extends ModelBase
                        $datautem['lianxi'],//'公开联系方式',
                        $datautem['lianxitype'],//'公开联系方式类型(手机/座机/邮箱)',
                        $datautem['mobile_check_res_cname'].'('.$dataItem['mobile_check_res'].')',//'公开手机号码状态',
-                       $datautem['lianxitype'],//'公开手机微信号码',
+
                    ];
 
                    //通过手机号补全微信信息
                    if(
-                       $datautem['lianxitype']!= '手机'
+                       $datautem['lianxitype']!== '手机'
                    ){
+                       $tmpDataItem[] = '';//'公开手机微信号码',
                        $tmpDataItem[] = '';//'联系人名称(疑似/通过微信名匹配)',
                        fputcsv($f, $tmpDataItem);
 
@@ -469,7 +470,7 @@ class ToolsFileLists extends ModelBase
                        continue;
                    }
 
-                   $tmpDataItem[] = $matchedWeiXinName['nickname'];//'联系人名称(疑似/通过微信名匹配)',
+                   $tmpDataItem[] = $matchedWeiXinName['nickname'];//'公开手机微信号码', 
 
                    //用微信名匹配联系人职位信息
                    $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV3($entname, $matchedWeiXinName['nickname']);
@@ -483,6 +484,7 @@ class ToolsFileLists extends ModelBase
                        ])
                    );
 
+                   $tmpDataItem[] =  $tmpRes['data']['NAME'];//联系人名称(疑似/通过微信名匹配)',
                    $tmpDataItem[] =  $tmpRes['data']['POSITION'];//'职位(疑似/通过微信名匹配)',
                    $tmpDataItem[] =  $tmpRes['match_res']['type'];//'微信匹配类型',
                    $tmpDataItem[] =  $tmpRes['match_res']['details'];//'微信匹配子类型',
