@@ -17,9 +17,11 @@ use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
+use App\HttpController\Models\BusinessBase\CompanyClue;
 use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\RDS3\Company;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
@@ -463,40 +465,60 @@ class ToolsController extends ControllerBase
         $requestData =  $this->getRequestData();
         $page =$requestData['page']?:1;
         $pageSize =$requestData['pageSize']?:20;
+//        return $this->writeJson(200, [
+//            'page' => $page,
+//            'pageSize' =>$pageSize,
+//            'total' => $total,
+//            'totalPage' =>  ceil( $total/ $pageSize ),
+//        ],  [
+//            [
+//                'id'=>1,
+//                'entname'=>'北京公司',
+//                'code'=>'XXXX',
+//                'pub_contacts'=>'13269706293,13269706293,13269706293,13269706293,13269706293,13269706293,13269706293,13269706293',
+//                'pri_contacts'=>'13269706293,13269706293,13269706293,13269706293,13269706293,13269706293,13269706293,13269706293',
+//                'qcc_contacts'=>'13269706293,13269706293,13269706293,13269706293,13269706293,13269706293,13269706293,13269706293',
+//
+//            ]
+//        ],'');
+
+        //XXXX
+        $checkRes = DataModelExample::checkField(
+            [
+                'code' => [
+                    'not_empty' =>  true,
+                    'field_name' => 'code',
+                    'err_msg' => '信用代码必传',
+                ],
+            ],
+            $requestData
+        );
+        if(
+            !$checkRes['res']
+        ){
+            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        }
+
+        $all =   CompanyClue::getAllContactByCode($requestData['code']);
+
+        $companyRes = CompanyBasic::findByCode($requestData['code']);
+
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' =>$pageSize,
             'total' => $total,
             'totalPage' =>  ceil( $total/ $pageSize ),
-        ],  [
+        ],   [
             [
-                'id'=>1,
-                'entname'=>'北京公司',
-                'code'=>'XXXX',
-                'pub_contacts'=>'13269706293,13269706293,13269706293,13269706293,13269706293,13269706293,13269706293,13269706293',
-                'pri_contacts'=>'13269706293,13269706293,13269706293,13269706293,13269706293,13269706293,13269706293,13269706293',
-                'qcc_contacts'=>'13269706293,13269706293,13269706293,13269706293,13269706293,13269706293,13269706293,13269706293',
+
+                'entname'=>$companyRes->ENTNAME,
+                'code'=>$requestData['code'],
+                'pub_contacts'=>$all['pub'],
+                'pri_contacts'=>$all['pri'],
+                'qcc_contacts'=>$all['qcc'],
 
             ]
         ],'');
-        $res = ToolsFileLists::findByConditionWithCountInfo(
-            [
-                'type' =>ToolsFileLists::$type_upload_pull_fei_gong_kai_contact,
-            ],$page
-        );
-        foreach ($res['data'] as &$dataItem ){
-            $adminInfo = \App\HttpController\Models\AdminV2\AdminNewUser::findById($dataItem['admin_id']);
-            $dataItem['admin_id_cname'] = $adminInfo->user_name;
-            $dataItem['new_file_path'] = '/Static/OtherFile/'.$dataItem['new_file_name'];
-            $dataItem['state_cname'] = ToolsFileLists::stateMaps()[$dataItem['state']];
-        }
-        $total = $res['total'];
-        return $this->writeJson(200, [
-            'page' => $page,
-            'pageSize' =>$pageSize,
-            'total' => $total,
-            'totalPage' =>  ceil( $total/ $pageSize ),
-        ],  $res['data'],'');
     }
 
     /*
