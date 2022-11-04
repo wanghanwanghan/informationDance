@@ -1009,15 +1009,15 @@ class LongXinService extends ServiceBase
             //联系人姓名
             $name = trim($lianXiData['name']);
             if (empty($name)) {
-                $lianXiData['staff_position'] = '';
+                $lianXiData['POSITION'] = '';
                 continue;
             }
 
             if (empty($staffsDatas[$name])) {
-                $lianXiData['staff_position'] = '';
+                $lianXiData['POSITION'] = '';
                 continue;
             }
-            $lianXiData['staff_position'] = $staffsDatas[$name]['POSITION'];
+            $lianXiData['POSITION'] = $staffsDatas[$name]['POSITION'];
         }
 
         return $apiResluts;
