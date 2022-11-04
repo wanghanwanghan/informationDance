@@ -4,6 +4,7 @@ namespace App\HttpController\Models\MRXD;
 
 use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
+use App\HttpController\Models\AdminV2\MobileCheckInfo;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\BusinessBase\CompanyClue;
 use App\HttpController\Models\BusinessBase\WechatInfo;
@@ -504,14 +505,9 @@ class ToolsFileLists extends ModelBase
     }
     static function pullFeiGongKaiContacts($params){
         $title = [
-            "企业名称",
-            '联系人职位',
-            '联系方式来源',
-            '联系人姓名',
-            '手机归属地/座机区号',
-            '联系方式来源网页链接',
-            '联系方式',
-            '联系方式类型(手机/座机/邮箱)',
+            '企业名称',
+            '信用代码',
+            '手机号',
             '手机号码状态',
             '手机微信号',
             '联系人名称(疑似/通过微信名匹配)',
@@ -563,6 +559,7 @@ class ToolsFileLists extends ModelBase
 
                // 企业名称：$dataItem[0]
                $entname = $dataItem[0];
+               $companyRes = CompanyBasic::findByName($entname);
                if(empty($entname)){
 //                    CommonService::getInstance()->log4PHP(
 //                        json_encode([
@@ -580,74 +577,60 @@ class ToolsFileLists extends ModelBase
                if(empty($companyModel)){
                    continue;
                }
-               CompanyClue::getAllContactByCode($companyModel->UNISCID);
 
-               $retData =  (new LongXinService())
-                   ->setCheckRespFlag(true)
-                   ->getEntLianXi([
-                       'entName' => $entname,
-                   ])['result'];
+               $allConatcts = CompanyClue::getAllContactByCode($companyModel->UNISCID);
                CommonService::getInstance()->log4PHP(
                    json_encode([
                        __CLASS__.__FUNCTION__ .__LINE__,
-                       'pullFeiGongKaiContacts_pull_url_contact' => [
-                           '$retData_nums' => count($retData),
-                           'entName' => $entname,
+                       'pullFeiGongKaiContacts_db_all_contacts' => [
+                           '$allConatcts' => $allConatcts,
                        ]
                    ])
                );
+
                //手机号状态检测 一次网络请求
-               $retData = LongXinService::complementEntLianXiMobileState($retData);
-//               CommonService::getInstance()->log4PHP(
-//                   json_encode([
-//                       __CLASS__.__FUNCTION__ .__LINE__,
-//                       'pullFeiGongKaiContacts_check_url_contact' => [
-//                           '$retData' => $retData,
-//                       ]
-//                   ])
-//               );
+               $needsCheckMobilesStr = join(",", $allConatcts['xn']);
+               $postData = [
+                   'mobiles' => $needsCheckMobilesStr,
+               ];
 
-               //通过名称补全联系人职位信息 两次db请求：查询company_basic 查询 company_manager
-               $retData = LongXinService::complementEntLianXiPositionV2($retData, $entname);
-//               CommonService::getInstance()->log4PHP(
-//                   json_encode([
-//                       __CLASS__.__FUNCTION__ .__LINE__,
-//                       'pullFeiGongKaiContacts_fill_position_by_name' => [
-//                           '$retData' => $retData,
-//                       ]
-//                   ])
-//               );
+               $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
+               // 转换为以手机号为key的数组
+               $mobilesRes = LongXinService::shiftArrayKeys($res['data'], 'mobile');
+               CommonService::getInstance()->log4PHP(
+                   json_encode([
+                       __CLASS__.__FUNCTION__ .__LINE__,
+                       'pullFeiGongKaiContacts_check_url_contact' => [
+                           '$retData' => $res['data'],
+                           '$mobilesRes' => $mobilesRes,
+                       ]
+                   ])
+               );
 
-               foreach($retData as $datautem){
+               foreach($allConatcts as $item){
                    $tmpDataItem = [
-                       $entname,
-                       $datautem['duty'],//'公开联系人职位',
-                       $datautem['source'],//'公开联系方式来源',
-                       $datautem['name'],//'公开联系人姓名',
-                       $datautem['quhao'],//'公开手机归属地/座机区号',
-                       $datautem['url'],//'公开联系方式来源网页链接',
-                       $datautem['lianxi'],//'公开联系方式',
-                       $datautem['lianxitype'],//'公开联系方式类型(手机/座机/邮箱)',
-                       $datautem['mobile_check_res_cname'].''.$datautem['mobile_check_res'].'',//'公开手机号码状态',
+                       $entname,//企业名称
+                       $companyRes->UNISCID,//信用代码
+                       $item,//手机号
+                       ChuangLanService::getStatusCnameMap()[$mobilesRes[$item]['status']].$mobilesRes[$item]['status'],//手机号状态
                    ];
 
                    //通过手机号补全微信信息
                    if(
-                       $datautem['lianxitype']!== '手机'
+                       !LongXinService::isValidPhone($item)
                    ){
                        $tmpDataItem[] = '';//'公开手机微信号码',
                        $tmpDataItem[] = '';//'联系人名称(疑似/通过微信名匹配)',
                        fputcsv($f, $tmpDataItem);
-
                        continue;
                    }
 
-                   $matchedWeiXinName = WechatInfo::findByPhoneV2(($datautem['lianxi']));
+                   $matchedWeiXinName = WechatInfo::findByPhoneV2(($item));
                    CommonService::getInstance()->log4PHP(
                        json_encode([
                            __CLASS__.__FUNCTION__ .__LINE__,
                            'pullFeiGongKaiContactss_fill_weixin_by_phone' => [
-                               'lianxi' => $datautem['lianxi'],
+                               'lianxi' => $item,
                                '$matchedWeiXinName'=>$matchedWeiXinName,
                            ]
                        ])

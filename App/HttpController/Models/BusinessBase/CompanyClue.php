@@ -63,7 +63,7 @@ class CompanyClue extends ModelBase
         return $res;
     }
 
-    static function getAllContactByCode($code){
+    static function getAllContactByCode($code, $returnPub = true, $returnPri = true, $returnQcc = true){
         $all = self::findAllByCondition(['code'=>$code]);
         $pub = $pri = $qcc = [];
 

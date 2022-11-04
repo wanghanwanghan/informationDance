@@ -1169,6 +1169,7 @@ class LongXinService extends ServiceBase
                 ]
             ])
         );
+
         foreach ($apiResluts as &$dataItem) {
 
             if (empty($res['data'][$dataItem['lianxi']])) {
