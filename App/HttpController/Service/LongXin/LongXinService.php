@@ -1158,7 +1158,16 @@ class LongXinService extends ServiceBase
 
         // 转换为以手机号为key的数组
         $res['data'] = self::shiftArrayKeys($res['data'], 'mobile');
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'complementEntLianXiMobileState'=>[
+                        'complementEntLianXiMobileState2'=>$res['data']
+                    ]
+                ]
+            ])
+        );
         foreach ($apiResluts as &$dataItem) {
             if (empty($res['data'][$dataItem['lianxi']])) {
                 $dataItem['mobile_check_res'] = '';
