@@ -773,7 +773,18 @@ class ToolsFileLists extends ModelBase
             AND state = 0 
             LIMIT 3 
        ");
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    'shangChuanGongKaiContact'=>[
+                        'start'=>true,
+                        '$params'=>$params,
+                        'count $filesDatas'=>count($filesDatas),
+                    ]
+                ]
+            ])
+        );
        foreach ($filesDatas as $filesData){
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
 
@@ -787,7 +798,6 @@ class ToolsFileLists extends ModelBase
                //$companyName = $dataItem[0];
                //$companyCode = $dataItem[1];
                $companyCode = $dataItem[0];
-
                $phone = $dataItem[1];
                if($phone<=0){
                    continue;
@@ -799,12 +809,7 @@ class ToolsFileLists extends ModelBase
                        json_encode([
                            __CLASS__.__FUNCTION__ .__LINE__,
                            [
-                               'addWeChatInfo'=>[
-                                    '$companyDataItem' => $companyName ,
-                                    '$companyCode' => $companyCode ,
-                                    '$phone' => $phone ,
-                                    '$wechat' => $wechat ,
-                                    '$sex' => $sex ,
+                               'shangChuanGongKaiContact times'=>[
                                     '$i' => $i ,
                                ]
                            ]
@@ -817,16 +822,33 @@ class ToolsFileLists extends ModelBase
                 $str = count($phonesArr)."@".join(";",$phonesArr);
                 $time = time();
                 //XXXX
-//                CompanyClue::addRecordV2([
-//                    'entname' => '',
-//                    'code' => $companyCode,
-//                    'fr' => '',
-//                    'qcc' =>     \wanghanwanghan\someUtils\control::aesEncode($phone, $time . ''),
-//                    'pub' => '',
-//                    'pri' => '',
-//                    'created_at' => $time,
-//                    'updated_at' => $time,
-//                ]);
+               $dbArr = [
+                   'entname' => '',
+                   'code' => $companyCode,
+                   'fr' => '',
+                   'qcc' =>     \wanghanwanghan\someUtils\control::aesEncode($phone, $time . ''),
+                   'pub' => '',
+                   'pri' => '',
+                   'created_at' => $time,
+                   'updated_at' => $time,
+               ];
+//                CompanyClue::addRecordV2(
+//                    $dbArr
+//                );
+
+
+               CommonService::getInstance()->log4PHP(
+                   json_encode([
+                       __CLASS__.__FUNCTION__ .__LINE__,
+                       [
+                           'shangChuanGongKaiContact add to db '=>[
+                               '$i' => $i ,
+                               '$dbArr' => $dbArr ,
+                           ]
+                       ]
+                   ])
+               );
+
            }
 
 
