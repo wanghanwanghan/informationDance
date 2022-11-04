@@ -136,7 +136,6 @@ class jincai_shoudong extends AbstractProcess
     function getData(string $nsrsbh, string $province, string $traceNo)
     {
         $res = (new JinCaiShuKeService())->obtainFpInfo($nsrsbh, $province, $traceNo);
-        dd($res);
         $this->handleMain($res);
         $res = (new JinCaiShuKeService())->obtainFpDetailInfo($nsrsbh, $province, $traceNo);
         $this->handleDetail($res);
