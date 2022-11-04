@@ -607,7 +607,7 @@ class ToolsFileLists extends ModelBase
                    ])
                );
 
-               foreach($allConatcts as $item){
+               foreach($allConatcts['xn'] as $item){
                    $tmpDataItem = [
                        $entname,//企业名称
                        $companyRes->UNISCID,//信用代码
