@@ -1116,8 +1116,8 @@ class LongXinService extends ServiceBase
             foreach ($apiResluts as &$dataItem) {
                 $dataItem['mobile_check_res'] = '';
                 $dataItem['mobile_check_res_cname'] = '';
-
             }
+
             return $apiResluts;
         }
 
