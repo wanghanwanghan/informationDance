@@ -1170,6 +1170,18 @@ class LongXinService extends ServiceBase
             ])
         );
         foreach ($apiResluts as &$dataItem) {
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        'complementEntLianXiMobileState3'=>[
+                            'complementEntLianXiMobileState3'=>$res['data'][$dataItem['lianxi']],
+                            'lianxi3'=>$dataItem['lianxi'],
+                        ]
+                    ]
+                ])
+            );
+
             if (empty($res['data'][$dataItem['lianxi']])) {
                 $dataItem['mobile_check_res'] = '';
                 $dataItem['mobile_check_res_cname'] = '';
