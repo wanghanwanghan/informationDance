@@ -108,6 +108,7 @@ class ToolsController extends ControllerBase
             'totalPage' =>  ceil( $total/ $pageSize ),
         ],  $res['data'],'');
     }
+
     public function pullGongKaiContact(){
         $requestData =  $this->getRequestData();
         $page =$requestData['page']?:1;
@@ -132,6 +133,7 @@ class ToolsController extends ControllerBase
             'totalPage' =>  ceil( $total/ $pageSize ),
         ],  $res['data'],'');
     }
+
     public function pullFeiGongKaiContact(){
         $requestData =  $this->getRequestData();
         $page =$requestData['page']?:1;
@@ -156,10 +158,47 @@ class ToolsController extends ControllerBase
             'totalPage' =>  ceil( $total/ $pageSize ),
         ],  $res['data'],'');
     }
+
+
     public function rePullFeiGongKaiContact(){
         $requestData =  $this->getRequestData();
         $page =$requestData['page']?:1;
         $pageSize =$requestData['pageSize']?:20;
+
+        $dataRes = ToolsFileLists::findById($requestData['id']);
+        ToolsFileLists::updateById(
+            $dataRes->id,
+            [
+                'touch_time'=>'',
+                'new_file_name'=>'',
+                'state'=>ToolsFileLists::$state_init,
+            ]
+        );
+        $config_arr = @json_decode($dataRes->remark,true);
+
+        $res = QueueLists::addRecord(
+            [
+                'name' => '拉取非公开联系人',
+                'desc' => '',
+                'func_info_json' => json_encode(
+                    [
+                        'class' => '\App\HttpController\Models\MRXD\ToolsFileLists',
+                        'static_func'=> 'pullFeiGongKaiContacts',
+                    ]
+                ),
+                'params_json' => json_encode([
+                    'fill_position_by_name' => intval($config_arr['fill_position_by_name']),
+                    'fill_weixin_by_phone' => intval($config_arr['fill_weixin_by_phone']),
+                    'fill_name_and_position_by_weixin' => intval($config_arr['fill_name_and_position_by_weixin']),
+                ]),
+                'type' => ToolsFileLists::$type_upload_pull_fei_gong_kai_contact,
+                'remark' => '',
+                'begin_date' => NULL,
+                'msg' => '',
+                'status' => QueueLists::$status_init,
+            ]
+        );
+
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' =>$pageSize,
@@ -167,10 +206,47 @@ class ToolsController extends ControllerBase
             'totalPage' =>  ceil( $total/ $pageSize ),
         ],  $res['data'],'');
     }
+
     public function rePullGongKaiContact(){
         $requestData =  $this->getRequestData();
         $page =$requestData['page']?:1;
         $pageSize =$requestData['pageSize']?:20;
+
+        $dataRes = ToolsFileLists::findById($requestData['id']);
+        $config_arr = @json_decode($dataRes->remark,true);
+        ToolsFileLists::updateById(
+            $dataRes->id,
+            [
+                'touch_time'=>'',
+                'new_file_name'=>'',
+                'state'=>ToolsFileLists::$state_init,
+            ]
+        );
+        
+        $res = QueueLists::addRecord(
+            [
+                'name' => '拉取公开联系人',
+                'desc' => '',
+                'func_info_json' => json_encode(
+                    [
+                        'class' => '\App\HttpController\Models\MRXD\ToolsFileLists',
+                        'static_func'=> 'pullGongKaiContacts',
+                    ]
+                ),
+                'params_json' => json_encode([
+                    'fill_position_by_name' => intval($config_arr['fill_position_by_name']),
+                    'fill_weixin_by_phone' => intval($config_arr['fill_weixin_by_phone']),
+                    'fill_name_and_position_by_weixin' => intval($config_arr['fill_name_and_position_by_weixin']),
+                ]),
+                'type' => ToolsFileLists::$type_upload_pull_gong_kai_contact,
+                'remark' => '',
+                'begin_date' => NULL,
+                'msg' => '',
+                'status' => QueueLists::$status_init,
+            ]
+        );
+
+
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' =>$pageSize,
@@ -286,7 +362,11 @@ class ToolsController extends ControllerBase
                         'admin_id' => $this->loginUserinfo['id'],
                         'file_name' => $fileName,
                         'new_file_name' => '',
-                        'remark' => $requestData['remark']?:'',
+                        'remark' => json_encode([
+                            'fill_position_by_name' => intval($requestData['get_zhiwei']),
+                            'fill_weixin_by_phone' => intval($requestData['get_wxname']),
+                            'fill_name_and_position_by_weixin' => intval($requestData['get_namezhiwei']),
+                        ]),
                         'type' => ToolsFileLists::$type_upload_pull_gong_kai_contact,
                         'state' => $requestData['state']?:'',
                         'touch_time' => $requestData['touch_time']?:'',
@@ -355,7 +435,11 @@ class ToolsController extends ControllerBase
                         'admin_id' => $this->loginUserinfo['id'],
                         'file_name' => $fileName,
                         'new_file_name' => '',
-                        'remark' => $requestData['remark']?:'',
+                        'remark' => json_encode([
+                            'fill_position_by_name' => intval($requestData['get_zhiwei']),
+                            'fill_weixin_by_phone' => intval($requestData['get_wxname']),
+                            'fill_name_and_position_by_weixin' => intval($requestData['get_namezhiwei']),
+                        ]),
                         'type' => ToolsFileLists::$type_upload_pull_fei_gong_kai_contact,
                         'state' => $requestData['state']?:'',
                         'touch_time' => $requestData['touch_time']?:'',
