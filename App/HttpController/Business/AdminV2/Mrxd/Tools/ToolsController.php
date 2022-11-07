@@ -482,26 +482,17 @@ class ToolsController extends ControllerBase
 //            ]
 //        ],'');
 
-        //XXXX
-        $checkRes = DataModelExample::checkField(
-            [
-                'code' => [
-                    'not_empty' =>  true,
-                    'field_name' => 'code',
-                    'err_msg' => '信用代码必传',
-                ],
-            ],
-            $requestData
-        );
-        if(
-            !$checkRes['res']
-        ){
-            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+
+        if($requestData['code']){
+            $all =   CompanyClue::getAllContactByCode($requestData['code']);
+
+            $companyRes = CompanyBasic::findByCode($requestData['code']);
+        }
+        else{
+            $all = [];
+            $companyRes = [];
         }
 
-        $all =   CompanyClue::getAllContactByCode($requestData['code']);
-
-        $companyRes = CompanyBasic::findByCode($requestData['code']);
 
         return $this->writeJson(200, [
             'page' => $page,
