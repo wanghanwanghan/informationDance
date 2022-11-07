@@ -25,7 +25,7 @@ class WechatInfo extends ModelBase
     static  function  addRecordV2($info){
 
         if(
-            self::findByPhoneV2($info['phone'])
+            self::findByPhoneV3($info['phone_md5'])
         ){
             return  true;
         }
@@ -135,6 +135,23 @@ class WechatInfo extends ModelBase
 
     public static function findByPhoneV2($phone){
         $res =  self::findByPhone(md5($phone));
+        $resData =  $res?$res->toArray():[];
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                [
+//                    'findWeiXinByPhone'=>[
+//                        '$phone'=>$phone,
+//                        'md5'=>md5($phone),
+//                        '$resData'=>$resData
+//                    ]
+//                ]
+//            ])
+//        );
+        return $resData;
+    }
+    public static function findByPhoneV3($phone){
+        $res =  self::findByPhone(($phone));
         $resData =  $res?$res->toArray():[];
 //        CommonService::getInstance()->log4PHP(
 //            json_encode([
