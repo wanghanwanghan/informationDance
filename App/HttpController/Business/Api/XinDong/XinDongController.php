@@ -2940,6 +2940,18 @@ eof;
                 , '成功', true, []);
         }
 
+        if(
+            $this->getRequestData('getLianXiByNameV2')
+        ){
+
+            //获取所有联系人
+            $staffsDatas = LongXinService::getLianXiByNameV2($this->getRequestData('getLianXiByNameV2'));
+
+            return $this->writeJson(200,[ ] ,
+                $staffsDatas
+                , '成功', true, []);
+        }
+
 
         if(
             $this->getRequestData('calScore')
