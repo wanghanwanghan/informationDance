@@ -394,6 +394,29 @@ class ToolsController extends ControllerBase
 
         return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
     }
+
+
+    public function commonToos(){
+        $requestData =  $this->getRequestData();
+        $succeedFiels = [];
+
+        return $this->writeJson(200, [], [
+            [
+                'params'=>'XXXX',
+                'return_datas_json'=>'{"xx","XXX"}',
+            ]
+        ],'成功 ');
+    }
+
+    public function commonToosOptions(){
+
+        return $this->writeJson(200, [], [
+            5 => '通过企业名称拉取公开联系人',
+            10 => '通过企业名称拉取企业管理人(company_manager)',
+        ],'成功');
+    }
+
+
     public function uploadeGongKaiContacts(){
         $requestData =  $this->getRequestData();
         $succeedFiels = [];
