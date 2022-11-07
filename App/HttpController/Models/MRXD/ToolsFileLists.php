@@ -321,6 +321,9 @@ class ToolsFileLists extends ModelBase
     "mobile_check_res_cname": "正常",
     "staff_position": "--"
     }
+
+
+
      */
     //TODO:上传文件格式文案：企业名称
     static function pullGongKaiContacts($params){
@@ -333,6 +336,7 @@ class ToolsFileLists extends ModelBase
             '联系方式来源网页链接',
             '联系方式',
             '联系方式类型(手机/座机/邮箱)',
+            '联系人职位(通过联系人姓名匹配到的)',
             '手机号码状态',
             '手机微信号',
             '联系人名称(疑似/通过微信名匹配)',
@@ -443,6 +447,7 @@ class ToolsFileLists extends ModelBase
                        $datautem['url'],//'公开联系方式来源网页链接',
                        $datautem['lianxi'],//'公开联系方式',
                        $datautem['lianxitype'],//'公开联系方式类型(手机/座机/邮箱)',
+                       $datautem['POSITION'],//'通过姓名批匹配到的联系人职位,
                        $datautem['mobile_check_res_cname'].''.$datautem['mobile_check_res'].'',//'公开手机号码状态',
                    ];
 
