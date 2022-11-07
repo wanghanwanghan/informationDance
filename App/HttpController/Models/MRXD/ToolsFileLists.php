@@ -427,7 +427,10 @@ class ToolsFileLists extends ModelBase
 //               );
 
                //通过名称补全联系人职位信息 两次db请求：查询company_basic 查询 company_manager
-               $retData = LongXinService::complementEntLianXiPositionV2($retData, $entname);
+               if($fill_position_by_name){
+                   $retData = LongXinService::complementEntLianXiPositionV2($retData, $entname);
+               }
+
 //               CommonService::getInstance()->log4PHP(
 //                   json_encode([
 //                       __CLASS__.__FUNCTION__ .__LINE__,
@@ -462,6 +465,13 @@ class ToolsFileLists extends ModelBase
                        continue;
                    }
 
+                   //不需要补充微信名
+                   if(!$fill_weixin_by_phone){
+                       $tmpDataItem[] = '';//'公开手机微信号码',
+                       $tmpDataItem[] = '';//'联系人名称(疑似/通过微信名匹配)',
+                       fputcsv($f, $tmpDataItem);
+                   }
+
                    $matchedWeiXinName = WechatInfo::findByPhoneV2(($datautem['lianxi']));
                    CommonService::getInstance()->log4PHP(
                        json_encode([
@@ -481,6 +491,14 @@ class ToolsFileLists extends ModelBase
                    }
 
                    $tmpDataItem[] = $matchedWeiXinName['nickname'];//'公开手机微信号码',
+
+                   //不需要微信匹配职位
+                   if(!$fill_name_and_position_by_weixin){
+                       $tmpDataItem[] = '';
+                       fputcsv($f, $tmpDataItem);
+
+                       continue;
+                   }
 
                    //用微信名匹配联系人职位信息
                    $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV3($entname, $matchedWeiXinName['nickname']);
@@ -633,6 +651,14 @@ class ToolsFileLists extends ModelBase
                        continue;
                    }
 
+                    //不需要微信名
+                    if(!$fill_weixin_by_phone){
+                        $tmpDataItem[] = '';
+                        fputcsv($f, $tmpDataItem);
+
+                        continue;
+                    }
+
                    $matchedWeiXinName = WechatInfo::findByPhoneV2(($item));
                    CommonService::getInstance()->log4PHP(
                        json_encode([
@@ -652,6 +678,14 @@ class ToolsFileLists extends ModelBase
                    }
 
                    $tmpDataItem[] = $matchedWeiXinName['nickname'];//'公开手机微信号码',
+
+                   //不需要通过微信匹配职位信息
+                   if(!$fill_name_and_position_by_weixin){
+                       $tmpDataItem[] = '';
+                       fputcsv($f, $tmpDataItem);
+
+                       continue;
+                   }
 
                    //用微信名匹配联系人职位信息
                    $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV3($entname, $matchedWeiXinName['nickname']);
