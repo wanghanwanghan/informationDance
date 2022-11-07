@@ -2,9 +2,12 @@
 
 date_default_timezone_set('Asia/Shanghai');
 
+use App\HttpController\Models\Api\AntAuthList;
+use App\HttpController\Models\Api\AntEmptyLog;
 use App\HttpController\Models\Api\JinCaiTrace;
 use App\HttpController\Models\EntDb\EntInvoice;
 use App\HttpController\Models\EntDb\EntInvoiceDetail;
+use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\CreateMysqlOrm;
@@ -14,12 +17,16 @@ use App\HttpController\Service\CreateMysqlPoolForRDS3NicCode;
 use App\HttpController\Service\CreateMysqlPoolForProjectDb;
 use App\HttpController\Service\CreateMysqlPoolForRDS3SiJiFenLei;
 use App\HttpController\Service\CreateRedisPool;
+use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
+use App\HttpController\Service\MaYi\MaYiService;
+use App\HttpController\Service\OSS\OSSService;
 use Carbon\Carbon;
 use \EasySwoole\EasySwoole\Core;
 use App\HttpController\Service\CreateDefine;
 use \EasySwoole\Component\Process\Config;
 use \EasySwoole\Component\Process\AbstractProcess;
+use wanghanwanghan\someUtils\control;
 
 require_once './vendor/autoload.php';
 require_once './bootstrap.php';
@@ -28,6 +35,11 @@ Core::getInstance()->initialize();
 
 class jincai_shoudong extends AbstractProcess
 {
+    public $currentAesKey = 'fjgh758GDBZhdi34';
+    public $iv = '1234567890abcdef';
+    public $oss_bucket = 'invoice-mrxd';
+    public $oss_expire_time = 86400 * 60;
+
     function do_strtr(?string $str): string
     {
         $str = strtr($str, [
@@ -50,9 +62,167 @@ class jincai_shoudong extends AbstractProcess
 
     static $hahaha = [];
 
+    //上传到oss 发票已经入完mysql
+    function sendToOSS($NSRSBH, $bigKprq): bool
+    {
+        //只有蚂蚁的税号才上传oss
+        //蚂蚁区块链dev id 36
+        //蚂蚁区块链pre id 41
+        //蚂蚁区块链pro id 42
+
+        //每个文件存多少张发票
+        $dataInFile = 3000;
+
+        $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
+        is_dir($store) || mkdir($store, 0755, true);
+
+        //取全部发票写入文件
+        $total = EntInvoice::create()
+            ->addSuffix($NSRSBH, 'test')
+            ->where('nsrsbh', $NSRSBH)
+            ->count();
+
+        //随机文件名
+        $fileSuffix = control::getUuid(8);
+
+        if (empty($total)) {
+            $filename = "{$NSRSBH}_page_1_{$fileSuffix}.json";
+            file_put_contents($store . $filename, '');
+        } else {
+            $totalPage = $total / $dataInFile + 1;
+            //每个文件存3000张发票
+            for ($page = 1; $page <= $totalPage; $page++) {
+                //每个文件存3000张发票
+                $filename = "{$NSRSBH}_page_{$page}_{$fileSuffix}.json";
+                $offset = ($page - 1) * $dataInFile;
+                $list = EntInvoice::create()
+                    ->addSuffix($NSRSBH, 'test')
+                    ->where('nsrsbh', $NSRSBH)
+                    ->field([
+                        'fpdm',//
+                        'fphm',//
+                        'kplx',//
+                        'xfsh',//
+                        'xfmc',//
+                        'xfdzdh',//
+                        'xfyhzh',//
+                        'gfsh',//
+                        'gfmc',//
+                        'gfdzdh',//
+                        'gfyhzh',//
+                        'kpr',//
+                        'skr',//
+                        'fhr',//
+                        'yfpdm',
+                        'yfphm',
+                        'je',//
+                        'se',//
+                        'jshj',//
+                        'bz',//
+                        'zfbz',//
+                        'zfsj',//
+                        'kprq',//
+                        'fplx',//
+                        'fpztDm',//
+                        'slbz',
+                        'rzdklBdjgDm',
+                        'rzdklBdrq',
+                        'direction',
+                        'nsrsbh',
+                    ])->limit($offset, $dataInFile)->all();
+                //没有数据了
+                if (empty($list)) break;
+                foreach ($list as $oneInv) {
+                    //每张添加明细
+                    $detail = EntInvoiceDetail::create()
+                        ->addSuffix($oneInv->getAttr('fpdm'), $oneInv->getAttr('fphm'), 'test')
+                        ->where(['fpdm' => $oneInv->getAttr('fpdm'), 'fphm' => $oneInv->getAttr('fphm')])
+                        ->field([
+                            'spbm',//
+                            'mc',//
+                            'jldw',//
+                            'shul',//
+                            'je',//
+                            'sl',//
+                            'se',//
+                            'mxxh',//
+                            'dj',//
+                            'ggxh',//
+                        ])->all();
+                    empty($detail) ? $oneInv->fpxxMxs = null : $oneInv->fpxxMxs = $detail;
+                }
+                $content = jsonEncode($list, false);
+                //AES-128-CTR
+                $content = base64_encode(openssl_encrypt(
+                    $content,
+                    'AES-128-CTR',
+                    $this->currentAesKey,
+                    OPENSSL_RAW_DATA,
+                    $this->iv
+                ));
+                file_put_contents($store . $filename, $content . PHP_EOL);
+            }
+        }
+
+        //上传oss
+        $file_arr = [];
+
+        if ($dh = opendir($store)) {
+            $ignore = [
+                '.', '..', '.gitignore',
+            ];
+            while (false !== ($file = readdir($dh))) {
+                if (!in_array($file, $ignore, true)) {
+                    if (strpos($file, $fileSuffix) !== false) {
+                        CommonService::getInstance()->log4PHP($file, 'info', 'upload_oss.log');
+                        try {
+                            $oss = new OSSService();
+                            $file_arr[] = $oss->doUploadFile(
+                                $this->oss_bucket,
+                                Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $file,
+                                $store . $file,
+                                $this->oss_expire_time
+                            );
+                        } catch (\Throwable $e) {
+                            $file = $e->getFile();
+                            $line = $e->getLine();
+                            $msg = $e->getMessage();
+                            $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+                            CommonService::getInstance()->log4PHP($content, 'sendToOSS', 'send_fapiao_err.log');
+                        }
+                    }
+                }
+            }
+            AntAuthList::create()
+                ->where('socialCredit', $NSRSBH)
+                ->update([
+                    'lastReqTime' => time(),
+                    'lastReqUrl' => empty($file_arr) ? '' : implode(',', $file_arr),
+                    'big_kprq' => $bigKprq
+                ]);
+        }
+        closedir($dh);
+
+        return true;
+    }
+
     protected function run($arg)
     {
         // $this->addTaskOne(394);// 381 394
+
+        $list = JinCaiTrace::create()->all();
+
+        foreach ($list as $oneData) {
+
+            $socialCredit = $oneData->getAttr('socialCredit');
+
+            $this->sendToOSS($socialCredit, '');
+
+
+        }
+
+        echo 'send shimashita' . PHP_EOL;
+        exit;
 
         // 这6个有问题
         $error_list = [
@@ -74,7 +244,7 @@ class jincai_shoudong extends AbstractProcess
 
             // ================================================================================================
             $socialCredit = $one->getAttr('socialCredit');
-            if ($socialCredit !== '91330382145505130Q' && $continue_at === 0) {
+            if ($socialCredit !== '91320205628283253Y' && $continue_at === 0) {
                 continue;
             }
             // ================================================================================================
@@ -96,7 +266,7 @@ class jincai_shoudong extends AbstractProcess
 
 
                 // ================================================================================================
-                if ($wupanTraceNo !== '91330382145505130Q1666686248077' && $wupan_continue_at === 0) {
+                if ($wupanTraceNo !== '91320205628283253Y1666835506846' && $wupan_continue_at === 0) {
                     continue;
                 }
                 $wupan_continue_at = 1;
@@ -131,6 +301,7 @@ class jincai_shoudong extends AbstractProcess
             }
         }
 
+        echo 'wanghan123';
     }
 
     function getData(string $nsrsbh, string $province, string $traceNo)
