@@ -31,7 +31,7 @@ class CompanyManager extends ModelBase
     public static function findByCompanyId($id){
         $res =  CompanyManager::create()
             ->where('companyid',$id)
-            ->get();
+            ->all();
         return $res;
     }
 
