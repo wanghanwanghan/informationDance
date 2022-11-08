@@ -388,18 +388,17 @@ class ToolsFileLists extends ModelBase
 
                // 企业名称：$dataItem[0]
                $entname = $dataItem[0];
-               if(empty($entname)){
-//                    CommonService::getInstance()->log4PHP(
-//                        json_encode([
-//                            __CLASS__.__FUNCTION__ .__LINE__,
-//                            'pullGongKaiContacts_empty_ent_name' => [
-//                                '$entname' => $entname,
-//                            ]
-//                        ])
-//                    );
-                   continue;
+               $code = $dataItem[1];
+               if($code){
+                   $companyRes = CompanyBasic::findByCode($code);
+               }else{
+                   $companyRes = CompanyBasic::findByName($entname);
                }
 
+               if(empty($companyRes)){
+                   continue;
+               }
+               $entname = $companyRes->ENTNAME;
                //取公开联系人信息
                $retData =  (new LongXinService())
                    ->setCheckRespFlag(true)
@@ -585,26 +584,25 @@ class ToolsFileLists extends ModelBase
 
                // 企业名称：$dataItem[0]
                $entname = $dataItem[0];
-               $companyRes = CompanyBasic::findByName($entname);
-               if(empty($entname)){
-//                    CommonService::getInstance()->log4PHP(
-//                        json_encode([
-//                            __CLASS__.__FUNCTION__ .__LINE__,
-//                            'pullFeiGongKaiContacts_empty_ent_name' => [
-//                                '$entname' => $entname,
-//                            ]
-//                        ])
-//                    );
+               $code = $dataItem[1];
+
+
+               if($code){
+
+                   $companyRes = CompanyBasic::findByCode($code);
+               }
+               else{
+                   $companyRes = CompanyBasic::findByName($entname);
+               }
+
+               if(empty($companyRes)){
+
                    continue;
                }
 
                //取公开联系人信息
-               $companyModel = CompanyBasic::findByName($entname);
-               if(empty($companyModel)){
-                   continue;
-               }
 
-               $allConatcts = CompanyClue::getAllContactByCode($companyModel->UNISCID);
+               $allConatcts = CompanyClue::getAllContactByCode($companyRes->UNISCID);
                CommonService::getInstance()->log4PHP(
                    json_encode([
                        __CLASS__.__FUNCTION__ .__LINE__,

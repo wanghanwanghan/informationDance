@@ -222,7 +222,7 @@ class ToolsController extends ControllerBase
                 'state'=>ToolsFileLists::$state_init,
             ]
         );
-        
+
         $res = QueueLists::addRecord(
             [
                 'name' => '拉取公开联系人',
