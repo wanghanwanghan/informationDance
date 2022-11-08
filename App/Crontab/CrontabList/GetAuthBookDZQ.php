@@ -90,7 +90,7 @@ Eof;
                 $fileData = [];
                 $flieDetail = [];
                 if ($oneEntInfo['dianZiQian_id'] >0) {
-                    CommonService::getInstance()->log4PHP([$data], 'info', 'DZQemptyAntAuthSealDetail');
+                    CommonService::getInstance()->log4PHP($oneEntInfo, 'info', 'DZQemptyAntAuthSeal');
                     $u = $this->getDataSealUrl($oneEntInfo['dianZiQian_id']);
                     if(empty($u)){
                         continue;
