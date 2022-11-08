@@ -90,12 +90,13 @@ Eof;
                 $fileData = [];
                 $flieDetail = [];
                 if ($oneEntInfo['dianZiQian_id'] >0) {
-                    CommonService::getInstance()->log4PHP($oneEntInfo, 'info', 'DZQemptyAntAuthSeal');
+
                     $u = $this->getDataSealUrl($oneEntInfo['dianZiQian_id']);
                     if(empty($u)){
                         continue;
                     }
                     $url['2'] = $u;
+                    CommonService::getInstance()->log4PHP([$oneEntInfo,$u], 'info', 'DZQemptyAntAuthSeal');
                 }
                 if(!empty($DetailList))
                 {
@@ -173,9 +174,10 @@ Eof;
                 AntAuthList::create()->where([
                                                  'id' => $oneEntInfo['id'],
                                                  'dianZiQian_id' => $oneEntInfo['dianZiQian_id'],
+                                                 'dianZiQian_status' => 0
                                              ])->update([
                                                             'filePath' => $url['2'] ?? '',
-                                                            'dianZiQian_status' => 1
+                                                            'dianZiQian_status' => 1,
                                                         ]);
 
                 //蚂蚁没有传需要盖章的文件过来时，就不需要通知蚂蚁
