@@ -32,6 +32,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
 use Vtiful\Kernel\Format;
 
@@ -486,12 +487,23 @@ class ToolsController extends ControllerBase
 
     public function commonToos(){
         $requestData =  $this->getRequestData();
-        $succeedFiels = [];
+        $key = trim($requestData['key']);
+        //通过企业名称拉取公开联系人
+        if($requestData['type'] == 5 ){
+
+            $key1 = $key;
+
+            $response = LongXinService::getLianXiByNameV2(trim($requestData['key']));
+        }
 
         return $this->writeJson(200, [], [
             [
-                'params'=>'XXXX',
-                'return_datas_json'=>'{"xx","XXX"}',
+                'params'=> [
+                    '$key1'=>$key1,
+                    '$key2'=>$key2,
+                    '$key3'=>$key3,
+                ],
+                'return_datas_json'=>is_array($response)?json_encode($response):$response,
             ]
         ],'成功 ');
     }
