@@ -488,13 +488,26 @@ class ToolsController extends ControllerBase
     public function commonToos(){
         $requestData =  $this->getRequestData();
         $key = trim($requestData['key']);
-        //通过企业名称拉取公开联系人
+        //通过企业名称查询我们库里的企业管理人(company_manager)
         if($requestData['type'] == 5 ){
 
             $key1 = $key;
 
-            $response = LongXinService::getLianXiByNameV2(trim($requestData['key']));
+            $response = LongXinService::getLianXiByNameV2($key1);
         }
+
+        //通过信用代码查询非公开联系人
+        if($requestData['type'] == 10 ){ 
+            $key1 = $key;
+            $response = CompanyClue::getAllContactByCode($key1);
+            $response = [
+                '非公开联系人来源1（pub）'=>$response['pub'],
+                '非公开联系人来源2（pri）'=>$response['pri'],
+                '非公开联系人来源3（qcc）'=>$response['qcc'],
+            ];
+        }
+
+        $all =   CompanyClue::getAllContactByCode($this->getRequestData('getAllContactByCode'));
 
         return $this->writeJson(200, [], [
             [
@@ -511,8 +524,8 @@ class ToolsController extends ControllerBase
     public function commonToosOptions(){
 
         return $this->writeJson(200, [], [
-            5 => '通过企业名称拉取公开联系人',
-            10 => '通过企业名称拉取企业管理人(company_manager)',
+            5 => '通过企业名称查询我们库里的企业管理人(company_manager)',
+            10 => '通过信用代码查询非公开联系人',
         ],'成功');
     }
 
