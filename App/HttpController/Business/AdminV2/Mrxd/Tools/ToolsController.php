@@ -514,7 +514,17 @@ class ToolsController extends ControllerBase
                 'mobiles' => $key1,
             ]);
         }
-        
+
+        // 根据微信名匹配企业对应的联系人（入参格式:企业名&&&微信名）
+        if($requestData['type'] == 15 ){
+            $arr = explode('&&&',$key);
+            $key1 = $arr[0];
+            $key2 = $arr[1];
+
+            $response = (new XinDongService())->matchContactNameByWeiXinNameV3($key1, $key2);
+        }
+
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -533,6 +543,7 @@ class ToolsController extends ControllerBase
             5 => '通过企业名称查询我们库里的企业管理人(company_manager)',
             10 => '通过信用代码查询非公开联系人',
             15 => '通过手机号检测号码状态（多个手机号英文逗号分隔）',
+            20 => '根据微信名匹配企业对应的联系人（入参格式:企业名&&&微信名）',
         ],'成功');
     }
 
