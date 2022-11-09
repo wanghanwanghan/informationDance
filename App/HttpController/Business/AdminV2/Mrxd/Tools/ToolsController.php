@@ -489,6 +489,7 @@ class ToolsController extends ControllerBase
     public function commonToos(){
         $requestData =  $this->getRequestData();
         $key = trim($requestData['key']);
+        $arr = explode('&&&',$key);
         //通过企业名称查询我们库里的企业管理人(company_manager)
         if($requestData['type'] == 5 ){
 
@@ -517,7 +518,7 @@ class ToolsController extends ControllerBase
 
         // 根据微信名匹配企业对应的联系人（入参格式:企业名&&&微信名）
         if($requestData['type'] == 15 ){
-            $arr = explode('&&&',$key);
+
             $key1 = $arr[0];
             $key2 = $arr[1];
 
@@ -531,6 +532,7 @@ class ToolsController extends ControllerBase
                     '$key1'=>$key1,
                     '$key2'=>$key2,
                     '$key3'=>$key3,
+                    '$arr'=>$arr,
                 ],JSON_UNESCAPED_UNICODE),
                 'return_datas_json'=>is_array($response)?json_encode($response,JSON_UNESCAPED_UNICODE):$response,
             ]
