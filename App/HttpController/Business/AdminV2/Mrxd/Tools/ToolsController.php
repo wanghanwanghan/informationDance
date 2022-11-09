@@ -512,7 +512,7 @@ class ToolsController extends ControllerBase
         }
 
         // 根据微信名匹配企业对应的联系人（入参格式:企业名&&&微信名）
-        if($requestData['type'] == 15 ){
+        if($requestData['type'] == 20 ){
 
             $response = (new XinDongService())->matchContactNameByWeiXinNameV3($arr[0], $arr[1]);
         }
