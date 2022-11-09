@@ -548,6 +548,7 @@ class ToolsFileLists extends ModelBase
         $fill_weixin_by_phone = $params['fill_weixin_by_phone'];
         //通过微信补全联系人姓名和职位
         $fill_name_and_position_by_weixin = $params['fill_name_and_position_by_weixin'];
+        $filter_qcc_phone = $params['filter_qcc_phone'];
 
        $filesDatas = self::findBySql("
             WHERE touch_time < 1
@@ -603,6 +604,24 @@ class ToolsFileLists extends ModelBase
                //取公开联系人信息
 
                $allConatcts = CompanyClue::getAllContactByCode($companyRes->UNISCID);
+               $tmpContacts = [];
+               foreach ($allConatcts['xn'] as $tmpPhone){
+                   if(
+                       !in_array($tmpPhone,$allConatcts['qcc'])
+                   ){
+                       $tmpContacts[$tmpPhone] = $tmpPhone;
+                   }
+               }
+               $allConatcts['xn'] = $tmpContacts;
+              if(empty($allConatcts['xn'])){
+                  $tmpDataItem = [
+                      $entname,//企业名称
+                      $companyRes->UNISCID."\t",//信用代码
+                  ];
+                  fputcsv($f, $tmpDataItem);
+                  continue;
+              }
+
                CommonService::getInstance()->log4PHP(
                    json_encode([
                        __CLASS__.__FUNCTION__ .__LINE__,
