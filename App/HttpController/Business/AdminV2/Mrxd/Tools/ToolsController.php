@@ -31,6 +31,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceExportRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\NewFinanceData;
+use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
@@ -497,7 +498,7 @@ class ToolsController extends ControllerBase
         }
 
         //通过信用代码查询非公开联系人
-        if($requestData['type'] == 10 ){ 
+        if($requestData['type'] == 10 ){
             $key1 = $key;
             $response = CompanyClue::getAllContactByCode($key1);
             $response = [
@@ -506,9 +507,14 @@ class ToolsController extends ControllerBase
                 '非公开联系人来源3（qcc）'=>$response['qcc'],
             ];
         }
-
-        $all =   CompanyClue::getAllContactByCode($this->getRequestData('getAllContactByCode'));
-
+        //通过手机号检测号码状态（多个手机号英文逗号分隔）
+        if($requestData['type'] == 15 ){
+            $key1 = $key;
+            $response = (new ChuangLanService())->getCheckPhoneStatus([
+                'mobiles' => $key1,
+            ]);
+        }
+        
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -526,6 +532,7 @@ class ToolsController extends ControllerBase
         return $this->writeJson(200, [], [
             5 => '通过企业名称查询我们库里的企业管理人(company_manager)',
             10 => '通过信用代码查询非公开联系人',
+            15 => '通过手机号检测号码状态（多个手机号英文逗号分隔）',
         ],'成功');
     }
 
