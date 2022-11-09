@@ -492,16 +492,12 @@ class ToolsController extends ControllerBase
         $arr = explode('&&&',$key);
         //通过企业名称查询我们库里的企业管理人(company_manager)
         if($requestData['type'] == 5 ){
-
-            $key1 = $key;
-
-            $response = LongXinService::getLianXiByNameV2($key1);
+            $response = LongXinService::getLianXiByNameV2($key);
         }
 
         //通过信用代码查询非公开联系人
         if($requestData['type'] == 10 ){
-            $key1 = $key;
-            $response = CompanyClue::getAllContactByCode($key1);
+            $response = CompanyClue::getAllContactByCode($key);
             $response = [
                 '非公开联系人来源1（pub）'=>$response['pub'],
                 '非公开联系人来源2（pri）'=>$response['pri'],
@@ -510,30 +506,26 @@ class ToolsController extends ControllerBase
         }
         //通过手机号检测号码状态（多个手机号英文逗号分隔）
         if($requestData['type'] == 15 ){
-            $key1 = $key;
             $response = (new ChuangLanService())->getCheckPhoneStatus([
-                'mobiles' => $key1,
+                'mobiles' => $key,
             ]);
         }
 
         // 根据微信名匹配企业对应的联系人（入参格式:企业名&&&微信名）
-        if($requestData['type'] == 15 ){
+        if($requestData['type'] == 15 ){ 
 
-            $key1 = $arr[0];
-            $key2 = $arr[1];
-
-            $response = (new XinDongService())->matchContactNameByWeiXinNameV3($key1, $key2);
+            $response = (new XinDongService())->matchContactNameByWeiXinNameV3($arr[0], $arr[1]);
         }
 
 
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
-                    '$key1'=>$key1,
-                    '$key2'=>$key2,
-                    '$key3'=>$key3,
+                    '$key'=>$key,
                     '$arr'=>$arr,
                     '$arr0'=>$arr[0],
+                    '$arr1'=>$arr[1],
+                    '$arr2'=>$arr[2],
                 ],JSON_UNESCAPED_UNICODE),
                 'return_datas_json'=>is_array($response)?json_encode($response,JSON_UNESCAPED_UNICODE):$response,
             ]
