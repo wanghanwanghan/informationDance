@@ -3420,7 +3420,13 @@ class XinDongService extends ServiceBase
 
         //获取所有联系人
         $staffsDatas = LongXinService::getLianXiByNameV2($entName);
-
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    '$staffsDatas'=>$staffsDatas,
+                ],JSON_UNESCAPED_UNICODE
+            )
+        );
         foreach ($staffsDatas as $staffsDataItem) {
             $tmpName = trim($staffsDataItem['NAME']);
             CommonService::getInstance()->log4PHP(
