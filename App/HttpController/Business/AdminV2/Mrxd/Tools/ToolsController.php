@@ -533,6 +533,7 @@ class ToolsController extends ControllerBase
                     '$key2'=>$key2,
                     '$key3'=>$key3,
                     '$arr'=>$arr,
+                    '$arr0'=>$arr[0],
                 ],JSON_UNESCAPED_UNICODE),
                 'return_datas_json'=>is_array($response)?json_encode($response,JSON_UNESCAPED_UNICODE):$response,
             ]
