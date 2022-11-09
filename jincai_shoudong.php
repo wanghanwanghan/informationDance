@@ -40,6 +40,24 @@ class jincai_shoudong extends AbstractProcess
     public $oss_bucket = 'invoice-mrxd';
     public $oss_expire_time = 86400 * 60;
 
+    public $out_list = [
+        '北京分贝通科技有限公司|91110108MA00654L08|北京市|北京市',
+        '北京分贝商贸有限公司|91110105MA00823H4A|北京市|北京市',
+        '北京分贝国际旅行社有限公司|91110105MA004MNF8T|北京市|北京市',
+//        '北京金堤科技有限公司|9111010831813798XE|北京市|北京市',// 设置了平台密码
+        '北京金堤征信服务有限公司|91110111MA0076A807|北京市|北京市',
+//        '北京商事创新科技有限公司|91110108MA0206K96J|北京市|北京市',// 非一般纳税人
+        '北京天眼查科技有限公司|91110108MA00FP4F5A|北京市|北京市',
+        '海口天眼查科技有限公司|91460100MAA8YF8T7L|海南省|海口市',
+        '企查查科技有限公司|91320594088140947F|江苏省|苏州市',
+        '人民数据管理（北京）有限公司|91640500MA774K1K2E|北京市|北京市',
+        '苏州贝尔塔数据技术有限公司|913205943021120597|江苏省|苏州市',
+        '苏州客找找网络科技有限公司|91320594MA21M50H4M|江苏省|苏州市',
+        '苏州新歌科技有限责任公司|91320594MA26UTJJ53|江苏省|苏州市',
+        '盐城金堤科技有限公司|91320913MA1MA43G41|江苏省|盐城市',
+        '元素征信有限责任公司|911101080628135175|北京市|北京市',
+    ];
+
     function do_strtr(?string $str): string
     {
         $str = strtr($str, [
@@ -310,13 +328,6 @@ class jincai_shoudong extends AbstractProcess
 
     protected function run($arg)
     {
-        // $this->addTaskOne(394);// 381 394
-
-        $this->sendToAnt();
-
-        echo 'send shimashita' . PHP_EOL;
-        exit;
-
         // 这6个有问题
         $error_list = [
             '91320106339391784W',// 部分任务超2000
@@ -336,10 +347,10 @@ class jincai_shoudong extends AbstractProcess
 
 
             // ================================================================================================
-            $socialCredit = $one->getAttr('socialCredit');
-            if ($socialCredit !== '91320205628283253Y' && $continue_at === 0) {
-                continue;
-            }
+            //$socialCredit = $one->getAttr('socialCredit');
+            //if ($socialCredit !== '91320205628283253Y' && $continue_at === 0) {
+            //    continue;
+            //}
             // ================================================================================================
 
 
@@ -359,9 +370,9 @@ class jincai_shoudong extends AbstractProcess
 
 
                 // ================================================================================================
-                if ($wupanTraceNo !== '91320205628283253Y1666835506846' && $wupan_continue_at === 0) {
-                    continue;
-                }
+                //if ($wupanTraceNo !== '91320205628283253Y1666835506846' && $wupan_continue_at === 0) {
+                //    continue;
+                //}
                 $wupan_continue_at = 1;
                 // ================================================================================================
 
@@ -375,26 +386,26 @@ class jincai_shoudong extends AbstractProcess
                     break;
                 }
 
-                // 取数
-                $w = [
-                    $socialCredit,
-                    Carbon::now()->format('H:i:s'),
-                    $province,
-                    $wupanTraceNo
-                ];
-
-                echo jsonEncode($w, false) . PHP_EOL;
-
-                $this->getData($socialCredit, $province, $wupanTraceNo);
-
-                $continue_at = 1;
-
-                sleep(2);
+//                // 取数
+//                $w = [
+//                    $socialCredit,
+//                    Carbon::now()->format('H:i:s'),
+//                    $province,
+//                    $wupanTraceNo
+//                ];
+//
+//                echo jsonEncode($w, false) . PHP_EOL;
+//
+//                $this->getData($socialCredit, $province, $wupanTraceNo);
+//
+//                $continue_at = 1;
+//
+//                sleep(2);
 
             }
         }
 
-        echo 'wanghan123';
+        echo 'wanghan123' . PHP_EOL;
     }
 
     function getData(string $nsrsbh, string $province, string $traceNo)
@@ -629,9 +640,55 @@ class jincai_shoudong extends AbstractProcess
 
     function addTask()
     {
-        $list = \App\HttpController\Models\Api\AntAuthList::create()
-            ->where('id', $all, 'IN')
+//        foreach ($this->out_list as $item) {
+//
+//            $arr = explode('|', $item);
+//
+//            $ywBody = [
+//                "kprqq" => "2020-12-01",
+//                "kprqz" => "2022-10-31",
+//                "nsrsbh" => "{$arr[1]}",
+//            ];
+//
+//            for ($try = 3; $try--;) {
+//                // 发送 试3次
+//                $addTaskInfo = (new JinCaiShuKeService())->addTask(
+//                    $arr[1],
+//                    $arr[2],
+//                    $arr[3],
+//                    $ywBody
+//                );
+//                if (isset($addTaskInfo['code']) && strlen($addTaskInfo['code']) > 1) {
+//                    break;
+//                }
+//                \co::sleep(120);
+//            }
+//
+//            JinCaiTrace::create()->data([
+//                'entName' => $arr[0],
+//                'socialCredit' => $arr[1],
+//                'code' => $addTaskInfo['code'] ?? '未返回',
+//                'type' => 1,// 无盘
+//                'province' => $addTaskInfo['result']['province'] ?? '未返回',
+//                'taskCode' => $addTaskInfo['result']['taskCode'] ?? '未返回',
+//                'taskStatus' => $addTaskInfo['result']['taskStatus'] ?? '未返回',
+//                'traceNo' => $addTaskInfo['result']['traceNo'] ?? '未返回',
+//                'kprqq' => '2020-12-01',
+//                'kprqz' => '2022-10-31',
+//            ])->save();
+//
+//            echo $item . PHP_EOL;
+//
+//            \co::sleep(120);
+//
+//        }
+
+        $list = AntAuthList::create()
+            ->where('id', 684, '<=')
+            ->where('id', 450, '>=')
+            ->where('isElectronics', '%成功', 'like')
             ->all();
+
         foreach ($list as $target) {
             // 开票日期止
             $kprqz = Carbon::now()->subMonths(1)->endOfMonth()->timestamp;
@@ -679,6 +736,7 @@ class jincai_shoudong extends AbstractProcess
                     'kprqq' => $kprqq,
                     'kprqz' => $kprqz,
                 ])->save();
+                \co::sleep(120);
             } catch (\Throwable $e) {
                 $file = $e->getFile();
                 $line = $e->getLine();
@@ -687,6 +745,7 @@ class jincai_shoudong extends AbstractProcess
                 CommonService::getInstance()->log4PHP($content, 'try-catch', 'GetJinCaiTrace.log');
             }
         }
+
         dd('完成');
     }
 
