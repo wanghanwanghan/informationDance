@@ -269,7 +269,7 @@ class GetInvData extends ProcessBase
                     //每张添加明细
                     $detail = EntInvoiceDetail::create()
                         ->addSuffix($oneInv->getAttr('fpdm'), $oneInv->getAttr('fphm'), 'wusuowei')
-                        ->where(['fpdm' => $oneInv->getAttr('fpdm') - 0, 'fphm' => $oneInv->getAttr('fphm') - 0])
+                        ->where(['fpdm' => $oneInv->getAttr('fpdm'), 'fphm' => $oneInv->getAttr('fphm')])
                         ->field([
                             'spbm',//
                             'mc',//
