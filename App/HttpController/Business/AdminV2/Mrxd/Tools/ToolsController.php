@@ -498,12 +498,12 @@ class ToolsController extends ControllerBase
 
         return $this->writeJson(200, [], [
             [
-                'params'=> [
+                'params'=> json_encode([
                     '$key1'=>$key1,
                     '$key2'=>$key2,
                     '$key3'=>$key3,
-                ],
-                'return_datas_json'=>is_array($response)?json_encode($response):$response,
+                ],JSON_UNESCAPED_UNICODE),
+                'return_datas_json'=>is_array($response)?json_encode($response,JSON_UNESCAPED_UNICODE):$response,
             ]
         ],'成功 ');
     }
