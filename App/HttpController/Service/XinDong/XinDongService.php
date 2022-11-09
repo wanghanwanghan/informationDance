@@ -3423,15 +3423,29 @@ class XinDongService extends ServiceBase
 
         foreach ($staffsDatas as $staffsDataItem) {
             $tmpName = trim($staffsDataItem['NAME']);
+            CommonService::getInstance()->log4PHP(
+               json_encode(
+                   [
+                       '$tmpName'=>$tmpName,
+                   ],JSON_UNESCAPED_UNICODE
+               )
+            );
             if (!$tmpName) {
                 continue;
             };
 
             $res = (new XinDongService())->matchNamesV2($tmpName, $WeiXin);
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        '$tmpName'=>$tmpName,
+                        '$WeiXin'=>$WeiXin,
+                        '$res'=>$res,
+                    ],JSON_UNESCAPED_UNICODE
+                )
+            );
             if ($res['res'] == '成功') {
-//                CommonService::getInstance()->log4PHP(
-//                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin
-//                );
+
                 return [
                     'data' => $staffsDataItem,
                     'match_res' => $res
