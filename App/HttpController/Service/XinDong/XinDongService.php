@@ -3206,6 +3206,17 @@ class XinDongService extends ServiceBase
 
         //拼音相似度匹配  张三0808    张三
         similar_text(PinYinService::getPinyin($tobeMatch), PinYinService::getPinyin($target), $perc);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'similar_text' => [
+                    '$perc' => $perc,
+                    '$tobeMatch'=>$tobeMatch,
+                    '$target'=>$target,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         if ($perc >= 90) {
             return [
                 'type' => '近似匹配',
@@ -3420,36 +3431,16 @@ class XinDongService extends ServiceBase
 
         //获取所有联系人
         $staffsDatas = LongXinService::getLianXiByNameV2($entName);
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    '$staffsDatas'=>$staffsDatas,
-                ],JSON_UNESCAPED_UNICODE
-            )
-        );
+
         foreach ($staffsDatas as $staffsDataItem) {
             $tmpName = trim($staffsDataItem['NAME']);
-            CommonService::getInstance()->log4PHP(
-               json_encode(
-                   [
-                       '$tmpName'=>$tmpName,
-                   ],JSON_UNESCAPED_UNICODE
-               )
-            );
+
             if (!$tmpName) {
                 continue;
             };
 
             $res = (new XinDongService())->matchNamesV2($tmpName, $WeiXin);
-            CommonService::getInstance()->log4PHP(
-                json_encode(
-                    [
-                        '$tmpName'=>$tmpName,
-                        '$WeiXin'=>$WeiXin,
-                        '$res'=>$res,
-                    ],JSON_UNESCAPED_UNICODE
-                )
-            );
+
             if ($res['res'] == '成功') {
 
                 return [

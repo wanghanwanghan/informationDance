@@ -517,6 +517,12 @@ class ToolsController extends ControllerBase
             $response = (new XinDongService())->matchContactNameByWeiXinNameV3($arr[0], $arr[1]);
         }
 
+        // 根据微信名匹配中文姓名（入参格式:中文姓名&&&微信名）
+        if($requestData['type'] == 25 ){
+
+            $response = (new XinDongService())->matchNamesV2($arr[0], $arr[1]);
+        }
+
 
         return $this->writeJson(200, [], [
             [
@@ -539,6 +545,7 @@ class ToolsController extends ControllerBase
             10 => '通过信用代码查询非公开联系人',
             15 => '通过手机号检测号码状态（多个手机号英文逗号分隔）',
             20 => '根据微信名匹配企业对应的联系人（入参格式:企业名&&&微信名）',
+            25 => '根据微信名匹配中文姓名（入参格式:中文姓名&&&微信名）',
         ],'成功');
     }
 
