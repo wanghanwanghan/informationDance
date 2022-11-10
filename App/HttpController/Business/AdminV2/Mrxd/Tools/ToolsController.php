@@ -903,6 +903,13 @@ class ToolsController extends ControllerBase
             $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
         }
 
+        //根据信用代码查询所得税（入参格式:信用代码）
+        if($requestData['type'] == 80 ){
+            $response = (new GuoPiaoService())->getEssential(
+                $key
+            );
+        }
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -937,6 +944,8 @@ class ToolsController extends ControllerBase
             75 => '根据信用代码导出增值税（入参格式:信用代码）',
             80 => '根据信用代码查询所得税（入参格式:信用代码）',
             85 => '根据信用代码导出所得税（入参格式:信用代码）',
+            90 => '根据信用代码查询企业税务基本信息（入参格式:信用代码）',
+            95 => '根据信用代码导出企业税务基本信息（入参格式:信用代码）',
         ],'成功');
     }
 
