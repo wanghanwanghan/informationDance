@@ -544,11 +544,68 @@ class ToolsController extends ControllerBase
         }
 
         //根据信用代码导出最近两年进项发票（入参格式:信用代码）
-        if($requestData['type'] == 30 ){
+        if($requestData['type'] == 35 ){
             $response  = [];
 
             //写到csv里
             $fileName = date('YmdHis')."_最近两年进项发票.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+            $allFields = [
+                "总金额",
+                "日期",
+                "购买方",
+                "销售方",
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+
+            // $startDate 往前推一个月  推两年
+            //纳税数据取得是两年的数据 取下开始结束时间
+            $lastMonth = date("Y-m-01",strtotime("-1 month"));
+            //两年前的开始月
+            $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+                $key,
+                $last2YearStart,
+                $lastMonth
+            );
+            foreach ($allInvoiceDatas as $InvoiceData){
+                fputcsv($f, $InvoiceData);
+            }
+
+            $response[] = "http://openapi.meirixindong.com/Static/OtherFile/".$fileName;
+        }
+
+        //根据信用代码取最近两年销项发票（入参格式:信用代码）
+        if($requestData['type'] == 40 ){
+            $response  = [];
+            // $startDate 往前推一个月  推两年
+            //纳税数据取得是两年的数据 取下开始结束时间
+            $lastMonth = date("Y-m-01",strtotime("-1 month"));
+            //两年前的开始月
+            $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+                $key,
+                $last2YearStart,
+                $lastMonth,
+                2
+            );
+            foreach ($allInvoiceDatas as $InvoiceData){
+                $response[] = $InvoiceData;
+            }
+        }
+
+        //根据信用代码导出最近两年销项发票（入参格式:信用代码）
+        if($requestData['type'] == 45 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."_最近两年销项发票.csv";
             $f = fopen(OTHER_FILE_PATH.$fileName, "w");
             fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
             $allFields = [
