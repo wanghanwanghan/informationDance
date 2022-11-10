@@ -871,7 +871,11 @@ class ToolsFileLists extends ModelBase
                    !empty($phone2) &&
                    $phone2!='-'
                ){
-                   $companysContacts[$companyCode][$phone2] = $phone2;
+
+                   $tmpArr = explode('; ',$phone2);
+                   foreach ($tmpArr as $tmpPhone){
+                       $companysContacts[$companyCode][$tmpPhone] = $tmpPhone;
+                   }
                }
 
                if($i%100==0){
@@ -922,7 +926,6 @@ class ToolsFileLists extends ModelBase
                        ])
                    );
                }
-
            }
 
 
