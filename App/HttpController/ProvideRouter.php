@@ -59,7 +59,8 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/accountInfo', $prefix . 'accountInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/costRecord', $prefix . 'costRecord');
             $routeCollector->addRoute(['GET', 'POST'], '/gaiZhang', $prefix . 'gaiZhang');
-            $routeCollector->addRoute(['GET', 'POST'], '/getAuthFile2Id', $prefix . 'getAuthFile2Id');
+            $routeCollector->addRoute(['GET', 'POST'], '/gaiZhang2', $prefix . 'gaiZhang2');//通过传过来的文件盖企业章
+            $routeCollector->addRoute(['GET', 'POST'], '/getAuthFile2Id', $prefix . 'getAuthFile2Id');//
 
         });
         return true;

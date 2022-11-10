@@ -493,6 +493,57 @@ class DianZiQianService extends ServiceBase
         $id = DianZiQianAuth::create()->data($insertData)->save();
         return $id;
     }
+    //给传过来的pdf盖企业章
+    public function gaiZhang2($postData){
+        //创建个人签署人
+        $signerPersonres    = $this->signerPerson($postData);
+        $signerCodePersonal = $signerPersonres['result']['signerCode'] ?? "";
+        if ($signerPersonres['code'] != 200) return $signerPersonres;
+
+        //创建企业签署人
+        $signerEnterprise  = $this->signerEnterprise($postData);
+        $signerCodeEnt    = $signerEnterprise['result']['signerCode'] ?? "";
+        if ($signerEnterprise['code'] != 200) return $signerEnterprise;
+        //生成png
+        $getPng = $this->getPng($postData);
+        if ($getPng['code'] != 200) return $getPng;
+        //法人照片上传
+        list($personalSealCode, $errorData) = $this->personalSign($signerCodePersonal, $postData);
+        if (!empty($errorData)) return $errorData;
+
+        //企业上传印章
+        list($entSealCode, $errorData) = $this->entSign($signerCodeEnt, $postData);
+        if (!empty($errorData)) return $errorData;
+
+        //创建合同
+        $contractFile = $this->contractFile2($postData['file']);
+        $contractCode = $contractFile['result']['contractCode'] ?? "";
+        if ($contractFile['code'] != 200) return $contractFile;
+
+        $entTransactionCode = control::getUuid();
+        //自动签署企业章  signUrl
+        $entContractSignUrl = $this->contractSignAuto($signerCodeEnt, $contractCode, '北京每日信动科技有限公司',$entSealCode,$entTransactionCode);
+        if ($entContractSignUrl['code'] != 200) return $entContractSignUrl;
+        $personalTransactionCode = control::getUuid();
+
+        $insertData = [
+            'entName' => $postData['entName'],
+            "personName"   => $postData['legalPerson'],
+            "personIdCard" => $postData['idCard'],
+            'socialCredit' => $postData['socialCredit'],
+            'signerCodePersonal' => $signerCodePersonal,
+            'signerCodeEnt' => $signerCodeEnt,
+            'contractTemplateCode' => '',
+            'contractCode' => $contractCode,
+            'entSealCode' => $entSealCode,
+            'personalSealCode' => $personalSealCode,
+            'entTransactionCode' => $entTransactionCode,
+            'personalTransactionCode' => $personalTransactionCode
+        ];
+        $id = DianZiQianAuth::create()->data($insertData)->save();
+        CommonService::getInstance()->log4PHP([$id], 'info', 'mayilog');
+        return $id;
+    }
 
     public function gaiZhang($postData){
         //创建个人签署人
@@ -777,6 +828,20 @@ class DianZiQianService extends ServiceBase
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('file'));
         CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'signerPerson');
+        return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
+    }
+    /**
+     * 创建合同
+     */
+    public function contractFile2($file)
+    {
+        $path  = '/open-api-lite/contract/file';
+        $file  = STATIC_PATH . "AuthBookModel/".$file;
+        $param = $this->buildParam([], $path, ['fileName' => $file, 'key' => 'contractFile']);
+        $resp  = (new CoHttpClient())
+            ->useCache($this->curl_use_cache)
+            ->send($this->url . $path, $param, $this->getHeader('file'));
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'contractFile');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
     /**
