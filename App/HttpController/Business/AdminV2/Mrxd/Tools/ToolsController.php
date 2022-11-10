@@ -498,6 +498,17 @@ class ToolsController extends ControllerBase
             $response = LongXinService::getLianXiByNameV2($key);
         }
 
+        //通过企业名称查询公开联系人(company_manager)
+        if($requestData['type'] == 8 ){
+            $postData = [
+                'entName' => $key,
+            ];
+
+            $response =  (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getEntLianXi($postData);
+        }
+
         //通过信用代码查询非公开联系人
         if($requestData['type'] == 10 ){
             $response = CompanyClue::getAllContactByCode($key);
@@ -1081,6 +1092,7 @@ class ToolsController extends ControllerBase
 
         return $this->writeJson(200, [], [
             5 => '通过企业名称查询我们库里的企业管理人(company_manager)（入参格式:企业名）',
+            8 => '通过企业名称查询公开联系人（入参格式:企业名称）',
             10 => '通过信用代码查询非公开联系人（入参格式:信用代码）',
             15 => '通过手机号检测号码状态（入参格式:英文逗号分隔的手机号）',
             20 => '根据微信名匹配企业对应的联系人（入参格式:企业名&&&微信名）',
