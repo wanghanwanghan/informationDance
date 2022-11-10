@@ -800,6 +800,55 @@ class ToolsController extends ControllerBase
             );
         }
 
+        //根据信用代码导出增值税（入参格式:信用代码）
+        if($requestData['type'] == 75 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."_增值税.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $allFields = [
+                "declarationDate",
+                "currentGoods",
+                "endDate",
+                "levyProjectName",
+                "projectType",
+                "currentYearAccumulativeService",
+                "beginDate",
+                "sequence",
+                "columnSequence",
+                "immediateRetreatYearAccumulativeAmount",
+                "taxpayerType",
+                "currentYearAccumulativeGoods",
+                "generalMonthAmount",
+                "projectNameCode",
+                "taxNo",
+                "projectName",
+                "currentService",
+                "deadline",
+                "taxpayerId",
+                "generalYearAccumulativeAmount",
+                "immediateRetreatMonthAmount"
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+
+            $allInvoiceDatas = (new GuoPiaoService())->getVatReturn(
+                $key
+            );
+            foreach ($allInvoiceDatas as $InvoiceData){
+                fputcsv($f, $InvoiceData);
+            }
+
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+        }
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
