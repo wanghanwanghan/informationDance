@@ -299,6 +299,26 @@ class GuoPiaoService extends ServiceBase
     }
 
     //企业税务基本信息查询
+    /**
+    essential	LIST	基本信息-纳税信用等级
+    overdueFine	Text	近12个月滞纳金次数(次)（废弃字段）
+    owingType	Text	是否欠税（是/否）
+    payTaxes	Text	纳税状态 = 正常/异常
+    regulations	Text	违章稽查记录（条）
+    nature	Text	纳税人性质
+
+    essential:
+    名称	类型	说明
+    creditLevel	Text	税务征信等级，枚举值[A、B、C、D、M、不参评、暂无、该纳税人还未终审完成]
+    year	string(date-time)	年份
+    taxpayerId	Text	纳税人识别号
+    creditPoint	Text	评价分数
+
+
+
+
+     */
+
     function getEssential($code)
     {
         $param['taxNumber'] = $code;

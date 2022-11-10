@@ -910,6 +910,48 @@ class ToolsController extends ControllerBase
             );
         }
 
+        //根据信用代码导出企业税务基本信息（入参格式:信用代码）
+        if($requestData['type'] == 95 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."_所得税.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $allFields = [
+               '是否欠税（是/否）',//
+                '纳税状态 = 正常/异常',//
+                '违章稽查记录（条）',
+                '纳税人性质',
+                '基本信息-纳税信用等级-年份',
+                '基本信息-纳税信用等级-税务征信等级，枚举值[A、B、C、D、M、不参评、暂无、该纳税人还未终审完成]',
+                '基本信息-纳税信用等级-纳税人识别号',
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+
+            $allInvoiceDatas = (new GuoPiaoService())->getEssential(
+                $key
+            );
+
+            fputcsv($f, [
+                $allInvoiceDatas['data']['owingType'],//是否欠税（是/否）
+                $allInvoiceDatas['data']['payTaxes'],//纳税状态 = 正常/异常
+                $allInvoiceDatas['data']['regulations'],//违章稽查记录（条）
+                $allInvoiceDatas['data']['nature'],//纳税人性质
+                $allInvoiceDatas['data']['essential'][0]['year'],//基本信息-纳税信用等级-年份
+                $allInvoiceDatas['data']['essential'][0]['creditLevel'],//基本信息-纳税信用等级-税务征信等级，枚举值[A、B、C、D、M、不参评、暂无、该纳税人还未终审完成]
+                $allInvoiceDatas['data']['essential'][0]['taxpayerId']//基本信息-纳税信用等级-纳税人识别号
+            ]);
+
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+        }
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
