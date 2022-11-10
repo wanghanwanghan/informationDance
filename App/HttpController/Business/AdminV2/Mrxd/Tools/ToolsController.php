@@ -595,7 +595,7 @@ class ToolsController extends ControllerBase
                             'func_info_json' => json_encode(
                                 [
                                     'class' => '\App\HttpController\Models\MRXD\ToolsFileLists',
-                                    'static_func'=> 'buQuanZiDuan',
+                                    'static_func'=> 'shangChuanGongKaiContact',
                                 ]
                             ),
                             'params_json' => json_encode([
