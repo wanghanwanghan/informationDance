@@ -915,7 +915,7 @@ class ToolsController extends ControllerBase
             $response  = [];
 
             //写到csv里
-            $fileName = date('YmdHis')."_所得税.csv";
+            $fileName = date('YmdHis')."企业税务基本信息.csv";
             $f = fopen(OTHER_FILE_PATH.$fileName, "w");
             fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
 
