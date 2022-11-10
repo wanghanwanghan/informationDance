@@ -234,6 +234,20 @@ class GuoPiaoService extends ServiceBase
     }
 
     //进销项发票信息 信动专用
+    /**
+
+    "invoiceCode": "051002100204", //发票代码
+    "invoiceNumber": "03013525", //发票号码
+    "billingDate": "2022-09-29 ",//开票日期
+    "totalAmount": "1051.07",//总金额
+    "totalTax": "62.03",//总税额
+    "invoiceType": "04",//发票类型
+    "state": "0",//发票状态
+    "salesTaxNo": "91510104723445820B",//卖方税号
+    "salesTaxName": "成都万科物业服务有限公司",//卖方名称
+    "purchaserTaxNo": "91510106MA7FM5BL90",//买方税号
+    "purchaserName": "四川账三丰互联网科技有限公司"//买方名称
+     */
     function getInvoiceMain($code, $dataType, $startDate, $endDate, $page)
     {
         $param['taxNumber'] = $code;

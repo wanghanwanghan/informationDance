@@ -545,6 +545,7 @@ class ToolsController extends ControllerBase
             }
         }
 
+        /***/
         //根据信用代码导出最近两年进项发票（入参格式:信用代码）
         if($requestData['type'] == 35 ){
             $response  = [];
@@ -554,10 +555,17 @@ class ToolsController extends ControllerBase
             $f = fopen(OTHER_FILE_PATH.$fileName, "w");
             fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
             $allFields = [
+                "发票代码",
+                "发票号码",
+                "开票日期",
                 "总金额",
-                "日期",
-                "购买方",
-                "销售方",
+                "总税额",
+                "发票类型",
+                "发票状态",
+                "卖方税号",
+                "卖方名称",
+                "买方税号",
+                "买方名称",
             ];
             foreach ($allFields as $field=>$cname){
 
@@ -614,10 +622,17 @@ class ToolsController extends ControllerBase
             $f = fopen(OTHER_FILE_PATH.$fileName, "w");
             fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
             $allFields = [
+                "发票代码",
+                "发票号码",
+                "开票日期",
                 "总金额",
-                "日期",
-                "购买方",
-                "销售方",
+                "总税额",
+                "发票类型",
+                "发票状态",
+                "卖方税号",
+                "卖方名称",
+                "买方税号",
+                "买方名称",
             ];
             foreach ($allFields as $field=>$cname){
 
