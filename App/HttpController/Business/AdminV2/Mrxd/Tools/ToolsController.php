@@ -961,6 +961,52 @@ class ToolsController extends ControllerBase
             );
         }
 
+        //根据信用代码导出企业利润（入参格式:信用代码）
+        if($requestData['type'] == 105 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."企业利润.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $allFields = [
+                    "本月累计金额",//
+                    "申报日期",//
+                    "所属时期止",//
+                    "征收项目",//
+                    "reportType",
+                    "所属时期起",//
+                    "顺序",//
+                    "栏次",//
+                    "本年累计金额",//
+                    "项目代码",//
+                    "授权批次号",//
+                    "项目名称",//
+                    "纳税识别号",//
+                    "SQJE"
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+
+            $allInvoiceDatas = (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getFinanceIncomeStatement(
+                    $key
+                );
+            //$allInvoiceDatas = jsonDecode($allInvoiceDatas['data']);
+            foreach ($allInvoiceDatas['result'] as $InvoiceData){
+                fputcsv($f, $InvoiceData);
+            }
+
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+
+        }
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([

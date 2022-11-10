@@ -410,6 +410,22 @@ class GuoPiaoService extends ServiceBase
     }
 
     //利润表查询
+    /**
+    "currentMonthAmount",//本月累计金额
+    "declarationDate",//申报日期
+    "endDate",//所属时期止
+    "levyProjectName",//征收项目
+    "reportType",
+    "beginDate",//所属时期起
+    "sequence",//顺序
+    "columnSequence",//栏次
+    "currentYearAccumulativeAmount",//本年累计金额
+    "projectNameCode",//项目代码
+    "taxNo",//授权批次号
+    "projectName",//项目名称
+    "taxpayerId",//纳税识别号
+    "SQJE"
+     */
     function getFinanceIncomeStatement($code)
     {
         $param['taxpayerId'] = $code;
