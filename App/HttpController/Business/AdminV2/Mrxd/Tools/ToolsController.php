@@ -740,7 +740,7 @@ class ToolsController extends ControllerBase
                 $key,
                 $last2YearStart,
                 $lastMonth,
-                2 
+                2
             );
             foreach ($allInvoiceDatas as $InvoiceData){
                 $response[] = $InvoiceData;
@@ -793,6 +793,13 @@ class ToolsController extends ControllerBase
             $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
         }
 
+        //根据信用代码查询增值税（入参格式:信用代码）
+        if($requestData['type'] == 70 ){
+            $response = (new GuoPiaoService())->getVatReturn(
+                $key
+            );
+        }
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -823,6 +830,8 @@ class ToolsController extends ControllerBase
             55 => '根据信用代码导出最近两年进项发票明细（入参格式:信用代码）',
             60 => '根据信用代码查询最近两年销项发票明细（入参格式:信用代码）',
             65 => '根据信用代码导出最近两年销项发票明细（入参格式:信用代码）',
+            70 => '根据信用代码查询增值税（入参格式:信用代码）',
+            75 => '根据信用代码导出增值税（入参格式:信用代码）',
         ],'成功');
     }
 
