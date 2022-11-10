@@ -100,11 +100,11 @@ class CompanyClue extends ModelBase
 
             $pub = array_merge($pub, $_pub);
             $pri = array_merge($pri, $_pri);
-            $qcc = array_merge($qcc, $_qcc);
+            //$qcc = array_merge($qcc, $_qcc);
 
         }
 
-        $xn = array_values(array_unique(array_merge($pub, $pri, $qcc)));
+        $xn = array_values(array_unique(array_merge($pub, $pri)));
 
         sort($xn);
         return [

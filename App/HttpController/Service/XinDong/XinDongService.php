@@ -3018,7 +3018,83 @@ class XinDongService extends ServiceBase
     // $tobeMatch 姓名   $target：微信名
     function matchNamesV2($tobeMatch, $target)
     {
-//        CommonService::getInstance()->log4PHP(json_encode(['$tobeMatch'=>$tobeMatch,'$target'=>$target]));
+        //两个字的
+        if(
+            strlen($tobeMatch) == 6
+        ){
+            $sub = substr($tobeMatch, 3, 3);
+            //如果去掉姓名后  微信名直接包含：张三  三爷
+            if(strpos($target,$sub) !== false){
+                return [
+                    'type' => '近似匹配',
+                    'details' => '包含姓名中的名',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+
+
+            similar_text($sub, $target, $perc);
+            $tobeMatchArr = $this->getPinYin($tobeMatch);
+            $targetArr = $this->getPinYin($target);
+
+
+        }
+
+
+        //3个字的
+        if(
+            strlen($tobeMatch) == 9
+        ){
+            $sub = substr($tobeMatch, 3, 6);
+            //如果去掉姓名后  微信名直接包含：张小三  小三爷
+            if(strpos($target,$sub) !== false){
+                return [
+                    'type' => '近似匹配',
+                    'details' => '包含姓名中的名',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+
+
+            similar_text($sub, $target, $perc);
+            if($perc>=50){
+                return [
+                    'type' => '近似匹配',
+                    'details' => '名和微信比较近似',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+        }
+
+        //4个字的
+        if(
+            strlen($tobeMatch) == 12
+        ){
+            $sub = substr($tobeMatch, 6, 6);
+            //如果去掉姓名后  微信名直接包含：欧阳小三  小三爷
+            if(strpos($target,$sub) !== false){
+                return [
+                    'type' => '近似匹配',
+                    'details' => '包含姓名中的名',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+
+            similar_text($sub, $target, $perc);
+            if($perc>=50){
+                return [
+                    'type' => '近似匹配',
+                    'details' => '名和微信比较近似',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+        }
+
 
         //完全匹配
         $res = $this->matchNamesByEqual($tobeMatch, $target);
@@ -3206,6 +3282,17 @@ class XinDongService extends ServiceBase
 
         //拼音相似度匹配  张三0808    张三
         similar_text(PinYinService::getPinyin($tobeMatch), PinYinService::getPinyin($target), $perc);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'similar_text' => [
+                    '$perc' => $perc,
+                    '$tobeMatch'=>$tobeMatch,
+                    '$target'=>$target,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         if ($perc >= 90) {
             return [
                 'type' => '近似匹配',
@@ -3423,15 +3510,15 @@ class XinDongService extends ServiceBase
 
         foreach ($staffsDatas as $staffsDataItem) {
             $tmpName = trim($staffsDataItem['NAME']);
+
             if (!$tmpName) {
                 continue;
             };
 
             $res = (new XinDongService())->matchNamesV2($tmpName, $WeiXin);
+
             if ($res['res'] == '成功') {
-//                CommonService::getInstance()->log4PHP(
-//                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin
-//                );
+
                 return [
                     'data' => $staffsDataItem,
                     'match_res' => $res

@@ -31,7 +31,9 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceExportRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadDataRecord;
 use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\NewFinanceData;
+use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
 use Vtiful\Kernel\Format;
 
@@ -190,6 +192,7 @@ class ToolsController extends ControllerBase
                     'fill_position_by_name' => intval($config_arr['fill_position_by_name']),
                     'fill_weixin_by_phone' => intval($config_arr['fill_weixin_by_phone']),
                     'fill_name_and_position_by_weixin' => intval($config_arr['fill_name_and_position_by_weixin']),
+                    'filter_qcc_phone' => intval($config_arr['filter_qcc_phone']),
                 ]),
                 'type' => ToolsFileLists::$type_upload_pull_fei_gong_kai_contact,
                 'remark' => '',
@@ -222,7 +225,7 @@ class ToolsController extends ControllerBase
                 'state'=>ToolsFileLists::$state_init,
             ]
         );
-        
+
         $res = QueueLists::addRecord(
             [
                 'name' => '拉取公开联系人',
@@ -439,6 +442,7 @@ class ToolsController extends ControllerBase
                             'fill_position_by_name' => intval($requestData['get_zhiwei']),
                             'fill_weixin_by_phone' => intval($requestData['get_wxname']),
                             'fill_name_and_position_by_weixin' => intval($requestData['get_namezhiwei']),
+                            'filter_qcc_phone' => intval($requestData['get_filterQccPhone']),
                         ]),
                         'type' => ToolsFileLists::$type_upload_pull_fei_gong_kai_contact,
                         'state' => $requestData['state']?:'',
@@ -484,12 +488,52 @@ class ToolsController extends ControllerBase
 
     public function commonToos(){
         $requestData =  $this->getRequestData();
-        $succeedFiels = [];
+        $key = trim($requestData['key']);
+        $arr = explode('&&&',$key);
+        //通过企业名称查询我们库里的企业管理人(company_manager)
+        if($requestData['type'] == 5 ){
+            $response = LongXinService::getLianXiByNameV2($key);
+        }
+
+        //通过信用代码查询非公开联系人
+        if($requestData['type'] == 10 ){
+            $response = CompanyClue::getAllContactByCode($key);
+            $response = [
+                '非公开联系人来源1（pub）'=>$response['pub'],
+                '非公开联系人来源2（pri）'=>$response['pri'],
+                '非公开联系人来源3（qcc）'=>$response['qcc'],
+            ];
+        }
+        //通过手机号检测号码状态（多个手机号英文逗号分隔）
+        if($requestData['type'] == 15 ){
+            $response = (new ChuangLanService())->getCheckPhoneStatus([
+                'mobiles' => $key,
+            ]);
+        }
+
+        // 根据微信名匹配企业对应的联系人（入参格式:企业名&&&微信名）
+        if($requestData['type'] == 20 ){
+
+            $response = (new XinDongService())->matchContactNameByWeiXinNameV3($arr[0], $arr[1]);
+        }
+
+        // 根据微信名匹配中文姓名（入参格式:中文姓名&&&微信名）
+        if($requestData['type'] == 25 ){
+
+            $response = (new XinDongService())->matchNamesV2($arr[0], $arr[1]);
+        }
+
 
         return $this->writeJson(200, [], [
             [
-                'params'=>'XXXX',
-                'return_datas_json'=>'{"xx","XXX"}',
+                'params'=> json_encode([
+                    '$key'=>$key,
+                    '$arr'=>$arr,
+                    '$arr0'=>$arr[0],
+                    '$arr1'=>$arr[1],
+                    '$arr2'=>$arr[2],
+                ],JSON_UNESCAPED_UNICODE),
+                'return_datas_json'=>is_array($response)?json_encode($response,JSON_UNESCAPED_UNICODE):$response,
             ]
         ],'成功 ');
     }
@@ -497,8 +541,11 @@ class ToolsController extends ControllerBase
     public function commonToosOptions(){
 
         return $this->writeJson(200, [], [
-            5 => '通过企业名称拉取公开联系人',
-            10 => '通过企业名称拉取企业管理人(company_manager)',
+            5 => '通过企业名称查询我们库里的企业管理人(company_manager)',
+            10 => '通过信用代码查询非公开联系人',
+            15 => '通过手机号检测号码状态（多个手机号英文逗号分隔）',
+            20 => '根据微信名匹配企业对应的联系人（入参格式:企业名&&&微信名）',
+            25 => '根据微信名匹配中文姓名（入参格式:中文姓名&&&微信名）',
         ],'成功');
     }
 
@@ -548,7 +595,7 @@ class ToolsController extends ControllerBase
                             'func_info_json' => json_encode(
                                 [
                                     'class' => '\App\HttpController\Models\MRXD\ToolsFileLists',
-                                    'static_func'=> 'buQuanZiDuan',
+                                    'static_func'=> 'shangChuanGongKaiContact',
                                 ]
                             ),
                             'params_json' => json_encode([
