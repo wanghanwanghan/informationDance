@@ -536,7 +536,9 @@ class ToolsController extends ControllerBase
             $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
                 $key,
                 $last2YearStart,
-                $lastMonth
+                $lastMonth,
+                1,
+                true
             );
             foreach ($allInvoiceDatas as $InvoiceData){
                 $response[] = $InvoiceData;
@@ -572,13 +574,15 @@ class ToolsController extends ControllerBase
             $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
                 $key,
                 $last2YearStart,
-                $lastMonth
+                $lastMonth,
+                1,
+                true
             );
             foreach ($allInvoiceDatas as $InvoiceData){
                 fputcsv($f, $InvoiceData);
             }
 
-            $response[] = "http://openapi.meirixindong.com/Static/OtherFile/".$fileName;
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
         }
 
         //根据信用代码取最近两年销项发票（入参格式:信用代码）
@@ -593,7 +597,8 @@ class ToolsController extends ControllerBase
                 $key,
                 $last2YearStart,
                 $lastMonth,
-                2
+                2,
+                true
             );
             foreach ($allInvoiceDatas as $InvoiceData){
                 $response[] = $InvoiceData;
@@ -629,13 +634,15 @@ class ToolsController extends ControllerBase
             $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
                 $key,
                 $last2YearStart,
-                $lastMonth
+                $lastMonth,
+                2,
+                true
             );
             foreach ($allInvoiceDatas as $InvoiceData){
                 fputcsv($f, $InvoiceData);
             }
 
-            $response[] = "http://openapi.meirixindong.com/Static/OtherFile/".$fileName;
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
         }
 
         return $this->writeJson(200, [], [

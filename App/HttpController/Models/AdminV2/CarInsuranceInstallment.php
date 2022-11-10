@@ -1353,7 +1353,7 @@ class CarInsuranceInstallment extends ModelBase
         return $age;
     }
 
-    static function getYieldInvoiceMainData($social_credit_code,$Start,$end,$type =1 ){
+    static function getYieldInvoiceMainData($social_credit_code,$Start,$end,$type =1,$getAllField = false ){
         $datas = [];
         $page = 1;
         $size = 10;
@@ -1372,15 +1372,21 @@ class CarInsuranceInstallment extends ModelBase
             }
             else{
                 foreach ($invoices as $invoiceItem){
-                    yield $datas[] = [
+                    if($getAllField){
+                        yield $datas[] = $invoiceItem;
+                    }
+                    else{
+                        yield $datas[] = [
 
-                        'totalAmount' => $invoiceItem['totalAmount'],
-                        'billingDate' => $invoiceItem['billingDate'],
-                        // $type = 1 时 本公司|进项|买方
-                        'purchaserName' => $invoiceItem['purchaserName'],
-                        //卖方
-                        'salesTaxName' => $invoiceItem['salesTaxName'],
-                    ];
+                            'totalAmount' => $invoiceItem['totalAmount'],
+                            'billingDate' => $invoiceItem['billingDate'],
+                            // $type = 1 时 本公司|进项|买方
+                            'purchaserName' => $invoiceItem['purchaserName'],
+                            //卖方
+                            'salesTaxName' => $invoiceItem['salesTaxName'],
+                        ];
+                    }
+
                 }
             }
             $page ++;
