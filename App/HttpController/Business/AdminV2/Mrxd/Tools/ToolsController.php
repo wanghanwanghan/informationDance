@@ -10,6 +10,7 @@ use App\HttpController\Models\AdminV2\AdminNewMenu;
 use App\HttpController\Models\AdminV2\AdminUserChargeConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceChargeInfo;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
+use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\CarInsuranceInstallment;
 use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverHistory;
@@ -542,6 +543,44 @@ class ToolsController extends ControllerBase
             }
         }
 
+        //根据信用代码导出最近两年进项发票（入参格式:信用代码）
+        if($requestData['type'] == 30 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."_最近两年进项发票.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+            $allFields = [
+                "总金额",
+                "日期",
+                "购买方",
+                "销售方",
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+
+            // $startDate 往前推一个月  推两年
+            //纳税数据取得是两年的数据 取下开始结束时间
+            $lastMonth = date("Y-m-01",strtotime("-1 month"));
+            //两年前的开始月
+            $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+                $key,
+                $last2YearStart,
+                $lastMonth
+            );
+            foreach ($allInvoiceDatas as $InvoiceData){
+                fputcsv($f, $InvoiceData);
+            }
+
+            $response[] = "http://openapi.meirixindong.com/Static/OtherFile/".$fileName;
+        }
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -564,7 +603,8 @@ class ToolsController extends ControllerBase
             15 => '通过手机号检测号码状态（入参格式:英文逗号分隔的手机号）',
             20 => '根据微信名匹配企业对应的联系人（入参格式:企业名&&&微信名）',
             25 => '根据微信名匹配中文姓名（入参格式:中文姓名&&&微信名）',
-            30 => '根据信用代码取最近两年进项发票（入参格式:信用代码）',
+            30 => '根据信用代码查询最近两年进项发票（入参格式:信用代码）',
+            35 => '根据信用代码导出最近两年进项发票（入参格式:信用代码）',
         ],'成功');
     }
 
