@@ -910,17 +910,17 @@ class ToolsFileLists extends ModelBase
                 );
 
 
-//               CommonService::getInstance()->log4PHP(
-//                   json_encode([
-//                       __CLASS__.__FUNCTION__ .__LINE__,
-//                       [
-//                           'shangChuanGongKaiContact add to db '=>[
-//                               '$i' => $i ,
-//                               '$dbArr' => $dbArr ,
-//                           ]
-//                       ]
-//                   ])
-//               );
+               CommonService::getInstance()->log4PHP(
+                   json_encode([
+                       __CLASS__.__FUNCTION__ .__LINE__,
+                       [
+                           'shangChuanGongKaiContact add to db '=>[
+                               '$i' => $i ,
+                               '$dbArr' => $dbArr ,
+                           ]
+                       ]
+                   ])
+               );
            }
 
 

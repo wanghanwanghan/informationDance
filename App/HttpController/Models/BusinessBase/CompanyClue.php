@@ -71,6 +71,15 @@ class CompanyClue extends ModelBase
 
     static function getAllContactByCode($code, $returnPub = true, $returnPri = true, $returnQcc = true){
         $all = self::findAllByCondition(['code'=>$code]);
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    'getAllContactByCode'=>[
+                        '$all'=>$all,
+                    ]
+                ]
+            )
+        );
         $pub = $pri = $qcc = [];
 
         foreach ($all as $one) {
@@ -100,7 +109,7 @@ class CompanyClue extends ModelBase
 
             $pub = array_merge($pub, $_pub);
             $pri = array_merge($pri, $_pri);
-            //$qcc = array_merge($qcc, $_qcc);
+            $qcc = array_merge($qcc, $_qcc);
 
         }
 
