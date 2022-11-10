@@ -808,28 +808,7 @@ class ToolsController extends ControllerBase
             $fileName = date('YmdHis')."_增值税.csv";
             $f = fopen(OTHER_FILE_PATH.$fileName, "w");
             fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
-            /**
-            currentGoods	number(double)
-            declarationDate	string(date-time)
-            endDate	string(date-time)
-            levyProjectName	Text
-            projectType	Text
-            currentYearAccumulativeService	number(double)
-            beginDate	string(date-time)
-            sequence	Integer64
-            columnSequence	Text
-            immediateRetreatYearAccumulativeAmount	number(double)
-            taxpayerType	Text
-            currentYearAccumulativeGoods	number(double)
-            generalMonthAmount	number(double)
-            projectNameCode	Text
-            currentService	number(double)
-            projectName	Text
-            taxNo	Text
-            generalYearAccumulativeAmount	number(double)
-            taxpayerId	Text
-            immediateRetreatMonthAmount	number(double)
-             */
+
             $allFields = [
                 "申报日期",
                 "本期数-货物及劳务",
@@ -871,6 +850,13 @@ class ToolsController extends ControllerBase
             $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
         }
 
+        //根据信用代码查询所得税（入参格式:信用代码）
+        if($requestData['type'] == 80 ){
+            $response =  (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
+                $key
+            );
+        }
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -903,6 +889,8 @@ class ToolsController extends ControllerBase
             65 => '根据信用代码导出最近两年销项发票明细（入参格式:信用代码）',
             70 => '根据信用代码查询增值税（入参格式:信用代码）',
             75 => '根据信用代码导出增值税（入参格式:信用代码）',
+            80 => '根据信用代码查询所得税（入参格式:信用代码）',
+            85 => '根据信用代码导出所得税（入参格式:信用代码）',
         ],'成功');
     }
 
