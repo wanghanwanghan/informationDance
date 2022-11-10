@@ -267,6 +267,19 @@ class GuoPiaoService extends ServiceBase
     }
 
     //进销项发票商品明细 信动专用 $dataType：0  $dataType：1
+    /**
+    "invoiceCode": "051002100204",//发票代码
+    "invoiceNumber": "03013525",//发票号码
+    "billingDate": "2022-09-29 ",//开票日期
+    "amount": "1051.07",//开票金额
+    "tax": "62.03",//含税单价？
+    "invoiceType": "04",//规格型号？
+    "goodName": "-",//商品名？
+    "taxRate": "0",//税率？
+    "unitPrice": "-",//单价？
+    "quantity": "1",//数量
+    "specificationModel": "-"//？
+     */
     function getInvoiceGoods($code, $dataType, $startDate, $endDate, $page)
     {
         $param['taxNumber'] = $code;
