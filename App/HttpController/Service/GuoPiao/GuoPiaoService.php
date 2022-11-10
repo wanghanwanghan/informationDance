@@ -252,7 +252,7 @@ class GuoPiaoService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
-    //进销项发票商品明细 信动专用
+    //进销项发票商品明细 信动专用 $dataType：0  $dataType：1
     function getInvoiceGoods($code, $dataType, $startDate, $endDate, $page)
     {
         $param['taxNumber'] = $code;
