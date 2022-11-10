@@ -1051,7 +1051,7 @@ class ToolsController extends ControllerBase
 
             $allInvoiceDatas = (new GuoPiaoService())
                 ->setCheckRespFlag(true)
-                ->getFinanceIncomeStatement(
+                ->getFinanceBalanceSheet(
                     $key
                 );
             //$allInvoiceDatas = jsonDecode($allInvoiceDatas['data']);
