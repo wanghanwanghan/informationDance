@@ -1393,7 +1393,7 @@ class CarInsuranceInstallment extends ModelBase
             $page ++;
         }
     }
-    static function getYieldInvoiceGoodsData($social_credit_code,$Start,$end,$type =1,$getAllField = false ){
+    static function getYieldInvoiceGoodsData($social_credit_code,$Start,$end,$type =1 ){
         $datas = [];
         $page = 1;
         $size = 10;
@@ -1406,27 +1406,13 @@ class CarInsuranceInstallment extends ModelBase
                 $end,
                 $page
             );
-            $invoices = $jinXiaoXiangFaPiaoRes['data']['invoices'];
+            $invoices = $jinXiaoXiangFaPiaoRes['data']['goodsInfo'];
             if(empty($invoices)){
                 break;
             }
             else{
                 foreach ($invoices as $invoiceItem){
-                    if($getAllField){
-                        yield $datas[] = $invoiceItem;
-                    }
-                    else{
-                        yield $datas[] = [
-
-                            'totalAmount' => $invoiceItem['totalAmount'],
-                            'billingDate' => $invoiceItem['billingDate'],
-                            // $type = 1 时 本公司|进项|买方
-                            'purchaserName' => $invoiceItem['purchaserName'],
-                            //卖方
-                            'salesTaxName' => $invoiceItem['salesTaxName'],
-                        ];
-                    }
-
+                    yield $datas[] = $invoiceItem;
                 }
             }
             $page ++;

@@ -669,23 +669,23 @@ class ToolsController extends ControllerBase
             $lastMonth = date("Y-m-01",strtotime("-1 month"));
             //两年前的开始月
             $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
-            $response = (new GuoPiaoService())->getInvoiceGoods(
-                $key,
-                1,
-                $last2YearStart,
-                $lastMonth,
-                1
-            );
-//            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+//            $response = (new GuoPiaoService())->getInvoiceGoods(
 //                $key,
+//                1,
 //                $last2YearStart,
 //                $lastMonth,
-//                1,
-//                true
+//                1
 //            );
-//            foreach ($allInvoiceDatas as $InvoiceData){
-//                $response[] = $InvoiceData;
-//            }
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceGoodsData(
+                $key,
+                $last2YearStart,
+                $lastMonth,
+                1,
+                true
+            );
+            foreach ($allInvoiceDatas as $InvoiceData){
+                $response[] = $InvoiceData;
+            }
         }
 
         return $this->writeJson(200, [], [
