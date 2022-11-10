@@ -808,29 +808,50 @@ class ToolsController extends ControllerBase
             $fileName = date('YmdHis')."_增值税.csv";
             $f = fopen(OTHER_FILE_PATH.$fileName, "w");
             fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
-
+            /**
+            currentGoods	number(double)
+            declarationDate	string(date-time)
+            endDate	string(date-time)
+            levyProjectName	Text
+            projectType	Text
+            currentYearAccumulativeService	number(double)
+            beginDate	string(date-time)
+            sequence	Integer64
+            columnSequence	Text
+            immediateRetreatYearAccumulativeAmount	number(double)
+            taxpayerType	Text
+            currentYearAccumulativeGoods	number(double)
+            generalMonthAmount	number(double)
+            projectNameCode	Text
+            currentService	number(double)
+            projectName	Text
+            taxNo	Text
+            generalYearAccumulativeAmount	number(double)
+            taxpayerId	Text
+            immediateRetreatMonthAmount	number(double)
+             */
             $allFields = [
-                "declarationDate",
-                "currentGoods",
-                "endDate",
-                "levyProjectName",
-                "projectType",
-                "currentYearAccumulativeService",
-                "beginDate",
-                "sequence",
-                "columnSequence",
-                "immediateRetreatYearAccumulativeAmount",
-                "taxpayerType",
-                "currentYearAccumulativeGoods",
-                "generalMonthAmount",
-                "projectNameCode",
-                "taxNo",
-                "projectName",
-                "currentService",
+                "申报日期",
+                "本期数-货物及劳务",
+                "所属时期止",
+                "征收项目",
+                "项目类型",
+                "本年累计-服务、不动产和无形资产",
+                "所属时期起",
+                "顺序",
+                "栏次",
+                "即征即退项目-本年累计",
+                "纳税人类型(0：一般纳税人 1：小规模纳税人)",
+                "本年累计-货物及劳务",
+                "一般项目-本月数",
+                "项目代码",
+                "授权批次号",
+                "项目名称",
+                "本期数-服务、不动产和无形资产",
                 "deadline",
-                "taxpayerId",
-                "generalYearAccumulativeAmount",
-                "immediateRetreatMonthAmount"
+                "企业信用代码",
+                "一般项目-本年累计",
+                "即征即退项目-本月数"
             ];
             foreach ($allFields as $field=>$cname){
 
