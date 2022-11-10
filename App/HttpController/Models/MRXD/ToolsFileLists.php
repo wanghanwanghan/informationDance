@@ -859,7 +859,7 @@ class ToolsFileLists extends ModelBase
                }
                $companyCode = $companyRes->UNISCID;
                $phone = $dataItem[1];
-               $phone2 = $dataItem[2]; 
+               $phone2 = $dataItem[2];
 
                if(
                    !empty($phone) &&
@@ -889,22 +889,25 @@ class ToolsFileLists extends ModelBase
            }
 
            foreach ($companysContacts as $code => $phonesArr){
-                $str = count($phonesArr)."@".join(";",$phonesArr);
                 $time = time();
+                $str = join(";",$phonesArr);
+                $str_aes = \wanghanwanghan\someUtils\control::aesEncode($str, $time . '');
+                $str2 = count($phonesArr)."@".$str_aes;
+
                 //XXXX
                $dbArr = [
                    'entname' => '',
                    'code' => $companyCode,
                    'fr' => '',
-                   'qcc' =>     \wanghanwanghan\someUtils\control::aesEncode($phone, $time . ''),
+                   'qcc' =>    $str2,
                    'pub' => '',
                    'pri' => '',
                    'created_at' => $time,
                    'updated_at' => $time,
                ];
-//                CompanyClue::addRecordV2(
-//                    $dbArr
-//                );
+                CompanyClue::addRecordV2(
+                    $dbArr
+                );
 
 
 //               CommonService::getInstance()->log4PHP(
