@@ -859,10 +859,7 @@ class ToolsFileLists extends ModelBase
                }
                $companyCode = $companyRes->UNISCID;
                $phone = $dataItem[1];
-               $phone2 = $dataItem[2];
-               if($phone<=0){
-                   continue;
-               }
+               $phone2 = $dataItem[2]; 
 
                if(
                    !empty($phone) &&
