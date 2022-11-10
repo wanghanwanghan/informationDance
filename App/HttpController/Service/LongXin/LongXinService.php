@@ -1138,17 +1138,17 @@ class LongXinService extends ServiceBase
         ];
 
         $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                [
-                    'complementEntLianXiMobileState'=>[
-                        'message'=>$res['message'],
-                        'data'=>$res['data'],
-                    ]
-                ]
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                [
+//                    'complementEntLianXiMobileState'=>[
+//                        'message'=>$res['message'],
+//                        'data'=>$res['data'],
+//                    ]
+//                ]
+//            ])
+//        );
         if ($res['message'] != '成功') {
             foreach ($apiResluts as &$dataItem) {
                 $dataItem['mobile_check_res'] = '';
@@ -1169,16 +1169,16 @@ class LongXinService extends ServiceBase
 
         // 转换为以手机号为key的数组
         $res['data'] = self::shiftArrayKeys($res['data'], 'mobile');
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                [
-                    'complementEntLianXiMobileState'=>[
-                        'complementEntLianXiMobileState2'=>$res['data']
-                    ]
-                ]
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                [
+//                    'complementEntLianXiMobileState'=>[
+//                        'complementEntLianXiMobileState2'=>$res['data']
+//                    ]
+//                ]
+//            ])
+//        );
 
         foreach ($apiResluts as &$dataItem) {
 
@@ -1191,19 +1191,19 @@ class LongXinService extends ServiceBase
             $dataItem['mobile_check_res_cname'] = $res['data'][$dataItem['lianxi']]['status'] ?
                 ChuangLanService::getStatusCnameMap()[$res['data'][$dataItem['lianxi']]['status']] : '';
 
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        'complementEntLianXiMobileState3'=>[
-                            'complementEntLianXiMobileState3'=>$res['data'][$dataItem['lianxi']],
-                            'lianxi3'=>$dataItem['lianxi'],
-                            'mobile_check_res'=>$dataItem['mobile_check_res'],
-                            'mobile_check_res_cname'=>$dataItem['mobile_check_res_cname'],
-                        ]
-                    ]
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    [
+//                        'complementEntLianXiMobileState3'=>[
+//                            'complementEntLianXiMobileState3'=>$res['data'][$dataItem['lianxi']],
+//                            'lianxi3'=>$dataItem['lianxi'],
+//                            'mobile_check_res'=>$dataItem['mobile_check_res'],
+//                            'mobile_check_res_cname'=>$dataItem['mobile_check_res_cname'],
+//                        ]
+//                    ]
+//                ])
+//            );
 
         }
         return $apiResluts;
