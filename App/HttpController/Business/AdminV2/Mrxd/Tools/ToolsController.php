@@ -857,6 +857,52 @@ class ToolsController extends ControllerBase
             );
         }
 
+        //根据信用代码导出所得税（入参格式:信用代码）
+        if($requestData['type'] == 85 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."_所得税.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $allFields = [
+                "申报日期",//
+                "所属时期止",//
+                "征收项目",//
+                "累计金额",//
+                "项目类型",//
+                "项目父类型",//
+                "本期金额(2015版专有)",//
+                "所属时期起",//
+                "顺序",//
+                "tableType",
+                "栏次",//
+                "项目代码",//
+                "所属税务局",//
+                "授权批次号",//
+                "项目名称",//
+                "deadline",
+                "纳税识别号" //
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+
+            $allInvoiceDatas = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
+                $key
+            );
+            $allInvoiceDatas = jsonDecode($allInvoiceDatas['data']);
+            foreach ($allInvoiceDatas as $InvoiceData){
+                fputcsv($f, $InvoiceData);
+            }
+
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+        }
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([

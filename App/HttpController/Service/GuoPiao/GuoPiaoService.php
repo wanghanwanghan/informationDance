@@ -314,6 +314,28 @@ class GuoPiaoService extends ServiceBase
     }
 
     //企业所得税-月（季）度申报表查询
+
+    /**
+    "declarationDate": "2022-10-24 00:00:00",//申报日期
+    "endDate": "2022-09-30 00:00:00",//所属时期止
+    "levyProjectName": "2021版企业所得税A类申报",//征收项目
+    "accumulativeAmount": 0E-8,//累计金额
+    "projectType": "预缴税款计算",//项目类型
+    "projectSubType": "",//项目父类型
+    "currentAmount": 0.0,//本期金额(2015版专有)
+    "beginDate": "2022-07-01 00:00:00",//所属时期起
+    "sequence": 5,//顺序
+    "tableType": "A",
+    "columnSequence": "5",//栏次
+    "projectNameCode": "070127",//项目代码
+    "bureau": "SICHUAN",//所属税务局
+    "taxNo": "TAX_NO_0120221110113032OYH",//授权批次号
+    "projectName": "减：不征税收入",//项目名称
+    "deadline": null,
+    "taxpayerId": "91510106MA7FM5BL90" //纳税识别号
+
+     *
+     */
     function getIncometaxMonthlyDeclaration($code)
     {
         $param['taxpayerId'] = $code;
