@@ -851,9 +851,13 @@ class ToolsFileLists extends ModelBase
 
            foreach ($yieldDatas as $dataItem) {
                //企业 税号 电话 微信名 性别
-               //$companyName = $dataItem[0];
+               $companyName = $dataItem[0];
+               $companyRes = CompanyBasic::findByName($companyName);
                //$companyCode = $dataItem[1];
-               $companyCode = $dataItem[0];
+               if(empty($companyRes)){
+                   continue;
+               }
+               $companyCode = $companyRes->UNISCID;
                $phone = $dataItem[1];
                $phone2 = $dataItem[2];
                if($phone<=0){
@@ -917,7 +921,6 @@ class ToolsFileLists extends ModelBase
                        ]
                    ])
                );
-
            }
 
 
