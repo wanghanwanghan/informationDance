@@ -842,13 +842,7 @@ class ToolsController extends ControllerBase
             $allInvoiceDatas = (new GuoPiaoService())->getVatReturn(
                 $key
             );
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$allInvoiceDatas' => $allInvoiceDatas,
-                    'is_array' => is_array($allInvoiceDatas),
-                ])
-            );
+            $allInvoiceDatas = jsonDecode($allInvoiceDatas['data']); 
             foreach ($allInvoiceDatas as $InvoiceData){
                 fputcsv($f, $InvoiceData);
             }
