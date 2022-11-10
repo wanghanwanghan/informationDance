@@ -1026,21 +1026,21 @@ class ToolsController extends ControllerBase
             fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
 
             $allFields = [
-                "declarationDate",//申报日期
-                "endDate",//所属时期止
-                "levyProjectName",//征收项目
+                "申报日期",//
+                "所属时期止",//
+                "征收项目",//
                 "projectType",
-                "endingBalance",//期末数
-                "type",//资产负债类型,1:资产,2:负债及所有者权益
+                "期末数",//
+                "资产负债类型，1:资产，2:负债及所有者权益",//
                 "reportType",
-                "beginDate",//所属时期起
-                "sequence",//顺序
-                "columnSequence",//栏次
-                "initialBalance",//年初数
-                "projectNameCode",//项目代码
-                "taxNo",//授权批次号
-                "projectName",//项目名称
-                "taxpayerId"//纳税识别号
+                "所属时期起",//
+                "顺序",//
+                "栏次",//
+                "年初数",//
+                "项目代码",//
+                "授权批次号",//
+                "项目名称",//
+                "纳税识别号"//
             ];
             foreach ($allFields as $field=>$cname){
 
