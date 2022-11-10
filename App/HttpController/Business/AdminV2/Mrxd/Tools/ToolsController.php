@@ -904,7 +904,7 @@ class ToolsController extends ControllerBase
         }
 
         //根据信用代码查询所得税（入参格式:信用代码）
-        if($requestData['type'] == 80 ){
+        if($requestData['type'] == 90 ){
             $response = (new GuoPiaoService())->getEssential(
                 $key
             );
