@@ -855,11 +855,24 @@ class ToolsFileLists extends ModelBase
                //$companyCode = $dataItem[1];
                $companyCode = $dataItem[0];
                $phone = $dataItem[1];
+               $phone2 = $dataItem[2];
                if($phone<=0){
                    continue;
                }
 
-               $companysContacts[$companyCode][$phone] = $phone;
+               if(
+                   !empty($phone) &&
+                   $phone!='-'
+               ){
+                   $companysContacts[$companyCode][$phone] = $phone;
+               }
+               if(
+                   !empty($phone2) &&
+                   $phone2!='-'
+               ){
+                   $companysContacts[$companyCode][$phone2] = $phone2;
+               }
+
                if($i%100==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([

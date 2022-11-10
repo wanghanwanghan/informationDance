@@ -3149,7 +3149,6 @@ eof;
                 true,
                 []
             );
-
         }
 
         if(
@@ -3459,7 +3458,7 @@ eof;
             );
         }
             if(
-            $this->getRequestData('getFinanceIncomeStatement')
+                $this->getRequestData('getFinanceIncomeStatement')
         ) {
             $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceIncomeStatement(
                 $this->getRequestData('getFinanceIncomeStatement')

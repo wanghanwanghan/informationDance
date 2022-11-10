@@ -3084,7 +3084,6 @@ class XinDongService extends ServiceBase
                 ];
             }
 
-
             similar_text($sub, $target, $perc);
             if($perc>=50){
                 return [
