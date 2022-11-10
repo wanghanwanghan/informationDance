@@ -35,6 +35,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
 use Vtiful\Kernel\Format;
@@ -660,6 +661,33 @@ class ToolsController extends ControllerBase
             $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
         }
 
+        //根据信用代码查询最近两年进项发票明细（入参格式:信用代码）
+        if($requestData['type'] == 50 ){
+            $response  = [];
+            // $startDate 往前推一个月  推两年
+            //纳税数据取得是两年的数据 取下开始结束时间
+            $lastMonth = date("Y-m-01",strtotime("-1 month"));
+            //两年前的开始月
+            $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+            $response = (new GuoPiaoService())->getInvoiceGoods(
+                $key,
+                1,
+                $last2YearStart,
+                $lastMonth,
+                1
+            );
+//            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+//                $key,
+//                $last2YearStart,
+//                $lastMonth,
+//                1,
+//                true
+//            );
+//            foreach ($allInvoiceDatas as $InvoiceData){
+//                $response[] = $InvoiceData;
+//            }
+        }
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -686,6 +714,7 @@ class ToolsController extends ControllerBase
             35 => '根据信用代码导出最近两年进项发票（入参格式:信用代码）',
             40 => '根据信用代码查询最近两年销项发票（入参格式:信用代码）',
             45 => '根据信用代码导出最近两年销项发票（入参格式:信用代码）',
+            50 => '根据信用代码查询最近两年进项发票明细（入参格式:信用代码）',
         ],'成功');
     }
 

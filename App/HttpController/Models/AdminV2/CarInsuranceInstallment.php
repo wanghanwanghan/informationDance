@@ -1353,6 +1353,7 @@ class CarInsuranceInstallment extends ModelBase
         return $age;
     }
 
+    //进销项发票
     static function getYieldInvoiceMainData($social_credit_code,$Start,$end,$type =1,$getAllField = false ){
         $datas = [];
         $page = 1;
@@ -1360,6 +1361,45 @@ class CarInsuranceInstallment extends ModelBase
 
         while (true) {
             $jinXiaoXiangFaPiaoRes = (new GuoPiaoService())->getInvoiceMain(
+                $social_credit_code,
+                $type,
+                $Start,
+                $end,
+                $page
+            );
+            $invoices = $jinXiaoXiangFaPiaoRes['data']['invoices'];
+            if(empty($invoices)){
+                break;
+            }
+            else{
+                foreach ($invoices as $invoiceItem){
+                    if($getAllField){
+                        yield $datas[] = $invoiceItem;
+                    }
+                    else{
+                        yield $datas[] = [
+
+                            'totalAmount' => $invoiceItem['totalAmount'],
+                            'billingDate' => $invoiceItem['billingDate'],
+                            // $type = 1 时 本公司|进项|买方
+                            'purchaserName' => $invoiceItem['purchaserName'],
+                            //卖方
+                            'salesTaxName' => $invoiceItem['salesTaxName'],
+                        ];
+                    }
+
+                }
+            }
+            $page ++;
+        }
+    }
+    static function getYieldInvoiceGoodsData($social_credit_code,$Start,$end,$type =1,$getAllField = false ){
+        $datas = [];
+        $page = 1;
+        $size = 10;
+
+        while (true) {
+            $jinXiaoXiangFaPiaoRes = (new GuoPiaoService())->getInvoiceGoods(
                 $social_credit_code,
                 $type,
                 $Start,
