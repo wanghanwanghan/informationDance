@@ -24,6 +24,7 @@ use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
@@ -498,11 +499,18 @@ class ToolsController extends ControllerBase
             $response = LongXinService::getLianXiByName($key);
         }
 
-        //通过企业名称查询我们库里的企业管理人(company_manager)
+        //通过企业名称查询我们库里的有职务信息的企业管理人(company_manager)（入参格式:企业名）
         if($requestData['type'] == 5 ){
             $response = LongXinService::getLianXiByNameV2($key);
         }
 
+
+        //通过企业名称查询我们库里的所有企业管理人(company_manager)（入参格式:企业名）
+        if($requestData['type'] == 6 ){
+            $companyRes = CompanyBasic::findByName($key);
+            //管理人
+            $response = CompanyManager::findByCompanyId($companyRes->companyid);
+        }
         //通过企业名称查询公开联系人(company_manager)
         if($requestData['type'] == 8 ){
             $postData = [
@@ -1097,7 +1105,8 @@ class ToolsController extends ControllerBase
 
         return $this->writeJson(200, [], [
             2 => '根据企业名称查询库里全部的联系人名称和职位(老梗)（入参格式:企业名）',
-            5 => '通过企业名称查询我们库里的企业管理人(company_manager)（入参格式:企业名）',
+            5 => '通过企业名称查询我们库里的有职务信息的企业管理人(company_manager)（入参格式:企业名）',
+            6 => '通过企业名称查询我们库里的所有企业管理人(company_manager)（入参格式:企业名）',
             8 => '通过企业名称查询公开联系人（入参格式:企业名称）',
             10 => '通过信用代码查询非公开联系人（入参格式:信用代码）',
             15 => '通过手机号检测号码状态（入参格式:英文逗号分隔的手机号）',
