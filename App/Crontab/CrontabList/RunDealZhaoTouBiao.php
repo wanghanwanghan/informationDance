@@ -1726,7 +1726,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
 
         //zhao_tou_biao_key01
-        $sql = " SELECT * FROM zhao_tou_biao_key01 
+        $sql = " SELECT * FROM zhao_tou_biao_key03 
                     WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
         $datas01 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
         CommonService::getInstance()->log4PHP(
@@ -1775,589 +1775,589 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         $fileObject ->data($tmp);
 
 
-        //===============================
-        //zhao_tou_biao_key02
-        $sql = " SELECT * FROM zhao_tou_biao_key02 
-                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
-        $datas02 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'exportDataV7' => [
-                    '$datas02'=>count($datas02),
-                    '$sql'=>$sql,
-                    '$dateStart'=>$dateStart,
-                    '$dateEnd'=>$dateEnd,
-                ]
-            ])
-        );
-
-
-        $tmp = [];
-        foreach ($datas02 as $dataItem){
-            $tmp[] = [
-                '标题' => $dataItem['标题'] ?:'' , //
-                '项目名称' => $dataItem['项目名称'] ?:'' , //
-                '项目编号' => $dataItem['项目编号'] ?:'' , //
-                '项目简介'  => $dataItem['项目简介'] ?:'' , //
-                '采购方式'   => $dataItem['采购方式'] ?:'' , //
-                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
-                '公告日期' => $dataItem['公告日期'] ?:'' , //
-                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
-                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
-                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
-                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
-                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
-                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
-                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
-                '名次'  => $dataItem['名次'] ?:'' , //
-                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
-                '中标金额'  => $dataItem['中标金额'] ?:'' , //
-                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
-                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
-                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
-                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
-                '评标专家' => $dataItem['评标专家'] ?:'' , //
-                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
-                'url'  => $dataItem['url'] ?:'' , //
-                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
-                '来源' => 'zhao_tou_biao_key02' , //
-            ];
-        }
-        $fileObject ->data($tmp);
-
-        //===============================
-        //zhao_tou_biao_key03
-        $sql = " SELECT * FROM zhao_tou_biao_key03 
-                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
-        $datas03 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'exportDataV7' => [
-                    '$datas03'=>count($datas03),
-                    '$sql'=>$sql,
-                    '$dateStart'=>$dateStart,
-                    '$dateEnd'=>$dateEnd,
-                ]
-            ])
-        );
-
-
-        $tmp = [];
-        foreach ($datas03 as $dataItem){
-            $tmp[] = [
-                '标题' => $dataItem['标题'] ?:'XXX' , //
-                '项目名称' => $dataItem['项目名称'] ?:'' , //
-                '项目编号' => $dataItem['项目编号'] ?:'' , //
-                '项目简介'  => $dataItem['项目简介'] ?:'' , //
-                '采购方式'   => $dataItem['采购方式'] ?:'' , //
-                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
-                '公告日期' => $dataItem['公告日期'] ?:'' , //
-                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
-                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
-                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
-                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
-                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
-                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
-                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
-                '名次'  => $dataItem['名次'] ?:'' , //
-                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
-                '中标金额'  => $dataItem['中标金额'] ?:'' , //
-                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
-                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
-                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
-                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
-                '评标专家' => $dataItem['评标专家'] ?:'' , //
-                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
-                'url'  => $dataItem['url'] ?:'' , //
-                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
-                '来源' => 'zhao_tou_biao_key03' , //
-            ];
-        }
-        $fileObject ->data($tmp);
-
-        //===============================
-        //zhao_tou_biao_key04
-        $sql = " SELECT * FROM zhao_tou_biao_key04 
-                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
-        $datas04 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'exportDataV7' => [
-                    '$datas04'=>count($datas04),
-                    '$sql'=>$sql,
-                    '$dateStart'=>$dateStart,
-                    '$dateEnd'=>$dateEnd,
-                ]
-            ])
-        );
-
-
-        $tmp = [];
-        foreach ($datas04 as $dataItem){
-            $tmp[] = [
-                '标题' => $dataItem['标题'] ?:'' , //
-                '项目名称' => $dataItem['项目名称'] ?:'' , //
-                '项目编号' => $dataItem['项目编号'] ?:'' , //
-                '项目简介'  => $dataItem['项目简介'] ?:'' , //
-                '采购方式'   => $dataItem['采购方式'] ?:'' , //
-                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
-                '公告日期' => $dataItem['公告日期'] ?:'' , //
-                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
-                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
-                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
-                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
-                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
-                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
-                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
-                '名次'  => $dataItem['名次'] ?:'' , //
-                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
-                '中标金额'  => $dataItem['中标金额'] ?:'' , //
-                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
-                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
-                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
-                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
-                '评标专家' => $dataItem['评标专家'] ?:'' , //
-                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
-                'url'  => $dataItem['url'] ?:'' , //
-                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
-                '来源' => 'zhao_tou_biao_key03' , //
-            ];
-        }
-        $fileObject ->data($tmp);
-
-        //===============================
-        //zhao_tou_biao_key05
-        $sql = " SELECT * FROM zhao_tou_biao_key05 
-                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
-        $datas05 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'exportDataV7' => [
-                    '$datas05'=>count($datas05),
-                    '$sql'=>$sql,
-                    '$dateStart'=>$dateStart,
-                    '$dateEnd'=>$dateEnd,
-                ]
-            ])
-        );
-
-
-        $tmp = [];
-        foreach ($datas05 as $dataItem){
-            $tmp[] = [
-                '标题' => $dataItem['标题'] ?:'' , //
-                '项目名称' => $dataItem['项目名称'] ?:'' , //
-                '项目编号' => $dataItem['项目编号'] ?:'' , //
-                '项目简介'  => $dataItem['项目简介'] ?:'' , //
-                '采购方式'   => $dataItem['采购方式'] ?:'' , //
-                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
-                '公告日期' => $dataItem['公告日期'] ?:'' , //
-                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
-                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
-                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
-                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
-                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
-                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
-                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
-                '名次'  => $dataItem['名次'] ?:'' , //
-                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
-                '中标金额'  => $dataItem['中标金额'] ?:'' , //
-                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
-                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
-                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
-                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
-                '评标专家' => $dataItem['评标专家'] ?:'' , //
-                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
-                'url'  => $dataItem['url'] ?:'' , //
-                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
-                '来源' => 'zhao_tou_biao_key03' , //
-            ];
-        }
-        $fileObject ->data($tmp);
-
-        //===============================
-        //zhao_tou_biao_key06
-        $sql = " SELECT * FROM zhao_tou_biao_key06 
-                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
-        $datas06 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'exportDataV7' => [
-                    '$datas06'=>count($datas06),
-                    '$sql'=>$sql,
-                    '$dateStart'=>$dateStart,
-                    '$dateEnd'=>$dateEnd,
-                ]
-            ])
-        );
-
-
-        $tmp = [];
-        foreach ($datas06 as $dataItem){
-            $tmp[] = [
-                '标题' => $dataItem['标题'] ?:'' , //
-                '项目名称' => $dataItem['项目名称'] ?:'' , //
-                '项目编号' => $dataItem['项目编号'] ?:'' , //
-                '项目简介'  => $dataItem['项目简介'] ?:'' , //
-                '采购方式'   => $dataItem['采购方式'] ?:'' , //
-                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
-                '公告日期' => $dataItem['公告日期'] ?:'' , //
-                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
-                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
-                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
-                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
-                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
-                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
-                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
-                '名次'  => $dataItem['名次'] ?:'' , //
-                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
-                '中标金额'  => $dataItem['中标金额'] ?:'' , //
-                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
-                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
-                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
-                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
-                '评标专家' => $dataItem['评标专家'] ?:'' , //
-                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
-                'url'  => $dataItem['url'] ?:'' , //
-                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
-                '来源' => 'zhao_tou_biao_key03' , //
-            ];
-        }
-        $fileObject ->data($tmp);
-
-
-        //===============================
-        //zhao_tou_biao_key07
-        $sql = " SELECT * FROM zhao_tou_biao_key07 
-                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
-        $datas07 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'exportDataV7' => [
-                    '$datas07'=>count($datas07),
-                    '$sql'=>$sql,
-                    '$dateStart'=>$dateStart,
-                    '$dateEnd'=>$dateEnd,
-                ]
-            ])
-        );
-
-
-        $tmp = [];
-        foreach ($datas07 as $dataItem){
-            $tmp[] = [
-                '标题' => $dataItem['标题'] ?:'' , //
-                '项目名称' => $dataItem['项目名称'] ?:'' , //
-                '项目编号' => $dataItem['项目编号'] ?:'' , //
-                '项目简介'  => $dataItem['项目简介'] ?:'' , //
-                '采购方式'   => $dataItem['采购方式'] ?:'' , //
-                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
-                '公告日期' => $dataItem['公告日期'] ?:'' , //
-                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
-                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
-                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
-                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
-                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
-                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
-                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
-                '名次'  => $dataItem['名次'] ?:'' , //
-                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
-                '中标金额'  => $dataItem['中标金额'] ?:'' , //
-                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
-                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
-                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
-                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
-                '评标专家' => $dataItem['评标专家'] ?:'' , //
-                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
-                'url'  => $dataItem['url'] ?:'' , //
-                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
-                '来源' => 'zhao_tou_biao_key03' , //
-            ];
-        }
-        $fileObject ->data($tmp);
-
-
-        //===============================
-        //zhao_tou_biao_key08
-        $sql = " SELECT * FROM zhao_tou_biao_key08 
-                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
-        $datas08 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'exportDataV7' => [
-                    '$datas08'=>count($datas08),
-                    '$sql'=>$sql,
-                    '$dateStart'=>$dateStart,
-                    '$dateEnd'=>$dateEnd,
-                ]
-            ])
-        );
-
-
-        $tmp = [];
-        foreach ($datas08 as $dataItem){
-            $tmp[] = [
-                '标题' => $dataItem['标题'] ?:'' , //
-                '项目名称' => $dataItem['项目名称'] ?:'' , //
-                '项目编号' => $dataItem['项目编号'] ?:'' , //
-                '项目简介'  => $dataItem['项目简介'] ?:'' , //
-                '采购方式'   => $dataItem['采购方式'] ?:'' , //
-                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
-                '公告日期' => $dataItem['公告日期'] ?:'' , //
-                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
-                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
-                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
-                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
-                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
-                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
-                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
-                '名次'  => $dataItem['名次'] ?:'' , //
-                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
-                '中标金额'  => $dataItem['中标金额'] ?:'' , //
-                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
-                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
-                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
-                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
-                '评标专家' => $dataItem['评标专家'] ?:'' , //
-                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
-                'url'  => $dataItem['url'] ?:'' , //
-                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
-                '来源' => 'zhao_tou_biao_key03' , //
-            ];
-        }
-        $fileObject ->data($tmp);
-
-
-        //===============================
-        //zhao_tou_biao_key09
-        $sql = " SELECT * FROM zhao_tou_biao_key09 
-                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
-        $datas09 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'exportDataV7' => [
-                    '$datas09'=>count($datas09),
-                    '$sql'=>$sql,
-                    '$dateStart'=>$dateStart,
-                    '$dateEnd'=>$dateEnd,
-                ]
-            ])
-        );
-
-
-        $tmp = [];
-        foreach ($datas09 as $dataItem){
-            $tmp[] = [
-                '标题' => $dataItem['标题'] ?:'' , //
-                '项目名称' => $dataItem['项目名称'] ?:'' , //
-                '项目编号' => $dataItem['项目编号'] ?:'' , //
-                '项目简介'  => $dataItem['项目简介'] ?:'' , //
-                '采购方式'   => $dataItem['采购方式'] ?:'' , //
-                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
-                '公告日期' => $dataItem['公告日期'] ?:'' , //
-                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
-                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
-                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
-                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
-                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
-                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
-                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
-                '名次'  => $dataItem['名次'] ?:'' , //
-                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
-                '中标金额'  => $dataItem['中标金额'] ?:'' , //
-                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
-                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
-                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
-                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
-                '评标专家' => $dataItem['评标专家'] ?:'' , //
-                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
-                'url'  => $dataItem['url'] ?:'' , //
-                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
-                '来源' => 'zhao_tou_biao_key03' , //
-            ];
-        }
-        $fileObject ->data($tmp);
-
-        //===============================
-        //zhao_tou_biao_key10
-        $sql = " SELECT * FROM zhao_tou_biao_key10 
-                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
-        $datas10 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'exportDataV7' => [
-                    '$datas10'=>count($datas10),
-                    '$sql'=>$sql,
-                    '$dateStart'=>$dateStart,
-                    '$dateEnd'=>$dateEnd,
-                ]
-            ])
-        );
-
-
-        $tmp = [];
-        foreach ($datas10 as $dataItem){
-            $tmp[] = [
-                '标题' => $dataItem['标题'] ?:'' , //
-                '项目名称' => $dataItem['项目名称'] ?:'' , //
-                '项目编号' => $dataItem['项目编号'] ?:'' , //
-                '项目简介'  => $dataItem['项目简介'] ?:'' , //
-                '采购方式'   => $dataItem['采购方式'] ?:'' , //
-                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
-                '公告日期' => $dataItem['公告日期'] ?:'' , //
-                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
-                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
-                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
-                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
-                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
-                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
-                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
-                '名次'  => $dataItem['名次'] ?:'' , //
-                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
-                '中标金额'  => $dataItem['中标金额'] ?:'' , //
-                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
-                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
-                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
-                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
-                '评标专家' => $dataItem['评标专家'] ?:'' , //
-                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
-                'url'  => $dataItem['url'] ?:'' , //
-                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
-                '来源' => 'zhao_tou_biao_key03' , //
-            ];
-        }
-        $fileObject ->data($tmp);
-
-
-        //===============================
-        //zhao_tou_biao_key11
-        $sql = " SELECT * FROM zhao_tou_biao_key11 
-                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
-        $datas11 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'exportDataV7' => [
-                    '$datas11'=>count($datas11),
-                    '$sql'=>$sql,
-                    '$dateStart'=>$dateStart,
-                    '$dateEnd'=>$dateEnd,
-                ]
-            ])
-        );
-
-
-        $tmp = [];
-        foreach ($datas11 as $dataItem){
-            $tmp[] = [
-                '标题' => $dataItem['标题'] ?:'' , //
-                '项目名称' => $dataItem['项目名称'] ?:'' , //
-                '项目编号' => $dataItem['项目编号'] ?:'' , //
-                '项目简介'  => $dataItem['项目简介'] ?:'' , //
-                '采购方式'   => $dataItem['采购方式'] ?:'' , //
-                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
-                '公告日期' => $dataItem['公告日期'] ?:'' , //
-                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
-                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
-                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
-                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
-                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
-                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
-                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
-                '名次'  => $dataItem['名次'] ?:'' , //
-                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
-                '中标金额'  => $dataItem['中标金额'] ?:'' , //
-                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
-                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
-                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
-                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
-                '评标专家' => $dataItem['评标专家'] ?:'' , //
-                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
-                'url'  => $dataItem['url'] ?:'' , //
-                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
-                '来源' => 'zhao_tou_biao_key03' , //
-            ];
-        }
-        $fileObject ->data($tmp);
-
-
-        //===============================
-        //zhao_tou_biao_key12
-        $sql = " SELECT * FROM zhao_tou_biao_key12 
-                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
-        $datas12 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'exportDataV7' => [
-                    '$datas12'=>count($datas12),
-                    '$sql'=>$sql,
-                    '$dateStart'=>$dateStart,
-                    '$dateEnd'=>$dateEnd,
-                ]
-            ])
-        );
-
-
-        $tmp = [];
-        foreach ($datas12 as $dataItem){
-            $tmp[] = [
-                '标题' => $dataItem['标题'] ?:'' , //
-                '项目名称' => $dataItem['项目名称'] ?:'' , //
-                '项目编号' => $dataItem['项目编号'] ?:'' , //
-                '项目简介'  => $dataItem['项目简介'] ?:'' , //
-                '采购方式'   => $dataItem['采购方式'] ?:'' , //
-                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
-                '公告日期' => $dataItem['公告日期'] ?:'' , //
-                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
-                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
-                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
-                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
-                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
-                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
-                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
-                '名次'  => $dataItem['名次'] ?:'' , //
-                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
-                '中标金额'  => $dataItem['中标金额'] ?:'' , //
-                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
-                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
-                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
-                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
-                '评标专家' => $dataItem['评标专家'] ?:'' , //
-                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
-                'url'  => $dataItem['url'] ?:'' , //
-                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
-                '来源' => 'zhao_tou_biao_key03' , //
-            ];
-        }
-        $fileObject ->data($tmp);
-
-
-        //===============================
-        //zhao_tou_biao_key13
-        $sql = " SELECT * FROM zhao_tou_biao_key13 
-                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
-        $datas13 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'exportDataV7' => [
-                    '$datas13'=>count($datas13),
-                    '$sql'=>$sql,
-                    '$dateStart'=>$dateStart,
-                    '$dateEnd'=>$dateEnd,
-                ]
-            ])
-        );
+//        //===============================
+//        //zhao_tou_biao_key02
+//        $sql = " SELECT * FROM zhao_tou_biao_key02
+//                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
+//        $datas02 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'exportDataV7' => [
+//                    '$datas02'=>count($datas02),
+//                    '$sql'=>$sql,
+//                    '$dateStart'=>$dateStart,
+//                    '$dateEnd'=>$dateEnd,
+//                ]
+//            ])
+//        );
+//
+//
+//        $tmp = [];
+//        foreach ($datas02 as $dataItem){
+//            $tmp[] = [
+//                '标题' => $dataItem['标题'] ?:'' , //
+//                '项目名称' => $dataItem['项目名称'] ?:'' , //
+//                '项目编号' => $dataItem['项目编号'] ?:'' , //
+//                '项目简介'  => $dataItem['项目简介'] ?:'' , //
+//                '采购方式'   => $dataItem['采购方式'] ?:'' , //
+//                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
+//                '公告日期' => $dataItem['公告日期'] ?:'' , //
+//                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
+//                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
+//                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
+//                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
+//                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
+//                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
+//                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
+//                '名次'  => $dataItem['名次'] ?:'' , //
+//                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
+//                '中标金额'  => $dataItem['中标金额'] ?:'' , //
+//                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
+//                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
+//                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
+//                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
+//                '评标专家' => $dataItem['评标专家'] ?:'' , //
+//                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
+//                'url'  => $dataItem['url'] ?:'' , //
+//                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
+//                '来源' => 'zhao_tou_biao_key02' , //
+//            ];
+//        }
+//        $fileObject ->data($tmp);
+//
+//        //===============================
+//        //zhao_tou_biao_key03
+//        $sql = " SELECT * FROM zhao_tou_biao_key03
+//                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
+//        $datas03 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'exportDataV7' => [
+//                    '$datas03'=>count($datas03),
+//                    '$sql'=>$sql,
+//                    '$dateStart'=>$dateStart,
+//                    '$dateEnd'=>$dateEnd,
+//                ]
+//            ])
+//        );
+//
+//
+//        $tmp = [];
+//        foreach ($datas03 as $dataItem){
+//            $tmp[] = [
+//                '标题' => $dataItem['标题'] ?:'XXX' , //
+//                '项目名称' => $dataItem['项目名称'] ?:'' , //
+//                '项目编号' => $dataItem['项目编号'] ?:'' , //
+//                '项目简介'  => $dataItem['项目简介'] ?:'' , //
+//                '采购方式'   => $dataItem['采购方式'] ?:'' , //
+//                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
+//                '公告日期' => $dataItem['公告日期'] ?:'' , //
+//                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
+//                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
+//                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
+//                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
+//                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
+//                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
+//                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
+//                '名次'  => $dataItem['名次'] ?:'' , //
+//                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
+//                '中标金额'  => $dataItem['中标金额'] ?:'' , //
+//                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
+//                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
+//                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
+//                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
+//                '评标专家' => $dataItem['评标专家'] ?:'' , //
+//                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
+//                'url'  => $dataItem['url'] ?:'' , //
+//                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
+//                '来源' => 'zhao_tou_biao_key03' , //
+//            ];
+//        }
+//        $fileObject ->data($tmp);
+//
+//        //===============================
+//        //zhao_tou_biao_key04
+//        $sql = " SELECT * FROM zhao_tou_biao_key04
+//                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
+//        $datas04 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'exportDataV7' => [
+//                    '$datas04'=>count($datas04),
+//                    '$sql'=>$sql,
+//                    '$dateStart'=>$dateStart,
+//                    '$dateEnd'=>$dateEnd,
+//                ]
+//            ])
+//        );
+//
+//
+//        $tmp = [];
+//        foreach ($datas04 as $dataItem){
+//            $tmp[] = [
+//                '标题' => $dataItem['标题'] ?:'' , //
+//                '项目名称' => $dataItem['项目名称'] ?:'' , //
+//                '项目编号' => $dataItem['项目编号'] ?:'' , //
+//                '项目简介'  => $dataItem['项目简介'] ?:'' , //
+//                '采购方式'   => $dataItem['采购方式'] ?:'' , //
+//                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
+//                '公告日期' => $dataItem['公告日期'] ?:'' , //
+//                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
+//                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
+//                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
+//                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
+//                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
+//                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
+//                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
+//                '名次'  => $dataItem['名次'] ?:'' , //
+//                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
+//                '中标金额'  => $dataItem['中标金额'] ?:'' , //
+//                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
+//                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
+//                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
+//                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
+//                '评标专家' => $dataItem['评标专家'] ?:'' , //
+//                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
+//                'url'  => $dataItem['url'] ?:'' , //
+//                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
+//                '来源' => 'zhao_tou_biao_key03' , //
+//            ];
+//        }
+//        $fileObject ->data($tmp);
+//
+//        //===============================
+//        //zhao_tou_biao_key05
+//        $sql = " SELECT * FROM zhao_tou_biao_key05
+//                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
+//        $datas05 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'exportDataV7' => [
+//                    '$datas05'=>count($datas05),
+//                    '$sql'=>$sql,
+//                    '$dateStart'=>$dateStart,
+//                    '$dateEnd'=>$dateEnd,
+//                ]
+//            ])
+//        );
+//
+//
+//        $tmp = [];
+//        foreach ($datas05 as $dataItem){
+//            $tmp[] = [
+//                '标题' => $dataItem['标题'] ?:'' , //
+//                '项目名称' => $dataItem['项目名称'] ?:'' , //
+//                '项目编号' => $dataItem['项目编号'] ?:'' , //
+//                '项目简介'  => $dataItem['项目简介'] ?:'' , //
+//                '采购方式'   => $dataItem['采购方式'] ?:'' , //
+//                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
+//                '公告日期' => $dataItem['公告日期'] ?:'' , //
+//                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
+//                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
+//                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
+//                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
+//                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
+//                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
+//                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
+//                '名次'  => $dataItem['名次'] ?:'' , //
+//                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
+//                '中标金额'  => $dataItem['中标金额'] ?:'' , //
+//                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
+//                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
+//                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
+//                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
+//                '评标专家' => $dataItem['评标专家'] ?:'' , //
+//                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
+//                'url'  => $dataItem['url'] ?:'' , //
+//                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
+//                '来源' => 'zhao_tou_biao_key03' , //
+//            ];
+//        }
+//        $fileObject ->data($tmp);
+//
+//        //===============================
+//        //zhao_tou_biao_key06
+//        $sql = " SELECT * FROM zhao_tou_biao_key06
+//                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
+//        $datas06 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'exportDataV7' => [
+//                    '$datas06'=>count($datas06),
+//                    '$sql'=>$sql,
+//                    '$dateStart'=>$dateStart,
+//                    '$dateEnd'=>$dateEnd,
+//                ]
+//            ])
+//        );
+//
+//
+//        $tmp = [];
+//        foreach ($datas06 as $dataItem){
+//            $tmp[] = [
+//                '标题' => $dataItem['标题'] ?:'' , //
+//                '项目名称' => $dataItem['项目名称'] ?:'' , //
+//                '项目编号' => $dataItem['项目编号'] ?:'' , //
+//                '项目简介'  => $dataItem['项目简介'] ?:'' , //
+//                '采购方式'   => $dataItem['采购方式'] ?:'' , //
+//                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
+//                '公告日期' => $dataItem['公告日期'] ?:'' , //
+//                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
+//                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
+//                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
+//                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
+//                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
+//                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
+//                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
+//                '名次'  => $dataItem['名次'] ?:'' , //
+//                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
+//                '中标金额'  => $dataItem['中标金额'] ?:'' , //
+//                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
+//                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
+//                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
+//                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
+//                '评标专家' => $dataItem['评标专家'] ?:'' , //
+//                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
+//                'url'  => $dataItem['url'] ?:'' , //
+//                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
+//                '来源' => 'zhao_tou_biao_key03' , //
+//            ];
+//        }
+//        $fileObject ->data($tmp);
+//
+//
+//        //===============================
+//        //zhao_tou_biao_key07
+//        $sql = " SELECT * FROM zhao_tou_biao_key07
+//                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
+//        $datas07 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'exportDataV7' => [
+//                    '$datas07'=>count($datas07),
+//                    '$sql'=>$sql,
+//                    '$dateStart'=>$dateStart,
+//                    '$dateEnd'=>$dateEnd,
+//                ]
+//            ])
+//        );
+//
+//
+//        $tmp = [];
+//        foreach ($datas07 as $dataItem){
+//            $tmp[] = [
+//                '标题' => $dataItem['标题'] ?:'' , //
+//                '项目名称' => $dataItem['项目名称'] ?:'' , //
+//                '项目编号' => $dataItem['项目编号'] ?:'' , //
+//                '项目简介'  => $dataItem['项目简介'] ?:'' , //
+//                '采购方式'   => $dataItem['采购方式'] ?:'' , //
+//                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
+//                '公告日期' => $dataItem['公告日期'] ?:'' , //
+//                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
+//                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
+//                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
+//                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
+//                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
+//                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
+//                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
+//                '名次'  => $dataItem['名次'] ?:'' , //
+//                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
+//                '中标金额'  => $dataItem['中标金额'] ?:'' , //
+//                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
+//                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
+//                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
+//                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
+//                '评标专家' => $dataItem['评标专家'] ?:'' , //
+//                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
+//                'url'  => $dataItem['url'] ?:'' , //
+//                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
+//                '来源' => 'zhao_tou_biao_key03' , //
+//            ];
+//        }
+//        $fileObject ->data($tmp);
+//
+//
+//        //===============================
+//        //zhao_tou_biao_key08
+//        $sql = " SELECT * FROM zhao_tou_biao_key08
+//                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
+//        $datas08 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'exportDataV7' => [
+//                    '$datas08'=>count($datas08),
+//                    '$sql'=>$sql,
+//                    '$dateStart'=>$dateStart,
+//                    '$dateEnd'=>$dateEnd,
+//                ]
+//            ])
+//        );
+//
+//
+//        $tmp = [];
+//        foreach ($datas08 as $dataItem){
+//            $tmp[] = [
+//                '标题' => $dataItem['标题'] ?:'' , //
+//                '项目名称' => $dataItem['项目名称'] ?:'' , //
+//                '项目编号' => $dataItem['项目编号'] ?:'' , //
+//                '项目简介'  => $dataItem['项目简介'] ?:'' , //
+//                '采购方式'   => $dataItem['采购方式'] ?:'' , //
+//                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
+//                '公告日期' => $dataItem['公告日期'] ?:'' , //
+//                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
+//                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
+//                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
+//                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
+//                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
+//                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
+//                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
+//                '名次'  => $dataItem['名次'] ?:'' , //
+//                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
+//                '中标金额'  => $dataItem['中标金额'] ?:'' , //
+//                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
+//                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
+//                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
+//                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
+//                '评标专家' => $dataItem['评标专家'] ?:'' , //
+//                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
+//                'url'  => $dataItem['url'] ?:'' , //
+//                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
+//                '来源' => 'zhao_tou_biao_key03' , //
+//            ];
+//        }
+//        $fileObject ->data($tmp);
+//
+//
+//        //===============================
+//        //zhao_tou_biao_key09
+//        $sql = " SELECT * FROM zhao_tou_biao_key09
+//                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
+//        $datas09 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'exportDataV7' => [
+//                    '$datas09'=>count($datas09),
+//                    '$sql'=>$sql,
+//                    '$dateStart'=>$dateStart,
+//                    '$dateEnd'=>$dateEnd,
+//                ]
+//            ])
+//        );
+//
+//
+//        $tmp = [];
+//        foreach ($datas09 as $dataItem){
+//            $tmp[] = [
+//                '标题' => $dataItem['标题'] ?:'' , //
+//                '项目名称' => $dataItem['项目名称'] ?:'' , //
+//                '项目编号' => $dataItem['项目编号'] ?:'' , //
+//                '项目简介'  => $dataItem['项目简介'] ?:'' , //
+//                '采购方式'   => $dataItem['采购方式'] ?:'' , //
+//                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
+//                '公告日期' => $dataItem['公告日期'] ?:'' , //
+//                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
+//                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
+//                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
+//                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
+//                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
+//                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
+//                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
+//                '名次'  => $dataItem['名次'] ?:'' , //
+//                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
+//                '中标金额'  => $dataItem['中标金额'] ?:'' , //
+//                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
+//                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
+//                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
+//                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
+//                '评标专家' => $dataItem['评标专家'] ?:'' , //
+//                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
+//                'url'  => $dataItem['url'] ?:'' , //
+//                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
+//                '来源' => 'zhao_tou_biao_key03' , //
+//            ];
+//        }
+//        $fileObject ->data($tmp);
+//
+//        //===============================
+//        //zhao_tou_biao_key10
+//        $sql = " SELECT * FROM zhao_tou_biao_key10
+//                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
+//        $datas10 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'exportDataV7' => [
+//                    '$datas10'=>count($datas10),
+//                    '$sql'=>$sql,
+//                    '$dateStart'=>$dateStart,
+//                    '$dateEnd'=>$dateEnd,
+//                ]
+//            ])
+//        );
+//
+//
+//        $tmp = [];
+//        foreach ($datas10 as $dataItem){
+//            $tmp[] = [
+//                '标题' => $dataItem['标题'] ?:'' , //
+//                '项目名称' => $dataItem['项目名称'] ?:'' , //
+//                '项目编号' => $dataItem['项目编号'] ?:'' , //
+//                '项目简介'  => $dataItem['项目简介'] ?:'' , //
+//                '采购方式'   => $dataItem['采购方式'] ?:'' , //
+//                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
+//                '公告日期' => $dataItem['公告日期'] ?:'' , //
+//                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
+//                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
+//                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
+//                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
+//                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
+//                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
+//                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
+//                '名次'  => $dataItem['名次'] ?:'' , //
+//                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
+//                '中标金额'  => $dataItem['中标金额'] ?:'' , //
+//                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
+//                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
+//                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
+//                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
+//                '评标专家' => $dataItem['评标专家'] ?:'' , //
+//                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
+//                'url'  => $dataItem['url'] ?:'' , //
+//                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
+//                '来源' => 'zhao_tou_biao_key03' , //
+//            ];
+//        }
+//        $fileObject ->data($tmp);
+//
+//
+//        //===============================
+//        //zhao_tou_biao_key11
+//        $sql = " SELECT * FROM zhao_tou_biao_key11
+//                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
+//        $datas11 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'exportDataV7' => [
+//                    '$datas11'=>count($datas11),
+//                    '$sql'=>$sql,
+//                    '$dateStart'=>$dateStart,
+//                    '$dateEnd'=>$dateEnd,
+//                ]
+//            ])
+//        );
+//
+//
+//        $tmp = [];
+//        foreach ($datas11 as $dataItem){
+//            $tmp[] = [
+//                '标题' => $dataItem['标题'] ?:'' , //
+//                '项目名称' => $dataItem['项目名称'] ?:'' , //
+//                '项目编号' => $dataItem['项目编号'] ?:'' , //
+//                '项目简介'  => $dataItem['项目简介'] ?:'' , //
+//                '采购方式'   => $dataItem['采购方式'] ?:'' , //
+//                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
+//                '公告日期' => $dataItem['公告日期'] ?:'' , //
+//                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
+//                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
+//                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
+//                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
+//                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
+//                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
+//                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
+//                '名次'  => $dataItem['名次'] ?:'' , //
+//                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
+//                '中标金额'  => $dataItem['中标金额'] ?:'' , //
+//                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
+//                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
+//                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
+//                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
+//                '评标专家' => $dataItem['评标专家'] ?:'' , //
+//                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
+//                'url'  => $dataItem['url'] ?:'' , //
+//                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
+//                '来源' => 'zhao_tou_biao_key03' , //
+//            ];
+//        }
+//        $fileObject ->data($tmp);
+//
+//
+//        //===============================
+//        //zhao_tou_biao_key12
+//        $sql = " SELECT * FROM zhao_tou_biao_key12
+//                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
+//        $datas12 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'exportDataV7' => [
+//                    '$datas12'=>count($datas12),
+//                    '$sql'=>$sql,
+//                    '$dateStart'=>$dateStart,
+//                    '$dateEnd'=>$dateEnd,
+//                ]
+//            ])
+//        );
+//
+//
+//        $tmp = [];
+//        foreach ($datas12 as $dataItem){
+//            $tmp[] = [
+//                '标题' => $dataItem['标题'] ?:'' , //
+//                '项目名称' => $dataItem['项目名称'] ?:'' , //
+//                '项目编号' => $dataItem['项目编号'] ?:'' , //
+//                '项目简介'  => $dataItem['项目简介'] ?:'' , //
+//                '采购方式'   => $dataItem['采购方式'] ?:'' , //
+//                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
+//                '公告日期' => $dataItem['公告日期'] ?:'' , //
+//                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
+//                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
+//                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
+//                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
+//                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
+//                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
+//                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
+//                '名次'  => $dataItem['名次'] ?:'' , //
+//                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
+//                '中标金额'  => $dataItem['中标金额'] ?:'' , //
+//                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
+//                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
+//                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
+//                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
+//                '评标专家' => $dataItem['评标专家'] ?:'' , //
+//                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
+//                'url'  => $dataItem['url'] ?:'' , //
+//                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
+//                '来源' => 'zhao_tou_biao_key03' , //
+//            ];
+//        }
+//        $fileObject ->data($tmp);
+//
+//
+//        //===============================
+//        //zhao_tou_biao_key13
+//        $sql = " SELECT * FROM zhao_tou_biao_key13
+//                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
+//        $datas13 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'exportDataV7' => [
+//                    '$datas13'=>count($datas13),
+//                    '$sql'=>$sql,
+//                    '$dateStart'=>$dateStart,
+//                    '$dateEnd'=>$dateEnd,
+//                ]
+//            ])
+//        );
 
 
         $tmp = [];
