@@ -2498,6 +2498,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         ];
         foreach ($variables as $dataItems){
             foreach ($dataItems as $dataItem){
+                $dataItem['corexml'] = str_replace(',', '，', $dataItem['corexml']);
                 $tmpDataItem = [
                     '标题' => $dataItem['标题'] ?:'aaaa' , //
                     '项目名称' => $dataItem['项目名称'] ?:'' , //
