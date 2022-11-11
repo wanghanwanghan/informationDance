@@ -822,6 +822,46 @@ class Company extends ServiceBase
 
         return $this;
     }
+    function SetQueryByNaShuiGuiMo($searchOptionArr){
+
+        $ying_shou_gui_mo_values = [];  // 营收规模
+
+        foreach($searchOptionArr as $item){
+            if($item['pid'] == 65){
+                $ying_shou_gui_mo_values = $item['value'];
+            }
+        }
+
+        $matchedCnamesRaw = [];
+        foreach($ying_shou_gui_mo_values as $item){
+            $item && $matchedCnamesRaw[] = $item;
+        }
+
+
+        (!empty($matchedCnamesRaw)) && $this->es->addMustShouldPhraseQuery( 'na_shui_gui_mo_2021' , $matchedCnamesRaw) ;
+
+        return $this;
+    }
+    function SetQueryByLiRunGuiMo($searchOptionArr){
+
+        $ying_shou_gui_mo_values = [];  // 营收规模
+
+        foreach($searchOptionArr as $item){
+            if($item['pid'] == 66){
+                $ying_shou_gui_mo_values = $item['value'];
+            }
+        }
+
+        $matchedCnamesRaw = [];
+        foreach($ying_shou_gui_mo_values as $item){
+            $item && $matchedCnamesRaw[] = $item;
+        }
+
+
+        (!empty($matchedCnamesRaw)) && $this->es->addMustShouldPhraseQuery( 'li_run_gui_mo_2021' , $matchedCnamesRaw) ;
+
+        return $this;
+    }
 
     // addMustShouldPhrasePrefixQuery
     function SetQueryBySiJiFenLei($siJiFenLeiStrs,$field = 'si_ji_fen_lei_code'){

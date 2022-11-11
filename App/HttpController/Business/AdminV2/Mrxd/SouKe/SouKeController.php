@@ -178,6 +178,10 @@ class SouKeController extends ControllerBase
             ->SetQueryByTuanDuiRenShu($searchOptionArr)
             // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
             ->SetQueryByYingShouGuiMo($searchOptionArr)
+            // 纳税规模
+            ->SetQueryByNaShuiGuiMo($searchOptionArr)
+            // 利润规模
+            ->SetQueryByLiRunGuiMo($searchOptionArr)
             //四级分类 basic_nicid: A0111,A0112,A0113,
             //->SetQueryBySiJiFenLei(trim($this->request()->getRequestParam('basic_nicid')))
             ->SetQueryBySiJiFenLeiV2(trim($this->request()->getRequestParam('basic_nicid')))
