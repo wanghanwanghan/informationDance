@@ -196,6 +196,25 @@ class LongDunController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //股权冻结
+    function getJudicialAssistance()
+    {
+        $entName = $this->request()->getRequestParam('entName');
+
+        $postData = [
+            'keyWord' => $entName,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'JudicialAssistance/GetJudicialAssistance', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
     //行政许可
     function getAdministrativeLicenseList()
     {
@@ -290,5 +309,48 @@ class LongDunController extends ProvideBase
     }
     public function getPatentV4Search(){
 
+    }
+
+    //行政许可
+    function EquityFreezeCheckGetList()
+    {
+        $entName  = $this->request()->getRequestParam('entName');
+        $page     = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData = [
+            'searchKey' => $entName,
+            'pageIndex' => $page,
+            'pageSize'  => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'EquityFreezeCheck/GetList', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+
+    }
+
+    //行政许可详情
+    function EquityFreezeCheckGetDetail()
+    {
+        $id = $this->request()->getRequestParam('id');
+
+        $postData = ['id' => $id];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'EquityFreezeCheck/GetDetail', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
     }
 }
