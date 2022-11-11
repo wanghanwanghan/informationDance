@@ -548,8 +548,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
            // ->defaultFormat($alignStyle)
         ;
 
+        $tmp = [];
         foreach ($datas01 as $dataItem){
-            $tmp = [
+            $tmp[] = [
                '标题' => $dataItem['标题'] ?:'' , //
                '项目名称' => $dataItem['项目名称'] ?:'' , //
                '项目编号' => $dataItem['项目编号'] ?:'' , //
@@ -576,8 +577,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                'url'  => $dataItem['url'] ?:'' , //
                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
            ];
-            $fileObject ->data(  [$tmp]  );
+
         }
+        $fileObject ->data($tmp);
 
         //==============================================
         $sql =" SELECT * FROM zhao_tou_biao_key02 
@@ -602,8 +604,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             //->defaultFormat($alignStyle)
            ;
 
+        $tmp = [];
         foreach ($datas02 as $dataItem){
-            $tmp = [
+            $tmp[] = [
                 '标题' => $dataItem['标题'] ?:'' , //
                 '项目名称' => $dataItem['项目名称'] ?:'' , //
                 '项目编号' => $dataItem['项目编号'] ?:'' , //
@@ -631,10 +634,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
             ];
 
-            $fileObject ->data(
-                [$tmp]
-            );
+
         }
+        $fileObject ->data($tmp );
         //==============================================
 
         //==============================================
@@ -662,8 +664,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             //->defaultFormat($alignStyle)
         ;
 
+        $tmp = [];
         foreach ($datas03 as $dataItem){
-            $tmp = [
+            $tmp[] = [
                 '标题' => $dataItem['标题'] ?:'' , //
                 '项目名称' => $dataItem['项目名称'] ?:'' , //
                 '项目编号' => $dataItem['项目编号'] ?:'' , //
@@ -691,10 +694,10 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
             ];
 
-            $fileObject ->data(
-                [$tmp]
-            );
+
         }
+        $fileObject ->data($tmp );
+
         //==============================================
 
         //==============================================
@@ -721,8 +724,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             //->defaultFormat($alignStyle)
         ;
 
+        $tmp = [];
         foreach ($datas04 as $dataItem){
-            $tmp = [
+            $tmp[] = [
                 '标题' => $dataItem['标题'] ?:'' , //
                 '项目名称' => $dataItem['项目名称'] ?:'' , //
                 '项目编号' => $dataItem['项目编号'] ?:'' , //
@@ -750,10 +754,11 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
             ];
 
-            $fileObject ->data(
-                [$tmp]
-            );
+
         }
+
+        $fileObject ->data($tmp);
+
         //==============================================
 
         //==============================================
@@ -781,6 +786,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             //->defaultFormat($alignStyle)
         ;
 
+        $tmp = [];
         foreach ($datas05 as $dataItem){
             $tmp = [
                 '标题' => $dataItem['标题'] ?:'' , //
@@ -817,10 +823,10 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                     ]
                 ])
             );
-            $fileObject ->data(
-                [$tmp]
-            );
+
         }
+
+        $fileObject ->data($tmp);
         //==============================================
 
         //==============================================
@@ -846,8 +852,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             //->defaultFormat($alignStyle)
         ;
 
+        $tmp = [];
         foreach ($datas06 as $dataItem){
-            $tmp = [
+            $tmp[] = [
                 '标题' => $dataItem['标题'] ?:'' , //
                 '项目名称' => $dataItem['项目名称'] ?:'' , //
                 '项目编号' => $dataItem['项目编号'] ?:'' , //
@@ -875,10 +882,10 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
             ];
 
-            $fileObject ->data(
-                [$tmp]
-            );
+
         }
+        $fileObject ->data($tmp );
+
         //==============================================
 
         //==============================================
@@ -905,8 +912,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             //->defaultFormat($alignStyle)
         ;
 
+        $tmp= [];
         foreach ($datas07 as $dataItem){
-            $tmp = [
+            $tmp[] = [
                 '标题' => $dataItem['标题'] ?:'' , //
                 '项目名称' => $dataItem['项目名称'] ?:'' , //
                 '项目编号' => $dataItem['项目编号'] ?:'' , //
@@ -934,10 +942,10 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
             ];
 
-            $fileObject ->data(
-                [$tmp]
-            );
+
         }
+        $fileObject ->data($tmp);
+
         //==============================================
 
         //==============================================
@@ -965,8 +973,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             //->defaultFormat($alignStyle)
         ;
 
+        $tmp = [];
         foreach ($datas08 as $dataItem){
-            $tmp = [
+            $tmp[] = [
                 '标题' => $dataItem['标题'] ?:'' , //
                 '项目名称' => $dataItem['项目名称'] ?:'' , //
                 '项目编号' => $dataItem['项目编号'] ?:'' , //
@@ -994,10 +1003,10 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
             ];
 
-            $fileObject ->data(
-                [$tmp]
-            );
+
         }
+        $fileObject ->data($tmp);
+
         //==============================================
         //==============================================
         $sql = " SELECT * FROM zhao_tou_biao_key09 
@@ -1024,8 +1033,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             //->defaultFormat($alignStyle)
         ;
 
+        $tmp = [];
         foreach ($datas09 as $dataItem){
-            $tmp = [
+            $tmp[] = [
                 '标题' => $dataItem['标题'] ?:'' , //
                 '项目名称' => $dataItem['项目名称'] ?:'' , //
                 '项目编号' => $dataItem['项目编号'] ?:'' , //
@@ -1053,10 +1063,10 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
             ];
 
-            $fileObject ->data(
-                [$tmp]
-            );
+
         }
+        $fileObject ->data($tmp );
+
         //==============================================
 
 
@@ -1085,8 +1095,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             //->defaultFormat($alignStyle)
         ;
 
+        $tmp = [];
         foreach ($datas10 as $dataItem){
-            $tmp = [
+            $tmp[] = [
                 '标题' => $dataItem['标题'] ?:'' , //
                 '项目名称' => $dataItem['项目名称'] ?:'' , //
                 '项目编号' => $dataItem['项目编号'] ?:'' , //
@@ -1114,10 +1125,10 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
             ];
 
-            $fileObject ->data(
-                [$tmp]
-            );
+
         }
+        $fileObject ->data($tmp );
+
         //==============================================
 
 
@@ -1145,8 +1156,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             //->defaultFormat($alignStyle)
         ;
 
+        $tmp = [];
         foreach ($datas11 as $dataItem){
-            $tmp = [
+            $tmp[] = [
                 '标题' => $dataItem['标题'] ?:'' , //
                 '项目名称' => $dataItem['项目名称'] ?:'' , //
                 '项目编号' => $dataItem['项目编号'] ?:'' , //
@@ -1174,10 +1186,11 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
             ];
 
-            $fileObject ->data(
-                [$tmp]
-            );
+
         }
+
+        $fileObject ->data($tmp);
+
         //==============================================
 
         //==============================================
@@ -1205,8 +1218,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             //->defaultFormat($alignStyle)
         ;
 
+        $tmp = [];
         foreach ($datas12 as $dataItem){
-            $tmp = [
+            $tmp[] = [
                 '标题' => $dataItem['标题'] ?:'' , //
                 '项目名称' => $dataItem['项目名称'] ?:'' , //
                 '项目编号' => $dataItem['项目编号'] ?:'' , //
@@ -1234,10 +1248,10 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
             ];
 
-            $fileObject ->data(
-                [$tmp]
-            );
+
         }
+        $fileObject ->data($tmp );
+
         //==============================================
 
         //==============================================
@@ -1265,8 +1279,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             //->defaultFormat($alignStyle)
         ;
 
+        $tmp = [];
         foreach ($datas13 as $dataItem){
-            $tmp = [
+            $tmp[] = [
                 '标题' => $dataItem['标题'] ?:'' , //
                 '项目名称' => $dataItem['项目名称'] ?:'' , //
                 '项目编号' => $dataItem['项目编号'] ?:'' , //
@@ -1294,10 +1309,10 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
             ];
 
-            $fileObject ->data(
-                [$tmp]
-            );
+
         }
+
+        $fileObject ->data($tmp);
         //==============================================
 
         CommonService::getInstance()->log4PHP(
