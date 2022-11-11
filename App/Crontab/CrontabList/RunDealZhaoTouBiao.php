@@ -463,20 +463,20 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             [TEMP_FILE_PATH . $res['filename']]
         );
 
-        $res3 = CommonService::getInstance()->sendEmailV2(
-            'minglongoc@me.com',
-            '招投标数据('.$day.')',
-            '',
-            [TEMP_FILE_PATH . $res['filename']]
-        );
-
-        $res4 = CommonService::getInstance()->sendEmailV2(
-            'zhengmeng@meirixindong.com',
-            // 'minglongoc@me.com',
-            '招投标数据('.$day.')',
-            '',
-            [TEMP_FILE_PATH . $res['filename']]
-        );
+//        $res3 = CommonService::getInstance()->sendEmailV2(
+//            'minglongoc@me.com',
+//            '招投标数据('.$day.')',
+//            '',
+//            [TEMP_FILE_PATH . $res['filename']]
+//        );
+//
+//        $res4 = CommonService::getInstance()->sendEmailV2(
+//            'zhengmeng@meirixindong.com',
+//            // 'minglongoc@me.com',
+//            '招投标数据('.$day.')',
+//            '',
+//            [TEMP_FILE_PATH . $res['filename']]
+//        );
 
         OperatorLog::addRecord(
             [
@@ -1659,7 +1659,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'exportDataV7' => [
                     'start'=>true,
                     '$dateStart'=>$dateStart,
-                    '$dateEnd'=>$dateEnd, 
+                    '$dateEnd'=>$dateEnd,
                 ]
             ])
         );
@@ -1847,7 +1847,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         $tmp = [];
         foreach ($datas03 as $dataItem){
             $tmp[] = [
-                '标题' => $dataItem['标题'] ?:'' , //
+                '标题' => $dataItem['标题'] ?:'XXX' , //
                 '项目名称' => $dataItem['项目名称'] ?:'' , //
                 '项目编号' => $dataItem['项目编号'] ?:'' , //
                 '项目简介'  => $dataItem['项目简介'] ?:'' , //
