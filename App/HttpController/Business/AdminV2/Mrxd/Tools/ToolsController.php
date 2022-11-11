@@ -1110,6 +1110,28 @@ class ToolsController extends ControllerBase
             $response[] = $res;
         }
 
+        //126 根据日期发送新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）
+        if($requestData['type'] == 126 ){
+            $week =  date('w',strtotime($key));
+            $startday = date('Y-m-d',strtotime('today -' . ($week - 1) . 'day'));
+            $dateStart = $startday.' 00:00:00';
+            $dateEnd = $key.' 23:59:59';
+
+            $res = RunDealZhaoTouBiao::exportDataV5($dateStart,$dateEnd);
+
+            $response[] = $res;
+            $res1 = CommonService::getInstance()->sendEmailV2(
+                'tianyongshan@meirixindong.com',
+                // 'minglongoc@me.com',
+                '招投标数据('.$key.')',
+                '',
+                [TEMP_FILE_PATH . $res['filename'],TEMP_FILE_PATH . $res['filename']]
+            );
+
+        }
+
+
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -1156,6 +1178,7 @@ class ToolsController extends ControllerBase
             115 => '根据信用代码导出资产负债（入参格式:信用代码）',
             //120 => '根据json查询导出资产负债（入参格式:信用代码）',
             125 => '根据日期查询新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）',
+            126 => '根据日期发送新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）',
         ],'成功');
     }
 
