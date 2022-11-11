@@ -385,21 +385,34 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
         $res1 = CommonService::getInstance()->sendEmailV2(
              'tianyongshan@meirixindong.com',
-           // 'minglongoc@me.com',
             '招投标数据-新('.$day.')',
             '',
             $attrs
         );
 
-        //
-        $res3 = CommonService::getInstance()->sendEmailV2(
+
+        $res2 = CommonService::getInstance()->sendEmailV2(
             'guoxinxia@meirixindong.com',
             // 'minglongoc@me.com',
             '招投标数据('.$day.')',
             '',
-            [TEMP_FILE_PATH . $res['filename']]
+            $attrs
         );
 
+        $res3 = CommonService::getInstance()->sendEmailV2(
+            'minglongoc@me.com',
+            '招投标数据('.$day.')',
+            '',
+            $attrs
+        );
+
+        $res4 = CommonService::getInstance()->sendEmailV2(
+            'zhengmeng@meirixindong.com',
+            // 'minglongoc@me.com',
+            '招投标数据('.$day.')',
+            '',
+            $attrs
+        );
 
         OperatorLog::addRecord(
             [
