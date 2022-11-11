@@ -1104,29 +1104,39 @@ class ToolsController extends ControllerBase
             $startday = date('Y-m-d',strtotime('today -' . ($week - 1) . 'day'));
             $dateStart = $startday.' 00:00:00';
             $dateEnd = $key.' 23:59:59';
+            $attrs = [];
 
-            $res = RunDealZhaoTouBiao::exportDataV5($dateStart,$dateEnd);
+            $tables = [
+                'zhao_tou_biao_key01',
+                'zhao_tou_biao_key02',
+                'zhao_tou_biao_key03',
+                'zhao_tou_biao_key04',
+                'zhao_tou_biao_key05',
+                'zhao_tou_biao_key06',
+                'zhao_tou_biao_key07',
+                'zhao_tou_biao_key08',
+                'zhao_tou_biao_key09',
+                'zhao_tou_biao_key10',
+                'zhao_tou_biao_key11',
+                'zhao_tou_biao_key12',
+                'zhao_tou_biao_key13',
+            ];
+            foreach ($tables as $table){
+                $res = RunDealZhaoTouBiao::exportDataV6($dateStart,$dateEnd,$table);
+                if(
+                    $res['Nums'] >= 0
+                ){
+                    $attrs[] = TEMP_FILE_PATH . $res['filename'];
+                }
+            }
 
-            $response[] = $res;
+            $response[] = $attrs;
         }
 
         //126 根据日期发送新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）
         if($requestData['type'] == 126 ){
-            $week =  date('w',strtotime($key));
-            $startday = date('Y-m-d',strtotime('today -' . ($week - 1) . 'day'));
-            $dateStart = $startday.' 00:00:00';
-            $dateEnd = $key.' 23:59:59';
 
-            $res = RunDealZhaoTouBiao::exportDataV5($dateStart,$dateEnd);
-
-            $response[] = $res;
-            $res1 = CommonService::getInstance()->sendEmailV2(
-                'tianyongshan@meirixindong.com',
-                // 'minglongoc@me.com',
-                '招投标数据('.$key.')',
-                '',
-                [TEMP_FILE_PATH . $res['filename'],TEMP_FILE_PATH . $res['filename']]
-            );
+            $response[] =RunDealZhaoTouBiao::sendEmailV3($key);
 
         }
 
