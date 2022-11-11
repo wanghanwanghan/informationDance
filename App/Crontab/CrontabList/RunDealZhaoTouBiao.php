@@ -1749,7 +1749,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     '标题' => $dataItem['标题'],
-                    'code' =>  (utf8_encode(utf8_decode($dataItem['标题'])) == $dataItem['标题']) ,
+                    'code' =>  mb_detect_encoding($dataItem['标题']) ,
                     '$i' => $i
                 ])
             );
