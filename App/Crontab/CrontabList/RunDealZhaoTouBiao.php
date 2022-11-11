@@ -1758,7 +1758,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
             //
             $tmp[] = [
-               '标题' => $dataItem['标题'] ?  '测试'.$dataItem['标题'].'测试' :'aaaa' , //
+               '标题' => $dataItem['标题'] ?  '测试' :'aaaa' , //
                '项目名称' => $dataItem['项目名称'] ?:'' , //
                '项目编号' => $dataItem['项目编号'] ?:'' , //
                '项目简介'  => $dataItem['项目简介'] ?:'' , //
