@@ -1132,7 +1132,7 @@ class ToolsController extends ControllerBase
 //            }
 //
 //            $response[] = $attrs;
-            $res = RunDealZhaoTouBiao::exportDataV8($dateStart,$dateEnd);
+            $res = RunDealZhaoTouBiao::exportDataV7($dateStart,$dateEnd);
             $response[] = $res['filename_url'];
         }
 
