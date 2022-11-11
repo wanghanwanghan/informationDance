@@ -196,6 +196,25 @@ class LongDunController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //股权冻结
+    function getJudicialAssistance()
+    {
+        $entName = $this->request()->getRequestParam('entName');
+
+        $postData = [
+            'keyWord' => $entName,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'JudicialAssistance/GetJudicialAssistance', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
     //行政许可
     function getAdministrativeLicenseList()
     {
