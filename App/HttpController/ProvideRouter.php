@@ -116,6 +116,8 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getPatentV4Search', $prefix . 'getPatentV4Search');//专利
             $routeCollector->addRoute(['GET', 'POST'], '/GetCreditCodeNew', $prefix . 'GetCreditCodeNew');// 银行信息
             $routeCollector->addRoute(['GET', 'POST'], '/getJudicialAssistance', $prefix . 'getJudicialAssistance');// 股权冻结
+            $routeCollector->addRoute(['GET', 'POST'], '/EquityFreezeCheckGetList', $prefix . 'EquityFreezeCheckGetList');//股权冻结核查
+            $routeCollector->addRoute(['GET', 'POST'], '/EquityFreezeCheckGetDetail', $prefix . 'EquityFreezeCheckGetDetail');//股权冻结详情
         });
 
         return true;
