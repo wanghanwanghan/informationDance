@@ -2524,7 +2524,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                     '评标专家' => $dataItem['评标专家'] ?:'' , //
                     'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
                     'url'  => $dataItem['url'] ?:'' , //
-                    'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
+                    //'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
+                    'corexml' => '' , //
                     '来源' => 'zhao_tou_biao_key01' , //
                 ];
                 fputcsv($f, $tmpDataItem);
