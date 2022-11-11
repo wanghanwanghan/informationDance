@@ -72,4 +72,9 @@ class ZhaoTouBiaoAll extends ModelBase
         return $data;
     }
 
+    public static function findBySqlV2($sql){
+        $data = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_zhao_tou_biao'));
+        return $data;
+    }
+
 }

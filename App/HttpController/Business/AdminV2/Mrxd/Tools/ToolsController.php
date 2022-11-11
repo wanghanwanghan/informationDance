@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\AdminV2\Mrxd\Tools;
 
+use App\Crontab\CrontabList\RunDealZhaoTouBiao;
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminNew\AdminNewUser;
 use App\HttpController\Models\AdminNew\ConfigInfo;
@@ -1097,6 +1098,18 @@ class ToolsController extends ControllerBase
 
         }
 
+        //125 根据日期查询新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）
+        if($requestData['type'] == 125 ){
+            $week =  date('w',strtotime($key));
+            $startday = date('Y-m-d',strtotime('today -' . ($week - 1) . 'day'));
+            $dateStart = $startday.' 00:00:00';
+            $dateEnd = $key.' 23:59:59';
+
+            $res = RunDealZhaoTouBiao::exportDataV5($dateStart,$dateEnd);
+
+            $response[] = $res;
+        }
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -1142,6 +1155,7 @@ class ToolsController extends ControllerBase
             110 => '根据信用代码查询资产负债（入参格式:信用代码）',
             115 => '根据信用代码导出资产负债（入参格式:信用代码）',
             120 => '根据json查询导出资产负债（入参格式:信用代码）',
+            125 => '根据日期查询新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）',
         ],'成功');
     }
 

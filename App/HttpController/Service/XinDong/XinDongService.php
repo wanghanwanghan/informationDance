@@ -3873,7 +3873,7 @@ class XinDongService extends ServiceBase
                 ];
             }
         }
-        
+
         //文本匹配度  张三0808    张三
         similar_text($tobeMatch, $target, $perc);
         if ($perc > 80) {
