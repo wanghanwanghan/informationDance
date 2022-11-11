@@ -234,6 +234,20 @@ class GuoPiaoService extends ServiceBase
     }
 
     //进销项发票信息 信动专用
+    /**
+
+    "invoiceCode": "051002100204", //发票代码
+    "invoiceNumber": "03013525", //发票号码
+    "billingDate": "2022-09-29 ",//开票日期
+    "totalAmount": "1051.07",//总金额
+    "totalTax": "62.03",//总税额
+    "invoiceType": "04",//发票类型
+    "state": "0",//发票状态
+    "salesTaxNo": "91510104723445820B",//卖方税号
+    "salesTaxName": "成都万科物业服务有限公司",//卖方名称
+    "purchaserTaxNo": "91510106MA7FM5BL90",//买方税号
+    "purchaserName": "四川账三丰互联网科技有限公司"//买方名称
+     */
     function getInvoiceMain($code, $dataType, $startDate, $endDate, $page)
     {
         $param['taxNumber'] = $code;
@@ -252,7 +266,20 @@ class GuoPiaoService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
-    //进销项发票商品明细 信动专用
+    //进销项发票商品明细 信动专用 $dataType：0  $dataType：1
+    /**
+    "invoiceCode": "051002100204",//发票代码
+    "invoiceNumber": "03013525",//发票号码
+    "billingDate": "2022-09-29 ",//开票日期
+    "amount": "1051.07",//开票金额
+    "tax": "62.03",//含税单价？
+    "invoiceType": "04",//规格型号？
+    "goodName": "-",//商品名？
+    "taxRate": "0",//税率？
+    "unitPrice": "-",//单价？
+    "quantity": "1",//数量
+    "specificationModel": "-"//？
+     */
     function getInvoiceGoods($code, $dataType, $startDate, $endDate, $page)
     {
         $param['taxNumber'] = $code;
@@ -272,6 +299,26 @@ class GuoPiaoService extends ServiceBase
     }
 
     //企业税务基本信息查询
+    /**
+    essential	LIST	基本信息-纳税信用等级
+    overdueFine	Text	近12个月滞纳金次数(次)（废弃字段）
+    owingType	Text	是否欠税（是/否）
+    payTaxes	Text	纳税状态 = 正常/异常
+    regulations	Text	违章稽查记录（条）
+    nature	Text	纳税人性质
+
+    essential:
+    名称	类型	说明
+    creditLevel	Text	税务征信等级，枚举值[A、B、C、D、M、不参评、暂无、该纳税人还未终审完成]
+    year	string(date-time)	年份
+    taxpayerId	Text	纳税人识别号
+    creditPoint	Text	评价分数
+
+
+
+
+     */
+
     function getEssential($code)
     {
         $param['taxNumber'] = $code;
@@ -287,6 +334,28 @@ class GuoPiaoService extends ServiceBase
     }
 
     //企业所得税-月（季）度申报表查询
+
+    /**
+    "declarationDate": "2022-10-24 00:00:00",//申报日期
+    "endDate": "2022-09-30 00:00:00",//所属时期止
+    "levyProjectName": "2021版企业所得税A类申报",//征收项目
+    "accumulativeAmount": 0E-8,//累计金额
+    "projectType": "预缴税款计算",//项目类型
+    "projectSubType": "",//项目父类型
+    "currentAmount": 0.0,//本期金额(2015版专有)
+    "beginDate": "2022-07-01 00:00:00",//所属时期起
+    "sequence": 5,//顺序
+    "tableType": "A",
+    "columnSequence": "5",//栏次
+    "projectNameCode": "070127",//项目代码
+    "bureau": "SICHUAN",//所属税务局
+    "taxNo": "TAX_NO_0120221110113032OYH",//授权批次号
+    "projectName": "减：不征税收入",//项目名称
+    "deadline": null,
+    "taxpayerId": "91510106MA7FM5BL90" //纳税识别号
+
+     *
+     */
     function getIncometaxMonthlyDeclaration($code)
     {
         $param['taxpayerId'] = $code;
@@ -341,6 +410,22 @@ class GuoPiaoService extends ServiceBase
     }
 
     //利润表查询
+    /**
+    "currentMonthAmount",//本月累计金额
+    "declarationDate",//申报日期
+    "endDate",//所属时期止
+    "levyProjectName",//征收项目
+    "reportType",
+    "beginDate",//所属时期起
+    "sequence",//顺序
+    "columnSequence",//栏次
+    "currentYearAccumulativeAmount",//本年累计金额
+    "projectNameCode",//项目代码
+    "taxNo",//授权批次号
+    "projectName",//项目名称
+    "taxpayerId",//纳税识别号
+    "SQJE"
+     */
     function getFinanceIncomeStatement($code)
     {
         $param['taxpayerId'] = $code;

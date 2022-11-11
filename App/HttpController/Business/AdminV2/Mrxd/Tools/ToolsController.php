@@ -10,6 +10,8 @@ use App\HttpController\Models\AdminV2\AdminNewMenu;
 use App\HttpController\Models\AdminV2\AdminUserChargeConfig;
 use App\HttpController\Models\AdminV2\AdminUserFinanceChargeInfo;
 use App\HttpController\Models\AdminV2\AdminUserFinanceExportDataQueue;
+use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
+use App\HttpController\Models\AdminV2\CarInsuranceInstallment;
 use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
@@ -22,6 +24,9 @@ use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Models\RDS3\HdSaic\CompanyHistoryManager;
+use App\HttpController\Models\RDS3\HdSaic\CompanyHistoryName;
+use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Service\AdminRole\AdminPrivilegedUser;
 use App\HttpController\Models\AdminV2\AdminRoles;
 use App\HttpController\Models\AdminV2\AdminUserFinanceConfig;
@@ -33,6 +38,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
 use Vtiful\Kernel\Format;
@@ -490,9 +496,40 @@ class ToolsController extends ControllerBase
         $requestData =  $this->getRequestData();
         $key = trim($requestData['key']);
         $arr = explode('&&&',$key);
-        //通过企业名称查询我们库里的企业管理人(company_manager)
+        //根据企业名称查询库里全部的联系人名称和职位(老梗)
+        if($requestData['type'] == 2 ){
+            $response = LongXinService::getLianXiByName($key);
+        }
+
+        //通过企业名称查询我们库里的有职务信息的企业管理人(company_manager)（入参格式:企业名）
         if($requestData['type'] == 5 ){
             $response = LongXinService::getLianXiByNameV2($key);
+        }
+
+
+        //通过企业名称查询我们库里的所有企业管理人(company_manager)（入参格式:企业名）
+        if($requestData['type'] == 6 ){
+            $companyRes = CompanyBasic::findByName($key);
+            //管理人
+            $response = CompanyManager::findByCompanyId($companyRes->companyid);
+        }
+
+        //通过企业名称查询我们库里的所有历史企业管理人(company_history_manager)（入参格式:企业名）
+        if($requestData['type'] == 7 ){
+            $companyRes = CompanyBasic::findByName($key);
+            //管理人
+            $response = CompanyHistoryManager::findByCompanyId($companyRes->companyid);
+        }
+
+        //通过企业名称查询公开联系人(company_manager)
+        if($requestData['type'] == 8 ){
+            $postData = [
+                'entName' => $key,
+            ];
+
+            $response =  (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getEntLianXi($postData);
         }
 
         //通过信用代码查询非公开联系人
@@ -523,6 +560,542 @@ class ToolsController extends ControllerBase
             $response = (new XinDongService())->matchNamesV2($arr[0], $arr[1]);
         }
 
+        //根据信用代码取最近两年进项发票（入参格式:信用代码）
+        if($requestData['type'] == 30 ){
+            $response  = [];
+            // $startDate 往前推一个月  推两年
+            //纳税数据取得是两年的数据 取下开始结束时间
+            $lastMonth = date("Y-m-01",strtotime("-1 month"));
+            //两年前的开始月
+            $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+                $key,
+                $last2YearStart,
+                $lastMonth,
+                1,
+                true
+            );
+            foreach ($allInvoiceDatas as $InvoiceData){
+                $response[] = $InvoiceData;
+            }
+        }
+
+        /***/
+        //根据信用代码导出最近两年进项发票（入参格式:信用代码）
+        if($requestData['type'] == 35 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."_最近两年进项发票.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+            $allFields = [
+                "发票代码",
+                "发票号码",
+                "开票日期",
+                "总金额",
+                "总税额",
+                "发票类型",
+                "发票状态",
+                "卖方税号",
+                "卖方名称",
+                "买方税号",
+                "买方名称",
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+
+            // $startDate 往前推一个月  推两年
+            //纳税数据取得是两年的数据 取下开始结束时间
+            $lastMonth = date("Y-m-01",strtotime("-1 month"));
+            //两年前的开始月
+            $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+                $key,
+                $last2YearStart,
+                $lastMonth,
+                1,
+                true
+            );
+            foreach ($allInvoiceDatas as $InvoiceData){
+                fputcsv($f, $InvoiceData);
+            }
+
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+        }
+
+        //根据信用代码取最近两年销项发票（入参格式:信用代码）
+        if($requestData['type'] == 40 ){
+            $response  = [];
+            // $startDate 往前推一个月  推两年
+            //纳税数据取得是两年的数据 取下开始结束时间
+            $lastMonth = date("Y-m-01",strtotime("-1 month"));
+            //两年前的开始月
+            $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+                $key,
+                $last2YearStart,
+                $lastMonth,
+                2,
+                true
+            );
+            foreach ($allInvoiceDatas as $InvoiceData){
+                $response[] = $InvoiceData;
+            }
+        }
+
+        //根据信用代码导出最近两年销项发票（入参格式:信用代码）
+        if($requestData['type'] == 45 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."_最近两年销项发票.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+            $allFields = [
+                "发票代码",
+                "发票号码",
+                "开票日期",
+                "总金额",
+                "总税额",
+                "发票类型",
+                "发票状态",
+                "卖方税号",
+                "卖方名称",
+                "买方税号",
+                "买方名称",
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+
+            // $startDate 往前推一个月  推两年
+            //纳税数据取得是两年的数据 取下开始结束时间
+            $lastMonth = date("Y-m-01",strtotime("-1 month"));
+            //两年前的开始月
+            $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceMainData(
+                $key,
+                $last2YearStart,
+                $lastMonth,
+                2,
+                true
+            );
+            foreach ($allInvoiceDatas as $InvoiceData){
+                fputcsv($f, $InvoiceData);
+            }
+
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+        }
+
+        //根据信用代码查询最近两年进项发票明细（入参格式:信用代码）
+        if($requestData['type'] == 50 ){
+            $response  = [];
+            // $startDate 往前推一个月  推两年
+            //纳税数据取得是两年的数据 取下开始结束时间
+            $lastMonth = date("Y-m-01",strtotime("-1 month"));
+            //两年前的开始月
+            $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceGoodsData(
+                $key,
+                $last2YearStart,
+                $lastMonth,
+                1,
+                true
+            );
+            foreach ($allInvoiceDatas as $InvoiceData){
+                $response[] = $InvoiceData;
+            }
+        }
+
+        //根据信用代码导出最近两年进项发票明细（入参格式:信用代码）
+        if($requestData['type'] == 55 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."_最近两年进项发票明细.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $allFields = [
+                "发票代码",
+                "发票号码",
+                "开票日期",
+                "开票金额",
+                "税额",
+                "规格型号",
+                "商品名",
+                "税率",
+                "单价",
+                "数量",
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+
+            // $startDate 往前推一个月  推两年
+            //纳税数据取得是两年的数据 取下开始结束时间
+            $lastMonth = date("Y-m-01",strtotime("-1 month"));
+            //两年前的开始月
+            $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceGoodsData(
+                $key,
+                $last2YearStart,
+                $lastMonth,
+                1,
+                true
+            );
+            foreach ($allInvoiceDatas as $InvoiceData){
+                fputcsv($f, $InvoiceData);
+            }
+
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+        }
+
+        //根据信用代码查询最近两年销项发票明细（入参格式:信用代码）
+        if($requestData['type'] == 60 ){
+            $response  = [];
+            // $startDate 往前推一个月  推两年
+            //纳税数据取得是两年的数据 取下开始结束时间
+            $lastMonth = date("Y-m-01",strtotime("-1 month"));
+            //两年前的开始月
+            $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceGoodsData(
+                $key,
+                $last2YearStart,
+                $lastMonth,
+                2
+            );
+            foreach ($allInvoiceDatas as $InvoiceData){
+                $response[] = $InvoiceData;
+            }
+        }
+
+        //根据信用代码导出最近两年销项发票明细（入参格式:信用代码）
+        if($requestData['type'] == 65 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."_最近两年销项发票明细.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $allFields = [
+                "发票代码",
+                "发票号码",
+                "开票日期",
+                "开票金额",
+                "税额",
+                "规格型号",
+                "商品名",
+                "税率",
+                "单价",
+                "数量",
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+
+            // $startDate 往前推一个月  推两年
+            //纳税数据取得是两年的数据 取下开始结束时间
+            $lastMonth = date("Y-m-01",strtotime("-1 month"));
+            //两年前的开始月
+            $last2YearStart = date("Y-m-d",strtotime("-2 years",strtotime($lastMonth)));
+            $allInvoiceDatas = CarInsuranceInstallment::getYieldInvoiceGoodsData(
+                $key,
+                $last2YearStart,
+                $lastMonth,
+                2
+            );
+            foreach ($allInvoiceDatas as $InvoiceData){
+                fputcsv($f, $InvoiceData);
+            }
+
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+        }
+
+        //根据信用代码查询增值税（入参格式:信用代码）
+        if($requestData['type'] == 70 ){
+            $response = (new GuoPiaoService())->getVatReturn(
+                $key
+            );
+        }
+
+        //根据信用代码导出增值税（入参格式:信用代码）
+        if($requestData['type'] == 75 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."_增值税.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $allFields = [
+                "申报日期",
+                "本期数-货物及劳务",
+                "所属时期止",
+                "征收项目",
+                "项目类型",
+                "本年累计-服务、不动产和无形资产",
+                "所属时期起",
+                "顺序",
+                "栏次",
+                "即征即退项目-本年累计",
+                "纳税人类型(0：一般纳税人 1：小规模纳税人)",
+                "本年累计-货物及劳务",
+                "一般项目-本月数",
+                "项目代码",
+                "授权批次号",
+                "项目名称",
+                "本期数-服务、不动产和无形资产",
+                "deadline",
+                "企业信用代码",
+                "一般项目-本年累计",
+                "即征即退项目-本月数"
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+
+            $allInvoiceDatas = (new GuoPiaoService())->getVatReturn(
+                $key
+            );
+            $allInvoiceDatas = jsonDecode($allInvoiceDatas['data']); 
+            foreach ($allInvoiceDatas as $InvoiceData){
+                fputcsv($f, $InvoiceData);
+            }
+
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+        }
+
+        //根据信用代码查询所得税（入参格式:信用代码）
+        if($requestData['type'] == 80 ){
+            $response =  (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
+                $key
+            );
+        }
+
+        //根据信用代码导出所得税（入参格式:信用代码）
+        if($requestData['type'] == 85 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."_所得税.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $allFields = [
+                "申报日期",//
+                "所属时期止",//
+                "征收项目",//
+                "累计金额",//
+                "项目类型",//
+                "项目父类型",//
+                "本期金额(2015版专有)",//
+                "所属时期起",//
+                "顺序",//
+                "tableType",
+                "栏次",//
+                "项目代码",//
+                "所属税务局",//
+                "授权批次号",//
+                "项目名称",//
+                "deadline",
+                "纳税识别号" //
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+
+            $allInvoiceDatas = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
+                $key
+            );
+            $allInvoiceDatas = jsonDecode($allInvoiceDatas['data']);
+            foreach ($allInvoiceDatas as $InvoiceData){
+                fputcsv($f, $InvoiceData);
+            }
+
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+        }
+
+        //根据信用代码查询所得税（入参格式:信用代码）
+        if($requestData['type'] == 90 ){
+            $response = (new GuoPiaoService())->getEssential(
+                $key
+            );
+        }
+
+        //根据信用代码导出企业税务基本信息（入参格式:信用代码）
+        if($requestData['type'] == 95 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."_企业税务基本信息.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $allFields = [
+               '是否欠税（是/否）',//
+                '纳税状态 = 正常/异常',//
+                '违章稽查记录（条）',
+                '纳税人性质',
+                '基本信息-纳税信用等级-年份',
+                '基本信息-纳税信用等级-税务征信等级，枚举值[A、B、C、D、M、不参评、暂无、该纳税人还未终审完成]',
+                '基本信息-纳税信用等级-纳税人识别号',
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+
+            $allInvoiceDatas = (new GuoPiaoService())->getEssential(
+                $key
+            );
+
+            fputcsv($f, [
+                $allInvoiceDatas['data']['owingType'],//是否欠税（是/否）
+                $allInvoiceDatas['data']['payTaxes'],//纳税状态 = 正常/异常
+                $allInvoiceDatas['data']['regulations'],//违章稽查记录（条）
+                $allInvoiceDatas['data']['nature'],//纳税人性质
+                $allInvoiceDatas['data']['essential'][0]['year'],//基本信息-纳税信用等级-年份
+                $allInvoiceDatas['data']['essential'][0]['creditLevel'],//基本信息-纳税信用等级-税务征信等级，枚举值[A、B、C、D、M、不参评、暂无、该纳税人还未终审完成]
+                $allInvoiceDatas['data']['essential'][0]['taxpayerId']//基本信息-纳税信用等级-纳税人识别号
+            ]);
+
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+        }
+
+        //根据信用代码查询企业利润（入参格式:信用代码）
+        if($requestData['type'] == 100 ){
+            $response =  (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getFinanceIncomeStatement(
+                $key
+            );
+        }
+
+        //根据信用代码导出企业利润（入参格式:信用代码）
+        if($requestData['type'] == 105 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."_企业利润.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $allFields = [
+                    "本月累计金额",//
+                    "申报日期",//
+                    "所属时期止",//
+                    "征收项目",//
+                    "reportType",
+                    "所属时期起",//
+                    "顺序",//
+                    "栏次",//
+                    "本年累计金额",//
+                    "项目代码",//
+                    "授权批次号",//
+                    "项目名称",//
+                    "纳税识别号",//
+                    "SQJE"
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+
+            $allInvoiceDatas = (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getFinanceIncomeStatement(
+                    $key
+                );
+            //$allInvoiceDatas = jsonDecode($allInvoiceDatas['data']);
+            foreach ($allInvoiceDatas['result'] as $InvoiceData){
+                fputcsv($f, $InvoiceData);
+            }
+
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+
+        }
+
+        //根据信用代码查询资产负债（入参格式:信用代码）
+        if($requestData['type'] == 110 ){
+            $response =  (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getFinanceBalanceSheet(
+                    $key
+                );
+        }
+
+        //根据信用代码导出资产负债（入参格式:信用代码）
+        if($requestData['type'] == 115 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."_资产负债.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $allFields = [
+                "申报日期",//
+                "所属时期止",//
+                "征收项目",//
+                "projectType",
+                "期末数",//
+                "资产负债类型，1:资产，2:负债及所有者权益",//
+                "reportType",
+                "所属时期起",//
+                "顺序",//
+                "栏次",//
+                "年初数",//
+                "项目代码",//
+                "授权批次号",//
+                "项目名称",//
+                "纳税识别号"//
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+
+            $allInvoiceDatas = (new GuoPiaoService())
+                ->setCheckRespFlag(true)
+                ->getFinanceBalanceSheet(
+                    $key
+                );
+            //$allInvoiceDatas = jsonDecode($allInvoiceDatas['data']);
+            foreach ($allInvoiceDatas['result'] as $InvoiceData){
+                fputcsv($f, $InvoiceData);
+            }
+
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+
+        }
 
         return $this->writeJson(200, [], [
             [
@@ -541,11 +1114,34 @@ class ToolsController extends ControllerBase
     public function commonToosOptions(){
 
         return $this->writeJson(200, [], [
-            5 => '通过企业名称查询我们库里的企业管理人(company_manager)',
-            10 => '通过信用代码查询非公开联系人',
-            15 => '通过手机号检测号码状态（多个手机号英文逗号分隔）',
+            2 => '根据企业名称查询库里全部的联系人名称和职位(老梗)（入参格式:企业名）',
+            5 => '通过企业名称查询我们库里的有职务信息的企业管理人(company_manager)（入参格式:企业名）',
+            6 => '通过企业名称查询我们库里的所有企业管理人(company_manager)（入参格式:企业名）',
+            7 => '通过企业名称查询我们库里的所有历史企业管理人(company_history_manager)（入参格式:企业名）',
+            8 => '通过企业名称查询公开联系人（入参格式:企业名称）',
+            10 => '通过信用代码查询非公开联系人（入参格式:信用代码）',
+            15 => '通过手机号检测号码状态（入参格式:英文逗号分隔的手机号）',
             20 => '根据微信名匹配企业对应的联系人（入参格式:企业名&&&微信名）',
             25 => '根据微信名匹配中文姓名（入参格式:中文姓名&&&微信名）',
+            30 => '根据信用代码查询最近两年进项发票（入参格式:信用代码）',
+            35 => '根据信用代码导出最近两年进项发票（入参格式:信用代码）',
+            40 => '根据信用代码查询最近两年销项发票（入参格式:信用代码）',
+            45 => '根据信用代码导出最近两年销项发票（入参格式:信用代码）',
+            50 => '根据信用代码查询最近两年进项发票明细（入参格式:信用代码）',
+            55 => '根据信用代码导出最近两年进项发票明细（入参格式:信用代码）',
+            60 => '根据信用代码查询最近两年销项发票明细（入参格式:信用代码）',
+            65 => '根据信用代码导出最近两年销项发票明细（入参格式:信用代码）',
+            70 => '根据信用代码查询增值税（入参格式:信用代码）',
+            75 => '根据信用代码导出增值税（入参格式:信用代码）',
+            80 => '根据信用代码查询所得税（入参格式:信用代码）',
+            85 => '根据信用代码导出所得税（入参格式:信用代码）',
+            90 => '根据信用代码查询企业税务基本信息（入参格式:信用代码）',
+            95 => '根据信用代码导出企业税务基本信息（入参格式:信用代码）',
+            100 => '根据信用代码查询企业利润（入参格式:信用代码）',
+            105 => '根据信用代码导出企业利润（入参格式:信用代码）',
+            110 => '根据信用代码查询资产负债（入参格式:信用代码）',
+            115 => '根据信用代码导出资产负债（入参格式:信用代码）',
+            120 => '根据json查询导出资产负债（入参格式:信用代码）',
         ],'成功');
     }
 

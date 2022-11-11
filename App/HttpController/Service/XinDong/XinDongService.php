@@ -1398,91 +1398,292 @@ class XinDongService extends ServiceBase
                     ],
                 ],
             ],
+//            [
+//                'pid' => 50,
+//                'desc' => '营收规模',
+//                'key' => 'ying_shou_gui_mo',
+//                'detail' => '',
+//                'type' => 'select',
+//                'data' => [
+//                    $this->reg_capital_50 => [
+//                        'cname' => $this->reg_capital_50_des,
+//                        'detail' => '100万以下',
+//                        'min' => 0,
+//                        'max' => 1000000,
+//                    ],
+//                    $this->reg_capital_50to100 => [
+//                        'cname' => $this->reg_capital_50to100_des,
+//                        'detail' => '100万以上，500万以下',
+//                        'min' => 1000000,
+//                        'max' => 5000000,
+//                    ],
+//                    $this->reg_capital_100to200 => [
+//                        'cname' => $this->reg_capital_100to200_des,
+//                        'detail' => '500万以上，1000万以下',
+//                        'min' => 5000000,
+//                        'max' => 10000000,
+//                    ],
+//                    $this->reg_capital_200to500 => [
+//                        'cname' => $this->reg_capital_200to500_des,
+//                        'detail' => '1000万以上，3000万以下',
+//                        'min' => 10000000,
+//                        'max' => 30000000,
+//                    ],
+//                    $this->reg_capital_500to1000 => [
+//                        'cname' => $this->reg_capital_500to1000_des,
+//                        'detail' => '3000万以上，5000万以下',
+//                        'min' => 30000000,
+//                        'max' => 50000000,
+//                    ],
+//                    $this->reg_capital_1000to10000 => [
+//                        'cname' => $this->reg_capital_1000to10000_des,
+//                        'detail' => '5000万以上，8000万以下',
+//                        'min' => 50000000,
+//                        'max' => 80000000,
+//                    ],
+//                    //    $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des,
+//                    $this->reg_capital_minddle_a => [
+//                        'cname' => $this->reg_capital_minddle_a_des,
+//                        'detail' => '8000万以上，1亿以下',
+//                        'min' => 80000000,
+//                        'max' => 100000000,
+//                    ],
+//                    $this->reg_capital_big_c => [
+//                        'cname' => $this->reg_capital_big_c_des,
+//                        'detail' => '1亿以上，5亿以下',
+//                        'min' => 100000000,
+//                        'max' => 500000000,
+//                    ],
+//                    $this->reg_capital_big_b => [
+//                        'cname' => $this->reg_capital_big_b_des,
+//                        'detail' => '5亿以上，10亿以下',
+//                        'min' => 500000000,
+//                        'max' => 1000000000,
+//                    ],
+//                    $this->reg_capital_big_A => [
+//                        'cname' => $this->reg_capital_big_A_des,
+//                        'detail' => '10亿以上，50亿以下',
+//                        'min' => 1000000000,
+//                        'max' => 5000000000,
+//                    ],
+//                    $this->reg_capital_super_big_C => [
+//                        'cname' => $this->reg_capital_super_big_C_des,
+//                        'detail' => '50亿以上，100亿以下',
+//                        'min' => 5000000000,
+//                        'max' => 10000000000,
+//                    ],
+//                    $this->reg_capital_super_big_B => [
+//                        'cname' => $this->reg_capital_super_big_B_des,
+//                        'detail' => '100亿以上，500亿以下',
+//                        'min' => 10000000000,
+//                        'max' => 50000000000,
+//                    ],
+//                    $this->reg_capital_super_big_A => [
+//                        'cname' => $this->reg_capital_super_big_A_des,
+//                        'detail' => '500亿以上',
+//                        'min' => 50000000000,
+//                        'max' => 500000000000,
+//                    ],
+//                ],
+//            ],
             [
                 'pid' => 50,
                 'desc' => '营收规模',
-                'key' => 'ying_shou_gui_mo',
+                'key' => 'ying_shou_gui_mo_2021',
                 'detail' => '',
                 'type' => 'select',
                 'data' => [
-                    $this->reg_capital_50 => [
-                        'cname' => $this->reg_capital_50_des,
-                        'detail' => '100万以下',
-                        'min' => 0,
-                        'max' => 1000000,
+                    'YF' => [
+                        'cname' => 'YF',
+                        'detail' => '负值',
                     ],
-                    $this->reg_capital_50to100 => [
-                        'cname' => $this->reg_capital_50to100_des,
-                        'detail' => '100万以上，500万以下',
-                        'min' => 1000000,
-                        'max' => 5000000,
+                    'Y0' => [
+                        'cname' => 'Y0',
+                        'detail' => '0值',
                     ],
-                    $this->reg_capital_100to200 => [
-                        'cname' => $this->reg_capital_100to200_des,
-                        'detail' => '500万以上，1000万以下',
-                        'min' => 5000000,
-                        'max' => 10000000,
+                    'Y1' => [
+                        'cname' => 'Y1',
+                        'detail' => '万',
                     ],
-                    $this->reg_capital_200to500 => [
-                        'cname' => $this->reg_capital_200to500_des,
-                        'detail' => '1000万以上，3000万以下',
-                        'min' => 10000000,
-                        'max' => 30000000,
+                    'Y2' => [
+                        'cname' => 'Y2',
+                        'detail' => '十万',
                     ],
-                    $this->reg_capital_500to1000 => [
-                        'cname' => $this->reg_capital_500to1000_des,
-                        'detail' => '3000万以上，5000万以下',
-                        'min' => 30000000,
-                        'max' => 50000000,
+                    'Y3' => [
+                        'cname' => 'Y3',
+                        'detail' => 'Y3',
                     ],
-                    $this->reg_capital_1000to10000 => [
-                        'cname' => $this->reg_capital_1000to10000_des,
-                        'detail' => '5000万以上，8000万以下',
-                        'min' => 50000000,
-                        'max' => 80000000,
+                    'Y4' => [
+                        'cname' => 'Y4',
+                        'detail' => 'Y4',
                     ],
-                    //    $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des,
-                    $this->reg_capital_minddle_a => [
-                        'cname' => $this->reg_capital_minddle_a_des,
-                        'detail' => '8000万以上，1亿以下',
-                        'min' => 80000000,
-                        'max' => 100000000,
+                    'Y5' => [
+                        'cname' => 'Y5',
+                        'detail' => 'Y5',
                     ],
-                    $this->reg_capital_big_c => [
-                        'cname' => $this->reg_capital_big_c_des,
-                        'detail' => '1亿以上，5亿以下',
-                        'min' => 100000000,
-                        'max' => 500000000,
+                    'Y6' => [
+                        'cname' => 'Y6',
+                        'detail' => 'Y6',
                     ],
-                    $this->reg_capital_big_b => [
-                        'cname' => $this->reg_capital_big_b_des,
-                        'detail' => '5亿以上，10亿以下',
-                        'min' => 500000000,
-                        'max' => 1000000000,
+                    'Y7' => [
+                        'cname' => 'Y7',
+                        'detail' => 'Y7',
                     ],
-                    $this->reg_capital_big_A => [
-                        'cname' => $this->reg_capital_big_A_des,
-                        'detail' => '10亿以上，50亿以下',
-                        'min' => 1000000000,
-                        'max' => 5000000000,
+                    'Y8' => [
+                        'cname' => 'Y8',
+                        'detail' => 'Y8',
                     ],
-                    $this->reg_capital_super_big_C => [
-                        'cname' => $this->reg_capital_super_big_C_des,
-                        'detail' => '50亿以上，100亿以下',
-                        'min' => 5000000000,
-                        'max' => 10000000000,
+                    'Y9' => [
+                        'cname' => 'Y9',
+                        'detail' => 'Y9',
                     ],
-                    $this->reg_capital_super_big_B => [
-                        'cname' => $this->reg_capital_super_big_B_des,
-                        'detail' => '100亿以上，500亿以下',
-                        'min' => 10000000000,
-                        'max' => 50000000000,
+                    'Y10' => [
+                        'cname' => 'Y10',
+                        'detail' => 'Y10',
                     ],
-                    $this->reg_capital_super_big_A => [
-                        'cname' => $this->reg_capital_super_big_A_des,
-                        'detail' => '500亿以上',
-                        'min' => 50000000000,
-                        'max' => 500000000000,
+                    'Y11' => [
+                        'cname' => 'Y11',
+                        'detail' => 'Y11',
+                    ],
+                    'Y12' => [
+                        'cname' => 'Y12',
+                        'detail' => 'Y12',
+                    ],
+                    'Y13' => [
+                        'cname' => 'Y13',
+                        'detail' => 'Y13',
+                    ],
+                    'Y14' => [
+                        'cname' => 'Y14',
+                        'detail' => 'Y14',
+                    ],
+                    'Y15' => [
+                        'cname' => 'Y15',
+                        'detail' => 'Y15',
+                    ],
+                    'Y16' => [
+                        'cname' => 'Y16',
+                        'detail' => 'Y16',
+                    ],
+                    'Y17' => [
+                        'cname' => 'Y17',
+                        'detail' => 'Y17',
+                    ],
+                    'Y18' => [
+                        'cname' => 'Y18',
+                        'detail' => 'Y18',
+                    ],
+                    'Y19' => [
+                        'cname' => 'Y19',
+                        'detail' => 'Y19',
+                    ],
+                    'Y20' => [
+                        'cname' => 'Y20',
+                        'detail' => 'Y20',
+                    ],
+                    'Y21' => [
+                        'cname' => 'Y21',
+                        'detail' => 'Y21',
+                    ],
+                    'Y22' => [
+                        'cname' => 'Y22',
+                        'detail' => 'Y22',
+                    ],
+                    'Y23' => [
+                        'cname' => 'Y23',
+                        'detail' => 'Y23',
+                    ],
+                    'Y24' => [
+                        'cname' => 'Y24',
+                        'detail' => 'Y24',
+                    ],
+                    'Y25' => [
+                        'cname' => 'Y25',
+                        'detail' => 'Y25',
+                    ],
+                    'Y26' => [
+                        'cname' => 'Y26',
+                        'detail' => 'Y26',
+                    ],
+                    'Y27' => [
+                        'cname' => 'Y27',
+                        'detail' => 'Y27',
+                    ],
+                    'Y28' => [
+                        'cname' => 'Y28',
+                        'detail' => 'Y28',
+                    ],
+                    'Y29' => [
+                        'cname' => 'Y29',
+                        'detail' => 'Y29',
+                    ],
+                    'Y30' => [
+                        'cname' => 'Y30',
+                        'detail' => 'Y30',
+                    ],
+                    'Y31' => [
+                        'cname' => 'Y31',
+                        'detail' => 'Y31',
+                    ],
+                    'Y32' => [
+                        'cname' => 'Y32',
+                        'detail' => 'Y32',
+                    ],
+                    'Y33' => [
+                        'cname' => 'Y33',
+                        'detail' => 'Y33',
+                    ],
+                    'Y34' => [
+                        'cname' => 'Y34',
+                        'detail' => 'Y34',
+                    ],
+                    'Y35' => [
+                        'cname' => 'Y35',
+                        'detail' => 'Y35',
+                    ],
+                    'Y36' => [
+                        'cname' => 'Y36',
+                        'detail' => 'Y36',
+                    ],
+                    'Y37' => [
+                        'cname' => 'Y37',
+                        'detail' => 'Y37',
+                    ],
+                    'Y38' => [
+                        'cname' => 'Y38',
+                        'detail' => 'Y38',
+                    ],
+                    'Y39' => [
+                        'cname' => 'Y39',
+                        'detail' => 'Y39',
+                    ],
+                    'Y40' => [
+                        'cname' => 'Y40',
+                        'detail' => 'Y40',
+                    ],
+                    'Y41' => [
+                        'cname' => 'Y41',
+                        'detail' => 'Y41',
+                    ],
+                    'Y42' => [
+                        'cname' => 'Y42',
+                        'detail' => 'Y42',
+                    ],
+                    'Y43' => [
+                        'cname' => 'Y43',
+                        'detail' => 'Y43',
+                    ],
+                    'Y44' => [
+                        'cname' => 'Y44',
+                        'detail' => 'Y44',
+                    ],
+                    'Y45' => [
+                        'cname' => 'Y45',
+                        'detail' => 'Y45',
+                    ],
+                    'Y46' => [
+                        'cname' => 'Y46',
+                        'detail' => 'Y46',
                     ],
                 ],
             ],
@@ -1534,6 +1735,408 @@ class XinDongService extends ServiceBase
                         'detail' => '',
                         'min' => 5000,
                         'max' => 500000,
+                    ],
+                ],
+            ],
+            [
+                'pid' => 65,
+                'desc' => '纳税规模',
+                'detail' => '',
+                'key' => 'na_shui_gui_mo_2021',
+                'type' => 'select',
+                'data' => [
+                    'YF' => [
+                        'cname' => 'YF',
+                        'detail' => '负值',
+                    ],
+                    'Y0' => [
+                        'cname' => 'Y0',
+                        'detail' => '0值',
+                    ],
+                    'Y1' => [
+                        'cname' => 'Y1',
+                        'detail' => '万',
+                    ],
+                    'Y2' => [
+                        'cname' => 'Y2',
+                        'detail' => '十万',
+                    ],
+                    'Y3' => [
+                        'cname' => 'Y3',
+                        'detail' => 'Y3',
+                    ],
+                    'Y4' => [
+                        'cname' => 'Y4',
+                        'detail' => 'Y4',
+                    ],
+                    'Y5' => [
+                        'cname' => 'Y5',
+                        'detail' => 'Y5',
+                    ],
+                    'Y6' => [
+                        'cname' => 'Y6',
+                        'detail' => 'Y6',
+                    ],
+                    'Y7' => [
+                        'cname' => 'Y7',
+                        'detail' => 'Y7',
+                    ],
+                    'Y8' => [
+                        'cname' => 'Y8',
+                        'detail' => 'Y8',
+                    ],
+                    'Y9' => [
+                        'cname' => 'Y9',
+                        'detail' => 'Y9',
+                    ],
+                    'Y10' => [
+                        'cname' => 'Y10',
+                        'detail' => 'Y10',
+                    ],
+                    'Y11' => [
+                        'cname' => 'Y11',
+                        'detail' => 'Y11',
+                    ],
+                    'Y12' => [
+                        'cname' => 'Y12',
+                        'detail' => 'Y12',
+                    ],
+                    'Y13' => [
+                        'cname' => 'Y13',
+                        'detail' => 'Y13',
+                    ],
+                    'Y14' => [
+                        'cname' => 'Y14',
+                        'detail' => 'Y14',
+                    ],
+                    'Y15' => [
+                        'cname' => 'Y15',
+                        'detail' => 'Y15',
+                    ],
+                    'Y16' => [
+                        'cname' => 'Y16',
+                        'detail' => 'Y16',
+                    ],
+                    'Y17' => [
+                        'cname' => 'Y17',
+                        'detail' => 'Y17',
+                    ],
+                    'Y18' => [
+                        'cname' => 'Y18',
+                        'detail' => 'Y18',
+                    ],
+                    'Y19' => [
+                        'cname' => 'Y19',
+                        'detail' => 'Y19',
+                    ],
+                    'Y20' => [
+                        'cname' => 'Y20',
+                        'detail' => 'Y20',
+                    ],
+                    'Y21' => [
+                        'cname' => 'Y21',
+                        'detail' => 'Y21',
+                    ],
+                    'Y22' => [
+                        'cname' => 'Y22',
+                        'detail' => 'Y22',
+                    ],
+                    'Y23' => [
+                        'cname' => 'Y23',
+                        'detail' => 'Y23',
+                    ],
+                    'Y24' => [
+                        'cname' => 'Y24',
+                        'detail' => 'Y24',
+                    ],
+                    'Y25' => [
+                        'cname' => 'Y25',
+                        'detail' => 'Y25',
+                    ],
+                    'Y26' => [
+                        'cname' => 'Y26',
+                        'detail' => 'Y26',
+                    ],
+                    'Y27' => [
+                        'cname' => 'Y27',
+                        'detail' => 'Y27',
+                    ],
+                    'Y28' => [
+                        'cname' => 'Y28',
+                        'detail' => 'Y28',
+                    ],
+                    'Y29' => [
+                        'cname' => 'Y29',
+                        'detail' => 'Y29',
+                    ],
+                    'Y30' => [
+                        'cname' => 'Y30',
+                        'detail' => 'Y30',
+                    ],
+                    'Y31' => [
+                        'cname' => 'Y31',
+                        'detail' => 'Y31',
+                    ],
+                    'Y32' => [
+                        'cname' => 'Y32',
+                        'detail' => 'Y32',
+                    ],
+                    'Y33' => [
+                        'cname' => 'Y33',
+                        'detail' => 'Y33',
+                    ],
+                    'Y34' => [
+                        'cname' => 'Y34',
+                        'detail' => 'Y34',
+                    ],
+                    'Y35' => [
+                        'cname' => 'Y35',
+                        'detail' => 'Y35',
+                    ],
+                    'Y36' => [
+                        'cname' => 'Y36',
+                        'detail' => 'Y36',
+                    ],
+                    'Y37' => [
+                        'cname' => 'Y37',
+                        'detail' => 'Y37',
+                    ],
+                    'Y38' => [
+                        'cname' => 'Y38',
+                        'detail' => 'Y38',
+                    ],
+                    'Y39' => [
+                        'cname' => 'Y39',
+                        'detail' => 'Y39',
+                    ],
+                    'Y40' => [
+                        'cname' => 'Y40',
+                        'detail' => 'Y40',
+                    ],
+                    'Y41' => [
+                        'cname' => 'Y41',
+                        'detail' => 'Y41',
+                    ],
+                    'Y42' => [
+                        'cname' => 'Y42',
+                        'detail' => 'Y42',
+                    ],
+                    'Y43' => [
+                        'cname' => 'Y43',
+                        'detail' => 'Y43',
+                    ],
+                    'Y44' => [
+                        'cname' => 'Y44',
+                        'detail' => 'Y44',
+                    ],
+                    'Y45' => [
+                        'cname' => 'Y45',
+                        'detail' => 'Y45',
+                    ],
+                    'Y46' => [
+                        'cname' => 'Y46',
+                        'detail' => 'Y46',
+                    ],
+                ],
+            ],
+            [
+                'pid' => 66,
+                'desc' => '利润规模',
+                'detail' => '',
+                'key' => 'li_run_gui_mo_2021',
+                'type' => 'select',
+                'data' => [
+                    'YF' => [
+                        'cname' => 'YF',
+                        'detail' => '负值',
+                    ],
+                    'Y0' => [
+                        'cname' => 'Y0',
+                        'detail' => '0值',
+                    ],
+                    'Y1' => [
+                        'cname' => 'Y1',
+                        'detail' => '万',
+                    ],
+                    'Y2' => [
+                        'cname' => 'Y2',
+                        'detail' => '十万',
+                    ],
+                    'Y3' => [
+                        'cname' => 'Y3',
+                        'detail' => 'Y3',
+                    ],
+                    'Y4' => [
+                        'cname' => 'Y4',
+                        'detail' => 'Y4',
+                    ],
+                    'Y5' => [
+                        'cname' => 'Y5',
+                        'detail' => 'Y5',
+                    ],
+                    'Y6' => [
+                        'cname' => 'Y6',
+                        'detail' => 'Y6',
+                    ],
+                    'Y7' => [
+                        'cname' => 'Y7',
+                        'detail' => 'Y7',
+                    ],
+                    'Y8' => [
+                        'cname' => 'Y8',
+                        'detail' => 'Y8',
+                    ],
+                    'Y9' => [
+                        'cname' => 'Y9',
+                        'detail' => 'Y9',
+                    ],
+                    'Y10' => [
+                        'cname' => 'Y10',
+                        'detail' => 'Y10',
+                    ],
+                    'Y11' => [
+                        'cname' => 'Y11',
+                        'detail' => 'Y11',
+                    ],
+                    'Y12' => [
+                        'cname' => 'Y12',
+                        'detail' => 'Y12',
+                    ],
+                    'Y13' => [
+                        'cname' => 'Y13',
+                        'detail' => 'Y13',
+                    ],
+                    'Y14' => [
+                        'cname' => 'Y14',
+                        'detail' => 'Y14',
+                    ],
+                    'Y15' => [
+                        'cname' => 'Y15',
+                        'detail' => 'Y15',
+                    ],
+                    'Y16' => [
+                        'cname' => 'Y16',
+                        'detail' => 'Y16',
+                    ],
+                    'Y17' => [
+                        'cname' => 'Y17',
+                        'detail' => 'Y17',
+                    ],
+                    'Y18' => [
+                        'cname' => 'Y18',
+                        'detail' => 'Y18',
+                    ],
+                    'Y19' => [
+                        'cname' => 'Y19',
+                        'detail' => 'Y19',
+                    ],
+                    'Y20' => [
+                        'cname' => 'Y20',
+                        'detail' => 'Y20',
+                    ],
+                    'Y21' => [
+                        'cname' => 'Y21',
+                        'detail' => 'Y21',
+                    ],
+                    'Y22' => [
+                        'cname' => 'Y22',
+                        'detail' => 'Y22',
+                    ],
+                    'Y23' => [
+                        'cname' => 'Y23',
+                        'detail' => 'Y23',
+                    ],
+                    'Y24' => [
+                        'cname' => 'Y24',
+                        'detail' => 'Y24',
+                    ],
+                    'Y25' => [
+                        'cname' => 'Y25',
+                        'detail' => 'Y25',
+                    ],
+                    'Y26' => [
+                        'cname' => 'Y26',
+                        'detail' => 'Y26',
+                    ],
+                    'Y27' => [
+                        'cname' => 'Y27',
+                        'detail' => 'Y27',
+                    ],
+                    'Y28' => [
+                        'cname' => 'Y28',
+                        'detail' => 'Y28',
+                    ],
+                    'Y29' => [
+                        'cname' => 'Y29',
+                        'detail' => 'Y29',
+                    ],
+                    'Y30' => [
+                        'cname' => 'Y30',
+                        'detail' => 'Y30',
+                    ],
+                    'Y31' => [
+                        'cname' => 'Y31',
+                        'detail' => 'Y31',
+                    ],
+                    'Y32' => [
+                        'cname' => 'Y32',
+                        'detail' => 'Y32',
+                    ],
+                    'Y33' => [
+                        'cname' => 'Y33',
+                        'detail' => 'Y33',
+                    ],
+                    'Y34' => [
+                        'cname' => 'Y34',
+                        'detail' => 'Y34',
+                    ],
+                    'Y35' => [
+                        'cname' => 'Y35',
+                        'detail' => 'Y35',
+                    ],
+                    'Y36' => [
+                        'cname' => 'Y36',
+                        'detail' => 'Y36',
+                    ],
+                    'Y37' => [
+                        'cname' => 'Y37',
+                        'detail' => 'Y37',
+                    ],
+                    'Y38' => [
+                        'cname' => 'Y38',
+                        'detail' => 'Y38',
+                    ],
+                    'Y39' => [
+                        'cname' => 'Y39',
+                        'detail' => 'Y39',
+                    ],
+                    'Y40' => [
+                        'cname' => 'Y40',
+                        'detail' => 'Y40',
+                    ],
+                    'Y41' => [
+                        'cname' => 'Y41',
+                        'detail' => 'Y41',
+                    ],
+                    'Y42' => [
+                        'cname' => 'Y42',
+                        'detail' => 'Y42',
+                    ],
+                    'Y43' => [
+                        'cname' => 'Y43',
+                        'detail' => 'Y43',
+                    ],
+                    'Y44' => [
+                        'cname' => 'Y44',
+                        'detail' => 'Y44',
+                    ],
+                    'Y45' => [
+                        'cname' => 'Y45',
+                        'detail' => 'Y45',
+                    ],
+                    'Y46' => [
+                        'cname' => 'Y46',
+                        'detail' => 'Y46',
                     ],
                 ],
             ],
@@ -3018,82 +3621,7 @@ class XinDongService extends ServiceBase
     // $tobeMatch 姓名   $target：微信名
     function matchNamesV2($tobeMatch, $target)
     {
-        //两个字的
-        if(
-            strlen($tobeMatch) == 6
-        ){
-            $sub = substr($tobeMatch, 3, 3);
-            //如果去掉姓名后  微信名直接包含：张三  三爷
-            if(strpos($target,$sub) !== false){
-                return [
-                    'type' => '近似匹配',
-                    'details' => '包含姓名中的名',
-                    'res' => '成功',
-                    'percentage' => '',
-                ];
-            }
 
-
-            similar_text($sub, $target, $perc);
-            $tobeMatchArr = $this->getPinYin($tobeMatch);
-            $targetArr = $this->getPinYin($target);
-
-
-        }
-
-
-        //3个字的
-        if(
-            strlen($tobeMatch) == 9
-        ){
-            $sub = substr($tobeMatch, 3, 6);
-            //如果去掉姓名后  微信名直接包含：张小三  小三爷
-            if(strpos($target,$sub) !== false){
-                return [
-                    'type' => '近似匹配',
-                    'details' => '包含姓名中的名',
-                    'res' => '成功',
-                    'percentage' => '',
-                ];
-            }
-
-
-            similar_text($sub, $target, $perc);
-            if($perc>=50){
-                return [
-                    'type' => '近似匹配',
-                    'details' => '名和微信比较近似',
-                    'res' => '成功',
-                    'percentage' => '',
-                ];
-            }
-        }
-
-        //4个字的
-        if(
-            strlen($tobeMatch) == 12
-        ){
-            $sub = substr($tobeMatch, 6, 6);
-            //如果去掉姓名后  微信名直接包含：欧阳小三  小三爷
-            if(strpos($target,$sub) !== false){
-                return [
-                    'type' => '近似匹配',
-                    'details' => '包含姓名中的名',
-                    'res' => '成功',
-                    'percentage' => '',
-                ];
-            }
-
-            similar_text($sub, $target, $perc);
-            if($perc>=50){
-                return [
-                    'type' => '近似匹配',
-                    'details' => '名和微信比较近似',
-                    'res' => '成功',
-                    'percentage' => '',
-                ];
-            }
-        }
 
 
         //完全匹配
@@ -3269,6 +3797,83 @@ class XinDongService extends ServiceBase
             ];
         }
 
+        //两个字的
+        if(
+            strlen($tobeMatch) == 6
+        ){
+            $sub = substr($tobeMatch, 3, 3);
+            //如果去掉姓名后  微信名直接包含：张三  三爷
+            if(strpos($target,$sub) !== false){
+                return [
+                    'type' => '近似匹配',
+                    'details' => '包含姓名中的名',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+
+
+            similar_text($sub, $target, $perc);
+            $tobeMatchArr = $this->getPinYin($tobeMatch);
+            $targetArr = $this->getPinYin($target);
+
+
+        }
+
+
+        //3个字的
+        if(
+            strlen($tobeMatch) == 9
+        ){
+            $sub = substr($tobeMatch, 3, 6);
+            //如果去掉姓名后  微信名直接包含：张小三  小三爷
+            if(strpos($target,$sub) !== false){
+                return [
+                    'type' => '近似匹配',
+                    'details' => '包含姓名中的名',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+
+
+            similar_text($sub, $target, $perc);
+            if($perc>=50){
+                return [
+                    'type' => '近似匹配',
+                    'details' => '名和微信比较近似',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+        }
+
+        //4个字的
+        if(
+            strlen($tobeMatch) == 12
+        ){
+            $sub = substr($tobeMatch, 6, 6);
+            //如果去掉姓名后  微信名直接包含：欧阳小三  小三爷
+            if(strpos($target,$sub) !== false){
+                return [
+                    'type' => '近似匹配',
+                    'details' => '包含姓名中的名',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+
+            similar_text($sub, $target, $perc);
+            if($perc>=50){
+                return [
+                    'type' => '近似匹配',
+                    'details' => '名和微信比较近似',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+        }
+        
         //文本匹配度  张三0808    张三
         similar_text($tobeMatch, $target, $perc);
         if ($perc > 80) {
