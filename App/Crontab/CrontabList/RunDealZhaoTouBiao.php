@@ -1742,15 +1742,18 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         );
 
         $tmp = [];
+        $i = 0;
         foreach ($datas01 as $dataItem){
+            $i ++;
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    '标题' => $dataItem['标题']
+                    '标题' => $dataItem['标题'],
+                    '$i' => $i
                 ])
             );
             $tmp[] = [
-               '标题' => $dataItem['标题'] ?json_encode($dataItem['标题']):'aaaa' , //
+               '标题' => $dataItem['标题'] ?substr($dataItem['标题'] , 0 , 12):'aaaa' , //
                '项目名称' => $dataItem['项目名称'] ?:'' , //
                '项目编号' => $dataItem['项目编号'] ?:'' , //
                '项目简介'  => $dataItem['项目简介'] ?:'' , //
