@@ -1301,6 +1301,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             'dateStart' => $dateStart  ,
             'dateEnd' => $dateEnd ,
             'filename'=>$filename,
+            'filename_url'=>'http://api.test.meirixindong.com/Static/Temp/'.$filename,
             'Nums' => count($datas01) +  count($datas02) +  count($datas03) + count($datas04) + count($datas05) + count($datas06)
                 + count($datas06) +  count($datas07) + count($datas07) + count($datas08)+ count($datas09) +  count($datas10)
                 +  count($datas11) +  count($datas12) +  count($datas13)
