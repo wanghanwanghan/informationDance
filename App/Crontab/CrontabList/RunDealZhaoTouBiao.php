@@ -547,7 +547,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             )
            // ->defaultFormat($alignStyle)
         ;
- 
+
         foreach ($datas01 as $dataItem){
             $tmp = [
                '标题' => $dataItem['标题'] ?:'' , //
@@ -809,7 +809,14 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'url'  => $dataItem['url'] ?:'' , //
                 'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
             ];
-
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'exportDataV5' => [
+                        '$datas05 $tmp'=>$tmp,
+                    ]
+                ])
+            );
             $fileObject ->data(
                 [$tmp]
             );
