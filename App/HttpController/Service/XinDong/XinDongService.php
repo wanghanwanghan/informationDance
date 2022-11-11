@@ -1603,6 +1603,136 @@ class XinDongService extends ServiceBase
                 ],
             ],
             [
+                'pid' => 65,
+                'desc' => '纳税规模',
+                'detail' => '',
+                'key' => 'na_shui_gui_mo_2021',
+                'type' => 'select',
+                'data' => [
+                    'YF' => [
+                        'cname' => 'YF',
+                        'detail' => '负值',
+                    ],
+                    'Y0' => [
+                        'cname' => 'Y0',
+                        'detail' => '0值',
+                    ],
+                    'Y1' => [
+                        'cname' => 'Y1',
+                        'detail' => '万',
+                    ],
+                    'Y2' => [
+                        'cname' => 'Y2',
+                        'detail' => '十万',
+                    ],
+                    'Y3' => [
+                        'cname' => 'Y3',
+                        'detail' => 'Y3',
+                    ],
+                    'Y4' => [
+                        'cname' => 'Y4',
+                        'detail' => 'Y4',
+                    ],
+                    'Y5' => [
+                        'cname' => 'Y5',
+                        'detail' => 'Y5',
+                    ],
+                    'Y6' => [
+                        'cname' => 'Y6',
+                        'detail' => 'Y6',
+                    ],
+                    'Y7' => [
+                        'cname' => 'Y7',
+                        'detail' => 'Y7',
+                    ],
+                    'Y8' => [
+                        'cname' => 'Y8',
+                        'detail' => 'Y8',
+                    ],
+                    'Y9' => [
+                        'cname' => 'Y9',
+                        'detail' => 'Y9',
+                    ],
+                    'Y10' => [
+                        'cname' => 'Y10',
+                        'detail' => 'Y10',
+                    ],
+                    'Y11' => [
+                        'cname' => 'Y11',
+                        'detail' => 'Y11',
+                    ],
+                    'Y12' => [
+                        'cname' => 'Y12',
+                        'detail' => 'Y12',
+                    ],
+                ],
+            ],
+            [
+                'pid' => 66,
+                'desc' => '利润规模',
+                'detail' => '',
+                'key' => 'li_run_gui_mo_2021',
+                'type' => 'select',
+                'data' => [
+                    'YF' => [
+                        'cname' => 'YF',
+                        'detail' => '负值',
+                    ],
+                    'Y0' => [
+                        'cname' => 'Y0',
+                        'detail' => '0值',
+                    ],
+                    'Y1' => [
+                        'cname' => 'Y1',
+                        'detail' => '万',
+                    ],
+                    'Y2' => [
+                        'cname' => 'Y2',
+                        'detail' => '十万',
+                    ],
+                    'Y3' => [
+                        'cname' => 'Y3',
+                        'detail' => 'Y3',
+                    ],
+                    'Y4' => [
+                        'cname' => 'Y4',
+                        'detail' => 'Y4',
+                    ],
+                    'Y5' => [
+                        'cname' => 'Y5',
+                        'detail' => 'Y5',
+                    ],
+                    'Y6' => [
+                        'cname' => 'Y6',
+                        'detail' => 'Y6',
+                    ],
+                    'Y7' => [
+                        'cname' => 'Y7',
+                        'detail' => 'Y7',
+                    ],
+                    'Y8' => [
+                        'cname' => 'Y8',
+                        'detail' => 'Y8',
+                    ],
+                    'Y9' => [
+                        'cname' => 'Y9',
+                        'detail' => 'Y9',
+                    ],
+                    'Y10' => [
+                        'cname' => 'Y10',
+                        'detail' => 'Y10',
+                    ],
+                    'Y11' => [
+                        'cname' => 'Y11',
+                        'detail' => 'Y11',
+                    ],
+                    'Y12' => [
+                        'cname' => 'Y12',
+                        'detail' => 'Y12',
+                    ],
+                ],
+            ],
+            [
                 'pid' => 70,
                 'desc' => '有无官网',
                 'detail' => '',
