@@ -1750,6 +1750,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                     __CLASS__.__FUNCTION__ .__LINE__,
                     '标题' => $dataItem['标题'],
                     'code' =>  mb_detect_encoding($dataItem['标题']) ,
+                    'code2' =>  mb_detect_encoding($dataItem['标题']) ,
                     '$i' => $i
                 ])
             );
@@ -1757,7 +1758,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
             //
             $tmp[] = [
-               '标题' => $dataItem['标题'] ? utf8_encode(utf8_decode($dataItem['标题'])) :'aaaa' , //
+               '标题' => $dataItem['标题'] ?  '测试'.$dataItem['标题'].'测试' :'aaaa' , //
                '项目名称' => $dataItem['项目名称'] ?:'' , //
                '项目编号' => $dataItem['项目编号'] ?:'' , //
                '项目简介'  => $dataItem['项目简介'] ?:'' , //
