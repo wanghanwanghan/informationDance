@@ -202,7 +202,7 @@ class SouKeController extends ControllerBase
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202209',true)
+            ->searchFromEs('company_202211',true)
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额

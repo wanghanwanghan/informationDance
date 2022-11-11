@@ -274,10 +274,9 @@ class Company extends ServiceBase
 
         $this->setReturnData($this->return_data)   ;
         return $this;
-    }
+    } 
 
-
-    function searchFromEs($index = 'company_202207',$showLog = false)
+    function searchFromEs($index = 'company_202211',$showLog = false)
     {
 
         $responseJson = (new XinDongService())->advancedSearch($this->es,$index);
