@@ -1126,7 +1126,7 @@ class ToolsController extends ControllerBase
                 if(
                     $res['Nums'] >= 0
                 ){
-                    $attrs[] = TEMP_FILE_PATH . $res['filename_url'];
+                    $attrs[] =  $res['filename_url'];
                 }
             }
 
