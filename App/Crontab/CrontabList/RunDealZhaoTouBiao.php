@@ -1450,7 +1450,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
         $startMemory = memory_get_usage();
 
-        $filename = 'zhao_tou_biao('.$tablesName.')_'.date('YmdHis').'.xlsx';
+        $filename = $tablesName.'_招投标_'.date('YmdHis').'.xlsx';
         $headerTitle= [
             '标题' , //
             '项目名称' , //
