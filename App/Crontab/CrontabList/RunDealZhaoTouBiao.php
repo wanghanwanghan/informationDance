@@ -1743,8 +1743,14 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
         $tmp = [];
         foreach ($datas01 as $dataItem){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '标题' => $dataItem['标题']
+                ])
+            );
             $tmp[] = [
-               '标题' => $dataItem['标题'] ?:'' , //
+               '标题' => $dataItem['标题'] ?:'aaaa' , //
                '项目名称' => $dataItem['项目名称'] ?:'' , //
                '项目编号' => $dataItem['项目编号'] ?:'' , //
                '项目简介'  => $dataItem['项目简介'] ?:'' , //
@@ -2360,38 +2366,38 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 //        );
 
 
-        $tmp = [];
-        foreach ($datas13 as $dataItem){
-            $tmp[] = [
-                '标题' => $dataItem['标题'] ?:'' , //
-                '项目名称' => $dataItem['项目名称'] ?:'' , //
-                '项目编号' => $dataItem['项目编号'] ?:'' , //
-                '项目简介'  => $dataItem['项目简介'] ?:'' , //
-                '采购方式'   => $dataItem['采购方式'] ?:'' , //
-                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
-                '公告日期' => $dataItem['公告日期'] ?:'' , //
-                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
-                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
-                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
-                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
-                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
-                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
-                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
-                '名次'  => $dataItem['名次'] ?:'' , //
-                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
-                '中标金额'  => $dataItem['中标金额'] ?:'' , //
-                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
-                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
-                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
-                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
-                '评标专家' => $dataItem['评标专家'] ?:'' , //
-                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
-                'url'  => $dataItem['url'] ?:'' , //
-                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
-                '来源' => 'zhao_tou_biao_key03' , //
-            ];
-        }
-        $fileObject ->data($tmp);
+//        $tmp = [];
+//        foreach ($datas13 as $dataItem){
+//            $tmp[] = [
+//                '标题' => $dataItem['标题'] ?:'' , //
+//                '项目名称' => $dataItem['项目名称'] ?:'' , //
+//                '项目编号' => $dataItem['项目编号'] ?:'' , //
+//                '项目简介'  => $dataItem['项目简介'] ?:'' , //
+//                '采购方式'   => $dataItem['采购方式'] ?:'' , //
+//                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
+//                '公告日期' => $dataItem['公告日期'] ?:'' , //
+//                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
+//                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
+//                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
+//                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
+//                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
+//                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
+//                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
+//                '名次'  => $dataItem['名次'] ?:'' , //
+//                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
+//                '中标金额'  => $dataItem['中标金额'] ?:'' , //
+//                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
+//                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
+//                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
+//                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
+//                '评标专家' => $dataItem['评标专家'] ?:'' , //
+//                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
+//                'url'  => $dataItem['url'] ?:'' , //
+//                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
+//                '来源' => 'zhao_tou_biao_key03' , //
+//            ];
+//        }
+//        $fileObject ->data($tmp);
 
         CommonService::getInstance()->log4PHP(
             json_encode([
