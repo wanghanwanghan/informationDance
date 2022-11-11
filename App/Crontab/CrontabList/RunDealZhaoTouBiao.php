@@ -406,12 +406,6 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         ;
         $p1Nums = 0;
         foreach ($financeDatas as $dataItem){
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    __CLASS__.__FUNCTION__ .__LINE__,
-//                    '$dataItem1' => $dataItem
-//                ])
-//            );
             $fileObject ->data([$dataItem]);
             $p1Nums ++ ;
         }
@@ -582,7 +576,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                'url'  => $dataItem['url'] ?:'' , //
                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
            ];
-
+           // $fileObject ->data([$dataItem]);
             $fileObject ->data(
                 [$tmp]
             );
