@@ -555,6 +555,15 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         ;
 
         foreach ($datas01 as $dataItem){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'exportDataV5' => [
+                        '$dataItem'=>$dataItem,
+                    ]
+                ])
+            );
+
             $fileObject ->data(
                 [
                     '标题' => $dataItem['标题'] ?:'' , //
