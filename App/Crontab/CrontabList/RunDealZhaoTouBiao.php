@@ -192,7 +192,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         //生成文件 发邮件
         $res = self::sendEmail($day);
         //$res = self::sendEmailV2($day);
-        $res = self::sendEmailV3($day);
+        $res = self::sendEmailV4($day);
         return true ;
     }
 
@@ -412,6 +412,70 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             '招投标数据('.$day.')',
             '',
             $attrs
+        );
+
+        OperatorLog::addRecord(
+            [
+                'user_id' => 0,
+                'msg' =>  " 附件:".TEMP_FILE_PATH . $res['filename'] .' 邮件结果:'.$res1.$res2.$res3.$res5,
+                'details' =>json_encode( XinDongService::trace()),
+                'type_cname' => '招投标邮件',
+            ]
+        );
+
+        return true ;
+    }
+    static function sendEmailV4($day)
+    {
+        $week =  date('w',strtotime($day));
+        if($week != 5 ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '$day' => $day,
+                   '不是星期五',
+                ], JSON_UNESCAPED_UNICODE)
+            );
+            return  true;
+        }
+
+        $startday = date('Y-m-d',strtotime('today -' . ($week - 1) . 'day'));
+        $dateStart = $startday.' 00:00:00';
+        $dateEnd = $day.' 23:59:59';
+
+
+        $res = self::exportDataV7($dateStart,$dateEnd);
+
+
+        $res1 = CommonService::getInstance()->sendEmailV2(
+             'tianyongshan@meirixindong.com',
+            '招投标数据-新('.$day.')',
+            '',
+            [TEMP_FILE_PATH . $res['filename']]
+        );
+
+
+        $res2 = CommonService::getInstance()->sendEmailV2(
+            'guoxinxia@meirixindong.com',
+            // 'minglongoc@me.com',
+            '招投标数据('.$day.')',
+            '',
+            [TEMP_FILE_PATH . $res['filename']]
+        );
+
+        $res3 = CommonService::getInstance()->sendEmailV2(
+            'minglongoc@me.com',
+            '招投标数据('.$day.')',
+            '',
+            [TEMP_FILE_PATH . $res['filename']]
+        );
+
+        $res4 = CommonService::getInstance()->sendEmailV2(
+            'zhengmeng@meirixindong.com',
+            // 'minglongoc@me.com',
+            '招投标数据('.$day.')',
+            '',
+            [TEMP_FILE_PATH . $res['filename']]
         );
 
         OperatorLog::addRecord(
