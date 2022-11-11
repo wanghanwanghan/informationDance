@@ -2498,7 +2498,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         ];
         foreach ($variables as $dataItems){
             foreach ($dataItems as $dataItem){
-                $dataItem['corexml'] = str_replace(',', '，', $dataItem['corexml']);
+                $comment_content = $dataItem['corexml'];
+                $comment_content =  str_replace(",","，",$comment_content);
                 $tmpDataItem = [
                     '标题' => $dataItem['标题'] ?:'aaaa' , //
                     '项目名称' => $dataItem['项目名称'] ?:'' , //
@@ -2524,8 +2525,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                     '评标专家' => $dataItem['评标专家'] ?:'' , //
                     'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
                     'url'  => $dataItem['url'] ?:'' , //
-                    //'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
-                    'corexml' => '' , //
+                    'corexml' => $comment_content ?str_split ( $comment_content, 32766 )[0]:'' , //
+//                    'corexml' => '' , //
                     '来源' => 'zhao_tou_biao_key01' , //
                 ];
                 fputcsv($f, $tmpDataItem);
