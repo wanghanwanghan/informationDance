@@ -2486,8 +2486,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
 
         $datas01 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
-            " SELECT * FROM zhao_tou_biao_key01 
-                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    "
+            " SELECT * FROM zhao_tou_biao_key03 
+                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'   LIMIT 1   "
         );
         $datas02 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
             " SELECT * FROM zhao_tou_biao_key02 
@@ -2500,8 +2500,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
         $variables = [
             $datas01,
-            $datas02,
-            $datas03,
+//            $datas02,
+//            $datas03,
         ];
         foreach ($variables as $dataItems){
             foreach ($dataItems as $dataItem){
@@ -2532,8 +2532,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                     '评标专家' => $dataItem['评标专家'] ?:'' , //
                     'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
                     'url'  => $dataItem['url'] ?:'' , //
-//                    'corexml' => $comment_content ?str_split ( $comment_content, 32766 )[0]:'' , //
-                    'corexml' => '' , //
+                    'corexml' => $comment_content ?str_split ( $comment_content, 32766 )[0]:'' , //
+                    //'corexml' => '' , //
                     '来源' => 'zhao_tou_biao_key01' , //
                 ];
                 fputcsv($f, $tmpDataItem);
