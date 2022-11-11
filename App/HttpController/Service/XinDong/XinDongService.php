@@ -3621,82 +3621,7 @@ class XinDongService extends ServiceBase
     // $tobeMatch 姓名   $target：微信名
     function matchNamesV2($tobeMatch, $target)
     {
-        //两个字的
-        if(
-            strlen($tobeMatch) == 6
-        ){
-            $sub = substr($tobeMatch, 3, 3);
-            //如果去掉姓名后  微信名直接包含：张三  三爷
-            if(strpos($target,$sub) !== false){
-                return [
-                    'type' => '近似匹配',
-                    'details' => '包含姓名中的名',
-                    'res' => '成功',
-                    'percentage' => '',
-                ];
-            }
 
-
-            similar_text($sub, $target, $perc);
-            $tobeMatchArr = $this->getPinYin($tobeMatch);
-            $targetArr = $this->getPinYin($target);
-
-
-        }
-
-
-        //3个字的
-        if(
-            strlen($tobeMatch) == 9
-        ){
-            $sub = substr($tobeMatch, 3, 6);
-            //如果去掉姓名后  微信名直接包含：张小三  小三爷
-            if(strpos($target,$sub) !== false){
-                return [
-                    'type' => '近似匹配',
-                    'details' => '包含姓名中的名',
-                    'res' => '成功',
-                    'percentage' => '',
-                ];
-            }
-
-
-            similar_text($sub, $target, $perc);
-            if($perc>=50){
-                return [
-                    'type' => '近似匹配',
-                    'details' => '名和微信比较近似',
-                    'res' => '成功',
-                    'percentage' => '',
-                ];
-            }
-        }
-
-        //4个字的
-        if(
-            strlen($tobeMatch) == 12
-        ){
-            $sub = substr($tobeMatch, 6, 6);
-            //如果去掉姓名后  微信名直接包含：欧阳小三  小三爷
-            if(strpos($target,$sub) !== false){
-                return [
-                    'type' => '近似匹配',
-                    'details' => '包含姓名中的名',
-                    'res' => '成功',
-                    'percentage' => '',
-                ];
-            }
-
-            similar_text($sub, $target, $perc);
-            if($perc>=50){
-                return [
-                    'type' => '近似匹配',
-                    'details' => '名和微信比较近似',
-                    'res' => '成功',
-                    'percentage' => '',
-                ];
-            }
-        }
 
 
         //完全匹配
@@ -3872,6 +3797,83 @@ class XinDongService extends ServiceBase
             ];
         }
 
+        //两个字的
+        if(
+            strlen($tobeMatch) == 6
+        ){
+            $sub = substr($tobeMatch, 3, 3);
+            //如果去掉姓名后  微信名直接包含：张三  三爷
+            if(strpos($target,$sub) !== false){
+                return [
+                    'type' => '近似匹配',
+                    'details' => '包含姓名中的名',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+
+
+            similar_text($sub, $target, $perc);
+            $tobeMatchArr = $this->getPinYin($tobeMatch);
+            $targetArr = $this->getPinYin($target);
+
+
+        }
+
+
+        //3个字的
+        if(
+            strlen($tobeMatch) == 9
+        ){
+            $sub = substr($tobeMatch, 3, 6);
+            //如果去掉姓名后  微信名直接包含：张小三  小三爷
+            if(strpos($target,$sub) !== false){
+                return [
+                    'type' => '近似匹配',
+                    'details' => '包含姓名中的名',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+
+
+            similar_text($sub, $target, $perc);
+            if($perc>=50){
+                return [
+                    'type' => '近似匹配',
+                    'details' => '名和微信比较近似',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+        }
+
+        //4个字的
+        if(
+            strlen($tobeMatch) == 12
+        ){
+            $sub = substr($tobeMatch, 6, 6);
+            //如果去掉姓名后  微信名直接包含：欧阳小三  小三爷
+            if(strpos($target,$sub) !== false){
+                return [
+                    'type' => '近似匹配',
+                    'details' => '包含姓名中的名',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+
+            similar_text($sub, $target, $perc);
+            if($perc>=50){
+                return [
+                    'type' => '近似匹配',
+                    'details' => '名和微信比较近似',
+                    'res' => '成功',
+                    'percentage' => '',
+                ];
+            }
+        }
+        
         //文本匹配度  张三0808    张三
         similar_text($tobeMatch, $target, $perc);
         if ($perc > 80) {
