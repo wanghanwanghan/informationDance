@@ -274,7 +274,7 @@ class Company extends ServiceBase
 
         $this->setReturnData($this->return_data)   ;
         return $this;
-    } 
+    }
 
     function searchFromEs($index = 'company_202211',$showLog = false)
     {
@@ -776,7 +776,8 @@ class Company extends ServiceBase
     }
     function SetQueryByYingShouGuiMo($searchOptionArr){
 
-        $ying_shou_gui_mo_values = [];  // 营收规模
+        return $this->SetQueryByYingShouGuiMoV2($searchOptionArr);
+        $ying_shou_gui_mo_values = [];   // 营收规模
 
         foreach($searchOptionArr as $item){
             if($item['pid'] == 50){
@@ -811,34 +812,13 @@ class Company extends ServiceBase
             }
         }
 
-        $map = [
-            5 => ['A1'], //微型
-            10 => ['A2'], //小型C类
-            15 => ['A3'],// 小型B类
-            20 => ['A4'],// 小型A类
-            25 => ['A5'],// 中型C类
-            30 => ['A6'],// 中型B类
-            40 => ['A7'],// 中型A类
-            45 => ['A8'],// 大型C类
-            50 => ['A9'],//大型B类
-            60 => ['A10'],//大型A类，一般指规模在10亿以上，50亿以下
-            65 => ['A11'],//'特大型C类，一般指规模在50亿以上，100亿以下'
-            70 => ['A12'],//'特大型C类，一般指规模在50亿以上，100亿以下'
-            80 => ['A13'],//'特大型C类，一般指规模在50亿以上，100亿以下'
-        ];
-
         $matchedCnamesRaw = [];
         foreach($ying_shou_gui_mo_values as $item){
-            $item && $matchedCnamesRaw[] = $map[$item];
-        }
-        $matchedCnames = [];
-        foreach($matchedCnamesRaw as $items){
-            foreach($items as $item){
-                $matchedCnames[] = $item;
-            }
+            $item && $matchedCnamesRaw[] = $item;
         }
 
-        (!empty($matchedCnames)) && $this->es->addMustShouldPhraseQuery( 'ying_shou_gui_mo' , $matchedCnames) ;
+
+        (!empty($matchedCnamesRaw)) && $this->es->addMustShouldPhraseQuery( 'ying_shou_gui_mo_2021' , $matchedCnamesRaw) ;
 
         return $this;
     }

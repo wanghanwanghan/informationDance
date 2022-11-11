@@ -1398,91 +1398,156 @@ class XinDongService extends ServiceBase
                     ],
                 ],
             ],
+//            [
+//                'pid' => 50,
+//                'desc' => '营收规模',
+//                'key' => 'ying_shou_gui_mo',
+//                'detail' => '',
+//                'type' => 'select',
+//                'data' => [
+//                    $this->reg_capital_50 => [
+//                        'cname' => $this->reg_capital_50_des,
+//                        'detail' => '100万以下',
+//                        'min' => 0,
+//                        'max' => 1000000,
+//                    ],
+//                    $this->reg_capital_50to100 => [
+//                        'cname' => $this->reg_capital_50to100_des,
+//                        'detail' => '100万以上，500万以下',
+//                        'min' => 1000000,
+//                        'max' => 5000000,
+//                    ],
+//                    $this->reg_capital_100to200 => [
+//                        'cname' => $this->reg_capital_100to200_des,
+//                        'detail' => '500万以上，1000万以下',
+//                        'min' => 5000000,
+//                        'max' => 10000000,
+//                    ],
+//                    $this->reg_capital_200to500 => [
+//                        'cname' => $this->reg_capital_200to500_des,
+//                        'detail' => '1000万以上，3000万以下',
+//                        'min' => 10000000,
+//                        'max' => 30000000,
+//                    ],
+//                    $this->reg_capital_500to1000 => [
+//                        'cname' => $this->reg_capital_500to1000_des,
+//                        'detail' => '3000万以上，5000万以下',
+//                        'min' => 30000000,
+//                        'max' => 50000000,
+//                    ],
+//                    $this->reg_capital_1000to10000 => [
+//                        'cname' => $this->reg_capital_1000to10000_des,
+//                        'detail' => '5000万以上，8000万以下',
+//                        'min' => 50000000,
+//                        'max' => 80000000,
+//                    ],
+//                    //    $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des,
+//                    $this->reg_capital_minddle_a => [
+//                        'cname' => $this->reg_capital_minddle_a_des,
+//                        'detail' => '8000万以上，1亿以下',
+//                        'min' => 80000000,
+//                        'max' => 100000000,
+//                    ],
+//                    $this->reg_capital_big_c => [
+//                        'cname' => $this->reg_capital_big_c_des,
+//                        'detail' => '1亿以上，5亿以下',
+//                        'min' => 100000000,
+//                        'max' => 500000000,
+//                    ],
+//                    $this->reg_capital_big_b => [
+//                        'cname' => $this->reg_capital_big_b_des,
+//                        'detail' => '5亿以上，10亿以下',
+//                        'min' => 500000000,
+//                        'max' => 1000000000,
+//                    ],
+//                    $this->reg_capital_big_A => [
+//                        'cname' => $this->reg_capital_big_A_des,
+//                        'detail' => '10亿以上，50亿以下',
+//                        'min' => 1000000000,
+//                        'max' => 5000000000,
+//                    ],
+//                    $this->reg_capital_super_big_C => [
+//                        'cname' => $this->reg_capital_super_big_C_des,
+//                        'detail' => '50亿以上，100亿以下',
+//                        'min' => 5000000000,
+//                        'max' => 10000000000,
+//                    ],
+//                    $this->reg_capital_super_big_B => [
+//                        'cname' => $this->reg_capital_super_big_B_des,
+//                        'detail' => '100亿以上，500亿以下',
+//                        'min' => 10000000000,
+//                        'max' => 50000000000,
+//                    ],
+//                    $this->reg_capital_super_big_A => [
+//                        'cname' => $this->reg_capital_super_big_A_des,
+//                        'detail' => '500亿以上',
+//                        'min' => 50000000000,
+//                        'max' => 500000000000,
+//                    ],
+//                ],
+//            ],
             [
                 'pid' => 50,
                 'desc' => '营收规模',
-                'key' => 'ying_shou_gui_mo',
+                'key' => 'ying_shou_gui_mo_2021',
                 'detail' => '',
                 'type' => 'select',
                 'data' => [
-                    $this->reg_capital_50 => [
-                        'cname' => $this->reg_capital_50_des,
-                        'detail' => '100万以下',
-                        'min' => 0,
-                        'max' => 1000000,
+                    'YF' => [
+                        'cname' => 'YF',
+                        'detail' => '负值',
                     ],
-                    $this->reg_capital_50to100 => [
-                        'cname' => $this->reg_capital_50to100_des,
-                        'detail' => '100万以上，500万以下',
-                        'min' => 1000000,
-                        'max' => 5000000,
+                    'Y0' => [
+                        'cname' => 'Y0',
+                        'detail' => '0值',
                     ],
-                    $this->reg_capital_100to200 => [
-                        'cname' => $this->reg_capital_100to200_des,
-                        'detail' => '500万以上，1000万以下',
-                        'min' => 5000000,
-                        'max' => 10000000,
+                    'Y1' => [
+                        'cname' => 'Y1',
+                        'detail' => '万',
                     ],
-                    $this->reg_capital_200to500 => [
-                        'cname' => $this->reg_capital_200to500_des,
-                        'detail' => '1000万以上，3000万以下',
-                        'min' => 10000000,
-                        'max' => 30000000,
+                    'Y2' => [
+                        'cname' => 'Y2',
+                        'detail' => '十万',
                     ],
-                    $this->reg_capital_500to1000 => [
-                        'cname' => $this->reg_capital_500to1000_des,
-                        'detail' => '3000万以上，5000万以下',
-                        'min' => 30000000,
-                        'max' => 50000000,
+                    'Y3' => [
+                        'cname' => 'Y3',
+                        'detail' => 'Y3',
                     ],
-                    $this->reg_capital_1000to10000 => [
-                        'cname' => $this->reg_capital_1000to10000_des,
-                        'detail' => '5000万以上，8000万以下',
-                        'min' => 50000000,
-                        'max' => 80000000,
+                    'Y4' => [
+                        'cname' => 'Y4',
+                        'detail' => 'Y4',
                     ],
-                    //    $this->reg_capital_10000to100000  =>  $this->reg_capital_10000to100000_des,
-                    $this->reg_capital_minddle_a => [
-                        'cname' => $this->reg_capital_minddle_a_des,
-                        'detail' => '8000万以上，1亿以下',
-                        'min' => 80000000,
-                        'max' => 100000000,
+                    'Y5' => [
+                        'cname' => 'Y5',
+                        'detail' => 'Y5',
                     ],
-                    $this->reg_capital_big_c => [
-                        'cname' => $this->reg_capital_big_c_des,
-                        'detail' => '1亿以上，5亿以下',
-                        'min' => 100000000,
-                        'max' => 500000000,
+                    'Y6' => [
+                        'cname' => 'Y6',
+                        'detail' => 'Y6',
                     ],
-                    $this->reg_capital_big_b => [
-                        'cname' => $this->reg_capital_big_b_des,
-                        'detail' => '5亿以上，10亿以下',
-                        'min' => 500000000,
-                        'max' => 1000000000,
+                    'Y7' => [
+                        'cname' => 'Y7',
+                        'detail' => 'Y7',
                     ],
-                    $this->reg_capital_big_A => [
-                        'cname' => $this->reg_capital_big_A_des,
-                        'detail' => '10亿以上，50亿以下',
-                        'min' => 1000000000,
-                        'max' => 5000000000,
+                    'Y8' => [
+                        'cname' => 'Y8',
+                        'detail' => 'Y8',
                     ],
-                    $this->reg_capital_super_big_C => [
-                        'cname' => $this->reg_capital_super_big_C_des,
-                        'detail' => '50亿以上，100亿以下',
-                        'min' => 5000000000,
-                        'max' => 10000000000,
+                    'Y9' => [
+                        'cname' => 'Y9',
+                        'detail' => 'Y9',
                     ],
-                    $this->reg_capital_super_big_B => [
-                        'cname' => $this->reg_capital_super_big_B_des,
-                        'detail' => '100亿以上，500亿以下',
-                        'min' => 10000000000,
-                        'max' => 50000000000,
+                    'Y10' => [
+                        'cname' => 'Y10',
+                        'detail' => 'Y10',
                     ],
-                    $this->reg_capital_super_big_A => [
-                        'cname' => $this->reg_capital_super_big_A_des,
-                        'detail' => '500亿以上',
-                        'min' => 50000000000,
-                        'max' => 500000000000,
+                    'Y11' => [
+                        'cname' => 'Y11',
+                        'detail' => 'Y11',
+                    ],
+                    'Y12' => [
+                        'cname' => 'Y12',
+                        'detail' => 'Y12',
                     ],
                 ],
             ],
