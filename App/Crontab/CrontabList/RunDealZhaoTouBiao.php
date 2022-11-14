@@ -263,7 +263,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
     {
 
         $res = self::exportDataV8($day);
-        $res = self::exportDataV4($day);
+        $dateStart = $day.' 00:00:00';
+        $dateEnd = $day.' 23:59:59';
+        $res = self::exportDataV4($dateStart,$dateEnd);
 
         $res1 = CommonService::getInstance()->sendEmailV2(
             'tianyongshan@meirixindong.com',
