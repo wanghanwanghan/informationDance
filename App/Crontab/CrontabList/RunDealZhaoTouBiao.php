@@ -2688,6 +2688,14 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         foreach ($variables as $dataItems){
             foreach ($dataItems as $dataItem){
                 $comment_content = self::gb2312($dataItem['corexml']);
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        'exportDataV5' => [
+                            '$comment_content'=>$comment_content,
+                        ]
+                    ])
+                );
                 $tmpDataItem = [
                     '标题' => $dataItem['标题'] , //
                     '项目名称' => $dataItem['项目名称'] , //
