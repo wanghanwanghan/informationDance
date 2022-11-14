@@ -263,29 +263,24 @@ class RunDealZhaoTouBiao extends AbstractCronTask
     static function sendEmailV4($day,$emailsLists)
     {
 
-
-        $dateStart = '2022-11-07 00:00:00';
-        $dateEnd = $day.' 23:59:59';
-        $res1 = self::exportDataV4($dateStart,$dateEnd);
-
         $res = self::exportDataV8($day);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 'sendEmailV2' => [
-                    '1'=> [TEMP_FILE_PATH . $res1['filename']],
-                    '2'=> [TEMP_FILE_PATH . $res['filename']],
+
+                    'filesArr'=> $res['filesArr'],
                 ]
             ])
         );
 
 
         $filename = control::getUuid();
-        ZipService::getInstance()->zip( [TEMP_FILE_PATH . $res['filename']], TEMP_FILE_PATH . $filename . '.zip');
+        ZipService::getInstance()->zip( $res['filesArr'], TEMP_FILE_PATH . $filename . '.zip');
 
         CommonService::getInstance()->sendEmailV2(
          'tianyongshan@meirixindong.com',
-            '招投标数据('.$day.')',
+            '招投标数据_新('.$day.')',
             '',
             [TEMP_FILE_PATH . $filename . '.zip']
         );
@@ -299,9 +294,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 //                [TEMP_FILE_PATH . $res['filename']]
 //            );
 //            $sendResArr[$emailsAddress] = $sendRes;
-//        }
-
-
+//        } 
 
         return true ;
     }
@@ -676,11 +669,6 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             ])
         );
 
-
-        //写到csv里
-        $fileName = 'zhao_tou_biao_new_'.date('YmdHis').".csv";
-        $f = fopen(TEMP_FILE_PATH.$fileName, "w");
-        //fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
         $headerTitle= [
             '来源' , //
             '标题' , //
@@ -710,8 +698,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             'corexml' , //
 
         ];
-        //插入表头
-        fputcsv($f, $headerTitle);
+
 
         $tables = [
             'zhao_tou_biao_key01',
@@ -730,7 +717,16 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         ];
 
         $totalNums = 0;
+        $filesArr = [];
         foreach ($tables as $table){
+
+            //写到csv里
+            $fileName = $table.'_'.date('YmdHis').".csv";
+            $f = fopen(TEMP_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+            //插入表头
+            fputcsv($f, $headerTitle);
+
             $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
                 " SELECT * FROM $table WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
             );
@@ -772,6 +768,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                     'corexml' => $comment_content ?str_split ( $comment_content, 32766 )[0]:'' , //
                 ];
                 fputcsv($f, $tmpDataItem);
+                $filesArr[] = TEMP_FILE_PATH.$fileName;
             }
         }
 
@@ -790,6 +787,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             'dateStart' => $dateStart  ,
             'dateEnd' => $dateEnd ,
             'filename'=>$fileName,
+            'filesArr'=>$filesArr,
             'filename_url'=>'http://api.test.meirixindong.com/Static/Temp/'.$fileName,
             'Nums' => $totalNums
         ];
