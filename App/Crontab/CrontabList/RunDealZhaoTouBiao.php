@@ -417,17 +417,21 @@ class RunDealZhaoTouBiao extends AbstractCronTask
     static function  exportDataV8($day){
         $startMemory = memory_get_usage();
 
-        $week =  date('w',strtotime($day));
-        $startday = date('Y-m-d',strtotime('today -' . ($week - 1) . 'day'));
-        $dateStart = $startday.' 00:00:00';
-        $dateEnd = $day.' 23:59:59';
+        $the_date = $day;
+        $the_day_of_week = date("w",strtotime($the_date)); //sunday is 0
+
+        $first_day_of_week = date("Y-m-d",strtotime( $the_date )-60*60*24*($the_day_of_week)+60*60*24*1 );
+        $last_day_of_week = date("Y-m-d",strtotime($first_day_of_week)+60*60*24*4 );
+
+        $dateStart = $first_day_of_week.' 00:00:00';
+        $dateEnd = $last_day_of_week.' 23:59:59';
+
+
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 'exportDataV8' => [
-                    '$day'=>$day,
-                    '$week'=>$week,
-                    '$startday'=>$startday,
+                    '$day'=>$day, 
                     '$dateStart'=>$dateStart,
                     '$dateEnd'=>$dateEnd,
                 ]
@@ -499,14 +503,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 $comment_content =  str_replace("\r","",$comment_content);
                 $comment_content =  str_replace("\n","",$comment_content);
                 $comment_content =  str_replace("\"","",$comment_content);
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        'exportDataV5' => [
-                            '$comment_content'=>$comment_content,
-                        ]
-                    ])
-                );
+
                 $tmpDataItem = [
                     '来源' => $table , //
                     '标题' => $dataItem['标题'] , //

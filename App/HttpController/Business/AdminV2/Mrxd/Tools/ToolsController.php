@@ -1100,7 +1100,7 @@ class ToolsController extends ControllerBase
         }
 
         //125 根据日期查询新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）
-        if($requestData['type'] == 125 ){ 
+        if($requestData['type'] == 125 ){
             $res = RunDealZhaoTouBiao::exportDataV8($key);
             $response[] = $res['filename_url'];
         }
