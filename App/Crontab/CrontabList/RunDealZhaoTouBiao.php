@@ -26,6 +26,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\Sms\SmsService;
+use App\HttpController\Service\Zip\ZipService;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\Mysqli\QueryBuilder;
 use Vtiful\Kernel\Format;
@@ -278,11 +279,15 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             ])
         );
 
+
+        $filename = control::getUuid();
+        ZipService::getInstance()->zip( [TEMP_FILE_PATH . $res['filename']], TEMP_FILE_PATH . $filename . '.zip');
+
         CommonService::getInstance()->sendEmailV2(
          'tianyongshan@meirixindong.com',
             '招投标数据('.$day.')',
             '',
-            [TEMP_FILE_PATH . $res['filename']]
+            [TEMP_FILE_PATH . $filename . '.zip']
         );
 
 //        $sendResArr = [];
