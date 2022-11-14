@@ -534,22 +534,11 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             )
            // ->defaultFormat($alignStyle)
         ;
-        $p1Nums = 0;
-        foreach ($datas as $dataItem){
-            //$new2 = iconv('utf-8', 'utf-8', $dataItem['标题']);
-//            $new2 = utf8_encode($dataItem['标题']);
-//            $new1 = mb_convert_encoding($dataItem['标题'], 'UTF-8');
-//                 CommonService::getInstance()->log4PHP(
-//                     json_encode([
-//                         __CLASS__.__FUNCTION__ .__LINE__,
-//                         '$datas' => [
-//                             'old'=>$dataItem['标题'],
-//                             '$new1'=>$new1,
-//                             '$new2'=>$new2,
-//                         ]
-//                     ])
-//                 );
-//            $comment_content =  $dataItem['corexml'];
+
+        for ($p1Nums = 1;$p1Nums<=34;$p1Nums++){
+
+            $dataItem = TmpInfo::findById($p1Nums);
+            $dataItem = $dataItem->toArray();
             $tmpDataItem = [
                 'source' => $dataItem['source'] , //
                 'biao_ti' => $dataItem['biao_ti'] , //
