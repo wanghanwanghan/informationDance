@@ -262,7 +262,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
     static function sendEmailV4($day,$emailsLists)
     {
 
-        $res = self::exportDataV8($day);
+
         $dateStart = $day.' 00:00:00';
         $dateEnd = $day.' 23:59:59';
         $res = self::exportDataV4($dateStart,$dateEnd);
@@ -275,13 +275,13 @@ class RunDealZhaoTouBiao extends AbstractCronTask
            // []
            [TEMP_FILE_PATH . $res['filename']]
         );
+
+        $res = self::exportDataV8($day);
         $res2 = CommonService::getInstance()->sendEmailV2(
-        // 'tianyongshan@meirixindong.com',
-            'minglongoc@me.com',
+         'tianyongshan@meirixindong.com',
             '招投标数据('.$day.')',
             '',
-            []
-           // [TEMP_FILE_PATH . $res['filename']]
+            [TEMP_FILE_PATH . $res['filename']]
         );
 
 //        $sendResArr = [];
