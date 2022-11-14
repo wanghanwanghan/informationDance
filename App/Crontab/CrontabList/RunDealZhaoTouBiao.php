@@ -2689,7 +2689,13 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         ];
         foreach ($variables as $dataItems){
             foreach ($dataItems as $dataItem){
-                $comment_content = self::gb2312($dataItem['corexml']);
+                //$comment_content = self::gb2312($dataItem['corexml']);
+                //$str = str_replace(array("\r\n", "\r", "\n",",","\""), array("","","","&",""), $str);
+                $comment_content =  str_replace(",","&",$dataItem['corexml']);
+                $comment_content =  str_replace("\r\n","",$comment_content);
+                $comment_content =  str_replace("\r","",$comment_content);
+                $comment_content =  str_replace("\n","",$comment_content);
+                $comment_content =  str_replace("\"","",$comment_content);
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
