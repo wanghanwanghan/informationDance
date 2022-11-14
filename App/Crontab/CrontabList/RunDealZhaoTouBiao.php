@@ -436,7 +436,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
             " SELECT * FROM zhao_tou_biao_key03 WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
         );
-        foreach ($datas as $data){ 
+        foreach ($datas as $data){
             TmpInfo::addRecord([
                 'biao_ti' => $data['标题']?:'',
                 'xiang_mu_ming_cheng' => $data['项目名称']?:'',
@@ -549,35 +549,35 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 //                         ]
 //                     ])
 //                 );
-//            $comment_content =  $dataItem['corexml'];
+//            $comment_content =  $dataItem['corexml']; 
             $tmpDataItem = [
-                '来源' => $dataItem['name'] , //
-                '标题' => $new1 , //
-                '项目名称' => empty($dataItem['标题'])?'无':md5($dataItem['标题']) , //
-                '项目编号' => empty($dataItem['标题'])?'无':json_encode($dataItem['标题'],JSON_UNESCAPED_UNICODE) , //
-                '项目简介'  => $dataItem['项目简介'] ?:'' , //
-                '采购方式'   => $dataItem['采购方式'] ?:'' , //
-                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
-                '公告日期' => $dataItem['公告日期'] ?:'' , //
-                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
-                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
-                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
-                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
-                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
-                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
-                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
-                '名次'  => $dataItem['名次'] ?:'' , //
-                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
-                '中标金额'  => $dataItem['中标金额'] ?:'' , //
-                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
-                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
-                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
-                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
-                '评标专家' => $dataItem['评标专家'] ?:'' , //
+                'source' => $dataItem['source'] , //
+                'biao_ti' => $dataItem['biao_ti'] , //
+                'xiang_mu_ming_cheng' => $dataItem['xiang_mu_ming_cheng'] , //
+                'xiang_mu_bian_hao' => $dataItem['xiang_mu_bian_hao'] , //
+                'xiang_mu_jian_jie'  => $dataItem['xiang_mu_jian_jie'] ?:'' , //
+                'cai_gou_fang_shi'   => $dataItem['cai_gou_fang_shi'] ?:'' , //
+                'gong_gao_lei_xing2'  => $dataItem['gong_gao_lei_xing2'] ?:'' , //
+                'gong_gao_ri_qi' => $dataItem['gong_gao_ri_qi'] ?:'' , //
+                'xing_zheng_qv_yu_sheng' => $dataItem['xing_zheng_qv_yu_sheng'] ?:'' , //
+                'xing_zheng_qv_yu_shi'  => $dataItem['xing_zheng_qv_yu_shi'] ?:'' , //
+                'xing_zheng_qv_yu_xian' => $dataItem['xing_zheng_qv_yu_xian'] ?:'' , //
+                'cai_gou_dan_wei_ming_cheng' => $dataItem['cai_gou_dan_wei_ming_cheng'] ?:'' , //
+                'cai_gou_dan_wei_di_zhi' => $dataItem['cai_gou_dan_wei_di_zhi'] ?:'' , //
+                'cai_gou_dan_wei_lian_xi_ren' => $dataItem['cai_gou_dan_wei_lian_xi_ren'] ?:'' , //
+                'cai_gou_dan_wei_lian_xi__dian_hua' => $dataItem['cai_gou_dan_wei_lian_xi__dian_hua'] ?:'' , //
+                'ming_ci'  => $dataItem['ming_ci'] ?:'' , //
+                'zhong_biao_gong_ying_shang'  => $dataItem['zhong_biao_gong_ying_shang'] ?:'' , //
+                'zhong_biao_jin_e'  => $dataItem['zhong_biao_jin_e'] ?:'' , //
+                'dai_li_ji_gou_ming_cheng' => $dataItem['dai_li_ji_gou_ming_cheng'] ?:'' , //
+                'dai_li_ji_gou_di_zhi'  => $dataItem['dai_li_ji_gou_di_zhi'] ?:'' , //
+                'dai_li_ji_gou_lian_xi_ren'  => $dataItem['dai_li_ji_gou_lian_xi_ren'] ?:'' , //
+                'dai_li_ji_gou_lian_xi_dian_hua' => $dataItem['dai_li_ji_gou_lian_xi_dian_hua'] ?:'' , //
+                'ping_gu_zhuan_jia' => $dataItem['ping_gu_zhuan_jia'] ?:'' , //
                 'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
                 'url'  => $dataItem['url'] ?:'' , //
                 //'corexml' => $comment_content  , //
-                'corexml' => $comment_content ?str_split ( $comment_content, 32766 )[0]:'' , //
+                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
             ];
             $fileObject ->data([$tmpDataItem]);
             $p1Nums ++ ;
