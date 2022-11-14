@@ -17,6 +17,7 @@ use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
+use App\HttpController\Models\AdminV2\MobileCheckInfo;
 use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
@@ -1115,12 +1116,25 @@ class ToolsController extends ControllerBase
 
         }
 
-        //
+        //空号验证的时候：有多少其他错误
         if($requestData['type'] == 127 ){
 
+            $res2 = MobileCheckInfo::findAllByCondition([
+                'status' => 999,
+            ]);
 
+            $response[] = count($res2);
         }
 
+        //空号验证里的其他错误，重新拉取（入参格式：重拉的数量）
+        if($requestData['type'] == 128 ){
+
+            $res2 = MobileCheckInfo::reCheck([
+                'status' => 999,
+            ],intval($key));
+
+            $response[] = $res2 ;
+        }
 
         return $this->writeJson(200, [], [
             [
@@ -1169,7 +1183,8 @@ class ToolsController extends ControllerBase
             //120 => '根据json查询导出资产负债（入参格式:信用代码）',
             125 => '根据日期查询新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）',
             126 => '根据日期发送新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）',
-            127 => '测试招投标（入参格式:日期|如2022-11-11）',
+            127 => '空号验证的时候：有多少其他错误',
+            128 => '空号验证里的其他错误，重新拉取（入参格式：重拉的数量）',
         ],'成功');
     }
 

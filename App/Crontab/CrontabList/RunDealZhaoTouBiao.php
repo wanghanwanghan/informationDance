@@ -431,7 +431,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 'exportDataV8' => [
-                    '$day'=>$day, 
+                    '$day'=>$day,
                     '$dateStart'=>$dateStart,
                     '$dateEnd'=>$dateEnd,
                 ]
