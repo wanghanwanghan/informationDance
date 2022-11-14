@@ -65,7 +65,11 @@ class ZipService extends ServiceBase
             $name = end($arr);
             $res = $zip->addFile($one, $name);
             CommonService::getInstance()->log4PHP(
-                 'zip res '.json_encode($res)
+                 json_encode([
+                     'zip res '=>$res,
+                     '$one'=>$one,
+                     '$name'=>$name,
+                 ],JSON_UNESCAPED_UNICODE)
             ); 
         }
 
