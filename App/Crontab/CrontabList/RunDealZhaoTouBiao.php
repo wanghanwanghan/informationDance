@@ -2657,9 +2657,20 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
 
         $datas01 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
-            " SELECT * FROM zhao_tou_biao_key03 
-                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'     "
+            " SELECT * FROM `zhao_tou_biao_key03` WHERE updated_at >= '2022-11-07 00:00:00' AND  updated_at <= '2022-11-11 23:00:00'  "
         );
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'exportDataV5' => [
+
+                    '$datas01'=>count($datas01),
+                ]
+            ])
+        );
+
+
         $datas02 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
             " SELECT * FROM zhao_tou_biao_key02 
                     WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    "
