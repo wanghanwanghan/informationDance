@@ -469,7 +469,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             ]);
         }
         $datas =  TmpInfo::findBySql(
-            "  "
+            " WHERE id = 19  "
         );
 
 
@@ -549,7 +549,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 //                         ]
 //                     ])
 //                 );
-//            $comment_content =  $dataItem['corexml']; 
+//            $comment_content =  $dataItem['corexml'];
             $tmpDataItem = [
                 'source' => $dataItem['source'] , //
                 'biao_ti' => $dataItem['biao_ti'] , //
