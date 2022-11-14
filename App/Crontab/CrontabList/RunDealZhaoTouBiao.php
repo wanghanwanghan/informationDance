@@ -276,7 +276,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
 
         //$filename = control::getUuid();
-        $filename = '招投标新-'.date('Y-m-d').control::getUuid();
+        $filename = 'zhao_tou_biao_new_'.date('Y-m-d').control::getUuid();
         ZipService::getInstance()->zip( $res['filesArr'], TEMP_FILE_PATH . $filename . '.zip');
 
 //        CommonService::getInstance()->sendEmailV2(
