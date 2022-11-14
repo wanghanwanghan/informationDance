@@ -20,6 +20,7 @@ use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
+use App\HttpController\Models\MRXD\TmpInfo;
 use App\HttpController\Models\RDS3\HdSaic\ZhaoTouBiaoAll;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -2417,6 +2418,154 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 ]
             ])
         );
+
+
+        $format = new Format($fileHandle);
+        //单元格有\n解析成换行
+        $wrapStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->wrap()
+            ->toResource();
+
+        $fileObject->output();
+        //===============================
+
+        return  [
+            'dateStart' => $dateStart  ,
+            'dateEnd' => $dateEnd ,
+            'filename'=>$filename,
+            'filename_url'=>'http://api.test.meirixindong.com/Static/Temp/'.$filename,
+            'Nums' => count($datas01)
+        ];
+    }
+    static function  exportDataV9($dateStart,$dateEnd){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'exportDataV9' => [
+                    'start'=>true,
+//                    '$dateStart'=>$dateStart,
+//                    '$dateEnd'=>$dateEnd,
+                ]
+            ])
+        );
+
+        $startMemory = memory_get_usage();
+
+        $filename = '_zhao_tou_biao_new_'.date('YmdHis').'.xlsx';
+        $headerTitle= [
+            '标题' , //
+            '项目名称' , //
+            '项目编号' , //
+            '项目简介' , //
+            '采购方式' , //
+            '公告类型2' , //
+            '公告日期' , //
+            '行政区域_省' , //
+            '行政区域_市' , //
+            '行政区域_县' , //
+            '采购单位名称' , //
+            '采购单位地址' , //
+            '采购单位联系人' , //
+            '采购单位联系电话' , //
+            '名次' , //
+            '中标供应商' , //
+            '中标金额' , //
+            '代理机构名称' , //
+            '代理机构地址' , //
+            '代理机构联系人' , //
+            '代理机构联系电话' , //
+            '评标专家' , //
+            'DLSM_UUID' , //
+            'url' , //
+            'corexml' , //
+            '来源' , //
+        ];
+
+        $config=  [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+
+        $excel = new \Vtiful\Kernel\Excel($config);
+        $fileObject = $excel->fileName($filename, 'zhao_tou_biao');
+        $fileHandle = $fileObject->getHandle();
+
+        $format = new Format($fileHandle);
+        $colorStyle = $format
+            ->fontColor(Format::COLOR_ORANGE)
+            ->border(Format::BORDER_DASH_DOT)
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $format = new Format($fileHandle);
+
+        $alignStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+        $file = $fileObject
+            //->defaultFormat($colorStyle)
+            ->header(
+                $headerTitle
+            )
+            // ->defaultFormat($alignStyle)
+        ;
+
+
+        //zhao_tou_biao_key01
+        $res = TmpInfo::findAllByCondition();
+        foreach ($res as $resItem){
+            $datas = json_decode($resItem['value'],true);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'exportDataV9' => [
+                        '$datas'=>count($datas),
+                    ]
+                ])
+            );
+
+            $tmp = [];
+            foreach ($datas as $dataItem){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '标题' => $dataItem['标题'],
+                        'code2' =>  mb_detect_encoding($dataItem['标题']) ,
+                    ])
+                );
+                $tmp[] = [
+                    '标题' => $dataItem['标题'] ?  '测试' :'aaaa' , //
+                    '项目名称' => $dataItem['项目名称'] ?:'' , //
+                    '项目编号' => $dataItem['项目编号'] ?:'' , //
+                    '项目简介'  => $dataItem['项目简介'] ?:'' , //
+                    '采购方式'   => $dataItem['采购方式'] ?:'' , //
+                    '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
+                    '公告日期' => $dataItem['公告日期'] ?:'' , //
+                    '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
+                    '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
+                    '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
+                    '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
+                    '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
+                    '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
+                    '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
+                    '名次'  => $dataItem['名次'] ?:'' , //
+                    '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
+                    '中标金额'  => $dataItem['中标金额'] ?:'' , //
+                    '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
+                    '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
+                    '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
+                    '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
+                    '评标专家' => $dataItem['评标专家'] ?:'' , //
+                    'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
+                    'url'  => $dataItem['url'] ?:'' , //
+                    'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
+                    '来源' => 'zhao_tou_biao_key01' , //
+                ];
+
+            }
+
+            $fileObject ->data($tmp);
+        }
 
 
         $format = new Format($fileHandle);

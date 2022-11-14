@@ -21,6 +21,7 @@ use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
 use App\HttpController\Models\BusinessBase\CompanyClue;
+use App\HttpController\Models\MRXD\TmpInfo;
 use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\RDS3\Company;
@@ -1143,6 +1144,34 @@ class ToolsController extends ControllerBase
 
         }
 
+        //
+        if($requestData['type'] == 127 ){
+            $week =  date('w',strtotime($key));
+            $startday = date('Y-m-d',strtotime('today -' . ($week - 1) . 'day'));
+            $dateStart = $startday.' 00:00:00';
+            $dateEnd = $key.' 23:59:59';
+
+            $sql = " SELECT * FROM zhao_tou_biao_key03 
+                    WHERE updated_at >= '$dateStart' AND updated_at <= '$dateEnd'    ";
+            $datas01 =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(  $sql );
+            $tmp = [];
+            foreach ($datas01 as $data01){
+                $tmp[] = $data01;
+            }
+
+            TmpInfo::addRecordV2(
+                [
+                    'name' => 'zhao_tou_biao_key03',
+                    'details' => '',
+                    'value' => json_encode($tmp),
+                    'remark' => '',
+                ]
+            );
+
+
+            $response[] =RunDealZhaoTouBiao::exportDataV9($dateStart,$dateEnd);
+
+        }
 
 
         return $this->writeJson(200, [], [
@@ -1192,6 +1221,7 @@ class ToolsController extends ControllerBase
             //120 => '根据json查询导出资产负债（入参格式:信用代码）',
             125 => '根据日期查询新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）',
             126 => '根据日期发送新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）',
+            127 => '测试招投标（入参格式:日期|如2022-11-11）',
         ],'成功');
     }
 
