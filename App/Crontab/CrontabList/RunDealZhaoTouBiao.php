@@ -270,7 +270,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 $emailsAddress,//'',
                 '招投标数据-新('.$day.')',
                 '',
-                [OTHER_FILE_PATH . $res['filename']]
+                [TEMP_FILE_PATH . $res['filename']]
             );
             $sendResArr[$emailsAddress] = $sendRes;
         }
@@ -441,7 +441,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
         //写到csv里
         $fileName = 'zhao_tou_biao_new_'.date('YmdHis').".csv";
-        $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+        $f = fopen(TEMP_FILE_PATH.$fileName, "w");
         fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
         $headerTitle= [
             '来源' , //
@@ -551,7 +551,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             'dateStart' => $dateStart  ,
             'dateEnd' => $dateEnd ,
             'filename'=>$fileName,
-            'filename_url'=>'http://api.test.meirixindong.com/Static/OtherFile/'.$fileName,
+            'filename_url'=>'http://api.test.meirixindong.com/Static/Temp/'.$fileName,
             'Nums' => $totalNums
         ];
     }
