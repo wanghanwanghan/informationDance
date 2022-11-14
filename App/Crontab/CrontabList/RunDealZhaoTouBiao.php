@@ -2586,6 +2586,27 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             'Nums' => count($datas01)
         ];
     }
+
+    static function gb2312($str)
+
+    {
+
+        $str = str_replace(array("\r\n", "\r", "\n",",","\""), array("","","","&",""), $str);
+
+        if (preg_match("/[\x7f-\xff]/", $str))
+
+        {
+
+            $inconvStr = iconv('utf8',"gbk2312",$str);
+
+            $inconvStr = empty($inconvStr)?iconv('utf8',"gbk",$str):$inconvStr;
+
+        }
+
+        return $inconvStr;
+
+    }
+
     static function  exportDataV8($dateStart,$dateEnd){
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -2654,9 +2675,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 //            $datas03,
         ];
         foreach ($variables as $dataItems){
-            foreach ($dataItems as $dataItem){
-                $comment_content = $dataItem['corexml'];
-                $comment_content = str_replace(",", $comma, $comment_content); 
+            foreach ($dataItems as $dataItem){ 
+                $comment_content = self::gb2312($dataItem['corexml']);
                 $tmpDataItem = [
                     '标题' => $dataItem['标题'] , //
                     '项目名称' => $dataItem['项目名称'] , //
