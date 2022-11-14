@@ -263,7 +263,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
     {
 
 
-        $dateStart = $day.' 00:00:00';
+        $dateStart = '2022-11-07 00:00:00';
         $dateEnd = $day.' 23:59:59';
         $res = self::exportDataV4($dateStart,$dateEnd);
 
