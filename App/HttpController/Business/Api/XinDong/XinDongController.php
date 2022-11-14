@@ -2785,6 +2785,21 @@ eof;
         }
 
         if(
+            $this->getRequestData('sendEmailV4')
+        ){
+
+
+            return $this->writeJson(200, null, RunDealZhaoTouBiao::sendEmailV4(
+                $requestData['day']
+                ,[
+                'tianyongshan@meirixindong.com',
+                'minglongoc@me.com',
+                'zhengmeng@meirixindong.com',
+            ]));
+        }
+
+
+        if(
             $this->getRequestData('recheck_chuangLian_num')
         ){
 
