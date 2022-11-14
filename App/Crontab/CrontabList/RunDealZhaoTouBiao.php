@@ -437,6 +437,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             " SELECT * FROM zhao_tou_biao_key03 WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
         );
 
+        $datas =  TmpInfo::findBySql(
+            "  "
+        );
 
 
         $filename = 'zhao_tou_biao_new_'.date('YmdHis').'.xlsx';
@@ -503,21 +506,21 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         $p1Nums = 0;
         foreach ($datas as $dataItem){
             //$new2 = iconv('utf-8', 'utf-8', $dataItem['标题']);
-            $new2 = utf8_encode($dataItem['标题']);
-            $new1 = mb_convert_encoding($dataItem['标题'], 'UTF-8');
-                 CommonService::getInstance()->log4PHP(
-                     json_encode([
-                         __CLASS__.__FUNCTION__ .__LINE__,
-                         '$datas' => [
-                             'old'=>$dataItem['标题'],
-                             '$new1'=>$new1,
-                             '$new2'=>$new2,
-                         ]
-                     ])
-                 );
-            $comment_content =  $dataItem['corexml'];
+//            $new2 = utf8_encode($dataItem['标题']);
+//            $new1 = mb_convert_encoding($dataItem['标题'], 'UTF-8');
+//                 CommonService::getInstance()->log4PHP(
+//                     json_encode([
+//                         __CLASS__.__FUNCTION__ .__LINE__,
+//                         '$datas' => [
+//                             'old'=>$dataItem['标题'],
+//                             '$new1'=>$new1,
+//                             '$new2'=>$new2,
+//                         ]
+//                     ])
+//                 );
+//            $comment_content =  $dataItem['corexml'];
             $tmpDataItem = [
-                '来源' => $new2 , //
+                '来源' => $dataItem['name'] , //
                 '标题' => $new1 , //
                 '项目名称' => empty($dataItem['标题'])?'无':md5($dataItem['标题']) , //
                 '项目编号' => empty($dataItem['标题'])?'无':json_encode($dataItem['标题'],JSON_UNESCAPED_UNICODE) , //
