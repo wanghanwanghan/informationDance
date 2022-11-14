@@ -263,6 +263,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
     {
 
         $res = self::exportDataV8($day);
+        $res = self::exportDataV4($day);
 
         $res1 = CommonService::getInstance()->sendEmailV2(
             'tianyongshan@meirixindong.com',
