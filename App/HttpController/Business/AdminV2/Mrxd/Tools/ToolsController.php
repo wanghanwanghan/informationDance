@@ -1136,6 +1136,14 @@ class ToolsController extends ControllerBase
             $response[] = $res2 ;
         }
 
+        //
+        if($requestData['type'] == 129 ){
+
+            $res = RunDealZhaoTouBiao::exportDataV5($key);
+            $response[] = $res['filename_url'];
+        }
+
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -1181,10 +1189,11 @@ class ToolsController extends ControllerBase
             110 => '根据信用代码查询资产负债（入参格式:信用代码）',
             115 => '根据信用代码导出资产负债（入参格式:信用代码）',
             //120 => '根据json查询导出资产负债（入参格式:信用代码）',
-            125 => '根据日期查询新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）',
+            125 => '根据日期查询新的招投标邮件对应的csv文件（入参格式:日期|如2022-11-11）',
             126 => '根据日期发送新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）',
             127 => '空号验证的时候：有多少其他错误',
             128 => '空号验证里的其他错误，重新拉取（入参格式：重拉的数量）',
+            129 => '根据日期查询新的招投标邮件对应的xlsx文件（入参格式:日期|如2022-11-11）',
         ],'成功');
     }
 
