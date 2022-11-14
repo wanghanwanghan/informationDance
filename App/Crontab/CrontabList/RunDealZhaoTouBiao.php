@@ -436,7 +436,14 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
             " SELECT * FROM zhao_tou_biao_key03 WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
         );
-
+        foreach ($datas as $data){
+            TmpInfo::addRecord([
+                'name' => $data['标题'],
+                'details' => $data['标题'],
+                'value' => $data['标题'],
+                'remark' => $data['标题'],
+            ]);
+        }
         $datas =  TmpInfo::findBySql(
             "  "
         );
