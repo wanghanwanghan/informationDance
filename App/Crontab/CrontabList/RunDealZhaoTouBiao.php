@@ -445,7 +445,16 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
 
         $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
-            " SELECT * FROM zhao_tou_biao_ke03 WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
+            " SELECT * FROM zhao_tou_biao_key03 WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
+        );
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sendEmailV2' => [
+                    '$e'=>$e->getMessage(),
+                ]
+            ])
         );
 
         $filename = 'zhao_tou_biao_new_'.date('YmdHis').'.xlsx';
@@ -547,9 +556,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         //==============================================
         //p2
 
-        $financeDatas2 = self::getZhaoTouBiaoData(
-            $dateStart,$dateEnd,'p2'
-        );
+
         $file->addSheet('p2')
             //->defaultFormat($colorStyle)
             ->header($headerTitle)
