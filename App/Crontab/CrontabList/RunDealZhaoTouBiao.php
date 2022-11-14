@@ -534,7 +534,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         ;
         $p1Nums = 1;
         $datas =  TmpInfo::findBySql(
-            " WHERE id>=1 AND id <=10 "
+            "  "
         );
 
         foreach ($datas as $dataItem){
@@ -571,81 +571,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             $p1Nums ++ ;
         }
 
-        $datas =  TmpInfo::findBySql(
-            " WHERE id>=11 AND id <=20 "
-        );
 
-        foreach ($datas as $dataItem){
-            $tmpDataItem = [
-                'source' => $dataItem['source'] , //
-                'biao_ti' => $dataItem['biao_ti'] , //
-                'xiang_mu_ming_cheng' => $dataItem['xiang_mu_ming_cheng'] , //
-                'xiang_mu_bian_hao' => $dataItem['xiang_mu_bian_hao'] , //
-                'xiang_mu_jian_jie'  => $dataItem['xiang_mu_jian_jie'] ?:'' , //
-                'cai_gou_fang_shi'   => $dataItem['cai_gou_fang_shi'] ?:'' , //
-                'gong_gao_lei_xing2'  => $dataItem['gong_gao_lei_xing2'] ?:'' , //
-                'gong_gao_ri_qi' => $dataItem['gong_gao_ri_qi'] ?:'' , //
-                'xing_zheng_qv_yu_sheng' => $dataItem['xing_zheng_qv_yu_sheng'] ?:'' , //
-                'xing_zheng_qv_yu_shi'  => $dataItem['xing_zheng_qv_yu_shi'] ?:'' , //
-                'xing_zheng_qv_yu_xian' => $dataItem['xing_zheng_qv_yu_xian'] ?:'' , //
-                'cai_gou_dan_wei_ming_cheng' => $dataItem['cai_gou_dan_wei_ming_cheng'] ?:'' , //
-                'cai_gou_dan_wei_di_zhi' => $dataItem['cai_gou_dan_wei_di_zhi'] ?:'' , //
-                'cai_gou_dan_wei_lian_xi_ren' => $dataItem['cai_gou_dan_wei_lian_xi_ren'] ?:'' , //
-                'cai_gou_dan_wei_lian_xi__dian_hua' => $dataItem['cai_gou_dan_wei_lian_xi__dian_hua'] ?:'' , //
-                'ming_ci'  => $dataItem['ming_ci'] ?:'' , //
-                'zhong_biao_gong_ying_shang'  => $dataItem['zhong_biao_gong_ying_shang'] ?:'' , //
-                'zhong_biao_jin_e'  => $dataItem['zhong_biao_jin_e'] ?:'' , //
-                'dai_li_ji_gou_ming_cheng' => $dataItem['dai_li_ji_gou_ming_cheng'] ?:'' , //
-                'dai_li_ji_gou_di_zhi'  => $dataItem['dai_li_ji_gou_di_zhi'] ?:'' , //
-                'dai_li_ji_gou_lian_xi_ren'  => $dataItem['dai_li_ji_gou_lian_xi_ren'] ?:'' , //
-                'dai_li_ji_gou_lian_xi_dian_hua' => $dataItem['dai_li_ji_gou_lian_xi_dian_hua'] ?:'' , //
-                'ping_gu_zhuan_jia' => $dataItem['ping_gu_zhuan_jia'] ?:'' , //
-                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
-                'url'  => $dataItem['url'] ?:'' , //
-                //'corexml' => $comment_content  , //
-                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
-            ];
-            $fileObject ->data([$tmpDataItem]);
-            $p1Nums ++ ;
-        }
-
-        $datas =  TmpInfo::findBySql(
-            " WHERE id>=21 AND id <=34 "
-        );
-
-        foreach ($datas as $dataItem){
-            $tmpDataItem = [
-                'source' => $dataItem['source'] , //
-                'biao_ti' => $dataItem['biao_ti'] , //
-                'xiang_mu_ming_cheng' => $dataItem['xiang_mu_ming_cheng'] , //
-                'xiang_mu_bian_hao' => $dataItem['xiang_mu_bian_hao'] , //
-                'xiang_mu_jian_jie'  => $dataItem['xiang_mu_jian_jie'] ?:'' , //
-                'cai_gou_fang_shi'   => $dataItem['cai_gou_fang_shi'] ?:'' , //
-                'gong_gao_lei_xing2'  => $dataItem['gong_gao_lei_xing2'] ?:'' , //
-                'gong_gao_ri_qi' => $dataItem['gong_gao_ri_qi'] ?:'' , //
-                'xing_zheng_qv_yu_sheng' => $dataItem['xing_zheng_qv_yu_sheng'] ?:'' , //
-                'xing_zheng_qv_yu_shi'  => $dataItem['xing_zheng_qv_yu_shi'] ?:'' , //
-                'xing_zheng_qv_yu_xian' => $dataItem['xing_zheng_qv_yu_xian'] ?:'' , //
-                'cai_gou_dan_wei_ming_cheng' => $dataItem['cai_gou_dan_wei_ming_cheng'] ?:'' , //
-                'cai_gou_dan_wei_di_zhi' => $dataItem['cai_gou_dan_wei_di_zhi'] ?:'' , //
-                'cai_gou_dan_wei_lian_xi_ren' => $dataItem['cai_gou_dan_wei_lian_xi_ren'] ?:'' , //
-                'cai_gou_dan_wei_lian_xi__dian_hua' => $dataItem['cai_gou_dan_wei_lian_xi__dian_hua'] ?:'' , //
-                'ming_ci'  => $dataItem['ming_ci'] ?:'' , //
-                'zhong_biao_gong_ying_shang'  => $dataItem['zhong_biao_gong_ying_shang'] ?:'' , //
-                'zhong_biao_jin_e'  => $dataItem['zhong_biao_jin_e'] ?:'' , //
-                'dai_li_ji_gou_ming_cheng' => $dataItem['dai_li_ji_gou_ming_cheng'] ?:'' , //
-                'dai_li_ji_gou_di_zhi'  => $dataItem['dai_li_ji_gou_di_zhi'] ?:'' , //
-                'dai_li_ji_gou_lian_xi_ren'  => $dataItem['dai_li_ji_gou_lian_xi_ren'] ?:'' , //
-                'dai_li_ji_gou_lian_xi_dian_hua' => $dataItem['dai_li_ji_gou_lian_xi_dian_hua'] ?:'' , //
-                'ping_gu_zhuan_jia' => $dataItem['ping_gu_zhuan_jia'] ?:'' , //
-                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
-                'url'  => $dataItem['url'] ?:'' , //
-                //'corexml' => $comment_content  , //
-                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
-            ];
-            $fileObject ->data([$tmpDataItem]);
-            $p1Nums ++ ;
-        }
 
         //==============================================
         //p2
