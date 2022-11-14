@@ -1112,6 +1112,8 @@ class ToolsController extends ControllerBase
                 'tianyongshan@meirixindong.com',
                 'minglongoc@me.com',
                 'zhengmeng@meirixindong.com',
+                'luoyuting@huoyan.cn',
+                'liqingfeng@huoyan.cn',
             ]);
 
         }
