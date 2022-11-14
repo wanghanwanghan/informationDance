@@ -265,19 +265,20 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
         $dateStart = '2022-11-07 00:00:00';
         $dateEnd = $day.' 23:59:59';
-        $res = self::exportDataV4($dateStart,$dateEnd);
-
-        $res1 = CommonService::getInstance()->sendEmailV2(
-            'tianyongshan@meirixindong.com',
-            // 'minglongoc@me.com',
-            '招投标数据('.$day.')',
-            '',
-           // []
-           [TEMP_FILE_PATH . $res['filename']]
-        );
+        $res1 = self::exportDataV4($dateStart,$dateEnd);
 
         $res = self::exportDataV8($day);
-        $res2 = CommonService::getInstance()->sendEmailV2(
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sendEmailV2' => [
+                    '1'=> [TEMP_FILE_PATH . $res1['filename']],
+                    '2'=> [TEMP_FILE_PATH . $res['filename']],
+                ]
+            ])
+        );
+
+        CommonService::getInstance()->sendEmailV2(
          'tianyongshan@meirixindong.com',
             '招投标数据('.$day.')',
             '',
@@ -296,18 +297,6 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 //        }
 
 
-        OperatorLog::addRecord(
-            [
-                'user_id' => 0,
-                'msg' =>
-                    json_encode([
-                        '附件'=> [TEMP_FILE_PATH . $res['filename']],
-                        '邮件结果'=> $sendResArr,
-                    ],JSON_UNESCAPED_UNICODE),
-                'details' =>json_encode( XinDongService::trace()),
-                'type_cname' => '招投标邮件-新',
-            ]
-        );
 
         return true ;
     }
