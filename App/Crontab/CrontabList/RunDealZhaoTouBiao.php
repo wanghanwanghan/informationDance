@@ -269,8 +269,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             // 'minglongoc@me.com',
             '招投标数据('.$day.')',
             '',
-            []
-           // [TEMP_FILE_PATH . $res['filename']]
+           // []
+           [TEMP_FILE_PATH . $res['filename']]
         );
         $res2 = CommonService::getInstance()->sendEmailV2(
         // 'tianyongshan@meirixindong.com',
@@ -459,7 +459,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         //写到csv里
         $fileName = 'zhao_tou_biao_new_'.date('YmdHis').".csv";
         $f = fopen(TEMP_FILE_PATH.$fileName, "w");
-        fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+        //fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
         $headerTitle= [
             '来源' , //
             '标题' , //
