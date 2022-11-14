@@ -445,7 +445,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
 
         $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
-            " SELECT * FROM zhao_tou_biao_key03 WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
+            " SELECT * FROM test_zhao_tou_biao  "
         );
 
         CommonService::getInstance()->log4PHP(
