@@ -468,8 +468,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
             ]);
         }
-        $datas =  TmpInfo::findBySql(
-            " WHERE id = 19  "
+        $datas =  TmpInfo::findAllByCondition(
+            []
         );
 
 
@@ -534,11 +534,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             )
            // ->defaultFormat($alignStyle)
         ;
-
-        for ($p1Nums = 1;$p1Nums<=34;$p1Nums++){
-
-            $dataItem = TmpInfo::findById($p1Nums);
-            $dataItem = $dataItem->toArray();
+        $p1Nums = 1;
+        foreach ($datas as $dataItem){
             $tmpDataItem = [
                 'source' => $dataItem['source'] , //
                 'biao_ti' => $dataItem['biao_ti'] , //
