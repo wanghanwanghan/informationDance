@@ -451,8 +451,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'sendEmailV2' => [
-                    '$e'=>$e->getMessage(),
+                '$datas' => [
+                    '$datas'=>count($datas),
                 ]
             ])
         );
