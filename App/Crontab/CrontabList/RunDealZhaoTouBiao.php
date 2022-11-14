@@ -468,8 +468,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
             ]);
         }
-        $datas =  TmpInfo::findAllByCondition(
-            []
+        $datas =  TmpInfo::findBySql(
+             " WHERE id>=19 AND id <=34 "
         );
 
 
