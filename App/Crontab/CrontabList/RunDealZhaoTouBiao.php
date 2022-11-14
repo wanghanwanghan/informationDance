@@ -437,36 +437,36 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             " SELECT * FROM zhao_tou_biao_key03 WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
         );
         foreach ($datas as $data){
-            TmpInfo::addRecord([
-                'biao_ti' => $data['标题']?:'',
-                'xiang_mu_ming_cheng' => $data['项目名称']?:'',
-                'xiang_mu_bian_hao' => $data['项目编号']?:'',
-                'xiang_mu_jian_jie' => $data['项目简介']?:'',
-                'cai_gou_fang_shi' => $data['采购方式']?:'',
-                'gong_gao_lei_xing2' => $data['公告类型2']?:'',
-                'gong_gao_ri_qi' => $data['公告日期']?:'',
-                'xing_zheng_qv_yu_sheng' => $data['行政区域_省']?:'',
-                'xing_zheng_qv_yu_shi' => $data['行政区域_市']?:'',
-                'xing_zheng_qv_yu_xian' => $data['行政区域_县']?:'',
-                'cai_gou_dan_wei_ming_cheng' => $data['采购单位名称']?:'',
-                'cai_gou_dan_wei_di_zhi' => $data['采购单位地址']?:'',
-                'cai_gou_dan_wei_lian_xi_ren' => $data['采购单位联系人']?:'',
-                'cai_gou_dan_wei_lian_xi__dian_hua' => $data['采购单位联系电话']?:'',
-                'ming_ci' => $data['名次']?:'',
-                'zhong_biao_gong_ying_shang' => $data['中标供应商']?:'',
-                'zhong_biao_jin_e' => $data['中标金额']?:'',
-                'dai_li_ji_gou_ming_cheng' => $data['代理机构名称']?:'',
-                'dai_li_ji_gou_di_zhi' => $data['代理机构地址']?:'',
-                'dai_li_ji_gou_lian_xi_ren' => $data['代理机构联系人']?:'',
-                'dai_li_ji_gou_lian_xi_dian_hua' => $data['代理机构联系电话']?:'',
-                'ping_gu_zhuan_jia' => $data['评标专家']?:'',
-                'DLSM_UUID' => $data['DLSM_UUID']?:'',
-                'url' => $data['url']?:'',
-                'corexml' => $data['corexml']?:'',
-                'updated_at' => $data['updated_at']?:'',
-                'source' => $data['source']?:'',
-
-            ]);
+//            TmpInfo::addRecord([
+//                'biao_ti' => $data['标题']?:'',
+//                'xiang_mu_ming_cheng' => $data['项目名称']?:'',
+//                'xiang_mu_bian_hao' => $data['项目编号']?:'',
+//                'xiang_mu_jian_jie' => $data['项目简介']?:'',
+//                'cai_gou_fang_shi' => $data['采购方式']?:'',
+//                'gong_gao_lei_xing2' => $data['公告类型2']?:'',
+//                'gong_gao_ri_qi' => $data['公告日期']?:'',
+//                'xing_zheng_qv_yu_sheng' => $data['行政区域_省']?:'',
+//                'xing_zheng_qv_yu_shi' => $data['行政区域_市']?:'',
+//                'xing_zheng_qv_yu_xian' => $data['行政区域_县']?:'',
+//                'cai_gou_dan_wei_ming_cheng' => $data['采购单位名称']?:'',
+//                'cai_gou_dan_wei_di_zhi' => $data['采购单位地址']?:'',
+//                'cai_gou_dan_wei_lian_xi_ren' => $data['采购单位联系人']?:'',
+//                'cai_gou_dan_wei_lian_xi__dian_hua' => $data['采购单位联系电话']?:'',
+//                'ming_ci' => $data['名次']?:'',
+//                'zhong_biao_gong_ying_shang' => $data['中标供应商']?:'',
+//                'zhong_biao_jin_e' => $data['中标金额']?:'',
+//                'dai_li_ji_gou_ming_cheng' => $data['代理机构名称']?:'',
+//                'dai_li_ji_gou_di_zhi' => $data['代理机构地址']?:'',
+//                'dai_li_ji_gou_lian_xi_ren' => $data['代理机构联系人']?:'',
+//                'dai_li_ji_gou_lian_xi_dian_hua' => $data['代理机构联系电话']?:'',
+//                'ping_gu_zhuan_jia' => $data['评标专家']?:'',
+//                'DLSM_UUID' => $data['DLSM_UUID']?:'',
+//                'url' => $data['url']?:'',
+//                'corexml' => $data['corexml']?:'',
+//                'updated_at' => $data['updated_at']?:'',
+//                'source' => $data['source']?:'',
+//
+//            ]);
         }
 
 
