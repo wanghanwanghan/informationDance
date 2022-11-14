@@ -2601,9 +2601,11 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
             $inconvStr = empty($inconvStr)?iconv('utf8',"gbk",$str):$inconvStr;
 
-        }
+            return $inconvStr;
 
-        return $inconvStr;
+        }else{
+            return  $str;
+        }
 
     }
 
@@ -2721,8 +2723,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                     '评标专家' => $dataItem['评标专家'] ?:'' , //
                     'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
                     'url'  => $dataItem['url'] ?:'' , //
-                    'corexml' => $comment_content  , //
-                    //'corexml' => $comment_content ?str_split ( $comment_content, 32766 )[0]:'' , //
+                    //'corexml' => $comment_content  , //
+                    'corexml' => $comment_content ?str_split ( $comment_content, 32766 )[0]:'' , //
                     //'corexml' => '' , //
                     '来源' => 'zhao_tou_biao_key01' , //
                 ];
