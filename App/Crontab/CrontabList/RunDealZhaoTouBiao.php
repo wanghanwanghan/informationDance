@@ -530,8 +530,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             $tmpDataItem = [
                 '来源' => $new2 , //
                 '标题' => $new1 , //
-                '项目名称' => $dataItem['项目名称'] , //
-                '项目编号' => $dataItem['项目编号'] ?:'' , //
+                '项目名称' => empty($dataItem['标题'])?'无':md5($dataItem['标题']) , //
+                '项目编号' => empty($dataItem['标题'])?'无':json_encode($dataItem['标题'],JSON_UNESCAPED_UNICODE) , //
                 '项目简介'  => $dataItem['项目简介'] ?:'' , //
                 '采购方式'   => $dataItem['采购方式'] ?:'' , //
                 '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
