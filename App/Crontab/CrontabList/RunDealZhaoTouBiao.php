@@ -2658,8 +2658,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 $comment_content = $dataItem['corexml'];
                 $comment_content =  str_replace(",","，",$comment_content);
                 $tmpDataItem = [
-                    '标题' => $dataItem['标题'] ?:'aaaa' , //
-                    '项目名称' => $dataItem['项目名称'] ?:'' , //
+                    '标题' => $dataItem['标题'] , //
+                    '项目名称' => $dataItem['项目名称'] , //
                     '项目编号' => $dataItem['项目编号'] ?:'' , //
                     '项目简介'  => $dataItem['项目简介'] ?:'' , //
                     '采购方式'   => $dataItem['采购方式'] ?:'' , //
