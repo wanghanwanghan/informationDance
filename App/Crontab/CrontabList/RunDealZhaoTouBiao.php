@@ -2512,7 +2512,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
 
         //zhao_tou_biao_key01
-        $res = TmpInfo::findAllByCondition();
+        $res = TmpInfo::findAllByCondition([]);
         foreach ($res as $resItem){
             $datas = json_decode($resItem['value'],true);
             CommonService::getInstance()->log4PHP(
