@@ -431,45 +431,6 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         $dateStart = $first_day_of_week.' 00:00:00';
         $dateEnd = $last_day_of_week.' 23:59:59';
 
-
-        $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
-            " SELECT * FROM zhao_tou_biao_key03 WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
-        );
-        foreach ($datas as $data){
-//            TmpInfo::addRecord([
-//                'biao_ti' => $data['标题']?:'',
-//                'xiang_mu_ming_cheng' => $data['项目名称']?:'',
-//                'xiang_mu_bian_hao' => $data['项目编号']?:'',
-//                'xiang_mu_jian_jie' => $data['项目简介']?:'',
-//                'cai_gou_fang_shi' => $data['采购方式']?:'',
-//                'gong_gao_lei_xing2' => $data['公告类型2']?:'',
-//                'gong_gao_ri_qi' => $data['公告日期']?:'',
-//                'xing_zheng_qv_yu_sheng' => $data['行政区域_省']?:'',
-//                'xing_zheng_qv_yu_shi' => $data['行政区域_市']?:'',
-//                'xing_zheng_qv_yu_xian' => $data['行政区域_县']?:'',
-//                'cai_gou_dan_wei_ming_cheng' => $data['采购单位名称']?:'',
-//                'cai_gou_dan_wei_di_zhi' => $data['采购单位地址']?:'',
-//                'cai_gou_dan_wei_lian_xi_ren' => $data['采购单位联系人']?:'',
-//                'cai_gou_dan_wei_lian_xi__dian_hua' => $data['采购单位联系电话']?:'',
-//                'ming_ci' => $data['名次']?:'',
-//                'zhong_biao_gong_ying_shang' => $data['中标供应商']?:'',
-//                'zhong_biao_jin_e' => $data['中标金额']?:'',
-//                'dai_li_ji_gou_ming_cheng' => $data['代理机构名称']?:'',
-//                'dai_li_ji_gou_di_zhi' => $data['代理机构地址']?:'',
-//                'dai_li_ji_gou_lian_xi_ren' => $data['代理机构联系人']?:'',
-//                'dai_li_ji_gou_lian_xi_dian_hua' => $data['代理机构联系电话']?:'',
-//                'ping_gu_zhuan_jia' => $data['评标专家']?:'',
-//                'DLSM_UUID' => $data['DLSM_UUID']?:'',
-//                'url' => $data['url']?:'',
-//                'corexml' => $data['corexml']?:'',
-//                'updated_at' => $data['updated_at']?:'',
-//                'source' => $data['source']?:'',
-//
-//            ]);
-        }
-
-
-
         $filename = 'zhao_tou_biao_new_'.date('YmdHis').'.xlsx';
 
         //===============================
@@ -531,89 +492,79 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             )
            // ->defaultFormat($alignStyle)
         ;
-        $p1Nums = 1;
-        $datas =  TmpInfo::findBySql(
-            "  "
-        );
 
+        $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
+            " SELECT * FROM zhao_tou_biao_key03 WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
+        );
+        $p1Nums = 1;
         foreach ($datas as $dataItem){
-            $tmpDataItem = [
-                'source' => $dataItem['source'] , //
-                'biao_ti' => $dataItem['biao_ti'] , //
-                'xiang_mu_ming_cheng' => $dataItem['xiang_mu_ming_cheng'] , //
-                'xiang_mu_bian_hao' => $dataItem['xiang_mu_bian_hao'] , //
-                'xiang_mu_jian_jie'  => $dataItem['xiang_mu_jian_jie'] ?:'' , //
-                'cai_gou_fang_shi'   => $dataItem['cai_gou_fang_shi'] ?:'' , //
-                'gong_gao_lei_xing2'  => $dataItem['gong_gao_lei_xing2'] ?:'' , //
-                'gong_gao_ri_qi' => $dataItem['gong_gao_ri_qi'] ?:'' , //
-                'xing_zheng_qv_yu_sheng' => $dataItem['xing_zheng_qv_yu_sheng'] ?:'' , //
-                'xing_zheng_qv_yu_shi'  => $dataItem['xing_zheng_qv_yu_shi'] ?:'' , //
-                'xing_zheng_qv_yu_xian' => $dataItem['xing_zheng_qv_yu_xian'] ?:'' , //
-                'cai_gou_dan_wei_ming_cheng' => $dataItem['cai_gou_dan_wei_ming_cheng'] ?:'' , //
-                'cai_gou_dan_wei_di_zhi' => $dataItem['cai_gou_dan_wei_di_zhi'] ?:'' , //
-                'cai_gou_dan_wei_lian_xi_ren' => $dataItem['cai_gou_dan_wei_lian_xi_ren'] ?:'' , //
-                'cai_gou_dan_wei_lian_xi__dian_hua' => $dataItem['cai_gou_dan_wei_lian_xi__dian_hua'] ?:'' , //
-                'ming_ci'  => $dataItem['ming_ci'] ?:'' , //
-                'zhong_biao_gong_ying_shang'  => $dataItem['zhong_biao_gong_ying_shang'] ?:'' , //
-                'zhong_biao_jin_e'  => $dataItem['zhong_biao_jin_e'] ?:'' , //
-                'dai_li_ji_gou_ming_cheng' => $dataItem['dai_li_ji_gou_ming_cheng'] ?:'' , //
-                'dai_li_ji_gou_di_zhi'  => $dataItem['dai_li_ji_gou_di_zhi'] ?:'' , //
-                'dai_li_ji_gou_lian_xi_ren'  => $dataItem['dai_li_ji_gou_lian_xi_ren'] ?:'' , //
-                'dai_li_ji_gou_lian_xi_dian_hua' => $dataItem['dai_li_ji_gou_lian_xi_dian_hua'] ?:'' , //
-                'ping_gu_zhuan_jia' => $dataItem['ping_gu_zhuan_jia'] ?:'' , //
-                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
-                'url'  => $dataItem['url'] ?:'' , //
-                //'corexml' => $comment_content  , //
-                'corexml' => $dataItem['corexml'] ?str_split ( $dataItem['corexml'], 32766 )[0]:'' , //
-            ];
-            $fileObject ->data([$tmpDataItem]);
+            $fileObject->insertText($p1Nums, 0, 'zhao_tou_biao_key03');
+            $fileObject->insertText($p1Nums, 1, $dataItem['标题']);
+            $fileObject->insertText($p1Nums, 2, $dataItem['项目名称']);
+            $fileObject->insertText($p1Nums, 3, $dataItem['项目编号']);
+            $fileObject->insertText($p1Nums, 4, $dataItem['项目简介']);
+            $fileObject->insertText($p1Nums, 5, $dataItem['采购方式']);
+            $fileObject->insertText($p1Nums, 6, $dataItem['公告类型2']);
+            $fileObject->insertText($p1Nums, 7, $dataItem['公告日期']);
+            $fileObject->insertText($p1Nums, 8, $dataItem['行政区域_省']);
+            $fileObject->insertText($p1Nums, 9, $dataItem['行政区域_市']);
+            $fileObject->insertText($p1Nums, 10, $dataItem['行政区域_县']);
+            $fileObject->insertText($p1Nums, 11, $dataItem['采购单位名称']);
+            $fileObject->insertText($p1Nums, 12, $dataItem['采购单位地址']);
+            $fileObject->insertText($p1Nums, 13, $dataItem['采购单位联系人']);
+            $fileObject->insertText($p1Nums, 14, $dataItem['采购单位联系电话']);
+            $fileObject->insertText($p1Nums, 15, $dataItem['名次']);
+            $fileObject->insertText($p1Nums, 16, $dataItem['中标供应商']);
+            $fileObject->insertText($p1Nums, 17, $dataItem['中标金额']);
+            $fileObject->insertText($p1Nums, 18, $dataItem['代理机构名称']);
+            $fileObject->insertText($p1Nums, 19, $dataItem['代理机构地址']);
+            $fileObject->insertText($p1Nums, 20, $dataItem['代理机构联系人']);
+            $fileObject->insertText($p1Nums, 21, $dataItem['代理机构联系电话']);
+            $fileObject->insertText($p1Nums, 22, $dataItem['评标专家']);
+            $fileObject->insertText($p1Nums, 23, $dataItem['DLSM_UUID']);
+            $fileObject->insertText($p1Nums, 24, $dataItem['url']);
+            $fileObject->insertText($p1Nums, 25, str_split ( $dataItem['corexml'], 32766 )[0]);
             $p1Nums ++ ;
         }
 
 
 
         //==============================================
-        //p2
-
+        //p2 
 
         $file->addSheet('p2')
             //->defaultFormat($colorStyle)
             ->header($headerTitle)
             //->defaultFormat($alignStyle)
            ;
-        $p2Nums = 0;
+        $p2Nums = 1;
         foreach ($datas as $dataItem){
-            $comment_content =  $dataItem['corexml'];
-            $tmpDataItem = [
-                '来源' => '' , //
-                '标题' => $dataItem['标题'] , //
-                '项目名称' => $dataItem['项目名称'] , //
-                '项目编号' => $dataItem['项目编号'] ?:'' , //
-                '项目简介'  => $dataItem['项目简介'] ?:'' , //
-                '采购方式'   => $dataItem['采购方式'] ?:'' , //
-                '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
-                '公告日期' => $dataItem['公告日期'] ?:'' , //
-                '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
-                '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
-                '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
-                '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
-                '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
-                '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
-                '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
-                '名次'  => $dataItem['名次'] ?:'' , //
-                '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
-                '中标金额'  => $dataItem['中标金额'] ?:'' , //
-                '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
-                '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
-                '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
-                '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
-                '评标专家' => $dataItem['评标专家'] ?:'' , //
-                'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
-                'url'  => $dataItem['url'] ?:'' , //
-                //'corexml' => $comment_content  , //
-                'corexml' => $comment_content ?str_split ( $comment_content, 32766 )[0]:'' , //
-            ];
-            $fileObject ->data([$tmpDataItem]);
+            $fileObject->insertText($p2Nums, 0, 'zhao_tou_biao_key03');
+            $fileObject->insertText($p2Nums, 1, $dataItem['标题']);
+            $fileObject->insertText($p2Nums, 2, $dataItem['项目名称']);
+            $fileObject->insertText($p2Nums, 3, $dataItem['项目编号']);
+            $fileObject->insertText($p2Nums, 4, $dataItem['项目简介']);
+            $fileObject->insertText($p2Nums, 5, $dataItem['采购方式']);
+            $fileObject->insertText($p2Nums, 6, $dataItem['公告类型2']);
+            $fileObject->insertText($p2Nums, 7, $dataItem['公告日期']);
+            $fileObject->insertText($p2Nums, 8, $dataItem['行政区域_省']);
+            $fileObject->insertText($p2Nums, 9, $dataItem['行政区域_市']);
+            $fileObject->insertText($p2Nums, 10, $dataItem['行政区域_县']);
+            $fileObject->insertText($p2Nums, 11, $dataItem['采购单位名称']);
+            $fileObject->insertText($p2Nums, 12, $dataItem['采购单位地址']);
+            $fileObject->insertText($p2Nums, 13, $dataItem['采购单位联系人']);
+            $fileObject->insertText($p2Nums, 14, $dataItem['采购单位联系电话']);
+            $fileObject->insertText($p2Nums, 15, $dataItem['名次']);
+            $fileObject->insertText($p2Nums, 16, $dataItem['中标供应商']);
+            $fileObject->insertText($p2Nums, 17, $dataItem['中标金额']);
+            $fileObject->insertText($p2Nums, 18, $dataItem['代理机构名称']);
+            $fileObject->insertText($p2Nums, 19, $dataItem['代理机构地址']);
+            $fileObject->insertText($p2Nums, 20, $dataItem['代理机构联系人']);
+            $fileObject->insertText($p2Nums, 21, $dataItem['代理机构联系电话']);
+            $fileObject->insertText($p2Nums, 22, $dataItem['评标专家']);
+            $fileObject->insertText($p2Nums, 23, $dataItem['DLSM_UUID']);
+            $fileObject->insertText($p2Nums, 24, $dataItem['url']);
+            $fileObject->insertText($p2Nums, 25, str_split ( $dataItem['corexml'], 32766 )[0]);
             $p2Nums ++ ;
         }
         //==============================================

@@ -1145,6 +1145,16 @@ class ToolsController extends ControllerBase
             $response[] = $res['filename_url'];
         }
 
+        //
+        if($requestData['type'] == 130 ){
+
+            $data = [];
+
+
+
+            $response[] = $res['filename_url'];
+        }
+
 
         return $this->writeJson(200, [], [
             [
