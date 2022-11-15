@@ -224,7 +224,14 @@ class ElasticSearchService extends ServiceBase
         if ($maxValue > 0) {
             $rangeArr['lte'] = $maxValue;
         }
-        $this->query['query']['bool']['must'][] = ['range' => [$field => [$rangeArr]]];
+
+        if(
+            $minValue>0 ||
+            $maxValue>0
+        ){
+            $this->query['query']['bool']['must'][] = ['range' => [$field => [$rangeArr]]];
+        }
+
     }
 
     function addMustShouldRangeQuery($field, $map)
