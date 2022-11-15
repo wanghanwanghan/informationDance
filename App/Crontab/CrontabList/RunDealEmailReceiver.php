@@ -609,7 +609,7 @@ class RunDealEmailReceiver extends AbstractCronTask
                     `status` =  ".InsuranceDataHuiZhong::$status_init." 
                 "
         );
-        
+
         foreach ($datas as $data){
             $insuranceDatas  = json_decode($data['post_params'],true);
             $insuranceDatas['id'] = $data['id'];
