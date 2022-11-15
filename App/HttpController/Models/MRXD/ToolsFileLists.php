@@ -570,7 +570,14 @@ class ToolsFileLists extends ModelBase
         //通过微信补全联系人姓名和职位
         $fill_name_and_position_by_weixin = $params['fill_name_and_position_by_weixin'];
         $filter_qcc_phone = $params['filter_qcc_phone'];
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+              'pullFeiGongKaiContacts' =>  [
+                    '$params'=>$params,
+                    '$filter_qcc_phone'=>$filter_qcc_phone,
+                ]
+            ], JSON_UNESCAPED_UNICODE)
+        );
        $filesDatas = self::findBySql("
             WHERE touch_time < 1
             AND type = ".self::$type_upload_pull_fei_gong_kai_contact." 
@@ -618,12 +625,18 @@ class ToolsFileLists extends ModelBase
                }
 
                if(empty($companyRes)){
-
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           //__CLASS__.__FUNCTION__ .__LINE__,
+                           'pullFeiGongKaiContacts已生成' => $i
+                       ], JSON_UNESCAPED_UNICODE)
+                   );
                    continue;
                }
 
                //取公开联系人信息
                $allConatcts = CompanyClue::getAllContactByCode($companyRes->UNISCID);
+
                $tmpContacts = [];
                foreach ($allConatcts['xn'] as $tmpPhone){
                    if($filter_qcc_phone){
@@ -637,6 +650,16 @@ class ToolsFileLists extends ModelBase
                    }
 
                }
+               CommonService::getInstance()->log4PHP(
+                   json_encode([
+                       'pullFeiGongKaiContacts' =>  [
+                           '$tmpContacts'=>$tmpContacts,
+                           'xn'=>$allConatcts['xn'],
+                           '$allConatcts'=>$allConatcts,
+                       ]
+                   ], JSON_UNESCAPED_UNICODE)
+               );
+
                $allConatcts['xn'] = $tmpContacts;
               if(empty($allConatcts['xn'])){
                   $tmpDataItem = [
