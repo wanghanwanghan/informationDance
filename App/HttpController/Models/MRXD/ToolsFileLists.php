@@ -651,15 +651,15 @@ class ToolsFileLists extends ModelBase
                    }
 
                }
-               CommonService::getInstance()->log4PHP(
-                   json_encode([
-                       'pullFeiGongKaiContacts' =>  [
-                           '$tmpContacts'=>$tmpContacts,
-                           'xn'=>$allConatcts['xn'],
-                           '$allConatcts'=>$allConatcts,
-                       ]
-                   ], JSON_UNESCAPED_UNICODE)
-               );
+//               CommonService::getInstance()->log4PHP(
+//                   json_encode([
+//                       'pullFeiGongKaiContacts' =>  [
+//                           '$tmpContacts'=>$tmpContacts,
+//                           'xn'=>$allConatcts['xn'],
+//                           '$allConatcts'=>$allConatcts,
+//                       ]
+//                   ], JSON_UNESCAPED_UNICODE)
+//               );
 
                $allConatcts['xn'] = $tmpContacts;
               if(empty($tmpContacts)){
