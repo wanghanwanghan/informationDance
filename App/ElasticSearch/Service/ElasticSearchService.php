@@ -166,8 +166,10 @@ class ElasticSearchService extends ServiceBase
             $boolQuery['bool']['should'][] =
                 ['match_phrase' => [$field => $value]];
         }
+        if(!empty($boolQuery)){
+            $this->query['query']['bool']['must'][] = $boolQuery;
+        }
 
-        $this->query['query']['bool']['must'][] = $boolQuery;
     }
 
 
