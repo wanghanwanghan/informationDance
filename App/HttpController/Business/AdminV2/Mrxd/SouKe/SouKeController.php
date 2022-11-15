@@ -153,6 +153,8 @@ class SouKeController extends ControllerBase
             ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')),"OPSCOPE")
             //jiejian  公司简介
             ->SetQueryByGongSiJianJie(explode(',',trim($this->request()->getRequestParam('jiejian'))),"gong_si_jian_jie")
+            //app
+            ->SetQueryByGongSiJianJie(explode(',',trim($this->request()->getRequestParam('jiejian'))),"app")
 
             //数字经济及其核心产业
             ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
