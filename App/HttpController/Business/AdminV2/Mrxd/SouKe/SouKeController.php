@@ -156,7 +156,7 @@ class SouKeController extends ControllerBase
             //app名称
             ->SetQueryByGongSiJianJie(explode(',',trim($this->request()->getRequestParam('jiejian'))),"app")
             //iso最小数量
-            ->SetQueryByIsonNums(intval($this->request()->getRequestParam('jiejian')),0,"iso")
+            ->SetQueryByIsonNums(intval($this->request()->getRequestParam('iso_num')),0,"iso")
             //数字经济及其核心产业
             ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
             // 搜索文案 智能搜索
