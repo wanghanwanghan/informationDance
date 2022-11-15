@@ -52,14 +52,14 @@ class RoleController extends ControllerBase
         $requestData = $this->getRequestData(); 
         $roleId = $requestData['role_id'];
         $res = AdminRolePerm::findByRole($roleId);
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    'getRolesPermission',
-                    'getRolesPermission',
-                ]
-            )
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode(
+//                [
+//                    'getRolesPermission',
+//                    'getRolesPermission',
+//                ]
+//            )
+//        );
 
         foreach($res as &$permissonItem){
             $roleRes = AdminRoles::create()
