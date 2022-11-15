@@ -178,7 +178,7 @@ class ToolsFileLists extends ModelBase
             WHERE touch_time < 1
             AND type = 5 
             AND state = 0 
-            LIMIT 3 
+            LIMIT 6 
        ");
        foreach ($filesDatas as $filesData){
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
