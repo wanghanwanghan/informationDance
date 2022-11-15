@@ -196,17 +196,7 @@ class RunDealQueueLists extends AbstractCronTask
             1,
             20
         );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                [
-                    'runDealQueue'=>[
-                        'stage'=>'start',
-                        '$datas'=>count($datas['data']),
-                    ],
-                ]
-            ])
-        );
+
         foreach ($datas['data'] as $data){
             self::runByItem($data);
         }

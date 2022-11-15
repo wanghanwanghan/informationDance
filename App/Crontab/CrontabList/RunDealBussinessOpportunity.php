@@ -792,7 +792,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(
             " WHERE status =  ".AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success
         );
-        
+
         foreach ($rawDatas as $rawDataItem){
             if($rawDataItem['touch_time']>1){
                 continue;
