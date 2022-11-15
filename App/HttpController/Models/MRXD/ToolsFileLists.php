@@ -371,7 +371,7 @@ class ToolsFileLists extends ModelBase
             WHERE touch_time < 1
             AND type = ".self::$type_upload_pull_gong_kai_contact." 
             AND state = 0 
-            LIMIT 3 
+            LIMIT 1 
        ");
        foreach ($filesDatas as $filesData){
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
@@ -568,7 +568,7 @@ class ToolsFileLists extends ModelBase
             WHERE touch_time < 1
             AND type = ".self::$type_upload_pull_fei_gong_kai_contact." 
             AND state = 0 
-            LIMIT 3 
+            LIMIT 1 
        ");
        foreach ($filesDatas as $filesData){
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
@@ -756,7 +756,7 @@ class ToolsFileLists extends ModelBase
             WHERE touch_time < 1
             AND type = 10 
             AND state = 0 
-            LIMIT 3 
+            LIMIT 1 
        ");
        foreach ($filesDatas as $filesData){
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
@@ -841,7 +841,7 @@ class ToolsFileLists extends ModelBase
             WHERE touch_time < 1
             AND type = 25 
             AND state = 0 
-            LIMIT 3 
+            LIMIT 1 
        ");
         CommonService::getInstance()->log4PHP(
             json_encode([
