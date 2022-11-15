@@ -2780,7 +2780,7 @@ eof;
         if(
             $this->getRequestData('buQuanZiDuan')
         ){
-            ToolsFileLists::buQuanZiDuan();
+            ToolsFileLists::buQuanZiDuan([]);
             return $this->writeJson(200, null, $res);
         }
 
