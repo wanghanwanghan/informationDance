@@ -554,15 +554,15 @@ class LongXinService extends ServiceBase
                 if (is_numeric($value) && $value == 0 && gettype($value) != 'integer') {
                     $newvalue = 0;
                     $newData[$field1][$field2] = $newvalue;
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            'formatFinanceReturnData ',
-                            'old value' => $value,
-                            'old value type' => gettype($value),
-                            'new value' => $newvalue,
-                            'new value type' => gettype($newvalue),
-                        ])
-                    );
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode([
+//                            'formatFinanceReturnData ',
+//                            'old value' => $value,
+//                            'old value type' => gettype($value),
+//                            'new value' => $newvalue,
+//                            'new value type' => gettype($newvalue),
+//                        ])
+//                    );
                 } else {
                     $newData[$field1][$field2] = $value;
                 }

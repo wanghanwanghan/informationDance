@@ -283,11 +283,15 @@ class Company extends ServiceBase
         $responseArr = @json_decode($responseJson,true);
         $this->setReturnData($responseArr);
         if($showLog){
-            CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
+            CommonService::getInstance()->log4PHP(@json_encode(
                     [
-                        'hits' => count($responseArr['hits']['hits']),
-                        'es_query' => $this->es->query,
-                    ]
+
+                        'searchFromEs' => [
+                            'hits' => $responseArr['hits']['total'],
+                            'es_query' => $this->es->query,
+                        ]
+
+                    ], JSON_UNESCAPED_UNICODE
             ));
         }
         return $this;
