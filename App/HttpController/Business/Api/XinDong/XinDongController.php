@@ -2785,6 +2785,22 @@ eof;
         }
 
         if(
+            $this->getRequestData('pullGongKaiContacts')
+        ){
+            ToolsFileLists::pullGongKaiContacts([]);
+            return $this->writeJson(200, null, $res);
+        }
+
+        if(
+            $this->getRequestData('pullFeiGongKaiContacts')
+        ){
+            ToolsFileLists::pullFeiGongKaiContacts([]);
+            return $this->writeJson(200, null, $res);
+        }
+
+
+
+        if(
             $this->getRequestData('sendEmailV4')
         ){
 
