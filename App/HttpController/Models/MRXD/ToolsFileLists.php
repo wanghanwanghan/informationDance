@@ -367,12 +367,7 @@ class ToolsFileLists extends ModelBase
             '微信匹配值',
         ];
 
-        //通过联系人名称 补全职位信息
-        $fill_position_by_name = $params['fill_position_by_name'];
-        //补全微信名称
-        $fill_weixin_by_phone = $params['fill_weixin_by_phone'];
-        //通过微信补全联系人姓名和职位
-        $fill_name_and_position_by_weixin = $params['fill_name_and_position_by_weixin'];
+
 
        $filesDatas = self::findBySql("
             WHERE touch_time < 1
@@ -381,6 +376,15 @@ class ToolsFileLists extends ModelBase
             LIMIT 1 
        ");
        foreach ($filesDatas as $filesData){
+            $tmp = json_decode($filesData['remark'],true);
+           //通过联系人名称 补全职位信息
+           $fill_position_by_name = $tmp['fill_position_by_name'];
+           //补全微信名称
+           $fill_weixin_by_phone = $tmp['fill_weixin_by_phone'];
+           //通过微信补全联系人姓名和职位
+           $fill_name_and_position_by_weixin = $tmp['fill_name_and_position_by_weixin'];
+
+
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
 
            //写到csv里
@@ -563,13 +567,7 @@ class ToolsFileLists extends ModelBase
             '微信匹配值',
         ];
 
-        //通过联系人名称 补全职位信息
-        $fill_position_by_name = $params['fill_position_by_name'];
-        //补全微信名称
-        $fill_weixin_by_phone = $params['fill_weixin_by_phone'];
-        //通过微信补全联系人姓名和职位
-        $fill_name_and_position_by_weixin = $params['fill_name_and_position_by_weixin'];
-        $filter_qcc_phone = $params['filter_qcc_phone'];
+
         CommonService::getInstance()->log4PHP(
             json_encode([
               'pullFeiGongKaiContacts' =>  [
@@ -586,6 +584,16 @@ class ToolsFileLists extends ModelBase
        ");
        foreach ($filesDatas as $filesData){
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
+
+           $tmp = json_decode($filesData['remark'],true);
+           //通过联系人名称 补全职位信息
+           $fill_position_by_name = $tmp['fill_position_by_name'];
+           //补全微信名称
+           $fill_weixin_by_phone = $tmp['fill_weixin_by_phone'];
+           //通过微信补全联系人姓名和职位
+           $fill_name_and_position_by_weixin = $tmp['fill_name_and_position_by_weixin'];
+           //过滤掉企查查
+           $filter_qcc_phone = $tmp['filter_qcc_phone'];
 
            //写到csv里
            $fileName = pathinfo($filesData['file_name'])['filename'];
