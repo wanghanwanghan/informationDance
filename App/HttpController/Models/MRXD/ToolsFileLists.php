@@ -199,12 +199,12 @@ class ToolsFileLists extends ModelBase
            $i = 1;
            foreach ($yieldDatas as $dataItem) {
                $i ++;
-               if($i%100==0){
+               if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                           __CLASS__.__FUNCTION__ .__LINE__,
+                           //__CLASS__.__FUNCTION__ .__LINE__,
                            'buQuanZiDuan' => [
-                               $i,
+                               '已生成'.$i,
                                $filesData['file_name']
                            ]
                        ], JSON_UNESCAPED_UNICODE)
@@ -390,11 +390,11 @@ class ToolsFileLists extends ModelBase
            $i = 0;
            foreach ($yieldDatas as $dataItem) {
                $i++;
-               if($i%100==0){
+               if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                           __CLASS__.__FUNCTION__ .__LINE__,
-                           'pullGongKaiContacts_$i' => $i
+                        //   __CLASS__.__FUNCTION__ .__LINE__,
+                           'pullGongKaiContacts_已生成' => $i
                        ])
                    );
                }
@@ -587,11 +587,11 @@ class ToolsFileLists extends ModelBase
            $i = 0;
            foreach ($yieldDatas as $dataItem) {
                $i++;
-               if($i%100==0){
+               if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                           __CLASS__.__FUNCTION__ .__LINE__,
-                           'pullFeiGongKaiContacts' => $i
+                           //__CLASS__.__FUNCTION__ .__LINE__,
+                           'pullFeiGongKaiContacts已生成' => $i
                        ])
                    );
                }
@@ -771,10 +771,10 @@ class ToolsFileLists extends ModelBase
                $wechat = $dataItem[3];
                $sex = $dataItem[4];
 
-               if($i%100==0){
+               if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                           __CLASS__.__FUNCTION__ .__LINE__,
+                          // __CLASS__.__FUNCTION__ .__LINE__,
                            [
                                'addWeChatInfo'=>[
                                     '$companyDataItem' => $companyName ,
@@ -782,7 +782,7 @@ class ToolsFileLists extends ModelBase
                                     '$phone' => $phone ,
                                     '$wechat' => $wechat ,
                                     '$sex' => $sex ,
-                                    '$i' => $i ,
+                                    '已生成' => $i ,
                                ]
                            ]
                        ])
@@ -817,10 +817,10 @@ class ToolsFileLists extends ModelBase
                WechatInfo::addRecordV2(
                    $insert
                );
-               if($i%100==0){
+               if($i%500==0){
                    CommonService    ::getInstance()->log4PHP(
                        json_encode([
-                           __CLASS__.__FUNCTION__ .__LINE__,
+                          // __CLASS__.__FUNCTION__ .__LINE__,
                            $insert
                        ])
                    );
@@ -892,13 +892,13 @@ class ToolsFileLists extends ModelBase
                    }
                }
 
-               if($i%100==0){
+               if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                           __CLASS__.__FUNCTION__ .__LINE__,
+                          // __CLASS__.__FUNCTION__ .__LINE__,
                            [
                                'shangChuanGongKaiContact times'=>[
-                                    '$i' => $i ,
+                                    '已生成' => $i ,
                                ]
                            ]
                        ])
@@ -927,13 +927,13 @@ class ToolsFileLists extends ModelBase
                     $dbArr
                 );
 
-               if($i%100==0){
+               if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                           __CLASS__.__FUNCTION__ .__LINE__,
+                         //  __CLASS__.__FUNCTION__ .__LINE__,
                            [
                                'shangChuanGongKaiContact add to db '=>[
-                                   '$i' => $i ,
+                                   '已生成' => $i ,
                                    '$dbArr' => $dbArr ,
                                ]
                            ]
