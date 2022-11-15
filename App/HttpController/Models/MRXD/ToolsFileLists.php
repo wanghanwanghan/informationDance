@@ -196,7 +196,21 @@ class ToolsFileLists extends ModelBase
            fputcsv($f, $title);
 
            $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
+           $i = 1;
            foreach ($yieldDatas as $dataItem) {
+               $i ++;
+               if($i%100==0){
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           __CLASS__.__FUNCTION__ .__LINE__,
+                           'buQuanZiDuan' => [
+                               $i,
+                               $filesData['file_name']
+                           ]
+                       ], JSON_UNESCAPED_UNICODE)
+                   );
+               }
+
                //需要补全字段
                if($dataItem[1]){
                    $res = (new XinDongService())->getEsBasicInfoV3($dataItem[1],'UNISCID');
