@@ -442,7 +442,12 @@ class Company extends ServiceBase
         return $this;
     }
 
+    //gong_si_jian_jie 公司简介
+    function SetQueryByGongSiJianJie($gongSiJianJieArr,$gongSiJianJieFieldName = "gong_si_jian_jie"){
+        $this->es->addMustShouldPhraseQuery( $gongSiJianJieFieldName , $gongSiJianJieArr) ;
 
+        return $this;
+    }
 
     function SetQueryByBusinessScope($basic_opscope,$business_scope_field_name = "business_scope"){
         // 需要按文本搜索的
