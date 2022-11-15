@@ -493,17 +493,21 @@ class RunDealToolsFile extends AbstractCronTask
                 }
 
 
+                //iso_tags
+                if(
+                    $field=='iso_tags'
+                ){
+                    $str = "";
+                    foreach ($dataItem['iso_tags'] as $subItem){
+                        $str.= $subItem['cert_project'];
+                    }
+                    $dataItem['iso_tags'] =  $str;
+                }
+
                 if(
                     $field=='jin_chu_kou'
                 ){
                     $res['jin_chu_kou'] =  $res['jin_chu_kou']?'有':'无';
-                }
-
-
-                if(
-                    $field=='iso'
-                ){
-                    $res['iso'] =  $res['iso']?'有':'无';
                 }
 
                 // 高新技术

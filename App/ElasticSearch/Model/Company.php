@@ -1264,6 +1264,17 @@ class Company extends ServiceBase
                     $dataItem['szjjcy'] =  $dataItem['szjjcy']?'有':'无';
                 }
 
+                //iso_tags
+                if(
+                    $field=='iso_tags'
+                ){
+                    $str = "";
+                    foreach ($dataItem['iso_tags'] as $subItem){
+                        $str.= $subItem['cert_project'];
+                    }
+                    $dataItem['iso_tags'] =  $str;
+                }
+
 
                 if(
                     $field=='jin_chu_kou'
@@ -1272,11 +1283,6 @@ class Company extends ServiceBase
                 }
 
 
-                if(
-                    $field=='iso'
-                ){
-                    $dataItem['iso'] =  $dataItem['iso']?'有':'无';
-                }
 
                 // 高新技术
                 if(
