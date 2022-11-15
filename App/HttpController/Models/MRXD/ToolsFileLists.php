@@ -402,7 +402,7 @@ class ToolsFileLists extends ModelBase
                        json_encode([
                         //   __CLASS__.__FUNCTION__ .__LINE__,
                            'pullGongKaiContacts_已生成' => $i
-                       ])
+                       ], JSON_UNESCAPED_UNICODE)
                    );
                }
 
@@ -599,7 +599,7 @@ class ToolsFileLists extends ModelBase
                        json_encode([
                            //__CLASS__.__FUNCTION__ .__LINE__,
                            'pullFeiGongKaiContacts已生成' => $i
-                       ])
+                       ], JSON_UNESCAPED_UNICODE)
                    );
                }
 
@@ -792,7 +792,7 @@ class ToolsFileLists extends ModelBase
                                     '已生成' => $i ,
                                ]
                            ]
-                       ])
+                       ], JSON_UNESCAPED_UNICODE)
                    );
                }
 
@@ -908,7 +908,7 @@ class ToolsFileLists extends ModelBase
                                     '已生成' => $i ,
                                ]
                            ]
-                       ])
+                       ], JSON_UNESCAPED_UNICODE)
                    );
                }
            }
@@ -944,7 +944,7 @@ class ToolsFileLists extends ModelBase
                                    '$dbArr' => $dbArr ,
                                ]
                            ]
-                       ])
+                       ], JSON_UNESCAPED_UNICODE)
                    );
                }
            }
