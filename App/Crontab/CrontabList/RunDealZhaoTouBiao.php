@@ -498,8 +498,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         );
         $p1Nums = 1;
         foreach ($datas as $dataItem){
+
             $fileObject->insertText($p1Nums, 0, 'zhao_tou_biao_key03');
-            $fileObject->insertText($p1Nums, 1, $dataItem['标题']);
+            $fileObject->insertText($p1Nums, 1,  mb_substr($dataItem['标题'], 0, 500));
             $fileObject->insertText($p1Nums, 2, $dataItem['项目名称']);
             $fileObject->insertText($p1Nums, 3, $dataItem['项目编号']);
             $fileObject->insertText($p1Nums, 4, $dataItem['项目简介']);
@@ -530,7 +531,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
 
         //==============================================
-        //p2 
+        //p2
 
         $file->addSheet('p2')
             //->defaultFormat($colorStyle)
