@@ -445,7 +445,10 @@ class Company extends ServiceBase
     //gong_si_jian_jie 公司简介
     function SetQueryByGongSiJianJie($gongSiJianJieArr,$gongSiJianJieFieldName = "gong_si_jian_jie"){
 
-        $this->es->addMustShouldPhraseQuery( $gongSiJianJieFieldName , $gongSiJianJieArr) ;
+        if(!empty($gongSiJianJieArr)){
+            $this->es->addMustShouldPhraseQuery( $gongSiJianJieFieldName , $gongSiJianJieArr) ;
+        }
+
 
 
 

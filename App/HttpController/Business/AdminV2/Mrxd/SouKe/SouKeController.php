@@ -202,7 +202,7 @@ class SouKeController extends ControllerBase
             ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_basic_opscope')),'OPSCOPE')
             //不包含简介
             ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_jiejian')),'gong_si_jian_jie')
-            //不包含简介
+            //不包含app
             ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_app')),'app')
             ->addSize($size)
             //->addSort("_id","desc")
