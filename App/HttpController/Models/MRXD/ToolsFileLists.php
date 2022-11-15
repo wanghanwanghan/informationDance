@@ -568,14 +568,7 @@ class ToolsFileLists extends ModelBase
         ];
 
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-              'pullFeiGongKaiContacts' =>  [
-                    '$params'=>$params,
-                    '$filter_qcc_phone'=>$filter_qcc_phone,
-                ]
-            ], JSON_UNESCAPED_UNICODE)
-        );
+
        $filesDatas = self::findBySql("
             WHERE touch_time < 1
             AND type = ".self::$type_upload_pull_fei_gong_kai_contact." 
@@ -669,7 +662,7 @@ class ToolsFileLists extends ModelBase
                );
 
                $allConatcts['xn'] = $tmpContacts;
-              if(empty($allConatcts['xn'])){
+              if(empty($tmpContacts)){
                   $tmpDataItem = [
                       $entname,//企业名称
                       $companyRes->UNISCID."\t",//信用代码
@@ -688,7 +681,7 @@ class ToolsFileLists extends ModelBase
 //               );
 
                //手机号状态检测 一次网络请求
-               $needsCheckMobilesStr = join(",", $allConatcts['xn']);
+               $needsCheckMobilesStr = join(",", $tmpContacts);
                $postData = [
                    'mobiles' => $needsCheckMobilesStr,
                ];
@@ -706,7 +699,7 @@ class ToolsFileLists extends ModelBase
 //                   ])
 //               );
 
-               foreach($allConatcts['xn'] as $item){
+               foreach($tmpContacts as $item){
                    $tmpDataItem = [
                        $entname,//企业名称
                        $companyRes->UNISCID."\t",//信用代码
@@ -714,7 +707,7 @@ class ToolsFileLists extends ModelBase
                        ChuangLanService::getStatusCnameMap()[$mobilesRes[$item]['status']].$mobilesRes[$item]['status'],//手机号状态
                    ];
 
-                   //通过手机号补全微信信息
+
                    if(
                        !LongXinService::isValidPhone($item)
                    ){
