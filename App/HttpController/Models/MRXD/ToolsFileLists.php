@@ -213,10 +213,10 @@ class ToolsFileLists extends ModelBase
 
                //需要补全字段
                if($dataItem[1]){
-                   $res = (new XinDongService())->getEsBasicInfoV3($dataItem[1],'UNISCID');
+                   $res = (new XinDongService())->getEsBasicInfoV3($dataItem[1],'UNISCID',[]);
                }
                else{
-                   $res = (new XinDongService())->getEsBasicInfoV3($dataItem[0],'ENTNAME');
+                   $res = (new XinDongService())->getEsBasicInfoV3($dataItem[0],'ENTNAME',[]);
                }
                $baseArr = [];
                //====================================

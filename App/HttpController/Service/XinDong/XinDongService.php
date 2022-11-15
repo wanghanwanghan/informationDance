@@ -3308,7 +3308,10 @@ class XinDongService extends ServiceBase
         return !empty($res) ? $res : [];
     }
 
-    function getEsBasicInfoV3($value, $field = 'ENTNAME'): array
+    function getEsBasicInfoV3($value, $field = 'ENTNAME',$configs = [
+        'needs_logo'=>true,
+        'needs_email'=>true,
+    ]): array
     {
 
         $ElasticSearchService = new ElasticSearchService();
@@ -3333,17 +3336,26 @@ class XinDongService extends ServiceBase
         $hits = $responseArr['hits']['hits'];
 
         foreach ($hits as &$dataItem) {
-            $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
-            $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
-            $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
-            $dataItem['_source']['logo'] = (new XinDongService())->getLogoByEntIdV2($dataItem['_source']['companyid']);
+            if($configs['needs_email']){
+                $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
+                $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
+                $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
+            }
+
+            if($configs['needs_logo']){
+                $dataItem['_source']['logo'] = (new XinDongService())->getLogoByEntIdV2($dataItem['_source']['companyid']);
+            }
+
 
             // 添加tag
-            $dataItem['_source']['tags'] = array_values(
-                (new XinDongService())::getAllTagesByData(
-                    $dataItem['_source']
-                )
-            );
+            if($configs['needs_tags']){
+                $dataItem['_source']['tags'] = array_values(
+                    (new XinDongService())::getAllTagesByData(
+                        $dataItem['_source']
+                    )
+                );
+            }
+
 
             // 公司简介
             $tmpArr = explode('&&&', trim($dataItem['_source']['gong_si_jian_jie']));
