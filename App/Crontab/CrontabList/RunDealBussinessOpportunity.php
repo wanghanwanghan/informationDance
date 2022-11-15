@@ -456,16 +456,16 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         $rawDatas = AdminUserWechatInfoUploadRecord::findBySql(
             " WHERE status =  ".AdminUserWechatInfoUploadRecord::$status_init
         );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                [
-                    'addWeChatInfo'=>[
-                        'msg' => 'start ' ,
-                    ]
-                ]
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                [
+//                    'addWeChatInfo'=>[
+//                        'msg' => 'start ' ,
+//                    ]
+//                ]
+//            ])
+//        );
         foreach ($rawDatas as $rawDataItem){
             if($rawDataItem['touch_time']>1){
                 continue;
