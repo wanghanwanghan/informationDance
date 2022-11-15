@@ -369,19 +369,19 @@ class Company extends ServiceBase
          */
         if($searchText){
             $searchTextArr = explode(',',$searchText);
-//            $matchedCnames = [
-//                [ 'field'=>'ENTNAME' ,'value'=> $searchText],
-//                //[ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
-//                [ 'field'=>'OPSCOPE' ,'value'=> $searchText],
-//                [ 'field'=>'gong_si_jian_jie' ,'value'=> $searchText],
-//                [ 'field'=>'app' ,'value'=> $searchText],
-//            ];
-//            $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
+            $matchedCnames = [
+                [ 'field'=>'ENTNAME' ,'value'=> $searchTextArr],
+                //[ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
+                [ 'field'=>'OPSCOPE' ,'value'=> $searchTextArr],
+                [ 'field'=>'gong_si_jian_jie' ,'value'=> $searchTextArr],
+                [ 'field'=>'app' ,'value'=> $searchTextArr],
+            ];
+            $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
 //
-            $this->es->addMustShouldPhraseQuery( 'ENTNAME' , $searchTextArr) ;
-            $this->es->addMustShouldPhraseQuery( 'OPSCOPE' , $searchTextArr) ;
-            $this->es->addMustShouldPhraseQuery( 'gong_si_jian_jie' , $searchTextArr) ;
-            $this->es->addMustShouldPhraseQuery( 'app' , $searchTextArr) ;
+//            $this->es->addMustShouldPhraseQuery( 'ENTNAME' , $searchTextArr) ;
+//            $this->es->addMustShouldPhraseQuery( 'OPSCOPE' , $searchTextArr) ;
+//            $this->es->addMustShouldPhraseQuery( 'gong_si_jian_jie' , $searchTextArr) ;
+//            $this->es->addMustShouldPhraseQuery( 'app' , $searchTextArr) ;
         }
         return $this;
     }
