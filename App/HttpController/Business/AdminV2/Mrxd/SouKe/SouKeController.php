@@ -152,7 +152,7 @@ class SouKeController extends ControllerBase
             //经营范围
             ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')),"OPSCOPE")
             //jiejian  公司简介
-            ->SetQueryByGongSiJianJie(explode(';',trim($this->request()->getRequestParam('jiejian'))),"gong_si_jian_jie")
+            ->SetQueryByGongSiJianJie(explode(',',trim($this->request()->getRequestParam('jiejian'))),"gong_si_jian_jie")
 
             //数字经济及其核心产业
             ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
@@ -215,7 +215,7 @@ class SouKeController extends ControllerBase
             // 格式化下金额
             ->formatEsMoney('REGCAP')
         ;
-        
+
 
         foreach($companyEsModel->return_data['hits']['hits'] as &$dataItem){
             $dataItem['_source']['short_name'] =  CompanyBasic::findBriefName($dataItem['_source']['ENTNAME']);
