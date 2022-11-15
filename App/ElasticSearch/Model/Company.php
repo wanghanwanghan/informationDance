@@ -368,14 +368,20 @@ class Company extends ServiceBase
         ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_app')),'app')
          */
         if($searchText){
-            $matchedCnames = [
-                [ 'field'=>'ENTNAME' ,'value'=> $searchText],
-                //[ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
-                [ 'field'=>'OPSCOPE' ,'value'=> $searchText],
-                [ 'field'=>'gong_si_jian_jie' ,'value'=> $searchText],
-                [ 'field'=>'app' ,'value'=> $searchText],
-            ];
-            $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
+            $searchTextArr = explode(',',$searchText);
+//            $matchedCnames = [
+//                [ 'field'=>'ENTNAME' ,'value'=> $searchText],
+//                //[ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
+//                [ 'field'=>'OPSCOPE' ,'value'=> $searchText],
+//                [ 'field'=>'gong_si_jian_jie' ,'value'=> $searchText],
+//                [ 'field'=>'app' ,'value'=> $searchText],
+//            ];
+//            $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
+//
+            $this->es->addMustShouldPhraseQuery( 'ENTNAME' , $searchTextArr) ;
+            $this->es->addMustShouldPhraseQuery( 'OPSCOPE' , $searchTextArr) ;
+            $this->es->addMustShouldPhraseQuery( 'gong_si_jian_jie' , $searchTextArr) ;
+            $this->es->addMustShouldPhraseQuery( 'app' , $searchTextArr) ;
         }
         return $this;
     }
@@ -472,6 +478,8 @@ class Company extends ServiceBase
 
         return $this;
     }
+
+
 
     function SetQueryByBasicJlxxcyid($basicJlxxcyidStr){
         // 需要按文本搜索的
