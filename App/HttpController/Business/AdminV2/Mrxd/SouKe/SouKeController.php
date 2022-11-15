@@ -154,7 +154,7 @@ class SouKeController extends ControllerBase
             //jiejian  公司简介
             ->SetQueryByGongSiJianJie(explode(',',trim($this->request()->getRequestParam('jiejian'))),"gong_si_jian_jie")
             //app名称
-            ->SetQueryByGongSiJianJie(explode(',',trim($this->request()->getRequestParam('jiejian'))),"app")
+            ->SetQueryByGongSiJianJie(explode(',',trim($this->request()->getRequestParam('app'))),"app")
             //iso最小数量
             ->SetQueryByIsonNums(intval($this->request()->getRequestParam('iso_num')),0,"iso")
             //数字经济及其核心产业
