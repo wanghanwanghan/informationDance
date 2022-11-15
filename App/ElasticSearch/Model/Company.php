@@ -449,9 +449,12 @@ class Company extends ServiceBase
             $this->es->addMustShouldPhraseQuery( $gongSiJianJieFieldName , $gongSiJianJieArr) ;
         }
 
+        return $this;
+    }
 
+    function SetQueryByIsonNums($minValue,$maxValue,$field = "iso"){
 
-
+        $this->es->addMustRangeQuery( $field, $minValue, $maxValue) ;
         return $this;
     }
 
