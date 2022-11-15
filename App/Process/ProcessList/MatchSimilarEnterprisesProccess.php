@@ -123,7 +123,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
     {
         //这里可以把搜客中的数据查出来(company_202209)，放到新的es库中
         $bean = new \EasySwoole\ElasticSearch\RequestBean\Get();
-        $bean->setIndex('company_202209');
+        $bean->setIndex('company_202211');
         $bean->setType('_doc');
         $bean->setId($data['companyid']);
         $res = (new ElasticSearchService())->customGetBody($bean);

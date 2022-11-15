@@ -850,7 +850,7 @@ eof;
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202209')
+            ->searchFromEs('company_202211')
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
@@ -2198,7 +2198,7 @@ eof;
         $ElasticSearchService->addSize(1) ;
         $ElasticSearchService->addFrom(0) ;
 
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202209');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202211');
         $responseArr = @json_decode($responseJson,true);
         CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
                 [

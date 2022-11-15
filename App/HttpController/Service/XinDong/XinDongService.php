@@ -3252,7 +3252,7 @@ class XinDongService extends ServiceBase
         $offset = ($page - 1) * $size;
         $ElasticSearchService->addSize($size);
         $ElasticSearchService->addFrom($offset);
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202209');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202211');
         $responseArr = @json_decode($responseJson, true);
         // CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
         //     [
@@ -3320,7 +3320,7 @@ class XinDongService extends ServiceBase
         $offset = ($page - 1) * $size;
         $ElasticSearchService->addSize($size);
         $ElasticSearchService->addFrom($offset);
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202209');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202211');
         $responseArr = @json_decode($responseJson, true);
         // CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
         //     [

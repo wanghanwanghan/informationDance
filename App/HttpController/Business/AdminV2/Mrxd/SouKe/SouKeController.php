@@ -1038,7 +1038,7 @@ class SouKeController extends ControllerBase
         $ElasticSearchService->addSize(1) ;
         $ElasticSearchService->addFrom(0) ;
 
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202209');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202211');
         $responseArr = @json_decode($responseJson,true);
         CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
                 [
