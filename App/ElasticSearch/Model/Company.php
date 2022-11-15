@@ -377,11 +377,17 @@ class Company extends ServiceBase
 //                [ 'field'=>'app' ,'value'=> $searchTextArr],
 //            ];
 //            $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
-//
-            $this->es->addMustShouldPhraseQuery( 'ENTNAME' , $searchTextArr) ;
-//            $this->es->addMustShouldPhraseQuery( 'OPSCOPE' , $searchTextArr) ;
-//            $this->es->addMustShouldPhraseQuery( 'gong_si_jian_jie' , $searchTextArr) ;
-//            $this->es->addMustShouldPhraseQuery( 'app' , $searchTextArr) ;
+            $fileds = [
+                'ENTNAME',
+                'shang_pin_data.name',
+                'OPSCOPE',
+                'gong_si_jian_jie',
+                'app',
+            ];
+            foreach ($fileds as $filed){
+                $matchedCnames[] =  [ 'field'=>$filed ,'value'=> $searchTextArr];
+            }
+            $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
         }
         return $this;
     }
