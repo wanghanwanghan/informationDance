@@ -186,6 +186,8 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'tianyongshan@meirixindong.com',
                 'minglongoc@me.com',
                 'zhengmeng@meirixindong.com',
+                'luoyuting@huoyan.cn',
+                'liqingfeng@huoyan.cn',
             ]);
         }
 
