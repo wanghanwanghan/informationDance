@@ -623,15 +623,19 @@ class ToolsFileLists extends ModelBase
                }
 
                //取公开联系人信息
-
                $allConatcts = CompanyClue::getAllContactByCode($companyRes->UNISCID);
                $tmpContacts = [];
                foreach ($allConatcts['xn'] as $tmpPhone){
-                   if(
-                       !in_array($tmpPhone,$allConatcts['qcc'])
-                   ){
+                   if($filter_qcc_phone){
+                       if(
+                           !in_array($tmpPhone,$allConatcts['qcc'])
+                       ){
+                           $tmpContacts[$tmpPhone] = $tmpPhone;
+                       }
+                   }else{
                        $tmpContacts[$tmpPhone] = $tmpPhone;
                    }
+
                }
                $allConatcts['xn'] = $tmpContacts;
               if(empty($allConatcts['xn'])){
