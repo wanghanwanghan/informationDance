@@ -41,6 +41,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\Common\XlsWriter;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
@@ -1150,9 +1151,24 @@ class ToolsController extends ControllerBase
 
             $data = [];
 
+            $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
+                " SELECT * FROM zhao_tou_biao_key03 WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
+            );
 
+            $writer = new XlsWriter();
 
-            $response[] = $res['filename_url'];
+            $writer->setAuthor('Some Author');
+            foreach ($datas as $row) {
+                $writer->writeSheetRow('Sheet1', $row);
+            }
+
+            $writer->writeToStdOut();
+            $filename = rand(1,1000)."example.xlsx";
+            $writer->SetOut(TEMP_FILE_PATH.$filename);
+            //$writer->writeToFile('example.xlsx');
+            //echo $writer->writeToString();
+
+            $response[] = 'http://api.test.meirixindong.com/Static/Temp/'.$filename;
         }
 
 
