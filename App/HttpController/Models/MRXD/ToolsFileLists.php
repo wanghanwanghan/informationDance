@@ -649,8 +649,8 @@ class ToolsFileLists extends ModelBase
                    }else{
                        $tmpContacts[$tmpPhone] = $tmpPhone;
                    }
-
                }
+
 //               CommonService::getInstance()->log4PHP(
 //                   json_encode([
 //                       'pullFeiGongKaiContacts' =>  [
@@ -765,11 +765,11 @@ class ToolsFileLists extends ModelBase
 //                       ])
 //                   );
 
-                   $tmpDataItem[] =  $tmpRes['data']['NAME'];//联系人名称(疑似/通过微信名匹配)',
-                   $tmpDataItem[] =  $tmpRes['data']['POSITION'];//'职位(疑似/通过微信名匹配)',
-                   $tmpDataItem[] =  $tmpRes['match_res']['type'];//'微信匹配类型',
-                   $tmpDataItem[] =  $tmpRes['match_res']['details'];//'微信匹配子类型',
-                   $tmpDataItem[] =  $tmpRes['match_res']['percentage'];// '微信匹配值',
+                   $tmpDataItem[] =  $tmpRes['data']['NAME']; //联系人名称(疑似/通过微信名匹配)',
+                   $tmpDataItem[] =  $tmpRes['data']['POSITION']; //'职位(疑似/通过微信名匹配)',
+                   $tmpDataItem[] =  $tmpRes['match_res']['type']; //'微信匹配类型',
+                   $tmpDataItem[] =  $tmpRes['match_res']['details']; //'微信匹配子类型',
+                   $tmpDataItem[] =  $tmpRes['match_res']['percentage']; // '微信匹配值',
 
                    fputcsv($f, $tmpDataItem);
                }

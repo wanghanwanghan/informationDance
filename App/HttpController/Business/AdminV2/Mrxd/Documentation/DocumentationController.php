@@ -228,10 +228,10 @@ class DocumentationController extends ControllerBase
 
         $res = Documentation::findById($requestData['id'])->toArray();
         $fileName = $res['name'].'.html';
-        unlink(TEMP_FILE_PATH.$fileName);
-        file_put_contents(TEMP_FILE_PATH.$fileName, $res['content'], FILE_APPEND | LOCK_EX);
+        unlink(OTHER_FILE_PATH.$fileName);
+        file_put_contents(OTHER_FILE_PATH.$fileName, $res['content'], FILE_APPEND | LOCK_EX);
 
-        return $this->writeJson(200,  [ ],  '/Static/Temp/'.$fileName,'成功');
+        return $this->writeJson(200,  [ ],  '/Static/OtherFile/'.$fileName,'成功');
     }
 
 }
