@@ -368,26 +368,26 @@ class Company extends ServiceBase
         ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_app')),'app')
          */
         if($searchText){
-            $searchTextArr = explode(',',$searchText);
-//            $matchedCnames = [
-//                [ 'field'=>'ENTNAME' ,'value'=> $searchTextArr],
-//                //[ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
-//                [ 'field'=>'OPSCOPE' ,'value'=> $searchTextArr],
-//                [ 'field'=>'gong_si_jian_jie' ,'value'=> $searchTextArr],
-//                [ 'field'=>'app' ,'value'=> $searchTextArr],
-//            ];
-//            $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
-            $fileds = [
-                'ENTNAME',
-                'shang_pin_data.name',
-                'OPSCOPE',
-                'gong_si_jian_jie',
-                'app',
+//            $searchTextArr = explode(',',$searchText);
+            $matchedCnames = [
+                [ 'field'=>'ENTNAME' ,'value'=> $searchTextArr],
+                //[ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
+                [ 'field'=>'OPSCOPE' ,'value'=> $searchTextArr],
+                [ 'field'=>'gong_si_jian_jie' ,'value'=> $searchTextArr],
+                [ 'field'=>'app' ,'value'=> $searchTextArr],
             ];
-            foreach ($fileds as $filed){
-                $matchedCnames[] =  [ 'field'=>$filed ,'value'=> $searchTextArr];
-            }
             $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
+//            $fileds = [
+//                'ENTNAME',
+//                'shang_pin_data.name',
+//                'OPSCOPE',
+//                'gong_si_jian_jie',
+//                'app',
+//            ];
+//            foreach ($fileds as $filed){
+//                $matchedCnames[] =  [ 'field'=>$filed ,'value'=> $searchTextArr];
+//            }
+//            $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
         }
         return $this;
     }
