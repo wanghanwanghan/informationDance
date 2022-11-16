@@ -622,7 +622,7 @@ class ToolsFileLists extends ModelBase
                $code =  self::strtr_func($dataItem[1]);
 
 
-               if($code){
+               if($code>0){
 
                    $companyRes = CompanyBasic::findByCode($code);
                }
@@ -633,7 +633,11 @@ class ToolsFileLists extends ModelBase
                //有效的联系人
 //               $validContacts = CompanyManager::getManagesNamesByCompanyId($companyRes->companyid);
 
-               if(empty($companyRes)){
+               if(
+                   empty($companyRes) ||
+                   empty($companyRes->UNISCID)
+
+               ){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
                            //__CLASS__.__FUNCTION__ .__LINE__,
