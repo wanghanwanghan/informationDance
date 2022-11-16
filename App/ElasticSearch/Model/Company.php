@@ -1351,7 +1351,7 @@ class Company extends ServiceBase
 
         $datas = [];
 
-        $size = 3500;
+        $size = 500;
         $offset = 0;
         $nums =1;
         $lastId = 0;
