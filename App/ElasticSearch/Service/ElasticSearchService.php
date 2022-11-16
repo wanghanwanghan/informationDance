@@ -124,6 +124,18 @@ class ElasticSearchService extends ServiceBase
         $this->query['query']['bool']['must'][] = $boolQuery;
     }
 
+    function addMustShouldNotMatchQuery($field, $valueArr)
+    {
+        $boolQuery = [];
+        foreach ($valueArr as $value) {
+            $boolQuery['bool']['should'][] =
+                ['match' => [$field => $value]];
+        }
+
+        $this->query['query']['bool']['must_not'][] = $boolQuery;
+    }
+
+
     function addMustExistsQuery($field)
     {
         $this->query['query']['bool']['must'][] = ['exists' => ['field' => $field]];
@@ -166,8 +178,10 @@ class ElasticSearchService extends ServiceBase
             $boolQuery['bool']['should'][] =
                 ['match_phrase' => [$field => $value]];
         }
+        if(!empty($boolQuery)){
+            $this->query['query']['bool']['must'][] = $boolQuery;
+        }
 
-        $this->query['query']['bool']['must'][] = $boolQuery;
     }
 
 
@@ -222,7 +236,14 @@ class ElasticSearchService extends ServiceBase
         if ($maxValue > 0) {
             $rangeArr['lte'] = $maxValue;
         }
-        $this->query['query']['bool']['must'][] = ['range' => [$field => [$rangeArr]]];
+
+        if(
+            $minValue>0 ||
+            $maxValue>0
+        ){
+            $this->query['query']['bool']['must'][] = ['range' => [$field => [$rangeArr]]];
+        }
+
     }
 
     function addMustShouldRangeQuery($field, $map)

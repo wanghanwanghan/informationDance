@@ -283,11 +283,15 @@ class Company extends ServiceBase
         $responseArr = @json_decode($responseJson,true);
         $this->setReturnData($responseArr);
         if($showLog){
-            CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
+            CommonService::getInstance()->log4PHP(@json_encode(
                     [
-                        'hits' => count($responseArr['hits']['hits']),
-                        'es_query' => $this->es->query,
-                    ]
+
+                        'searchFromEs' => [
+                            'hits' => $responseArr['hits']['total'],
+                            'es_query' => $this->es->query,
+                        ]
+
+                    ], JSON_UNESCAPED_UNICODE
             ));
         }
         return $this;
@@ -364,13 +368,25 @@ class Company extends ServiceBase
         ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_app')),'app')
          */
         if($searchText){
-            $matchedCnames = [
-                [ 'field'=>'ENTNAME' ,'value'=> $searchText],
-                //[ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
-                [ 'field'=>'OPSCOPE' ,'value'=> $searchText],
-                [ 'field'=>'gong_si_jian_jie' ,'value'=> $searchText],
-                [ 'field'=>'app' ,'value'=> $searchText],
+            $searchTextArr = explode(',',$searchText);
+//            $matchedCnames = [
+//                [ 'field'=>'ENTNAME' ,'value'=> $searchTextArr],
+//                //[ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
+//                [ 'field'=>'OPSCOPE' ,'value'=> $searchTextArr],
+//                [ 'field'=>'gong_si_jian_jie' ,'value'=> $searchTextArr],
+//                [ 'field'=>'app' ,'value'=> $searchTextArr],
+//            ];
+//            $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
+            $fileds = [
+                'ENTNAME',
+                'shang_pin_data.name',
+                'OPSCOPE',
+                'gong_si_jian_jie',
+                'app',
             ];
+            foreach ($fileds as $filed){
+                $matchedCnames[] =  [ 'field'=>$filed ,'value'=> $searchTextArr];
+            }
             $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
         }
         return $this;
@@ -438,7 +454,21 @@ class Company extends ServiceBase
         return $this;
     }
 
+    //gong_si_jian_jie 公司简介
+    function SetQueryByGongSiJianJie($gongSiJianJieArr,$gongSiJianJieFieldName = "gong_si_jian_jie"){
 
+        if(!empty($gongSiJianJieArr)){
+            $this->es->addMustShouldPhraseQuery( $gongSiJianJieFieldName , $gongSiJianJieArr) ;
+        }
+
+        return $this;
+    }
+
+    function SetQueryByIsonNums($minValue,$maxValue,$field = "iso"){
+
+        $this->es->addMustRangeQuery( $field, $minValue, $maxValue) ;
+        return $this;
+    }
 
     function SetQueryByBusinessScope($basic_opscope,$business_scope_field_name = "business_scope"){
         // 需要按文本搜索的
@@ -454,6 +484,8 @@ class Company extends ServiceBase
 
         return $this;
     }
+
+
 
     function SetQueryByBasicJlxxcyid($basicJlxxcyidStr){
         // 需要按文本搜索的
@@ -1246,6 +1278,17 @@ class Company extends ServiceBase
                     $dataItem['szjjcy'] =  $dataItem['szjjcy']?'有':'无';
                 }
 
+                //iso_tags
+                if(
+                    $field=='iso_tags'
+                ){
+                    $str = "";
+                    foreach ($dataItem['iso_tags'] as $subItem){
+                        $str.= $subItem['cert_project'];
+                    }
+                    $dataItem['iso_tags'] =  $str;
+                }
+
 
                 if(
                     $field=='jin_chu_kou'
@@ -1254,11 +1297,6 @@ class Company extends ServiceBase
                 }
 
 
-                if(
-                    $field=='iso'
-                ){
-                    $dataItem['iso'] =  $dataItem['iso']?'有':'无';
-                }
 
                 // 高新技术
                 if(
@@ -1398,7 +1436,7 @@ class Company extends ServiceBase
             $showLog = true;
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202209',$showLog)
+                ->searchFromEs('company_202211',$showLog)
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();
@@ -1465,7 +1503,7 @@ class Company extends ServiceBase
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202209')
+            ->searchFromEs('company_202211')
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
@@ -1568,7 +1606,7 @@ class Company extends ServiceBase
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202209')
+            ->searchFromEs('company_202211')
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
@@ -1737,7 +1775,7 @@ class Company extends ServiceBase
             // 格式化下日期和时间
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202209')
+                ->searchFromEs('company_202211')
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();
@@ -1911,7 +1949,7 @@ class Company extends ServiceBase
             // 格式化下日期和时间
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202209')
+                ->searchFromEs('company_202211')
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();
@@ -2026,7 +2064,7 @@ class Company extends ServiceBase
             // 格式化下日期和时间
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202209')
+                ->searchFromEs('company_202211')
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();

@@ -1488,7 +1488,7 @@ class XinDongService extends ServiceBase
 //            ],
             [
                 'pid' => 50,
-                'desc' => '营收规模',
+                'desc' => '营收规模2021',
                 'key' => 'ying_shou_gui_mo_2021',
                 'detail' => '',
                 'type' => 'select',
@@ -1740,403 +1740,512 @@ class XinDongService extends ServiceBase
             ],
             [
                 'pid' => 65,
-                'desc' => '纳税规模',
+                'desc' => '纳税规模2021',
                 'detail' => '',
                 'key' => 'na_shui_gui_mo_2021',
                 'type' => 'select',
                 'data' => [
-                    'YF' => [
-                        'cname' => 'YF',
+                    'NF' => [
+                        'cname' => 'NF',
                         'detail' => '负值',
                     ],
-                    'Y0' => [
-                        'cname' => 'Y0',
+                    'N0' => [
+                        'cname' => 'N0',
                         'detail' => '0值',
                     ],
-                    'Y1' => [
-                        'cname' => 'Y1',
+                    'N1' => [
+                        'cname' => 'N1',
                         'detail' => '万',
                     ],
-                    'Y2' => [
-                        'cname' => 'Y2',
+                    'N2' => [
+                        'cname' => 'N2',
                         'detail' => '十万',
                     ],
-                    'Y3' => [
-                        'cname' => 'Y3',
-                        'detail' => 'Y3',
+                    'N3' => [
+                        'cname' => 'N3',
+                        'detail' => 'N3',
                     ],
-                    'Y4' => [
-                        'cname' => 'Y4',
-                        'detail' => 'Y4',
+                    'N4' => [
+                        'cname' => 'N4',
+                        'detail' => 'N4',
                     ],
-                    'Y5' => [
-                        'cname' => 'Y5',
-                        'detail' => 'Y5',
+                    'N5' => [
+                        'cname' => 'N5',
+                        'detail' => 'N5',
                     ],
-                    'Y6' => [
-                        'cname' => 'Y6',
-                        'detail' => 'Y6',
+                    'N6' => [
+                        'cname' => 'N6',
+                        'detail' => 'N6',
                     ],
-                    'Y7' => [
-                        'cname' => 'Y7',
-                        'detail' => 'Y7',
+                    'N7' => [
+                        'cname' => 'N7',
+                        'detail' => 'N7',
                     ],
-                    'Y8' => [
-                        'cname' => 'Y8',
-                        'detail' => 'Y8',
+                    'N8' => [
+                        'cname' => 'N8',
+                        'detail' => 'N8',
                     ],
-                    'Y9' => [
-                        'cname' => 'Y9',
-                        'detail' => 'Y9',
+                    'N9' => [
+                        'cname' => 'N9',
+                        'detail' => 'N9',
                     ],
-                    'Y10' => [
-                        'cname' => 'Y10',
-                        'detail' => 'Y10',
+                    'N10' => [
+                        'cname' => 'N10',
+                        'detail' => 'N10',
                     ],
-                    'Y11' => [
-                        'cname' => 'Y11',
-                        'detail' => 'Y11',
+                    'N11' => [
+                        'cname' => 'N11',
+                        'detail' => 'N11',
                     ],
-                    'Y12' => [
-                        'cname' => 'Y12',
-                        'detail' => 'Y12',
+                    'N12' => [
+                        'cname' => 'N12',
+                        'detail' => 'N12',
                     ],
-                    'Y13' => [
-                        'cname' => 'Y13',
-                        'detail' => 'Y13',
+                    'N13' => [
+                        'cname' => 'N13',
+                        'detail' => 'N13',
                     ],
-                    'Y14' => [
-                        'cname' => 'Y14',
-                        'detail' => 'Y14',
+                    'N14' => [
+                        'cname' => 'N14',
+                        'detail' => 'N14',
                     ],
-                    'Y15' => [
-                        'cname' => 'Y15',
-                        'detail' => 'Y15',
+                    'N15' => [
+                        'cname' => 'N15',
+                        'detail' => 'N15',
                     ],
-                    'Y16' => [
-                        'cname' => 'Y16',
-                        'detail' => 'Y16',
+                    'N16' => [
+                        'cname' => 'N16',
+                        'detail' => 'N16',
                     ],
-                    'Y17' => [
-                        'cname' => 'Y17',
-                        'detail' => 'Y17',
+                    'N17' => [
+                        'cname' => 'N17',
+                        'detail' => 'N17',
                     ],
-                    'Y18' => [
-                        'cname' => 'Y18',
-                        'detail' => 'Y18',
+                    'N18' => [
+                        'cname' => 'N18',
+                        'detail' => 'N18',
                     ],
-                    'Y19' => [
-                        'cname' => 'Y19',
-                        'detail' => 'Y19',
+                    'N19' => [
+                        'cname' => 'N19',
+                        'detail' => 'N19',
                     ],
-                    'Y20' => [
-                        'cname' => 'Y20',
-                        'detail' => 'Y20',
+                    'N20' => [
+                        'cname' => 'N20',
+                        'detail' => 'N20',
                     ],
-                    'Y21' => [
-                        'cname' => 'Y21',
-                        'detail' => 'Y21',
+                    'N21' => [
+                        'cname' => 'N21',
+                        'detail' => 'N21',
                     ],
-                    'Y22' => [
-                        'cname' => 'Y22',
-                        'detail' => 'Y22',
+                    'N22' => [
+                        'cname' => 'N22',
+                        'detail' => 'N22',
                     ],
-                    'Y23' => [
-                        'cname' => 'Y23',
-                        'detail' => 'Y23',
+                    'N23' => [
+                        'cname' => 'N23',
+                        'detail' => 'N23',
                     ],
-                    'Y24' => [
-                        'cname' => 'Y24',
-                        'detail' => 'Y24',
+                    'N24' => [
+                        'cname' => 'N24',
+                        'detail' => 'N24',
                     ],
-                    'Y25' => [
-                        'cname' => 'Y25',
-                        'detail' => 'Y25',
+                    'N25' => [
+                        'cname' => 'N25',
+                        'detail' => 'N25',
                     ],
-                    'Y26' => [
-                        'cname' => 'Y26',
-                        'detail' => 'Y26',
+                    'N26' => [
+                        'cname' => 'N26',
+                        'detail' => 'N26',
                     ],
-                    'Y27' => [
-                        'cname' => 'Y27',
-                        'detail' => 'Y27',
+                    'N27' => [
+                        'cname' => 'N27',
+                        'detail' => 'N27',
                     ],
-                    'Y28' => [
-                        'cname' => 'Y28',
-                        'detail' => 'Y28',
+                    'N28' => [
+                        'cname' => 'N28',
+                        'detail' => 'N28',
                     ],
-                    'Y29' => [
-                        'cname' => 'Y29',
-                        'detail' => 'Y29',
+                    'N29' => [
+                        'cname' => 'N29',
+                        'detail' => 'N29',
                     ],
-                    'Y30' => [
-                        'cname' => 'Y30',
-                        'detail' => 'Y30',
+                    'N30' => [
+                        'cname' => 'N30',
+                        'detail' => 'N30',
                     ],
-                    'Y31' => [
-                        'cname' => 'Y31',
-                        'detail' => 'Y31',
+                    'N31' => [
+                        'cname' => 'N31',
+                        'detail' => 'N31',
                     ],
-                    'Y32' => [
-                        'cname' => 'Y32',
-                        'detail' => 'Y32',
+                    'N32' => [
+                        'cname' => 'N32',
+                        'detail' => 'N32',
                     ],
-                    'Y33' => [
-                        'cname' => 'Y33',
-                        'detail' => 'Y33',
+                    'N33' => [
+                        'cname' => 'N33',
+                        'detail' => 'N33',
                     ],
-                    'Y34' => [
-                        'cname' => 'Y34',
-                        'detail' => 'Y34',
+                    'N34' => [
+                        'cname' => 'N34',
+                        'detail' => 'N34',
                     ],
-                    'Y35' => [
-                        'cname' => 'Y35',
-                        'detail' => 'Y35',
+                    'N35' => [
+                        'cname' => 'N35',
+                        'detail' => 'N35',
                     ],
-                    'Y36' => [
-                        'cname' => 'Y36',
-                        'detail' => 'Y36',
+                    'N36' => [
+                        'cname' => 'N36',
+                        'detail' => 'N36',
                     ],
-                    'Y37' => [
-                        'cname' => 'Y37',
-                        'detail' => 'Y37',
+                    'N37' => [
+                        'cname' => 'N37',
+                        'detail' => 'N37',
                     ],
-                    'Y38' => [
-                        'cname' => 'Y38',
-                        'detail' => 'Y38',
+                    'N38' => [
+                        'cname' => 'N38',
+                        'detail' => 'N38',
                     ],
-                    'Y39' => [
-                        'cname' => 'Y39',
-                        'detail' => 'Y39',
+                    'N39' => [
+                        'cname' => 'N39',
+                        'detail' => 'N39',
                     ],
-                    'Y40' => [
-                        'cname' => 'Y40',
-                        'detail' => 'Y40',
+                    'N40' => [
+                        'cname' => 'N40',
+                        'detail' => 'N40',
                     ],
-                    'Y41' => [
-                        'cname' => 'Y41',
-                        'detail' => 'Y41',
+                    'N41' => [
+                        'cname' => 'N41',
+                        'detail' => 'N41',
                     ],
-                    'Y42' => [
-                        'cname' => 'Y42',
-                        'detail' => 'Y42',
+                    'N42' => [
+                        'cname' => 'N42',
+                        'detail' => 'N42',
                     ],
-                    'Y43' => [
-                        'cname' => 'Y43',
-                        'detail' => 'Y43',
+                    'N43' => [
+                        'cname' => 'N43',
+                        'detail' => 'N43',
                     ],
-                    'Y44' => [
-                        'cname' => 'Y44',
-                        'detail' => 'Y44',
+                    'N44' => [
+                        'cname' => 'N44',
+                        'detail' => 'N44',
                     ],
-                    'Y45' => [
-                        'cname' => 'Y45',
-                        'detail' => 'Y45',
+                    'N45' => [
+                        'cname' => 'N45',
+                        'detail' => 'N45',
                     ],
-                    'Y46' => [
-                        'cname' => 'Y46',
-                        'detail' => 'Y46',
+                    'N46' => [
+                        'cname' => 'N46',
+                        'detail' => 'N46',
                     ],
+
                 ],
             ],
             [
                 'pid' => 66,
-                'desc' => '利润规模',
+                'desc' => '利润规模2021',
                 'detail' => '',
                 'key' => 'li_run_gui_mo_2021',
                 'type' => 'select',
                 'data' => [
-                    'YF' => [
-                        'cname' => 'YF',
-                        'detail' => '负值',
+                    'F28' => [
+                        'cname' => 'F28',
+                        'detail' => 'F28',
                     ],
-                    'Y0' => [
-                        'cname' => 'Y0',
+                    'F27' => [
+                        'cname' => 'F27',
+                        'detail' => 'F27',
+                    ],
+                    'F26' => [
+                        'cname' => 'F26',
+                        'detail' => 'F26',
+                    ],
+                    'F25' => [
+                        'cname' => 'F25',
+                        'detail' => 'F25',
+                    ],
+                    'F24' => [
+                        'cname' => 'F24',
+                        'detail' => 'F24',
+                    ],
+                    'F23' => [
+                        'cname' => 'F23',
+                        'detail' => 'F23',
+                    ],
+                    'F22' => [
+                        'cname' => 'F22',
+                        'detail' => 'F22',
+                    ],
+                    'F21' => [
+                        'cname' => 'F21',
+                        'detail' => 'F21',
+                    ],
+                    'F20' => [
+                        'cname' => 'F20',
+                        'detail' => 'F20',
+                    ],
+                    'F19' => [
+                        'cname' => 'F19',
+                        'detail' => 'F19',
+                    ],
+                    'F18' => [
+                        'cname' => 'F18',
+                        'detail' => 'F18',
+                    ],
+                    'F17' => [
+                        'cname' => 'F17',
+                        'detail' => 'F17',
+                    ],
+                    'F16' => [
+                        'cname' => 'F16',
+                        'detail' => 'F16',
+                    ],
+                    'F15' => [
+                        'cname' => 'F15',
+                        'detail' => 'F15',
+                    ],
+                    'F14' => [
+                        'cname' => 'F14',
+                        'detail' => 'F14',
+                    ],
+                    'F13' => [
+                        'cname' => 'F13',
+                        'detail' => 'F13',
+                    ],
+                    'F12' => [
+                        'cname' => 'F12',
+                        'detail' => 'F12',
+                    ],
+                    'F11' => [
+                        'cname' => 'F11',
+                        'detail' => 'F11',
+                    ],
+                    'F10' => [
+                        'cname' => 'F10',
+                        'detail' => 'F10',
+                    ],
+                    'F9' => [
+                        'cname' => 'F9',
+                        'detail' => 'F9',
+                    ],
+                    'F8' => [
+                        'cname' => 'F8',
+                        'detail' => 'F8',
+                    ],
+                    'F7' => [
+                        'cname' => 'F7',
+                        'detail' => 'F7',
+                    ],
+                    'F6' => [
+                        'cname' => 'F6',
+                        'detail' => 'F6',
+                    ],
+                    'F5' => [
+                        'cname' => 'F5',
+                        'detail' => 'F5',
+                    ],
+                    'F4' => [
+                        'cname' => 'F4',
+                        'detail' => 'F4',
+                    ],
+                    'F3' => [
+                        'cname' => 'F3',
+                        'detail' => 'F3',
+                    ],
+                    'F2' => [
+                        'cname' => 'F2',
+                        'detail' => 'F2',
+                    ],
+                    'F1' => [
+                        'cname' => 'F1',
+                        'detail' => 'F1',
+                    ],
+                    'L0' => [
+                        'cname' => 'L0',
                         'detail' => '0值',
                     ],
-                    'Y1' => [
-                        'cname' => 'Y1',
+                    'Z1' => [
+                        'cname' => 'Z1',
                         'detail' => '万',
                     ],
-                    'Y2' => [
-                        'cname' => 'Y2',
+                    'Z2' => [
+                        'cname' => 'Z2',
                         'detail' => '十万',
                     ],
-                    'Y3' => [
-                        'cname' => 'Y3',
-                        'detail' => 'Y3',
+                    'Z3' => [
+                        'cname' => 'Z3',
+                        'detail' => 'Z3',
                     ],
-                    'Y4' => [
-                        'cname' => 'Y4',
-                        'detail' => 'Y4',
+                    'Z4' => [
+                        'cname' => 'Z4',
+                        'detail' => 'Z4',
                     ],
-                    'Y5' => [
-                        'cname' => 'Y5',
-                        'detail' => 'Y5',
+                    'Z5' => [
+                        'cname' => 'Z5',
+                        'detail' => 'Z5',
                     ],
-                    'Y6' => [
-                        'cname' => 'Y6',
-                        'detail' => 'Y6',
+                    'Z6' => [
+                        'cname' => 'Z6',
+                        'detail' => 'Z6',
                     ],
-                    'Y7' => [
-                        'cname' => 'Y7',
-                        'detail' => 'Y7',
+                    'Z7' => [
+                        'cname' => 'Z7',
+                        'detail' => 'Z7',
                     ],
-                    'Y8' => [
-                        'cname' => 'Y8',
-                        'detail' => 'Y8',
+                    'Z8' => [
+                        'cname' => 'Z8',
+                        'detail' => 'Z8',
                     ],
-                    'Y9' => [
-                        'cname' => 'Y9',
-                        'detail' => 'Y9',
+                    'Z9' => [
+                        'cname' => 'Z9',
+                        'detail' => 'Z9',
                     ],
-                    'Y10' => [
-                        'cname' => 'Y10',
-                        'detail' => 'Y10',
+                    'Z10' => [
+                        'cname' => 'Z10',
+                        'detail' => 'Z10',
                     ],
-                    'Y11' => [
-                        'cname' => 'Y11',
-                        'detail' => 'Y11',
+                    'Z11' => [
+                        'cname' => 'Z11',
+                        'detail' => 'Z11',
                     ],
-                    'Y12' => [
-                        'cname' => 'Y12',
-                        'detail' => 'Y12',
+                    'Z12' => [
+                        'cname' => 'Z12',
+                        'detail' => 'Z12',
                     ],
-                    'Y13' => [
-                        'cname' => 'Y13',
-                        'detail' => 'Y13',
+                    'Z13' => [
+                        'cname' => 'Z13',
+                        'detail' => 'Z13',
                     ],
-                    'Y14' => [
-                        'cname' => 'Y14',
-                        'detail' => 'Y14',
+                    'Z14' => [
+                        'cname' => 'Z14',
+                        'detail' => 'Z14',
                     ],
-                    'Y15' => [
-                        'cname' => 'Y15',
-                        'detail' => 'Y15',
+                    'Z15' => [
+                        'cname' => 'Z15',
+                        'detail' => 'Z15',
                     ],
-                    'Y16' => [
-                        'cname' => 'Y16',
-                        'detail' => 'Y16',
+                    'Z16' => [
+                        'cname' => 'Z16',
+                        'detail' => 'Z16',
                     ],
-                    'Y17' => [
-                        'cname' => 'Y17',
-                        'detail' => 'Y17',
+                    'Z17' => [
+                        'cname' => 'Z17',
+                        'detail' => 'Z17',
                     ],
-                    'Y18' => [
-                        'cname' => 'Y18',
-                        'detail' => 'Y18',
+                    'Z18' => [
+                        'cname' => 'Z18',
+                        'detail' => 'Z18',
                     ],
-                    'Y19' => [
-                        'cname' => 'Y19',
-                        'detail' => 'Y19',
+                    'Z19' => [
+                        'cname' => 'Z19',
+                        'detail' => 'Z19',
                     ],
-                    'Y20' => [
-                        'cname' => 'Y20',
-                        'detail' => 'Y20',
+                    'Z20' => [
+                        'cname' => 'Z20',
+                        'detail' => 'Z20',
                     ],
-                    'Y21' => [
-                        'cname' => 'Y21',
-                        'detail' => 'Y21',
+                    'Z21' => [
+                        'cname' => 'Z21',
+                        'detail' => 'Z21',
                     ],
-                    'Y22' => [
-                        'cname' => 'Y22',
-                        'detail' => 'Y22',
+                    'Z22' => [
+                        'cname' => 'Z22',
+                        'detail' => 'Z22',
                     ],
-                    'Y23' => [
-                        'cname' => 'Y23',
-                        'detail' => 'Y23',
+                    'Z23' => [
+                        'cname' => 'Z23',
+                        'detail' => 'Z23',
                     ],
-                    'Y24' => [
-                        'cname' => 'Y24',
-                        'detail' => 'Y24',
+                    'Z24' => [
+                        'cname' => 'Z24',
+                        'detail' => 'Z24',
                     ],
-                    'Y25' => [
-                        'cname' => 'Y25',
-                        'detail' => 'Y25',
+                    'Z25' => [
+                        'cname' => 'Z25',
+                        'detail' => 'Z25',
                     ],
-                    'Y26' => [
-                        'cname' => 'Y26',
-                        'detail' => 'Y26',
+                    'Z26' => [
+                        'cname' => 'Z26',
+                        'detail' => 'Z26',
                     ],
-                    'Y27' => [
-                        'cname' => 'Y27',
-                        'detail' => 'Y27',
+                    'Z27' => [
+                        'cname' => 'Z27',
+                        'detail' => 'Z27',
                     ],
-                    'Y28' => [
-                        'cname' => 'Y28',
-                        'detail' => 'Y28',
+                    'Z28' => [
+                        'cname' => 'Z28',
+                        'detail' => 'Z28',
                     ],
-                    'Y29' => [
-                        'cname' => 'Y29',
-                        'detail' => 'Y29',
+                    'Z29' => [
+                        'cname' => 'Z29',
+                        'detail' => 'Z29',
                     ],
-                    'Y30' => [
-                        'cname' => 'Y30',
-                        'detail' => 'Y30',
+                    'Z30' => [
+                        'cname' => 'Z30',
+                        'detail' => 'Z30',
                     ],
-                    'Y31' => [
-                        'cname' => 'Y31',
-                        'detail' => 'Y31',
+                    'Z31' => [
+                        'cname' => 'Z31',
+                        'detail' => 'Z31',
                     ],
-                    'Y32' => [
-                        'cname' => 'Y32',
-                        'detail' => 'Y32',
+                    'Z32' => [
+                        'cname' => 'Z32',
+                        'detail' => 'Z32',
                     ],
-                    'Y33' => [
-                        'cname' => 'Y33',
-                        'detail' => 'Y33',
+                    'Z33' => [
+                        'cname' => 'Z33',
+                        'detail' => 'Z33',
                     ],
-                    'Y34' => [
-                        'cname' => 'Y34',
-                        'detail' => 'Y34',
+                    'Z34' => [
+                        'cname' => 'Z34',
+                        'detail' => 'Z34',
                     ],
-                    'Y35' => [
-                        'cname' => 'Y35',
-                        'detail' => 'Y35',
+                    'Z35' => [
+                        'cname' => 'Z35',
+                        'detail' => 'Z35',
                     ],
-                    'Y36' => [
-                        'cname' => 'Y36',
-                        'detail' => 'Y36',
+                    'Z36' => [
+                        'cname' => 'Z36',
+                        'detail' => 'Z36',
                     ],
-                    'Y37' => [
-                        'cname' => 'Y37',
-                        'detail' => 'Y37',
+                    'Z37' => [
+                        'cname' => 'Z37',
+                        'detail' => 'Z37',
                     ],
-                    'Y38' => [
-                        'cname' => 'Y38',
-                        'detail' => 'Y38',
+                    'Z38' => [
+                        'cname' => 'Z38',
+                        'detail' => 'Z38',
                     ],
-                    'Y39' => [
-                        'cname' => 'Y39',
-                        'detail' => 'Y39',
+                    'Z39' => [
+                        'cname' => 'Z39',
+                        'detail' => 'Z39',
                     ],
-                    'Y40' => [
-                        'cname' => 'Y40',
-                        'detail' => 'Y40',
+                    'Z40' => [
+                        'cname' => 'Z40',
+                        'detail' => 'Z40',
                     ],
-                    'Y41' => [
-                        'cname' => 'Y41',
-                        'detail' => 'Y41',
+                    'Z41' => [
+                        'cname' => 'Z41',
+                        'detail' => 'Z41',
                     ],
-                    'Y42' => [
-                        'cname' => 'Y42',
-                        'detail' => 'Y42',
+                    'Z42' => [
+                        'cname' => 'Z42',
+                        'detail' => 'Z42',
                     ],
-                    'Y43' => [
-                        'cname' => 'Y43',
-                        'detail' => 'Y43',
+                    'Z43' => [
+                        'cname' => 'Z43',
+                        'detail' => 'Z43',
                     ],
-                    'Y44' => [
-                        'cname' => 'Y44',
-                        'detail' => 'Y44',
+                    'Z44' => [
+                        'cname' => 'Z44',
+                        'detail' => 'Z44',
                     ],
-                    'Y45' => [
-                        'cname' => 'Y45',
-                        'detail' => 'Y45',
+                    'Z45' => [
+                        'cname' => 'Z45',
+                        'detail' => 'Z45',
                     ],
-                    'Y46' => [
-                        'cname' => 'Y46',
-                        'detail' => 'Y46',
+                    'Z46' => [
+                        'cname' => 'Z46',
+                        'detail' => 'Z46',
                     ],
                 ],
             ],
@@ -3252,7 +3361,7 @@ class XinDongService extends ServiceBase
         $offset = ($page - 1) * $size;
         $ElasticSearchService->addSize($size);
         $ElasticSearchService->addFrom($offset);
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202209');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202211');
         $responseArr = @json_decode($responseJson, true);
         // CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
         //     [
@@ -3308,7 +3417,10 @@ class XinDongService extends ServiceBase
         return !empty($res) ? $res : [];
     }
 
-    function getEsBasicInfoV3($value, $field = 'ENTNAME'): array
+    function getEsBasicInfoV3($value, $field = 'ENTNAME',$configs = [
+        'needs_logo'=>true,
+        'needs_email'=>true,
+    ]): array
     {
 
         $ElasticSearchService = new ElasticSearchService();
@@ -3320,7 +3432,7 @@ class XinDongService extends ServiceBase
         $offset = ($page - 1) * $size;
         $ElasticSearchService->addSize($size);
         $ElasticSearchService->addFrom($offset);
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202209');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202211');
         $responseArr = @json_decode($responseJson, true);
         // CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
         //     [
@@ -3333,17 +3445,26 @@ class XinDongService extends ServiceBase
         $hits = $responseArr['hits']['hits'];
 
         foreach ($hits as &$dataItem) {
-            $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
-            $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
-            $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
-            $dataItem['_source']['logo'] = (new XinDongService())->getLogoByEntIdV2($dataItem['_source']['companyid']);
+            if($configs['needs_email']){
+                $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
+                $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
+                $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
+            }
+
+            if($configs['needs_logo']){
+                $dataItem['_source']['logo'] = (new XinDongService())->getLogoByEntIdV2($dataItem['_source']['companyid']);
+            }
+
 
             // 添加tag
-            $dataItem['_source']['tags'] = array_values(
-                (new XinDongService())::getAllTagesByData(
-                    $dataItem['_source']
-                )
-            );
+            if($configs['needs_tags']){
+                $dataItem['_source']['tags'] = array_values(
+                    (new XinDongService())::getAllTagesByData(
+                        $dataItem['_source']
+                    )
+                );
+            }
+
 
             // 公司简介
             $tmpArr = explode('&&&', trim($dataItem['_source']['gong_si_jian_jie']));
@@ -3873,7 +3994,7 @@ class XinDongService extends ServiceBase
                 ];
             }
         }
-        
+
         //文本匹配度  张三0808    张三
         similar_text($tobeMatch, $target, $perc);
         if ($perc > 80) {

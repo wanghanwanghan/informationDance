@@ -47,7 +47,7 @@ class AdminPrivilegedUser extends ServiceBase
             AdminRole::getRolePerms($dataItem["role_id"]);              
 
         }
-        CommonService::getInstance()->log4PHP('roles '.json_encode($this->roles));
+//        CommonService::getInstance()->log4PHP('roles '.json_encode($this->roles));
 
     }
 

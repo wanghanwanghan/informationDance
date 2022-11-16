@@ -151,6 +151,12 @@ class SouKeController extends ControllerBase
 
             //经营范围
             ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')),"OPSCOPE")
+            //jiejian  公司简介
+            ->SetQueryByGongSiJianJie(explode(',',trim($this->request()->getRequestParam('jiejian'))),"gong_si_jian_jie")
+            //app名称
+            ->SetQueryByGongSiJianJie(explode(',',trim($this->request()->getRequestParam('app'))),"app")
+            //iso最小数量
+            ->SetQueryByIsonNums(intval($this->request()->getRequestParam('iso_num')),0,"iso")
             //数字经济及其核心产业
             ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
             // 搜索文案 智能搜索
@@ -199,7 +205,7 @@ class SouKeController extends ControllerBase
             ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_basic_opscope')),'OPSCOPE')
             //不包含简介
             ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_jiejian')),'gong_si_jian_jie')
-            //不包含简介
+            //不包含app
             ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_app')),'app')
             ->addSize($size)
             //->addSort("_id","desc")
@@ -212,12 +218,6 @@ class SouKeController extends ControllerBase
             // 格式化下金额
             ->formatEsMoney('REGCAP')
         ;
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'hits_count' =>  count($companyEsModel->return_data['hits']['hits'])
-            ])
-        );
 
 
         foreach($companyEsModel->return_data['hits']['hits'] as &$dataItem){
@@ -1038,7 +1038,7 @@ class SouKeController extends ControllerBase
         $ElasticSearchService->addSize(1) ;
         $ElasticSearchService->addFrom(0) ;
 
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202209');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202211');
         $responseArr = @json_decode($responseJson,true);
         CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
                 [

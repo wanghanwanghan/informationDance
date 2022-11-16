@@ -229,12 +229,6 @@ class RunDealApiSouKe extends AbstractCronTask
         $searchOption = json_decode($requestDataArr['searchOption'],true);
         $datas = [];
 
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                __CLASS__.__FUNCTION__ .__LINE__,
-//                '$datas' => $datas
-//            ])
-//        );
 
         $size = 3500;
         $offset = 0;
@@ -287,16 +281,6 @@ class RunDealApiSouKe extends AbstractCronTask
                 //->addSort("_id","desc")
                 //设置默认值 不传任何条件 搜全部
                 ;
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    __CLASS__.__FUNCTION__ .__LINE__,
-//                    '$lastId' => $lastId,
-//                    '$totalNums' => $totalNums,
-//                    '$fieldsArr' => $fieldsArr,
-//                    'generate data  . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
-//                    ' costs seconds '=>microtime(true) - $start
-//                ])
-//            );
 
             if($lastId>0){
                 $companyEsModel->addSearchAfterV1($lastId);
@@ -311,31 +295,11 @@ class RunDealApiSouKe extends AbstractCronTask
 
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
                 $lastId = $dataItem['_id'];
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        '$lastId' => $lastId
-//                    ])
-//                );
                 $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmail($dataItem);
                 $dataItem['_source']['last_postal_address'] = $addresAndEmailData['last_postal_address'];
                 $dataItem['_source']['last_email'] = $addresAndEmailData['last_email'];
 
-               // $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntId($dataItem['_source']['xd_id']);
 
-                // 添加tag
-//                $dataItem['_source']['tags'] = array_values(
-//                    (new XinDongService())::getAllTagesByData(
-//                        $dataItem['_source']
-//                    )
-//                );
-
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        '$nums' => $nums
-//                    ])
-//                );
                 $nums ++;
 
                 // 官网
@@ -456,13 +420,6 @@ class RunDealApiSouKe extends AbstractCronTask
                 LIMIT $limit
             "
         );
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                __CLASS__.__FUNCTION__ .__LINE__,
-//                'memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
-//            ])
-//        );
-
         foreach($allInitDatas as $InitData){
             DownloadSoukeHistory::setTouchTime(
                 $InitData['id'],date('Y-m-d H:i:s')

@@ -143,11 +143,7 @@ class RunDealFinanceCompanyDataNew extends AbstractCronTask
       * */
     function run(int $taskId, int $workerIndex): bool
     {
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .' stop ',
-            ])
-        );
+
         return true;
         //防止重复跑
         if(

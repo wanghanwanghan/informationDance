@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Business\AdminV2\Mrxd\Tools;
 
+use App\Crontab\CrontabList\RunDealZhaoTouBiao;
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminNew\AdminNewUser;
 use App\HttpController\Models\AdminNew\ConfigInfo;
@@ -16,10 +17,12 @@ use App\HttpController\Models\AdminV2\DataModelExample;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
+use App\HttpController\Models\AdminV2\MobileCheckInfo;
 use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
 use App\HttpController\Models\BusinessBase\CompanyClue;
+use App\HttpController\Models\MRXD\TmpInfo;
 use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\RDS3\Company;
@@ -38,6 +41,7 @@ use App\HttpController\Models\AdminV2\AdminUserFinanceUploadRecord;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
+use App\HttpController\Service\Common\XlsWriter;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
@@ -372,9 +376,9 @@ class ToolsController extends ControllerBase
                         'file_name' => $fileName,
                         'new_file_name' => '',
                         'remark' => json_encode([
-                            'fill_position_by_name' => intval($requestData['get_zhiwei']),
-                            'fill_weixin_by_phone' => intval($requestData['get_wxname']),
-                            'fill_name_and_position_by_weixin' => intval($requestData['get_namezhiwei']),
+                            'fill_position_by_name' => $requestData['get_zhiwei']?1:0,
+                            'fill_weixin_by_phone' => $requestData['get_wxname']?1:0,
+                            'fill_name_and_position_by_weixin' => $requestData['get_namezhiwei']?1:0,
                         ]),
                         'type' => ToolsFileLists::$type_upload_pull_gong_kai_contact,
                         'state' => $requestData['state']?:'',
@@ -396,9 +400,9 @@ class ToolsController extends ControllerBase
                                 ]
                             ),
                             'params_json' => json_encode([
-                                'fill_position_by_name' => intval($requestData['get_zhiwei']),
-                                'fill_weixin_by_phone' => intval($requestData['get_wxname']),
-                                'fill_name_and_position_by_weixin' => intval($requestData['get_namezhiwei']),
+                                'fill_position_by_name' => $requestData['get_zhiwei']?1:0,
+                                'fill_weixin_by_phone' => $requestData['get_wxname']?1:0,
+                                'fill_name_and_position_by_weixin' => $requestData['get_namezhiwei']?1:0,
                             ]),
                             'type' => ToolsFileLists::$type_upload_pull_gong_kai_contact,
                             'remark' => '',
@@ -445,10 +449,10 @@ class ToolsController extends ControllerBase
                         'file_name' => $fileName,
                         'new_file_name' => '',
                         'remark' => json_encode([
-                            'fill_position_by_name' => intval($requestData['get_zhiwei']),
-                            'fill_weixin_by_phone' => intval($requestData['get_wxname']),
-                            'fill_name_and_position_by_weixin' => intval($requestData['get_namezhiwei']),
-                            'filter_qcc_phone' => intval($requestData['get_filterQccPhone']),
+                            'fill_position_by_name' => $requestData['get_zhiwei']?1:0,
+                            'fill_weixin_by_phone' => $requestData['get_wxname']?1:0,
+                            'fill_name_and_position_by_weixin' => $requestData['get_namezhiwei']?1:0,
+                            'filter_qcc_phone' => $requestData['get_filterQccPhone']?1:0,
                         ]),
                         'type' => ToolsFileLists::$type_upload_pull_fei_gong_kai_contact,
                         'state' => $requestData['state']?:'',
@@ -470,9 +474,10 @@ class ToolsController extends ControllerBase
                                 ]
                             ),
                             'params_json' => json_encode([
-                                'fill_position_by_name' => intval($requestData['get_zhiwei']),
-                                'fill_weixin_by_phone' => intval($requestData['get_wxname']),
-                                'fill_name_and_position_by_weixin' => intval($requestData['get_namezhiwei']),
+                                'fill_position_by_name' => $requestData['get_zhiwei']?1:0,
+                                'fill_weixin_by_phone' => $requestData['get_wxname']?1:0,
+                                'fill_name_and_position_by_weixin' => $requestData['get_namezhiwei']?1:0,
+                                'filter_qcc_phone' => $requestData['get_filterQccPhone']?1:0,
                             ]),
                             'type' => ToolsFileLists::$type_upload_pull_fei_gong_kai_contact,
                             'remark' => '',
@@ -1097,6 +1102,77 @@ class ToolsController extends ControllerBase
 
         }
 
+        //125 根据日期查询新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）
+        if($requestData['type'] == 125 ){
+            $res = RunDealZhaoTouBiao::exportDataV8($key);
+            $response[] = $res['filename_url'];
+        }
+
+        //126 根据日期发送新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）
+        if($requestData['type'] == 126 ){
+            $response[] = RunDealZhaoTouBiao::sendEmailV4($key,[
+                'tianyongshan@meirixindong.com',
+                'minglongoc@me.com',
+                'zhengmeng@meirixindong.com',
+                'luoyuting@huoyan.cn',
+                'liqingfeng@huoyan.cn',
+            ]);
+
+        }
+
+        //空号验证的时候：有多少其他错误
+        if($requestData['type'] == 127 ){
+
+            $res2 = MobileCheckInfo::findAllByCondition([
+                'status' => 999,
+            ]);
+
+            $response[] = count($res2);
+        }
+
+        //空号验证里的其他错误，重新拉取（入参格式：重拉的数量）
+        if($requestData['type'] == 128 ){
+
+            $res2 = MobileCheckInfo::reCheck([
+                'status' => 999,
+            ],intval($key));
+
+            $response[] = $res2 ;
+        }
+
+        //
+        if($requestData['type'] == 129 ){
+
+            $res = RunDealZhaoTouBiao::exportDataV5($key);
+            $response[] = $res['filename_url'];
+        }
+
+        //
+        if($requestData['type'] == 130 ){
+
+            $data = [];
+
+            $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
+                " SELECT * FROM zhao_tou_biao_key03 WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
+            );
+
+            $writer = new XlsWriter();
+
+            $writer->setAuthor('Some Author');
+            foreach ($datas as $row) {
+                $writer->writeSheetRow('Sheet1', $row);
+            }
+
+            $writer->writeToStdOut();
+            $filename = rand(1,1000)."example.xlsx";
+            $writer->SetOut(TEMP_FILE_PATH.$filename);
+            //$writer->writeToFile('example.xlsx');
+            //echo $writer->writeToString();
+
+            $response[] = 'http://api.test.meirixindong.com/Static/Temp/'.$filename;
+        }
+
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -1141,7 +1217,13 @@ class ToolsController extends ControllerBase
             105 => '根据信用代码导出企业利润（入参格式:信用代码）',
             110 => '根据信用代码查询资产负债（入参格式:信用代码）',
             115 => '根据信用代码导出资产负债（入参格式:信用代码）',
-            120 => '根据json查询导出资产负债（入参格式:信用代码）',
+            //120 => '根据json查询导出资产负债（入参格式:信用代码）',
+            125 => '根据日期查询新的招投标邮件对应的csv文件（入参格式:日期|如2022-11-11）',
+            126 => '根据日期发送新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）',
+            127 => '空号验证的时候：有多少其他错误',
+            128 => '空号验证里的其他错误，重新拉取（入参格式：重拉的数量）',
+            129 => '根据日期查询新的招投标邮件对应的xlsx文件（入参格式:日期|如2022-11-11）',
+            130 => '测试xlswriter（入参格式:日期|如2022-11-11）',
         ],'成功');
     }
 

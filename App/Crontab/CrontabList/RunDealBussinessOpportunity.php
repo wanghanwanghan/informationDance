@@ -251,16 +251,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(
             " WHERE status =  ".AdminUserBussinessOpportunityUploadRecord::$status_init
         );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                [
-                    'delEmptyMobile'=>[
-                        'msg' => 'start',
-                    ]
-                ]
-            ])
-        );
+
         foreach ($rawDatas as $rawDataItem){
             if($rawDataItem['touch_time']>1){
                 continue;
@@ -300,52 +291,14 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 }
                 $code1 = $dataArr[1];
                 $mobileString = $dataArr[2];
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        [
-//                            'delEmptyMobile'=>[
-//                                'read_data' => [
-//                                    '$name1'=>$name1,
-//                                    '$code1'=>$code1,
-//                                    '$mobileString'=>$mobileString,
-//                                ],
-//                            ]
-//                        ]
-//                    ])
-//                );
                 //如果是需要去空号
                 if($rawDataItem['del_empty']){
                     $mobileStr = str_replace(";", ",", trim($mobileString));
-//                    CommonService::getInstance()->log4PHP(
-//                        json_encode([
-//                            __CLASS__.__FUNCTION__ .__LINE__,
-//                            [
-//                                'delEmptyMobile'=>[
-//                                    'del_empty' => [
-//                                        '$mobileStr'=>$mobileStr,
-//                                    ],
-//                                ]
-//                            ]
-//                        ])
-//                    );
                     $newmobileStr = "";
                     if(!empty($mobileStr)){
                         $res = (new ChuangLanService())->getCheckPhoneStatus([
                             'mobiles' => $mobileStr,
                         ]);
-//                        CommonService::getInstance()->log4PHP(
-//                            json_encode([
-//                                __CLASS__.__FUNCTION__ .__LINE__,
-//                                [
-//                                    'delEmptyMobile'=>[
-//                                        'del_empty' => [
-//                                            'mobile_check_res'=>$res,
-//                                        ],
-//                                    ]
-//                                ]
-//                            ])
-//                        );
                         if (!empty($res['data'])){
                             foreach($res['data'] as $dataItem){
                                 if($dataItem['status'] == 1){
@@ -374,33 +327,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
                 // 拆分出来
                 $mobilesArr = explode(';',trim($mobileString));
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        [
-//                            'delEmptyMobile'=>[
-//                                'del_empty' => [
-//                                    '$mobileString'=>$mobileString,
-//                                    '$mobilesArr'=>$mobilesArr,
-//                                ],
-//                            ]
-//                        ]
-//                    ])
-//                );
                 if($mobileString<=0){
-//                    CommonService::getInstance()->log4PHP(
-//                        json_encode([
-//                            __CLASS__.__FUNCTION__ .__LINE__,
-//                            [
-//                                'delEmptyMobile'=>[
-//                                    'empty' => [
-//                                        '$mobileString'=>$mobileString,
-//                                        '$mobilesArr'=>$mobilesArr,
-//                                    ],
-//                                ]
-//                            ]
-//                        ])
-//                    );
                     BussinessOpportunityDetails::addRecordV2(
                         [
                             'upload_record_id' => $rawDataItem['id'], //
@@ -455,16 +382,6 @@ class RunDealBussinessOpportunity extends AbstractCronTask
     static function  addWeChatInfo(){
         $rawDatas = AdminUserWechatInfoUploadRecord::findBySql(
             " WHERE status =  ".AdminUserWechatInfoUploadRecord::$status_init
-        );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                [
-                    'addWeChatInfo'=>[
-                        'msg' => 'start ' ,
-                    ]
-                ]
-            ])
         );
         foreach ($rawDatas as $rawDataItem){
             if($rawDataItem['touch_time']>1){
@@ -565,9 +482,6 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         $newReords = [];
         foreach ($allRecords as $Record){
             $mobile = trim($Record['mobile']);
-//            if(empty($mobile)){
-//                continue;
-//            }
             $newReords[$Record['entName']][$mobile]  = $mobile;
         }
 
@@ -593,28 +507,10 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
         if($bussinessOpportunity['get_all_field']){
             yield $datas[] =  $title;
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        'generateNewFile'=>[
-                            'add field' => '',
-                        ]
-                    ]
-                ])
-            );
+
         }
         else{
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    [
-                        'generateNewFile'=>[
-                            'add no field' => '',
-                        ]
-                    ]
-                ])
-            );
+
         }
         foreach ($newReords as $entName => $mobilesArr){
             //
@@ -645,19 +541,6 @@ class RunDealBussinessOpportunity extends AbstractCronTask
             else{
                 $res = (new XinDongService())->getEsBasicInfoV3($entName,'ENTNAME');
             }
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    __CLASS__.__FUNCTION__ .__LINE__,
-//                    [
-//                        'getYieldCompanyData'=>[
-//                            '$res'=>$res,
-//                            '$mobilesArr'=>$mobilesArr,
-//                            '$code'=>$code,
-//                            '$entName'=>$entName,
-//                        ]
-//                    ]
-//                ])
-//            );
 
             foreach ($allFields as $field=>$cname){
                 if(
@@ -690,12 +573,6 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                     $field=='NIC_ID' &&
                    !empty( $res['NIC_ID'])
                 ){
-//                    $nicRes = NicCode::findNICID($res['NIC_ID']);
-//                    CommonService::getInstance()->log4PHP(json_encode([
-//                        'NIC_ID'=>$res['NIC_ID'],
-//                        '$nicRes'=>$nicRes,
-//                    ]));nic_full_name
-//                    $res['NIC_ID'] =  $nicRes['industry'];
                     $res['NIC_ID'] =  $res['nic_full_name'];
                 }
 
@@ -720,6 +597,17 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                     $res['szjjcy'] =  $res['szjjcy']?'有':'无';
                 }
 
+                //iso_tags
+                if(
+                    $field=='iso_tags'
+                ){
+                    $str = "";
+                    foreach ($dataItem['iso_tags'] as $subItem){
+                        $str.= $subItem['cert_project'];
+                    }
+                    $dataItem['iso_tags'] =  $str;
+                }
+
 
                 if(
                     $field=='jin_chu_kou'
@@ -728,11 +616,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 }
 
 
-                if(
-                    $field=='iso'
-                ){
-                    $res['iso'] =  $res['iso']?'有':'无';
-                }
+
 
                 // 高新技术
                 if(
@@ -770,70 +654,17 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                 $newReords[$Record['entName']][$mobile]  = $mobile;
             }
             foreach ($newReords as $entName => $mobilesArr){
-//                $details =  BussinessOpportunityDetails::findOneByName($entName,$id);
-//                $details =  $details->toArray();
-//                $code = trim($details['entCode']);
 
                 $retData =  (new LongXinService())
                     ->setCheckRespFlag(true)
                     ->getEntLianXi([
                         'entName' => $entName,
                     ])['result'];
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        __CLASS__.__FUNCTION__ .__LINE__,
-//                        [
-//                            'getYieldPublicContactData'=>[
-//                                '$retData'=>$retData,
-//                                '$entName'=>$entName
-//                            ]
-//                        ]
-//                    ])
-//                );
                 $retData = LongXinService::complementEntLianXiMobileState($retData);
                 $retData = LongXinService::complementEntLianXiPosition($retData, $entName);
 
-//                yield $datas[] = [
-//                    '企业名',
-//                    '微信名',
-//                    '联系人职位[url]',
-//                    '联系方式来源[url]',
-//                    '联系方式唯一标识[url]',
-//                    'ltype[url]',
-//                    '联系人姓名[url]',
-//                    '联系方式权重[url]',
-//                    '手机归属地/座机区号[url]',
-//                    '联系方式来源网页链接[url]',
-//                    '联系方式[url]',
-//                    '联系方式类型（手机/座机/邮箱）[url]',
-//                    'mobile_check_res[url]',
-//                    '手机号码状态[url]',
-//                    'url联系人姓名匹配到的职位[url]',
-//                    '联系人名称（疑似）[微信匹配]',
-//                    '职位（疑似）[微信匹配]',
-//                    '匹配类型[微信匹配]',
-//                    '匹配子类型[微信匹配]',
-//                    '匹配值[微信匹配]',
-//                ];
                 foreach($retData as $datautem){
-                    /**
-                    [
-                    {
-                    "duty": "公司最高代表",
-                    "source": "黄页",
-                    "lid": 199752834,
-                    "ltype": "1",
-                    "name": "严庆",
-                    "idx": "A",
-                    "quhao": "广东省深圳市",
-                    "url": "http://www.czvv.com/huangye/1516626.html",
-                    "lianxi": "13823539096",
-                    "lianxitype": "手机",
-                    "mobile_check_res": "1",
-                    "mobile_check_res_cname": "正常",
-                    "staff_position": "--"
-                    }]
-                     */
+
                     if($datautem['lianxitype'] != '手机'){
                         yield $datas[] = array_values(
                             array_merge(
@@ -863,18 +694,6 @@ class RunDealBussinessOpportunity extends AbstractCronTask
                     }
                     //用微信匹配
                     $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($entName,$matchedWeiXinName['nickname']);
-//                    CommonService::getInstance()->log4PHP(
-//                        json_encode([
-//                            __CLASS__.__FUNCTION__ .__LINE__,
-//                            [
-//                                'getYieldPublicContactData'=>[
-//                                    'match_by_weixin_res1'=> $tmpRes,
-//                                    'nickname2'=> $matchedWeiXinName['nickname'],
-//                                    '$entName'=> $entName,
-//                                ]
-//                            ]
-//                        ])
-//                    );
                     yield $datas[] = array_values(
                         array_merge(
                             [
@@ -903,11 +722,6 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         $datas = [];
 
         //如果不需要拉取公开的联系人
-//        if(!$bussinessOpportunity['pull_api']){
-//            return $datas;
-//        }
-
-//        $allRecords = BussinessOpportunityDetails::findByUploadId($id);
         $newReords = [];
         foreach ($allRecords as $Record){
             $mobile = trim($Record['mobile']);
@@ -927,17 +741,9 @@ class RunDealBussinessOpportunity extends AbstractCronTask
 
         foreach ($allRecords as $recordItem){
             if($recordItem['mobile']<=0 ){
-//                yield $datas[] =  [
-//                    'entName' =>$recordItem['entName'],
-//                    'mobile'=>$recordItem['mobile'],
-//                    'weixin'=>'',
-//                ];
                 continue;
             }
 
-//            $details =  BussinessOpportunityDetails::findOneByName($recordItem['entName'],$id);
-//            $details =  $details->toArray();
-//            $code = trim($details['entCode']);
 
             //匹配微信名字
             $matchedWeiXinName = WechatInfo::findByPhoneV2(($recordItem['mobile']));
@@ -993,16 +799,7 @@ class RunDealBussinessOpportunity extends AbstractCronTask
         $rawDatas = AdminUserBussinessOpportunityUploadRecord::findBySql(
             " WHERE status =  ".AdminUserBussinessOpportunityUploadRecord::$status_check_mobile_success
         );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                [
-                    'generateNewFile'=>[
-                        'msg' => 'start',
-                    ]
-                ]
-            ])
-        );
+
         foreach ($rawDatas as $rawDataItem){
             if($rawDataItem['touch_time']>1){
                 continue;

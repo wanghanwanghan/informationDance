@@ -62,9 +62,6 @@ class ConfigInfo extends ModelBase
     }
 
     public static function setIsRunning($crontabName){
-        CommonService::getInstance()->log4PHP(
-            'setIsRunning '.$crontabName
-        );
 
         $info = ConfigInfo::findByName('crontab');
         $config = $info->getAttr("value");
@@ -81,9 +78,6 @@ class ConfigInfo extends ModelBase
         $configArr[$crontabName]['start_time'] = date('Y-m-d H:i:s');
         $configArr[$crontabName]['is_running'] = 1;
 
-//        CommonService::getInstance()->log4PHP(
-//            'update '.json_encode($configArr)
-//        );
         return $info->update([
             'value' => json_encode($configArr),
         ]);

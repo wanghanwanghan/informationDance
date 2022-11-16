@@ -501,6 +501,14 @@ class CommonService extends ServiceBase
             //发送邮件
             $mailer->sendTo($sendTo, $mimeBean);
         } catch (\Throwable $e) {
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'sendEmailV2' => [
+                        '$e'=>$e->getMessage(),
+                    ]
+                ])
+            );
             return $this->writeErr($e, __FUNCTION__);
         }
 

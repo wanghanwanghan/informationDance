@@ -126,11 +126,7 @@ class RunDealEmailReceiver extends AbstractCronTask
         if(
             !ConfigInfo::checkCrontabIfCanRun(__CLASS__)
         ){
-            return     CommonService::getInstance()->log4PHP(json_encode(
-                [
-                    __CLASS__ . ' is already running  ',
-                ]
-            ));
+            return    true;
         }
 
         //设置为正在执行中
@@ -164,16 +160,6 @@ class RunDealEmailReceiver extends AbstractCronTask
         $totalCount = $mail->mailTotalCount();
         $msgcount = $totalCount;
 
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                __CLASS__.__FUNCTION__ .__LINE__,
-//                'pull_Email_lists'=>[
-//                    'msg'=>'start',
-//                    'pull_by_date'=>$date,
-//                    'pull_by_date_res_count'=>$totalCount,
-//                ]
-//            ])
-//        );
 
         //单纯加数据
         for ($msgcount = $totalCount; $msgcount > 0; $msgcount--) {
@@ -207,18 +193,6 @@ class RunDealEmailReceiver extends AbstractCronTask
                 'raw_return' => stripslashes(json_encode($mail)),
                 'date' => date('Y-m-d H:i:s',strtotime($mailHeader['date'])) ,
             ];
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    __CLASS__.__FUNCTION__ .__LINE__,
-//                    'pull_Email_lists_attachs'=>[
-//                        'msg'=>'add_to_db',
-//                        '$attachs'=>$attachs,
-//                        '$mailHeader'=>$mailHeader,
-//                        'email_id'=>intval(@imap_uid($source, $msgcount)),
-//                        'subject'=>stripslashes($mailHeader['subject']),
-//                    ]
-//                ])
-//            );
             MailReceipt::addRecordV2(
                 $datas
             );
@@ -237,17 +211,6 @@ class RunDealEmailReceiver extends AbstractCronTask
                     `status` =  ".MailReceipt::$status_init." 
                 "
         );
-//        CommonService::getInstance()->log4PHP(
-//            json_encode(
-//                [
-//                    'receive_email.lest_deal_with_it'=>[
-//                        'deal_by_date'=>$day,
-//                        'deal_by_sender'=>$emailAddress,
-//                        'data_count'=>count($emails),
-//                    ]
-//                ]
-//            )
-//        );
         foreach ($emails as $email){
 
             if(
@@ -262,23 +225,6 @@ class RunDealEmailReceiver extends AbstractCronTask
                    ]
                )
             ){
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode(
-//                        [
-//                            'receive_email.lest_deal_with_it'=>[
-//                                'msg'=>'invalid_email_sender',
-//                                'email_sender'=>$email['from'] ,
-//                                'valid_email_sender_lists'=>[
-//                                    'tianyongshan@meirixindong.com',
-//                                    'wanghan@meirixindong.com',
-//                                    'liyunxian@meirixindong.com',
-//                                    'guoxinxia@meirixindong.com',
-//                                    '10000@exmail.weixin.qq.com'
-//                                ],
-//                            ]
-//                        ]
-//                    )
-//                );
                //其他人的文件  直接更新为其他状态
                 MailReceipt::updateById($email['id'],[
                     'status'=>MailReceipt::$status_succeed
@@ -286,38 +232,12 @@ class RunDealEmailReceiver extends AbstractCronTask
                 continue;
             }
             else{
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode(
-//                        [
-//                            'receive_email.lest_deal_with_it'=>[
-//                                'msg'=>'valid_email_sender',
-//                                'email_sender'=>$email['from'] ,
-//                                'valid_email_sender_lists'=>[
-//                                    'tianyongshan@meirixindong.com',
-//                                    'wanghan@meirixindong.com',
-//                                    'liyunxian@meirixindong.com',
-//                                    'guoxinxia@meirixindong.com',
-//                                    '10000@exmail.weixin.qq.com'
-//                                ],
-//                            ]
-//                        ]
-//                    )
-//                );
+
             }
 
             //解析保险数据id
             preg_match('/信动数据id01:&lt;&lt;&lt;(.*?)&gt;&gt;&gt;/',$email['body'],$match);
             $huizhongId = $match[1];
-//            CommonService::getInstance()->log4PHP(
-//                json_encode(
-//                    [
-//                        'receive_email.lest_deal_with_it'=>[
-//                            'msg'=>'try_decode_hui_zhong_id',
-//                            '$huizhongId'=>$huizhongId ,
-//                        ]
-//                    ]
-//                )
-//            );
             if($huizhongId){
                 MailReceipt::updateById($email['id'],[
                     'insurance_hui_zhong_id'=>intval($huizhongId),
@@ -326,16 +246,6 @@ class RunDealEmailReceiver extends AbstractCronTask
 
             preg_match('/信动数据id:&lt;&lt;&lt;(.*?)&gt;&gt;&gt;/',$email['body'],$match);
             $baoyaId = $match[1];
-//            CommonService::getInstance()->log4PHP(
-//                json_encode(
-//                    [
-//                        'receive_email.lest_deal_with_it'=>[
-//                            'msg'=>'try_decode_bao_ya_id',
-//                            '$baoyaId'=>$baoyaId ,
-//                        ]
-//                    ]
-//                )
-//            );
             if($baoyaId){
                 MailReceipt::updateById($email['id'],[
                     'insurance_id'=>intval($baoyaId),
@@ -350,17 +260,6 @@ class RunDealEmailReceiver extends AbstractCronTask
             }
 
             if(empty($InsuranceData)){
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode(
-//                        [
-//                            'receive_email.lest_deal_with_it'=>[
-//                                'msg'=>'empty_db_record_.decode_id_went_wrong?',
-//                                '$baoyaId'=>$baoyaId ,
-//                                '$huizhongId'=>$huizhongId ,
-//                            ]
-//                        ]
-//                    )
-//                );
                 MailReceipt::updateById($email['id'],['status' => MailReceipt::$status_failed]);
                 continue;
             }
@@ -370,17 +269,6 @@ class RunDealEmailReceiver extends AbstractCronTask
             //需要发短信了
             $res = SmsService::getInstance()->sendByTemplete(
                 $userData['phone'], 'SMS_249280572',[  ]);
-//            CommonService::getInstance()->log4PHP(
-//                json_encode(
-//                    [
-//                        'receive_email.lest_deal_with_it'=>[
-//                            'msg'=>'send_msg_to_user_.remind_them_to_check_conlsole_res.',
-//                            'phone'=>$userData['phone'] ,
-//                            'send_res'=>$res ,
-//                        ]
-//                    ]
-//                )
-//            );
             OperatorLog::addRecord(
                 [
                     'user_id' => $userData['id'],
@@ -619,15 +507,6 @@ class RunDealEmailReceiver extends AbstractCronTask
                     `status` =  ".InsuranceData::$status_init." 
                 "
         );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'send_consloe_data_to_bao_ya'=> [
-                    'msg'=>'start',
-                    'data_count'=>count($datas),
-                ],
-            ])
-        );
 
         foreach ($datas as $data){
             $insuranceDatas  = json_decode($data['post_params'],true);
@@ -726,15 +605,7 @@ class RunDealEmailReceiver extends AbstractCronTask
                     `status` =  ".InsuranceDataHuiZhong::$status_init." 
                 "
         );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'send_consloe_data_to_hui_zhong'=> [
-                    'msg'=>'start',
-                    'data_count'=>count($datas),
-                ],
-            ])
-        );
+
         foreach ($datas as $data){
             $insuranceDatas  = json_decode($data['post_params'],true);
             $insuranceDatas['id'] = $data['id'];

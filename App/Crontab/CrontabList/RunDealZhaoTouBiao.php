@@ -20,11 +20,13 @@ use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\OperatorLog;
+use App\HttpController\Models\MRXD\TmpInfo;
 use App\HttpController\Models\RDS3\HdSaic\ZhaoTouBiaoAll;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\Sms\SmsService;
+use App\HttpController\Service\Zip\ZipService;
 use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
 use EasySwoole\Mysqli\QueryBuilder;
 use Vtiful\Kernel\Format;
@@ -123,35 +125,6 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         ));
         //上传记录详情
         foreach ($datas as $dataItem){
-//            $tmp = [];
-//            foreach ($dataItem as $key=>$value){
-//                if(
-//                    in_array($key,['updated_at','source'])
-//                ){
-//                    continue ;
-//                }
-//
-//                // corexml 有可能超出限制 单独处理
-//                if(
-//                    in_array($key,['updated_at','source','corexml'])
-//                ){
-//                    $value =   substr($value, 0, 32767);
-//                }
-//                $tmp[$key] = $value?:'';
-//            }
-
-            // corexml 有可能超出字节限制 单独处理
-//            if(strlen($dataItem['corexml'])>32767){
-//                $tmpStrs = str_split ( $dataItem['corexml'], 32766 );
-//                $i = 1;
-//                foreach ($tmpStrs as $tmpItem){
-//                    $tmp['corexml_'.$i] = $tmpItem;
-//                    $i ++;
-//                }
-//            }
-//            else{
-//                $tmp['corexml'] = $dataItem['corexml'];
-//            }
 
             yield $returnDatas[] = [
                 '标题' => $dataItem['标题'] ?:'' , //
@@ -183,6 +156,9 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
         }
     }
+
+
+
      /*
       * step1:上传客户名单
       * step2:定时将客户名单解析到数据库
@@ -195,36 +171,32 @@ class RunDealZhaoTouBiao extends AbstractCronTask
       * */
     function run(int $taskId, int $workerIndex): bool
     {
-
-        //return  true;
-        //防止重复跑
-//        if(
-//            !ConfigInfo::checkCrontabIfCanRun(__CLASS__)
-//        ){
-//            return     CommonService::getInstance()->log4PHP(json_encode(
-//                [
-//                    __CLASS__ . ' is already running  ',
-//                ]
-//            ));
-//        }
-
         //设置为正在执行中
         ConfigInfo::setIsRunning(__CLASS__);
 
         $day = date('Y-m-d');
-        //$day = '2022-06-20';
-        //$day = '2022-07-14';
 
-        //生成文件 发邮件
+        //第一次的招投标
         $res = self::sendEmail($day);
-        return true ;   
+
+        //第二次的招投标
+        $week =  date('w',strtotime($day));
+        if($week == 5 ){
+            $res = self::sendEmailV4($day,[
+                'tianyongshan@meirixindong.com',
+                'minglongoc@me.com',
+                'zhengmeng@meirixindong.com',
+                'luoyuting@huoyan.cn',
+                'liqingfeng@huoyan.cn',
+            ]);
+        }
+
+        return true ;
     }
 
     static function sendEmail($day)
     {
-        //$day = date('Y-m-d');
-        //$day = '2022-06-20';
-        //$day = '2022-07-14';
+
         $dateStart = $day.' 00:00:00';
         $dateEnd = $day.' 23:59:59';
 
@@ -270,15 +242,6 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             [TEMP_FILE_PATH . $res['filename']]
         );
 
-        //
-//        $res4 = CommonService::getInstance()->sendEmailV2(
-//            'zhengmeng@meirixindong.com',
-//            // 'minglongoc@me.com',
-//            '招投标数据('.$day.')',
-//            '',
-//            [TEMP_FILE_PATH . $res['filename']]
-//        );
-
         $res5 = CommonService::getInstance()->sendEmailV2(
             'hujiehuan@huoyan.cn',
             // 'minglongoc@me.com',
@@ -295,6 +258,46 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'type_cname' => '招投标邮件',
             ]
         );
+
+        return true ;
+    }
+
+    static function sendEmailV4($day,$emailsLists)
+    {
+
+        $res = self::exportDataV8($day);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sendEmailV2' => [
+
+                    'filesArr'=> $res['filesArr'],
+                ]
+            ])
+        );
+
+
+        //$filename = control::getUuid();
+        $filename = 'zhao_tou_biao_new_'.date('Y-m-d').control::getUuid();
+        ZipService::getInstance()->zip( $res['filesArr'], TEMP_FILE_PATH . $filename . '.zip');
+
+//        CommonService::getInstance()->sendEmailV2(
+//         'tianyongshan@meirixindong.com',
+//            '招投标数据_新('.$day.')',
+//            '',
+//            [TEMP_FILE_PATH . $filename . '.zip']
+//        );
+
+        $sendResArr = [];
+        foreach ($emailsLists as $emailsAddress){
+            $sendRes = CommonService::getInstance()->sendEmailV2(
+                $emailsAddress,//'',
+                '招投标数据-新('.$day.')',
+                '',
+                [TEMP_FILE_PATH . $filename . '.zip']
+            );
+            $sendResArr[$emailsAddress] = $sendRes;
+        }
 
         return true ;
     }
@@ -331,47 +334,42 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
             ->toResource();
 
+        $headerTitle= [
+            '标题' , //
+            '项目名称' , //
+            '项目编号' , //
+            '项目简介' , //
+            '采购方式' , //
+            '公告类型2' , //
+            '公告日期' , //
+            '行政区域_省' , //
+            '行政区域_市' , //
+            '行政区域_县' , //
+            '采购单位名称' , //
+            '采购单位地址' , //
+            '采购单位联系人' , //
+            '采购单位联系电话' , //
+            '名次' , //
+            '中标供应商' , //
+            '中标金额' , //
+            '代理机构名称' , //
+            '代理机构地址' , //
+            '代理机构联系人' , //
+            '代理机构联系电话' , //
+            '评标专家' , //
+            'DLSM_UUID' , //
+            'url' , //
+            'corexml' , //
+        ];
         $file = $fileObject
             //->defaultFormat($colorStyle)
             ->header(
-                [
-                    '标题' , //
-                    '项目名称' , //
-                    '项目编号' , //
-                    '项目简介' , //
-                    '采购方式' , //
-                    '公告类型2' , //
-                    '公告日期' , //
-                    '行政区域_省' , //
-                    '行政区域_市' , //
-                    '行政区域_县' , //
-                    '采购单位名称' , //
-                    '采购单位地址' , //
-                    '采购单位联系人' , //
-                    '采购单位联系电话' , //
-                    '名次' , //
-                    '中标供应商' , //
-                    '中标金额' , //
-                    '代理机构名称' , //
-                    '代理机构地址' , //
-                    '代理机构联系人' , //
-                    '代理机构联系电话' , //
-                    '评标专家' , //
-                    'DLSM_UUID' , //
-                    'url' , //
-                    'corexml' , //
-                ]
+                $headerTitle
             )
            // ->defaultFormat($alignStyle)
         ;
         $p1Nums = 0;
         foreach ($financeDatas as $dataItem){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$dataItem1' => $dataItem
-                ])
-            );
             $fileObject ->data([$dataItem]);
             $p1Nums ++ ;
         }
@@ -383,43 +381,17 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         );
         $file->addSheet('p2')
             //->defaultFormat($colorStyle)
-            ->header([
-                '标题' , //
-                '项目名称' , //
-                '项目编号' , //
-                '项目简介' , //
-                '采购方式' , //
-                '公告类型2' , //
-                '公告日期' , //
-                '行政区域_省' , //
-                '行政区域_市' , //
-                '行政区域_县' , //
-                '采购单位名称' , //
-                '采购单位地址' , //
-                '采购单位联系人' , //
-                '采购单位联系电话' , //
-                '名次' , //
-                '中标供应商' , //
-                '中标金额' , //
-                '代理机构名称' , //
-                '代理机构地址' , //
-                '代理机构联系人' , //
-                '代理机构联系电话' , //
-                '评标专家' , //
-                'DLSM_UUID' , //
-                'url' , //
-                'corexml' , //
-            ])
+            ->header($headerTitle)
             //->defaultFormat($alignStyle)
            ;
         $p2Nums = 0;
         foreach ($financeDatas2 as $dataItem){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    '$dataItem2' => $dataItem
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    '$dataItem2' => $dataItem
+//                ])
+//            );
             $file->data([$dataItem]);
             $p2Nums ++;
         }
@@ -447,6 +419,332 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             'filename'=>$filename,
             'p2Nums' => $p2Nums,
             'p1Nums' => $p1Nums,
+        ];
+    }
+    static function  exportDataV5($day){
+        $startMemory = memory_get_usage();
+
+        $the_date = $day;
+        $the_day_of_week = date("w",strtotime($the_date)); //sunday is 0
+
+        $first_day_of_week = date("Y-m-d",strtotime( $the_date )-60*60*24*($the_day_of_week)+60*60*24*1 );
+        $last_day_of_week = date("Y-m-d",strtotime($first_day_of_week)+60*60*24*4 );
+
+        $dateStart = $first_day_of_week.' 00:00:00';
+        $dateEnd = $last_day_of_week.' 23:59:59';
+
+        $filename = 'zhao_tou_biao_new_'.date('YmdHis').'.xlsx';
+
+        //===============================
+        $config=  [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+
+        $excel = new \Vtiful\Kernel\Excel($config);
+        $fileObject = $excel->fileName($filename, 'p1');
+        $fileHandle = $fileObject->getHandle();
+
+        $format = new Format($fileHandle);
+        $colorStyle = $format
+            ->fontColor(Format::COLOR_ORANGE)
+            ->border(Format::BORDER_DASH_DOT)
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $format = new Format($fileHandle);
+
+        $alignStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $headerTitle= [
+            '来源' , //
+            '标题' , //
+            '项目名称' , //
+            '项目编号' , //
+            '项目简介' , //
+            '采购方式' , //
+            '公告类型2' , //
+            '公告日期' , //
+            '行政区域_省' , //
+            '行政区域_市' , //
+            '行政区域_县' , //
+            '采购单位名称' , //
+            '采购单位地址' , //
+            '采购单位联系人' , //
+            '采购单位联系电话' , //
+            '名次' , //
+            '中标供应商' , //
+            '中标金额' , //
+            '代理机构名称' , //
+            '代理机构地址' , //
+            '代理机构联系人' , //
+            '代理机构联系电话' , //
+            '评标专家' , //
+            'DLSM_UUID' , //
+            'url' , //
+            'corexml' , //
+
+        ];
+
+        $file = $fileObject
+            //->defaultFormat($colorStyle)
+            ->header(
+                $headerTitle
+            )
+           // ->defaultFormat($alignStyle)
+        ;
+
+        $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
+            " SELECT * FROM zhao_tou_biao_key03 WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
+        );
+        $p1Nums = 1;
+        foreach ($datas as $dataItem){
+
+            $fileObject->insertText($p1Nums, 0, 'zhao_tou_biao_key03');
+            $fileObject->insertText($p1Nums, 1,  mb_substr($dataItem['标题'], 0, 500));
+            $fileObject->insertText($p1Nums, 2, $dataItem['项目名称']);
+            $fileObject->insertText($p1Nums, 3, $dataItem['项目编号']);
+            $fileObject->insertText($p1Nums, 4, $dataItem['项目简介']);
+            $fileObject->insertText($p1Nums, 5, $dataItem['采购方式']);
+            $fileObject->insertText($p1Nums, 6, $dataItem['公告类型2']);
+            $fileObject->insertText($p1Nums, 7, $dataItem['公告日期']);
+            $fileObject->insertText($p1Nums, 8, $dataItem['行政区域_省']);
+            $fileObject->insertText($p1Nums, 9, $dataItem['行政区域_市']);
+            $fileObject->insertText($p1Nums, 10, $dataItem['行政区域_县']);
+            $fileObject->insertText($p1Nums, 11, $dataItem['采购单位名称']);
+            $fileObject->insertText($p1Nums, 12, $dataItem['采购单位地址']);
+            $fileObject->insertText($p1Nums, 13, $dataItem['采购单位联系人']);
+            $fileObject->insertText($p1Nums, 14, $dataItem['采购单位联系电话']);
+            $fileObject->insertText($p1Nums, 15, $dataItem['名次']);
+            $fileObject->insertText($p1Nums, 16, $dataItem['中标供应商']);
+            $fileObject->insertText($p1Nums, 17, $dataItem['中标金额']);
+            $fileObject->insertText($p1Nums, 18, $dataItem['代理机构名称']);
+            $fileObject->insertText($p1Nums, 19, $dataItem['代理机构地址']);
+            $fileObject->insertText($p1Nums, 20, $dataItem['代理机构联系人']);
+            $fileObject->insertText($p1Nums, 21, $dataItem['代理机构联系电话']);
+            $fileObject->insertText($p1Nums, 22, $dataItem['评标专家']);
+            $fileObject->insertText($p1Nums, 23, $dataItem['DLSM_UUID']);
+            $fileObject->insertText($p1Nums, 24, $dataItem['url']);
+            $fileObject->insertText($p1Nums, 25, str_split ( $dataItem['corexml'], 32766 )[0]);
+            $p1Nums ++ ;
+        }
+
+
+
+        //==============================================
+        //p2
+
+        $file->addSheet('p2')
+            //->defaultFormat($colorStyle)
+            ->header($headerTitle)
+            //->defaultFormat($alignStyle)
+           ;
+        $p2Nums = 1;
+        foreach ($datas as $dataItem){
+            $fileObject->insertText($p2Nums, 0, 'zhao_tou_biao_key03');
+            $fileObject->insertText($p2Nums, 1, $dataItem['标题']);
+            $fileObject->insertText($p2Nums, 2, $dataItem['项目名称']);
+            $fileObject->insertText($p2Nums, 3, $dataItem['项目编号']);
+            $fileObject->insertText($p2Nums, 4, $dataItem['项目简介']);
+            $fileObject->insertText($p2Nums, 5, $dataItem['采购方式']);
+            $fileObject->insertText($p2Nums, 6, $dataItem['公告类型2']);
+            $fileObject->insertText($p2Nums, 7, $dataItem['公告日期']);
+            $fileObject->insertText($p2Nums, 8, $dataItem['行政区域_省']);
+            $fileObject->insertText($p2Nums, 9, $dataItem['行政区域_市']);
+            $fileObject->insertText($p2Nums, 10, $dataItem['行政区域_县']);
+            $fileObject->insertText($p2Nums, 11, $dataItem['采购单位名称']);
+            $fileObject->insertText($p2Nums, 12, $dataItem['采购单位地址']);
+            $fileObject->insertText($p2Nums, 13, $dataItem['采购单位联系人']);
+            $fileObject->insertText($p2Nums, 14, $dataItem['采购单位联系电话']);
+            $fileObject->insertText($p2Nums, 15, $dataItem['名次']);
+            $fileObject->insertText($p2Nums, 16, $dataItem['中标供应商']);
+            $fileObject->insertText($p2Nums, 17, $dataItem['中标金额']);
+            $fileObject->insertText($p2Nums, 18, $dataItem['代理机构名称']);
+            $fileObject->insertText($p2Nums, 19, $dataItem['代理机构地址']);
+            $fileObject->insertText($p2Nums, 20, $dataItem['代理机构联系人']);
+            $fileObject->insertText($p2Nums, 21, $dataItem['代理机构联系电话']);
+            $fileObject->insertText($p2Nums, 22, $dataItem['评标专家']);
+            $fileObject->insertText($p2Nums, 23, $dataItem['DLSM_UUID']);
+            $fileObject->insertText($p2Nums, 24, $dataItem['url']);
+            $fileObject->insertText($p2Nums, 25, str_split ( $dataItem['corexml'], 32766 )[0]);
+            $p2Nums ++ ;
+        }
+        //==============================================
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+            ])
+        );
+
+        $format = new Format($fileHandle);
+        //单元格有\n解析成换行
+        $wrapStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->wrap()
+            ->toResource();
+
+        $fileObject->output();
+        //===============================
+
+        return  [
+            'dateStart' => $dateStart  ,
+            'dateEnd' => $dateEnd ,
+            'filename'=>$filename,
+            'filename_url'=>'http://api.test.meirixindong.com/Static/Temp/'.$filename,
+            'p2Nums' => $p2Nums,
+            'p1Nums' => $p1Nums,
+        ];
+    }
+
+
+
+    static function  exportDataV8($day){
+        $startMemory = memory_get_usage();
+
+        $the_date = $day;
+        $the_day_of_week = date("w",strtotime($the_date)); //sunday is 0
+
+        $first_day_of_week = date("Y-m-d",strtotime( $the_date )-60*60*24*($the_day_of_week)+60*60*24*1 );
+        $last_day_of_week = date("Y-m-d",strtotime($first_day_of_week)+60*60*24*4 );
+
+        $dateStart = $first_day_of_week.' 00:00:00';
+        $dateEnd = $last_day_of_week.' 23:59:59';
+
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'exportDataV8' => [
+                    '$day'=>$day,
+                    '$dateStart'=>$dateStart,
+                    '$dateEnd'=>$dateEnd,
+                ]
+            ])
+        );
+
+        $headerTitle= [
+            '来源' , //
+            '标题' , //
+            '项目名称' , //
+            '项目编号' , //
+            '项目简介' , //
+            '采购方式' , //
+            '公告类型2' , //
+            '公告日期' , //
+            '行政区域_省' , //
+            '行政区域_市' , //
+            '行政区域_县' , //
+            '采购单位名称' , //
+            '采购单位地址' , //
+            '采购单位联系人' , //
+            '采购单位联系电话' , //
+            '名次' , //
+            '中标供应商' , //
+            '中标金额' , //
+            '代理机构名称' , //
+            '代理机构地址' , //
+            '代理机构联系人' , //
+            '代理机构联系电话' , //
+            '评标专家' , //
+            'DLSM_UUID' , //
+            'url' , //
+            'corexml' , //
+
+        ];
+
+
+        $tables = [
+            'zhao_tou_biao_key01',
+            'zhao_tou_biao_key02',
+            'zhao_tou_biao_key03',
+            'zhao_tou_biao_key04',
+            'zhao_tou_biao_key05',
+            'zhao_tou_biao_key06',
+            'zhao_tou_biao_key07',
+            'zhao_tou_biao_key08',
+            'zhao_tou_biao_key09',
+            'zhao_tou_biao_key10',
+            'zhao_tou_biao_key11',
+            'zhao_tou_biao_key12',
+            'zhao_tou_biao_key13',
+        ];
+
+        $totalNums = 0;
+        $filesArr = [];
+        foreach ($tables as $table){
+
+            //写到csv里
+            $fileName = $table.'_'.date('YmdHis').".csv";
+            $f = fopen(TEMP_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+            //插入表头
+            fputcsv($f, $headerTitle);
+
+            $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
+                " SELECT * FROM $table WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
+            );
+            $totalNums +=count($datas);
+            foreach ($datas as $dataItem){
+                $comment_content =  str_replace(",","，",$dataItem['corexml']);
+                $comment_content =  str_replace("\r\n","",$comment_content);
+                $comment_content =  str_replace("\r","",$comment_content);
+                $comment_content =  str_replace("\n","",$comment_content);
+                $comment_content =  str_replace("\"","",$comment_content);
+
+                $tmpDataItem = [
+                    '来源' => $table , //
+                    '标题' => $dataItem['标题'] , //
+                    '项目名称' => $dataItem['项目名称'] , //
+                    '项目编号' => $dataItem['项目编号'] ?:'' , //
+                    '项目简介'  => $dataItem['项目简介'] ?:'' , //
+                    '采购方式'   => $dataItem['采购方式'] ?:'' , //
+                    '公告类型2'  => $dataItem['公告类型2'] ?:'' , //
+                    '公告日期' => $dataItem['公告日期'] ?:'' , //
+                    '行政区域_省' => $dataItem['行政区域_省'] ?:'' , //
+                    '行政区域_市'  => $dataItem['行政区域_市'] ?:'' , //
+                    '行政区域_县' => $dataItem['行政区域_县'] ?:'' , //
+                    '采购单位名称' => $dataItem['采购单位名称'] ?:'' , //
+                    '采购单位地址' => $dataItem['采购单位地址'] ?:'' , //
+                    '采购单位联系人' => $dataItem['采购单位联系人'] ?:'' , //
+                    '采购单位联系电话' => $dataItem['采购单位联系电话'] ?:'' , //
+                    '名次'  => $dataItem['名次'] ?:'' , //
+                    '中标供应商'  => $dataItem['中标供应商'] ?:'' , //
+                    '中标金额'  => $dataItem['中标金额'] ?:'' , //
+                    '代理机构名称' => $dataItem['代理机构名称'] ?:'' , //
+                    '代理机构地址'  => $dataItem['代理机构地址'] ?:'' , //
+                    '代理机构联系人'  => $dataItem['代理机构联系人'] ?:'' , //
+                    '代理机构联系电话' => $dataItem['代理机构联系电话'] ?:'' , //
+                    '评标专家' => $dataItem['评标专家'] ?:'' , //
+                    'DLSM_UUID'  => $dataItem['DLSM_UUID'] ?:'' , //
+                    'url'  => $dataItem['url'] ?:'' , //
+                    //'corexml' => $comment_content  , //
+                    'corexml' => $comment_content ?str_split ( $comment_content, 32766 )[0]:'' , //
+                ];
+                fputcsv($f, $tmpDataItem);
+                $filesArr[] = TEMP_FILE_PATH.$fileName;
+            }
+        }
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'exportDataV8' => [
+                    '$day'=>$day,
+                    '$fileName'=>$fileName,
+                    'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+                ]
+            ])
+        );
+
+        return  [
+            'dateStart' => $dateStart  ,
+            'dateEnd' => $dateEnd ,
+            'filename'=>$fileName,
+            'filesArr'=>$filesArr,
+            'filename_url'=>'http://api.test.meirixindong.com/Static/Temp/'.$fileName,
+            'Nums' => $totalNums
         ];
     }
 

@@ -157,11 +157,7 @@ class RunDealCarInsuranceInstallment extends AbstractCronTask
         if(
             !ConfigInfo::checkCrontabIfCanRun(__CLASS__)
         ){
-            return     CommonService::getInstance()->log4PHP(json_encode(
-                [
-                    __CLASS__ . ' is already running  ',
-                ]
-            ));
+            return    true;
         }
 
         //设置为正在执行中

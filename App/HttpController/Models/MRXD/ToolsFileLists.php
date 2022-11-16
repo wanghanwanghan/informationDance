@@ -178,7 +178,7 @@ class ToolsFileLists extends ModelBase
             WHERE touch_time < 1
             AND type = 5 
             AND state = 0 
-            LIMIT 3 
+            LIMIT 1 
        ");
        foreach ($filesDatas as $filesData){
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
@@ -196,13 +196,27 @@ class ToolsFileLists extends ModelBase
            fputcsv($f, $title);
 
            $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
+           $i = 1;
            foreach ($yieldDatas as $dataItem) {
+               $i ++;
+               if($i%300==0){
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           //__CLASS__.__FUNCTION__ .__LINE__,
+                           'buQuanZiDuan' => [
+                               '已生成'.$i,
+                               $filesData['file_name']
+                           ]
+                       ], JSON_UNESCAPED_UNICODE)
+                   );
+               }
+
                //需要补全字段
                if($dataItem[1]){
-                   $res = (new XinDongService())->getEsBasicInfoV3($dataItem[1],'UNISCID');
+                   $res = (new XinDongService())->getEsBasicInfoV3($dataItem[1],'UNISCID',[]);
                }
                else{
-                   $res = (new XinDongService())->getEsBasicInfoV3($dataItem[0],'ENTNAME');
+                   $res = (new XinDongService())->getEsBasicInfoV3($dataItem[0],'ENTNAME',[]);
                }
                $baseArr = [];
                //====================================
@@ -258,6 +272,17 @@ class ToolsFileLists extends ModelBase
                    }
 
 
+                   //iso_tags
+                   if(
+                       $field=='iso_tags'
+                   ){
+                       $str = "";
+                       foreach ($dataItem['iso_tags'] as $subItem){
+                           $str.= $subItem['cert_project'];
+                       }
+                       $dataItem['iso_tags'] =  $str;
+                   }
+
                    if(
                        $field=='jin_chu_kou'
                    ){
@@ -265,11 +290,7 @@ class ToolsFileLists extends ModelBase
                    }
 
 
-                   if(
-                       $field=='iso'
-                   ){
-                       $res['iso'] =  $res['iso']?'有':'无';
-                   }
+
 
                    // 高新技术
                    if(
@@ -346,20 +367,24 @@ class ToolsFileLists extends ModelBase
             '微信匹配值',
         ];
 
-        //通过联系人名称 补全职位信息
-        $fill_position_by_name = $params['fill_position_by_name'];
-        //补全微信名称
-        $fill_weixin_by_phone = $params['fill_weixin_by_phone'];
-        //通过微信补全联系人姓名和职位
-        $fill_name_and_position_by_weixin = $params['fill_name_and_position_by_weixin'];
+
 
        $filesDatas = self::findBySql("
             WHERE touch_time < 1
             AND type = ".self::$type_upload_pull_gong_kai_contact." 
             AND state = 0 
-            LIMIT 3 
+            LIMIT 1 
        ");
        foreach ($filesDatas as $filesData){
+            $tmp = json_decode($filesData['remark'],true);
+           //通过联系人名称 补全职位信息
+           $fill_position_by_name = $tmp['fill_position_by_name'];
+           //补全微信名称
+           $fill_weixin_by_phone = $tmp['fill_weixin_by_phone'];
+           //通过微信补全联系人姓名和职位
+           $fill_name_and_position_by_weixin = $tmp['fill_name_and_position_by_weixin'];
+
+
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
 
            //写到csv里
@@ -376,12 +401,12 @@ class ToolsFileLists extends ModelBase
            $i = 0;
            foreach ($yieldDatas as $dataItem) {
                $i++;
-               if($i%100==0){
+               if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                           __CLASS__.__FUNCTION__ .__LINE__,
-                           'pullGongKaiContacts_$i' => $i
-                       ])
+                        //   __CLASS__.__FUNCTION__ .__LINE__,
+                           'pullGongKaiContacts_已生成' => $i
+                       ], JSON_UNESCAPED_UNICODE)
                    );
                }
 
@@ -542,22 +567,26 @@ class ToolsFileLists extends ModelBase
             '微信匹配值',
         ];
 
-        //通过联系人名称 补全职位信息
-        $fill_position_by_name = $params['fill_position_by_name'];
-        //补全微信名称
-        $fill_weixin_by_phone = $params['fill_weixin_by_phone'];
-        //通过微信补全联系人姓名和职位
-        $fill_name_and_position_by_weixin = $params['fill_name_and_position_by_weixin'];
-        $filter_qcc_phone = $params['filter_qcc_phone'];
+
 
        $filesDatas = self::findBySql("
             WHERE touch_time < 1
             AND type = ".self::$type_upload_pull_fei_gong_kai_contact." 
             AND state = 0 
-            LIMIT 3 
+            LIMIT 1 
        ");
        foreach ($filesDatas as $filesData){
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
+
+           $tmp = json_decode($filesData['remark'],true);
+           //通过联系人名称 补全职位信息
+           $fill_position_by_name = $tmp['fill_position_by_name'];
+           //补全微信名称
+           $fill_weixin_by_phone = $tmp['fill_weixin_by_phone'];
+           //通过微信补全联系人姓名和职位
+           $fill_name_and_position_by_weixin = $tmp['fill_name_and_position_by_weixin'];
+           //过滤掉企查查
+           $filter_qcc_phone = $tmp['filter_qcc_phone'];
 
            //写到csv里
            $fileName = pathinfo($filesData['file_name'])['filename'];
@@ -573,12 +602,12 @@ class ToolsFileLists extends ModelBase
            $i = 0;
            foreach ($yieldDatas as $dataItem) {
                $i++;
-               if($i%100==0){
+               if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                           __CLASS__.__FUNCTION__ .__LINE__,
-                           'pullFeiGongKaiContacts' => $i
-                       ])
+                           //__CLASS__.__FUNCTION__ .__LINE__,
+                           'pullFeiGongKaiContacts已生成' => $i
+                       ], JSON_UNESCAPED_UNICODE)
                    );
                }
 
@@ -597,23 +626,43 @@ class ToolsFileLists extends ModelBase
                }
 
                if(empty($companyRes)){
-
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           //__CLASS__.__FUNCTION__ .__LINE__,
+                           'pullFeiGongKaiContacts已生成' => $i
+                       ], JSON_UNESCAPED_UNICODE)
+                   );
                    continue;
                }
 
                //取公开联系人信息
-
                $allConatcts = CompanyClue::getAllContactByCode($companyRes->UNISCID);
+
                $tmpContacts = [];
                foreach ($allConatcts['xn'] as $tmpPhone){
-                   if(
-                       !in_array($tmpPhone,$allConatcts['qcc'])
-                   ){
+                   if($filter_qcc_phone){
+                       if(
+                           !in_array($tmpPhone,$allConatcts['qcc'])
+                       ){
+                           $tmpContacts[$tmpPhone] = $tmpPhone;
+                       }
+                   }else{
                        $tmpContacts[$tmpPhone] = $tmpPhone;
                    }
+
                }
+//               CommonService::getInstance()->log4PHP(
+//                   json_encode([
+//                       'pullFeiGongKaiContacts' =>  [
+//                           '$tmpContacts'=>$tmpContacts,
+//                           'xn'=>$allConatcts['xn'],
+//                           '$allConatcts'=>$allConatcts,
+//                       ]
+//                   ], JSON_UNESCAPED_UNICODE)
+//               );
+
                $allConatcts['xn'] = $tmpContacts;
-              if(empty($allConatcts['xn'])){
+              if(empty($tmpContacts)){
                   $tmpDataItem = [
                       $entname,//企业名称
                       $companyRes->UNISCID."\t",//信用代码
@@ -632,7 +681,7 @@ class ToolsFileLists extends ModelBase
 //               );
 
                //手机号状态检测 一次网络请求
-               $needsCheckMobilesStr = join(",", $allConatcts['xn']);
+               $needsCheckMobilesStr = join(",", $tmpContacts);
                $postData = [
                    'mobiles' => $needsCheckMobilesStr,
                ];
@@ -650,7 +699,7 @@ class ToolsFileLists extends ModelBase
 //                   ])
 //               );
 
-               foreach($allConatcts['xn'] as $item){
+               foreach($tmpContacts as $item){
                    $tmpDataItem = [
                        $entname,//企业名称
                        $companyRes->UNISCID."\t",//信用代码
@@ -658,7 +707,7 @@ class ToolsFileLists extends ModelBase
                        ChuangLanService::getStatusCnameMap()[$mobilesRes[$item]['status']].$mobilesRes[$item]['status'],//手机号状态
                    ];
 
-                   //通过手机号补全微信信息
+
                    if(
                        !LongXinService::isValidPhone($item)
                    ){
@@ -742,7 +791,7 @@ class ToolsFileLists extends ModelBase
             WHERE touch_time < 1
             AND type = 10 
             AND state = 0 
-            LIMIT 3 
+            LIMIT 1 
        ");
        foreach ($filesDatas as $filesData){
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
@@ -757,10 +806,10 @@ class ToolsFileLists extends ModelBase
                $wechat = $dataItem[3];
                $sex = $dataItem[4];
 
-               if($i%100==0){
+               if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                           __CLASS__.__FUNCTION__ .__LINE__,
+                          // __CLASS__.__FUNCTION__ .__LINE__,
                            [
                                'addWeChatInfo'=>[
                                     '$companyDataItem' => $companyName ,
@@ -768,10 +817,10 @@ class ToolsFileLists extends ModelBase
                                     '$phone' => $phone ,
                                     '$wechat' => $wechat ,
                                     '$sex' => $sex ,
-                                    '$i' => $i ,
+                                    '已生成' => $i ,
                                ]
                            ]
-                       ])
+                       ], JSON_UNESCAPED_UNICODE)
                    );
                }
 
@@ -803,10 +852,10 @@ class ToolsFileLists extends ModelBase
                WechatInfo::addRecordV2(
                    $insert
                );
-               if($i%100==0){
+               if($i%500==0){
                    CommonService    ::getInstance()->log4PHP(
                        json_encode([
-                           __CLASS__.__FUNCTION__ .__LINE__,
+                          // __CLASS__.__FUNCTION__ .__LINE__,
                            $insert
                        ])
                    );
@@ -827,7 +876,7 @@ class ToolsFileLists extends ModelBase
             WHERE touch_time < 1
             AND type = 25 
             AND state = 0 
-            LIMIT 3 
+            LIMIT 1 
        ");
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -878,16 +927,16 @@ class ToolsFileLists extends ModelBase
                    }
                }
 
-               if($i%100==0){
+               if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                           __CLASS__.__FUNCTION__ .__LINE__,
+                          // __CLASS__.__FUNCTION__ .__LINE__,
                            [
                                'shangChuanGongKaiContact times'=>[
-                                    '$i' => $i ,
+                                    '已生成' => $i ,
                                ]
                            ]
-                       ])
+                       ], JSON_UNESCAPED_UNICODE)
                    );
                }
            }
@@ -913,17 +962,17 @@ class ToolsFileLists extends ModelBase
                     $dbArr
                 );
 
-               if($i%100==0){
+               if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                           __CLASS__.__FUNCTION__ .__LINE__,
+                         //  __CLASS__.__FUNCTION__ .__LINE__,
                            [
                                'shangChuanGongKaiContact add to db '=>[
-                                   '$i' => $i ,
+                                   '已生成' => $i ,
                                    '$dbArr' => $dbArr ,
                                ]
                            ]
-                       ])
+                       ], JSON_UNESCAPED_UNICODE)
                    );
                }
            }

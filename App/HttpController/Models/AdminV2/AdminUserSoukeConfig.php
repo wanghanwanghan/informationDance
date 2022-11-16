@@ -152,7 +152,11 @@ class AdminUserSoukeConfig extends ModelBase
             'NIC_ID' => '行业分类代码',
             'CANDATE' => '注销日期',
             'REVDATE' => '吊销日期',
-            'ying_shou_gui_mo'=>'营收规模',
+            'ying_shou_gui_mo'=>'营收规模(2020)',
+            'ying_shou_gui_mo_2021'=>'营收规模(2021)',
+            'li_run_gui_mo_2021'=>'利润规模(2021)',
+            'na_shui_gui_mo_2021'=>'纳税规模(2021)',
+
             'gong_si_jian_jie'=>'公司简介',
             'gao_xin_ji_shu' => '高新技术',
             'deng_ling_qi_ye' => '瞪羚企业',
@@ -171,7 +175,8 @@ class AdminUserSoukeConfig extends ModelBase
             'zlxxcy' => '战略新兴产业',
             'szjjcy' => '数字经济产业',
             'jin_chu_kou' => '进出口',
-            'iso' => 'iso',
+            'iso' => 'iso数量',
+            'iso_tags'=>'ISO',
         ];
         return $fields;
     }
