@@ -12,6 +12,7 @@ use App\HttpController\Models\ModelBase;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -478,6 +479,10 @@ class ToolsFileLists extends ModelBase
                        $datautem['mobile_check_res_cname'].''.$datautem['mobile_check_res'].'',//'公开手机号码状态',
                    ];
 
+                   //有效的联系人
+                   $validContacts = CompanyManager::getManagesNamesByCompanyId($companyRes->companyid);
+
+
                    //通过手机号补全微信信息
                    if(
                        $datautem['lianxitype']!== '手机'
@@ -625,6 +630,9 @@ class ToolsFileLists extends ModelBase
                    $companyRes = CompanyBasic::findByName($entname);
                }
 
+               //有效的联系人
+               $validContacts = CompanyManager::getManagesNamesByCompanyId($companyRes->companyid);
+
                if(empty($companyRes)){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
@@ -755,6 +763,14 @@ class ToolsFileLists extends ModelBase
 
                    //用微信名匹配联系人职位信息
                    $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV3($entname, $matchedWeiXinName['nickname']);
+//                   if(
+//                       !in_array($tmpRes['data']['NAME'],$validContacts)
+//                   ){
+//                       $tmpDataItem[] = '';
+//                       fputcsv($f, $tmpDataItem);
+//
+//                       continue;
+//                   }
 //                   CommonService::getInstance()->log4PHP(
 //                       json_encode([
 //                           __CLASS__.__FUNCTION__ .__LINE__,
@@ -902,6 +918,7 @@ class ToolsFileLists extends ModelBase
                //企业 税号 电话 微信名 性别
                $companyName = $dataItem[0];
                $companyRes = CompanyBasic::findByName($companyName);
+
                //$companyCode = $dataItem[1];
                if(empty($companyRes)){
                    continue;
