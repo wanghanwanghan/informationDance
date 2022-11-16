@@ -618,8 +618,8 @@ class ToolsFileLists extends ModelBase
 
 
                // 企业名称：$dataItem[0]
-               $entname = $dataItem[0];
-               $code = $dataItem[1];
+               $entname = self::strtr_func($dataItem[0]);
+               $code =  self::strtr_func($dataItem[1]);
 
 
                if($code){
