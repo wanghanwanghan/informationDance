@@ -480,7 +480,7 @@ class ToolsFileLists extends ModelBase
                    ];
 
                    //有效的联系人
-                   $validContacts = CompanyManager::getManagesNamesByCompanyId($companyRes->companyid);
+//                   $validContacts = CompanyManager::getManagesNamesByCompanyId($companyRes->companyid);
 
 
                    //通过手机号补全微信信息
@@ -631,7 +631,7 @@ class ToolsFileLists extends ModelBase
                }
 
                //有效的联系人
-               $validContacts = CompanyManager::getManagesNamesByCompanyId($companyRes->companyid);
+//               $validContacts = CompanyManager::getManagesNamesByCompanyId($companyRes->companyid);
 
                if(empty($companyRes)){
                    CommonService::getInstance()->log4PHP(
