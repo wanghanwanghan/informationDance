@@ -88,7 +88,7 @@ class RunCompleteCompanyData extends AbstractCronTask
                     json_encode([
                         'getEntLianXi $xlsx_name'=>$xlsx_name,
                         'getEntLianXi $nums'=>$nums,
-                    ])
+                    ],JSON_UNESCAPED_UNICODE)
                 );
             }
             $one = $excel_read->nextRow([
