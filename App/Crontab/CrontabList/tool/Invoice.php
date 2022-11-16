@@ -2,6 +2,9 @@
 
 namespace App\Crontab\CrontabList\tool;
 
+use App\HttpController\Models\RDS3\HdSaic\CodeRegion;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Models\RDS3\HdSaic\CompanyHistoryName;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use Carbon\Carbon;
@@ -1781,17 +1784,25 @@ class Invoice
 
             if (!isset($return[$year][$name])) {
                 //调用企业详情接口，查看司龄
-                $res = (new TaoShuService())->setCheckRespFlag(true)->post(['entName' => $name], 'getRegisterInfo');
-                ($res['code'] === 200 && !empty($res['result'])) ? $res = current($res['result']) : $res = null;
-
-                //错误就不统计了
-                if (empty($res)) continue;
-
-                $data = $res;
-
-                if (isset($data['ESDATE']) && !empty($data['ESDATE']) && strlen($data['ESDATE'] >= 4)) {
+//                $res = (new TaoShuService())->setCheckRespFlag(true)->post(['entName' => $name], 'getRegisterInfo');
+//                ($res['code'] === 200 && !empty($res['result'])) ? $res = current($res['result']) : $res = null;
+//
+//                //错误就不统计了
+//                if (empty($res)) continue;
+//
+//                $data = $res;
+                $info = CompanyBasic::create()->where(['ENTNAME' => $name])->get();
+                if(empty($info)){
+                    $hInfo = CompanyHistoryName::create()->where(['ENTNAME' => $name])->get();
+                    if(empty($hInfo)) continue;
+                    else{
+                        $info = CompanyBasic::create()->where(['companyid' => $hInfo->getAttr('companyid')])->get();
+                    }
+                }
+                $ESDATE = $info->getAttr('getAttr');
+                if (!empty($ESDATE) && strlen($ESDATE >= 4)) {
                     //取得成立年
-                    $esYear = substr($data['ESDATE'], 0, 4);
+                    $esYear = substr($ESDATE, 0, 4);
 
                     //取得司龄
                     $siling = date('Y') - $esYear;
@@ -2014,20 +2025,25 @@ class Invoice
 
             if (!in_array($name, $tmp[$year])) {
                 //调用企业详情接口，查看地域
-                $res = (new TaoShuService())->setCheckRespFlag(true)->post(['entName' => $name], 'getRegisterInfo');
-                ($res['code'] === 200 && !empty($res['result'])) ? $res = current($res['result']) : $res = null;
+//                $res = (new TaoShuService())->setCheckRespFlag(true)->post(['entName' => $name], 'getRegisterInfo');
+//                ($res['code'] === 200 && !empty($res['result'])) ? $res = current($res['result']) : $res = null;
+//
+//                //错误就不统计了
+//                if (empty($res)) continue;
+//
+//                $data = $res;
 
-                //错误就不统计了
-                if (empty($res)) continue;
+                $ent = CompanyBasic::create()->where(['ENTNAME'=>$name])->get();
+                if(empty($ent)) continue;
+                $info = CodeRegion::create()->where("code =".$ent->getAttr('DOMDISTRICT').' or newcode = '.$ent->getAttr('DOMDISTRICT'))->get();
+                if(empty($info)) continue;
+                $PROVINCE = $info->getAttr('name');
+                if (empty(trim($PROVINCE))) continue;
 
-                $data = $res;
-
-                if (!isset($data['PROVINCE']) || empty(trim($data['PROVINCE']))) continue;
-
-                if (isset($return[$year][trim($data['PROVINCE'])])) {
-                    $return[$year][trim($data['PROVINCE'])]++;
+                if (isset($return[$year][trim($PROVINCE)])) {
+                    $return[$year][trim($PROVINCE)]++;
                 } else {
-                    $return[$year][trim($data['PROVINCE'])] = 1;
+                    $return[$year][trim($PROVINCE)] = 1;
                 }
 
                 array_push($tmp[$year], $name);
