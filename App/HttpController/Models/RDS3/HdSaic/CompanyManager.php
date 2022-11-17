@@ -39,7 +39,7 @@ class CompanyManager extends ModelBase
         $res =  self::findByCompanyId($id) ;
         $return = [];
         foreach ($res as $subItem){
-            $tmp = trim($subItem['Name']);
+            $tmp = trim($subItem['NAME']);
             if($tmp){
                 $return[] = $tmp;
             }
