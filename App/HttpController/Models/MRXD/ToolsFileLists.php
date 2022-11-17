@@ -480,12 +480,26 @@ class ToolsFileLists extends ModelBase
                                     'pullGongKaiContacts' => [
                                         '联系人已离职' =>  [
                                             '企业名'=>$entname,
+                                            '$validContacts'=>$validContacts,
                                             '联系人姓名'=>$datautem['name']
                                         ],
                                     ]
                                 ])
                             );
                             continue;
+                        }else{
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'pullGongKaiContacts' => [
+                                        '联系人未离职' =>  [
+                                            '企业名'=>$entname,
+                                            '$validContacts'=>$validContacts,
+                                            '联系人姓名'=>$datautem['name']
+                                        ],
+                                    ]
+                                ])
+                            );
                         }
                    }
 
@@ -794,33 +808,33 @@ class ToolsFileLists extends ModelBase
 
 //                       $tmpDataItem[] = '';
 //                       fputcsv($f, $tmpDataItem);
-                       CommonService::getInstance()->log4PHP(
-                           json_encode([
-                               __CLASS__.__FUNCTION__ .__LINE__,
-                               'pullFeiGongKaiContacts_' => [
-                                   '联系人已离职' =>  [
-                                       '企业名'=>$entname,
-                                       '$validContacts'=>$validContacts,
-                                       '联系人姓名'=>$tmpRes['data']['NAME']
-                                   ],
-                               ]
-                           ], JSON_UNESCAPED_UNICODE)
-                       );
+//                       CommonService::getInstance()->log4PHP(
+//                           json_encode([
+//                               __CLASS__.__FUNCTION__ .__LINE__,
+//                               'pullFeiGongKaiContacts_' => [
+//                                   '联系人已离职' =>  [
+//                                       '企业名'=>$entname,
+//                                       '$validContacts'=>$validContacts,
+//                                       '联系人姓名'=>$tmpRes['data']['NAME']
+//                                   ],
+//                               ]
+//                           ], JSON_UNESCAPED_UNICODE)
+//                       );
                        continue;
                    }
                    else{
-                       CommonService::getInstance()->log4PHP(
-                           json_encode([
-                               __CLASS__.__FUNCTION__ .__LINE__,
-                               'pullFeiGongKaiContacts_' => [
-                                   '联系人未离职' =>  [
-                                       '企业名'=>$entname,
-                                       '$validContacts'=>$validContacts,
-                                       '联系人姓名'=>$tmpRes['data']['NAME']
-                                   ],
-                               ]
-                           ], JSON_UNESCAPED_UNICODE)
-                       );
+//                       CommonService::getInstance()->log4PHP(
+//                           json_encode([
+//                               __CLASS__.__FUNCTION__ .__LINE__,
+//                               'pullFeiGongKaiContacts_' => [
+//                                   '联系人未离职' =>  [
+//                                       '企业名'=>$entname,
+//                                       '$validContacts'=>$validContacts,
+//                                       '联系人姓名'=>$tmpRes['data']['NAME']
+//                                   ],
+//                               ]
+//                           ], JSON_UNESCAPED_UNICODE)
+//                       );
                    }
 //                   CommonService::getInstance()->log4PHP(
 //                       json_encode([
