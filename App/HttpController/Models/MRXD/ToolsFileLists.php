@@ -484,7 +484,7 @@ class ToolsFileLists extends ModelBase
                                             '联系人姓名'=>$datautem['name']
                                         ],
                                     ]
-                                ])
+                                ], JSON_UNESCAPED_UNICODE)
                             );
                             continue;
                         }else{
@@ -498,7 +498,7 @@ class ToolsFileLists extends ModelBase
                                             '联系人姓名'=>$datautem['name']
                                         ],
                                     ]
-                                ])
+                                ], JSON_UNESCAPED_UNICODE)
                             );
                         }
                    }
