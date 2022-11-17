@@ -474,32 +474,32 @@ class ToolsFileLists extends ModelBase
                         if(
                             !in_array($datautem['name'],$validContacts)
                         ){
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'pullGongKaiContacts' => [
-                                        '联系人已离职' =>  [
-                                            '企业名'=>$entname,
-                                            '$validContacts'=>$validContacts,
-                                            '联系人姓名'=>$datautem['name']
-                                        ],
-                                    ]
-                                ], JSON_UNESCAPED_UNICODE)
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'pullGongKaiContacts' => [
+//                                        '联系人已离职' =>  [
+//                                            '企业名'=>$entname,
+//                                            '$validContacts'=>$validContacts,
+//                                            '联系人姓名'=>$datautem['name']
+//                                        ],
+//                                    ]
+//                                ], JSON_UNESCAPED_UNICODE)
+//                            );
                             continue;
                         }else{
-                            CommonService::getInstance()->log4PHP(
-                                json_encode([
-                                    __CLASS__.__FUNCTION__ .__LINE__,
-                                    'pullGongKaiContacts' => [
-                                        '联系人未离职' =>  [
-                                            '企业名'=>$entname,
-                                            '$validContacts'=>$validContacts,
-                                            '联系人姓名'=>$datautem['name']
-                                        ],
-                                    ]
-                                ], JSON_UNESCAPED_UNICODE)
-                            );
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'pullGongKaiContacts' => [
+//                                        '联系人未离职' =>  [
+//                                            '企业名'=>$entname,
+//                                            '$validContacts'=>$validContacts,
+//                                            '联系人姓名'=>$datautem['name']
+//                                        ],
+//                                    ]
+//                                ], JSON_UNESCAPED_UNICODE)
+//                            );
                         }
                    }
 
