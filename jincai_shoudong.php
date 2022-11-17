@@ -326,8 +326,105 @@ class jincai_shoudong extends AbstractProcess
         return true;
     }
 
+    //get分贝通
+    function getFenBeiTong(): bool
+    {
+        $list = [
+            //'91110108MA00654L08',
+            //'91110105MA00823H4A',
+            '91110105MA004MNF8T',
+        ];
+
+        foreach ($list as $code) {
+            $filename_main = $code . '_main.txt';
+            $filename_detail = $code . '_detail.txt';
+            //取全部发票写入文件
+            $id = 0;
+            while (true) {
+                $list = EntInvoice::create()
+                    ->addSuffix($code, 'test')
+                    ->where('nsrsbh', $code)
+                    ->where('id', $id, '>')
+                    ->field([
+                        'id',
+                        'fpdm',//
+                        'fphm',//
+                        'kplx',//
+                        'xfsh',//
+                        'xfmc',//
+                        'xfdzdh',//
+                        'xfyhzh',//
+                        'gfsh',//
+                        'gfmc',//
+                        'gfdzdh',//
+                        'gfyhzh',//
+                        'kpr',//
+                        'skr',//
+                        'fhr',//
+                        'yfpdm',
+                        'yfphm',
+                        'je',//
+                        'se',//
+                        'jshj',//
+                        'bz',//
+                        'zfbz',//
+                        'zfsj',//
+                        'kprq',//
+                        'fplx',//
+                        'fpztDm',//
+                        'slbz',
+                        'rzdklBdjgDm',
+                        'rzdklBdrq',
+                        'direction',
+                        'nsrsbh',
+                    ])->limit(3000)->all();
+                //没有数据了
+                if (empty($list)) break;
+                foreach ($list as $oneInv) {
+                    $id = $oneInv->getAttr('id');
+                    // 写主票
+                    $main = array_map(function ($row) {
+                        return str_replace('|', '', trim($row));
+                    }, obj2Arr($oneInv));
+                    file_put_contents($filename_main, implode('|', $main) . PHP_EOL, FILE_APPEND);
+                    $detail = EntInvoiceDetail::create()
+                        ->addSuffix($oneInv->getAttr('fpdm'), $oneInv->getAttr('fphm'), 'test')
+                        ->where(['fpdm' => $oneInv->getAttr('fpdm'), 'fphm' => $oneInv->getAttr('fphm')])
+                        ->field([
+                            'spbm',//
+                            'mc',//
+                            'jldw',//
+                            'shul',//
+                            'je',//
+                            'sl',//
+                            'se',//
+                            'mxxh',//
+                            'dj',//
+                            'ggxh',//
+                        ])->all();
+                    // 写明细
+                    if (!empty($detail)) {
+                        foreach ($detail as $fpxx) {
+                            $info = array_map(function ($row) {
+                                return str_replace('|', '', trim($row));
+                            }, obj2Arr($fpxx));
+                            file_put_contents($filename_detail, implode('|', $info) . PHP_EOL, FILE_APPEND);
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
     protected function run($arg)
     {
+//        foreach (['91110105MA004MNF8T', '91110111MA0076A807', '91110000722617379C'] as $one) {
+//            $this->updateAddTask($one);
+//        }
+//        dd(11111);
+
         // 这6个有问题
         $error_list = [
             '91320106339391784W',// 部分任务超2000
@@ -336,6 +433,19 @@ class jincai_shoudong extends AbstractProcess
             '9133020431684033X3',// 部分任务超2000
             '91330382725250541E',// 部分任务超2000
             '91211022MA0U95ER7Y',// 部分任务超2000
+
+//            '91110108MA00654L08',
+//            '91110105MA00823H4A',
+//            '91110105MA004MNF8T',
+//            '91110111MA0076A807',
+//            '91110108MA00FP4F5A',
+//            '91460100MAA8YF8T7L',
+//            '91320594088140947F',
+//            '91640500MA774K1K2E',
+//            '91654201MA7ABWLT7L',
+//            '91210211588083598A',
+//            '91110000722617379C',
+//            '912201047826342268',
         ];
 
         $list = JinCaiTrace::create()->all();
@@ -345,18 +455,19 @@ class jincai_shoudong extends AbstractProcess
 
         foreach ($list as $index => $one) {
 
-
             // ================================================================================================
-            //$socialCredit = $one->getAttr('socialCredit');
-            //if ($socialCredit !== '91320205628283253Y' && $continue_at === 0) {
-            //    continue;
-            //}
+            $socialCredit = $one->getAttr('socialCredit');
+            if ($socialCredit !== '91320500703697975D' && $continue_at === 0) {
+                continue;
+            }
             // ================================================================================================
 
 
             $rwh_list = (new JinCaiShuKeService())
                 ->obtainResultTraceNo($one->getAttr('traceNo'));
+
             $timeout = time() - $one->getAttr('updated_at');
+
             foreach ($rwh_list['result'] as $rwh) {
                 $province = $one->getAttr('province');
                 $socialCredit = $one->getAttr('socialCredit');
@@ -370,9 +481,9 @@ class jincai_shoudong extends AbstractProcess
 
 
                 // ================================================================================================
-                //if ($wupanTraceNo !== '91320205628283253Y1666835506846' && $wupan_continue_at === 0) {
-                //    continue;
-                //}
+                if ($wupanTraceNo !== '91320500703697975D1667912900731' && $wupan_continue_at === 0) {
+                    continue;
+                }
                 $wupan_continue_at = 1;
                 // ================================================================================================
 
@@ -382,25 +493,27 @@ class jincai_shoudong extends AbstractProcess
                     //if (!$check) {
                     //    dd($traceNo);
                     //}
-                    echo $socialCredit . PHP_EOL;
-                    break;
+                    //echo $socialCredit . PHP_EOL;
+                    //echo $wupanTraceNo . PHP_EOL;
+                    //break;
                 }
 
-//                // 取数
-//                $w = [
-//                    $socialCredit,
-//                    Carbon::now()->format('H:i:s'),
-//                    $province,
-//                    $wupanTraceNo
-//                ];
-//
-//                echo jsonEncode($w, false) . PHP_EOL;
-//
-//                $this->getData($socialCredit, $province, $wupanTraceNo);
-//
-//                $continue_at = 1;
-//
-//                sleep(2);
+
+                // 取数
+                $w = [
+                    $socialCredit,
+                    Carbon::now()->format('H:i:s'),
+                    $province,
+                    $wupanTraceNo
+                ];
+
+                echo jsonEncode($w, false) . PHP_EOL;
+
+                $this->getData($socialCredit, $province, $wupanTraceNo);
+
+                $continue_at = 1;
+
+                sleep(2);
 
             }
         }
@@ -747,6 +860,60 @@ class jincai_shoudong extends AbstractProcess
         }
 
         dd('完成');
+    }
+
+    function updateAddTask($code)
+    {
+        $info = JinCaiTrace::create()->where('socialCredit', $code)->get();
+
+        // 开票日期止
+        $kprqz = Carbon::now()->subMonths(1)->endOfMonth()->timestamp;
+
+        // 开票日期起
+        $kprqq = Carbon::now()->subMonths(23)->startOfMonth()->timestamp;
+
+        // 拼task请求参数
+        $ywBody = [
+            'kprqq' => date('Y-m-d', $kprqq),// 开票日期起
+            'kprqz' => date('Y-m-d', $kprqz),// 开票日期止
+            'nsrsbh' => $code,// 纳税人识别号
+        ];
+
+        try {
+            for ($try = 3; $try--;) {
+                // 发送 试3次
+                $addTaskInfo = (new JinCaiShuKeService())->addTask(
+                    $code,
+                    '北京市',
+                    '北京市',
+                    $ywBody
+                );
+                if (isset($addTaskInfo['code']) && strlen($addTaskInfo['code']) > 1) {
+                    break;
+                }
+                \co::sleep(5);
+            }
+
+            dump($addTaskInfo);
+
+            $info->update([
+                'code' => $addTaskInfo['code'] ?? '未返回',
+                'province' => $addTaskInfo['result']['province'] ?? '未返回',
+                'taskCode' => $addTaskInfo['result']['taskCode'] ?? '未返回',
+                'taskStatus' => $addTaskInfo['result']['taskStatus'] ?? '未返回',
+                'traceNo' => $addTaskInfo['result']['traceNo'] ?? '未返回',
+                'created_at' => time()]);
+
+            // 还要间隔2分钟
+            \co::sleep(120);
+        } catch (\Throwable $e) {
+            $file = $e->getFile();
+            $line = $e->getLine();
+            $msg = $e->getMessage();
+            $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+            CommonService::getInstance()->log4PHP($content, 'try-catch', 'GetJinCaiTrace.log');
+        }
+
     }
 
     function addTaskOne($id)
