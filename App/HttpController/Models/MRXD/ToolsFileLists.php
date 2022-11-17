@@ -465,7 +465,30 @@ class ToolsFileLists extends ModelBase
 //                   ])
 //               );
 
+               //有效的联系人
+               $validContacts = CompanyManager::getManagesNamesByCompanyId($companyRes->companyid);
+
                foreach($retData as $datautem){
+                   //公开联系人姓名
+                   if($datautem['name']){
+                        if(
+                            !in_array($datautem['name'],$validContacts)
+                        ){
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    'pullGongKaiContacts' => [
+                                        '联系人已离职' =>  [
+                                            '企业名'=>$entname,
+                                            '联系人姓名'=>$datautem['name']
+                                        ],
+                                    ]
+                                ])
+                            );
+                            continue;
+                        }
+                   }
+
                    $tmpDataItem = [
                        $entname,
                        $datautem['duty'],//'公开联系人职位',
@@ -479,8 +502,7 @@ class ToolsFileLists extends ModelBase
                        $datautem['mobile_check_res_cname'].''.$datautem['mobile_check_res'].'',//'公开手机号码状态',
                    ];
 
-                   //有效的联系人
-//                   $validContacts = CompanyManager::getManagesNamesByCompanyId($companyRes->companyid);
+
 
 
                    //通过手机号补全微信信息
@@ -766,6 +788,7 @@ class ToolsFileLists extends ModelBase
                    //用微信名匹配联系人职位信息
                    $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV3($entname, $matchedWeiXinName['nickname']);
                    if(
+                       $tmpRes['data']['NAME'] &&
                        !in_array($tmpRes['data']['NAME'],$validContacts)
                    ){
 
