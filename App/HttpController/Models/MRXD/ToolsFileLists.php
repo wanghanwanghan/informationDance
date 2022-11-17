@@ -807,6 +807,20 @@ class ToolsFileLists extends ModelBase
                        );
                        continue;
                    }
+                   else{
+                       CommonService::getInstance()->log4PHP(
+                           json_encode([
+                               __CLASS__.__FUNCTION__ .__LINE__,
+                               'pullFeiGongKaiContacts_' => [
+                                   '联系人未离职' =>  [
+                                       '企业名'=>$entname,
+                                       '$validContacts'=>$validContacts,
+                                       '联系人姓名'=>$tmpRes['data']['NAME']
+                                   ],
+                               ]
+                           ])
+                       );
+                   }
 //                   CommonService::getInstance()->log4PHP(
 //                       json_encode([
 //                           __CLASS__.__FUNCTION__ .__LINE__,
