@@ -631,12 +631,10 @@ class ToolsFileLists extends ModelBase
                }
 
                //有效的联系人
-//               $validContacts = CompanyManager::getManagesNamesByCompanyId($companyRes->companyid);
-
+               $validContacts = CompanyManager::getManagesNamesByCompanyId($companyRes->companyid);
                if(
                    empty($companyRes) ||
                    empty($companyRes->UNISCID)
-
                ){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
@@ -767,14 +765,25 @@ class ToolsFileLists extends ModelBase
 
                    //用微信名匹配联系人职位信息
                    $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV3($entname, $matchedWeiXinName['nickname']);
-//                   if(
-//                       !in_array($tmpRes['data']['NAME'],$validContacts)
-//                   ){
+                   if(
+                       !in_array($tmpRes['data']['NAME'],$validContacts)
+                   ){
+
 //                       $tmpDataItem[] = '';
 //                       fputcsv($f, $tmpDataItem);
-//
-//                       continue;
-//                   }
+                       CommonService::getInstance()->log4PHP(
+                           json_encode([
+                               __CLASS__.__FUNCTION__ .__LINE__,
+                               'pullFeiGongKaiContacts_' => [
+                                   '联系人已离职' =>  [
+                                       '企业名'=>$entname,
+                                       '联系人姓名'=>$tmpRes['data']['NAME']
+                                   ],
+                               ]
+                           ])
+                       );
+                       continue;
+                   }
 //                   CommonService::getInstance()->log4PHP(
 //                       json_encode([
 //                           __CLASS__.__FUNCTION__ .__LINE__,
