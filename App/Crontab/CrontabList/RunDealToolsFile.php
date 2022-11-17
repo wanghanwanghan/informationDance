@@ -305,9 +305,9 @@ class RunDealToolsFile extends AbstractCronTask
             $value2 = self::strtr_func($one[2]);
             $value3 = self::strtr_func($one[3]);
             $tmpRes = XinDongService::fuzzyMatchEntName($value0,3);
-            $name1 = $tmpRes[0]['_source']['name'];
-            $name2 = $tmpRes[1]['_source']['name'];
-            $name3 = $tmpRes[2]['_source']['name'];
+            $name1 = $tmpRes[0]['_source']['ENTNAME'];
+            $name2 = $tmpRes[1]['_source']['ENTNAME'];
+            $name3 = $tmpRes[2]['_source']['ENTNAME'];
             yield $datas[] = [
                 $value0,
                 //$value1,
