@@ -4008,16 +4008,16 @@ class XinDongService extends ServiceBase
 
         //拼音相似度匹配  张三0808    张三
         similar_text(PinYinService::getPinyin($tobeMatch), PinYinService::getPinyin($target), $perc);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'similar_text' => [
-                    '$perc' => $perc,
-                    '$tobeMatch'=>$tobeMatch,
-                    '$target'=>$target,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'similar_text' => [
+//                    '$perc' => $perc,
+//                    '$tobeMatch'=>$tobeMatch,
+//                    '$target'=>$target,
+//                ]
+//            ],JSON_UNESCAPED_UNICODE)
+//        );
 
         if ($perc >= 90) {
             return [

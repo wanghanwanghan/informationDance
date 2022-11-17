@@ -800,10 +800,11 @@ class ToolsFileLists extends ModelBase
                                'pullFeiGongKaiContacts_' => [
                                    '联系人已离职' =>  [
                                        '企业名'=>$entname,
+                                       '$validContacts'=>$validContacts,
                                        '联系人姓名'=>$tmpRes['data']['NAME']
                                    ],
                                ]
-                           ])
+                           ], JSON_UNESCAPED_UNICODE)
                        );
                        continue;
                    }
@@ -818,7 +819,7 @@ class ToolsFileLists extends ModelBase
                                        '联系人姓名'=>$tmpRes['data']['NAME']
                                    ],
                                ]
-                           ])
+                           ], JSON_UNESCAPED_UNICODE)
                        );
                    }
 //                   CommonService::getInstance()->log4PHP(
