@@ -89,8 +89,8 @@ class DocumentationController extends ControllerBase
         if(!empty($requestData['name'])){
             $whereArr[] =  [
                 'field' => 'name',
-                'value' => $requestData['name'],
-                'operate' => '=',
+                'value' => '%'.$requestData['name'].'%',
+                'operate' => 'like',
             ];
         }
 
