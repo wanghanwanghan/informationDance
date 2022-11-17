@@ -4259,7 +4259,7 @@ class XinDongService extends ServiceBase
     static function fuzzyMatchEntName($fuzzyName, $size = 1)
     {
         $companyEsModel = new \App\ElasticSearch\Model\Company();
-        $companyEsModel->es->addMustMatchQuery('name', $fuzzyName);
+        $companyEsModel->es->addMustMatchQuery('ENTNAME', $fuzzyName);
         $companyEsModel
             ->addSize($size)
             ->addFrom(0)
