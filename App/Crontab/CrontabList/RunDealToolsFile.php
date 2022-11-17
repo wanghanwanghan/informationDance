@@ -545,7 +545,7 @@ class RunDealToolsFile extends AbstractCronTask
         $startMemory = memory_get_usage();
         $allInitDatas =  ToolsUploadQueue::findBySql(
             " WHERE status = ".ToolsUploadQueue::$state_init.
-                    " AND touch_time  < 1 
+                    " AND touch_time  is NULL 
                      LIMIT 1 
                      "
         );
