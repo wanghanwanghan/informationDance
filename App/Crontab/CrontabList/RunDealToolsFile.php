@@ -265,6 +265,12 @@ class RunDealToolsFile extends AbstractCronTask
         }
     }
 
+    static function getYieldHeaderDataForFuzzyMatch(){
+        return [
+            '企业模糊名称',
+            '匹配结果',
+        ];
+    }
     static function  getYieldDataForFuzzyMatch($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
@@ -275,9 +281,11 @@ class RunDealToolsFile extends AbstractCronTask
             if($nums%100==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        'getYieldDataForFuzzyMatch $xlsx_name'=>$xlsx_name,
-                        'getYieldDataForFuzzyMatch $nums'=>$nums,
-                    ])
+                        '模糊匹配企业'=>[
+                            '文件名'=>$xlsx_name,
+                            '数量'=>$nums,
+                        ],
+                    ], JSON_UNESCAPED_UNICODE)
                 );
             }
             $one = $excel_read->nextRow([
@@ -290,17 +298,6 @@ class RunDealToolsFile extends AbstractCronTask
                 break;
             }
 
-            //第一行是标题  不是数据
-            if($nums==1){
-                $nums ++;
-                yield $datas[] = [
-                    '企业模糊名称',
-                    '匹配结果1',
-                    '匹配结果2',
-                    '匹配结果3',
-                ];
-                continue;
-            }
             $nums ++;
             //企业名称
             $value0 = self::strtr_func($one[0]);
@@ -308,21 +305,14 @@ class RunDealToolsFile extends AbstractCronTask
             $value2 = self::strtr_func($one[2]);
             $value3 = self::strtr_func($one[3]);
             $tmpRes = XinDongService::fuzzyMatchEntName($value0,3);
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    __CLASS__.__FUNCTION__ .__LINE__,
-//                    '$value0' =>$value0,
-//                    '$tmpRes' => $tmpRes
-//                ])
-//            );
-            yield $datas[] = [
-                $value0,
-                //$value1,
-                //$value2,
-                $tmpRes[0]['_source']['name'],
-                $tmpRes[1]['_source']['name'],
-                $tmpRes[2]['_source']['name'],
-            ];
+            for ($ii=0;$ii<=2;$i++){
+                $name = $tmpRes[$ii]['_source']['name'];
+                yield $datas[] = [
+                    $value0,
+                    $name
+                ];
+            }
+
         }
     }
     static function  getYieldDataForSplite($xlsx_name){
@@ -552,7 +542,9 @@ class RunDealToolsFile extends AbstractCronTask
         $startMemory = memory_get_usage();
         $allInitDatas =  ToolsUploadQueue::findBySql(
             " WHERE status = ".ToolsUploadQueue::$state_init.
-                    " AND touch_time  IS NULL "
+                    " AND touch_time  < 1 
+                     LIMIT 1 
+                     "
         );
 
         foreach($allInitDatas as $InitData){
@@ -583,7 +575,7 @@ class RunDealToolsFile extends AbstractCronTask
                 $InitData['type'] == 15
             ){
                 $tmpXlsxDatas = self::getYieldDataForFuzzyMatch($InitData['upload_file_name']);
-                $tmpXlsxHeaders = [];
+                $tmpXlsxHeaders = self::getYieldHeaderDataForFuzzyMatch();
             }
 
             if(
