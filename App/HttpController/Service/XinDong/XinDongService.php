@@ -4263,7 +4263,7 @@ class XinDongService extends ServiceBase
         $companyEsModel
             ->addSize($size)
             ->addFrom(0)
-            ->searchFromEs();
+            ->searchFromEs('company_202211',true);
 
         $returnData = [];
         foreach ($companyEsModel->return_data['hits']['hits'] as $dataItem) {
