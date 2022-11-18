@@ -2373,9 +2373,8 @@ class XinDongController extends ProvideBase
 
     function fuzzyMatchEntName(): bool
     {
-        //
-        $requestData =  $this->getRequestData();
-        $name = trim($requestData['name']);
+        // 
+        $name = trim($this->getRequestData('name'));
         if(empty($name)){
             return $this->writeJson(201, null, [], '参数错误('.$name.')', true, []);
         }
