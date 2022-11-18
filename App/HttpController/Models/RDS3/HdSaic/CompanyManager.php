@@ -35,6 +35,18 @@ class CompanyManager extends ModelBase
         return $res;
     }
 
+    public static function getManagesNamesByCompanyId($id){
+        $res =  self::findByCompanyId($id) ;
+        $return = [];
+        foreach ($res as $subItem){
+            $tmp = trim($subItem['NAME']);
+            if($tmp){
+                $return[] = $tmp;
+            }
+        }
+        return $return;
+    }
+
     public static function findByName($name){
         $res =  CompanyManager::create()
             ->where('ENTNAME',$name)

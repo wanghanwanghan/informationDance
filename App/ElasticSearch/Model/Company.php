@@ -370,24 +370,46 @@ class Company extends ServiceBase
         if($searchText){
             $searchTextArr = explode(',',$searchText);
 //            $matchedCnames = [
-//                [ 'field'=>'ENTNAME' ,'value'=> $searchTextArr],
+//                [ 'field'=>'ENTNAME' ,'value'=> $searchText],
 //                //[ 'field'=>'shang_pin_data.name' ,'value'=> $searchText],
-//                [ 'field'=>'OPSCOPE' ,'value'=> $searchTextArr],
-//                [ 'field'=>'gong_si_jian_jie' ,'value'=> $searchTextArr],
-//                [ 'field'=>'app' ,'value'=> $searchTextArr],
+//                [ 'field'=>'OPSCOPE' ,'value'=> $searchText],
+//                [ 'field'=>'gong_si_jian_jie' ,'value'=> $searchText],
+//                [ 'field'=>'app' ,'value'=> $searchText],
 //            ];
-//            $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
-            $fileds = [
-                'ENTNAME',
-                'shang_pin_data.name',
-                'OPSCOPE',
-                'gong_si_jian_jie',
-                'app',
+            $matchedCnames = [
+
             ];
-            foreach ($fileds as $filed){
-                $matchedCnames[] =  [ 'field'=>$filed ,'value'=> $searchTextArr];
+            foreach ($searchTextArr as $subItem){
+                $matchedCnames[] = [
+                    'field'=>'ENTNAME',
+                    'value'=>$subItem,
+                ];
+                $matchedCnames[] = [
+                    'field'=>'OPSCOPE',
+                    'value'=>$subItem,
+                ];
+                $matchedCnames[] = [
+                    'field'=>'gong_si_jian_jie',
+                    'value'=>$subItem,
+                ];
+                $matchedCnames[] = [
+                    'field'=>'app',
+                    'value'=>$subItem,
+                ];
             }
+
             $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
+//            $fileds = [
+//                'ENTNAME',
+//                'shang_pin_data.name',
+//                'OPSCOPE',
+//                'gong_si_jian_jie',
+//                'app',
+//            ];
+//            foreach ($fileds as $filed){
+//                $matchedCnames[] =  [ 'field'=>$filed ,'value'=> $searchTextArr];
+//            }
+//            $this->es->addMustShouldPhraseQueryV2($matchedCnames) ;
         }
         return $this;
     }
@@ -1351,7 +1373,7 @@ class Company extends ServiceBase
 
         $datas = [];
 
-        $size = 3500;
+        $size = 500;
         $offset = 0;
         $nums =1;
         $lastId = 0;

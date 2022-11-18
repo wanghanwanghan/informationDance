@@ -12,6 +12,7 @@ use App\HttpController\Models\ModelBase;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -464,7 +465,44 @@ class ToolsFileLists extends ModelBase
 //                   ])
 //               );
 
+               //有效的联系人
+               $validContacts = CompanyManager::getManagesNamesByCompanyId($companyRes->companyid);
+
                foreach($retData as $datautem){
+                   //公开联系人姓名
+                   if($datautem['name']){
+                        if(
+                            !in_array($datautem['name'],$validContacts)
+                        ){
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'pullGongKaiContacts' => [
+//                                        '联系人已离职' =>  [
+//                                            '企业名'=>$entname,
+//                                            '$validContacts'=>$validContacts,
+//                                            '联系人姓名'=>$datautem['name']
+//                                        ],
+//                                    ]
+//                                ], JSON_UNESCAPED_UNICODE)
+//                            );
+                            continue;
+                        }else{
+//                            CommonService::getInstance()->log4PHP(
+//                                json_encode([
+//                                    __CLASS__.__FUNCTION__ .__LINE__,
+//                                    'pullGongKaiContacts' => [
+//                                        '联系人未离职' =>  [
+//                                            '企业名'=>$entname,
+//                                            '$validContacts'=>$validContacts,
+//                                            '联系人姓名'=>$datautem['name']
+//                                        ],
+//                                    ]
+//                                ], JSON_UNESCAPED_UNICODE)
+//                            );
+                        }
+                   }
+
                    $tmpDataItem = [
                        $entname,
                        $datautem['duty'],//'公开联系人职位',
@@ -477,6 +515,9 @@ class ToolsFileLists extends ModelBase
                        $datautem['POSITION'],//'通过姓名批匹配到的联系人职位,
                        $datautem['mobile_check_res_cname'].''.$datautem['mobile_check_res'].'',//'公开手机号码状态',
                    ];
+
+
+
 
                    //通过手机号补全微信信息
                    if(
@@ -613,11 +654,11 @@ class ToolsFileLists extends ModelBase
 
 
                // 企业名称：$dataItem[0]
-               $entname = $dataItem[0];
-               $code = $dataItem[1];
+               $entname = self::strtr_func($dataItem[0]);
+               $code =  self::strtr_func($dataItem[1]);
 
 
-               if($code){
+               if($code>0){
 
                    $companyRes = CompanyBasic::findByCode($code);
                }
@@ -625,7 +666,12 @@ class ToolsFileLists extends ModelBase
                    $companyRes = CompanyBasic::findByName($entname);
                }
 
-               if(empty($companyRes)){
+               //有效的联系人
+               $validContacts = CompanyManager::getManagesNamesByCompanyId($companyRes->companyid);
+               if(
+                   empty($companyRes) ||
+                   empty($companyRes->UNISCID)
+               ){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
                            //__CLASS__.__FUNCTION__ .__LINE__,
@@ -649,8 +695,8 @@ class ToolsFileLists extends ModelBase
                    }else{
                        $tmpContacts[$tmpPhone] = $tmpPhone;
                    }
-
                }
+
 //               CommonService::getInstance()->log4PHP(
 //                   json_encode([
 //                       'pullFeiGongKaiContacts' =>  [
@@ -755,6 +801,41 @@ class ToolsFileLists extends ModelBase
 
                    //用微信名匹配联系人职位信息
                    $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV3($entname, $matchedWeiXinName['nickname']);
+                   if(
+                       $tmpRes['data']['NAME'] &&
+                       !in_array($tmpRes['data']['NAME'],$validContacts)
+                   ){
+
+//                       $tmpDataItem[] = '';
+//                       fputcsv($f, $tmpDataItem);
+//                       CommonService::getInstance()->log4PHP(
+//                           json_encode([
+//                               __CLASS__.__FUNCTION__ .__LINE__,
+//                               'pullFeiGongKaiContacts_' => [
+//                                   '联系人已离职' =>  [
+//                                       '企业名'=>$entname,
+//                                       '$validContacts'=>$validContacts,
+//                                       '联系人姓名'=>$tmpRes['data']['NAME']
+//                                   ],
+//                               ]
+//                           ], JSON_UNESCAPED_UNICODE)
+//                       );
+                       continue;
+                   }
+                   else{
+//                       CommonService::getInstance()->log4PHP(
+//                           json_encode([
+//                               __CLASS__.__FUNCTION__ .__LINE__,
+//                               'pullFeiGongKaiContacts_' => [
+//                                   '联系人未离职' =>  [
+//                                       '企业名'=>$entname,
+//                                       '$validContacts'=>$validContacts,
+//                                       '联系人姓名'=>$tmpRes['data']['NAME']
+//                                   ],
+//                               ]
+//                           ], JSON_UNESCAPED_UNICODE)
+//                       );
+                   }
 //                   CommonService::getInstance()->log4PHP(
 //                       json_encode([
 //                           __CLASS__.__FUNCTION__ .__LINE__,
@@ -765,11 +846,11 @@ class ToolsFileLists extends ModelBase
 //                       ])
 //                   );
 
-                   $tmpDataItem[] =  $tmpRes['data']['NAME'];//联系人名称(疑似/通过微信名匹配)',
-                   $tmpDataItem[] =  $tmpRes['data']['POSITION'];//'职位(疑似/通过微信名匹配)',
-                   $tmpDataItem[] =  $tmpRes['match_res']['type'];//'微信匹配类型',
-                   $tmpDataItem[] =  $tmpRes['match_res']['details'];//'微信匹配子类型',
-                   $tmpDataItem[] =  $tmpRes['match_res']['percentage'];// '微信匹配值',
+                   $tmpDataItem[] =  $tmpRes['data']['NAME']; //联系人名称(疑似/通过微信名匹配)',
+                   $tmpDataItem[] =  $tmpRes['data']['POSITION']; //'职位(疑似/通过微信名匹配)',
+                   $tmpDataItem[] =  $tmpRes['match_res']['type']; //'微信匹配类型',
+                   $tmpDataItem[] =  $tmpRes['match_res']['details']; //'微信匹配子类型',
+                   $tmpDataItem[] =  $tmpRes['match_res']['percentage']; // '微信匹配值',
 
                    fputcsv($f, $tmpDataItem);
                }
@@ -902,6 +983,7 @@ class ToolsFileLists extends ModelBase
                //企业 税号 电话 微信名 性别
                $companyName = $dataItem[0];
                $companyRes = CompanyBasic::findByName($companyName);
+
                //$companyCode = $dataItem[1];
                if(empty($companyRes)){
                    continue;

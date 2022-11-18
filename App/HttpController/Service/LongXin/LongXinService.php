@@ -1074,16 +1074,16 @@ class LongXinService extends ServiceBase
 
         //管理人
         $allManages = CompanyManager::findByCompanyId($companyDataObj->companyid);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'getLianXiByNameV2'=>[
-                    '$allManages'=>$allManages,
-                    'companyid'=>$companyDataObj->companyid,
-                    '$entName'=>$entName,
-                ]
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'getLianXiByNameV2'=>[
+//                    '$allManages'=>$allManages,
+//                    'companyid'=>$companyDataObj->companyid,
+//                    '$entName'=>$entName,
+//                ]
+//            ])
+//        );
         foreach ($allManages as $Manage){
             if(
                 !empty($Manage['POSITION']) &&

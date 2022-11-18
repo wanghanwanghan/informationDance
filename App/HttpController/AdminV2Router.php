@@ -217,6 +217,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/uploadeGongKaiContacts', $prefix . 'uploadeGongKaiContacts');
             $routeCollector->addRoute(['GET', 'POST'], '/commonToosOptions', $prefix . 'commonToosOptions');
             $routeCollector->addRoute(['GET', 'POST'], '/commonToos', $prefix . 'commonToos');
+
             //获取上传列表
             $routeCollector->addRoute(['GET', 'POST'], '/getUploadLists', $prefix . 'getUploadLists'); //
             //获取上传文件类型
