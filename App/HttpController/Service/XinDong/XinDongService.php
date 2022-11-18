@@ -3758,13 +3758,13 @@ class XinDongService extends ServiceBase
         $res = $this->matchNamesByToBeContain($tobeMatch, $target);
         if ($res) {
             return [
-                'type' => '安全匹配',
+                'type' => '完全匹配',
                 'details' => '中文被包含匹配',
                 'res' => '成功',
                 'percentage' => '',
             ];
         }
-        
+
         //拼音全等
         $tobeMatchArr = $this->getPinYin($tobeMatch);
 //        CommonService::getInstance()->log4PHP(json_encode(['$tobeMatchArr'=>$tobeMatchArr]));
