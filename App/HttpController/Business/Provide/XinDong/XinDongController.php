@@ -2377,7 +2377,7 @@ class XinDongController extends ProvideBase
         $requestData =  $this->getRequestData();
         $name = trim($requestData['name']);
         if(empty($name)){
-            return $this->writeJson(201, null, [], '参数错误', true, []);
+            return $this->writeJson(201, null, [], '参数错误('.$name.')', true, []);
         }
 
         $datas = XinDongService::fuzzyMatchEntName($name);
