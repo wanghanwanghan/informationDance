@@ -181,10 +181,6 @@ class LongDunController extends ProvideBase
             'pageIndex' => $page,
             'pageSize'  => $pageSize,
         ];
-        CommonService::getInstance()->log4PHP($postData, 'info', 'tenderSearchParam');
-        $res = (new LongDunService())->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'Tender/Search', $postData);
-        CommonService::getInstance()->log4PHP($res, 'info', 'tenderSearchRes');
-
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new LongDunService())
                 ->setCheckRespFlag(true)
@@ -193,6 +189,20 @@ class LongDunController extends ProvideBase
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
+        return $this->checkResponse($res);
+    }
+    //招投标详情
+    function tenderSearchDetail()
+    {
+        $id = $this->request()->getRequestParam('id');
+
+        $postData = ['id' => $id];
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'Tender/Detail', $postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
 

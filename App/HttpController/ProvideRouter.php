@@ -109,6 +109,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getAdministrativeLicenseList', $prefix . 'getAdministrativeLicenseList');//  行政许可
             $routeCollector->addRoute(['GET', 'POST'], '/getAdministrativeLicenseListDetail', $prefix . 'getAdministrativeLicenseListDetail');//  行政许可详情
             $routeCollector->addRoute(['GET', 'POST'], '/tenderSearch', $prefix . 'tenderSearch');//招投标
+            $routeCollector->addRoute(['GET', 'POST'], '/tenderSearchDetail', $prefix . 'tenderSearchDetail');//招投标详情
             $routeCollector->addRoute(['GET', 'POST'], '/getSearchSoftwareCr', $prefix . 'getSearchSoftwareCr');//软件著作权
             $routeCollector->addRoute(['GET', 'POST'], '/getSearchCopyRight', $prefix . 'getSearchCopyRight');//作品著作权
             $routeCollector->addRoute(['GET', 'POST'], '/getSearchCertification', $prefix . 'getSearchCertification');//企业证书查询
