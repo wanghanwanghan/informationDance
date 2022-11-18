@@ -2371,4 +2371,19 @@ class XinDongController extends ProvideBase
     }
 
 
+    function fuzzyMatchEntName(): bool
+    {
+        //
+        $requestData =  $this->getRequestData();
+        $name = trim($requestData['name']);
+        if(empty($name)){
+            return $this->writeJson(201, null, [], '参数错误', true, []);
+        }
+
+        $datas = XinDongService::fuzzyMatchEntName($name);
+
+        return $this->writeJson(200, null, $datas, null, true, []);
+
+    }
+
 }
