@@ -686,6 +686,16 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
                 " SELECT * FROM $table WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
             );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'exportDataV8' => [
+                        'sql'=>" SELECT * FROM $table WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  ",
+                        '$datas'=>count($datas), 
+                    ]
+                ])
+            );
+
             $totalNums +=count($datas);
             foreach ($datas as $dataItem){
                 $comment_content =  str_replace(",","，",$dataItem['corexml']);
