@@ -5314,7 +5314,7 @@ class XinDongService extends ServiceBase
         if (empty($info)) {
             return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
         }
-        $list = CncaRzGltxH::create()->where('companyid' , $info->getAttr('companyid'))->get();
+        $list = CncaRzGltxH::create()->where('companyid' , $info->getAttr('companyid'))->all();
         CommonService::getInstance()->log4PHP([$list,$info],'info', 'getCncaRzGltx_h');
         $data = [];
         foreach ($list as $key => $item) {
@@ -5339,7 +5339,7 @@ class XinDongService extends ServiceBase
         if (empty($info)) {
             return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
         }
-        $list = CaseAll::create()->where('companyid' , $info->getAttr('companyid'))->get();
+        $list = CaseAll::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key]['CASETIME']      = $item->getAttr('CASETIME');
@@ -5376,7 +5376,7 @@ class XinDongService extends ServiceBase
         if (empty($info)) {
             return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
         }
-        $list = CaseCheck::create()->where('companyid' , $info->getAttr('companyid'))->get();
+        $list = CaseCheck::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key] = [
@@ -5404,7 +5404,7 @@ class XinDongService extends ServiceBase
         if (empty($info)) {
             return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
         }
-        $list = CaseYzwfsx::create()->where('companyid' , $info->getAttr('companyid'))->get();
+        $list = CaseYzwfsx::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key] = [
@@ -5430,7 +5430,7 @@ class XinDongService extends ServiceBase
         if (empty($info)) {
             return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
         }
-        $list = CompanyAbnormity::create()->where('companyid' , $info->getAttr('companyid'))->get();
+        $list = CompanyAbnormity::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key] = [
