@@ -22,6 +22,7 @@ use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
 use App\HttpController\Models\BusinessBase\CompanyClue;
+use App\HttpController\Models\BusinessBase\CompanyClueMd5;
 use App\HttpController\Models\MRXD\TmpInfo;
 use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\Provide\RequestApiInfo;
@@ -1154,11 +1155,66 @@ class ToolsController extends ControllerBase
 
             $datas  = DataModelExample::getYieldData(
                 $key,
-                OTHER_FILE_PATH);
-            foreach ($datas as $dataItem){
-                $response[] = $dataItem[0];
-            }
+                OTHER_FILE_PATH
+            );
 
+            //写到csv里
+            $fileName = date('YmdHis')."_剔除代理记账并去空号.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $allFields = [
+                "手机号",//
+                "代理记账",//
+                "手机号检测状态",//
+            ];
+            foreach ($allFields as $field=>$cname){
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+            $i = 1;
+            foreach ($datas as $dataItem){
+                if($i%100 == 0){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            '_剔除代理记账并去空号' => [
+                                '已生成'.$i,
+                                $dataItem[0]
+                            ]
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
+
+                //代理记账
+                $daiLiJiZhang = CompanyClueMd5::daiLiJiZhang($dataItem[0]);
+
+                // 调用接口查询手机号状态
+                $needsCheckMobilesStr = $dataItem[0];
+                $postData = [
+                    'mobiles' => $needsCheckMobilesStr,
+                ];
+
+                $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
+
+                //检测失败
+                if(empty($res['data'])){
+                    fputcsv($f, [
+                        $dataItem[0],
+                        trim($daiLiJiZhang),
+                        '检测失败',
+                    ]);
+                }else{
+                    foreach ($res['data'] as $subRes){
+                        fputcsv($f, [
+                            $dataItem[0],
+                            trim($daiLiJiZhang),
+                            MobileCheckInfo::getStatusMap()[$subRes['status']].'('.$subRes['status'].')',
+                        ]);
+                    }
+                }
+                $i ++;
+            }
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
         }
 
         return $this->writeJson(200, [], [
