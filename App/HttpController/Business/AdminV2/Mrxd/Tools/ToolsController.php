@@ -81,6 +81,10 @@ class ToolsController extends ControllerBase
                 'name' => '将表格根据手机号拆分成多行',
                 'path' => '/Static/Template/将表格根据手机号拆分成多行.xlsx',
             ],
+            [
+                'name' => '剔除代理记账并去空号',
+                'path' => '/Static/Template/剔除代理记账并去空号.xlsx',
+            ],
         ],'');
     }
 
@@ -93,6 +97,7 @@ class ToolsController extends ControllerBase
                 15  =>  '模糊匹配企业名称',
                 20  =>  '将表格根据手机号拆分成多行',
                 25  =>  '补全企业字段',
+                30  =>  '剔除代理记账并去空号',
 
         ],'');
     }
