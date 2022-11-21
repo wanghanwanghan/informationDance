@@ -457,11 +457,10 @@ class jincai_shoudong extends AbstractProcess
 
             // ================================================================================================
             $socialCredit = $one->getAttr('socialCredit');
-            if ($socialCredit !== '91320500703697975D' && $continue_at === 0) {
+            if ($socialCredit !== '9133020479005351XX' && $continue_at === 0) {
                 continue;
             }
             // ================================================================================================
-
 
             $rwh_list = (new JinCaiShuKeService())
                 ->obtainResultTraceNo($one->getAttr('traceNo'));
@@ -481,7 +480,7 @@ class jincai_shoudong extends AbstractProcess
 
 
                 // ================================================================================================
-                if ($wupanTraceNo !== '91320500703697975D1667912900731' && $wupan_continue_at === 0) {
+                if ($wupanTraceNo !== '9133020479005351XX1667924787422' && $wupan_continue_at === 0) {
                     continue;
                 }
                 $wupan_continue_at = 1;
@@ -516,6 +515,7 @@ class jincai_shoudong extends AbstractProcess
                 sleep(2);
 
             }
+
         }
 
         echo 'wanghan123' . PHP_EOL;
