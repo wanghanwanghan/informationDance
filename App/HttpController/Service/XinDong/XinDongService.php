@@ -14,11 +14,16 @@ use App\HttpController\Models\BusinessBase\VendincScale2020Model;
 use App\HttpController\Models\EntDb\EntDbNacao;
 use App\HttpController\Models\EntDb\EntDbNacaoBasic;
 use App\HttpController\Models\EntDb\EntDbNacaoClass;
+use App\HttpController\Models\RDS3\HdSaic\CaseAll;
+use App\HttpController\Models\RDS3\HdSaic\CaseCheck;
+use App\HttpController\Models\RDS3\HdSaic\CaseYzwfsx;
+use App\HttpController\Models\RDS3\HdSaic\CompanyAbnormity;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggreListedH;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggrePicsH;
+use App\HttpController\Models\RDS3\HdSaicExtension\CncaRzGltxH;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
@@ -5299,5 +5304,179 @@ class XinDongService extends ServiceBase
                 ])->all();
         }
         return $this->checkResp(200, null, $list, '查询成功');
+    }
+
+    //认监委-ISO管理体系认证
+    public function getCncaRzGltx_h($entName)
+    {
+
+        $info = CompanyBasic::create()->where('ENTNAME' ,$entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CncaRzGltxH::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        CommonService::getInstance()->log4PHP([$list,$info],'info', 'getCncaRzGltx_h');
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key]['cert_code']         = $item->getAttr('cert_code');
+            $data[$key]['cert_project']      = $item->getAttr('cert_project');
+            $data[$key]['cert_num']          = $item->getAttr('cert_num');
+            $data[$key]['org_num']           = $item->getAttr('org_num');
+            $data[$key]['cert_code']         = $item->getAttr('cert_code');
+            $data[$key]['cert_status']       = $item->getAttr('cert_status');
+            $data[$key]['award_date']        = $item->getAttr('award_date');
+            $data[$key]['expire_date']       = $item->getAttr('expire_date');
+            $data[$key]['certificate_basis'] = $item->getAttr('certificate_basis');
+            $data[$key]['certificate_scope'] = $item->getAttr('certificate_scope');
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //工商-行政处罚
+    public function getCaseAll_h($entName)
+    {
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CaseAll::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key]['CASETIME']      = $item->getAttr('CASETIME');
+            $data[$key]['NAME']          = $item->getAttr('NAME');
+            $data[$key]['REGNO']         = $item->getAttr('REGNO');
+            $data[$key]['CERNO']         = $item->getAttr('CERNO');
+            $data[$key]['CASEREASON']    = $item->getAttr('CASEREASON');
+            $data[$key]['CASEVAL']       = $item->getAttr('CASEVAL');
+            $data[$key]['CASETYPE']      = $item->getAttr('CASETYPE');
+            $data[$key]['EXESORT']       = $item->getAttr('EXESORT');
+            $data[$key]['CASERESULT']    = $item->getAttr('CASERESULT');
+            $data[$key]['PENDECNO']      = $item->getAttr('PENDECNO');
+            $data[$key]['PENDECISSDATE'] = $item->getAttr('PENDECISSDATE');
+            $data[$key]['PENAUTHNAME']   = $item->getAttr('PENAUTHNAME');
+            $data[$key]['PENAUTHID']     = $item->getAttr('PENAUTHID');
+            $data[$key]['ILLEGFACT']     = $item->getAttr('ILLEGFACT');
+            $data[$key]['PENBASIS']      = $item->getAttr('PENBASIS');
+            $data[$key]['PENTYPE']       = $item->getAttr('PENTYPE');
+            $data[$key]['PENRESULT']     = $item->getAttr('PENRESULT');
+            $data[$key]['PENAM']         = $item->getAttr('PENAM');
+            $data[$key]['PENEXEST']      = $item->getAttr('PENEXEST');
+            $data[$key]['PUBDATE']       = $item->getAttr('PUBDATE');
+            $data[$key]['ENDDATE']       = $item->getAttr('ENDDATE');
+            $data[$key]['CONTENT']       = $item->getAttr('CONTENT');
+        }
+
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //工商-抽查检查信息
+    public function getCaseCheck_h($entName)
+    {
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CaseCheck::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'REGNO'       => $item->getAttr('REGNO'),
+                'UNISCID'     => $item->getAttr('UNISCID'),
+                'CHECKDATE'   => $item->getAttr('CHECKDATE'),
+                'INSTYPE'     => $item->getAttr('INSTYPE'),
+                'LOCALADM'    => $item->getAttr('LOCALADM'),
+                'LOCALADMID'  => $item->getAttr('LOCALADMID'),
+                'FOUNDPROB'   => $item->getAttr('FOUNDPROB'),
+                'NOTICETITLE' => $item->getAttr('NOTICETITLE'),
+                'NOTICEID'    => $item->getAttr('NOTICEID'),
+                'SETST'       => $item->getAttr('SETST'),
+                'SETSUG'      => $item->getAttr('SETSUG'),
+                'REMARK'      => $item->getAttr('REMARK'),
+            ];
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //工商-严重违法失信
+    public function getCaseYzwfsx_h($entName)
+    {
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CaseYzwfsx::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'UNISCID'   => $item->getAttr('UNISCID'),
+                'REGNO'     => $item->getAttr('REGNO'),
+                'inreason'  => $item->getAttr('inreason'),
+                'indate'    => $item->getAttr('indate'),
+                'inorg'     => $item->getAttr('inorg'),
+                'outreason' => $item->getAttr('outreason'),
+                'outdate'   => $item->getAttr('outdate'),
+                'outorg'    => $item->getAttr('outorg'),
+                'yztype'    => $item->getAttr('yztype'),
+                'yzfact'    => $item->getAttr('yzfact'),
+            ];
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //工商-经营异常
+    public function getCompanyAbnormity_h($entName)
+    {
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyAbnormity::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'INDATE'    => $item->getAttr('INDATE'),
+                'INREASON'  => $item->getAttr('INREASON'),
+                'YR_REGORG' => $item->getAttr('YR_REGORG'),
+                'OUTDATE'   => $item->getAttr('OUTDATE'),
+                'OUTREASON' => $item->getAttr('OUTREASON'),
+                'YC_REGORG' => $item->getAttr('YC_REGORG'),
+            ];
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //获取企业基本信息
+    public function getCompanyBasic_h($entName)
+    {
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $data = [
+            'UNISCID'     => $info->getAttr('UNISCID'),
+            'REGNO'       => $info->getAttr('REGNO'),
+            'NACAOID'     => $info->getAttr('NACAOID'),
+            'NAME'        => $info->getAttr('NAME'),
+            'NAMETITLE'   => $info->getAttr('NAMETITLE'),
+            'ENTTYPE'     => $info->getAttr('ENTTYPE'),
+            'ESDATE'      => $info->getAttr('ESDATE'),
+            'APPRDATE'    => $info->getAttr('APPRDATE'),
+            'ENTSTATUS'   => $info->getAttr('ENTSTATUS'),
+            'REGCAP'      => $info->getAttr('REGCAP'),
+            'REGCAP_NAME' => $info->getAttr('REGCAP_NAME'),
+            'REGCAPCUR'   => $info->getAttr('REGCAPCUR'),
+            'RECCAP'      => $info->getAttr('RECCAP'),
+            'REGORG'      => $info->getAttr('REGORG'),
+            'OPFROM'      => $info->getAttr('OPFROM'),
+            'OPTO'        => $info->getAttr('OPTO'),
+            'OPSCOPE'     => $info->getAttr('OPSCOPE'),
+            'DOM'         => $info->getAttr('DOM'),
+            'DOMDISTRICT' => $info->getAttr('DOMDISTRICT'),
+            'NIC_ID'      => $info->getAttr('NIC_ID'),
+            'CANDATE'     => $info->getAttr('CANDATE'),
+            'REVDATE'     => $info->getAttr('REVDATE'),
+        ];
+
+        return $this->checkResp(200, null, $data, '成功');
     }
 }

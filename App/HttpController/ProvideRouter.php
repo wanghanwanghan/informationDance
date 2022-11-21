@@ -109,6 +109,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getAdministrativeLicenseList', $prefix . 'getAdministrativeLicenseList');//  行政许可
             $routeCollector->addRoute(['GET', 'POST'], '/getAdministrativeLicenseListDetail', $prefix . 'getAdministrativeLicenseListDetail');//  行政许可详情
             $routeCollector->addRoute(['GET', 'POST'], '/tenderSearch', $prefix . 'tenderSearch');//招投标
+            $routeCollector->addRoute(['GET', 'POST'], '/tenderSearchDetail', $prefix . 'tenderSearchDetail');//招投标详情
             $routeCollector->addRoute(['GET', 'POST'], '/getSearchSoftwareCr', $prefix . 'getSearchSoftwareCr');//软件著作权
             $routeCollector->addRoute(['GET', 'POST'], '/getSearchCopyRight', $prefix . 'getSearchCopyRight');//作品著作权
             $routeCollector->addRoute(['GET', 'POST'], '/getSearchCertification', $prefix . 'getSearchCertification');//企业证书查询
@@ -294,6 +295,14 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getEntMarketInfo', $prefix . 'getEntMarketInfo');//企业上市信息
             $routeCollector->addRoute(['GET', 'POST'], '/getEntLiquidation', $prefix . 'getEntLiquidation');//清算
             $routeCollector->addRoute(['GET', 'POST'], '/fuzzyMatchEntName', $prefix . 'fuzzyMatchEntName');//清算
+
+            //获取本库中的数据接口
+            $routeCollector->addRoute(['GET', 'POST'], '/getCncaRzGltx_h', $prefix . 'getCncaRzGltx_h');//认监委-ISO管理体系认证
+            $routeCollector->addRoute(['GET', 'POST'], '/getCaseAll_h', $prefix . 'getCaseAll_h');//工商-行政处罚
+            $routeCollector->addRoute(['GET', 'POST'], '/getCaseCheck_h', $prefix . 'getCaseCheck_h');//工商-抽查检查信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getCaseYzwfsx_h', $prefix . 'getCaseYzwfsx_h');//工商-严重违法失信
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyAbnormity_h', $prefix . 'getCompanyAbnormity_h');// 工商-经营异常
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyBasic_h', $prefix . 'getCompanyBasic_h');//获取企业基本信息
         });
 
         return true;
