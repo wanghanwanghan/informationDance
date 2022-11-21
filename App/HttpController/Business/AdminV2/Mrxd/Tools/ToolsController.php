@@ -1151,7 +1151,14 @@ class ToolsController extends ControllerBase
 
         //剔除代理记账并去空号（传文件到Static/OtherFile/后，入参格式:文件名）
         if($requestData['type'] == 130 ){
-            $response[] = 'http://api.test.meirixindong.com/Static/Temp/'.$filename;
+
+            $datas  = DataModelExample::getYieldData(
+                $key,
+                OTHER_FILE_PATH);
+            foreach ($datas as $dataItem){
+                $response[] = $dataItem[0];
+            }
+
         }
 
         return $this->writeJson(200, [], [
@@ -1204,7 +1211,7 @@ class ToolsController extends ControllerBase
             127 => '空号验证的时候：有多少其他错误',
             128 => '空号验证里的其他错误，重新拉取（入参格式：重拉的数量）',
             129 => '根据日期查询新的招投标邮件对应的xlsx文件（入参格式:日期|如2022-11-11）',
-            130 => '测试xlswriter（入参格式:日期|如2022-11-11）',
+            130 => '剔除代理记账并去空号（传文件到Static/OtherFile/后，入参格式:文件名）',
         ],'成功');
     }
     public function zhaoTouBiaoDatas(){
