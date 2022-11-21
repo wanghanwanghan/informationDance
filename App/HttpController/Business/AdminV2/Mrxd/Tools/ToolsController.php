@@ -1150,7 +1150,7 @@ class ToolsController extends ControllerBase
         }
 
         //剔除代理记账并去空号（传文件到Static/OtherFile/后，入参格式:文件名）
-        if($requestData['type'] == 130 ){ 
+        if($requestData['type'] == 130 ){
             $response[] = 'http://api.test.meirixindong.com/Static/Temp/'.$filename;
         }
 
