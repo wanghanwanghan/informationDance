@@ -5310,11 +5310,12 @@ class XinDongService extends ServiceBase
     public function getCncaRzGltx_h($entName)
     {
 
-        $info = CompanyBasic::create()->where('ENTNAME=' . $entName)->get();
+        $info = CompanyBasic::create()->where('ENTNAME' ,$entName)->get();
         if (empty($info)) {
             return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
         }
-        $list = CncaRzGltxH::create()->where('companyid=' . $info->getAttr('companyid'))->get();
+        $list = CncaRzGltxH::create()->where('companyid' , $info->getAttr('companyid'))->get();
+        CommonService::getInstance()->log4PHP([$list,$info],'info', 'getCncaRzGltx_h');
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key]['cert_code']         = $item->getAttr('cert_code');
@@ -5334,11 +5335,11 @@ class XinDongService extends ServiceBase
     //工商-行政处罚
     public function getCaseAll_h($entName)
     {
-        $info = CompanyBasic::create()->where('ENTNAME=' . $entName)->get();
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
         if (empty($info)) {
             return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
         }
-        $list = CaseAll::create()->where('companyid=' . $info->getAttr('companyid'))->get();
+        $list = CaseAll::create()->where('companyid' , $info->getAttr('companyid'))->get();
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key]['CASETIME']      = $item->getAttr('CASETIME');
@@ -5371,11 +5372,11 @@ class XinDongService extends ServiceBase
     //工商-抽查检查信息
     public function getCaseCheck_h($entName)
     {
-        $info = CompanyBasic::create()->where('ENTNAME=' . $entName)->get();
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
         if (empty($info)) {
             return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
         }
-        $list = CaseCheck::create()->where('companyid=' . $info->getAttr('companyid'))->get();
+        $list = CaseCheck::create()->where('companyid' , $info->getAttr('companyid'))->get();
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key] = [
@@ -5399,11 +5400,11 @@ class XinDongService extends ServiceBase
     //工商-严重违法失信
     public function getCaseYzwfsx_h($entName)
     {
-        $info = CompanyBasic::create()->where('ENTNAME=' . $entName)->get();
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
         if (empty($info)) {
             return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
         }
-        $list = CaseYzwfsx::create()->where('companyid=' . $info->getAttr('companyid'))->get();
+        $list = CaseYzwfsx::create()->where('companyid' , $info->getAttr('companyid'))->get();
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key] = [
@@ -5425,11 +5426,11 @@ class XinDongService extends ServiceBase
     //工商-经营异常
     public function getCompanyAbnormity_h($entName)
     {
-        $info = CompanyBasic::create()->where('ENTNAME=' . $entName)->get();
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
         if (empty($info)) {
             return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
         }
-        $list = CompanyAbnormity::create()->where('companyid=' . $info->getAttr('companyid'))->get();
+        $list = CompanyAbnormity::create()->where('companyid' , $info->getAttr('companyid'))->get();
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key] = [
@@ -5447,7 +5448,7 @@ class XinDongService extends ServiceBase
     //获取企业基本信息
     public function getCompanyBasic_h($entName)
     {
-        $info = CompanyBasic::create()->where('ENTNAME=' . $entName)->get();
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
         if (empty($info)) {
             return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
         }
