@@ -3743,14 +3743,23 @@ class XinDongService extends ServiceBase
     function matchNamesV2($tobeMatch, $target)
     {
 
-
-
         //完全匹配
         $res = $this->matchNamesByEqual($tobeMatch, $target);
         if ($res) {
             return [
                 'type' => '完全匹配',
                 'details' => '名称完全匹配',
+                'res' => '成功',
+                'percentage' => '',
+            ];
+        }
+
+        //包含被匹配  张三0808    张三
+        $res = $this->matchNamesByToBeContain($tobeMatch, $target);
+        if ($res) {
+            return [
+                'type' => '完全匹配',
+                'details' => '中文被包含匹配',
                 'res' => '成功',
                 'percentage' => '',
             ];
@@ -3865,20 +3874,6 @@ class XinDongService extends ServiceBase
             }
         }
 
-        //多音字匹配
-        $tobeMatchArr = $this->getPinYin($tobeMatch);
-        $targetArr = $this->getPinYin($target);
-//        CommonService::getInstance()->log4PHP(json_encode(['duo yin zi  '=>['$tobeMatchArr' => $tobeMatchArr,'$targetArr' =>$targetArr]]));
-
-        $res = $this->checkIfArrayEqual($tobeMatchArr, $targetArr);
-        if ($res) {
-            return [
-                'type' => '近似匹配',
-                'details' => '多音字匹配',
-                'res' => '成功',
-                'percentage' => '',
-            ];
-        }
 
         //包含匹配  张三0808    张三
         $res = $this->matchNamesByContain($tobeMatch, $target);
@@ -3892,31 +3887,7 @@ class XinDongService extends ServiceBase
             ];
         }
 
-        //包含被匹配  张三0808    张三
-        $res = $this->matchNamesByToBeContain($tobeMatch, $target);
-        if ($res) {
-            return [
-                'type' => '近似匹配',
-                'details' => '中文被包含匹配',
-                'res' => '成功',
-                'percentage' => '',
-            ];
-        }
 
-        //拼音包含
-        similar_text(PinYinService::getPinyin($tobeMatch), PinYinService::getPinyin($target), $perc);
-        $res = array_intersect($tobeMatchArr, $targetArr);
-        if (
-            !empty($res) &&
-            $perc >= 90
-        ) {
-            return [
-                'type' => '近似匹配',
-                'details' => '拼音包含匹配',
-                'res' => '成功',
-                'percentage' => number_format($perc, 2),
-            ];
-        }
 
         //两个字的
         if(
@@ -3995,6 +3966,39 @@ class XinDongService extends ServiceBase
             }
         }
 
+        //拼音包含
+        similar_text(PinYinService::getPinyin($tobeMatch), PinYinService::getPinyin($target), $perc);
+        $res = array_intersect($tobeMatchArr, $targetArr);
+        if (
+            !empty($res) &&
+            $perc >= 90
+        ) {
+            return [
+                'type' => '近似匹配',
+                'details' => '拼音包含匹配',
+                'res' => '成功',
+                'percentage' => number_format($perc, 2),
+            ];
+        }
+
+
+        //多音字匹配
+        $tobeMatchArr = $this->getPinYin($tobeMatch);
+        $targetArr = $this->getPinYin($target);
+//        CommonService::getInstance()->log4PHP(json_encode(['duo yin zi  '=>['$tobeMatchArr' => $tobeMatchArr,'$targetArr' =>$targetArr]]));
+
+        $res = $this->checkIfArrayEqual($tobeMatchArr, $targetArr);
+        if ($res) {
+            return [
+                'type' => '近似匹配',
+                'details' => '多音字匹配',
+                'res' => '成功',
+                'percentage' => '',
+            ];
+        }
+
+
+
         //文本匹配度  张三0808    张三
         similar_text($tobeMatch, $target, $perc);
         if ($perc > 80) {
@@ -4008,16 +4012,16 @@ class XinDongService extends ServiceBase
 
         //拼音相似度匹配  张三0808    张三
         similar_text(PinYinService::getPinyin($tobeMatch), PinYinService::getPinyin($target), $perc);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'similar_text' => [
-                    '$perc' => $perc,
-                    '$tobeMatch'=>$tobeMatch,
-                    '$target'=>$target,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'similar_text' => [
+//                    '$perc' => $perc,
+//                    '$tobeMatch'=>$tobeMatch,
+//                    '$target'=>$target,
+//                ]
+//            ],JSON_UNESCAPED_UNICODE)
+//        );
 
         if ($perc >= 90) {
             return [
@@ -4259,11 +4263,12 @@ class XinDongService extends ServiceBase
     static function fuzzyMatchEntName($fuzzyName, $size = 1)
     {
         $companyEsModel = new \App\ElasticSearch\Model\Company();
-        $companyEsModel->es->addMustMatchQuery('name', $fuzzyName);
+        $companyEsModel->es->addMustMatchQuery('ENTNAME', $fuzzyName);
         $companyEsModel
             ->addSize($size)
             ->addFrom(0)
-            ->searchFromEs();
+            //->searchFromEs('company_202211',true);
+            ->searchFromEs('company_202211');
 
         $returnData = [];
         foreach ($companyEsModel->return_data['hits']['hits'] as $dataItem) {

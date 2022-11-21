@@ -172,6 +172,7 @@ class ToolsController extends ControllerBase
     }
 
 
+
     public function rePullFeiGongKaiContact(){
         $requestData =  $this->getRequestData();
         $page =$requestData['page']?:1;
@@ -334,6 +335,7 @@ class ToolsController extends ControllerBase
 
         return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
     }
+
 
     /**
         上传公开联系人文件

@@ -266,21 +266,22 @@ class RunDealZhaoTouBiao extends AbstractCronTask
     {
 
         $res = self::exportDataV8($day);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'sendEmailV2' => [
 
-                    'filesArr'=> $res['filesArr'],
-                ]
-            ])
-        );
 
 
         //$filename = control::getUuid();
         $filename = 'zhao_tou_biao_new_'.date('Y-m-d').control::getUuid();
-        ZipService::getInstance()->zip( $res['filesArr'], TEMP_FILE_PATH . $filename . '.zip');
-
+        $zipRes = ZipService::getInstance()->zip( $res['filesArr'], TEMP_FILE_PATH . $filename . '.zip');
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'sendEmailV2' => [
+                    'filesArr'=> $res['filesArr'],
+                    '$zipRes'=> $zipRes,
+                    '$filename'=> $filename,
+                ]
+            ])
+        );
 //        CommonService::getInstance()->sendEmailV2(
 //         'tianyongshan@meirixindong.com',
 //            '招投标数据_新('.$day.')',
@@ -685,6 +686,16 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
                 " SELECT * FROM $table WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
             );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'exportDataV8' => [
+                        'sql'=>" SELECT * FROM $table WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  ",
+                        '$datas'=>count($datas), 
+                    ]
+                ])
+            );
+
             $totalNums +=count($datas);
             foreach ($datas as $dataItem){
                 $comment_content =  str_replace(",","，",$dataItem['corexml']);
