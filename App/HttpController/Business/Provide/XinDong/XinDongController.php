@@ -1461,6 +1461,18 @@ class XinDongController extends ProvideBase
     //企业联系方式
     function getEntLianXi(): bool
     {
+        // qudao
+        // 渠道（a、b、c、d四种，全选即为'abcd'，默认为'a'）。其中'a'查询的是年报、招聘、等多个公开渠道；'b'、'c'、'd'都是指定账号及 配置查询权限才可以查询，查询的是NonPub数据。
+
+        // lianxitype
+        // 类型（1、2、3三种；1手机，2座机，3邮箱；全选即为'123'，默认为空）
+
+        // zhiwei
+        // 类型（1企业主/法人，2董事/监事，3总经理/负责人，4销售总监/经理，5市场总监/经理，6会计，7人力资源，全选即为'1234567'，默认为全选）
+
+        // emptycheck
+        // 是否进行空号检测（'0'或'1'），默认为'0'不进行空号检测，若是'1'会调用运营商接口进行空号检测，会增加接口响应时长。
+
         $postData = [
             'entName' => $this->getRequestData('entName', ''),
         ];
