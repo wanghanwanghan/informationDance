@@ -691,7 +691,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'exportDataV8' => [
                         'sql'=>" SELECT * FROM $table WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  ",
-                        '$datas'=>count($datas), 
+                        '$datas'=>count($datas),
                     ]
                 ])
             );
