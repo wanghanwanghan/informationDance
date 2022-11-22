@@ -5319,12 +5319,10 @@ class XinDongService extends ServiceBase
     }
 
     //认监委-ISO管理体系认证
-    public function getCncaRzGltx_h($entName)
-    {
-
-        $info = CompanyBasic::create()->where('ENTNAME' ,$entName)->get();
+    public function getCncaRzGltx_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CncaRzGltxH::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5343,11 +5341,10 @@ class XinDongService extends ServiceBase
     }
 
     //工商-行政处罚
-    public function getCaseAll_h($entName)
-    {
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCaseAll_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CaseAll::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5380,11 +5377,10 @@ class XinDongService extends ServiceBase
     }
 
     //工商-抽查检查信息
-    public function getCaseCheck_h($entName)
-    {
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCaseCheck_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CaseCheck::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5408,11 +5404,10 @@ class XinDongService extends ServiceBase
     }
 
     //工商-严重违法失信
-    public function getCaseYzwfsx_h($entName)
-    {
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCaseYzwfsx_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CaseYzwfsx::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5434,11 +5429,10 @@ class XinDongService extends ServiceBase
     }
 
     //工商-经营异常
-    public function getCompanyAbnormity_h($entName)
-    {
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCompanyAbnormity_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CompanyAbnormity::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5456,11 +5450,10 @@ class XinDongService extends ServiceBase
     }
 
     //获取企业基本信息
-    public function getCompanyBasic_h($entName)
-    {
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCompanyBasic_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $data = [
 //            'UNISCID'     => $info->getAttr('UNISCID'),
@@ -5491,10 +5484,10 @@ class XinDongService extends ServiceBase
     }
 
     //工商-年报-主表
-    public function getCompanyAr_h($entName){
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCompanyAr_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CompanyAr::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5523,10 +5516,10 @@ class XinDongService extends ServiceBase
     }
 
     //工商-年报股权变更
-    public function getCompanyArAlterstockinfo_h($entName){
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCompanyArAlterstockinfo_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CompanyArAlterstockinfo::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5544,10 +5537,10 @@ class XinDongService extends ServiceBase
     }
 
     //工商-年报股权变更
-    public function getCompanyArForinvestment_h($entName){
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCompanyArForinvestment_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CompanyArForinvestment::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5564,10 +5557,10 @@ class XinDongService extends ServiceBase
     }
 
     //工商-年报-资产
-    public function getCompanyArAsset_h($entName){
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCompanyArAsset_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CompanyArForinvestment::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5583,10 +5576,10 @@ class XinDongService extends ServiceBase
         return $this->checkResp(200, null, $data, '成功');
     }
 
-    public function getCompanyArForguaranteeinfo_h($entName){
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCompanyArForguaranteeinfo_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CompanyArForguaranteeinfo::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5607,10 +5600,10 @@ class XinDongService extends ServiceBase
         return $this->checkResp(200, null, $data, '成功');
     }
 
-    public function getCompanyArCapital_h($entName){
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCompanyArCapital_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CompanyArCapital::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5630,10 +5623,10 @@ class XinDongService extends ServiceBase
     }
 
     //工商-年报变更信息
-    public function getCompanyArModify_h($entName, $page, $pageSize){
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCompanyArModify_h($code,$entName, $page, $pageSize){
+        $info = $this->getCompanyId(['entName'=>$entName,'code'=>$code]);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $entName . ',code:'.$code.'）的信息');
         }
         $list = CompanyArModify::create()->where('companyid' , $info->getAttr('companyid'))
             ->limit($this->exprOffset($page, $pageSize), (int)$pageSize)
@@ -5653,10 +5646,10 @@ class XinDongService extends ServiceBase
 
     }
 
-    public function getCompanyArSocialfee_h($entName){
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCompanyArSocialfee_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CompanyArSocialfee::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5689,10 +5682,10 @@ class XinDongService extends ServiceBase
         return $this->checkResp(200, null, $data, '成功');
     }
 
-    public function getCompanyArWebsiteinfo_h($entName){
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCompanyArWebsiteinfo_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CompanyArWebsiteinfo::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5709,10 +5702,10 @@ class XinDongService extends ServiceBase
     }
 
     //工商-注吊销信息
-    public function getCompanyCancelInfo_h($entName){
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCompanyCancelInfo_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CompanyCancelInfo::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5731,10 +5724,10 @@ class XinDongService extends ServiceBase
     }
 
     //工商-分支机构
-    public function getCompanyFiliation_h($entName){
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCompanyFiliation_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CompanyFiliation::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5754,10 +5747,10 @@ class XinDongService extends ServiceBase
     }
 
     //大数据-曾用名表
-    public function getCompanyHistoryName_h($entName){
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCompanyHistoryName_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CompanyHistoryName::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5772,10 +5765,10 @@ class XinDongService extends ServiceBase
 
 
     //工商-企业股东
-    public function getCompanyInv_h($entName){
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCompanyInv_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CompanyInv::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5797,10 +5790,10 @@ class XinDongService extends ServiceBase
         return $this->checkResp(200, null, $data, '成功');
     }
     //工商-企业主要人员
-    public function getCompanyManager_h($entName){
-        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+    public function getCompanyManager_h($postData){
+        $info = $this->getCompanyId($postData);
         if (empty($info)) {
-            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CompanyManager::create()->where('companyid' , $info->getAttr('companyid'))->all();
         $data = [];
@@ -5813,4 +5806,14 @@ class XinDongService extends ServiceBase
         }
         return $this->checkResp(200, null, $data, '成功');
     }
+
+    public function getCompanyId($postData){
+        $info = CompanyBasic::create()->where('UNISCID' , $postData['code'])->get();
+        if(empty($info)){
+            $info = CompanyBasic::create()->where('ENTNAME' , $postData['entName'])->get();
+        }
+        return $info;
+    }
+
+
 }
