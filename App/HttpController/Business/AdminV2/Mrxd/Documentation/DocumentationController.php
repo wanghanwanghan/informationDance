@@ -99,6 +99,10 @@ class DocumentationController extends ControllerBase
             $page
         );
 
+        foreach ($res['data'] as &$item){
+            $item['url'] = 'https://api.meirixindong.com/Static/OtherFile/'.md5($requestData['name']).'.html';
+        }
+
         return $this->writeJson(200,  [
             'page' => $page,
             'pageSize' =>10,
@@ -227,7 +231,7 @@ class DocumentationController extends ControllerBase
         }
 
         $res = Documentation::findById($requestData['id'])->toArray();
-        $fileName = $res['name'].'.html';
+        $fileName = md5($res['name']).'.html';
         unlink(OTHER_FILE_PATH.$fileName);
         file_put_contents(OTHER_FILE_PATH.$fileName, $res['content'], FILE_APPEND | LOCK_EX);
 
