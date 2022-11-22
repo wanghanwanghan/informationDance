@@ -461,7 +461,7 @@ class RunDealToolsFile extends AbstractCronTask
                  */
                 foreach ($res['data'] as $subItem) {
                     //代理记账
-                    $daiLiJiZhang = CompanyClueMd5::daiLiJiZhang($newPhone);
+                    $daiLiJiZhang = CompanyClueMd5::daiLiJiZhang($subItem['mobile']);
                     yield $datas[] = [
                         //企业
                         $value0,
