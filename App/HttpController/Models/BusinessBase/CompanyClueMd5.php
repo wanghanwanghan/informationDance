@@ -141,25 +141,38 @@ class CompanyClueMd5 extends ModelBase
     }
 
     static function daiLiJiZhang($phone){
+
         $dataRes = self::findByPhoneV2($phone);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    '代理记账'=>[
+                        '手机号'=>$phone,
+                        '数据'=>$dataRes,
+                        '结果'=>$dataRes['label_num'],
+                    ]
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
         return $dataRes['label_num'];
     }
 
     public static function findByPhoneV2($phone){
         $res =  self::findByPhone(md5($phone));
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    '根据手机查询线索'=>[
+                        '手机号'=>$phone,
+                        'md5'=>md5($phone),
+                        '结果'=>$res,
+                    ]
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
         $resData =  $res?$res->toArray():[];
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                __CLASS__.__FUNCTION__ .__LINE__,
-//                [
-//                    'findWeiXinByPhone'=>[
-//                        '$phone'=>$phone,
-//                        'md5'=>md5($phone),
-//                        '$resData'=>$resData
-//                    ]
-//                ]
-//            ])
-//        );
         return $resData;
     }
 
