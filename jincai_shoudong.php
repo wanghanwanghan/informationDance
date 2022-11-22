@@ -420,6 +420,15 @@ class jincai_shoudong extends AbstractProcess
 
     protected function run($arg)
     {
+        $all = JinCaiTrace::create()->all();
+
+        foreach ($all as $one) {
+            $this->sendToOSS($one->getAttr('socialCredit'), '');
+        }
+
+        dd(123);
+
+
 //        foreach (['91110105MA004MNF8T', '91110111MA0076A807', '91110000722617379C'] as $one) {
 //            $this->updateAddTask($one);
 //        }
