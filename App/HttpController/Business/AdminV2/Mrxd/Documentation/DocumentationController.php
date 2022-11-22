@@ -99,7 +99,7 @@ class DocumentationController extends ControllerBase
             $page
         );
 
-        foreach ($res as &$item){
+        foreach ($res['data'] as &$item){
             $item['url'] = 'https://api.meirixindong.com/Static/OtherFile/'.md5($requestData['name']).'.html';
         }
 
