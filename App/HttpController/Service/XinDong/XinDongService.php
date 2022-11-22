@@ -28,6 +28,9 @@ use App\HttpController\Models\RDS3\HdSaic\CompanyArSocialfee;
 use App\HttpController\Models\RDS3\HdSaic\CompanyArWebsiteinfo;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyCancelInfo;
+use App\HttpController\Models\RDS3\HdSaic\CompanyFiliation;
+use App\HttpController\Models\RDS3\HdSaic\CompanyHistoryName;
+use App\HttpController\Models\RDS3\HdSaic\CompanyInv;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggreListedH;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
@@ -5387,8 +5390,8 @@ class XinDongService extends ServiceBase
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key] = [
-                'REGNO'       => $item->getAttr('REGNO'),
-                'UNISCID'     => $item->getAttr('UNISCID'),
+//                'REGNO'       => $item->getAttr('REGNO'),
+//                'UNISCID'     => $item->getAttr('UNISCID'),
                 'CHECKDATE'   => $item->getAttr('CHECKDATE'),
                 'INSTYPE'     => $item->getAttr('INSTYPE'),
                 'LOCALADM'    => $item->getAttr('LOCALADM'),
@@ -5415,8 +5418,8 @@ class XinDongService extends ServiceBase
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key] = [
-                'UNISCID'   => $item->getAttr('UNISCID'),
-                'REGNO'     => $item->getAttr('REGNO'),
+//                'UNISCID'   => $item->getAttr('UNISCID'),
+//                'REGNO'     => $item->getAttr('REGNO'),
                 'inreason'  => $item->getAttr('inreason'),
                 'indate'    => $item->getAttr('indate'),
                 'inorg'     => $item->getAttr('inorg'),
@@ -5460,8 +5463,8 @@ class XinDongService extends ServiceBase
             return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
         }
         $data = [
-            'UNISCID'     => $info->getAttr('UNISCID'),
-            'REGNO'       => $info->getAttr('REGNO'),
+//            'UNISCID'     => $info->getAttr('UNISCID'),
+//            'REGNO'       => $info->getAttr('REGNO'),
             'NACAOID'     => $info->getAttr('NACAOID'),
             'NAME'        => $info->getAttr('NAME'),
             'NAMETITLE'   => $info->getAttr('NAMETITLE'),
@@ -5499,9 +5502,9 @@ class XinDongService extends ServiceBase
             $data[$key] = [
                 'ANCHEYEAR'    => $item->getAttr('ANCHEYEAR'),
                 'ANCHEDATE'  => $item->getAttr('ANCHEDATE'),
-                'ENTNAME' => $item->getAttr('ENTNAME'),
-                'REGNO'   => $item->getAttr('REGNO'),
-                'UNISCID' => $item->getAttr('UNISCID'),
+//                'ENTNAME' => $item->getAttr('ENTNAME'),
+//                'REGNO'   => $item->getAttr('REGNO'),
+//                'UNISCID' => $item->getAttr('UNISCID'),
                 'LEGAL_PERSON' => $item->getAttr('LEGAL_PERSON'),
                 'TEL' => $item->getAttr('TEL'),
                 'DOM' => $item->getAttr('DOM'),
@@ -5552,8 +5555,8 @@ class XinDongService extends ServiceBase
             $data[$key] = [
                 'ANCHEYEAR'    => $item->getAttr('ANCHEYEAR'),
                 'ENTNAME'  => $item->getAttr('ENTNAME'),
-                'UNISCID' => $item->getAttr('UNISCID'),
-                'REGNO'   => $item->getAttr('REGNO'),
+//                'UNISCID' => $item->getAttr('UNISCID'),
+//                'REGNO'   => $item->getAttr('REGNO'),
             ];
 
         }
@@ -5626,6 +5629,7 @@ class XinDongService extends ServiceBase
         return $this->checkResp(200, null, $data, '成功');
     }
 
+    //工商-年报变更信息
     public function getCompanyArModify_h($entName, $page, $pageSize){
         $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
         if (empty($info)) {
@@ -5704,6 +5708,7 @@ class XinDongService extends ServiceBase
         return $this->checkResp(200, null, $data, '成功');
     }
 
+    //工商-注吊销信息
     public function getCompanyCancelInfo_h($entName){
         $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
         if (empty($info)) {
@@ -5720,6 +5725,90 @@ class XinDongService extends ServiceBase
                 'REG_CAPITAL'   => $item->getAttr('REG_CAPITAL'),
                 'REG_CAPITAL_AMOUNT'   => $item->getAttr('REG_CAPITAL_AMOUNT'),
                 'PUBLISH_DATE'   => $item->getAttr('PUBLISH_DATE'),
+            ];
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //工商-分支机构
+    public function getCompanyFiliation_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyFiliation::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'BRANCH_ID'    => $item->getAttr('BRANCH_ID'),
+                'BRANCH_NAME'  => $item->getAttr('BRANCH_NAME'),
+                'CAPITAL' => $item->getAttr('CAPITAL'),
+                'CAPITALACTL'  => $item->getAttr('CAPITALACTL'),
+                'AMOUNT' => $item->getAttr('AMOUNT'),
+                'CERTNAME'  => $item->getAttr('CERTNAME'),
+                'CERTNO' => $item->getAttr('CERTNO'),
+            ];
+
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //大数据-曾用名表
+    public function getCompanyHistoryName_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyHistoryName::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'ENTNAME'    => $item->getAttr('ENTNAME'),
+                'ALTDATE'  => $item->getAttr('ALTDATE'),
+            ];
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+
+    //工商-企业股东
+    public function getCompanyInv_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyInv::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'INV'    => $item->getAttr('INV'),
+                'INVTYPE'    => $item->getAttr('INVTYPE'),
+                'BLICNO'  => $item->getAttr('BLICNO'),
+                'BLICTYPE'    => $item->getAttr('BLICTYPE'),
+                'AMOUNT'  => $item->getAttr('AMOUNT'),
+                'SUBCONAM'    => $item->getAttr('SUBCONAM'),
+                'ACCONAM'  => $item->getAttr('ACCONAM'),
+                'CONPROP'    => $item->getAttr('CONPROP'),
+                'CONDATE'  => $item->getAttr('CONDATE'),
+                'CONFORM'    => $item->getAttr('CONFORM'),
+                'CURRENCY'  => $item->getAttr('CURRENCY'),
+            ];
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+    //工商-企业主要人员
+    public function getCompanyManager_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyManager::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'NAME'    => $item->getAttr('NAME'),
+                'POSITION'    => $item->getAttr('POSITION'),
+                'LEREPSIGN'    => $item->getAttr('LEREPSIGN'),
             ];
         }
         return $this->checkResp(200, null, $data, '成功');

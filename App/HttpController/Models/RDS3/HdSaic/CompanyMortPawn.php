@@ -2,9 +2,10 @@
 
 namespace App\HttpController\Models\RDS3\HdSaic;
 
+use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\CreateConf;
 
-class CompanyMortPawn
+class CompanyMortPawn extends ModelBase
 {
     protected $tableName = 'company_mort_pawn';
 

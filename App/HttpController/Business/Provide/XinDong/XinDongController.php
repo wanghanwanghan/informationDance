@@ -2625,4 +2625,96 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
+    //工商-年报-网站或网店信息
+    function getCompanyArWebsiteinfo_h():bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, '参数企业名称为空');
+        }
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getCompanyArWebsiteinfo_h($entName);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+    //工商-注吊销信息
+    function getCompanyCancelInfo_h():bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, '参数企业名称为空');
+        }
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getCompanyCancelInfo_h($entName);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+    //工商-分支机构
+    function getCompanyFiliation_h():bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, '参数企业名称为空');
+        }
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getCompanyFiliation_h($entName);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+    //大数据-曾用名表
+    function getCompanyHistoryName_h():bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, '参数企业名称为空');
+        }
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getCompanyHistoryName_h($entName);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+    //工商-企业股东
+    function getCompanyInv_h():bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, '参数企业名称为空');
+        }
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getCompanyInv_h($entName);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+
+    //工商-企业主要人员
+    function getCompanyManager_h():bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, '参数企业名称为空');
+        }
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getCompanyManager_h($entName);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
 }
