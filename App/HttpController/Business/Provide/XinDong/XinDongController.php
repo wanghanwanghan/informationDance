@@ -2406,13 +2406,18 @@ class XinDongController extends ProvideBase
     function getCncaRzGltx_h(): bool
    {
        $entName = $this->getRequestData('entName', '');
-       if (empty($entName)) {
-           return $this->writeJson(201, null, null, '参数企业名称为空');
+       $code = $this->getRequestData('code', '');
+       $postData = [
+           'entName'=>$entName,
+           'code'=>$code
+       ];
+       if (empty($entName) && empty($code)) {
+           return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
        }
-       $this->csp->add($this->cspKey, function () use ($entName) {
+       $this->csp->add($this->cspKey, function () use ($postData) {
            return (new XinDongService())
                ->setCheckRespFlag(true)
-               ->getCncaRzGltx_h($entName);
+               ->getCncaRzGltx_h($postData);
        });
        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
        return $this->checkResponse($res);
@@ -2422,13 +2427,18 @@ class XinDongController extends ProvideBase
    function getCaseAll_h(): bool
    {
        $entName = $this->getRequestData('entName', '');
-       if (empty($entName)) {
-           return $this->writeJson(201, null, null, '参数企业名称为空');
+       $code = $this->getRequestData('code', '');
+       $postData = [
+           'entName'=>$entName,
+           'code'=>$code
+       ];
+       if (empty($entName) && empty($code)) {
+           return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
        }
-       $this->csp->add($this->cspKey, function () use ($entName) {
+       $this->csp->add($this->cspKey, function () use ($postData) {
            return (new XinDongService())
                ->setCheckRespFlag(true)
-               ->getCaseAll_h($entName);
+               ->getCaseAll_h($postData);
        });
        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
        return $this->checkResponse($res);
@@ -2438,13 +2448,18 @@ class XinDongController extends ProvideBase
     function getCaseCheck_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCaseCheck_h($entName);
+                ->getCaseCheck_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2454,13 +2469,18 @@ class XinDongController extends ProvideBase
     function getCaseYzwfsx_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCaseYzwfsx_h($entName);
+                ->getCaseYzwfsx_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2470,13 +2490,18 @@ class XinDongController extends ProvideBase
     function getCompanyAbnormity_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyAbnormity_h($entName);
+                ->getCompanyAbnormity_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2486,13 +2511,18 @@ class XinDongController extends ProvideBase
     function getCompanyBasic_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyBasic_h($entName);
+                ->getCompanyBasic_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2502,13 +2532,18 @@ class XinDongController extends ProvideBase
     function getCompanyAr_h():bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyAr_h($entName);
+                ->getCompanyAr_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2518,13 +2553,18 @@ class XinDongController extends ProvideBase
     function getCompanyArAlterstockinfo_h():bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyArAlterstockinfo_h($entName);
+                ->getCompanyArAlterstockinfo_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2534,13 +2574,18 @@ class XinDongController extends ProvideBase
     function getCompanyArForinvestment_h():bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyArForinvestment_h($entName);
+                ->getCompanyArForinvestment_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2550,13 +2595,18 @@ class XinDongController extends ProvideBase
     function getCompanyArForguaranteeinfo_h():bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyArForguaranteeinfo_h($entName);
+                ->getCompanyArForguaranteeinfo_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2566,13 +2616,18 @@ class XinDongController extends ProvideBase
     function getCompanyArAsset_h():bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyArAsset_h($entName);
+                ->getCompanyArAsset_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2582,13 +2637,18 @@ class XinDongController extends ProvideBase
     function getCompanyArCapital_h():bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyArCapital_h($entName);
+                ->getCompanyArCapital_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2599,13 +2659,14 @@ class XinDongController extends ProvideBase
         $entName = $this->getRequestData('entName', '');
         $page = $this->getRequestData('page', 1);
         $pageSize = $this->getRequestData('pageSize', 10);
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName,$page,$pageSize) {
+        $this->csp->add($this->cspKey, function () use ($code,$entName,$page,$pageSize) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyArModify_h($entName,$page,$pageSize);
+                ->getCompanyArModify_h($code,$entName,$page,$pageSize);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2614,13 +2675,18 @@ class XinDongController extends ProvideBase
     function getCompanyArSocialfee_h():bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyArSocialfee_h($entName);
+                ->getCompanyArSocialfee_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2630,13 +2696,18 @@ class XinDongController extends ProvideBase
     function getCompanyArWebsiteinfo_h():bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyArWebsiteinfo_h($entName);
+                ->getCompanyArWebsiteinfo_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2645,13 +2716,18 @@ class XinDongController extends ProvideBase
     function getCompanyCancelInfo_h():bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyCancelInfo_h($entName);
+                ->getCompanyCancelInfo_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2660,13 +2736,18 @@ class XinDongController extends ProvideBase
     function getCompanyFiliation_h():bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyFiliation_h($entName);
+                ->getCompanyFiliation_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2675,13 +2756,18 @@ class XinDongController extends ProvideBase
     function getCompanyHistoryName_h():bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyHistoryName_h($entName);
+                ->getCompanyHistoryName_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2690,13 +2776,18 @@ class XinDongController extends ProvideBase
     function getCompanyInv_h():bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyInv_h($entName);
+                ->getCompanyInv_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -2706,13 +2797,18 @@ class XinDongController extends ProvideBase
     function getCompanyManager_h():bool
     {
         $entName = $this->getRequestData('entName', '');
-        if (empty($entName)) {
-            return $this->writeJson(201, null, null, '参数企业名称为空');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName'=>$entName,
+            'code'=>$code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyManager_h($entName);
+                ->getCompanyManager_h($postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
