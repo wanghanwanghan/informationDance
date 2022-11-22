@@ -18,7 +18,19 @@ use App\HttpController\Models\RDS3\HdSaic\CaseAll;
 use App\HttpController\Models\RDS3\HdSaic\CaseCheck;
 use App\HttpController\Models\RDS3\HdSaic\CaseYzwfsx;
 use App\HttpController\Models\RDS3\HdSaic\CompanyAbnormity;
+use App\HttpController\Models\RDS3\HdSaic\CompanyAr;
+use App\HttpController\Models\RDS3\HdSaic\CompanyArAlterstockinfo;
+use App\HttpController\Models\RDS3\HdSaic\CompanyArCapital;
+use App\HttpController\Models\RDS3\HdSaic\CompanyArForguaranteeinfo;
+use App\HttpController\Models\RDS3\HdSaic\CompanyArForinvestment;
+use App\HttpController\Models\RDS3\HdSaic\CompanyArModify;
+use App\HttpController\Models\RDS3\HdSaic\CompanyArSocialfee;
+use App\HttpController\Models\RDS3\HdSaic\CompanyArWebsiteinfo;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
+use App\HttpController\Models\RDS3\HdSaic\CompanyCancelInfo;
+use App\HttpController\Models\RDS3\HdSaic\CompanyFiliation;
+use App\HttpController\Models\RDS3\HdSaic\CompanyHistoryName;
+use App\HttpController\Models\RDS3\HdSaic\CompanyInv;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggreListedH;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
@@ -5315,14 +5327,12 @@ class XinDongService extends ServiceBase
             return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
         }
         $list = CncaRzGltxH::create()->where('companyid' , $info->getAttr('companyid'))->all();
-        CommonService::getInstance()->log4PHP([$list,$info],'info', 'getCncaRzGltx_h');
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key]['cert_code']         = $item->getAttr('cert_code');
             $data[$key]['cert_project']      = $item->getAttr('cert_project');
             $data[$key]['cert_num']          = $item->getAttr('cert_num');
             $data[$key]['org_num']           = $item->getAttr('org_num');
-            $data[$key]['cert_code']         = $item->getAttr('cert_code');
             $data[$key]['cert_status']       = $item->getAttr('cert_status');
             $data[$key]['award_date']        = $item->getAttr('award_date');
             $data[$key]['expire_date']       = $item->getAttr('expire_date');
@@ -5380,8 +5390,8 @@ class XinDongService extends ServiceBase
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key] = [
-                'REGNO'       => $item->getAttr('REGNO'),
-                'UNISCID'     => $item->getAttr('UNISCID'),
+//                'REGNO'       => $item->getAttr('REGNO'),
+//                'UNISCID'     => $item->getAttr('UNISCID'),
                 'CHECKDATE'   => $item->getAttr('CHECKDATE'),
                 'INSTYPE'     => $item->getAttr('INSTYPE'),
                 'LOCALADM'    => $item->getAttr('LOCALADM'),
@@ -5408,8 +5418,8 @@ class XinDongService extends ServiceBase
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key] = [
-                'UNISCID'   => $item->getAttr('UNISCID'),
-                'REGNO'     => $item->getAttr('REGNO'),
+//                'UNISCID'   => $item->getAttr('UNISCID'),
+//                'REGNO'     => $item->getAttr('REGNO'),
                 'inreason'  => $item->getAttr('inreason'),
                 'indate'    => $item->getAttr('indate'),
                 'inorg'     => $item->getAttr('inorg'),
@@ -5453,8 +5463,8 @@ class XinDongService extends ServiceBase
             return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
         }
         $data = [
-            'UNISCID'     => $info->getAttr('UNISCID'),
-            'REGNO'       => $info->getAttr('REGNO'),
+//            'UNISCID'     => $info->getAttr('UNISCID'),
+//            'REGNO'       => $info->getAttr('REGNO'),
             'NACAOID'     => $info->getAttr('NACAOID'),
             'NAME'        => $info->getAttr('NAME'),
             'NAMETITLE'   => $info->getAttr('NAMETITLE'),
@@ -5477,6 +5487,330 @@ class XinDongService extends ServiceBase
             'REVDATE'     => $info->getAttr('REVDATE'),
         ];
 
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //工商-年报-主表
+    public function getCompanyAr_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyAr::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'ANCHEYEAR'    => $item->getAttr('ANCHEYEAR'),
+                'ANCHEDATE'  => $item->getAttr('ANCHEDATE'),
+//                'ENTNAME' => $item->getAttr('ENTNAME'),
+//                'REGNO'   => $item->getAttr('REGNO'),
+//                'UNISCID' => $item->getAttr('UNISCID'),
+                'LEGAL_PERSON' => $item->getAttr('LEGAL_PERSON'),
+                'TEL' => $item->getAttr('TEL'),
+                'DOM' => $item->getAttr('DOM'),
+                'POSTALCODE' => $item->getAttr('POSTALCODE'),
+                'EMAIL' => $item->getAttr('EMAIL'),
+                'BUSST' => $item->getAttr('BUSST'),
+                'EMPNUM' => $item->getAttr('EMPNUM'),
+                'EMPNUMDIS' => $item->getAttr('EMPNUMDIS'),
+                'WOMEMPNUM' => $item->getAttr('WOMEMPNUM'),
+                'WOMEMPNUMDIS' => $item->getAttr('WOMEMPNUMDIS'),
+                'MAINBUSIACT' => $item->getAttr('MAINBUSIACT'),
+            ];
+
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //工商-年报股权变更
+    public function getCompanyArAlterstockinfo_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyArAlterstockinfo::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'ANCHEYEAR'    => $item->getAttr('ANCHEYEAR'),
+                'INV'  => $item->getAttr('INV'),
+                'TRANSAMPR' => $item->getAttr('TRANSAMPR'),
+                'TRANSAMAFT'   => $item->getAttr('TRANSAMAFT'),
+                'ALTDATE' => $item->getAttr('ALTDATE'),
+            ];
+
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //工商-年报股权变更
+    public function getCompanyArForinvestment_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyArForinvestment::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'ANCHEYEAR'    => $item->getAttr('ANCHEYEAR'),
+                'ENTNAME'  => $item->getAttr('ENTNAME'),
+//                'UNISCID' => $item->getAttr('UNISCID'),
+//                'REGNO'   => $item->getAttr('REGNO'),
+            ];
+
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //工商-年报-资产
+    public function getCompanyArAsset_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyArForinvestment::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'ANCHEYEAR'    => $item->getAttr('ANCHEYEAR'),
+                'ENTNAME'  => $item->getAttr('ENTNAME'),
+                'UNISCID' => $item->getAttr('UNISCID'),
+                'REGNO'   => $item->getAttr('REGNO'),
+            ];
+
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    public function getCompanyArForguaranteeinfo_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyArForguaranteeinfo::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'ANCHEYEAR'    => $item->getAttr('ANCHEYEAR'),
+                'PEFPER_TERM'  => $item->getAttr('PEFPER_TERM'),
+                'RAGE' => $item->getAttr('RAGE'),
+                'MORE'   => $item->getAttr('MORE'),
+                'PRICLASECKIND'    => $item->getAttr('PRICLASECKIND'),
+                'GUARANPERIOD'  => $item->getAttr('GUARANPERIOD'),
+                'GATYPE' => $item->getAttr('GATYPE'),
+                'MORTGAGOR'   => $item->getAttr('MORTGAGOR'),
+                'PRICLASECAM'   => $item->getAttr('PRICLASECAM'),
+            ];
+
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    public function getCompanyArCapital_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyArCapital::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'ANCHEYEAR'    => $item->getAttr('ANCHEYEAR'),
+                'INV'  => $item->getAttr('INV'),
+                'SUBCONAM' => $item->getAttr('SUBCONAM'),
+                'SUBCONDATE'   => $item->getAttr('SUBCONDATE'),
+                'SUBCONFORM'    => $item->getAttr('SUBCONFORM'),
+                'ACCONAM'  => $item->getAttr('ACCONAM'),
+                'ACCONDATE' => $item->getAttr('ACCONDATE'),
+                'ACCONFORM'   => $item->getAttr('ACCONFORM'),
+            ];
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //工商-年报变更信息
+    public function getCompanyArModify_h($entName, $page, $pageSize){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyArModify::create()->where('companyid' , $info->getAttr('companyid'))
+            ->limit($this->exprOffset($page, $pageSize), (int)$pageSize)
+            ->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'ANCHEYEAR'    => $item->getAttr('ANCHEYEAR'),
+                'ALTITEM'  => $item->getAttr('ALTITEM'),
+                'ALTBE' => $item->getAttr('ALTBE'),
+                'ALTAF'   => $item->getAttr('ALTAF'),
+                'ALTDATE'    => $item->getAttr('ALTDATE'),
+
+            ];
+        }
+        return $this->checkResp(200, null, $data, '成功');
+
+    }
+
+    public function getCompanyArSocialfee_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyArSocialfee::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'ANCHEYEAR'    => $item->getAttr('ANCHEYEAR'),
+                'SO1'    => $item->getAttr('SO1'),
+                'SO2'    => $item->getAttr('SO2'),
+                'SO3'    => $item->getAttr('SO3'),
+                'SO4'    => $item->getAttr('SO4'),
+                'SO5'    => $item->getAttr('SO5'),
+                'TOTALWAGESSO1'    => $item->getAttr('TOTALWAGESSO1'),
+                'TOTALWAGESSO2'    => $item->getAttr('TOTALWAGESSO2'),
+                'TOTALWAGESSO3'    => $item->getAttr('TOTALWAGESSO3'),
+                'TOTALWAGESSO4'    => $item->getAttr('TOTALWAGESSO4'),
+                'TOTALWAGESSO5'    => $item->getAttr('TOTALWAGESSO5'),
+                'TOTALPAYMENTSO1'    => $item->getAttr('TOTALPAYMENTSO1'),
+                'TOTALPAYMENTSO2'    => $item->getAttr('TOTALPAYMENTSO2'),
+                'TOTALPAYMENTSO3'    => $item->getAttr('TOTALPAYMENTSO3'),
+                'TOTALPAYMENTSO4'    => $item->getAttr('TOTALPAYMENTSO4'),
+                'TOTALPAYMENTSO5'    => $item->getAttr('TOTALPAYMENTSO5'),
+                'UNPAIDSOCIALINSSO1'    => $item->getAttr('UNPAIDSOCIALINSSO1'),
+                'UNPAIDSOCIALINSSO2'    => $item->getAttr('UNPAIDSOCIALINSSO2'),
+                'UNPAIDSOCIALINSSO3'    => $item->getAttr('UNPAIDSOCIALINSSO3'),
+                'UNPAIDSOCIALINSSO4'    => $item->getAttr('UNPAIDSOCIALINSSO4'),
+                'UNPAIDSOCIALINSSO5'    => $item->getAttr('UNPAIDSOCIALINSSO5'),
+            ];
+
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    public function getCompanyArWebsiteinfo_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyArWebsiteinfo::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'ANCHEYEAR'    => $item->getAttr('ANCHEYEAR'),
+                'WEBSITNAME'  => $item->getAttr('WEBSITNAME'),
+                'DOMAIN' => $item->getAttr('DOMAIN'),
+                'WEBTYPE'   => $item->getAttr('WEBTYPE'),
+            ];
+
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //工商-注吊销信息
+    public function getCompanyCancelInfo_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyCancelInfo::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'ENTNAME'    => $item->getAttr('ENTNAME'),
+                'PROVINCE'  => $item->getAttr('PROVINCE'),
+                'CANCEL_DATE' => $item->getAttr('CANCEL_DATE'),
+                'CANCEL_REASON'   => $item->getAttr('CANCEL_REASON'),
+                'REG_CAPITAL'   => $item->getAttr('REG_CAPITAL'),
+                'REG_CAPITAL_AMOUNT'   => $item->getAttr('REG_CAPITAL_AMOUNT'),
+                'PUBLISH_DATE'   => $item->getAttr('PUBLISH_DATE'),
+            ];
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //工商-分支机构
+    public function getCompanyFiliation_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyFiliation::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'BRANCH_ID'    => $item->getAttr('BRANCH_ID'),
+                'BRANCH_NAME'  => $item->getAttr('BRANCH_NAME'),
+                'CAPITAL' => $item->getAttr('CAPITAL'),
+                'CAPITALACTL'  => $item->getAttr('CAPITALACTL'),
+                'AMOUNT' => $item->getAttr('AMOUNT'),
+                'CERTNAME'  => $item->getAttr('CERTNAME'),
+                'CERTNO' => $item->getAttr('CERTNO'),
+            ];
+
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //大数据-曾用名表
+    public function getCompanyHistoryName_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyHistoryName::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'ENTNAME'    => $item->getAttr('ENTNAME'),
+                'ALTDATE'  => $item->getAttr('ALTDATE'),
+            ];
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+
+    //工商-企业股东
+    public function getCompanyInv_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyInv::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'INV'    => $item->getAttr('INV'),
+                'INVTYPE'    => $item->getAttr('INVTYPE'),
+                'BLICNO'  => $item->getAttr('BLICNO'),
+                'BLICTYPE'    => $item->getAttr('BLICTYPE'),
+                'AMOUNT'  => $item->getAttr('AMOUNT'),
+                'SUBCONAM'    => $item->getAttr('SUBCONAM'),
+                'ACCONAM'  => $item->getAttr('ACCONAM'),
+                'CONPROP'    => $item->getAttr('CONPROP'),
+                'CONDATE'  => $item->getAttr('CONDATE'),
+                'CONFORM'    => $item->getAttr('CONFORM'),
+                'CURRENCY'  => $item->getAttr('CURRENCY'),
+            ];
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+    //工商-企业主要人员
+    public function getCompanyManager_h($entName){
+        $info = CompanyBasic::create()->where('ENTNAME' , $entName)->get();
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（' . $entName . '）的信息');
+        }
+        $list = CompanyManager::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'NAME'    => $item->getAttr('NAME'),
+                'POSITION'    => $item->getAttr('POSITION'),
+                'LEREPSIGN'    => $item->getAttr('LEREPSIGN'),
+            ];
+        }
         return $this->checkResp(200, null, $data, '成功');
     }
 }

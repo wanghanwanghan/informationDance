@@ -303,6 +303,20 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getCaseYzwfsx_h', $prefix . 'getCaseYzwfsx_h');//工商-严重违法失信
             $routeCollector->addRoute(['GET', 'POST'], '/getCompanyAbnormity_h', $prefix . 'getCompanyAbnormity_h');// 工商-经营异常
             $routeCollector->addRoute(['GET', 'POST'], '/getCompanyBasic_h', $prefix . 'getCompanyBasic_h');//获取企业基本信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyAr_h', $prefix . 'getCompanyAr_h');//工商-年报-主表
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyArForinvestment_h', $prefix . 'getCompanyArForinvestment_h');// 工商-年报-对外投资
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyArAlterstockinfo_h', $prefix . 'getCompanyArAlterstockinfo_h');//工商-年报股权变更
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyArCapital_h', $prefix . 'getCompanyArCapital_h');// 工商-年报出资
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyArAsset_h', $prefix . 'getCompanyArAsset_h');// 工商-年报-资产
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyArForguaranteeinfo_h', $prefix . 'getCompanyArForguaranteeinfo_h');//  工商-年报-对外提供保证担保信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyArSocialfee_h', $prefix . 'getCompanyArSocialfee_h');// 工商-年报-社保信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyArWebsiteinfo_h', $prefix . 'getCompanyArWebsiteinfo_h');//  工商-年报-网站或网店信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyCancelInfo_h', $prefix . 'getCompanyCancelInfo_h');//  工商-注吊销信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyFiliation_h', $prefix . 'getCompanyFiliation_h');// 工商-分支机构
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyHistoryName_h', $prefix . 'getCompanyHistoryName_h');// 大数据-曾用名表
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyInv_h', $prefix . 'getCompanyInv_h');// 工商-企业股东
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyManager_h', $prefix . 'getCompanyManager_h');// 工商-企业主要人员
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyArModify_h', $prefix . 'getCompanyArModify_h');// 工商-年报变更信息
         });
 
         return true;
