@@ -100,7 +100,8 @@ class DocumentationController extends ControllerBase
         );
 
         foreach ($res['data'] as &$item){
-            $item['url'] = 'https://api.meirixindong.com/Static/OtherFile/'.md5($requestData['name']).'.html';
+            $fileName = md5($item['name']).'.html';
+            $item['url'] = 'https://api.meirixindong.com/Static/OtherFile/'.$fileName.'.html';
         }
 
         return $this->writeJson(200,  [
