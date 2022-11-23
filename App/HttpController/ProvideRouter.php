@@ -317,6 +317,20 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getCompanyInv_h', $prefix . 'getCompanyInv_h');// 工商-企业股东
             $routeCollector->addRoute(['GET', 'POST'], '/getCompanyManager_h', $prefix . 'getCompanyManager_h');// 工商-企业主要人员
             $routeCollector->addRoute(['GET', 'POST'], '/getCompanyArModify_h', $prefix . 'getCompanyArModify_h');// 工商-年报变更信息
+
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyCertificate_h', $prefix . 'getCompanyCertificate_h');// 工商-行政许可
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyHistoryInv_h', $prefix . 'getCompanyHistoryInv_h');// 大数据-股权轨迹表
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyHistoryManager_h', $prefix . 'getCompanyHistoryManager_h');// 大数据-历史高管表
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyInvestment_h', $prefix . 'getCompanyInvestment_h');// 工商-对外投资信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyIpr_h', $prefix . 'getCompanyIpr_h');// 工商-知识产权出质
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyIprChange_h', $prefix . 'getCompanyIprChange_h');// 工商-知识产权出质-变更信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyLiquidation_h', $prefix . 'getCompanyLiquidation_h');// 工商-清算信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyModify_h', $prefix . 'getCompanyModify_h');// 工商-公司变更信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyMort_h', $prefix . 'getCompanyMort_h');// 工商-动产抵押
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyMortChange_h', $prefix . 'getCompanyMortChange_h');// 工商-动产抵押-变更信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyMortPawn_p', $prefix . 'getCompanyMortPawn_p');// 工商-动产抵押-抵押物信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyMortPeople_h', $prefix . 'getCompanyMortPeople_h');// 工商-动产抵押-抵押权人信息
+            $routeCollector->addRoute(['GET', 'POST'], '/getCompanyStockImpawn_h', $prefix . 'getCompanyStockImpawn_h');// 工商-股权质押
         });
 
         return true;
