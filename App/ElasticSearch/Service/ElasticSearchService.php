@@ -280,6 +280,9 @@ class ElasticSearchService extends ServiceBase
     {
 
         $this->query['sort'][] = [$field => ['order' => $desc]];
+        CommonService::getInstance()->log4PHP(json_encode([
+            'es查询' => $this->query
+        ],JSON_UNESCAPED_UNICODE));
     }
 
     function addSortV2($field, $value)

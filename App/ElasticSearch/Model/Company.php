@@ -70,10 +70,9 @@ class Company extends ServiceBase
     {
         foreach($searchOptionArr as $item){
             if($item['pid'] == 100){
-                $ying_shou_gui_mo_values = $item['value'];
+                $this->es->addSort($field,'desc') ;
             }
         }
-        $this->es->addSort($field,'desc') ;
         return $this;
     }
 

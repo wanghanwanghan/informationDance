@@ -2306,7 +2306,7 @@ class XinDongService extends ServiceBase
             ],
             [
                 'pid' => 100,
-                'desc' => '按营收规模降序',
+                'desc' => '营收规模降序',
                 'detail' => '',
                 'key' => 'li_run_gui_mo_2021',
                 'type' => 'select',
@@ -2320,7 +2320,7 @@ class XinDongService extends ServiceBase
             //
             [
                 'pid' => 110,
-                'desc' => '按纳税规模降序',
+                'desc' => '纳税规模降序',
                 'detail' => '',
                 'key' => 'na_shui_gui_mo_2021',
                 'type' => 'select',
@@ -2334,7 +2334,7 @@ class XinDongService extends ServiceBase
             //
             [
                 'pid' => 120,
-                'desc' => '按营收规模降序',
+                'desc' => '营收规模降序',
                 'detail' => '',
                 'key' => 'ying_shou_gui_mo_2021',
                 'type' => 'select',
