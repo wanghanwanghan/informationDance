@@ -28,10 +28,22 @@ use App\HttpController\Models\RDS3\HdSaic\CompanyArSocialfee;
 use App\HttpController\Models\RDS3\HdSaic\CompanyArWebsiteinfo;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyCancelInfo;
+use App\HttpController\Models\RDS3\HdSaic\CompanyCertificate;
 use App\HttpController\Models\RDS3\HdSaic\CompanyFiliation;
+use App\HttpController\Models\RDS3\HdSaic\CompanyHistoryInv;
+use App\HttpController\Models\RDS3\HdSaic\CompanyHistoryManager;
 use App\HttpController\Models\RDS3\HdSaic\CompanyHistoryName;
 use App\HttpController\Models\RDS3\HdSaic\CompanyInv;
+use App\HttpController\Models\RDS3\HdSaic\CompanyInvestment;
+use App\HttpController\Models\RDS3\HdSaic\CompanyIpr;
+use App\HttpController\Models\RDS3\HdSaic\CompanyIprChange;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
+use App\HttpController\Models\RDS3\HdSaic\CompanyModify;
+use App\HttpController\Models\RDS3\HdSaic\CompanyMort;
+use App\HttpController\Models\RDS3\HdSaic\CompanyMortChange;
+use App\HttpController\Models\RDS3\HdSaic\CompanyMortPawn;
+use App\HttpController\Models\RDS3\HdSaic\CompanyMortPeople;
+use App\HttpController\Models\RDS3\HdSaic\CompanyStockImpawn;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggreListedH;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggrePicsH;
@@ -5787,17 +5799,17 @@ class XinDongService extends ServiceBase
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key] = [
-                'INV'    => $item->getAttr('INV'),
-                'INVTYPE'    => $item->getAttr('INVTYPE'),
-                'BLICNO'  => $item->getAttr('BLICNO'),
-                'BLICTYPE'    => $item->getAttr('BLICTYPE'),
-                'AMOUNT'  => $item->getAttr('AMOUNT'),
-                'SUBCONAM'    => $item->getAttr('SUBCONAM'),
+                'INV'      => $item->getAttr('INV'),
+                'INVTYPE'  => $item->getAttr('INVTYPE'),
+                'BLICNO'   => $item->getAttr('BLICNO'),
+                'BLICTYPE' => $item->getAttr('BLICTYPE'),
+                'AMOUNT'   => $item->getAttr('AMOUNT'),
+                'SUBCONAM' => $item->getAttr('SUBCONAM'),
                 'ACCONAM'  => $item->getAttr('ACCONAM'),
-                'CONPROP'    => $item->getAttr('CONPROP'),
+                'CONPROP'  => $item->getAttr('CONPROP'),
                 'CONDATE'  => $item->getAttr('CONDATE'),
-                'CONFORM'    => $item->getAttr('CONFORM'),
-                'CURRENCY'  => $item->getAttr('CURRENCY'),
+                'CONFORM'  => $item->getAttr('CONFORM'),
+                'CURRENCY' => $item->getAttr('CURRENCY'),
             ];
         }
         return $this->checkResp(200, null, $data, '成功');
@@ -5829,4 +5841,294 @@ class XinDongService extends ServiceBase
     }
 
 
+    //工商-行政许可
+    public function getCompanyCertificate_h($postData){
+        $info = $this->getCompanyId($postData);
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
+        }
+        $list = CompanyCertificate::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'ADLIC_NUM'     => $item->getAttr('ADLIC_NUM'),
+                'ADLIC_NAME'    => $item->getAttr('ADLIC_NAME'),
+                'INDLIC_CLASS'  => $item->getAttr('INDLIC_CLASS'),
+                'AUDIT_TYPE'    => $item->getAttr('AUDIT_TYPE'),
+                'CONTENT_LIC'   => $item->getAttr('CONTENT_LIC'),
+                'FILE_NUM'      => $item->getAttr('FILE_NUM'),
+                'LEGAL_PERSON'  => $item->getAttr('LEGAL_PERSON'),
+                'VALIDITY_DATE' => $item->getAttr('VALIDITY_DATE'),
+                'DECIDE_DATE'   => $item->getAttr('DECIDE_DATE'),
+                'END_DATE'      => $item->getAttr('END_DATE'),
+                'ADLIC_OFFICE'  => $item->getAttr('ADLIC_OFFICE'),
+                'ADLIC_DEP'     => $item->getAttr('ADLIC_DEP'),
+                'LOCAL_CODE'    => $item->getAttr('LOCAL_CODE'),
+                'ADLIC_STATE'   => $item->getAttr('ADLIC_STATE'),
+                'ADLIC_GRADE'   => $item->getAttr('ADLIC_GRADE'),
+                'ADLIC_FLAG'    => $item->getAttr('ADLIC_FLAG'),
+                'AREA_CODE'     => $item->getAttr('AREA_CODE'),
+                'AREA_NAME'     => $item->getAttr('AREA_NAME'),
+
+            ];
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+    //大数据-股权轨迹表	company_history_inv
+    public function getCompanyHistoryInv_h($postData){
+        $info = $this->getCompanyId($postData);
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
+        }
+        $list = CompanyHistoryInv::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'INV'    => $item->getAttr('INV'),
+                'CONAM_before'    => $item->getAttr('CONAM_before'),
+                'CONAM_after'    => $item->getAttr('CONAM_after'),
+                'CONPROP_before'    => $item->getAttr('CONPROP_before'),
+                'CONPROP_after'    => $item->getAttr('CONPROP_after'),
+                'TTYPE'    => $item->getAttr('TTYPE'),
+                'ATDATE'    => $item->getAttr('ATDATE'),
+            ];
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //大数据-历史高管表	company_history_manager
+    public function getCompanyHistoryManager_h($postData){
+        $info = $this->getCompanyId($postData);
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
+        }
+        $list = CompanyHistoryManager::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'NAME'    => $item->getAttr('NAME'),
+                'INDATE'    => $item->getAttr('INDATE'),
+                'OUTDATE'    => $item->getAttr('OUTDATE'),
+            ];
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+
+    //getCompanyInvestment_h 工商-对外投资信息	company_investment
+    public function getCompanyInvestment_h($postData){
+        $info = $this->getCompanyId($postData);
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
+        }
+        $list = CompanyInvestment::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'ENTNAME_INV'    => $item->getAttr('ENTNAME_INV'),
+                'INVESTDATE'    => $item->getAttr('INVESTDATE'),
+                'CAPITAL'    => $item->getAttr('CAPITAL'),
+                'CAPITALACTL'    => $item->getAttr('CAPITALACTL'),
+                'AMOUNT'    => $item->getAttr('AMOUNT'),
+                'CERTNAME'    => $item->getAttr('CERTNAME'),
+                'CERTNO'    => $item->getAttr('CERTNO'),
+                'STAKES_RATIO'    => $item->getAttr('STAKES_RATIO'),
+                'REMARKS'    => $item->getAttr('REMARKS'),
+            ];
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+    //getCompanyIpr_h 工商-知识产权出质	company_ipr
+    public function getCompanyIpr_h($postData){
+        $info = $this->getCompanyId($postData);
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
+        }
+        $list = CompanyIpr::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'id'=> $item->getAttr('id'),
+                'IPRNO'    => $item->getAttr('IPRNO'),
+                'IPRNAME'    => $item->getAttr('IPRNAME'),
+                'IPRTYPE'    => $item->getAttr('IPRTYPE'),
+                'PLEDGOR'    => $item->getAttr('PLEDGOR'),
+                'IMPORG'    => $item->getAttr('IMPORG'),
+                'REGDATE'    => $item->getAttr('REGDATE'),
+                'IPRSTATE'    => $item->getAttr('IPRSTATE'),
+                'PUBDATE'    => $item->getAttr('PUBDATE'),
+                'CANDATE'    => $item->getAttr('CANDATE'),
+                'CANREA'    => $item->getAttr('CANREA'),
+            ];
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+    //getCompanyIprChange_h 工商-知识产权出质-变更信息	company_ipr_change
+    public function getCompanyIprChange_h($id){
+        $list = CompanyIprChange::create()->where('pid' , $id)->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'ALTITEM'    => $item->getAttr('ALTITEM'),
+                'ALTBE'    => $item->getAttr('ALTBE'),
+                'ALTAF'    => $item->getAttr('ALTAF'),
+                'ALTDATE'    => $item->getAttr('ALTDATE'),
+            ];
+
+        }
+        return $this->checkResp(200, null, $data, '成功');
+    }
+    //getCompanyLiquidation_h 工商-清算信息	company_liquidation
+    public function getCompanyLiquidation_h($postData){
+        $info = $this->getCompanyId($postData);
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
+        }
+        $list = CompanyLiquidation::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'PUBLISH_DATE'    => $item->getAttr('PUBLISH_DATE'),
+                'LIQMEN'    => $item->getAttr('LIQMEN'),
+                'LIGPRINCIPAL'    => $item->getAttr('LIGPRINCIPAL'),
+            ];
+        }
+
+        return $this->checkResp(200, null, $data, '成功');
+    }
+    //getCompanyModify_h 工商-公司变更信息	company_modify
+    public function getCompanyModify_h($postData){
+        $info = $this->getCompanyId($postData);
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
+        }
+        $list = CompanyModify::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'ALTDATE'    => $item->getAttr('ALTDATE'),
+                'ALTITEM'    => $item->getAttr('ALTITEM'),
+                'ALTBE'    => $item->getAttr('ALTBE'),
+                'ALTAF'    => $item->getAttr('ALTAF'),
+            ];
+        }
+
+        return $this->checkResp(200, null, $data, '成功');
+    }
+    //getCompanyMort_h 工商-动产抵押	company_mort
+    public function getCompanyMort_h($postData){
+        $info = $this->getCompanyId($postData);
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
+        }
+        $list = CompanyMort::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'REG_NUM'    => $item->getAttr('REG_NUM'),
+                'REG_DATE'    => $item->getAttr('REG_DATE'),
+                'PUBLISH_DATE'    => $item->getAttr('PUBLISH_DATE'),
+                'STATUS'    => $item->getAttr('STATUS'),
+                'REG_DEPARTMENT'    => $item->getAttr('REG_DEPARTMENT'),
+                'TYPE'    => $item->getAttr('TYPE'),
+                'AMOUNT'    => $item->getAttr('AMOUNT'),
+                'TERM'    => $item->getAttr('TERM'),
+                'SCOPE'    => $item->getAttr('SCOPE'),
+                'REMARK'    => $item->getAttr('REMARK'),
+                'OVERVIEW_TYPE'    => $item->getAttr('OVERVIEW_TYPE'),
+                'OVERVIEW_AMOUNT'    => $item->getAttr('OVERVIEW_AMOUNT'),
+                'OVERVIEW_SCOPE'    => $item->getAttr('OVERVIEW_SCOPE'),
+                'OVERVIEW_TERM'    => $item->getAttr('OVERVIEW_TERM'),
+                'OVERVIEW_REMARK'    => $item->getAttr('OVERVIEW_REMARK'),
+                'CANCEL_DATE'    => $item->getAttr('CANCEL_DATE'),
+                'CANCEL_REASON'    => $item->getAttr('CANCEL_REASON'),
+            ];
+        }
+
+        return $this->checkResp(200, null, $data, '成功');
+    }
+    //getCompanyMortChange_h 工商-动产抵押-变更信息	company_mort_change
+    public function getCompanyMortChange_h($postData){
+        $info = $this->getCompanyId($postData);
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
+        }
+        $list = CompanyMortChange::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'COMPANY_MORTGAGE_ID'    => $item->getAttr('COMPANY_MORTGAGE_ID'),
+                'COMPANY_NAME'    => $item->getAttr('COMPANY_NAME'),
+                'CHANGE_DATE'    => $item->getAttr('CHANGE_DATE'),
+                'CHANGE_CONTENT'    => $item->getAttr('CHANGE_CONTENT'),
+            ];
+        }
+
+        return $this->checkResp(200, null, $data, '成功');
+    }
+    //getCompanyMortPawn_p 工商-动产抵押-抵押物信息	company_mort_pawn
+    public function getCompanyMortPawn_p($postData){
+        $info = $this->getCompanyId($postData);
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
+        }
+        $list = CompanyMortPawn::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'PAWN_NAME'    => $item->getAttr('PAWN_NAME'),
+//                'OWNERSHIP_ID'    => $item->getAttr('OWNERSHIP_ID'),
+                'OWNERSHIP_NAME'    => $item->getAttr('OWNERSHIP_NAME'),
+                'DETAIL'    => $item->getAttr('DETAIL'),
+            ];
+        }
+
+        return $this->checkResp(200, null, $data, '成功');
+    }
+    //getCompanyMortPeople_h 工商-动产抵押-抵押权人信息	company_mort_people
+    public function getCompanyMortPeople_h($postData){
+        $info = $this->getCompanyId($postData);
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
+        }
+        $list = CompanyMortPeople::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+//                'PLEDGEE_ID'    => $item->getAttr('PLEDGEE_ID'),
+                'PLEDGEE_NAME'    => $item->getAttr('PLEDGEE_NAME'),
+                'LICENSE_TYPE'    => $item->getAttr('LICENSE_TYPE'),
+                'LICENSE_NUM'    => $item->getAttr('LICENSE_NUM'),
+            ];
+        }
+
+        return $this->checkResp(200, null, $data, '成功');
+    }
+    //getCompanyStockImpawn_h 工商-股权质押	company_stock_impawn
+    public function getCompanyStockImpawn_h($postData){
+        $info = $this->getCompanyId($postData);
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
+        }
+        $list = CompanyStockImpawn::create()->where('companyid' , $info->getAttr('companyid'))->all();
+        $data = [];
+        foreach ($list as $key => $item) {
+            $data[$key] = [
+                'PLEDGOR'    => $item->getAttr('PLEDGOR'),
+                'IMPORG'    => $item->getAttr('IMPORG'),
+                'IMPORGTYPE'    => $item->getAttr('IMPORGTYPE'),
+                'IMPAM'    => $item->getAttr('IMPAM'),
+                'IMPONRECDATE'    => $item->getAttr('IMPONRECDATE'),
+                'IMPEXAEEP'    => $item->getAttr('IMPEXAEEP'),
+                'IMPSANDATE'    => $item->getAttr('IMPSANDATE'),
+                'IMPTO'    => $item->getAttr('IMPTO'),
+                'RELATEDCOMPANY'    => $item->getAttr('RELATEDCOMPANY'),
+                'EXESTATE'    => $item->getAttr('EXESTATE'),
+                'CHANGESITU'    => $item->getAttr('CHANGESITU'),
+                'CANDATE'    => $item->getAttr('CANDATE'),
+                'CANREASON'    => $item->getAttr('CANREASON'),
+            ];
+        }
+
+        return $this->checkResp(200, null, $data, '成功');
+    }
 }
