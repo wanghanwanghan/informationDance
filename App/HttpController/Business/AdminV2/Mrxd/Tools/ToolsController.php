@@ -1141,9 +1141,7 @@ class ToolsController extends ControllerBase
         //空号验证里的其他错误，重新拉取（入参格式：重拉的数量）
         if($requestData['type'] == 128 ){
 
-            $res2 = MobileCheckInfo::reCheck([
-                'status' => 999,
-            ],intval($key));
+            $res2 = MobileCheckInfo::reCheckV2(intval($key));
 
             $response[] = $res2 ;
         }

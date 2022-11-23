@@ -2821,9 +2821,7 @@ eof;
             $this->getRequestData('recheck_chuangLian_num')
         ){
 
-            $res2 = MobileCheckInfo::reCheck([
-                'status' => 999,
-            ],$this->getRequestData('recheck_chuangLian_num'));
+            $res2 = MobileCheckInfo::reCheckV2($this->getRequestData('recheck_chuangLian_num'));
 
             return $this->writeJson(200, null, [
                 $res2,

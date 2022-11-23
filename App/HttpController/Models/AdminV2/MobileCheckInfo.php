@@ -143,6 +143,21 @@ class MobileCheckInfo extends ModelBase
         }
         return true;
     }
+    static function reCheckV2($nums = 100){
+        $all = self::findBySql(" WHERE  
+id >=655167  AND  
+`status` = 999  LIMIT $nums");
+        $i =  1 ;
+        foreach ($all as $dataItem){
+            if($i>=$nums){
+                return true;
+            }
+            self::checkMobilesByChuangLan($dataItem['mobile'],false);
+            self::findResByMobile($dataItem['mobile'],false);
+            $i ++;
+        }
+        return true;
+    }
 
     //简版
     static function  checkMobilesByChuangLan($mobileStr,$userCache = true){
