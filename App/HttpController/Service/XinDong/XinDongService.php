@@ -2345,6 +2345,33 @@ class XinDongService extends ServiceBase
                     ],
                 ],
             ],
+            [
+                'pid' => 130,
+                'desc' => '导出时不要分公司',
+                'detail' => '',
+                'key' => 'ENTNAME',
+                'type' => 'select',
+                'data' => [
+                    10 => [
+                        'cname' => '是',
+                        'detail' => '',
+                    ],
+                ],
+            ],
+            [
+                'pid' => 140,
+                'desc' => '导出时不要子公司',
+                'detail' => '',
+                'key' => 'ENTNAME',
+                'type' => 'select',
+                'data' => [
+                    10 => [
+                        'cname' => '是',
+                        'detail' => '',
+                    ],
+                ],
+            ],
+
 //            [
 //                'pid' => 90,
 //                'desc' => '是否物流',
