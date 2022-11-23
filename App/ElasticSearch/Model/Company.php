@@ -1249,8 +1249,8 @@ class Company extends ServiceBase
         $featureArr = json_decode($InitData['feature'],true);
 
         $tmpXlsxDatas = self::getYieldDataForSouKe($featureArr['total_nums'],$featureArr,$fieldsArr);
-
         $i = 1;
+
         foreach ($tmpXlsxDatas as $dataItem){
             $i++;
             if($i%500==0){
@@ -1390,6 +1390,18 @@ class Company extends ServiceBase
         $offset = 0;
         $nums =1;
         $lastId = 0;
+
+        //导出时候过滤
+        $filtter_fen_gong_si = false;
+        foreach ($searchOption as $subItem){
+            if(
+                $subItem['pid']==130 &&
+                in_array($subItem['value'])
+            ){
+                $filtter_fen_gong_si = true;
+            }
+        };
+
         while ($totalNums > 0) {
             if($totalNums<$size){
                 $size = $totalNums;
@@ -1476,9 +1488,22 @@ class Company extends ServiceBase
                 ->formatEsMoney();
 
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
-                if($nums%500==0){
-
+                //不要分公司
+                if(
+                    $filtter_fen_gong_si &&
+                    strpos($dataItem['_source']['ENTNAME'],'分公司') !== false
+                ){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            __CLASS__.__FUNCTION__ .__LINE__,
+                            '分公司被过滤' => [
+                                '公司名称'=>$dataItem['_source']['ENTNAME']
+                            ]
+                        ])
+                    );
+                    continue;
                 }
+
                 $lastId = $dataItem['_id'];
                 $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
                 $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
