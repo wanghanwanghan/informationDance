@@ -850,6 +850,8 @@ eof;
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
+            //按照营收排序
+            ->addSortV2('li_run_gui_mo_2021',$searchOptionArr)
             ->searchFromEs('company_202211')
             // 格式化下日期和时间
             ->formatEsDate()

@@ -66,6 +66,17 @@ class Company extends ServiceBase
         return $this;
     }
 
+    function addSortV2($field,$searchOptionArr)
+    {
+        foreach($searchOptionArr as $item){
+            if($item['pid'] == 100){
+                $ying_shou_gui_mo_values = $item['value'];
+            }
+        }
+        $this->es->addSort($field,'desc') ;
+        return $this;
+    }
+
     function addMustTermQuery($field, $value)
     {
         $this->es->addMustTermQuery($field,$value) ;
