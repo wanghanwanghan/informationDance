@@ -68,6 +68,10 @@ class Company extends ServiceBase
 
     function addSortV2($field,$searchOptionArr)
     {
+        CommonService::getInstance()->log4PHP(json_encode([
+            '$searchOptionArr' => $searchOptionArr
+        ],JSON_UNESCAPED_UNICODE));
+
         foreach($searchOptionArr as $item){
             if($item['pid'] == 100){
                 $this->es->addSort($field,'desc') ;
