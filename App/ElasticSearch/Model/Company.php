@@ -1396,7 +1396,7 @@ class Company extends ServiceBase
         foreach ($searchOption as $subItem){
             if(
                 $subItem['pid']==130 &&
-                in_array($subItem['value'])
+                in_array(10,$subItem['value'])
             ){
                 $filtter_fen_gong_si = true;
             }
