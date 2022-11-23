@@ -5890,8 +5890,11 @@ class XinDongService extends ServiceBase
     }
 
     public function getCompanyId($postData){
-        $info = CompanyBasic::create()->where('UNISCID' , $postData['code'])->get();
-        if(empty($info)){
+        $info = [];
+        if(!empty($postData['code'])){
+            $info = CompanyBasic::create()->where('UNISCID' , $postData['code'])->get();
+        }
+        if(empty($info) && !empty($postData['entName'])){
             $info = CompanyBasic::create()->where('ENTNAME' , $postData['entName'])->get();
         }
         return $info;
