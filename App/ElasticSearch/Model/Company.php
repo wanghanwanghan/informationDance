@@ -1499,7 +1499,7 @@ class Company extends ServiceBase
                             '分公司被过滤' => [
                                 '公司名称'=>$dataItem['_source']['ENTNAME']
                             ]
-                        ])
+                        ],JSON_UNESCAPED_UNICODE)
                     );
                     continue;
                 }
