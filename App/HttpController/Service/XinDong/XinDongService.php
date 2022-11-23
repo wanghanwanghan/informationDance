@@ -2335,7 +2335,7 @@ class XinDongService extends ServiceBase
             [
                 'pid' => 120,
                 'desc' => '营收规模降序',
-                'detail' => '',
+                'detail' => '导出时',
                 'key' => 'ying_shou_gui_mo_2021',
                 'type' => 'select',
                 'data' => [
@@ -2348,7 +2348,7 @@ class XinDongService extends ServiceBase
             [
                 'pid' => 130,
                 'desc' => '导出时不要分公司',
-                'detail' => '',
+                'detail' => '导出时',
                 'key' => 'ENTNAME',
                 'type' => 'select',
                 'data' => [
@@ -2361,7 +2361,7 @@ class XinDongService extends ServiceBase
             [
                 'pid' => 140,
                 'desc' => '导出时不要子公司',
-                'detail' => '',
+                'detail' => '导出时',
                 'key' => 'ENTNAME',
                 'type' => 'select',
                 'data' => [
