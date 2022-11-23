@@ -2292,6 +2292,19 @@ class XinDongService extends ServiceBase
                     ],
                 ],
             ],
+            [
+                'pid' => 100,
+                'desc' => '按营收规模排序',
+                'detail' => '',
+                'key' => 'li_run_gui_mo_2021',
+                'type' => 'select',
+                'data' => [
+                    10 => [
+                        'cname' => '是',
+                        'detail' => '',
+                    ],
+                ],
+            ],
 //            [
 //                'pid' => 90,
 //                'desc' => '是否物流',
