@@ -1493,14 +1493,14 @@ class Company extends ServiceBase
                     $filtter_fen_gong_si &&
                     strpos($dataItem['_source']['ENTNAME'],'分公司') !== false
                 ){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            __CLASS__.__FUNCTION__ .__LINE__,
-                            '分公司被过滤' => [
-                                '公司名称'=>$dataItem['_source']['ENTNAME']
-                            ]
-                        ],JSON_UNESCAPED_UNICODE)
-                    );
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode([
+//                            __CLASS__.__FUNCTION__ .__LINE__,
+//                            '分公司被过滤' => [
+//                                '公司名称'=>$dataItem['_source']['ENTNAME']
+//                            ]
+//                        ],JSON_UNESCAPED_UNICODE)
+//                    );
                     continue;
                 }
 
