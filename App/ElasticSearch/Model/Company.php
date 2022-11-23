@@ -1202,11 +1202,11 @@ class Company extends ServiceBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'sou_ke_exportCompanyDataToCsv' =>[
+                '搜客导出开始执行' =>[
                     'data_id'=> $paramsData['data_id'],
-                    'start'=> 'start ',
+                    '参数'=> $paramsData,
                 ]
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
         $startMemory = memory_get_usage();
         $InitData =  DownloadSoukeHistory::findById( $paramsData['data_id'] );
@@ -1214,11 +1214,11 @@ class Company extends ServiceBase
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'sou_ke_exportCompanyDataToCsv' => [
+                    '搜客导出' => [
                         'data_id'=> $paramsData['data_id'],
-                        'return_false'=> 'empty data ',
+                        '异常'=> '摘不到数据',
                     ]
-                ])
+                ],JSON_UNESCAPED_UNICODE)
             );
 
             return [
@@ -1257,11 +1257,11 @@ class Company extends ServiceBase
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
-                        'sou_ke_exportCompanyDataToCsv' =>[
+                        '搜客导出' =>[
                             'data_id'=> $paramsData['data_id'],
-                            'generate_data_$i'=> $i,
+                            '已生成'=> $i,
                         ]
-                    ])
+                    ],JSON_UNESCAPED_UNICODE)
                 );
             }
 
@@ -1353,12 +1353,12 @@ class Company extends ServiceBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'sou_ke_exportCompanyDataToCsv' =>[
+                '搜客导出结束' =>[
                     'data_id'=> $paramsData['data_id'],
-                    'generate_data_$i'=> $i,
-                    'memory use'=> round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
+                    '总行数'=> $i,
+                    '内存使用'=> round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
                 ]
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
 
         //更新文件地址
@@ -1377,12 +1377,11 @@ class Company extends ServiceBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'getYieldDataForSouKe' =>[
-                    '$searchOption'=> $searchOption,
-                    '$totalNums'=> $totalNums,
-                    'start'=> 'start',
+                '获取搜客数据开始执行' =>[
+                    '搜索选项'=> $searchOption,
+                    '需要导出数量'=> $totalNums,
                 ]
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
 
         $datas = [];
@@ -1399,7 +1398,6 @@ class Company extends ServiceBase
             //区域搜索
             $areas_arr  = json_decode($requestDataArr['areas'],true) ;
             if(!empty($areas_arr)){
-
                 //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
                 $first = $areas_arr[0];;
                 $last =  end($areas_arr);
@@ -1479,15 +1477,7 @@ class Company extends ServiceBase
 
             foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
                 if($nums%500==0){
-//                    CommonService::getInstance()->log4PHP(json_encode(
-//                            [
-//                                'getYieldDataForSouKe' => [
-//                                    'read from es $nums'=>$nums,
-//                                    '$searchOption'=> $searchOption,
-//                                    '$totalNums'=> $totalNums,
-//                                ]
-//                            ]
-//                    ));
+
                 }
                 $lastId = $dataItem['_id'];
                 $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
@@ -1510,18 +1500,6 @@ class Company extends ServiceBase
             $totalNums -= $size;
             $offset +=$size;
         }
-
-        CommonService::getInstance()->log4PHP(json_encode(
-            [
-                'getYieldDataForSouKe' => [
-                    'read from es $nums'=>$nums,
-                    '$searchOption'=> $searchOption,
-                    '$totalNums'=> $totalNums,
-                    'generate data  done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
-                    'generate data  done . costs seconds '=>microtime(true) - $start
-                ]
-            ]
-        ));
     }
 
     static  function  getNamesByText($page,$size,$searchText,$returnFullField = false){
