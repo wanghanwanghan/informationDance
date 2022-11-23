@@ -5602,7 +5602,7 @@ class XinDongService extends ServiceBase
             return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:'.$postData['code'].'）的信息');
         }
         $list = CompanyArAlterstockinfo::create()->where('companyid' , $info->getAttr('companyid'))->all();
-        CommonService::getInstance()->log4PHP([$info,$list], 'info', 'getCompanyArAlterstockinfo_h');
+        CommonService::getInstance()->log4PHP([$info,$list,$postData], 'info', 'getCompanyArAlterstockinfo_h');
 
         $data = [];
         foreach ($list as $key => $item) {
