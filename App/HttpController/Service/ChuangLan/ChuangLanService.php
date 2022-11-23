@@ -18,6 +18,15 @@ class ChuangLanService extends ServiceBase
         parent::__construct();
         $this->appId = CreateConf::getInstance()->getConf('chuanglan.appId');
         $this->appKey = CreateConf::getInstance()->getConf('chuanglan.appKey');
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                '创蓝service' => [
+//                    'appId' => $this->appId,
+//                    'appKey' => $this->appKey,
+//                ]
+//            ])
+//        );
         return true;
     }
 

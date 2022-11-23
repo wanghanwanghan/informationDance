@@ -850,6 +850,8 @@ eof;
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
+            //按照营收排序
+            ->addSortV2('li_run_gui_mo_2021',$searchOptionArr)
             ->searchFromEs('company_202211')
             // 格式化下日期和时间
             ->formatEsDate()
@@ -2819,9 +2821,7 @@ eof;
             $this->getRequestData('recheck_chuangLian_num')
         ){
 
-            $res2 = MobileCheckInfo::reCheck([
-                'status' => 999,
-            ],$this->getRequestData('recheck_chuangLian_num'));
+            $res2 = MobileCheckInfo::reCheckV2($this->getRequestData('recheck_chuangLian_num'));
 
             return $this->writeJson(200, null, [
                 $res2,
@@ -2952,7 +2952,7 @@ eof;
 
         if(
             $this->getRequestData('runQueue')
-        ){
+        ){ //300
            $res =  QueueLists::findById($this->getRequestData('runQueue'));
             $res = $res->toArray();
 

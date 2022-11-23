@@ -2304,6 +2304,74 @@ class XinDongService extends ServiceBase
                     ],
                 ],
             ],
+            [
+                'pid' => 100,
+                'desc' => '营收规模降序',
+                'detail' => '',
+                'key' => 'li_run_gui_mo_2021',
+                'type' => 'select',
+                'data' => [
+                    10 => [
+                        'cname' => '是',
+                        'detail' => '',
+                    ],
+                ],
+            ],
+            //
+            [
+                'pid' => 110,
+                'desc' => '纳税规模降序',
+                'detail' => '',
+                'key' => 'na_shui_gui_mo_2021',
+                'type' => 'select',
+                'data' => [
+                    10 => [
+                        'cname' => '是',
+                        'detail' => '',
+                    ],
+                ],
+            ],
+            //
+            [
+                'pid' => 120,
+                'desc' => '营收规模降序',
+                'detail' => '导出时',
+                'key' => 'ying_shou_gui_mo_2021',
+                'type' => 'select',
+                'data' => [
+                    10 => [
+                        'cname' => '是',
+                        'detail' => '',
+                    ],
+                ],
+            ],
+            [
+                'pid' => 130,
+                'desc' => '导出时不要分公司',
+                'detail' => '导出时',
+                'key' => 'ENTNAME',
+                'type' => 'select',
+                'data' => [
+                    10 => [
+                        'cname' => '是',
+                        'detail' => '',
+                    ],
+                ],
+            ],
+            [
+                'pid' => 140,
+                'desc' => '导出时不要子公司',
+                'detail' => '导出时',
+                'key' => 'ENTNAME',
+                'type' => 'select',
+                'data' => [
+                    10 => [
+                        'cname' => '是',
+                        'detail' => '',
+                    ],
+                ],
+            ],
+
 //            [
 //                'pid' => 90,
 //                'desc' => '是否物流',

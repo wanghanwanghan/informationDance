@@ -209,6 +209,8 @@ class SouKeController extends ControllerBase
             ->SetQueryBySearchTextV5( trim($this->request()->getRequestParam('un_app')),'app')
             ->addSize($size)
             //->addSort("_id","desc")
+            //按照营收排序
+            ->addSortV2('li_run_gui_mo_2021',$searchOptionArr)
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
