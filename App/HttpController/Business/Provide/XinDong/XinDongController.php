@@ -1214,17 +1214,9 @@ class XinDongController extends ProvideBase
             'dataCount' => $dataCount,
         ];
 
-//        $range = FinanceRange::getInstance()->getRange('range_liulengjing');
-//        $ratio = FinanceRange::getInstance()->getRange('rangeRatio_liulengjing');
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                __CLASS__.__FUNCTION__ ,
-//                '六棱镜' => [
-//                    '$range ' => $range,
-//                    '$ratio ' => $ratio,
-//                ]
-//            ],JSON_UNESCAPED_UNICODE)
-//        );
+        $range = FinanceRange::getInstance()->getRange('range_liulengjing');
+        $ratio = FinanceRange::getInstance()->getRange('rangeRatio_liulengjing');
+
         $ent_info = EntDbEnt::create()->where('name', $entName)->get();
 
         $ANCHEYEAR = [];
@@ -1246,28 +1238,22 @@ class XinDongController extends ProvideBase
             }
             $obj = new LongXinService();
             $readyReturn = $obj->exprHandle($origin);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ ,
-                    '六棱镜' => [
-                        '原始值返回 ' => $readyReturn,
-                    ]
-                ],JSON_UNESCAPED_UNICODE)
-            );
+
             foreach ($readyReturn as $year => $arr) {
                 if (empty($arr)) continue;
                 foreach ($arr as $field => $val) {
-                    if (isset($range[1][$field]) && is_numeric($val)) {
-                        $readyReturn[$year][$field] = $obj->binaryFind(
-                            $val, 0, count($range[1][$field]) - 1, $range[1][$field]
-                        );
-                    } elseif (isset($ratio[1][$field]) && is_numeric($val)) {
-                        $readyReturn[$year][$field] = $obj->binaryFind(
-                            $val, 0, count($ratio[1][$field]) - 1, $ratio[1][$field]
-                        );
-                    } else {
-                        $readyReturn[$year][$field] = $val;
-                    }
+                    $readyReturn[$year][$field] = $val;
+//                    if (isset($range[1][$field]) && is_numeric($val)) {
+//                        $readyReturn[$year][$field] = $obj->binaryFind(
+//                            $val, 0, count($range[1][$field]) - 1, $range[1][$field]
+//                        );
+//                    } elseif (isset($ratio[1][$field]) && is_numeric($val)) {
+//                        $readyReturn[$year][$field] = $obj->binaryFind(
+//                            $val, 0, count($ratio[1][$field]) - 1, $ratio[1][$field]
+//                        );
+//                    } else {
+//                        $readyReturn[$year][$field] = $val;
+//                    }
                 }
             }
             krsort($readyReturn);
@@ -1275,7 +1261,7 @@ class XinDongController extends ProvideBase
                 json_encode([
                     __CLASS__.__FUNCTION__ ,
                     '六棱镜' => [
-                        '处理后的结果1  ' => $readyReturn,
+                        '处理1后的结果' => $readyReturn,
                     ]
                 ],JSON_UNESCAPED_UNICODE)
             );
@@ -1286,7 +1272,7 @@ class XinDongController extends ProvideBase
                 json_encode([
                     __CLASS__.__FUNCTION__ ,
                     '六棱镜' => [
-                        '处理后的结果2  ' => $tmp,
+                        '处理2后的结果' => $tmp,
                     ]
                 ],JSON_UNESCAPED_UNICODE)
             );
@@ -1321,7 +1307,7 @@ class XinDongController extends ProvideBase
             json_encode([
                 __CLASS__.__FUNCTION__ ,
                 '六棱镜' => [
-                    '处理后的结果3  ' => $result,
+                    '处理3后的结果' => $result,
                 ]
             ],JSON_UNESCAPED_UNICODE)
         );
@@ -1336,7 +1322,15 @@ class XinDongController extends ProvideBase
         foreach ($result as $year => $arr) {
             foreach ($arr as $field => $val) {
                 if (in_array($field, $save, true)) {
-                    $temp[$year][$field] = $val;
+                    if(
+                        is_numeric($val) &&
+                        !is_null($val)
+                    ){
+                        $temp[$year][$field] = number_format($val,2);
+                    } else{
+                        $temp[$year][$field] = $val;
+                    }
+
                 }
             }
         }
@@ -1344,7 +1338,7 @@ class XinDongController extends ProvideBase
             json_encode([
                 __CLASS__.__FUNCTION__ ,
                 '六棱镜' => [
-                    '处理后的结果4  ' => $temp,
+                    '处理4后的结果' => $temp,
                 ]
             ],JSON_UNESCAPED_UNICODE)
         );
