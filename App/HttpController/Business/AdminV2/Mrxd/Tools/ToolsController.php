@@ -1153,71 +1153,20 @@ class ToolsController extends ControllerBase
             $response[] = $res['filename_url'];
         }
 
-        //剔除代理记账并去空号（传文件到Static/OtherFile/后，入参格式:文件名）
-        if($requestData['type'] == 130 ){
+        //查询代理记账信息（ 入参格式:手机号）
+        if($requestData['type'] == 130 ){ 
+            //代理记账
+            $daiLiJiZhang = CompanyClueMd5::daiLiJiZhang($key);
 
-            $datas  = DataModelExample::getYieldData(
-                $key,
-                OTHER_FILE_PATH
-            );
-
-            //写到csv里
-            $fileName = date('YmdHis')."_剔除代理记账并去空号.csv";
-            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
-            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
-
-            $allFields = [
-                "手机号",//
-                "代理记账",//
-                "手机号检测状态",//
+            // 调用接口查询手机号状态
+            $postData = [
+                'mobiles' => $key,
             ];
-            foreach ($allFields as $field=>$cname){
-                $title[] = $cname ;
-            }
-            fputcsv($f, $title);
-            $i = 1;
-            foreach ($datas as $dataItem){
-                if($i%100 == 0){
-                    CommonService::getInstance()->log4PHP(
-                        json_encode([
-                            '_剔除代理记账并去空号' => [
-                                '已生成'.$i,
-                                $dataItem[0]
-                            ]
-                        ],JSON_UNESCAPED_UNICODE)
-                    );
-                }
 
-                //代理记账
-                $daiLiJiZhang = CompanyClueMd5::daiLiJiZhang($dataItem[0]);
+            $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
+            $response['代理记账'] = $daiLiJiZhang;
+            $response['空号验证'] = $res;
 
-                // 调用接口查询手机号状态
-                $needsCheckMobilesStr = $dataItem[0];
-                $postData = [
-                    'mobiles' => $needsCheckMobilesStr,
-                ];
-
-                $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
-
-                //检测失败
-                if(empty($res['data'])){
-                    fputcsv($f, [
-                        $dataItem[0],
-                        trim($daiLiJiZhang),
-                        '检测失败',
-                    ]);
-                }else{
-                    foreach ($res['data'] as $subRes){
-                        fputcsv($f, [
-                            $dataItem[0],
-                            trim($daiLiJiZhang),
-                            MobileCheckInfo::getStatusMap()[$subRes['status']].'('.$subRes['status'].')',
-                        ]);
-                    }
-                }
-                $i ++;
-            }
-            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
         }
 
         return $this->writeJson(200, [], [
@@ -1270,7 +1219,7 @@ class ToolsController extends ControllerBase
             127 => '空号验证的时候：有多少其他错误',
             128 => '空号验证里的其他错误，重新拉取（入参格式：重拉的数量）',
             129 => '根据日期查询新的招投标邮件对应的xlsx文件（入参格式:日期|如2022-11-11）',
-            130 => '剔除代理记账并去空号（传文件到Static/OtherFile/后，入参格式:文件名）',
+            130 => '查询代理记账信息（入参格式:手机号）',
         ],'成功');
     }
     public function zhaoTouBiaoDatas(){

@@ -1526,6 +1526,162 @@ class Company extends ServiceBase
             $offset +=$size;
         }
     }
+    static function searchYieldDataForZongGongSi($totalNums,$requestDataArr,$fieldsArr){
+        $startMemory = memory_get_usage();
+        $start = microtime(true);
+        $searchOption = json_decode($requestDataArr['searchOption'],true);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '获取搜客数据开始执行' =>[
+                    '搜索选项'=> $searchOption,
+                    '需要导出数量'=> $totalNums,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+        $datas = [];
+
+        $size = 500;
+        $offset = 0;
+        $nums =1;
+        $lastId = 0;
+
+        //导出时候过滤
+        $filtter_fen_gong_si = false;
+        foreach ($searchOption as $subItem){
+            if(
+                $subItem['pid']==130 &&
+                in_array(10,$subItem['value'])
+            ){
+                $filtter_fen_gong_si = true;
+            }
+        };
+
+        while ($totalNums > 0) {
+            if($totalNums<$size){
+                $size = $totalNums;
+            }
+
+            //区域搜索
+            $areas_arr  = json_decode($requestDataArr['areas'],true) ;
+            if(!empty($areas_arr)){
+                //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
+                $first = $areas_arr[0];;
+                $last =  end($areas_arr);
+                if(
+                    strval($first[0])!= strval($last[0]) ||
+                    strval($first[1])!= strval($last[1])
+                ){
+                    $areas_arr[] = $first;
+                }
+            }
+
+            $companyEsModel = new \App\ElasticSearch\Model\Company();
+            $companyEsModel
+                //经营范围
+                ->SetQueryByBusinessScope(trim($requestDataArr['basic_opscope']),"OPSCOPE")
+                //数字经济及其核心产业
+                ->SetQueryByBasicSzjjid(trim($requestDataArr['basic_szjjid']))
+                // 搜索文案 智能搜索
+                ->SetQueryBySearchTextV2( trim($requestDataArr['searchText']))
+                // 搜索战略新兴产业
+                ->SetQueryByBasicJlxxcyid(trim($requestDataArr['basic_jlxxcyid']))
+                // 搜索shang_pin_data 商品信息 appStr:五香;农庄
+                ->SetQueryByShangPinData( trim($requestDataArr['appStr']))
+                //必须存在官网
+                ->SetQueryByWeb($searchOption)
+                ->SetAreaQueryV5($areas_arr,$requestDataArr['areas_type']?:1)
+                //必须存在APP
+                ->SetQueryByApp($searchOption)
+                //必须是物流企业
+                ->SetQueryByWuLiuQiYe($searchOption)
+                // 企业类型 :传过来的是10 20 转换成对应文案 然后再去搜索
+                ->SetQueryByCompanyOrgType($searchOption)
+                // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
+                ->SetQueryByEstiblishTimeV2($searchOption)
+                // 营业状态   传过来的是 10  20  转换成文案后 去匹配
+                ->SetQueryByRegStatusV2($searchOption)
+                // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
+                ->SetQueryByRegCaptialV2($searchOption)
+                // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
+                ->SetQueryByTuanDuiRenShu($searchOption)
+                // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
+                ->SetQueryByYingShouGuiMo($searchOption)
+                //四级分类 basic_nicid: A0111,A0112,A0113,
+                //->SetQueryBySiJiFenLei(trim($requestDataArr['basic_nicid']),'NIC_ID')
+                ->SetQueryBySiJiFenLeiV2(trim($requestDataArr['basic_nicid']),'NIC_ID')
+                //公司类型
+                ->SetQueryByCompanyType(trim($requestDataArr['ENTTYPE']))
+                //公司状态
+                ->SetQueryByCompanyStatus(trim($requestDataArr['ENTSTATUS']))
+                // 地区 basic_regionid: 110101,110102,
+                ->SetQueryByBasicRegionid(trim($requestDataArr['basic_regionid']) ,'DOMDISTRICT')
+                //不包含名称
+                ->SetQueryBySearchTextV5( trim($requestDataArr['un_name']),'ENTNAME')
+                //不包含经营范围
+                ->SetQueryBySearchTextV5( trim($requestDataArr['un_basic_opscope']),'OPSCOPE')
+                //不包含简介
+                ->SetQueryBySearchTextV5( trim($requestDataArr['un_jiejian']),'gong_si_jian_jie')
+                //不包含简介
+                ->SetQueryBySearchTextV5( trim($requestDataArr['un_app']),'app')
+                ->addSort("_id","desc")
+                ->addSize($size)
+                ->setSource($fieldsArr)
+            ;
+
+
+            if($lastId>0){
+                $companyEsModel->addSearchAfterV1($lastId);
+            }
+
+            $showLog = true;
+            $companyEsModel
+                ->setDefault()
+                ->searchFromEs('company_202211',$showLog)
+                ->formatEsDate()
+                // 格式化下金额
+                ->formatEsMoney();
+
+            foreach($companyEsModel->return_data['hits']['hits'] as $dataItem){
+                //不要分公司
+                if(
+                    $filtter_fen_gong_si &&
+                    strpos($dataItem['_source']['ENTNAME'],'分公司') !== false
+                ){
+//                    CommonService::getInstance()->log4PHP(
+//                        json_encode([
+//                            __CLASS__.__FUNCTION__ .__LINE__,
+//                            '分公司被过滤' => [
+//                                '公司名称'=>$dataItem['_source']['ENTNAME']
+//                            ]
+//                        ],JSON_UNESCAPED_UNICODE)
+//                    );
+                    continue;
+                }
+
+                $lastId = $dataItem['_id'];
+                $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
+                $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
+                $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
+
+                $nums ++;
+                // 官网
+                $webStr = trim($dataItem['_source']['web']);
+                if(!$webStr){
+                    yield $datas[] = $dataItem['_source'];
+                    continue;
+                }
+                $webArr = explode('&&&', $webStr);
+                !empty($webArr) && $dataItem['_source']['web'] = end($webArr);
+
+                yield $datas[] = $dataItem['_source'];
+            }
+
+            $totalNums -= $size;
+            $offset +=$size;
+        }
+    }
 
     static  function  getNamesByText($page,$size,$searchText,$returnFullField = false){
 
