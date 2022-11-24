@@ -1257,25 +1257,11 @@ class XinDongController extends ProvideBase
                 }
             }
             krsort($readyReturn);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ ,
-                    '六棱镜' => [
-                        '处理1后的结果' => $readyReturn,
-                    ]
-                ],JSON_UNESCAPED_UNICODE)
-            );
+
             for ($i = $beginYear; $i > $beginYear - $dataCount; $i--) {
                 $tmp[$i] = $readyReturn[$i] ?? $readyReturn[$i . ''];
             }
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ ,
-                    '六棱镜' => [
-                        '处理2后的结果' => $tmp,
-                    ]
-                ],JSON_UNESCAPED_UNICODE)
-            );
+
             $res = [$this->cspKey => [
                 'code' => 200,
                 'paging' => null,
@@ -1303,14 +1289,6 @@ class XinDongController extends ProvideBase
                 }
             }
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ ,
-                '六棱镜' => [
-                    '处理3后的结果' => $result,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
 
         //留下要的字段
         $save = [
@@ -1334,14 +1312,7 @@ class XinDongController extends ProvideBase
                 }
             }
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ ,
-                '六棱镜' => [
-                    '处理4后的结果' => $temp,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
+       
         $res[$this->cspKey]['result'] = $temp;
 
         return $this->checkResponse($res);
