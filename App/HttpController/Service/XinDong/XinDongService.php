@@ -6244,13 +6244,17 @@ class XinDongService extends ServiceBase
             return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:' . $postData['code'] . '）的信息');
         }
 
-        $res = WindData::create()
-            ->where('UNISCID', $info->getAttr('UNISCID'))
-            ->order('ANCHEYEAR', 'DESC')
-            ->limit($dataCount)
-            ->field([
-                'ANCHEYEAR', 'PB', 'PS', 'PE', 'TROAR', 'CR', 'QR'
-            ])->all();
+        try {
+            $res = WindData::create()
+                ->where('UNISCID', $info->getAttr('UNISCID'))
+                ->order('ANCHEYEAR', 'DESC')
+                ->limit($dataCount)
+                ->field([
+                    'ANCHEYEAR', 'PB', 'PS', 'PE', 'TROAR', 'CR', 'QR'
+                ])->all();
+        } catch (\Throwable $e) {
+            $res = [];
+        }
 
         return $this->checkResp(200, null, $res, '成功');
     }
