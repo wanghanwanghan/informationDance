@@ -35,7 +35,7 @@ Core::getInstance()->initialize();
 
 class jincai_shoudong extends AbstractProcess
 {
-    public $currentAesKey = 'fjgh758GDBZhdi34';
+    public $currentAesKey = 'jfhgnvhd64yhf854';
     public $iv = '1234567890abcdef';
     public $oss_bucket = 'invoice-mrxd';
     public $oss_expire_time = 86400 * 60;
@@ -253,6 +253,8 @@ class jincai_shoudong extends AbstractProcess
 
             $check_file = AntAuthList::create()->where('socialCredit', $socialCredit)->get();
 
+            if (empty($check_file)) continue;
+
             $fileKeyList = empty($check_file->getAttr('lastReqUrl')) ?
                 [] :
                 array_filter(explode(',', $check_file->getAttr('lastReqUrl')));
@@ -420,12 +422,7 @@ class jincai_shoudong extends AbstractProcess
 
     protected function run($arg)
     {
-        $all = JinCaiTrace::create()->all();
-
-        foreach ($all as $one) {
-            $this->sendToOSS($one->getAttr('socialCredit'), '');
-        }
-
+        $this->sendToAnt();
         dd(123);
 
 
