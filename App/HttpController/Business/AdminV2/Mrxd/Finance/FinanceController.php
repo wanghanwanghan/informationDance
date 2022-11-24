@@ -757,6 +757,17 @@ class FinanceController extends ControllerBase
             ];
         }
 
+        if (
+            !empty($requestData['entName'])
+        ) {
+
+            $whereArr[] = [
+                'field' => 'entName',
+                'value' => $requestData['entName'],
+                'operate' => '=',
+            ];
+        }
+
         if(
             AdminUserRole::checkIfIsAdmin(
                 $this->loginUserinfo['id']
