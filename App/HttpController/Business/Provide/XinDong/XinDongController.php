@@ -3099,7 +3099,7 @@ class XinDongController extends ProvideBase
     }
 
     //上市公司指标信息
-    function getListedIndex(): bool
+    function getListedIndexLLJ(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');

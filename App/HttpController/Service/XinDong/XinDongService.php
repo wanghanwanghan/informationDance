@@ -6236,7 +6236,7 @@ class XinDongService extends ServiceBase
         return $this->checkResp(200, null, $data, '成功');
     }
 
-    public function getListedIndex($postData, $dataCount = 3): array
+    function getListedIndex($postData, $dataCount = 3): array
     {
         $info = $this->getCompanyId($postData);
 
