@@ -1295,20 +1295,19 @@ class XinDongController extends ProvideBase
             'VENDINC', 'NETINC', 'MAIBUSINC_RATIOL',
             'DEBTL', 'VENDINC_CGR', 'VENDINC_yoy_ave_2',
             'NETINC_yoy_ave_2', 'RATGRO',
+            'VENDINC_yoy', 'PROGRO_yoy', 'RATGRO_yoy', 'ASSGRO_yoy', 'NETINC_yoy',
+            'DEBTL', 'NALR', 'EQUITYL_new', 'MAIBUSINC_yoy', 'ATOL', 'OPM',
+            'ROE_AL', 'ROE_BL', 'ROCA', 'NOR', 'ROAL', 'PMOTA', 'TBR',
         ];
 
         foreach ($result as $year => $arr) {
             foreach ($arr as $field => $val) {
                 if (in_array($field, $save, true)) {
-                    if(
-                        is_numeric($val) &&
-                        !is_null($val)
-                    ){
-                        $temp[$year][$field] = number_format($val,2);
-                    } else{
+                    if (is_numeric($val)) {
+                        $temp[$year][$field] = number_format($val, 2);
+                    } else {
                         $temp[$year][$field] = $val;
                     }
-
                 }
             }
         }
@@ -2415,54 +2414,54 @@ class XinDongController extends ProvideBase
     }
 
     function getCncaRzGltx_h(): bool
-   {
-       $entName = $this->getRequestData('entName', '');
-       $code = $this->getRequestData('code', '');
-       $postData = [
-           'entName'=>$entName,
-           'code'=>$code
-       ];
-       if (empty($entName) && empty($code)) {
-           return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
-       }
-       $this->csp->add($this->cspKey, function () use ($postData) {
-           return (new XinDongService())
-               ->setCheckRespFlag(true)
-               ->getCncaRzGltx_h($postData);
-       });
-       $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-       return $this->checkResponse($res);
-   }
+    {
+        $entName = $this->getRequestData('entName', '');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName' => $entName,
+            'code' => $code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
+        }
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getCncaRzGltx_h($postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
 
-   //工商-行政处罚
-   function getCaseAll_h(): bool
-   {
-       $entName = $this->getRequestData('entName', '');
-       $code = $this->getRequestData('code', '');
-       $postData = [
-           'entName'=>$entName,
-           'code'=>$code
-       ];
-       if (empty($entName) && empty($code)) {
-           return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
-       }
-       $this->csp->add($this->cspKey, function () use ($postData) {
-           return (new XinDongService())
-               ->setCheckRespFlag(true)
-               ->getCaseAll_h($postData);
-       });
-       $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-       return $this->checkResponse($res);
-   }
+    //工商-行政处罚
+    function getCaseAll_h(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        $code = $this->getRequestData('code', '');
+        $postData = [
+            'entName' => $entName,
+            'code' => $code
+        ];
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
+        }
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getCaseAll_h($postData);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
 
-   //工商-抽查检查信息
+    //工商-抽查检查信息
     function getCaseCheck_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2482,8 +2481,8 @@ class XinDongController extends ProvideBase
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2503,8 +2502,8 @@ class XinDongController extends ProvideBase
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2524,8 +2523,8 @@ class XinDongController extends ProvideBase
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2540,13 +2539,13 @@ class XinDongController extends ProvideBase
     }
 
     //工商-年报-主表
-    function getCompanyAr_h():bool
+    function getCompanyAr_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2561,13 +2560,13 @@ class XinDongController extends ProvideBase
     }
 
     //工商-年报股权变更
-    function getCompanyArAlterstockinfo_h():bool
+    function getCompanyArAlterstockinfo_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2582,13 +2581,13 @@ class XinDongController extends ProvideBase
     }
 
     //工商-年报-对外投资
-    function getCompanyArForinvestment_h():bool
+    function getCompanyArForinvestment_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2603,13 +2602,13 @@ class XinDongController extends ProvideBase
     }
 
     //工商-年报-对外提供保证担保信息
-    function getCompanyArForguaranteeinfo_h():bool
+    function getCompanyArForguaranteeinfo_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2624,13 +2623,13 @@ class XinDongController extends ProvideBase
     }
 
     //工商-年报-资产
-    function getCompanyArAsset_h():bool
+    function getCompanyArAsset_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2645,13 +2644,13 @@ class XinDongController extends ProvideBase
     }
 
     //工商-年报出资
-    function getCompanyArCapital_h():bool
+    function getCompanyArCapital_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2664,8 +2663,9 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //工商-年报出资
-    function getCompanyArModify_h():bool
+    function getCompanyArModify_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $page = $this->getRequestData('page', 1);
@@ -2674,22 +2674,22 @@ class XinDongController extends ProvideBase
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
         }
-        $this->csp->add($this->cspKey, function () use ($code,$entName,$page,$pageSize) {
+        $this->csp->add($this->cspKey, function () use ($code, $entName, $page, $pageSize) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getCompanyArModify_h($code,$entName,$page,$pageSize);
+                ->getCompanyArModify_h($code, $entName, $page, $pageSize);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
 
-    function getCompanyArSocialfee_h():bool
+    function getCompanyArSocialfee_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2704,13 +2704,13 @@ class XinDongController extends ProvideBase
     }
 
     //工商-年报-网站或网店信息
-    function getCompanyArWebsiteinfo_h():bool
+    function getCompanyArWebsiteinfo_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2723,14 +2723,15 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //工商-注吊销信息
-    function getCompanyCancelInfo_h():bool
+    function getCompanyCancelInfo_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2743,14 +2744,15 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //工商-分支机构
-    function getCompanyFiliation_h():bool
+    function getCompanyFiliation_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2763,14 +2765,15 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //大数据-曾用名表
-    function getCompanyHistoryName_h():bool
+    function getCompanyHistoryName_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2783,14 +2786,15 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //工商-企业股东
-    function getCompanyInv_h():bool
+    function getCompanyInv_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2805,13 +2809,13 @@ class XinDongController extends ProvideBase
     }
 
     //工商-企业主要人员
-    function getCompanyManager_h():bool
+    function getCompanyManager_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2826,13 +2830,13 @@ class XinDongController extends ProvideBase
     }
 
     //工商-行政许可
-    function getCompanyCertificate_h():bool
+    function getCompanyCertificate_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2845,14 +2849,15 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //大数据-股权轨迹表
-    function getCompanyHistoryInv_h():bool
+    function getCompanyHistoryInv_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2865,14 +2870,15 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //大数据-历史高管表
-    function getCompanyHistoryManager_h():bool
+    function getCompanyHistoryManager_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2885,14 +2891,15 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //工商-对外投资信息
-    function getCompanyInvestment_h():bool
+    function getCompanyInvestment_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2905,14 +2912,15 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //工商-知识产权出质
-    function getCompanyIpr_h():bool
+    function getCompanyIpr_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2925,8 +2933,9 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //工商-知识产权出质-变更信息
-    function getCompanyIprChange_h():bool
+    function getCompanyIprChange_h(): bool
     {
         $id = $this->getRequestData('id', '');
 
@@ -2941,14 +2950,15 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //工商-清算信息
-    function getCompanyLiquidation_h():bool
+    function getCompanyLiquidation_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2961,14 +2971,15 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //工商-公司变更信息
-    function getCompanyModify_h():bool
+    function getCompanyModify_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -2983,13 +2994,13 @@ class XinDongController extends ProvideBase
     }
 
     //工商-动产抵押
-    function getCompanyMort_h():bool
+    function getCompanyMort_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -3004,13 +3015,13 @@ class XinDongController extends ProvideBase
     }
 
     //工商-动产抵押-变更信息
-    function getCompanyMortChange_h():bool
+    function getCompanyMortChange_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -3025,13 +3036,13 @@ class XinDongController extends ProvideBase
     }
 
     //工商-动产抵押-抵押物信息
-    function getCompanyMortPawn_p():bool
+    function getCompanyMortPawn_p(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -3046,13 +3057,13 @@ class XinDongController extends ProvideBase
     }
 
     //工商-动产抵押-抵押权人信息
-    function getCompanyMortPeople_h():bool
+    function getCompanyMortPeople_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -3067,13 +3078,13 @@ class XinDongController extends ProvideBase
     }
 
     //工商-股权质押
-    function getCompanyStockImpawn_h():bool
+    function getCompanyStockImpawn_h(): bool
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
         $postData = [
-            'entName'=>$entName,
-            'code'=>$code
+            'entName' => $entName,
+            'code' => $code
         ];
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
