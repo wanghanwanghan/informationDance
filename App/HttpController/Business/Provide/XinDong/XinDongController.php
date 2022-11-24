@@ -1204,7 +1204,7 @@ class XinDongController extends ProvideBase
     function getFinanceBaseDataLLJ(): bool
     {
         $entName = $this->getRequestData('entName', '');
-        $beginYear = 2020;
+        $beginYear = 2021;
         $dataCount = 3;
 
         $postData = [
