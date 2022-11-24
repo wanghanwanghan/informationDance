@@ -228,21 +228,13 @@ class AdminUserFinanceConfig extends ModelBase
         if($data['allowed_total_years_num'] < $yearsNums){
             return  CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'checkExportYearsNums   false',
-                    'params $userid '=> $userid,
-                    'params $yearsNums '=> $yearsNums,
-                    'allowed_total_years_num' =>$data['allowed_total_years_num'],
-                ])
+                    '检测允许得导出年限-失败',
+                    '用户'=> $userid,
+                    '想导出得年限'=> $yearsNums,
+                    '系统配置的年限' =>$data['allowed_total_years_num'],
+                ],JSON_UNESCAPED_UNICODE)
             );
-        }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'checkExportYearsNums   true',
-                'params $userid '=> $userid,
-                'params $yearsNums '=> $yearsNums,
-                'allowed_total_years_num' =>$data['allowed_total_years_num'],
-            ])
-        );
+        } 
         return true ;
     }
     public static function checkIfIsLocked($userid){

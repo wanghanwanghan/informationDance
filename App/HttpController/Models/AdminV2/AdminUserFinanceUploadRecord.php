@@ -349,7 +349,7 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
             //区间
             if(AdminUserFinanceConfig::$type_qvjian == $dataType){
-                $NewFinanceData2 = AdminUserFinanceConfig::formatchQvJian($NewFinanceData2); 
+                $NewFinanceData2 = AdminUserFinanceConfig::formatchQvJian($NewFinanceData2);
             }
 
             yield $returnDatas[] = [
