@@ -145,7 +145,7 @@ class MobileCheckInfo extends ModelBase
     }
     static function reCheckV2($nums = 100){
         $all = self::findBySql(" WHERE  
-id >=739347  AND  
+id >=820587  AND  
 `status` = 999  LIMIT $nums");
         $i =  1 ;
         foreach ($all as $dataItem){

@@ -1312,7 +1312,7 @@ class XinDongController extends ProvideBase
                 }
             }
         }
-       
+
         $res[$this->cspKey]['result'] = $temp;
 
         return $this->checkResponse($res);
