@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\AdminV2\Mrxd\Tools;
 
 use App\Crontab\CrontabList\RunDealZhaoTouBiao;
+use App\Csp\Service\CspService;
 use App\HttpController\Business\AdminV2\Mrxd\ControllerBase;
 use App\HttpController\Models\AdminNew\AdminNewUser;
 use App\HttpController\Models\AdminNew\ConfigInfo;
@@ -23,6 +24,8 @@ use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\CompanyCarInsuranceStatusInfo;
 use App\HttpController\Models\BusinessBase\CompanyClue;
 use App\HttpController\Models\BusinessBase\CompanyClueMd5;
+use App\HttpController\Models\EntDb\EntDbEnt;
+use App\HttpController\Models\EntDb\EntDbFinance;
 use App\HttpController\Models\MRXD\TmpInfo;
 use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\Provide\RequestApiInfo;
@@ -44,6 +47,7 @@ use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\Common\XlsWriter;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
+use App\HttpController\Service\LongXin\FinanceRange;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
 use Vtiful\Kernel\Format;
@@ -1219,58 +1223,11 @@ class ToolsController extends ControllerBase
             //===========
         }
 
-        //测试生成六棱镜图片
+        //测试生成六棱镜接口
         if($requestData['type'] == 132 ){
-            $postData = [
-                'entName' => $key,
-                'code' => '',
-                'beginYear' => date('Y') - 1,
-                'dataCount' => 4,//取最近几年的
-            ];
 
-            $res = (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData, false);
 
-            $response['$res'] = $res;
-
-            ksort($res['result']);
-
-            if (!empty($res['result'])) {
-                $tmp = $legend = [];
-                foreach ($res['result'] as $year => $val) {
-                    $legend[] = $year;
-                    $tmp[] = [
-                        sRound($val['ASSGRO_yoy'] * 100),
-                        sRound($val['LIAGRO_yoy'] * 100),
-                        sRound($val['VENDINC_yoy'] * 100),
-                        sRound($val['MAIBUSINC_yoy'] * 100),
-                        sRound($val['PROGRO_yoy'] * 100),
-                        sRound($val['NETINC_yoy'] * 100),
-                        sRound($val['RATGRO_yoy'] * 100),
-                        sRound($val['ASSGRO_yoy'] * 100),
-                        sRound($val['TOTEQU_yoy'] * 100),
-                    ];
-                }
-                $res['data'] = $res['result'];
-                $res['result'] = $tmp;
-            }
-
-            $labels = ['资产总额', '负债总额', '营业总收入', '主营业务收入', '利润总额', '净利润', '纳税总额', '所有者权益'];
-
-            $extension = [
-                'width' => 1200,
-                'height' => 700,
-                'title' => $key . ' - 同比',
-                'xTitle' => '此图为概况信息',
-                //'yTitle'=>$this->entName,
-                'titleSize' => 14,
-                'legend' => $legend
-            ];
-
-            $tmp = [];
-            $tmp['pic'] = CommonService::getInstance()->createBarPic($res['result'], $labels, $extension);
-            $tmp['data'] = $res['data'];
-
-            $response['$res'] = $tmp;
+            $response['$res'] = $temp;
             //===========
         }
 
