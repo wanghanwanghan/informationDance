@@ -1219,7 +1219,7 @@ class ToolsController extends ControllerBase
             //===========
         }
 
-        //
+        //测试生成六棱镜图片
         if($requestData['type'] == 132 ){
             $postData = [
                 'entName' => $key,
@@ -1230,7 +1230,7 @@ class ToolsController extends ControllerBase
 
             $res = (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData, false);
 
-            if ($res['code'] !== 200) return '';
+            $response['$res'] = $res;
 
             ksort($res['result']);
 
@@ -1270,7 +1270,7 @@ class ToolsController extends ControllerBase
             $tmp['pic'] = CommonService::getInstance()->createBarPic($res['result'], $labels, $extension);
             $tmp['data'] = $res['data'];
 
-            $response['data'] = $tmp;
+            $response['$res'] = $tmp;
             //===========
         }
 
