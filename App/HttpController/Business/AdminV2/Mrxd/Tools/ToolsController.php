@@ -1124,6 +1124,7 @@ class ToolsController extends ControllerBase
                 'zhengmeng@meirixindong.com',
                 'luoyuting@huoyan.cn',
                 'liqingfeng@huoyan.cn',
+                'luoyuting@huoyan.cn',
             ]);
 
         }
@@ -1154,7 +1155,7 @@ class ToolsController extends ControllerBase
         }
 
         //查询代理记账信息（ 入参格式:手机号）
-        if($requestData['type'] == 130 ){ 
+        if($requestData['type'] == 130 ){
             //代理记账
             $daiLiJiZhang = CompanyClueMd5::daiLiJiZhang($key);
 
@@ -1169,6 +1170,55 @@ class ToolsController extends ControllerBase
 
         }
 
+        //查询本周招投标信息
+        if($requestData['type'] == 131 ){
+            $the_date = $key;
+            $the_day_of_week = date("w",strtotime($the_date)); //sunday is 0
+
+            $first_day_of_week = date("Y-m-d",strtotime( $the_date )-60*60*24*($the_day_of_week)+60*60*24*1 );
+            $last_day_of_week = date("Y-m-d",strtotime($first_day_of_week)+60*60*24*4 );
+
+            $dateStart = $first_day_of_week.' 00:00:00';
+            $dateEnd = $last_day_of_week.' 23:59:59';
+
+            $response['查询日期'] = $key;
+            $response['查询日期-周1'] = $first_day_of_week;
+            $response['查询日期-周5'] = $last_day_of_week;
+
+            $tables = [
+                'zhao_tou_biao_key01',
+                'zhao_tou_biao_key02',
+                'zhao_tou_biao_key03',
+                'zhao_tou_biao_key04',
+                'zhao_tou_biao_key05',
+                'zhao_tou_biao_key06',
+                'zhao_tou_biao_key07',
+                'zhao_tou_biao_key08',
+                'zhao_tou_biao_key09',
+                'zhao_tou_biao_key10',
+                'zhao_tou_biao_key11',
+                'zhao_tou_biao_key12',
+                'zhao_tou_biao_key13',
+                'zhao_tou_biao_all',
+            ];
+            foreach ($tables as $table){
+                //===========
+                $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
+                    " SELECT * FROM  $table WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
+                );
+                $response['来源'.$table]['本周总数'] = count($datas);
+                $response['来源'.$table]['sql'] = " SELECT * FROM  $table WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  ";
+
+                $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
+                    " SELECT * FROM  $table  WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  
+                        ORDER BY  updated_at desc  LIMIT 1 
+                    "
+                );
+                $response['来源'.$table]['最新一条数据'] = $datas;
+            }
+
+            //===========
+        }
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -1220,49 +1270,9 @@ class ToolsController extends ControllerBase
             128 => '空号验证里的其他错误，重新拉取（入参格式：重拉的数量）',
             129 => '根据日期查询新的招投标邮件对应的xlsx文件（入参格式:日期|如2022-11-11）',
             130 => '查询代理记账信息（入参格式:手机号）',
+            131 => '查询本周招投标信息',
         ],'成功');
     }
-    public function zhaoTouBiaoDatas(){
-        //
-
-        return $this->writeJson(200, [], [
-            2 => '根据企业名称查询库里全部的联系人名称和职位(老梗)（入参格式:企业名）',
-            5 => '通过企业名称查询我们库里的有职务信息的企业管理人(company_manager)（入参格式:企业名）',
-            6 => '通过企业名称查询我们库里的所有企业管理人(company_manager)（入参格式:企业名）',
-            7 => '通过企业名称查询我们库里的所有历史企业管理人(company_history_manager)（入参格式:企业名）',
-            8 => '通过企业名称查询公开联系人（入参格式:企业名称）',
-            10 => '通过信用代码查询非公开联系人（入参格式:信用代码）',
-            15 => '通过手机号检测号码状态（入参格式:英文逗号分隔的手机号）',
-            20 => '根据微信名匹配企业对应的联系人（入参格式:企业名&&&微信名）',
-            25 => '根据微信名匹配中文姓名（入参格式:中文姓名&&&微信名）',
-            30 => '根据信用代码查询最近两年进项发票（入参格式:信用代码）',
-            35 => '根据信用代码导出最近两年进项发票（入参格式:信用代码）',
-            40 => '根据信用代码查询最近两年销项发票（入参格式:信用代码）',
-            45 => '根据信用代码导出最近两年销项发票（入参格式:信用代码）',
-            50 => '根据信用代码查询最近两年进项发票明细（入参格式:信用代码）',
-            55 => '根据信用代码导出最近两年进项发票明细（入参格式:信用代码）',
-            60 => '根据信用代码查询最近两年销项发票明细（入参格式:信用代码）',
-            65 => '根据信用代码导出最近两年销项发票明细（入参格式:信用代码）',
-            70 => '根据信用代码查询增值税（入参格式:信用代码）',
-            75 => '根据信用代码导出增值税（入参格式:信用代码）',
-            80 => '根据信用代码查询所得税（入参格式:信用代码）',
-            85 => '根据信用代码导出所得税（入参格式:信用代码）',
-            90 => '根据信用代码查询企业税务基本信息（入参格式:信用代码）',
-            95 => '根据信用代码导出企业税务基本信息（入参格式:信用代码）',
-            100 => '根据信用代码查询企业利润（入参格式:信用代码）',
-            105 => '根据信用代码导出企业利润（入参格式:信用代码）',
-            110 => '根据信用代码查询资产负债（入参格式:信用代码）',
-            115 => '根据信用代码导出资产负债（入参格式:信用代码）',
-            //120 => '根据json查询导出资产负债（入参格式:信用代码）',
-            125 => '根据日期查询新的招投标邮件对应的csv文件（入参格式:日期|如2022-11-11）',
-            126 => '根据日期发送新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）',
-            127 => '空号验证的时候：有多少其他错误',
-            128 => '空号验证里的其他错误，重新拉取（入参格式：重拉的数量）',
-            129 => '根据日期查询新的招投标邮件对应的xlsx文件（入参格式:日期|如2022-11-11）',
-            130 => '剔除代理记账并去空号（传文件到Static/OtherFile/后，入参格式:文件名）',
-        ],'成功');
-    }
-
 
     public function uploadeGongKaiContacts(){
         $requestData =  $this->getRequestData();

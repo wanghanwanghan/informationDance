@@ -188,6 +188,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'zhengmeng@meirixindong.com',
                 'luoyuting@huoyan.cn',
                 'liqingfeng@huoyan.cn',
+                'luoyuting@huoyan.cn',
             ]);
         }
 
@@ -266,8 +267,6 @@ class RunDealZhaoTouBiao extends AbstractCronTask
     {
 
         $res = self::exportDataV8($day);
-
-
 
         //$filename = control::getUuid();
         $filename = 'zhao_tou_biao_new_'.date('Y-m-d').control::getUuid();
