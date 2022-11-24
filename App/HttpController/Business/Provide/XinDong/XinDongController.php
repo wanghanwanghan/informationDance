@@ -3097,4 +3097,31 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
+    //上市公司指标信息
+    function getListedIndex(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        $code = $this->getRequestData('code', '');
+
+        if (empty($entName) && empty($code)) {
+            return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
+        }
+
+        $postData = [
+            'entName' => $entName,
+            'code' => $code
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getListedIndex($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
 }

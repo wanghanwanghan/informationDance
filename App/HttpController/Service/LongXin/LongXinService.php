@@ -1065,6 +1065,7 @@ class LongXinService extends ServiceBase
 
         return $staffsDatas;
     }
+
     static function getLianXiByNameV2($entName)
     {
 
@@ -1084,11 +1085,11 @@ class LongXinService extends ServiceBase
 //                ]
 //            ])
 //        );
-        foreach ($allManages as $Manage){
-            if(
+        foreach ($allManages as $Manage) {
+            if (
                 !empty($Manage['POSITION']) &&
                 !empty($Manage['NAME'])
-            ){
+            ) {
                 $returnData[$Manage['NAME']] = $Manage;
             }
         }
@@ -1291,6 +1292,14 @@ class LongXinService extends ServiceBase
         //47净利润同比的平均（两年） NETINC_yoy_ave_2
         //48主营业务净利润率 NPMOMB
 
+        //49市盈率 PE
+        //50市净率 PB
+        //51市销率 PS
+        //52权益净利率 NEIR
+        //53应收帐款周转率 TROAR
+        //54流动比率 CR
+        //55速动比率 QR
+
         $now = [];
         foreach ($origin as $year => $arr) {
             $now[$year] = [
@@ -1374,7 +1383,13 @@ class LongXinService extends ServiceBase
             'VENDINC_yoy_ave_2' => null,
             'NETINC_yoy_ave_2' => null,
             'NPMOMB' => null,
-
+            'PE' => null,
+            'PB' => null,
+            'MS' => null,
+            'NEIR' => null,
+            'TROAR' => null,
+            'CR' => null,
+            'QR' => null,
         ];
 
         $retrun = [];
@@ -1790,6 +1805,20 @@ class LongXinService extends ServiceBase
         $origin = $this->NETINC_yoy_ave_2($origin);
         //48主营业务净利润率 NPMOMB
         $origin = $this->NPMOMB($origin);
+        //49市盈率 PE
+        $origin = $this->PE($origin);
+        //50市净率 PB
+        $origin = $this->PB($origin);
+        //51市销率 PS
+        $origin = $this->PS($origin);
+        //52权益净利率 NEIR
+        $origin = $this->NEIR($origin);
+        //53应收帐款周转率 TROAR
+        $origin = $this->TROAR($origin);
+        //54流动比率 CR
+        $origin = $this->CR($origin);
+        //55速动比率 QR
+        $origin = $this->QR($origin);
 
         krsort($origin);
 
@@ -2755,6 +2784,73 @@ class LongXinService extends ServiceBase
         return $origin;
     }
 
+    //49市盈率 PE
+    private function PE($origin): array
+    {
+        foreach ($origin as $year => $val) {
+            $origin[$year][] = null;
+        }
+        return $origin;
+    }
+
+    //50市净率 PB
+    private function PB($origin): array
+    {
+        foreach ($origin as $year => $val) {
+            $origin[$year][] = null;
+        }
+        return $origin;
+    }
+
+    //51市销率 PS
+    private function PS($origin): array
+    {
+        foreach ($origin as $year => $val) {
+            $origin[$year][] = null;
+        }
+        return $origin;
+    }
+
+    //52权益净利率 NEIR 14总资产净利率 * 29权益乘数
+    private function NEIR($origin): array
+    {
+        foreach ($origin as $year => $val) {
+            if (is_numeric($val[14]) && is_numeric($val[29])) {
+                $origin[$year][] = $val[14] * $val[29];
+            } else {
+                $origin[$year][] = null;
+            }
+
+        }
+        return $origin;
+    }
+
+    //53应收帐款周转率 TROAR
+    private function TROAR($origin): array
+    {
+        foreach ($origin as $year => $val) {
+            $origin[$year][] = null;
+        }
+        return $origin;
+    }
+
+    //54流动比率 CR
+    private function CR($origin): array
+    {
+        foreach ($origin as $year => $val) {
+            $origin[$year][] = null;
+        }
+        return $origin;
+    }
+
+    //55速动比率 QR
+    private function QR($origin): array
+    {
+        foreach ($origin as $year => $val) {
+            $origin[$year][] = null;
+        }
+        return $origin;
+    }
 
     //近n年的财务数据
     function getFinanceDataTwo($postData, $toRange = true): array

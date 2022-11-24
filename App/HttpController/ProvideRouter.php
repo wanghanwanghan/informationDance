@@ -331,6 +331,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getCompanyMortPawn_p', $prefix . 'getCompanyMortPawn_p');// 工商-动产抵押-抵押物信息
             $routeCollector->addRoute(['GET', 'POST'], '/getCompanyMortPeople_h', $prefix . 'getCompanyMortPeople_h');// 工商-动产抵押-抵押权人信息
             $routeCollector->addRoute(['GET', 'POST'], '/getCompanyStockImpawn_h', $prefix . 'getCompanyStockImpawn_h');// 工商-股权质押
+            $routeCollector->addRoute(['GET', 'POST'], '/getListedIndex', $prefix . 'getListedIndex');//
         });
 
         return true;
