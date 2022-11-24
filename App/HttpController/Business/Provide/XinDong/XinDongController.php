@@ -1214,17 +1214,17 @@ class XinDongController extends ProvideBase
             'dataCount' => $dataCount,
         ];
 
-        $range = FinanceRange::getInstance()->getRange('range_liulengjing');
-        $ratio = FinanceRange::getInstance()->getRange('rangeRatio_liulengjing');
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ ,
-                '六棱镜' => [
-                    '$range ' => $range,
-                    '$ratio ' => $ratio,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
+//        $range = FinanceRange::getInstance()->getRange('range_liulengjing');
+//        $ratio = FinanceRange::getInstance()->getRange('rangeRatio_liulengjing');
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ ,
+//                '六棱镜' => [
+//                    '$range ' => $range,
+//                    '$ratio ' => $ratio,
+//                ]
+//            ],JSON_UNESCAPED_UNICODE)
+//        );
         $ent_info = EntDbEnt::create()->where('name', $entName)->get();
 
         $ANCHEYEAR = [];
@@ -1344,7 +1344,7 @@ class XinDongController extends ProvideBase
             json_encode([
                 __CLASS__.__FUNCTION__ ,
                 '六棱镜' => [
-                    '处理后的结果4  ' => $result,
+                    '处理后的结果4  ' => $temp,
                 ]
             ],JSON_UNESCAPED_UNICODE)
         );
