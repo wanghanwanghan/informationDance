@@ -238,13 +238,14 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ ,
-                    'not in annul years .charge by single year ',
-                    'year' => $user_finance_data['year'],
-                    '$annulYears' => $annulYears,
+                    '财务模块-设置收费类型',
+                    '按单年度付费',
+                    '年' => $user_finance_data['year'],
+                    '包年年度' => $annulYears,
                     'upload_data_id' => $id,
                     '$uploadId' =>$uploadId,
-                    'price' => self::getYearPriceByConfig($user_finance_data['year'],$finance_config),
-                ])
+                    '价格' => self::getYearPriceByConfig($user_finance_data['year'],$finance_config),
+                ],JSON_UNESCAPED_UNICODE)
             );
             return self::updatePriceType(
                 [
@@ -263,13 +264,14 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ ,
-                'default  .charge by annual year ',
-                'year' => $user_finance_data['year'],
-                '$annulYears' => $annulYears,
+                '财务模块-设置收费类型',
+                '默认-包年计费',
+                '年' => $user_finance_data['year'],
+                '包年年度' => $annulYears,
                 'upload_data_id' => $id,
                 '$uploadId' =>$uploadId,
-                'price' => $finance_config['annually_price'],
-            ])
+                '价格' => $finance_config['annually_price'],
+            ],JSON_UNESCAPED_UNICODE)
         );
         self::updatePriceType(
             [
@@ -288,13 +290,14 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ ,
-                    'single_year_charge_as_annual  .',
-                    'year' => $user_finance_data['year'],
-                    '$annulYears' => $annulYears,
+                    '财务模块-设置收费类型',
+                    '配置的单年度不按包年计算',
+                    '年' => $user_finance_data['year'],
+                    '包年' => $annulYears,
                     'upload_data_id' => $id,
                     '$uploadId' =>$uploadId,
                     'single_year_charge_as_annual' => $finance_config['single_year_charge_as_annual'],
-                ])
+                ],JSON_UNESCAPED_UNICODE)
             );
             // 数据不连续(有的数据缺失了) ： 改包年为单年
             if(
@@ -307,13 +310,14 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ ,
-                        'some data is empty . charge by single year ',
+                        '财务模块-设置收费类型',
+                        '数据不连续(有的数据缺失了) 改包年为单年计费',
                         'year' => $user_finance_data['year'],
                         '$annulYears' => $annulYears,
                         'upload_data_id' => $id,
                         '$uploadId' =>$uploadId,
                         'price' => self::getYearPriceByConfig($user_finance_data['year'],$finance_config),
-                    ])
+                    ],JSON_UNESCAPED_UNICODE)
                 );
                 self::updatePriceType(
                     [
@@ -336,14 +340,15 @@ class AdminUserFinanceUploadDataRecord extends ModelBase
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ ,
-                        'select years not equal annul year . charge by single year ',
+                        '财务模块-设置收费类型',
+                        '选择的不是全部包年年份 ：改为单年',
                         'year' => $user_finance_data['year'],
                         '$selectYears' => $selectYears,
                         '$annulYears' => $annulYears,
                         'upload_data_id' => $id,
                         '$uploadId' =>$uploadId,
                         'price' => self::getYearPriceByConfig($user_finance_data['year'],$finance_config),
-                    ])
+                    ],JSON_UNESCAPED_UNICODE)
                 );
                 self::updatePriceType(
                     [

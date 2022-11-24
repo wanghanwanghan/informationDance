@@ -246,11 +246,12 @@ class AdminUserFinanceData extends ModelBase
         $financeData =  AdminUserFinanceData::findById($adminFinanceDataId)
             ->toArray();
         CommonService::getInstance()->log4PHP(
-            [
-                'admin finance data getFinanceDataSourceDetail start ',
-                'params $adminFinanceDataId' => $adminFinanceDataId,
-                '$financeDataRes ' => $financeData,
-            ]
+            json_encode(
+                [
+                    '财务数据-判断到底从服务商取数据还是从数据库取数据',
+                    'params $adminFinanceDataId' => $adminFinanceDataId,
+                ],JSON_UNESCAPED_UNICODE
+            )
         );
 
         // 从财务数据表取数据
@@ -270,11 +271,14 @@ class AdminUserFinanceData extends ModelBase
             (strtotime($financeData['last_pull_api_date']) -time()) > self::$pullFinanceTimeInterval
         ){
             CommonService::getInstance()->log4PHP(
-                [
-                    'admin finance data last_pull_api_date  too long ',
-                    'params last_pull_api_date' => $financeData['last_pull_api_date'],
-                    '$pullFinanceTimeInterval ' =>  self::$pullFinanceTimeInterval,
-                ]
+                json_encode(
+                    [
+                        '财务数据-判断到底从服务商取数据还是从数据库取数据',
+                        '时间太长了，需要从新从服务商拉取',
+                        '上次拉取时间' => $financeData['last_pull_api_date'],
+                        '系统配置的需要拉取的时长 ' =>  self::$pullFinanceTimeInterval,
+                    ],JSON_UNESCAPED_UNICODE
+                )
             );
             return [
                 'pullFromApi' => true,
@@ -301,10 +305,12 @@ class AdminUserFinanceData extends ModelBase
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ ,
-                    'params $FinanceDataId ' =>$id,
-                    '$financeConifgArr ' =>$financeConifgArr,
-                    'year too large ,return true.'
-                ])
+                    '拉取财务数据 年限不符，直接返回' => [
+                        ' $FinanceDataId ' =>$id,
+                        '财务配置 ' =>$financeConifgArr,
+                        'year'=>$financeData['year']
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
             );
             return  true;
         }

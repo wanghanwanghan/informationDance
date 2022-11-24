@@ -156,15 +156,12 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
 
         //找到需要导出的 拉取财务数据
         self::pullFinanceDataV2(10);
-//        self::pullFinanceDataV2_v2(10);
 
         //找到需要导出的 设置为已确认
         self::checkConfirmV2(10);
-//        self::checkConfirmV2_V2(10);
 
         //找到需要导出的 重新拉取财务数据
         self::pullFinanceDataV3(10);
-//        self::pullFinanceDataV3_V2(10);
 
         self::exportFinanceDataV4(10);
 
@@ -172,7 +169,6 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
         self::sendSmsWhenBalanceIsNotEnough();
 
         //设置为已执行完毕
-//        ConfigInfo::setIsDone(__CLASS__);
 
         return true ;   
     }
@@ -952,8 +948,10 @@ class RunDealFinanceCompanyDataNewV2 extends AbstractCronTask
                     CommonService::getInstance()->log4PHP(
                         json_encode([
                             __CLASS__.__FUNCTION__ ,
-                            'error . $yearsArr is emprty . $yearsArr ='=>$yearsArr
-                        ])
+                            '财务模块定时异常'=>[
+                                '将客户名单解析到db时找不到年度'=>$yearsArr,
+                            ]
+                        ],JSON_UNESCAPED_UNICODE)
                     );
                     continue;
                 }

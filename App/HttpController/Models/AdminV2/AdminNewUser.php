@@ -117,13 +117,6 @@ class AdminNewUser extends ModelBase
         }
 
         $newMoney = AdminNewUser::aesDecode($money);
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                'admin new user getAccountBalance   '=> 'strat',
-//                '$money' =>  $money,
-//                '$newMoney' => $newMoney,
-//            ])
-//        );
         return $newMoney;
     }
 

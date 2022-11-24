@@ -234,7 +234,7 @@ class AdminUserFinanceConfig extends ModelBase
                     '系统配置的年限' =>$data['allowed_total_years_num'],
                 ],JSON_UNESCAPED_UNICODE)
             );
-        } 
+        }
         return true ;
     }
     public static function checkIfIsLocked($userid){

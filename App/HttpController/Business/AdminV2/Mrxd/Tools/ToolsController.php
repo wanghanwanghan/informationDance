@@ -1218,6 +1218,62 @@ class ToolsController extends ControllerBase
 
             //===========
         }
+
+        //
+        if($requestData['type'] == 132 ){
+            $postData = [
+                'entName' => $key,
+                'code' => '',
+                'beginYear' => date('Y') - 1,
+                'dataCount' => 4,//取最近几年的
+            ];
+
+            $res = (new LongXinService())->setCheckRespFlag(true)->getFinanceData($postData, false);
+
+            if ($res['code'] !== 200) return '';
+
+            ksort($res['result']);
+
+            if (!empty($res['result'])) {
+                $tmp = $legend = [];
+                foreach ($res['result'] as $year => $val) {
+                    $legend[] = $year;
+                    $tmp[] = [
+                        sRound($val['ASSGRO_yoy'] * 100),
+                        sRound($val['LIAGRO_yoy'] * 100),
+                        sRound($val['VENDINC_yoy'] * 100),
+                        sRound($val['MAIBUSINC_yoy'] * 100),
+                        sRound($val['PROGRO_yoy'] * 100),
+                        sRound($val['NETINC_yoy'] * 100),
+                        sRound($val['RATGRO_yoy'] * 100),
+                        sRound($val['ASSGRO_yoy'] * 100),
+                        sRound($val['TOTEQU_yoy'] * 100),
+                    ];
+                }
+                $res['data'] = $res['result'];
+                $res['result'] = $tmp;
+            }
+
+            $labels = ['资产总额', '负债总额', '营业总收入', '主营业务收入', '利润总额', '净利润', '纳税总额', '所有者权益'];
+
+            $extension = [
+                'width' => 1200,
+                'height' => 700,
+                'title' => $key . ' - 同比',
+                'xTitle' => '此图为概况信息',
+                //'yTitle'=>$this->entName,
+                'titleSize' => 14,
+                'legend' => $legend
+            ];
+
+            $tmp = [];
+            $tmp['pic'] = CommonService::getInstance()->createBarPic($res['result'], $labels, $extension);
+            $tmp['data'] = $res['data'];
+
+            $response['data'] = $tmp;
+            //===========
+        }
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -1270,6 +1326,7 @@ class ToolsController extends ControllerBase
             129 => '根据日期查询新的招投标邮件对应的xlsx文件（入参格式:日期|如2022-11-11）',
             130 => '查询代理记账信息（入参格式:手机号）',
             131 => '查询本周招投标信息（入参格式:日期|如2022-11-11）',
+            132 => '测试生成六棱镜图片',
         ],'成功');
     }
 
