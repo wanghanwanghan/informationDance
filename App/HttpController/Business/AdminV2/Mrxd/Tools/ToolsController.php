@@ -1210,8 +1210,7 @@ class ToolsController extends ControllerBase
                 $response['来源'.$table]['sql'] = " SELECT * FROM  $table WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  ";
 
                 $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
-                    " SELECT * FROM  $table  WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  
-                        ORDER BY  updated_at desc  LIMIT 1 
+                    " SELECT * FROM  $table  WHERE    ORDER BY  updated_at desc  LIMIT 1 
                     "
                 );
                 $response['来源'.$table]['最新一条数据'] = $datas;
