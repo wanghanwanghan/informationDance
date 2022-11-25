@@ -1240,8 +1240,15 @@ class ToolsController extends ControllerBase
                 $ext = pathinfo($v);
                 if($ext['extension']=='json'){
                     $name = substr($v,0,strpos($v,"."));
-                    sleep(0.2);
-                    $str = file_get_contents('/home/wwwroot/informationDance_test/Static/shan_xi/'.$v);
+                    sleep(1);
+
+                    $ctx = stream_context_create(array('http'=>
+                        array(
+                            'timeout' => 3,  //3 Seconds
+                        )
+                    ));
+                    $str = file_get_contents('/home/wwwroot/informationDance_test/Static/shan_xi/'.$v, false, $ctx);
+                    //$str = file_get_contents('/home/wwwroot/informationDance_test/Static/shan_xi/'.$v);
                     $arr = json_decode($str,true);
                     if(empty($arr)){
                         CommonService::getInstance()->log4PHP(
