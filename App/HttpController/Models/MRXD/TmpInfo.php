@@ -41,9 +41,23 @@ class TmpInfo extends ModelBase
     public static function addRecord($requestData){
         try {
            $res =  TmpInfo::create()->data([
-                'siteId' => $requestData['siteId']?:'',
+                'page' => $requestData['page']?:'',
+                'pathName' => $requestData['pathName']?:'',
+                'districtName' => $requestData['districtName']?:'',
+                'gpCatalogName' => $requestData['gpCatalogName']?:'',
+                'publishDate' => $requestData['publishDate']?:'',
+                'procurementMethod' => $requestData['procurementMethod']?:'',
                 'articleId' => $requestData['articleId']?:'',
+                'siteId' => $requestData['siteId']?:'',
+                'gpCatalogType' => $requestData['gpCatalogType']?:'',
                 'title' => $requestData['title']?:'',
+                'url' => $requestData['url']?:'',
+                'real_url' => $requestData['real_url']?:'',
+                'jia_fang' => $requestData['jia_fang']?:'',
+                'jia_fang_contacts' => $requestData['jia_fang_contacts']?:'',
+                'yi_fang' => $requestData['yi_fang']?:'',
+                'yi_fang_contacts' => $requestData['yi_fang_contacts']?:'',
+                'contact_money' => $requestData['contact_money']?:'',
                 'content' => $requestData['content']?:'',
                 'remark' => $requestData['remark']?:'',
            ])->save();

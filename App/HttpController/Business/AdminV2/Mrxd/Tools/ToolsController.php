@@ -1266,25 +1266,25 @@ class ToolsController extends ControllerBase
                         foreach ($arr['hits']['hits'] as $tmp){
 
                             $data_tmp = [
-                                '所属页码' =>$name,
-                                '所属菜单' =>$tmp['_source']['pathName'],
-                                '所属地区' =>$tmp['_source']['districtName'],
-                                '所属类别' =>$tmp['_source']['gpCatalogName'],
-                                '发布时间' =>$tmp['_source']['publishDate'],
-                                '采购方法' =>$tmp['_source']['procurementMethod'],
+                                'page' =>$name,
+                                'pathName' =>$tmp['_source']['pathName'],
+                                'districtName' =>$tmp['_source']['districtName'],
+                                'gpCatalogName' =>$tmp['_source']['gpCatalogName'],
+                                'publishDate' =>$tmp['_source']['publishDate'],
+                                'procurementMethod' =>$tmp['_source']['procurementMethod'],
                                 'articleId' =>$tmp['_source']['articleId'],
                                 'siteId' =>$tmp['_source']['siteId'],
-                                '所属类别2' =>$tmp['_source']['gpCatalogType'],
-                                '标题' =>$tmp['_source']['title'],
+                                'gpCatalogType' =>$tmp['_source']['gpCatalogType'],
+                                'title' =>$tmp['_source']['title'],
                                 'url' =>$tmp['_source']['url'],
-                                '真实路径' => 'http://www.ccgp-shanxi.gov.cn'.$tmp['_source']['url'],
+                                'real_url' => 'http://www.ccgp-shanxi.gov.cn'.$tmp['_source']['url'],
                             ];
 
                             $detail_str = file_get_contents('http://www.ccgp-shanxi.gov.cn'.$tmp['_source']['url']);
 
                             $regex='/采购人（甲方）：(.*)&lt;\/samp&gt;&lt;/U';
                             preg_match_all($regex,$detail_str,$result1);
-                            $data_tmp['采购人（甲方）'] = str_replace(
+                            $data_tmp['jia_fang'] = str_replace(
                                 '&lt;samp style&#x3D;\&quot;font-family: inherit\&quot; class&#x3D;\&quot;bookmark-item uuid-1653374723811 code-00014 editDisable interval-text-box-cls readonly\&quot;&gt;',
                                 '',
                                 $result1[1][0]
@@ -1292,7 +1292,7 @@ class ToolsController extends ControllerBase
 
                             $regex='/联系方式：(.*)&lt;\/samp&gt;&amp;nbsp;/U';
                             preg_match_all($regex,$detail_str,$result2);
-                            $data_tmp['采购人（甲方）联系方式'] = str_replace(
+                            $data_tmp['jia_fang_contacts'] = str_replace(
                                 '&lt;samp style&#x3D;\&quot;font-family: inherit\&quot; class&#x3D;\&quot;bookmark-item uuid-1653374744359 code-00016 editDisable single-line-text-input-box-cls readonly\&quot;&gt;',
                                 '',
                                 $result2[1][0]
@@ -1301,7 +1301,7 @@ class ToolsController extends ControllerBase
                             // 供应商（乙方）：
                             $regex='/供应商（乙方）：(.*)&lt;\/samp&gt;&lt/U';
                             preg_match_all($regex,$detail_str,$result3);
-                            $data_tmp['供应商（乙方）'] = str_replace(
+                            $data_tmp['yi_fang'] = str_replace(
                                 '&lt;samp style&#x3D;\&quot;font-family: inherit\&quot; class&#x3D;\&quot;bookmark-item uuid-1653374757031 code-81201 addWord single-line-text-input-box-cls\&quot;&gt;',
                                 '',
                                 $result3[1][0]
@@ -1309,7 +1309,7 @@ class ToolsController extends ControllerBase
 
                             $regex='/联系方式：(.*)&lt;\/samp&gt;&amp;nbsp;/U';
                             preg_match_all($regex,$detail_str,$result2);
-                            $data_tmp['采购人（乙方）联系方式'] = str_replace(
+                            $data_tmp['yi_fang_contacts'] = str_replace(
                                 '&lt;samp style&#x3D;\&quot;font-family: inherit\&quot; class&#x3D;\&quot;bookmark-item uuid-1653374785720 code-AM014supplierContact addContent single-line-text-input-box-cls\&quot;&gt;',
                                 '',
                                 $result2[1][1]
@@ -1318,20 +1318,14 @@ class ToolsController extends ControllerBase
                             //
                             $regex='/合同金额（元）：(.*)&lt;\/samp&gt;&lt;/U';
                             preg_match_all($regex,$detail_str,$result5);
-                            $data_tmp['合同金额（元）'] = str_replace(
+                            $data_tmp['contact_money'] = str_replace(
                                 '&lt;samp style&#x3D;\&quot;font-family: inherit\&quot; class&#x3D;\&quot;bookmark-item uuid-1653374884933 code-AM014totalContractAmount addWord single-line-text-input-box-cls\&quot;&gt;',
                                 '',
                                 $result5[1][0]
                             );
-                            //TmpInfo::addRecordV2(
+
                             TmpInfo::addRecord(
-                                [
-                                    'siteId'=>$data_tmp['siteId'],
-                                    'articleId'=>$data_tmp['articleId'],
-                                    'title'=>$data_tmp['标题'],
-                                    'remark'=>$v,
-                                    'content'=> json_encode($data_tmp,JSON_UNESCAPED_UNICODE),
-                                ]
+                                $data_tmp
                             );
                         }
                     }
@@ -1351,6 +1345,33 @@ class ToolsController extends ControllerBase
             //===========
         }
 
+        if($requestData['type'] == 133 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."山西政府采购网_合同公告信息.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $allFields = [
+
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+
+            $allInvoiceDatas = TmpInfo::findAllByCondition([]);
+            //$allInvoiceDatas = jsonDecode($allInvoiceDatas['data']);
+            foreach ($allInvoiceDatas as $InvoiceData){
+                json_decode($InvoiceData,true);
+                fputcsv($f, $InvoiceData);
+            }
+
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+        }
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -1404,6 +1425,7 @@ class ToolsController extends ControllerBase
             130 => '查询代理记账信息（入参格式:手机号）',
             131 => '查询本周招投标信息（入参格式:日期|如2022-11-11）',
             132 => '根据json抓取山西官网数据（入参格式:数量）',
+            133 => '导出山西官网数据',
         ],'成功');
     }
 
