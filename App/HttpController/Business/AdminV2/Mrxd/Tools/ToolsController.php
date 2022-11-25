@@ -1378,8 +1378,18 @@ class ToolsController extends ControllerBase
             $allInvoiceDatas = TmpInfo::findBySql("SELECT page,title,jia_fang,yi_fang,yi_fang_contacts,procurementMethod,districtName FROM tmp_info   
             ");
             //$allInvoiceDatas = jsonDecode($allInvoiceDatas['data']);
+            $i =1;
             foreach ($allInvoiceDatas as $InvoiceData){
+                if($i%100==0){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            '导出山西政府采购网_已生成' => $i,
+                            '导出山西政府采购网_文件名' => $fileName,
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
                 fputcsv($f, $InvoiceData);
+                $i++;
             }
 
             $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
