@@ -1244,31 +1244,31 @@ class XinDongController extends ProvideBase
                 foreach ($arr as $field => $val) {
                     $readyReturn[$year][$field] = $val;
 
-                    if(
-                        in_array($field,[
-                            'VENDINC',
-                            'NETINC',
-                            'RATGRO',
-                        ]) &&
-                        isset($range[1][$field]) && is_numeric($val)
-                    ){
-                        $readyReturn[$year][$field] = $obj->binaryFind(
-                            $val, 0, count($range[1][$field]) - 1, $range[1][$field]
-                        );
-                    }
-
-                    if(
-                        in_array($field,[
-                            'VENDINC',
-                            'NETINC',
-                            'RATGRO',
-                        ]) &&
-                        isset($ratio[1][$field]) && is_numeric($val)
-                    ){
-                        $readyReturn[$year][$field] = $obj->binaryFind(
-                            $val, 0, count($ratio[1][$field]) - 1, $ratio[1][$field]
-                        );
-                    }
+//                    if(
+//                        in_array($field,[
+//                            'VENDINC',
+//                            'NETINC',
+//                            'RATGRO',
+//                        ]) &&
+//                        isset($range[1][$field]) && is_numeric($val)
+//                    ){
+//                        $readyReturn[$year][$field] = $obj->binaryFind(
+//                            $val, 0, count($range[1][$field]) - 1, $range[1][$field]
+//                        );
+//                    }
+//
+//                    if(
+//                        in_array($field,[
+//                            'VENDINC',
+//                            'NETINC',
+//                            'RATGRO',
+//                        ]) &&
+//                        isset($ratio[1][$field]) && is_numeric($val)
+//                    ){
+//                        $readyReturn[$year][$field] = $obj->binaryFind(
+//                            $val, 0, count($ratio[1][$field]) - 1, $ratio[1][$field]
+//                        );
+//                    }
                 }
             }
             krsort($readyReturn);
