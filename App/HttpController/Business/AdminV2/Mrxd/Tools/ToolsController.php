@@ -1128,7 +1128,7 @@ class ToolsController extends ControllerBase
                 'zhengmeng@meirixindong.com',
                 'luoyuting@huoyan.cn',
                 'liqingfeng@huoyan.cn',
-                'luoyuting@huoyan.cn',
+                //'luoyuting@huoyan.cn',
             ]);
 
         }
@@ -1361,7 +1361,13 @@ class ToolsController extends ControllerBase
             fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
 
             $allFields = [
-
+                "序号",
+                "标题",
+                "采购人（甲方）",
+                "供应商（乙方）",
+                "乙方联系人",
+                "采购方式",
+                "地区",
             ];
             foreach ($allFields as $field=>$cname){
 
@@ -1369,11 +1375,10 @@ class ToolsController extends ControllerBase
             }
             fputcsv($f, $title);
 
-
-            $allInvoiceDatas = TmpInfo::findAllByCondition([]);
+            $allInvoiceDatas = TmpInfo::findBySql("SELECT page,title,jia_fang,yi_fang,yi_fang_contacts,procurementMethod,districtName FROM tmp_info   
+            ");
             //$allInvoiceDatas = jsonDecode($allInvoiceDatas['data']);
             foreach ($allInvoiceDatas as $InvoiceData){
-                json_decode($InvoiceData,true);
                 fputcsv($f, $InvoiceData);
             }
 

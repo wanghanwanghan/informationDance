@@ -154,12 +154,8 @@ class TmpInfo extends ModelBase
         ]);
     }
 
-    public static function findBySql($where){
-        $Sql = " select *  
-                            from  
-                        `tmp_info` 
-                            $where
-      " ;
+    public static function findBySql($Sql){
+
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }
