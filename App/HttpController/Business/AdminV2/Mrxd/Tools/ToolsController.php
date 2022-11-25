@@ -1323,7 +1323,8 @@ class ToolsController extends ControllerBase
                                 '',
                                 $result5[1][0]
                             );
-                            TmpInfo::addRecordV2(
+                            //TmpInfo::addRecordV2(
+                            TmpInfo::addRecord(
                                 [
                                     'siteId'=>$data_tmp['siteId'],
                                     'articleId'=>$data_tmp['articleId'],
