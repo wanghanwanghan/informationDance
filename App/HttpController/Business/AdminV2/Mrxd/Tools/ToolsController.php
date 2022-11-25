@@ -1343,7 +1343,7 @@ class ToolsController extends ControllerBase
                             '已完成$v'=>$v,
                             '已完成$i'=>$i,
                         ]
-                    ],JSON_UNESCAPED_UNICODE)
+                    ],JSON_UNESCAPED_UNICODE));
             }
 
             $response['$i'] = $i;
