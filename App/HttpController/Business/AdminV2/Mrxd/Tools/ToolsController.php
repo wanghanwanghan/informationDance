@@ -1231,7 +1231,7 @@ class ToolsController extends ControllerBase
 
             $i = 1;
             foreach($filename as $k=>$v){
-                if($key >= $i){
+                if($key <= $i){
                     break;
                 }
                 sleep(1);
