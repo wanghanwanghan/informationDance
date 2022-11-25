@@ -1241,7 +1241,7 @@ class ToolsController extends ControllerBase
                 $ext = pathinfo($v);
                 if($ext['extension']=='json'){
                     $name = substr($v,0,strpos($v,"."));
-                    $str = file_get_contents('/home/wwwroot/informationDance_test/Static/shan_xi'.$v);
+                    $str = file_get_contents('/home/wwwroot/informationDance_test/Static/shan_xi/'.$v);
                     $arr = json_decode($str,true);
                     if(empty($arr)){
                         CommonService::getInstance()->log4PHP(
@@ -1336,7 +1336,7 @@ class ToolsController extends ControllerBase
                     }
                 }
                 $i++;
-                @unlink($v);
+                @unlink('/home/wwwroot/informationDance_test/Static/shan_xi/'.$v);
             }
 
             $response['$i'] = $i;
