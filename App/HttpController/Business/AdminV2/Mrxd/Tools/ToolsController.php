@@ -1247,9 +1247,13 @@ class ToolsController extends ControllerBase
                         CommonService::getInstance()->log4PHP(
                             json_encode([
                                 '抓取山西数据'=>[
-                                    'json异常'=>'$name',
+                                    'json异常'=>[ 
+                                        '$arr'=>$arr,
+                                        '$name'=>$name,
+                                        '$str'=>$str,
+                                    ]
                                 ]
-                            ])
+                            ],true)
                         );
                         continue;
                     }
