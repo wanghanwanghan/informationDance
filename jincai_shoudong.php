@@ -35,7 +35,7 @@ Core::getInstance()->initialize();
 
 class jincai_shoudong extends AbstractProcess
 {
-    public $currentAesKey = 'jfhgnvhd64yhf854';
+    public $currentAesKey = 'fjgh758GDBZhdi34';
     public $iv = '1234567890abcdef';
     public $oss_bucket = 'invoice-mrxd';
     public $oss_expire_time = 86400 * 60;
