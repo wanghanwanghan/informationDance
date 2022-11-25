@@ -1241,13 +1241,14 @@ class ToolsController extends ControllerBase
                 $ext = pathinfo($v);
                 if($ext['extension']=='json'){
                     $name = substr($v,0,strpos($v,"."));
-                    $str = file_get_contents($v);
+                    $str = file_get_contents('/home/wwwroot/informationDance_test/Static/shan_xi'.$v);
                     $arr = json_decode($str,true);
                     if(empty($arr)){
                         CommonService::getInstance()->log4PHP(
                             json_encode([
                                 '抓取山西数据'=>[
-                                    'json异常'=>[ 
+                                    'json异常'=>[
+                                        '$v'=>$v,
                                         '$arr'=>$arr,
                                         '$name'=>$name,
                                         '$str'=>$str,
