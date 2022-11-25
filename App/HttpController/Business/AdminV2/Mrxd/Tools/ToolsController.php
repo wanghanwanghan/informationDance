@@ -1234,13 +1234,13 @@ class ToolsController extends ControllerBase
                 if($key <= $i){
                     break;
                 }
-                sleep(1);
 
                 if($v=="." || $v==".."){continue;}
 
                 $ext = pathinfo($v);
                 if($ext['extension']=='json'){
                     $name = substr($v,0,strpos($v,"."));
+                    sleep(0.2);
                     $str = file_get_contents('/home/wwwroot/informationDance_test/Static/shan_xi/'.$v);
                     $arr = json_decode($str,true);
                     if(empty($arr)){
