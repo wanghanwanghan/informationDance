@@ -1319,8 +1319,8 @@ class XinDongController extends ProvideBase
             foreach ($arr as $field => $val) {
                 if (in_array($field, $save, true)) {
                     if (is_numeric($val)) {
-                        //$temp[$year][$field] = number_format($val, 2);
-                        $temp[$year][$field] = intval($val);
+                        $temp[$year][$field] = number_format($val, 2);
+                        //$temp[$year][$field] = intval($val);
                     } else {
                         $temp[$year][$field] = $val;
                     }
