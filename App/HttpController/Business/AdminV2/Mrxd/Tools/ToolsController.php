@@ -1254,7 +1254,7 @@ class ToolsController extends ControllerBase
                                         '$str'=>$str,
                                     ]
                                 ]
-                            ],true)
+                            ],JSON_UNESCAPED_UNICODE)
                         );
                         continue;
                     }
@@ -1337,6 +1337,13 @@ class ToolsController extends ControllerBase
                 }
                 $i++;
                 @unlink('/home/wwwroot/informationDance_test/Static/shan_xi/'.$v);
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        '抓取山西数据'=>[
+                            '已完成$v'=>$v,
+                            '已完成$i'=>$i,
+                        ]
+                    ],JSON_UNESCAPED_UNICODE)
             }
 
             $response['$i'] = $i;
