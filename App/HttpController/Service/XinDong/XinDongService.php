@@ -47,6 +47,7 @@ use App\HttpController\Models\RDS3\HdSaic\CompanyStockImpawn;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggreListedH;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggrePicsH;
+use App\HttpController\Models\RDS3\HdSaicExtension\AqsiqAnccH;
 use App\HttpController\Models\RDS3\HdSaicExtension\CncaRzGltxH;
 use App\HttpController\Models\RDS3\HdSaicExtension\WindData;
 use App\HttpController\Service\Common\CommonService;
@@ -6252,6 +6253,30 @@ class XinDongService extends ServiceBase
                 ->field([
                     'ANCHEYEAR', 'PB', 'PS', 'PE', 'TROAR', 'CR', 'QR'
                 ])->all();
+        } catch (\Throwable $e) {
+            $res = [];
+        }
+
+        return $this->checkResp(200, null, $res, '成功');
+    }
+
+    function getCommodityCode($postData): array
+    {
+        $info = $this->getCompanyId($postData);
+
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:' . $postData['code'] . '）的信息');
+        }
+
+        try {
+            $res = AqsiqAnccH::findByCompanyidId($info->getAttr('companyid'),[
+                'pcode',
+                'pname',
+                'brandname',
+                'specific',
+                'desc',
+                'pstatus',
+            ]);
         } catch (\Throwable $e) {
             $res = [];
         }
