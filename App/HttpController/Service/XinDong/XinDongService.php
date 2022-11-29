@@ -6265,14 +6265,22 @@ class XinDongService extends ServiceBase
         $info = $this->getCompanyId($postData);
         $page = $postData['page'] ?:1 ;
         $limit = $postData['limit'] ?:100 ;
-        $fields = $postData['fields'] ?:[
-            'pcode',
-            'pname',
+        $fields = [
             '`brandname`',
             '`specific`',
             '`desc`',
+            '`pstatus`',
+            '`pcode`',
+            '`pname`',
+        ];
+        $fields2 = [
+            'brandname',
+            'specific',
+            'desc',
             'pstatus',
-        ] ;
+            'pcode',
+            'pname',
+        ];
         if (empty($info)) {
             return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:' . $postData['code'] . '）的信息');
         }
@@ -6285,7 +6293,7 @@ class XinDongService extends ServiceBase
                     $fields
                 )->all();
             foreach ($res as &$value){
-                foreach ($fields as $field){
+                foreach ($fields2 as $field){
                     $tmpvalue = str_replace(array("/r/n", "/r", "/n"), '', $value[$field]);
                     //$tmpvalue = preg_replace('//s*/', '', $tmpvalue);
                     $tmpvalue = str_replace(PHP_EOL, '', $tmpvalue);
