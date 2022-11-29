@@ -6287,7 +6287,7 @@ class XinDongService extends ServiceBase
             foreach ($res as &$value){
                 foreach ($fields as $field){
                     $tmpvalue = str_replace(array("/r/n", "/r", "/n"), '', $value[$field]);
-                    $tmpvalue = preg_replace('//s*/', '', $tmpvalue);
+                    //$tmpvalue = preg_replace('//s*/', '', $tmpvalue);
                     $tmpvalue = str_replace(PHP_EOL, '', $tmpvalue);
                     $value[$field] = $tmpvalue;
                 }
