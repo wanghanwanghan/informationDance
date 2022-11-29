@@ -6278,6 +6278,15 @@ class XinDongService extends ServiceBase
                 'pstatus',
             ]);
         } catch (\Throwable $e) {
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    '入参'=>$postData,
+                    '商品条码报错'=>$e->getMessage(),
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
             $res = [];
         }
 
