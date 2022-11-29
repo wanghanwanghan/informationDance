@@ -6272,9 +6272,9 @@ class XinDongService extends ServiceBase
             $res = AqsiqAnccH::findByCompanyidId($info->getAttr('companyid'),[
                 'pcode',
                 'pname',
-                'brandname',
-                'specific',
-                'desc',
+                '`brandname`',
+                '`specific`',
+                '`desc`',
                 'pstatus',
             ]);
         } catch (\Throwable $e) {
