@@ -27,6 +27,7 @@ use App\HttpController\Models\BusinessBase\CompanyClueMd5;
 use App\HttpController\Models\EntDb\EntDbEnt;
 use App\HttpController\Models\EntDb\EntDbFinance;
 use App\HttpController\Models\MRXD\TmpInfo;
+use App\HttpController\Models\MRXD\TmpInfo2;
 use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\RDS3\Company;
@@ -1394,6 +1395,40 @@ class ToolsController extends ControllerBase
 
             $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
         }
+
+        if($requestData['type'] == 134 ){
+            $files = glob("/home/wwwroot/tianyongshan/top500/*list.json");
+            foreach($files as $file) {
+                $content = file_get_contents($file);
+                $pathinfo  = pathinfo($file);
+                $content = json_decode($content,true);
+                foreach ($content['blocklist']['searchlist']['data']['resultlist']['data'] as $dataItem){
+                    TmpInfo::addRecordV2([
+                        'ID'=>$dataItem['ID'],
+                        'CompanyName'=>$dataItem['CompanyName'],
+                        'content'=> json_encode($dataItem,JSON_UNESCAPED_UNICODE),
+                        'remark'=>$pathinfo['filename'],
+                    ]);
+                };
+            }
+        }
+
+        if($requestData['type'] == 135 ){
+            $files = glob("/home/wwwroot/tianyongshan/top500/*details.json");
+            foreach($files as $file) {
+                $content = file_get_contents($file);
+                $pathinfo  = pathinfo($file);
+                $content = json_decode($content,true);
+                foreach ($content as $dataItem){
+                    TmpInfo2::addRecordV2([
+                        'brandid'=>$dataItem['brandid'],
+                        'content'=> json_encode($dataItem,JSON_UNESCAPED_UNICODE),
+                        'remark'=>$pathinfo['filename'],
+                    ]);
+                };
+            }
+        }
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -1448,6 +1483,8 @@ class ToolsController extends ControllerBase
             131 => '查询本周招投标信息（入参格式:日期|如2022-11-11）',
             132 => '根据json抓取山西官网数据（入参格式:数量）',
             133 => '导出山西官网数据',
+            134 => '解析top500_列表',
+            135 => '解析top500_详情',
         ],'成功');
     }
 
