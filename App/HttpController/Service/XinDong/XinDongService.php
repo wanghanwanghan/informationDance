@@ -6263,20 +6263,35 @@ class XinDongService extends ServiceBase
     function getCommodityCode($postData): array
     {
         $info = $this->getCompanyId($postData);
-
+        $page = $postData['page'] ?:1 ;
+        $limit = $postData['limit'] ?:100 ;
+        $fields = $postData['fields'] ?:[
+            'pcode',
+            'pname',
+            '`brandname`',
+            '`specific`',
+            '`desc`',
+            'pstatus',
+        ] ;
         if (empty($info)) {
             return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:' . $postData['code'] . '）的信息');
         }
 
         try {
-            $res = AqsiqAnccH::findByCompanyidId($info->getAttr('companyid'),[
-                'pcode',
-                'pname',
-                '`brandname`',
-                '`specific`',
-                '`desc`',
-                'pstatus',
-            ]);
+            $res = AqsiqAnccH::create()
+                ->where('companyid', $info->getAttr('companyid'))
+                ->page($page,$limit)
+                ->field(
+                    $fields
+                )->all();
+            foreach ($res as &$value){
+                foreach ($fields as $field){
+                    $tmpvalue = str_replace(array("/r/n", "/r", "/n"), '', $value[$field]);
+                    $tmpvalue = preg_replace('//s*/', '', $tmpvalue);
+                    $tmpvalue = str_replace(PHP_EOL, '', $tmpvalue);
+                    $value[$field] = $tmpvalue;
+                }
+            }
         } catch (\Throwable $e) {
         CommonService::getInstance()->log4PHP(
             json_encode([

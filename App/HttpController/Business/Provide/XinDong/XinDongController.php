@@ -3146,6 +3146,7 @@ class XinDongController extends ProvideBase
     {
         $entName = $this->getRequestData('entName', '');
         $code = $this->getRequestData('code', '');
+        $page = $this->getRequestData('page', 1);
 
         if (empty($entName) && empty($code)) {
             return $this->writeJson(201, null, null, '参数(entName,code)不可以都为空');
@@ -3153,7 +3154,8 @@ class XinDongController extends ProvideBase
 
         $postData = [
             'entName' => $entName,
-            'code' => $code
+            'code' => $code,
+            'page' => $page,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
