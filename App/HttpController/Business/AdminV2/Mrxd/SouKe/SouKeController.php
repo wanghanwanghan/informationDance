@@ -1499,6 +1499,7 @@ class SouKeController extends ControllerBase
         if($requestData['ids']>0){
             $idsArr = explode(',',$requestData['ids']);
             $sqlWhere  .= "  AND id in ( ".join(',',$idsArr)." )";
+            $size = 100;
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ ,
