@@ -1398,6 +1398,7 @@ class ToolsController extends ControllerBase
 
         if($requestData['type'] == 134 ){
             $files = glob("/home/wwwroot/tianyongshan/top500/*list.json");
+            $i =1;
             foreach($files as $file) {
                 $content = file_get_contents($file);
                 $pathinfo  = pathinfo($file);
@@ -1410,11 +1411,22 @@ class ToolsController extends ControllerBase
                         'remark'=>$pathinfo['filename'],
                     ]);
                 };
+                @unlink('/home/wwwroot/tianyongshan/top500/'.$file);
+                if($i%100==0){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            '解析top500_已生成' => $i,
+                            '解析top500_文件名' => $file,
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
+                $i++;
             }
         }
 
         if($requestData['type'] == 135 ){
             $files = glob("/home/wwwroot/tianyongshan/top500/*details.json");
+            $i = 1;
             foreach($files as $file) {
                 $content = file_get_contents($file);
                 $pathinfo  = pathinfo($file);
@@ -1426,7 +1438,18 @@ class ToolsController extends ControllerBase
                         'remark'=>$pathinfo['filename'],
                     ]);
                 };
+                @unlink('/home/wwwroot/tianyongshan/top500/'.$file);
+                if($i%100==0){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            '解析top500详情_已生成' => $i,
+                            '解析top500详情_文件名' => $file,
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
+                $i ++;
             }
+
         }
 
         return $this->writeJson(200, [], [
