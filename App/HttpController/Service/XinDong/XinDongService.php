@@ -6297,6 +6297,7 @@ class XinDongService extends ServiceBase
                     $tmpvalue = str_replace(array("/r/n", "/r", "/n"), '', $value[$field]);
                     //$tmpvalue = preg_replace('//s*/', '', $tmpvalue);
                     $tmpvalue = str_replace(PHP_EOL, '', $tmpvalue);
+                    $tmpvalue=preg_replace("/\s/","",$tmpvalue);
                     $value[$field] = $tmpvalue;
                 }
             }
