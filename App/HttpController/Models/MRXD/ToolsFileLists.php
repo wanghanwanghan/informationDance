@@ -963,23 +963,20 @@ class ToolsFileLists extends ModelBase
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 [
-                    'shangChuanGongKaiContact'=>[
-                        'start'=>true,
-                        '$params'=>$params,
-                        'count $filesDatas'=>count($filesDatas),
+                    '上传公开联系人开始执行'=>[
+                        '参数'=>$params,
                     ]
                 ]
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
+        $i = 1;
        foreach ($filesDatas as $filesData){
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
 
            $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
-           $i = 1;
-
-           $companysContacts = [];
 
            foreach ($yieldDatas as $dataItem) {
+               $companysContacts = [];
                //企业 税号 电话 微信名 性别
                $companyName = $dataItem[0];
                $companyRes = CompanyBasic::findByName($companyName);
@@ -989,6 +986,9 @@ class ToolsFileLists extends ModelBase
                    continue;
                }
                $companyCode = $companyRes->UNISCID;
+               if(empty($companyCode)){
+                   continue;
+               }
                $phone = $dataItem[1];
                $phone2 = $dataItem[2];
 
@@ -996,7 +996,7 @@ class ToolsFileLists extends ModelBase
                    !empty($phone) &&
                    $phone!='-'
                ){
-                   $companysContacts[$companyCode][$phone] = $phone;
+                   $companysContacts[$companyName][$phone] = $phone;
                }
                if(
                    !empty($phone2) &&
@@ -1005,57 +1005,45 @@ class ToolsFileLists extends ModelBase
 
                    $tmpArr = explode('; ',$phone2);
                    foreach ($tmpArr as $tmpPhone){
-                       $companysContacts[$companyCode][$tmpPhone] = $tmpPhone;
+                       $companysContacts[$companyName][$tmpPhone] = $tmpPhone;
                    }
                }
 
-               if($i%300==0){
-                   CommonService::getInstance()->log4PHP(
-                       json_encode([
-                          // __CLASS__.__FUNCTION__ .__LINE__,
-                           [
-                               'shangChuanGongKaiContact times'=>[
-                                    '已生成' => $i ,
-                               ]
-                           ]
-                       ], JSON_UNESCAPED_UNICODE)
+               foreach ($companysContacts as $phonesArr){
+                   $time = time();
+                   $str = join(";",$phonesArr);
+                   $str_aes = \wanghanwanghan\someUtils\control::aesEncode($str, $time . '');
+                   $str2 = count($phonesArr)."@".$str_aes;
+
+                   //XXXX
+                   $dbArr = [
+                       'entname' => $companyName,
+                       'code' => $companyCode?:'',
+                       'fr' => '',
+                       'qcc' =>    $str2,
+                       'pub' => '',
+                       'pri' => '',
+                       'created_at' => $time,
+                       'updated_at' => $time,
+                   ];
+                   CompanyClue::addRecordV2(
+                       $dbArr
                    );
-               }
-           }
 
-           foreach ($companysContacts as $code => $phonesArr){
-                $time = time();
-                $str = join(";",$phonesArr);
-                $str_aes = \wanghanwanghan\someUtils\control::aesEncode($str, $time . '');
-                $str2 = count($phonesArr)."@".$str_aes;
-
-                //XXXX
-               $dbArr = [
-                   'entname' => '',
-                   'code' => $companyCode,
-                   'fr' => '',
-                   'qcc' =>    $str2,
-                   'pub' => '',
-                   'pri' => '',
-                   'created_at' => $time,
-                   'updated_at' => $time,
-               ];
-                CompanyClue::addRecordV2(
-                    $dbArr
-                );
-
-               if($i%300==0){
-                   CommonService::getInstance()->log4PHP(
-                       json_encode([
-                         //  __CLASS__.__FUNCTION__ .__LINE__,
-                           [
-                               'shangChuanGongKaiContact add to db '=>[
-                                   '已生成' => $i ,
-                                   '$dbArr' => $dbArr ,
+                   if($i%50==0){
+                       CommonService::getInstance()->log4PHP(
+                           json_encode([
+                               //  __CLASS__.__FUNCTION__ .__LINE__,
+                               [
+                                   '上传公开联系人'=>[
+                                       '已执行' => $i ,
+                                       '$dbArr' => $dbArr ,
+                                   ]
                                ]
-                           ]
-                       ], JSON_UNESCAPED_UNICODE)
-                   );
+                           ], JSON_UNESCAPED_UNICODE)
+                       );
+                   }
+                   $i ++;
                }
            }
 

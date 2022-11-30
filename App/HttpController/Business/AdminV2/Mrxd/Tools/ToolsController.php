@@ -27,6 +27,7 @@ use App\HttpController\Models\BusinessBase\CompanyClueMd5;
 use App\HttpController\Models\EntDb\EntDbEnt;
 use App\HttpController\Models\EntDb\EntDbFinance;
 use App\HttpController\Models\MRXD\TmpInfo;
+use App\HttpController\Models\MRXD\TmpInfo2;
 use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\RDS3\Company;
@@ -1128,7 +1129,7 @@ class ToolsController extends ControllerBase
                 'zhengmeng@meirixindong.com',
                 'luoyuting@huoyan.cn',
                 'liqingfeng@huoyan.cn',
-                'luoyuting@huoyan.cn',
+                //'luoyuting@huoyan.cn',
             ]);
 
         }
@@ -1223,12 +1224,232 @@ class ToolsController extends ControllerBase
             //===========
         }
 
-        //测试生成六棱镜接口
+        //
         if($requestData['type'] == 132 ){
+            $filename = scandir(
+                '/home/wwwroot/informationDance_test/Static/shan_xi'
+            );
 
+            $i = 1;
+            foreach($filename as $k=>$v){
+                if($key <= $i){
+                    break;
+                }
 
-            $response['$res'] = $temp;
+                if($v=="." || $v==".."){continue;}
+
+                $ext = pathinfo($v);
+                if($ext['extension']=='json'){
+                    $name = substr($v,0,strpos($v,"."));
+                    //sleep(1);
+                    usleep(100);
+                    $ctx = stream_context_create(array('http'=>
+                        array(
+                            'timeout' => 3,  //3 Seconds
+                        )
+                    ));
+                    $str = file_get_contents('/home/wwwroot/informationDance_test/Static/shan_xi/'.$v, false, $ctx);
+                    //$str = file_get_contents('/home/wwwroot/informationDance_test/Static/shan_xi/'.$v);
+                    $arr = json_decode($str,true);
+                    if(empty($arr)){
+                        CommonService::getInstance()->log4PHP(
+                            json_encode([
+                                '抓取山西数据'=>[
+                                    'json异常'=>[
+                                        '$v'=>$v,
+                                        '$arr'=>$arr,
+                                        '$name'=>$name,
+                                        '$str'=>$str,
+                                    ]
+                                ]
+                            ],JSON_UNESCAPED_UNICODE)
+                        );
+                        continue;
+                    }
+
+                    if(
+                        is_array($arr['hits']['hits']) &&
+                        !empty($arr['hits']['hits'])
+                    ){
+                        foreach ($arr['hits']['hits'] as $tmp){
+
+                            $data_tmp = [
+                                'page' =>$name,
+                                'pathName' =>$tmp['_source']['pathName'],
+                                'districtName' =>$tmp['_source']['districtName'],
+                                'gpCatalogName' =>$tmp['_source']['gpCatalogName'],
+                                'publishDate' =>$tmp['_source']['publishDate'],
+                                'procurementMethod' =>$tmp['_source']['procurementMethod'],
+                                'articleId' =>$tmp['_source']['articleId'],
+                                'siteId' =>$tmp['_source']['siteId'],
+                                'gpCatalogType' =>$tmp['_source']['gpCatalogType'],
+                                'title' =>$tmp['_source']['title'],
+                                'url' =>$tmp['_source']['url'],
+                                'real_url' => 'http://www.ccgp-shanxi.gov.cn'.$tmp['_source']['url'],
+                            ];
+
+                            $detail_str = file_get_contents('http://www.ccgp-shanxi.gov.cn'.$tmp['_source']['url']);
+
+                            $regex='/采购人（甲方）：(.*)&lt;\/samp&gt;&lt;/U';
+                            preg_match_all($regex,$detail_str,$result1);
+                            $data_tmp['jia_fang'] = str_replace(
+                                '&lt;samp style&#x3D;\&quot;font-family: inherit\&quot; class&#x3D;\&quot;bookmark-item uuid-1653374723811 code-00014 editDisable interval-text-box-cls readonly\&quot;&gt;',
+                                '',
+                                $result1[1][0]
+                            );
+
+                            $regex='/联系方式：(.*)&lt;\/samp&gt;&amp;nbsp;/U';
+                            preg_match_all($regex,$detail_str,$result2);
+                            $data_tmp['jia_fang_contacts'] = str_replace(
+                                '&lt;samp style&#x3D;\&quot;font-family: inherit\&quot; class&#x3D;\&quot;bookmark-item uuid-1653374744359 code-00016 editDisable single-line-text-input-box-cls readonly\&quot;&gt;',
+                                '',
+                                $result2[1][0]
+                            );
+
+                            // 供应商（乙方）：
+                            $regex='/供应商（乙方）：(.*)&lt;\/samp&gt;&lt/U';
+                            preg_match_all($regex,$detail_str,$result3);
+                            $data_tmp['yi_fang'] = str_replace(
+                                '&lt;samp style&#x3D;\&quot;font-family: inherit\&quot; class&#x3D;\&quot;bookmark-item uuid-1653374757031 code-81201 addWord single-line-text-input-box-cls\&quot;&gt;',
+                                '',
+                                $result3[1][0]
+                            );
+
+                            $regex='/联系方式：(.*)&lt;\/samp&gt;&amp;nbsp;/U';
+                            preg_match_all($regex,$detail_str,$result2);
+                            $data_tmp['yi_fang_contacts'] = str_replace(
+                                '&lt;samp style&#x3D;\&quot;font-family: inherit\&quot; class&#x3D;\&quot;bookmark-item uuid-1653374785720 code-AM014supplierContact addContent single-line-text-input-box-cls\&quot;&gt;',
+                                '',
+                                $result2[1][1]
+                            );
+
+                            //
+                            $regex='/合同金额（元）：(.*)&lt;\/samp&gt;&lt;/U';
+                            preg_match_all($regex,$detail_str,$result5);
+                            $data_tmp['contact_money'] = str_replace(
+                                '&lt;samp style&#x3D;\&quot;font-family: inherit\&quot; class&#x3D;\&quot;bookmark-item uuid-1653374884933 code-AM014totalContractAmount addWord single-line-text-input-box-cls\&quot;&gt;',
+                                '',
+                                $result5[1][0]
+                            );
+
+                            TmpInfo::addRecord(
+                                $data_tmp
+                            );
+                        }
+                    }
+                }
+                $i++;
+                @unlink('/home/wwwroot/informationDance_test/Static/shan_xi/'.$v);
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        '抓取山西数据'=>[
+                            '已完成$v'=>$v,
+                            '已完成$i'=>$i,
+                        ]
+                    ],JSON_UNESCAPED_UNICODE));
+            }
+
+            $response['$i'] = $i;
             //===========
+        }
+
+        if($requestData['type'] == 133 ){
+            $response  = [];
+
+            //写到csv里
+            $fileName = date('YmdHis')."山西政府采购网_合同公告信息.csv";
+            $f = fopen(OTHER_FILE_PATH.$fileName, "w");
+            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $allFields = [
+                "序号",
+                "标题",
+                "采购人（甲方）",
+                "供应商（乙方）",
+                "乙方联系人",
+                "采购方式",
+                "地区",
+            ];
+            foreach ($allFields as $field=>$cname){
+
+                $title[] = $cname ;
+            }
+            fputcsv($f, $title);
+
+            $allInvoiceDatas = TmpInfo::findBySql("SELECT page,title,jia_fang,yi_fang,yi_fang_contacts,procurementMethod,districtName FROM tmp_info   
+            ");
+            //$allInvoiceDatas = jsonDecode($allInvoiceDatas['data']);
+            $i =1;
+            foreach ($allInvoiceDatas as $InvoiceData){
+                if($i%100==0){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            '导出山西政府采购网_已生成' => $i,
+                            '导出山西政府采购网_文件名' => $fileName,
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
+                fputcsv($f, $InvoiceData);
+                $i++;
+            }
+
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+        }
+
+        if($requestData['type'] == 134 ){
+            $files = glob("/home/wwwroot/tianyongshan/top500/*list.json");
+            $i =1;
+            foreach($files as $file) {
+                $content = file_get_contents($file);
+                $pathinfo  = pathinfo($file);
+                $content = json_decode($content,true);
+                foreach ($content['blocklist']['searchlist']['data']['resultlist']['data'] as $dataItem){
+                    TmpInfo::addRecordV2([
+                        'ID'=>$dataItem['ID'],
+                        'CompanyName'=>$dataItem['CompanyName'],
+                        'content'=> json_encode($dataItem,JSON_UNESCAPED_UNICODE),
+                        'remark'=>$pathinfo['filename'],
+                    ]);
+                };
+                @unlink('/home/wwwroot/tianyongshan/top500/'.$file);
+                if($i%100==0){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            '解析top500_已生成' => $i,
+                            '解析top500_文件名' => $file,
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
+                $i++;
+            }
+        }
+
+        if($requestData['type'] == 135 ){
+            $files = glob("/home/wwwroot/tianyongshan/top500/*details.json");
+            $i = 1;
+            foreach($files as $file) {
+                $content = file_get_contents($file);
+                $pathinfo  = pathinfo($file);
+                $content = json_decode($content,true);
+                foreach ($content as $dataItem){
+                    TmpInfo2::addRecordV2([
+                        'brandid'=>$dataItem['brandid'],
+                        'content'=> json_encode($dataItem,JSON_UNESCAPED_UNICODE),
+                        'remark'=>$pathinfo['filename'],
+                    ]);
+                };
+                @unlink('/home/wwwroot/tianyongshan/top500/'.$file);
+                if($i%100==0){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            '解析top500详情_已生成' => $i,
+                            '解析top500详情_文件名' => $file,
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
+                $i ++;
+            }
+
         }
 
         return $this->writeJson(200, [], [
@@ -1283,7 +1504,10 @@ class ToolsController extends ControllerBase
             129 => '根据日期查询新的招投标邮件对应的xlsx文件（入参格式:日期|如2022-11-11）',
             130 => '查询代理记账信息（入参格式:手机号）',
             131 => '查询本周招投标信息（入参格式:日期|如2022-11-11）',
-            132 => '测试生成六棱镜图片',
+            132 => '根据json抓取山西官网数据（入参格式:数量）',
+            133 => '导出山西官网数据',
+            134 => '解析top500_列表',
+            135 => '解析top500_详情',
         ],'成功');
     }
 

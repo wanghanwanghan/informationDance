@@ -47,6 +47,7 @@ use App\HttpController\Models\RDS3\HdSaic\CompanyStockImpawn;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggreListedH;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggrePicsH;
+use App\HttpController\Models\RDS3\HdSaicExtension\AqsiqAnccH;
 use App\HttpController\Models\RDS3\HdSaicExtension\CncaRzGltxH;
 use App\HttpController\Models\RDS3\HdSaicExtension\WindData;
 use App\HttpController\Service\Common\CommonService;
@@ -6253,6 +6254,62 @@ class XinDongService extends ServiceBase
                     'ANCHEYEAR', 'PB', 'PS', 'PE', 'TROAR', 'CR', 'QR'
                 ])->all();
         } catch (\Throwable $e) {
+            $res = [];
+        }
+
+        return $this->checkResp(200, null, $res, '成功');
+    }
+
+    function getCommodityCode($postData): array
+    {
+        $info = $this->getCompanyId($postData);
+        $page = $postData['page'] ?:1 ;
+        $limit = $postData['limit'] ?:100 ;
+        $fields = [
+            '`brandname`',
+            '`specific`',
+            '`desc`',
+            '`pstatus`',
+            '`pcode`',
+            '`pname`',
+        ];
+        $fields2 = [
+            'brandname',
+            'specific',
+            'desc',
+            'pstatus',
+            'pcode',
+            'pname',
+        ];
+        if (empty($info)) {
+            return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:' . $postData['code'] . '）的信息');
+        }
+
+        try {
+            $res = AqsiqAnccH::create()
+                ->where('companyid', $info->getAttr('companyid'))
+                ->page($page,$limit)
+                ->field(
+                    $fields
+                )->all();
+            foreach ($res as &$value){
+                foreach ($fields2 as $field){
+                    $tmpvalue = str_replace(array("/r/n", "/r", "/n"), '', $value[$field]);
+                    $tmpvalue = str_replace(PHP_EOL, '', $tmpvalue);
+                    $tmpvalue=preg_replace("/\s/","",$tmpvalue);
+                    $value[$field] = $tmpvalue;
+                }
+            }
+        } catch (\Throwable $e) {
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    '入参'=>$postData,
+                    '商品条码报错'=>$e->getMessage(),
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
             $res = [];
         }
 

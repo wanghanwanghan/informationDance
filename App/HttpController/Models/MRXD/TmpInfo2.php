@@ -22,29 +22,29 @@ use EasySwoole\RedisPool\Redis;
 
 // use App\HttpController\Models\AdminRole;
 
-class TmpInfo extends ModelBase
+class TmpInfo2 extends ModelBase
 {
 
-    protected $tableName = 'tmp_info';
+    protected $tableName = 'tmp_info2';
 
 
     static  function  addRecordV2($info){
-        $res = self::findByName($info['ID']);
+        $res = self::findByName($info['brandid']);
         if($res){
             return  $res->id;
         }
-        return TmpInfo::addRecord(
+        return TmpInfo2::addRecord(
             $info
         );
     }
 
     public static function addRecord($requestData){
         try {
-           $res =  TmpInfo::create()->data([
-                'ID' => $requestData['ID']?:'',
-                'CompanyName' => $requestData['CompanyName']?:'',
+           $res =  TmpInfo2::create()->data([
+                'brandid' => $requestData['brandid']?:'',
                 'content' => $requestData['content']?:'',
                 'remark' => $requestData['remark']?:'',
+
            ])->save();
 
         } catch (\Throwable $e) {
@@ -62,14 +62,14 @@ class TmpInfo extends ModelBase
 
 
     public static function findAllByCondition($whereArr){
-        $res =  TmpInfo::create()
+        $res =  TmpInfo2::create()
             ->where($whereArr)
             ->all();
         return $res;
     }
 
     public static function setTouchTime($id,$touchTime){
-        $info = TmpInfo::findById($id);
+        $info = TmpInfo2::findById($id);
 
         return $info->update([
             'touch_time' => $touchTime,
@@ -84,7 +84,7 @@ class TmpInfo extends ModelBase
     }
 
     public static function findByConditionWithCountInfo($whereArr,$page){
-        $model = TmpInfo::create()
+        $model = TmpInfo2::create()
                 ->where($whereArr)
                 ->page($page)
                 ->order('id', 'DESC')
@@ -100,7 +100,7 @@ class TmpInfo extends ModelBase
     }
 
     public static function findByConditionV2($whereArr,$page){
-        $model = TmpInfo::create();
+        $model = TmpInfo2::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -119,21 +119,21 @@ class TmpInfo extends ModelBase
 
 
     public static function findById($id){
-        $res =  TmpInfo::create()
+        $res =  TmpInfo2::create()
             ->where('id',$id)            
             ->get();  
         return $res;
     }
 
     public static function findByName($articleId){
-        $res =  TmpInfo::create()
-            ->where('ID',$articleId)
+        $res =  TmpInfo2::create()
+            ->where('brandid',$articleId)
             ->get();
         return $res;
     }
 
     public static function setData($id,$field,$value){
-        $info = TmpInfo::findById($id);
+        $info = TmpInfo2::findById($id);
         return $info->update([
             "$field" => $value,
         ]);
