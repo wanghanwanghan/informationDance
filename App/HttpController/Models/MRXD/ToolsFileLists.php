@@ -971,11 +971,12 @@ class ToolsFileLists extends ModelBase
                 ]
             ])
         );
+        $i = 1;
        foreach ($filesDatas as $filesData){
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
 
            $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
-           $i = 1;
+
 
            foreach ($yieldDatas as $dataItem) {
                $companysContacts = [];
