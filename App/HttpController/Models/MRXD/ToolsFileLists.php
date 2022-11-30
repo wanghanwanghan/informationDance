@@ -977,9 +977,8 @@ class ToolsFileLists extends ModelBase
            $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
            $i = 1;
 
-           $companysContacts = [];
-
            foreach ($yieldDatas as $dataItem) {
+               $companysContacts = [];
                //企业 税号 电话 微信名 性别
                $companyName = $dataItem[0];
                $companyRes = CompanyBasic::findByName($companyName);
@@ -1009,7 +1008,7 @@ class ToolsFileLists extends ModelBase
                    }
                }
 
-               if($i%300==0){
+               if($i%100==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
                           // __CLASS__.__FUNCTION__ .__LINE__,
@@ -1044,7 +1043,7 @@ class ToolsFileLists extends ModelBase
                     $dbArr
                 );
 
-               if($i%300==0){
+               if($i%100==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
                          //  __CLASS__.__FUNCTION__ .__LINE__,
