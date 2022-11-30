@@ -41,21 +41,21 @@ class jincai_shoudong extends AbstractProcess
     public $oss_expire_time = 86400 * 60;
 
     public $out_list = [
-        '北京分贝通科技有限公司|91110108MA00654L08|北京市|北京市',
-        '北京分贝商贸有限公司|91110105MA00823H4A|北京市|北京市',
+//        '北京分贝通科技有限公司|91110108MA00654L08|北京市|北京市',
+//        '北京分贝商贸有限公司|91110105MA00823H4A|北京市|北京市',
         '北京分贝国际旅行社有限公司|91110105MA004MNF8T|北京市|北京市',
-//        '北京金堤科技有限公司|9111010831813798XE|北京市|北京市',// 设置了平台密码
-        '北京金堤征信服务有限公司|91110111MA0076A807|北京市|北京市',
-//        '北京商事创新科技有限公司|91110108MA0206K96J|北京市|北京市',// 非一般纳税人
-        '北京天眼查科技有限公司|91110108MA00FP4F5A|北京市|北京市',
-        '海口天眼查科技有限公司|91460100MAA8YF8T7L|海南省|海口市',
-        '企查查科技有限公司|91320594088140947F|江苏省|苏州市',
-        '人民数据管理（北京）有限公司|91640500MA774K1K2E|北京市|北京市',
-        '苏州贝尔塔数据技术有限公司|913205943021120597|江苏省|苏州市',
-        '苏州客找找网络科技有限公司|91320594MA21M50H4M|江苏省|苏州市',
-        '苏州新歌科技有限责任公司|91320594MA26UTJJ53|江苏省|苏州市',
-        '盐城金堤科技有限公司|91320913MA1MA43G41|江苏省|盐城市',
-        '元素征信有限责任公司|911101080628135175|北京市|北京市',
+////        '北京金堤科技有限公司|9111010831813798XE|北京市|北京市',// 设置了平台密码
+//        '北京金堤征信服务有限公司|91110111MA0076A807|北京市|北京市',
+////        '北京商事创新科技有限公司|91110108MA0206K96J|北京市|北京市',// 非一般纳税人
+//        '北京天眼查科技有限公司|91110108MA00FP4F5A|北京市|北京市',
+//        '海口天眼查科技有限公司|91460100MAA8YF8T7L|海南省|海口市',
+//        '企查查科技有限公司|91320594088140947F|江苏省|苏州市',
+//        '人民数据管理（北京）有限公司|91640500MA774K1K2E|北京市|北京市',
+//        '苏州贝尔塔数据技术有限公司|913205943021120597|江苏省|苏州市',
+//        '苏州客找找网络科技有限公司|91320594MA21M50H4M|江苏省|苏州市',
+//        '苏州新歌科技有限责任公司|91320594MA26UTJJ53|江苏省|苏州市',
+//        '盐城金堤科技有限公司|91320913MA1MA43G41|江苏省|盐城市',
+//        '元素征信有限责任公司|911101080628135175|北京市|北京市',
     ];
 
     function do_strtr(?string $str): string
@@ -422,10 +422,8 @@ class jincai_shoudong extends AbstractProcess
 
     protected function run($arg)
     {
-        $this->sendToAnt();
-        dd(123);
-
-
+        $this->addTask();
+        dd(11111111);
 //        foreach (['91110105MA004MNF8T', '91110111MA0076A807', '91110000722617379C'] as $one) {
 //            $this->updateAddTask($one);
 //        }
@@ -759,48 +757,50 @@ class jincai_shoudong extends AbstractProcess
 
     function addTask()
     {
-//        foreach ($this->out_list as $item) {
-//
-//            $arr = explode('|', $item);
-//
-//            $ywBody = [
-//                "kprqq" => "2020-12-01",
-//                "kprqz" => "2022-10-31",
-//                "nsrsbh" => "{$arr[1]}",
-//            ];
-//
-//            for ($try = 3; $try--;) {
-//                // 发送 试3次
-//                $addTaskInfo = (new JinCaiShuKeService())->addTask(
-//                    $arr[1],
-//                    $arr[2],
-//                    $arr[3],
-//                    $ywBody
-//                );
-//                if (isset($addTaskInfo['code']) && strlen($addTaskInfo['code']) > 1) {
-//                    break;
-//                }
-//                \co::sleep(120);
-//            }
-//
-//            JinCaiTrace::create()->data([
-//                'entName' => $arr[0],
-//                'socialCredit' => $arr[1],
-//                'code' => $addTaskInfo['code'] ?? '未返回',
-//                'type' => 1,// 无盘
-//                'province' => $addTaskInfo['result']['province'] ?? '未返回',
-//                'taskCode' => $addTaskInfo['result']['taskCode'] ?? '未返回',
-//                'taskStatus' => $addTaskInfo['result']['taskStatus'] ?? '未返回',
-//                'traceNo' => $addTaskInfo['result']['traceNo'] ?? '未返回',
-//                'kprqq' => '2020-12-01',
-//                'kprqz' => '2022-10-31',
-//            ])->save();
-//
-//            echo $item . PHP_EOL;
-//
-//            \co::sleep(120);
-//
-//        }
+        foreach ($this->out_list as $item) {
+
+            $arr = explode('|', $item);
+
+            $ywBody = [
+                "kprqq" => "2020-12-01",
+                "kprqz" => "2022-10-31",
+                "nsrsbh" => "{$arr[1]}",
+            ];
+
+            for ($try = 3; $try--;) {
+                // 发送 试3次
+                $addTaskInfo = (new JinCaiShuKeService())->addTaskNew(
+                    $arr[1],
+                    $arr[2],
+                    $arr[3],
+                    $ywBody
+                );
+                if (isset($addTaskInfo['code']) && strlen($addTaskInfo['code']) > 1) {
+                    break;
+                }
+            }
+
+            JinCaiTrace::create()->data([
+                'entName' => $arr[0],
+                'socialCredit' => $arr[1],
+                'code' => $addTaskInfo['code'] ?? '未返回',
+                'type' => 1,// 无盘
+                'province' => $addTaskInfo['result']['province'] ?? '未返回',
+                'taskCode' => $addTaskInfo['result']['taskCode'] ?? '未返回',
+                'taskStatus' => $addTaskInfo['result']['taskStatus'] ?? '未返回',
+                'traceNo' => $addTaskInfo['result']['traceNo'] ?? '未返回',
+                'kprqq' => '2020-12-01',
+                'kprqz' => '2022-10-31',
+            ])->save();
+
+            echo $item . PHP_EOL;
+
+            \co::sleep(120);
+
+        }
+
+
+        dd(123123);
 
         $list = AntAuthList::create()
             ->where('id', 684, '<=')

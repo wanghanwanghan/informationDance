@@ -416,6 +416,44 @@ class JinCaiShuKeService extends ServiceBase
         return $this->checkResp($res, 'wupan');
     }
 
+    //无盘 添加任务接口（通用提交采集任务报文）
+    function addTaskNew(string $nsrsbh, string $province, string $city, array $ywBody, string $taskCode = 'A002'): array
+    {
+        $url = 'distribute/task/addTask';
+
+        $province_tmp = '';
+
+        foreach (self::$province as $work => $py) {
+            if (is_numeric(mb_strpos($city, $work))) {
+                $province_tmp = $py;
+                break;
+            }
+        }
+
+        if (empty($province_tmp)) {
+            foreach (self::$province as $work => $py) {
+                if (is_numeric(mb_strpos($province, $work))) {
+                    $province_tmp = $py;
+                    break;
+                }
+            }
+        }
+
+        $post_data = [
+            'nsrsbh' => trim($nsrsbh),
+            'province' => trim($province_tmp),
+            'taskCode' => trim($taskCode),
+            'ywBody' => $ywBody,
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken], [], 'postjson');
+
+        return $this->checkResp($res, 'wupan');
+    }
+
     //无盘 用于客户获取各个采集任务的流水号
     function obtainResultTraceNo(string $traceNo): array
     {
