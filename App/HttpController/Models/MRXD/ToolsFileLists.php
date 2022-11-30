@@ -986,6 +986,9 @@ class ToolsFileLists extends ModelBase
                    continue;
                }
                $companyCode = $companyRes->UNISCID;
+               if(empty($companyCode)){
+                   continue;
+               }
                $phone = $dataItem[1];
                $phone2 = $dataItem[2];
 
@@ -1014,7 +1017,7 @@ class ToolsFileLists extends ModelBase
 
                    //XXXX
                    $dbArr = [
-                       'entname' => '',
+                       'entname' => $companyName,
                        'code' => $companyCode?:'',
                        'fr' => '',
                        'qcc' =>    $str2,
@@ -1027,7 +1030,7 @@ class ToolsFileLists extends ModelBase
                        $dbArr
                    );
 
-                   if($i%10==0){
+                   if($i%50==0){
                        CommonService::getInstance()->log4PHP(
                            json_encode([
                                //  __CLASS__.__FUNCTION__ .__LINE__,
