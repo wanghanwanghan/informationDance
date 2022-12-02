@@ -124,25 +124,9 @@ class UserController extends ControllerBase
             ], null, '登录成功');
         }
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'login succeed',
-                '$username' =>$username,
-                '$enCodePassword'=>$enCodePassword,
-            ])
-        );
-
         $newToken = UserService::getInstance()->createAccessToken(
             AdminNewUser::aesDecode($info->phone),
             AdminNewUser::aesDecode($info->password)
-        );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'create new token ',
-                '$newToken' =>$newToken,
-                'AdminNewUser::aesDecode($info->phone)' => AdminNewUser::aesDecode($info->phone),
-                'AdminNewUser::aesDecode($info->password)' => AdminNewUser::aesDecode($info->password)
-            ])
         );
 
         $info->update(['token' => $newToken]);
@@ -159,14 +143,7 @@ class UserController extends ControllerBase
     public function signOut()
     { 
         $phone = $this->loginUserinfo['phone'];
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                [
-                    'signOut$phone' => $phone,
-                ]
-            ])
-        );
+       
         $info = AdminNewUser::findByPhone(
             //AdminNewUser::aesEncode($phone)
             $phone
