@@ -600,14 +600,6 @@ class XinDongKeDongAnalyzeList extends ModelBase
                 else{
                     $tmpRes = $field['static_func'];
                     $newRes = self::$tmpRes($esData['_source'][$field['filed']]);
-//                    CommonService::getInstance()->log4PHP(
-//                        json_encode([
-//                            __CLASS__.__FUNCTION__ .__LINE__,
-//                            [
-//                                $esData['_source'][$field['filed']] => $newRes,
-//                            ]
-//                        ])
-//                    );
                 }
                 $res[$field['filed']][$newRes] += 1 ;
             }
@@ -616,11 +608,9 @@ class XinDongKeDongAnalyzeList extends ModelBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'extractFeatureV2'=>json_encode(
-                    [
-                        'feature$res'=>$res,
-                    ]
-                )
+                '分析特征'=> [
+                   '-es返回的原始结果'=> $res
+                ]
             ])
         );
 
@@ -633,7 +623,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
             $tmp = array_keys($fieldValue);
             $returnData[$field] =  end($tmp);
         }
-
+        
         //开始分析
         return $returnData;
     }
