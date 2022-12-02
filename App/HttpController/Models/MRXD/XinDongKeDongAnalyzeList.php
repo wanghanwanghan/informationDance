@@ -597,8 +597,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
             );
             return [];
         }
-
-        $companyIds = array_column($lists,'companyid');
+ 
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
