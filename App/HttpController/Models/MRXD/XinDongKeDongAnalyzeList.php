@@ -562,15 +562,18 @@ class XinDongKeDongAnalyzeList extends ModelBase
         $lists = XinDongKeDongAnalyzeList::findAllByUserIdV2($userId);
 
         $companyIds = [];
+        $companyIdsCname = [];
         foreach ($lists as $subItem){
             if($subItem['companyid']>0){
                 $companyIds[] = $subItem['companyid'];
+                $companyIdsCname[] = $subItem['ent_name'];
             }
             else{
                 if(!empty($subItem['ent_name'])){
                     $comRes = CompanyBasic::findByName($subItem['ent_name']);
                     if($comRes){
                         $companyIds[] = $comRes->companyid;
+                        $companyIdsCname[] = $subItem['ent_name'];
                     }else{
                         CommonService::getInstance()->log4PHP(
                             json_encode([
@@ -597,14 +600,15 @@ class XinDongKeDongAnalyzeList extends ModelBase
             );
             return [];
         }
- 
+
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 '分析特征'=>[
                     '用户'=>$userId,
                     '$companyIds'=>$companyIds,
-                    '需要分析的企业数'=>count($lists),
+                    '$companyIdsCname'=>$companyIdsCname,
+                    '需要分析的企业数'=>count($companyIds),
                 ]
             ],JSON_UNESCAPED_UNICODE)
         );
