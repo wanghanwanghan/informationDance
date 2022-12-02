@@ -68,7 +68,7 @@ class ZipService extends ServiceBase
 //                 json_encode([
 //                     '打包压缩ZIP'=>$res,
 //                 ],JSON_UNESCAPED_UNICODE)
-//            ); 
+//            );
         }
 
         $zip->close();
