@@ -1302,12 +1302,9 @@ class SouKeController extends ControllerBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'getKeDongFeature'=>json_encode(
-                    [
-                        'getKeDongFeature_$featureslists'=>$featureslists
-                    ]
-                )
-            ])
+                '分析特征——返回'=>$featureslists,
+                '分析特征——用户'=>$this->loginUserinfo['id'],
+            ],JSON_UNESCAPED_UNICODE)
         );
         $mapedData = [];
         foreach ($featureslists['nicX'] as $value){

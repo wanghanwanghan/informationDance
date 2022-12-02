@@ -456,6 +456,17 @@ class XinDongKeDongAnalyzeList extends ModelBase
         $returnData = [];
 
         $rawData = self::extractFeatureV2($userId,false,true);
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                [
+                    '分析特征-$userId' => $userId ,
+                    '分析特征-$rawData' => $rawData ,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         $nicIdsArr = $rawData['NIC_ID'];
         $allNicScore = array_sum($nicIdsArr);
 
@@ -549,28 +560,25 @@ class XinDongKeDongAnalyzeList extends ModelBase
         ];
         $res = [];
         $lists = XinDongKeDongAnalyzeList::findAllByUserIdV2($userId);
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                __CLASS__.__FUNCTION__ .__LINE__,
-//                'getKeDongFeature'=>json_encode(
-//                    [
-//                        'extractFeatureV2 findAllByUserIdV2'=>$userId,
-//                        'count'=>count($lists),
-//                    ]
-//                )
-//            ])
-//        );
+
         if(count($lists)<=0){
             return [];
         }
 
         $companyIds = array_column($lists,'companyid');
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '分析特征'=>[
+                    '用户'=>$userId,
+                    '$companyIds'=>$companyIds,
+                    '需要分析的企业数'=>count($lists),
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
         $esRes = \App\ElasticSearch\Model\Company::serachFromEs(
             [
                 'companyids' => join(',',$companyIds),
-            ],
-            [
-
             ]
         ) ;
         foreach ($esRes['data'] as $esData){
@@ -605,16 +613,16 @@ class XinDongKeDongAnalyzeList extends ModelBase
             }
         }
 
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                __CLASS__.__FUNCTION__ .__LINE__,
-//                'extractFeatureV2'=>json_encode(
-//                    [
-//                        'feature$res'=>$res,
-//                    ]
-//                )
-//            ])
-//        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'extractFeatureV2'=>json_encode(
+                    [
+                        'feature$res'=>$res,
+                    ]
+                )
+            ])
+        );
 
         if($retrunAllData){
             return  $res;

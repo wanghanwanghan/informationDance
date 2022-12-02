@@ -300,9 +300,9 @@ class Company extends ServiceBase
             CommonService::getInstance()->log4PHP(@json_encode(
                     [
 
-                        'searchFromEs' => [
-                            'hits' => $responseArr['hits']['total'],
-                            'es_query' => $this->es->query,
+                        '搜索es' => [
+                            '命中数' => $responseArr['hits']['total'],
+                            '条件' => $this->es->query,
                         ]
 
                     ], JSON_UNESCAPED_UNICODE
