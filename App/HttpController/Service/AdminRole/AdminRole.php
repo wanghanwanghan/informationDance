@@ -4,6 +4,7 @@ namespace App\HttpController\Service\AdminRole;
 
 use App\HttpController\Models\Api\SupervisorPhoneEntName;
 use App\HttpController\Models\Api\User;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\ServiceBase;
 use EasySwoole\Component\Singleton;
@@ -30,7 +31,16 @@ class AdminRole extends ServiceBase
         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         foreach($list as $dataItem){
             $role->permissions[$dataItem["menu_id"]] = true;
-        } 
+        }
+        CommonService::getInstance()->log4PHP(json_encode(
+            [
+                "获取角色对应的权限"=>[
+                    '角色'=>$role_id,
+                    '权限'=>$role->permissions,
+                ]
+            ],
+            JSON_UNESCAPED_UNICODE
+        ));
         return $role;
     }
 

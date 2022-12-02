@@ -47,7 +47,15 @@ class AdminPrivilegedUser extends ServiceBase
             AdminRole::getRolePerms($dataItem["role_id"]);              
 
         }
-//        CommonService::getInstance()->log4PHP('roles '.json_encode($this->roles));
+        CommonService::getInstance()->log4PHP(json_encode(
+            [
+                "初始化角色"=>[
+                    '用户'=>$this->user_id,
+                    '角色'=>$this->roles,
+                ]
+            ],
+            JSON_UNESCAPED_UNICODE
+        ));
 
     }
 
@@ -65,8 +73,17 @@ class AdminPrivilegedUser extends ServiceBase
         //需要加缓存      
         
         // 该用户拥有的所有权限
-        $privUser = self::getByUserId($userId); 
-        
+        $privUser = self::getByUserId($userId);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '获取可见菜单'=>[
+                    '用户'=>$userId,
+                    '该用户拥有的所有权限'=>$privUser,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         //所有父级菜单
         $allParentMenus = AdminMenuItems::getMenusByParentId(0);
         // 只取有权限的菜单
