@@ -64,13 +64,11 @@ class ZipService extends ServiceBase
             $arr = explode(DIRECTORY_SEPARATOR, $one);
             $name = end($arr);
             $res = $zip->addFile($one, $name);
-            CommonService::getInstance()->log4PHP(
-                 json_encode([
-                     'zip res '=>$res,
-                     '$one'=>$one,
-                     '$name'=>$name,
-                 ],JSON_UNESCAPED_UNICODE)
-            ); 
+//            CommonService::getInstance()->log4PHP(
+//                 json_encode([
+//                     '打包压缩ZIP'=>$res,
+//                 ],JSON_UNESCAPED_UNICODE)
+//            ); 
         }
 
         $zip->close();

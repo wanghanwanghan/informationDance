@@ -116,14 +116,16 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         $datas = \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySql(
             $where
         );
-        CommonService::getInstance()->log4PHP(json_encode(
-            [
-                __CLASS__ . ' is already running  ',
-                '$where' => $where,
-                'data_count' => count($datas)
-            ]
-        ));
-        //上传记录详情
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '查询招投标数据'=>[
+                    '条件'=>$where,
+                    '返回结果数量'=>count($datas),
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         foreach ($datas as $dataItem){
 
             yield $returnDatas[] = [
@@ -177,12 +179,12 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         $day = date('Y-m-d');
 
         //第一次的招投标
-        $res = self::sendEmail($day);
+        self::sendEmail($day);
 
         //第二次的招投标
         $week =  date('w',strtotime($day));
         if($week == 5 ){
-            $res = self::sendEmailV4($day,[
+           self::sendEmailV4($day,[
                 'tianyongshan@meirixindong.com',
                 'minglongoc@me.com',
                 'zhengmeng@meirixindong.com',
@@ -190,6 +192,16 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'liqingfeng@huoyan.cn',
                 'luoyuting@huoyan.cn',
             ]);
+        }else{
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '发送招投标邮件（2）--不执行'=>[
+                        '日期'=>$day,
+                        '不是星期五',
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
         }
 
         return true ;
@@ -197,7 +209,14 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
     static function sendEmail($day)
     {
-
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '发送招投标邮件（1）--开始执行'=>[
+                    '日期'=>$day,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
         $dateStart = $day.' 00:00:00';
         $dateEnd = $day.' 23:59:59';
 
@@ -207,7 +226,15 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             $res['p2Nums'] == 0 &&
             $res['p1Nums'] == 0
         ){
-            //continue;
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '发送招投标邮件（1）--退出执行'=>[
+                        '日期'=>$day,
+                        '没有数据，不发送邮件 '=>$res,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
             OperatorLog::addRecord(
                 [
                     'user_id' => 0,
@@ -219,42 +246,48 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             return  true;
         }
 
-        //
         $res1 = CommonService::getInstance()->sendEmailV2(
              'tianyongshan@meirixindong.com',
-           // 'minglongoc@me.com',
             '招投标数据('.$day.')',
             '',
             [TEMP_FILE_PATH . $res['filename']]
         );
         $res2 = CommonService::getInstance()->sendEmailV2(
-            // 'tianyongshan@meirixindong.com',
             'minglongoc@me.com',
             '招投标数据('.$day.')',
             '',
             [TEMP_FILE_PATH . $res['filename']]
         );
-        //
-        $res3 = CommonService::getInstance()->sendEmailV2(
-            'guoxinxia@meirixindong.com',
-            // 'minglongoc@me.com',
+
+        $res4 = CommonService::getInstance()->sendEmailV2(
+            'hujiehuan@huoyan.cn',
             '招投标数据('.$day.')',
             '',
             [TEMP_FILE_PATH . $res['filename']]
         );
 
-        $res5 = CommonService::getInstance()->sendEmailV2(
-            'hujiehuan@huoyan.cn',
-            // 'minglongoc@me.com',
-            '招投标数据('.$day.')',
-            '',
-            [TEMP_FILE_PATH . $res['filename']]
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '发送招投标邮件（1）--执行结束'=>[
+                    '日期'=>$day,
+                    '附件'=>TEMP_FILE_PATH . $res['filename'] ,
+                    '邮件结果 '=>[
+                        $res1,$res2,$res4
+                    ],
+                ]
+            ],JSON_UNESCAPED_UNICODE)
         );
 
         OperatorLog::addRecord(
             [
                 'user_id' => 0,
-                'msg' =>  " 附件:".TEMP_FILE_PATH . $res['filename'] .' 邮件结果:'.$res1.$res2.$res3.$res5,
+                'msg' =>  json_encode([
+                    '附件'=>TEMP_FILE_PATH . $res['filename'],
+                    '邮件结果 '=>[
+                        $res1,$res2,$res4
+                    ],
+                ],JSON_UNESCAPED_UNICODE),
                 'details' =>json_encode( XinDongService::trace()),
                 'type_cname' => '招投标邮件',
             ]
@@ -265,28 +298,30 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
     static function sendEmailV4($day,$emailsLists)
     {
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '发送招投标邮件（2）--开始执行'=>[
+                    '日期'=>$day,
+                    '收件人'=>$emailsLists,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
 
         $res = self::exportDataV8($day);
 
-        //$filename = control::getUuid();
         $filename = 'zhao_tou_biao_new_'.date('Y-m-d').control::getUuid();
         $zipRes = ZipService::getInstance()->zip( $res['filesArr'], TEMP_FILE_PATH . $filename . '.zip');
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'sendEmailV2' => [
-                    'filesArr'=> $res['filesArr'],
-                    '$zipRes'=> $zipRes,
-                    '$filename'=> $filename,
+                '发送招投标邮件（2）-压缩csv文件' => [
+                    'csv文件集合'=> $res['filesArr'],
+                    '压缩结果'=> $zipRes,
+                    '新的文件名'=> $filename,
                 ]
             ])
         );
-//        CommonService::getInstance()->sendEmailV2(
-//         'tianyongshan@meirixindong.com',
-//            '招投标数据_新('.$day.')',
-//            '',
-//            [TEMP_FILE_PATH . $filename . '.zip']
-//        );
 
         $sendResArr = [];
         foreach ($emailsLists as $emailsAddress){
@@ -370,6 +405,17 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         ;
         $p1Nums = 0;
         foreach ($financeDatas as $dataItem){
+            if($p1Nums%20==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '生成招投标邮件sheet1'=>[
+                            '文件名'=>$filename,
+                            '已生成'=>$p1Nums,
+                        ]
+                    ],JSON_UNESCAPED_UNICODE)
+                );
+            }
             $fileObject ->data([$dataItem]);
             $p1Nums ++ ;
         }
@@ -386,22 +432,21 @@ class RunDealZhaoTouBiao extends AbstractCronTask
            ;
         $p2Nums = 0;
         foreach ($financeDatas2 as $dataItem){
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    __CLASS__.__FUNCTION__ .__LINE__,
-//                    '$dataItem2' => $dataItem
-//                ])
-//            );
+            if($p2Nums%20==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '生成招投标邮件sheet2'=>[
+                            '文件名'=>$filename,
+                            '已生成'=>$p2Nums,
+                        ]
+                    ],JSON_UNESCAPED_UNICODE)
+                );
+            }
             $file->data([$dataItem]);
             $p2Nums ++;
         }
         //==============================================
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M'
-            ])
-        );
 
         $format = new Format($fileHandle);
         //单元格有\n解析成换行
@@ -412,6 +457,21 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
         $fileObject->output();
         //===============================
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '生成招投标邮件完成'=>[
+                    '文件名'=>$filename,
+                    '内存使用'=>round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+                    'dateStart' => $dateStart  ,
+                    'dateEnd' => $dateEnd ,
+                    'filename'=>$filename,
+                    'p2Nums' => $p2Nums,
+                    'p1Nums' => $p1Nums,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
 
         return  [
             'dateStart' => $dateStart  ,
@@ -612,16 +672,15 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         $dateStart = $first_day_of_week.' 00:00:00';
         $dateEnd = $last_day_of_week.' 23:59:59';
 
-
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'exportDataV8' => [
-                    '$day'=>$day,
-                    '$dateStart'=>$dateStart,
-                    '$dateEnd'=>$dateEnd,
+                '查询并写入招投标邮件数据'=>[
+                    '日期'=>$day,
+                    '开始日期'=>$dateStart,
+                    '结束日期'=>$dateEnd,
                 ]
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
 
         $headerTitle= [
@@ -688,11 +747,13 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'exportDataV8' => [
-                        'sql'=>" SELECT * FROM $table WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  ",
-                        '$datas'=>count($datas),
+                    '查询并写入招投标邮件数据'=>[
+                        '日期'=>$day,
+                        '表'=>$table,
+                        '语句'=>" SELECT * FROM $table WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  ",
+                        '返回记录数量'=>count($datas),
                     ]
-                ])
+                ],JSON_UNESCAPED_UNICODE)
             );
 
             $totalNums +=count($datas);
@@ -740,12 +801,12 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'exportDataV8' => [
-                    '$day'=>$day,
-                    '$fileName'=>$fileName,
-                    'generate data done . memory use' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
+                '查询并写入招投标邮件数据-完成'=>[
+                    '日期'=>$day,
+                    '生成的文件名'=>$filesArr,
+                    '内存使用' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
                 ]
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
 
         return  [

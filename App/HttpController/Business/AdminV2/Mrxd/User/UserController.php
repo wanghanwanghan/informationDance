@@ -143,7 +143,7 @@ class UserController extends ControllerBase
     public function signOut()
     { 
         $phone = $this->loginUserinfo['phone'];
-       
+
         $info = AdminNewUser::findByPhone(
             //AdminNewUser::aesEncode($phone)
             $phone
