@@ -718,7 +718,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             'zhao_tou_biao_key01',
             'zhao_tou_biao_key02',
             'zhao_tou_biao_key03',
-            'zhao_tou_biao_key04',
+            //'zhao_tou_biao_key04',
             'zhao_tou_biao_key05',
             'zhao_tou_biao_key06',
             'zhao_tou_biao_key07',
