@@ -647,7 +647,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
                 '分析特征'=> [
                    '-es返回的原始结果'=> $res
                 ]
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
 
         if($retrunAllData){
