@@ -316,7 +316,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 '发送招投标邮件（2）-压缩csv文件' => [
-                    'csv文件集合'=> $res['filesArr'],
+                    //'csv文件集合'=> $res['filesArr'],
                     '压缩结果'=> $zipRes,
                     '新的文件名'=> $filename,
                 ]
