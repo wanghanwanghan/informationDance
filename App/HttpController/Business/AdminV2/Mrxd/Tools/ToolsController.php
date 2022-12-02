@@ -51,6 +51,7 @@ use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\LongXin\FinanceRange;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\XinDong\XinDongService;
+use App\HttpController\Service\Zip\ZipService;
 use Vtiful\Kernel\Format;
 
 class ToolsController extends ControllerBase
@@ -1118,7 +1119,19 @@ class ToolsController extends ControllerBase
         //125 根据日期查询新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）
         if($requestData['type'] == 125 ){
             $res = RunDealZhaoTouBiao::exportDataV8($key);
-            $response[] = $res['filename_url'];
+            $filename = 'zhao_tou_biao_new_'.date('Y_m_d_H_i');
+            $zipRes = ZipService::getInstance()->zip( $res['filesArr'], TEMP_FILE_PATH . $filename . '.zip');
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '发送招投标邮件（2）-压缩csv文件' => [
+                        //'csv文件集合'=> $res['filesArr'],
+                        '压缩结果'=> $zipRes,
+                        '新的文件名'=> $filename,
+                    ]
+                ])
+            );
+            $response[] = 'http://api.test.meirixindong.com/Static/Temp/'.$filename. '.zip';
         }
 
         //126 根据日期发送新的招投标邮件对应的文件（入参格式:日期|如2022-11-11）
