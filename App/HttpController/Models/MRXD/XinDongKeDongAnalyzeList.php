@@ -561,7 +561,40 @@ class XinDongKeDongAnalyzeList extends ModelBase
         $res = [];
         $lists = XinDongKeDongAnalyzeList::findAllByUserIdV2($userId);
 
-        if(count($lists)<=0){
+        $companyIds = [];
+        foreach ($lists as $subItem){
+            if($subItem['companyid']>0){
+                $companyIds[] = $subItem['companyid'];
+            }
+            else{
+                if(!empty($subItem['ent_name'])){
+                    $comRes = CompanyBasic::findByName($subItem['ent_name']);
+                    if($comRes){
+                        $companyIds[] = $comRes->companyid;
+                    }else{
+                        CommonService::getInstance()->log4PHP(
+                            json_encode([
+                                __CLASS__.__FUNCTION__ .__LINE__,
+                                '分析特征'=>[
+                                    '用户'=>$userId,
+                                    '找不到企业'=>$subItem['ent_name']
+                                ]
+                            ],JSON_UNESCAPED_UNICODE)
+                        );
+                    }
+                }
+            }
+        }
+        if(count($companyIds)<=0){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '分析特征'=>[
+                        '用户'=>$userId,
+                        '找不到一个企业'=>$companyIds
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
             return [];
         }
 
@@ -623,7 +656,7 @@ class XinDongKeDongAnalyzeList extends ModelBase
             $tmp = array_keys($fieldValue);
             $returnData[$field] =  end($tmp);
         }
-        
+
         //开始分析
         return $returnData;
     }
