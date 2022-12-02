@@ -718,7 +718,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             'zhao_tou_biao_key01',
             'zhao_tou_biao_key02',
             'zhao_tou_biao_key03',
-//            'zhao_tou_biao_key04',
+            'zhao_tou_biao_key04',
             'zhao_tou_biao_key05',
             'zhao_tou_biao_key06',
             'zhao_tou_biao_key07',
@@ -803,7 +803,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 __CLASS__.__FUNCTION__ .__LINE__,
                 '查询并写入招投标邮件数据-完成'=>[
                     '日期'=>$day,
-                    '生成的文件名'=>$filesArr,
+                    //'生成的文件名'=>$filesArr,
                     '内存使用' => round((memory_get_usage()-$startMemory)/1024/1024,3).'M',
                 ]
             ],JSON_UNESCAPED_UNICODE)
