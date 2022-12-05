@@ -1334,7 +1334,7 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    //天创 未完成
+    //天创
     function getFinanceBaseDataTC(): bool
     {
         $entName = $this->getRequestData('entName', '');
@@ -1370,8 +1370,6 @@ class XinDongController extends ProvideBase
                 ->all();
         }
 
-        CommonService::getInstance()->log4PHP($f_info);
-
         if (!empty($f_info)) {
             $origin = [];
             foreach ($f_info as $one) {
@@ -1393,9 +1391,11 @@ class XinDongController extends ProvideBase
                 }
             }
             krsort($readyReturn);
+            $tmp = [];
             for ($i = $beginYear; $i > $beginYear - $dataCount; $i--) {
                 $tmp[$i] = $readyReturn[$i] ?? $readyReturn[$i . ''];
             }
+            CommonService::getInstance()->log4PHP($tmp, 'info', 'tmp.log');
             $res = [$this->cspKey => [
                 'code' => 200,
                 'paging' => null,
