@@ -894,8 +894,6 @@ class FinanceRange
             'NETINC',//5净利润
             'RATGRO',//6纳税总额
             'TOTEQU',//7所有者权益
-            'SOCNUM',//社保人数
-            'EMPNUM',//从业人数
         ],
         [
             ['name' => '-68', 'range' => [-99999999999, -1000000000]],
