@@ -1370,6 +1370,8 @@ class XinDongController extends ProvideBase
                 ->all();
         }
 
+        CommonService::getInstance()->log4PHP($f_info);
+
         if (!empty($f_info)) {
             $origin = [];
             foreach ($f_info as $one) {
