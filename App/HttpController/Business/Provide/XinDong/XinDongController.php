@@ -1427,12 +1427,29 @@ class XinDongController extends ProvideBase
 
         //留下要的字段
         $save = [
-            'ASSGRO', 'LIAGRO', 'VENDINC',
-            'MAIBUSINC', 'PROGRO', 'NETINC',
-            'RATGRO', 'TOTEQU', 'SOCNUM', 'EMPNUM',
-            'NPMOMB', 'ATOL', 'DEBTL', 'ASSGRO_yoy',
-            'LIAGRO_yoy', 'VENDINC_yoy', 'MAIBUSINC_yoy', 'PROGRO_yoy',
-            'NETINC_yoy', 'RATGRO_yoy', 'TOTEQU_yoy',
+            'ASSGRO',
+            'LIAGRO',
+            'VENDINC',
+            'MAIBUSINC',
+            'PROGRO',
+            'NETINC',
+            'RATGRO',
+            'TOTEQU',
+            'ASSGRO_yoy',
+            'LIAGRO_yoy',
+            'VENDINC_yoy',
+            'MAIBUSINC_yoy',
+            'PROGRO_yoy',
+            'NETINC_yoy',
+            'RATGRO_yoy',
+            'TOTEQU_yoy',
+            'SOCNUM',
+            'ATOL',
+            'DEBTL',
+            'C_INTRATESL',
+            'ASSGRO_C_INTRATESL',
+            'NOR',
+            'NPMOMB',
         ];
 
         foreach ($result as $year => $arr) {
