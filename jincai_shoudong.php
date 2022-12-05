@@ -422,8 +422,7 @@ class jincai_shoudong extends AbstractProcess
 
     protected function run($arg)
     {
-        $this->addTask();
-        dd(11111111);
+
 //        foreach (['91110105MA004MNF8T', '91110111MA0076A807', '91110000722617379C'] as $one) {
 //            $this->updateAddTask($one);
 //        }

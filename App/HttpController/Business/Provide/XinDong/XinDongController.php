@@ -1245,27 +1245,27 @@ class XinDongController extends ProvideBase
                 foreach ($arr as $field => $val) {
                     $readyReturn[$year][$field] = $val;
 
-                    if(
-                        in_array($field,[
+                    if (
+                        in_array($field, [
                             'VENDINC',
                             'NETINC',
                             'RATGRO',
                         ]) &&
                         isset($range[1][$field]) && is_numeric($val)
-                    ){
+                    ) {
                         $readyReturn[$year][$field] = $obj->binaryFind(
                             $val, 0, count($range[1][$field]) - 1, $range[1][$field]
                         );
                     }
 
-                    if(
-                        in_array($field,[
+                    if (
+                        in_array($field, [
                             'VENDINC',
                             'NETINC',
                             'RATGRO',
                         ]) &&
                         isset($ratio[1][$field]) && is_numeric($val)
-                    ){
+                    ) {
                         $readyReturn[$year][$field] = $obj->binaryFind(
                             $val, 0, count($ratio[1][$field]) - 1, $ratio[1][$field]
                         );
@@ -1320,7 +1320,137 @@ class XinDongController extends ProvideBase
             foreach ($arr as $field => $val) {
                 if (in_array($field, $save, true)) {
                     if (is_numeric($val)) {
-                       $temp[$year][$field] = number_format($val, 1);
+                        $temp[$year][$field] = number_format($val, 1);
+                        //$temp[$year][$field] = ceil($val);
+                    } else {
+                        $temp[$year][$field] = $val;
+                    }
+                }
+            }
+        }
+
+        $res[$this->cspKey]['result'] = $temp;
+
+        return $this->checkResponse($res);
+    }
+
+    //天创
+    function getFinanceBaseDataTC(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+        $beginYear = 2021;
+        $dataCount = 3;
+
+        $postData = [
+            'entName' => $entName,
+            'code' => $this->getRequestData('code', ''),
+            'beginYear' => $beginYear,
+            'dataCount' => $dataCount,
+        ];
+
+        $range = FinanceRange::getInstance()->getRange('range_tc');
+        $ratio = FinanceRange::getInstance()->getRange('rangeRatio_tc');
+
+        $ent_info = EntDbEnt::create()->where('name', $entName)->get();
+
+        $ANCHEYEAR = [];
+        for ($i = $beginYear; $i >= $beginYear - $dataCount; $i--) {
+            $ANCHEYEAR[] = $i;
+        }
+
+        $f_info = EntDbFinance::create()
+            ->where('cid', $ent_info->getAttr('id'))
+            ->where('ANCHEYEAR', $ANCHEYEAR, 'IN')
+            ->order('ANCHEYEAR', 'DESC')
+            ->all();
+
+        if (!empty($ent_info) && !empty($f_info)) {
+            // $this->spendMoney = 0;
+            $origin = [];
+            foreach ($f_info as $one) {
+                $origin[$one->getAttr('ANCHEYEAR') . ''] = obj2Arr($one);
+            }
+            $obj = new LongXinService();
+            $readyReturn = $obj->exprHandle($origin);
+
+            foreach ($readyReturn as $year => $arr) {
+                if (empty($arr)) continue;
+                foreach ($arr as $field => $val) {
+                    $readyReturn[$year][$field] = $val;
+
+                    if (
+                        in_array($field, [
+                            'VENDINC',
+                            'NETINC',
+                            'RATGRO',
+                        ]) &&
+                        isset($range[1][$field]) && is_numeric($val)
+                    ) {
+                        $readyReturn[$year][$field] = $obj->binaryFind(
+                            $val, 0, count($range[1][$field]) - 1, $range[1][$field]
+                        );
+                    }
+
+                    if (
+                        in_array($field, [
+                            'VENDINC',
+                            'NETINC',
+                            'RATGRO',
+                        ]) &&
+                        isset($ratio[1][$field]) && is_numeric($val)
+                    ) {
+                        $readyReturn[$year][$field] = $obj->binaryFind(
+                            $val, 0, count($ratio[1][$field]) - 1, $ratio[1][$field]
+                        );
+                    }
+                }
+            }
+            krsort($readyReturn);
+
+            for ($i = $beginYear; $i > $beginYear - $dataCount; $i--) {
+                $tmp[$i] = $readyReturn[$i] ?? $readyReturn[$i . ''];
+            }
+
+            $res = [$this->cspKey => [
+                'code' => 200,
+                'paging' => null,
+                'result' => $tmp,
+                'msg' => null,
+            ]];
+        } else {
+            $this->csp->add($this->cspKey, function () use ($postData, $range, $ratio) {
+                return (new LongXinService())
+                    ->setCheckRespFlag(true)
+                    ->setRangeArr($range, $ratio)
+                    ->getFinanceData($postData, true);
+            });
+            $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        }
+
+        $result = [];
+
+        foreach ($res[$this->cspKey]['result'] as $year => $arr) {
+            foreach ($arr as $field => $val) {
+                if (!is_array($val)) {
+                    $result[$year][$field] = $val;
+                } else {
+                    $result[$year][$field] = $val['name'];
+                }
+            }
+        }
+
+        //留下要的字段
+        $save = [
+            'ASSGRO', 'LIAGRO', 'VENDINC', 'MAIBUSINC',
+            'PROGRO', 'NETINC', 'RATGRO', 'TOTEQU',
+            'SOCNUM', 'EMPNUM',
+        ];
+
+        foreach ($result as $year => $arr) {
+            foreach ($arr as $field => $val) {
+                if (in_array($field, $save, true)) {
+                    if (is_numeric($val)) {
+                        $temp[$year][$field] = number_format($val, 1);
                         //$temp[$year][$field] = ceil($val);
                     } else {
                         $temp[$year][$field] = $val;
