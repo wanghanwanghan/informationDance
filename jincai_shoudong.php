@@ -19,6 +19,7 @@ use App\HttpController\Service\CreateMysqlPoolForRDS3SiJiFenLei;
 use App\HttpController\Service\CreateRedisPool;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
+use App\HttpController\Service\LongXin\FinanceRange;
 use App\HttpController\Service\MaYi\MaYiService;
 use App\HttpController\Service\OSS\OSSService;
 use Carbon\Carbon;
