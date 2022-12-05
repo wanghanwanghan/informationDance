@@ -2115,7 +2115,7 @@ class LongXinService extends ServiceBase
             }
 
             //如果今年没数据
-            if (!is_numeric($origin[$year][5]) || $origin[$lastYear][7] === 0) {
+            if (!is_numeric($origin[$year][5]) || $origin[$lastYear][7] == 0) {
                 array_push($origin[$year], null);
                 continue;
             }
@@ -2217,7 +2217,7 @@ class LongXinService extends ServiceBase
             $last = $origin[$lastYear][0] - 0;
             $now = $origin[$year][0];
 
-            if ($last === 0) {
+            if ($last == 0) {
                 array_push($origin[$year], null);
                 continue;
             }
@@ -2251,7 +2251,7 @@ class LongXinService extends ServiceBase
             $last = $origin[$lastYear][1] - 0;
             $now = $origin[$year][1];
 
-            if ($last === 0) {
+            if ($last == 0) {
                 array_push($origin[$year], null);
                 continue;
             }
@@ -2285,7 +2285,7 @@ class LongXinService extends ServiceBase
             $last = $origin[$lastYear][2] - 0;
             $now = $origin[$year][2];
 
-            if ($last === 0) {
+            if ($last == 0) {
                 array_push($origin[$year], null);
                 continue;
             }
@@ -2319,7 +2319,7 @@ class LongXinService extends ServiceBase
             $last = $origin[$lastYear][3] - 0;
             $now = $origin[$year][3];
 
-            if ($last === 0) {
+            if ($last == 0) {
                 array_push($origin[$year], null);
                 continue;
             }
@@ -2353,7 +2353,7 @@ class LongXinService extends ServiceBase
             $last = $origin[$lastYear][4] - 0;
             $now = $origin[$year][4];
 
-            if ($last === 0) {
+            if ($last == 0) {
                 array_push($origin[$year], null);
                 continue;
             }
@@ -2387,7 +2387,7 @@ class LongXinService extends ServiceBase
             $last = $origin[$lastYear][5] - 0;
             $now = $origin[$year][5];
 
-            if ($last === 0) {
+            if ($last == 0) {
                 array_push($origin[$year], null);
                 continue;
             }
@@ -2421,7 +2421,7 @@ class LongXinService extends ServiceBase
             $last = $origin[$lastYear][6] - 0;
             $now = $origin[$year][6];
 
-            if ($last === 0) {
+            if ($last == 0) {
                 array_push($origin[$year], null);
                 continue;
             }
@@ -2455,7 +2455,7 @@ class LongXinService extends ServiceBase
             $last = $origin[$lastYear][7] - 0;
             $now = $origin[$year][7];
 
-            if ($last === 0) {
+            if ($last == 0) {
                 array_push($origin[$year], null);
                 continue;
             }
@@ -2505,7 +2505,7 @@ class LongXinService extends ServiceBase
             $last = $origin[$lastYear][8] - 0;
             $now = $origin[$year][8];
 
-            if ($last === 0) {
+            if ($last == 0) {
                 array_push($origin[$year], null);
                 continue;
             }
@@ -2536,7 +2536,7 @@ class LongXinService extends ServiceBase
             //两年都有数据
             $last = $origin[$lastYear][$index] - 0;
             $now = $val[$index];
-            if ($last === 0) {
+            if ($last == 0) {
                 array_push($origin[$year], null);
                 continue;
             }
@@ -2565,7 +2565,7 @@ class LongXinService extends ServiceBase
             //两年都有数据
             $last = $origin[$lastYear][$index] - 0;
             $now = $val[$index];
-            if ($last === 0) {
+            if ($last == 0) {
                 array_push($origin[$year], null);
                 continue;
             }
@@ -2594,7 +2594,7 @@ class LongXinService extends ServiceBase
             //两年都有数据
             $last = $origin[$lastYear][$index] - 0;
             $now = $val[$index];
-            if ($last === 0) {
+            if ($last == 0) {
                 array_push($origin[$year], null);
                 continue;
             }
@@ -2623,7 +2623,7 @@ class LongXinService extends ServiceBase
             //两年都有数据
             $last = $origin[$lastYear][$index] - 0;
             $now = $val[$index];
-            if ($last === 0) {
+            if ($last == 0) {
                 array_push($origin[$year], null);
                 continue;
             }
@@ -2652,7 +2652,7 @@ class LongXinService extends ServiceBase
             //两年都有数据
             $last = $origin[$lastYear][$index] - 0;
             $now = $val[$index];
-            if ($last === 0) {
+            if ($last == 0) {
                 array_push($origin[$year], null);
                 continue;
             }
@@ -2686,7 +2686,7 @@ class LongXinService extends ServiceBase
             $last = $origin[$lastYear][$index] - 0;
             $now = $val[$index];
 
-            if ($last === 0) {
+            if ($last == 0) {
                 array_push($origin[$year], null);
                 continue;
             }

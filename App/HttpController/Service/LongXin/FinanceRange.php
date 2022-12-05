@@ -1033,7 +1033,7 @@ class FinanceRange
             ['name' => '68', 'range' => [1000000000, 99999999999]],
         ]
     ];
-    public $rangeRatio_tc = ['', []];
+    public $rangeRatio_tc = [[], []];
 
     //pc端 智能评价服务系统里的财务营业总收入字段区间
     public $range_pc = [
