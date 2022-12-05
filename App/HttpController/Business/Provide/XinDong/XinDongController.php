@@ -1370,10 +1370,12 @@ class XinDongController extends ProvideBase
                 ->all();
         }
 
+        CommonService::getInstance()->log4PHP($f_info, 'info', 'f_info.log');
+
         if (!empty($f_info)) {
             $origin = [];
             foreach ($f_info as $one) {
-                $origin[$one->getAttr('ANCHEYEAR') . ''] = obj2Arr($one);
+                $origin[$one->getAttr('ANCHEYEAR')] = obj2Arr($one);
             }
             $obj = new LongXinService();
             $readyReturn = $obj->exprHandle($origin);
