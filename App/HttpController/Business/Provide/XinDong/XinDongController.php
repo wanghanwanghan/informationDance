@@ -1377,6 +1377,7 @@ class XinDongController extends ProvideBase
             }
             $obj = new LongXinService();
             $readyReturn = $obj->exprHandle($origin);
+            CommonService::getInstance()->log4PHP($readyReturn, 'info', 'exprHandle.log');
             foreach ($readyReturn as $year => $arr) {
                 if (empty($arr)) continue;
                 foreach ($arr as $field => $val) {
@@ -1393,7 +1394,7 @@ class XinDongController extends ProvideBase
             krsort($readyReturn);
             $tmp = [];
             for ($i = $beginYear; $i > $beginYear - $dataCount; $i--) {
-                $tmp[$i] = $readyReturn[$i] ?? $readyReturn[$i . ''];
+                $tmp[$i] = $readyReturn[$i];
             }
             CommonService::getInstance()->log4PHP($tmp, 'info', 'tmp.log');
             $res = [$this->cspKey => [
