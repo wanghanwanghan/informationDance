@@ -11,7 +11,7 @@ class JingZhunService extends ServiceBase
     use Singleton;
 
     private $token = 'ngQgdJuK98v1J5ND7EclPVHQnMFYdEND';
-
+    private $url = 'https://data-api.jingdata.com/x/api/';
     private $header = [
         'Content-Type' => 'application/json;charset=UTF-8'
     ];
@@ -48,5 +48,45 @@ class JingZhunService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 
+    //公司融资事件 https://dataapi.jingdata.com/x/api/enterprise/finance-list
+    public function enterpriseList($full_name){
+        $entInfo = $this->getEntInfo($full_name);
+        if($entInfo['code']==0){
+            return $this->checkRespFlag ? $this->checkResp($entInfo) : $entInfo;
+        }
+        if(empty($entInfo['data']['cid'])){
+            return $this->createReturn(500, null, [], '没有查询到这个公司的cid');
+        }
+        $url = $this->url.'enterprise/finance-list?token='.$this->token.'&cid='.$entInfo['data']['cid'];
+        $res = (new CoHttpClient())->useCache(false)->send($url, [], $this->header, [], 'GET');
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
+    }
 
+
+    //投资事件
+    public function investmentList($full_name){
+        $entInfo = $this->getEntInfo($full_name);
+        if($entInfo['code']==0){
+            return $this->checkRespFlag ? $this->checkResp($entInfo) : $entInfo;
+        }
+        if(empty($entInfo['data']['cid'])){
+            return $this->createReturn(500, null, [], '没有查询到这个公司的cid');
+        }
+        $url = $this->url.'investment/list?token='.$this->token.'&cid='.$entInfo['data']['cid'];
+        $res = (new CoHttpClient())->useCache(false)->send($url, [], $this->header, [], 'GET');
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
+    }
+
+    //企业搜索
+    public function searchComs($full_name){
+        $url = $this->url.'enterprise/search-coms?token='.$this->token.'&full_name='.$full_name.'&fuzzy=0';
+        $res = (new CoHttpClient())->useCache(false)->send($url, [], $this->header, [], 'GET');
+
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
+    }
+
+    private function getEntInfo($full_name){
+        $url = $this->url.'enterprise/search-coms?token='.$this->token.'&full_name='.$full_name.'&fuzzy=0';
+        return (new CoHttpClient())->useCache(false)->send($url, [], $this->header, [], 'GET');
+    }
 }

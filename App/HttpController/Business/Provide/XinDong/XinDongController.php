@@ -3,6 +3,7 @@
 namespace App\HttpController\Business\Provide\XinDong;
 
 use App\Csp\Service\CspService;
+use App\HttpController\Business\Provide\JingZhun\JingZhunController;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Models\Api\NeoCrmPendingEnt;
 use App\HttpController\Models\EntDb\EntDbEnt;
@@ -19,6 +20,7 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\Export\Report\Word\ReportWordService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
+use App\HttpController\Service\JingZhun\JingZhunService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\FinanceRange;
 use App\HttpController\Service\LongXin\LongXinService;
@@ -3300,4 +3302,52 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //鲸准 投资事件
+    function investmentList(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+
+        if (empty($entName) ) {
+            return $this->writeJson(201, null, null, '参数entName不可以都为空');
+        }
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new JingZhunService())
+                ->setCheckRespFlag(true)
+                ->investmentList($entName);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+    //鲸准 公司融资事件
+    function enterpriseList(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+
+        if (empty($entName) ) {
+            return $this->writeJson(201, null, null, '参数entName不可以都为空');
+        }
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new JingZhunService())
+                ->setCheckRespFlag(true)
+                ->enterpriseList($entName);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
+    //鲸准 企业搜索
+    function searchComs(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+
+        if (empty($entName) ) {
+            return $this->writeJson(201, null, null, '参数entName不可以都为空');
+        }
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new JingZhunService())
+                ->setCheckRespFlag(true)
+                ->searchComs($entName);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
 }
