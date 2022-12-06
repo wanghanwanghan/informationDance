@@ -74,6 +74,11 @@ class JinCaiShuKeService extends ServiceBase
         $this->wupan_url = 'http://ctp.jcsk100.com/';
         $this->oauthToken = CreateConf::getInstance()->getConf('jincai.oauthToken');
 
+        // 新系统
+        $this->wupan_url_new = 'http://221.222.184.98:8005/';// 测试
+        $this->appKey_new = 'd77022863e70cd7df9153b94bee843c9';
+        $this->appSecret_new = 'a1975fa7d04d4320';
+
         return true;
     }
 
@@ -417,7 +422,7 @@ class JinCaiShuKeService extends ServiceBase
     }
 
     //无盘 添加任务接口（通用提交采集任务报文）
-    function addTaskNew(string $nsrsbh, string $province, string $city, array $ywBody, string $taskCode = 'A002'): array
+    function addTaskNew(string $nsrsbh, string $province, string $city, array $ywBody, string $taskCode = 'A'): array
     {
         $url = 'distribute/task/addTask';
 
@@ -446,10 +451,23 @@ class JinCaiShuKeService extends ServiceBase
             'ywBody' => $ywBody,
         ];
 
+        $encryptStr = jsonEncode($post_data);
+        $encryptStr = control::aesEncode($encryptStr, $this->appSecret_new, 128, 'base64');
+
+        $timestamp = microTimeNew();
+
+        $sign = md5($this->appKey_new . $this->appSecret_new . $encryptStr . $timestamp);
+
+        $url .= "?appKey={$this->appKey_new}&encryptStr={$encryptStr}&sign={$sign}&timestamp={$timestamp}";
+
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(true)
-            ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken], [], 'postjson');
+            ->send($this->wupan_url_new . $url, $post_data, [], [], 'postjson');
+
+        dd($res, $this->wupan_url_new . $url, jsonEncode($post_data));
+
+        CommonService::getInstance()->log4PHP($res, 'info', 'wupantest.log');
 
         return $this->checkResp($res, 'wupan');
     }
