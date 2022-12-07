@@ -60,7 +60,7 @@ class JingZhunService extends ServiceBase
         if(empty($entInfo['data']['0']['cid'])){
             return $this->createReturn(500, null, [], '没有查询到这个公司的cid');
         }
-        $url = $this->url.'enterprise/finance-list?token='.$this->token.'&cid='.$entInfo['data']['0']['cid'];
+        $url = $this->url.'enterprise/finance-list?token='.$this->token.'&id='.$entInfo['data']['0']['cid'];
         $res = (new CoHttpClient())->useCache(false)->send($url, [], $this->header, [], 'GET');
         dingAlarm('鲸准 公司融资事件',['$res'=>json_encode($res)]);
         CommonService::getInstance()->log4PHP($res, 'info', 'enterpriseList');
