@@ -58,7 +58,7 @@ class XinDongController extends ProvideBase
         } else {
             $this->responseCode = $res[$this->cspKey]['code'];
             $this->responsePaging = $res[$this->cspKey]['paging'];
-            $this->responseData = $res[$this->cspKey]['result'];
+            $this->responseData = $res[$this->cspKey]['result']??$res[$this->cspKey]['data'];
             $this->responseMsg = $res[$this->cspKey]['msg'];
 
             $res[$this->cspKey]['code'] === 200 ?: $this->spendMoney = 0;
@@ -3326,6 +3326,7 @@ class XinDongController extends ProvideBase
         if (empty($entName) ) {
             return $this->writeJson(201, null, null, '参数entName不可以都为空');
         }
+        dingAlarm('鲸准 公司融资事件',['$entName'=>$entName]);
         $this->csp->add($this->cspKey, function () use ($entName) {
             return (new JingZhunService())
                 ->setCheckRespFlag(true)
