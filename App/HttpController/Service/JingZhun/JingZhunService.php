@@ -57,10 +57,10 @@ class JingZhunService extends ServiceBase
         if($entInfo['code']!=0){
             return $this->checkRespFlag ? $this->checkResp($entInfo) : $entInfo;
         }
-        if(empty($entInfo['data']['cid'])){
+        if(empty($entInfo['data']['0']['cid'])){
             return $this->createReturn(500, null, [], '没有查询到这个公司的cid');
         }
-        $url = $this->url.'enterprise/finance-list?token='.$this->token.'&cid='.$entInfo['data']['cid'];
+        $url = $this->url.'enterprise/finance-list?token='.$this->token.'&cid='.$entInfo['data']['0']['cid'];
         $res = (new CoHttpClient())->useCache(false)->send($url, [], $this->header, [], 'GET');
         dingAlarm('鲸准 公司融资事件',['$res'=>json_encode($res)]);
         CommonService::getInstance()->log4PHP($res, 'info', 'enterpriseList');
@@ -74,10 +74,10 @@ class JingZhunService extends ServiceBase
         if($entInfo['code']!=0){
             return $this->checkRespFlag ? $this->checkResp($entInfo) : $entInfo;
         }
-        if(empty($entInfo['data']['cid'])){
+        if(empty($entInfo['data']['0']['cid'])){
             return $this->createReturn(500, null, [], '没有查询到这个公司的cid');
         }
-        $url = $this->url.'investment/list?token='.$this->token.'&cid='.$entInfo['data']['cid'];
+        $url = $this->url.'investment/list?token='.$this->token.'&cid='.$entInfo['data']['0']['cid'];
         $res = (new CoHttpClient())->useCache(false)->send($url, [], $this->header, [], 'GET');
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
