@@ -278,6 +278,7 @@ class AdminV2Router
         $routeCollector->addGroup('/businessopportunitymamage', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getLists', $prefix . 'getLists');
             $routeCollector->addRoute(['GET', 'POST'], '/getFields', $prefix . 'getFields');
+            $routeCollector->addRoute(['GET', 'POST'], '/changeFields', $prefix . 'changeFields');
             $routeCollector->addRoute(['GET', 'POST'], '/addOne', $prefix . 'addOne');
         });
 

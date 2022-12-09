@@ -100,4 +100,10 @@ class BusinessOpportunityManageController extends ControllerBase
 
         return $this->writeJson(200, [  ], [],'成功');
     }
+
+    public function changeFields(){
+        $requestData =  $this->getRequestData();
+
+        return $this->writeJson(200, [  ], [],'成功');
+    }
 }
