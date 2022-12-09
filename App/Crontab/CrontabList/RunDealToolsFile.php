@@ -129,7 +129,6 @@ class RunDealToolsFile extends AbstractCronTask
         //生成文件
         self::generateFile(3);
 
-
         return true ;   
     }
 
@@ -144,9 +143,11 @@ class RunDealToolsFile extends AbstractCronTask
             if($nums%100==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        'getYieldDataForUrl $xlsx_name'=>$xlsx_name,
-                        'getYieldDataForUrl $nums'=>$nums
-                    ])
+                        '取url公开数据'=>[
+                            '文件名'=>$xlsx_name,
+                            '已执行次数'=>$nums
+                        ]
+                    ],JSON_UNESCAPED_UNICODE)
                 );
             }
             $one = $excel_read->nextRow([
@@ -207,9 +208,11 @@ class RunDealToolsFile extends AbstractCronTask
             if($nums%100==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        'getYieldDataForWeinXin $xlsx_name'=>$xlsx_name,
-                        'getYieldDataForWeinXin $nums'=>$nums,
-                    ])
+                        '取微信数据'=>[
+                            '文件名'=>$xlsx_name,
+                            '已执行'=>$nums,
+                        ],
+                    ],JSON_UNESCAPED_UNICODE)
                 );
             }
             $one = $excel_read->nextRow([
@@ -331,9 +334,11 @@ class RunDealToolsFile extends AbstractCronTask
             if($nums%100==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        'getYieldDataForSplite $xlsx_name'=>$xlsx_name,
-                        'getYieldDataForSplite $nums'=>$nums,
-                    ])
+                        '拆分表格'=>[
+                            '文件名'=>$xlsx_name,
+                            '已执行'=>$nums,
+                        ]
+                    ],JSON_UNESCAPED_UNICODE)
                 );
             }
             $one = $excel_read->nextRow([

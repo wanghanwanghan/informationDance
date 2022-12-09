@@ -82,10 +82,11 @@ class ToolsFileLists extends ModelBase
             return CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'failed',
-                    '$requestData' => $requestData,
-                    'msg' => $e->getMessage(),
-                ])
+                    'tools_file_lists_入库失败'=>[
+                        '参数' => $requestData,
+                        '错误信息' => $e->getMessage(),
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
             );
         }
         return $res;
@@ -175,6 +176,15 @@ class ToolsFileLists extends ModelBase
 
     //补全联系人
     static function buQuanZiDuan($params){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '补全联系人开始执行'=>[
+                    '参数' => $params,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
        $filesDatas = self::findBySql("
             WHERE touch_time < 1
             AND type = 5 
@@ -191,9 +201,9 @@ class ToolsFileLists extends ModelBase
 
            $allFields = AdminUserSoukeConfig::getAllFieldsV2();
            foreach ($allFields as $field=>$cname){
-
                $title[] = $cname ;
            }
+
            fputcsv($f, $title);
 
            $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
@@ -203,8 +213,7 @@ class ToolsFileLists extends ModelBase
                if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                           //__CLASS__.__FUNCTION__ .__LINE__,
-                           'buQuanZiDuan' => [
+                           '补全联系人' => [
                                '已生成'.$i,
                                $filesData['file_name']
                            ]
@@ -291,8 +300,6 @@ class ToolsFileLists extends ModelBase
                    }
 
 
-
-
                    // 高新技术
                    if(
                        $field=='gao_xin_ji_shu'
@@ -344,11 +351,18 @@ class ToolsFileLists extends ModelBase
     "staff_position": "--"
     }
 
-
-
      */
-    //TODO:上传文件格式文案：企业名称
+    //
     static function pullGongKaiContacts($params){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '拉取公开联系人开始执行'=>[
+                    '参数' => $params,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         $title = [
             "企业名称",
             '联系人职位',
@@ -406,7 +420,7 @@ class ToolsFileLists extends ModelBase
                    CommonService::getInstance()->log4PHP(
                        json_encode([
                         //   __CLASS__.__FUNCTION__ .__LINE__,
-                           'pullGongKaiContacts_已生成' => $i
+                           '拉取公开联系人_已生成' => $i
                        ], JSON_UNESCAPED_UNICODE)
                    );
                }
@@ -516,9 +530,6 @@ class ToolsFileLists extends ModelBase
                        $datautem['mobile_check_res_cname'].''.$datautem['mobile_check_res'].'',//'公开手机号码状态',
                    ];
 
-
-
-
                    //通过手机号补全微信信息
                    if(
                        $datautem['lianxitype']!== '手机'
@@ -595,6 +606,12 @@ class ToolsFileLists extends ModelBase
 
     }
     static function pullFeiGongKaiContacts($params){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                //__CLASS__.__FUNCTION__ .__LINE__,
+                '拉取非公开开始执行' => $params
+            ], JSON_UNESCAPED_UNICODE)
+        );
         $title = [
             '企业名称',
             '信用代码',
@@ -647,7 +664,7 @@ class ToolsFileLists extends ModelBase
                    CommonService::getInstance()->log4PHP(
                        json_encode([
                            //__CLASS__.__FUNCTION__ .__LINE__,
-                           'pullFeiGongKaiContacts已生成' => $i
+                           '拉取非公开已生成' => $i
                        ], JSON_UNESCAPED_UNICODE)
                    );
                }
@@ -672,12 +689,6 @@ class ToolsFileLists extends ModelBase
                    empty($companyRes) ||
                    empty($companyRes->UNISCID)
                ){
-                   CommonService::getInstance()->log4PHP(
-                       json_encode([
-                           //__CLASS__.__FUNCTION__ .__LINE__,
-                           'pullFeiGongKaiContacts已生成' => $i
-                       ], JSON_UNESCAPED_UNICODE)
-                   );
                    continue;
                }
 
