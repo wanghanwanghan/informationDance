@@ -276,7 +276,7 @@ class AdminV2Router
     {
         $prefix = '/Business/AdminV2/Mrxd/BusinessOpportunityManageController/';
         $routeCollector->addGroup('/businessopportunitymamage', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/WeiXinFilesList', $prefix . 'WeiXinFilesList');
+            $routeCollector->addRoute(['GET', 'POST'], '/getLists', $prefix . 'getLists');
         });
 
         return true;
