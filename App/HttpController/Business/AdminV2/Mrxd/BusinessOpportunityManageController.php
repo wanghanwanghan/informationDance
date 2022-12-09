@@ -39,7 +39,22 @@ class BusinessOpportunityManageController extends ControllerBase
         parent::afterAction($actionName);
     }
 
-    //
+    public function getFields(){
+        $requestData =  $this->getRequestData();
+
+        $datas = [
+            'name' => [
+                'field_name'=>'name',
+                'field_cname'=>'姓名',
+            ],
+            'ying_shou_gui_mo' => [
+                'field_name'=>'ying_shou_gui_mo',
+                'field_cname'=>'营收规模',
+            ],
+        ];
+        return $this->writeJson(200, [  ],  $datas,'成功');
+    }
+
     public function getLists(){
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
