@@ -286,6 +286,8 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/changeBasicData', $prefix . 'changeBasicData');
             $routeCollector->addRoute(['GET', 'POST'], '/getContactData', $prefix . 'getContactData');
             $routeCollector->addRoute(['GET', 'POST'], '/setContactData', $prefix . 'setContactData');
+            $routeCollector->addRoute(['GET', 'POST'], '/getcommunicationrecord', $prefix . 'getcommunicationrecord');
+            $routeCollector->addRoute(['GET', 'POST'], '/addcommunicationrecord', $prefix . 'addcommunicationrecord');
         });
 
         return true;

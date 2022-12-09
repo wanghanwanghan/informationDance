@@ -154,4 +154,25 @@ class BusinessOpportunityManageController extends ControllerBase
         return $this->writeJson(200, [  ], [],'成功');
     }
 
+    public function getcommunicationrecord(){
+        $requestData =  $this->getRequestData();
+        return $this->writeJson(200, [  ], [
+            [
+                'communicate_type' => '沟通方式1',
+                'communicate_subject' => '沟通主题1',
+                'communicate_remark' => '备注1',
+            ],
+            [
+                'communicate_type' => '沟通方式2',
+                'communicate_subject' => '沟通主题2',
+                'communicate_remark' => '备注2',
+            ],
+        ],'成功');
+    }
+
+    public function addcommunicationrecord(){
+        $requestData =  $this->getRequestData();
+        return $this->writeJson(200, [  ], [],'成功');
+    }
+
 }
