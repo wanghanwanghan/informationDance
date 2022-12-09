@@ -122,4 +122,20 @@ class BusinessOpportunityManageController extends ControllerBase
         ],'成功');
     }
 
+    public function getBasicData(){
+        $requestData =  $this->getRequestData();
+
+        return $this->writeJson(200, [  ], [
+            "name"=>"每日心动公司",
+            "ying_shou_gui_mo"=>"营收规模",
+        ],'成功');
+    }
+
+    public function changeBasicData(){
+        $requestData =  $this->getRequestData();
+
+        return $this->writeJson(200, [  ], [],'成功');
+    }
+
+
 }

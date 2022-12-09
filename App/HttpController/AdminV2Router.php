@@ -282,6 +282,8 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/changeStage', $prefix . 'changeStage');
             $routeCollector->addRoute(['GET', 'POST'], '/getStage', $prefix . 'getStage');
             $routeCollector->addRoute(['GET', 'POST'], '/addOne', $prefix . 'addOne');
+            $routeCollector->addRoute(['GET', 'POST'], '/getBasicData', $prefix . 'getBasicData');
+            $routeCollector->addRoute(['GET', 'POST'], '/changeBasicData', $prefix . 'changeBasicData');
         });
 
         return true;
