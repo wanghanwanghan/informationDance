@@ -27,6 +27,7 @@ class AdminV2Router
         $this->PApiRouterV1($routeCollector);
         $this->DocumentationRouterV1($routeCollector);
         $this->BusinessOpportunityRouterV1($routeCollector);
+        $this->BusinessOpportunityManageRouterV1($routeCollector);
         $this->ZhiJinCommissionRouterV1($routeCollector);
         $this->PStaticsRouterV1($routeCollector);
         $this->dzqRouterV1($routeCollector);
@@ -270,7 +271,17 @@ class AdminV2Router
         return true;
     }
 
-    //
+    // BusinessOpportunityManageRouterV1
+    private function BusinessOpportunityManageRouterV1(RouteCollector $routeCollector): bool
+    {
+        $prefix = '/Business/AdminV2/Mrxd/BusinessOpportunityManageController/';
+        $routeCollector->addGroup('/businessopportunitymamage', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/WeiXinFilesList', $prefix . 'WeiXinFilesList');
+        });
+
+        return true;
+    }
+
     private function BusinessOpportunityRouterV1(RouteCollector $routeCollector): bool
     {
         $prefix = '/Business/AdminV2/Mrxd/BusinessOpportunityController/';
