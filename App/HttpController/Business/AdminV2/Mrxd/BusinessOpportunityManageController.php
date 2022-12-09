@@ -80,4 +80,9 @@ class BusinessOpportunityManageController extends ControllerBase
         ],  $datas['data'],'成功');
     }
 
+    public function addOne(){
+        $requestData =  $this->getRequestData();
+
+        return $this->writeJson(200, [  ], [],'成功');
+    }
 }
