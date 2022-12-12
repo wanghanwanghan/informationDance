@@ -18,6 +18,7 @@ use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\BusinessBase\WechatInfo;
+use App\HttpController\Models\MRXD\ShangJi;
 use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
@@ -39,9 +40,10 @@ class BusinessOpportunityManageController extends ControllerBase
         parent::afterAction($actionName);
     }
 
+    //获取之前配置的基本信息的维度
     public function getFields(){
         $requestData =  $this->getRequestData();
-
+        $dbRes = ShangJi::findBySql("SHOW COLUMNS from shang_ji ");
         $datas = [
             'name' => [
                 'field_name'=>'name',
@@ -52,7 +54,7 @@ class BusinessOpportunityManageController extends ControllerBase
                 'field_cname'=>'营收规模',
             ],
         ];
-        return $this->writeJson(200, [  ],  $datas,'成功');
+        return $this->writeJson(200, $dbRes,  $datas,'成功');
     }
 
     public function getLists(){
@@ -95,9 +97,10 @@ class BusinessOpportunityManageController extends ControllerBase
         ],  $datas['data'],'成功');
     }
 
+
+    //录入商机
     public function addOne(){
         $requestData =  $this->getRequestData();
-
         return $this->writeJson(200, [  ], [],'成功');
     }
 
