@@ -142,6 +142,18 @@ class BusinessOpportunityManageController extends ControllerBase
             $allSubmitFields[] = $tmpArr['text'];
         }
 
+        $allFields = [];
+        foreach ($allSubmitFields as $field){
+            $length = strlen($field);
+            $wordNums = $length/3;
+            $newstr = "";
+            for ($i=0; $i<$wordNums; $i++){
+                $tmpStr  = mb_substr($field, $i, 1, 'utf-8');
+                $newstr  .= PinYinService::getPinyin($tmpStr)."_";
+            }
+            $newstr = substr($newstr, 0, -1);
+            $allFields[$newstr] =  $field;
+        }
        // PinYinService::getPinyin();
 //        $fieldsToAdd = [
 //            "shang_ji_jie_duan"=>"商机阶段",
@@ -169,7 +181,7 @@ class BusinessOpportunityManageController extends ControllerBase
 //        }
 
 
-        return $this->writeJson(200, [  ], [$requestData['data'],$allSubmitFields],'成功');
+        return $this->writeJson(200, [  ], [$allFields,$allSubmitFields],'成功');
     }
 
     public function changeStage(){
