@@ -214,8 +214,152 @@ class BusinessOpportunityController extends ControllerBase
 
         return $this->writeJson(200, [], [],'导入成功 入库文件数量:'.$succeedNums);
     }
+    public function uploadZhiFuBaoFile(){
+
+        $requestData =  $this->getRequestData();
+        $succeedFiels = [];
+        $files = $this->request()->getUploadedFiles();
+        foreach ($files as $key => $oneFile) {
+            try {
+                $fileName = $oneFile->getClientFilename();
+                $fileInfo = pathinfo($fileName);
+                if($fileInfo['extension']!='xlsx'){
+                    return $this->writeJson(203, [], [],'暂时只支持xlsx文件！');
+                }
+                $fileName = date('Y_m_d_H_i',time()).$fileName;
+                $path = OTHER_FILE_PATH . $fileName;
+                if(file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件已存在！');
+                }
+
+                $res = $oneFile->moveTo($path);
+                if(!file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件移动失败！');
+                }
+
+                $UploadRecordRes =  ToolsFileLists::addRecordV2(
+                    [
+                        'admin_id' => $this->loginUserinfo['id'],
+                        'file_name' => $fileName,
+                        'new_file_name' => '',
+                        'remark' => $requestData['remark']?:'',
+                        'type' => ToolsFileLists::$type_upload_weixin,
+                        'state' => $requestData['state']?:'',
+                        'touch_time' => $requestData['touch_time']?:'',
+                    ]
+                );
+                if(!$UploadRecordRes){
+                    return $this->writeJson(203, [], [],'文件上传失败');
+                }
+
+                $res = QueueLists::addRecord(
+                    [
+                        'name' => '',
+                        'desc' => '',
+                        'func_info_json' => json_encode(
+                            [
+                                'class' => '\App\HttpController\Models\MRXD\ToolsFileLists',
+                                'static_func'=> 'shangChuanWeiXinHao',
+                            ]
+                        ),
+                        'params_json' => json_encode([
+
+                        ]),
+                        'type' => ToolsFileLists::$type_upload_weixin,
+                        'remark' => '',
+                        'begin_date' => NULL,
+                        'msg' => '',
+                        'status' => QueueLists::$status_init,
+                    ]
+                );
+
+                $succeedFiels[] = $fileName;
+            } catch (\Throwable $e) {
+                return $this->writeJson(202, [], [],'导入失败'.$e->getMessage());
+            }
+        }
+
+        return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
+
+        return ;
+        $requestData =  $this->getRequestData(); ;
+        $files = $this->request()->getUploadedFiles();
+        //return $this->writeJson(200, [], [],'导入成功 入库文件数量:');
+        $succeedNums = 0;
+        foreach ($files as $key => $oneFile) {
+            try {
+                $fileName = $oneFile->getClientFilename();
+                $path = TEMP_FILE_PATH . $fileName;
+                if(file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件已存在！');;
+                }
+
+                $res = $oneFile->moveTo($path);
+                if(!file_exists($path)){
+                    return $this->writeJson(203, [], [],'文件移动失败！');
+                }
+
+                $addUploadRecordRes = AdminUserWechatInfoUploadRecord::addRecordV2(
+                    [
+                        'user_id' => $this->loginUserinfo['id'],
+                        'file_path' => TEMP_FILE_PATH,
+                        'title' => $requestData['title']?:'',
+                        'size' => filesize($path),
+                        'batch' =>  'BO'.date('YmdHis'),
+                        'reamrk' => $requestData['reamrk']?:'',
+                        'name' =>  $fileName,
+                        'status' => AdminUserWechatInfoUploadRecord::$status_init,
+                    ]
+                );
+
+                if(!$addUploadRecordRes){
+                    return $this->writeJson(203, [], [],'入库失败，请联系管理员');
+                }
+                $succeedNums ++;
+            } catch (\Throwable $e) {
+                return $this->writeJson(202, [], [],'导入失败'.$e->getMessage());
+            }
+        }
+
+        return $this->writeJson(200, [], [],'导入成功 入库文件数量:'.$succeedNums);
+    }
 
     public function WeiXinFilesList(){
+        $requestData =  $this->getRequestData();
+        $page = $requestData['page']?:1;
+        $pageSize = $requestData['pageSize']?:10;
+
+        $conditions = [];
+        if($requestData['nickname']){
+            $conditions[]  =  [
+                'field' =>'nickname',
+                'value' =>$requestData['nickname'].'%',
+                'operate' =>'like',
+            ];
+
+        }
+        $datas = WechatInfo::findByConditionV2(
+            $conditions,$page,$pageSize
+        );
+
+        foreach ($datas['data'] as &$dataItem){
+            if($dataItem['code']){
+                $companyRes = CompanyBasic::findByCode($dataItem['code']);
+                $companyRes = $companyRes?$companyRes->toArray():[];
+                $dataItem['ENTNAME'] = $companyRes['ENTNAME'];
+            }
+            $phone_res = \wanghanwanghan\someUtils\control::aesDecode($dataItem['phone'], $dataItem['created_at']);
+            $dataItem['phone_res'] = $phone_res;
+        }
+
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $datas['total'],
+            'totalPage' => ceil($datas['total']/$pageSize) ,
+        ],  $datas['data'],'成功');
+    }
+    public function ZhiFuBaoFilesList(){
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
         $pageSize = $requestData['pageSize']?:10;
