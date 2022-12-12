@@ -264,7 +264,7 @@ function sqlRawV2(string $sql, string $conn = null, $toArray = 1)
         );
         return null;
     }
-    return $res['result'];
+    return $toArray?$res['result']:$res;
 }
 
 //随机字符串
