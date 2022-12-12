@@ -103,7 +103,7 @@ class BusinessOpportunityManageController extends ControllerBase
     //录入商机
     public function addOne(){
         $requestData =  $this->getRequestData();
-        return $this->writeJson(200, [  ], [],'成功');
+        return $this->writeJson(200, [],$requestData,'成功');
     }
 
     public function changeFields(){
