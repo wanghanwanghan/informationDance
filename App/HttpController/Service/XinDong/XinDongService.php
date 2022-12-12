@@ -4357,7 +4357,7 @@ class XinDongService extends ServiceBase
     {
 
         //获取所有联系人
-        $staffsDatas = LongXinService::getLianXiByName($entName);
+        $staffsDatas = LongXinService::getLianXiByNameV2($entName);
         if (empty($staffsDatas)) {
             return [];
         }
