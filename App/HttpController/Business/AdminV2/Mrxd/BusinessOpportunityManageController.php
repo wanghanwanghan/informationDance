@@ -184,7 +184,7 @@ class BusinessOpportunityManageController extends ControllerBase
 
     public function getBasicData(){
         $requestData =  $this->getRequestData();
-        $res = ShangJi::findById(1);
+        $res = ShangJi::findById(2);
         $res = $res->toArray();
         unset($res['id']);
         unset($res['created_at']);
