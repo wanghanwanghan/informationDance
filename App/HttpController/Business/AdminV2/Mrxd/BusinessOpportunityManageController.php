@@ -163,7 +163,7 @@ class BusinessOpportunityManageController extends ControllerBase
 //        }
 
 
-        return $this->writeJson(200, [  ], $requestData['data'],'成功');
+        return $this->writeJson(200, [  ], json_decode($requestData['data'],true),'成功');
     }
 
     public function changeStage(){
