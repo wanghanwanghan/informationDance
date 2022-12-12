@@ -43,13 +43,8 @@ class BusinessOpportunityManageController extends ControllerBase
     //获取之前配置的基本信息的维度
     public function getFields(){
         $requestData =  $this->getRequestData();
-        $dbRes =  ShangJi::runBySql("SELECT
-                                                a.COLUMN_NAME,
-                                                a.COLUMN_COMMENT 
-                                            FROM
-                                                information_schema.COLUMNS a 
-                                            WHERE
-                                                a.TABLE_NAME = 'shang_ji'");
+        $field1 = "name";
+        $res = CreateConf::getInstance()->getConf('shang_ji_fields.'.$field1);
 
         //$dbRes = json_decode(json_encode($dbRes), true);
         //$dbRes = ShangJi::runBySql("ALTER TABLE shang_ji  add COLUMN `suo_shu_qv_yu` VARCHAR(200) DEFAULT ''");
@@ -63,7 +58,7 @@ class BusinessOpportunityManageController extends ControllerBase
                 'field_cname'=>'营收规模',
             ],
         ];
-        return $this->writeJson(200, $dbRes,  $datas,'成功');
+        return $this->writeJson(200, $res,  $datas,'成功');
     }
 
     public function getLists(){
