@@ -51,13 +51,7 @@ class BusinessOpportunityManageController extends ControllerBase
                                             WHERE
                                                 a.TABLE_NAME = 'shang_ji'");
 
-        foreach ($dbRes[0] as $key=>$value){
-            if(
-                in_array($key,['id','created_at'])
-            ){
-
-            }
-        }
+         
         //$dbRes = ShangJi::runBySql("ALTER TABLE shang_ji  add COLUMN `suo_shu_qv_yu` VARCHAR(200) DEFAULT ''");
         $datas = [
             'name' => [
