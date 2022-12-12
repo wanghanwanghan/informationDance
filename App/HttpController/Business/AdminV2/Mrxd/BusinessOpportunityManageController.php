@@ -27,6 +27,7 @@ use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\PinYin\PinYinService;
 use App\HttpController\Service\XinDong\XinDongService;
 use EasySwoole\RedisPool\Redis;
 
@@ -134,8 +135,35 @@ class BusinessOpportunityManageController extends ControllerBase
 
     public function changeFields(){
         $requestData =  $this->getRequestData();
+        $requestData['data'];
+       // PinYinService::getPinyin();
+//        $fieldsToAdd = [
+//            "shang_ji_jie_duan"=>"商机阶段",
+//            "suo_shu_qv_yu"=>"所属区域",
+//        ] ;
+//
+//        $allFields = ShangJiFields::findAllByCondition([]);
+//        $existsFieldsInfo = array_column($allFields,"field_name");
+//        foreach ($fieldsToAdd as $Field=>$FieldCname){
+//            if(
+//                in_array($Field,$existsFieldsInfo)
+//            ){
+//                continue;
+//            }
+//
+//            //改表结构
+//            $dbRes = ShangJi::runBySql("ALTER TABLE shang_ji  add COLUMN `$Field` VARCHAR(200) COMMENT '$FieldCname' DEFAULT ''");
+//            // 框架暂时没开放 SHOW COLUMNS from tablename ; 只好先存到表里.....
+//            ShangJiFields::addRecordV2(
+//                [
+//                    'field_name' => $Field,
+//                    'field_cname' => $FieldCname,
+//                ]
+//            );
+//        }
 
-        return $this->writeJson(200, [  ], [],'成功');
+
+        return $this->writeJson(200, [  ], $requestData['data'],'成功');
     }
 
     public function changeStage(){
