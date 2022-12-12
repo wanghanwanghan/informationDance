@@ -73,24 +73,8 @@ class BusinessOpportunityManageController extends ControllerBase
             ];
 
         }
+        $datas = ShangJi::findByConditionV2($conditions,$page);
         $total = $datas['total'];
-        $total = 2;
-        $datas['data'] = [
-            [
-                'id' => 1,
-                'name' => '北京每日心动有限公司',
-                'target_customers' => [
-                    '营收规模' => '千万以上',
-                    '团队规模' => '五百人',
-                ],
-                'remark' => '大客户' ,
-                'tags' => [
-                    '大客户',
-                    '重点客户',
-                ] ,
-                'stage_cname'=>'新建商机',
-            ]
-        ];
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' => $pageSize,
