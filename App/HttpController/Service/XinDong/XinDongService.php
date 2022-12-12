@@ -4138,6 +4138,31 @@ class XinDongService extends ServiceBase
 
     }
 
+    // $tobeMatch 姓名   $target：支付宝
+    function matchNamesForZhiFuBao($tobeMatch, $target)
+    {
+
+        //包含匹配  张三0808    张三
+        $res = $this->matchNamesByContain($tobeMatch, $target);
+
+        if ($res) {
+            return [
+                'type' => '近似匹配',
+                'details' => '中文包含匹配',
+                'res' => '成功',
+                'percentage' => '',
+            ];
+        }
+
+        return [
+            'type' => '',
+            'details' => '',
+            'res' => '失败',
+            'percentage' => 0,
+        ];
+
+    }
+
     function checkIfArrayEqual($array1, $array2)
     {
 
@@ -4315,6 +4340,34 @@ class XinDongService extends ServiceBase
                 continue;
             };
             $res = (new XinDongService())->matchNamesV2($tmpName, $WeiXin);
+            if ($res['res'] == '成功') {
+//                CommonService::getInstance()->log4PHP(
+//                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin
+//                );
+                return [
+                    'data' => $staffsDataItem,
+                    'match_res' => $res
+                ];
+            }
+        }
+
+        return [];
+    }
+    function matchContactNameByZhiFuBaoName($entName, $zhiFuBao)
+    {
+
+        //获取所有联系人
+        $staffsDatas = LongXinService::getLianXiByName($entName);
+        if (empty($staffsDatas)) {
+            return [];
+        }
+
+        foreach ($staffsDatas as $staffsDataItem) {
+            $tmpName = trim($staffsDataItem['stff_name']);
+            if (!$tmpName) {
+                continue;
+            };
+            $res = (new XinDongService())->matchNamesForZhiFuBao($tmpName, $zhiFuBao);
             if ($res['res'] == '成功') {
 //                CommonService::getInstance()->log4PHP(
 //                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin
