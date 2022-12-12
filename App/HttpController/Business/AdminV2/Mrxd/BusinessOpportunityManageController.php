@@ -47,43 +47,16 @@ class BusinessOpportunityManageController extends ControllerBase
     public function getFields(){
         $requestData =  $this->getRequestData();
 
-        $fieldsToAdd = [
-            "shang_ji_jie_duan"=>"商机阶段",
-            "suo_shu_qv_yu"=>"所属区域",
-        ] ;
-
         $allFields = ShangJiFields::findAllByCondition([]);
-        $existsFieldsInfo = array_column($allFields,"field_name");
-        foreach ($fieldsToAdd as $Field=>$FieldCname){
-            if(
-                in_array($Field,$existsFieldsInfo)
-            ){
-                continue;
-            }
-
-            //改表结构
-            $dbRes = ShangJi::runBySql("ALTER TABLE shang_ji  add COLUMN `$Field` VARCHAR(200) COMMENT '$FieldCname' DEFAULT ''");
-            // 框架暂时没开放 SHOW COLUMNS from tablename ; 只好先存到表里.....
-            ShangJiFields::addRecordV2(
-                [
-                    'field_name' => $Field,
-                    'field_cname' => $FieldCname,
-                ]
-            );
+        $datas = [];
+        foreach ($allFields as $fieldItem){
+            $datas[$fieldItem['field_name']] = [
+                'field_name'=> $fieldItem['field_name'],
+                'field_cname'=>   $fieldItem['field_name'],
+            ];
         }
 
-
-        $datas = [
-            'name' => [
-                'field_name'=>'name',
-                'field_cname'=>'姓名',
-            ],
-            'ying_shou_gui_mo' => [
-                'field_name'=>'ying_shou_gui_mo',
-                'field_cname'=>'营收规模',
-            ],
-        ];
-        return $this->writeJson(200, $res,  $datas,'成功');
+        return $this->writeJson(200, [],  $datas,'成功');
     }
 
     public function getLists(){
@@ -136,13 +109,20 @@ class BusinessOpportunityManageController extends ControllerBase
     public function changeFields(){
         $requestData =  $this->getRequestData();
 
+        //前端传过来的是
+        //{"text":"姓名"}
+        //data[]:
+        //{"text":"营收规模"}
+
+        //取到所有配置的字段
         $allSubmitFields = [];
         foreach ($requestData['data'] as $datum){
             $tmpArr = json_decode($datum,true);
             $allSubmitFields[] = $tmpArr['text'];
         }
 
-        $allFields = [];
+        //把字段转换为横杠分隔的英文字符
+        $fieldsToAdd = [];
         foreach ($allSubmitFields as $field){
             $length = strlen($field);
             $wordNums = $length/3;
@@ -152,36 +132,31 @@ class BusinessOpportunityManageController extends ControllerBase
                 $newstr  .= PinYinService::getPinyin($tmpStr)."_";
             }
             $newstr = substr($newstr, 0, -1);
-            $allFields[$newstr] =  $field;
+            $fieldsToAdd[$newstr] =  $field;
         }
-       // PinYinService::getPinyin();
-//        $fieldsToAdd = [
-//            "shang_ji_jie_duan"=>"商机阶段",
-//            "suo_shu_qv_yu"=>"所属区域",
-//        ] ;
-//
-//        $allFields = ShangJiFields::findAllByCondition([]);
-//        $existsFieldsInfo = array_column($allFields,"field_name");
-//        foreach ($fieldsToAdd as $Field=>$FieldCname){
-//            if(
-//                in_array($Field,$existsFieldsInfo)
-//            ){
-//                continue;
-//            }
-//
-//            //改表结构
-//            $dbRes = ShangJi::runBySql("ALTER TABLE shang_ji  add COLUMN `$Field` VARCHAR(200) COMMENT '$FieldCname' DEFAULT ''");
-//            // 框架暂时没开放 SHOW COLUMNS from tablename ; 只好先存到表里.....
-//            ShangJiFields::addRecordV2(
-//                [
-//                    'field_name' => $Field,
-//                    'field_cname' => $FieldCname,
-//                ]
-//            );
-//        }
 
+        $allFields = ShangJiFields::findAllByCondition([]);
+        $existsFieldsInfo = array_column($allFields,"field_name");
+        foreach ($fieldsToAdd as $Field=>$FieldCname){
+            //存在的就不加了
+            if(
+                in_array($Field,$existsFieldsInfo)
+            ){
+                continue;
+            }
 
-        return $this->writeJson(200, [  ], [$allFields,$allSubmitFields],'成功');
+            //改表结构
+            $dbRes = ShangJi::runBySql("ALTER TABLE shang_ji  add COLUMN `$Field` VARCHAR(200) COMMENT '$FieldCname' DEFAULT ''");
+            // 框架暂时没开放 SHOW COLUMNS from tablename ; 只好先存到表里.....
+            ShangJiFields::addRecordV2(
+                [
+                    'field_name' => $Field,
+                    'field_cname' => $FieldCname,
+                ]
+            );
+        }
+
+        return $this->writeJson(200, [  ], [$allFields],'成功');
     }
 
     public function changeStage(){
