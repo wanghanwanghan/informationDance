@@ -4363,7 +4363,7 @@ class XinDongService extends ServiceBase
         }
 
         foreach ($staffsDatas as $staffsDataItem) {
-            $tmpName = trim($staffsDataItem['stff_name']);
+            $tmpName = trim($staffsDataItem['NAME']);
             if (!$tmpName) {
                 continue;
             };
