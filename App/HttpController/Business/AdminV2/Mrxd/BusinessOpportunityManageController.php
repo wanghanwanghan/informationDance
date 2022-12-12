@@ -51,7 +51,7 @@ class BusinessOpportunityManageController extends ControllerBase
                                             WHERE
                                                 a.TABLE_NAME = 'shang_ji'");
 
-         
+        $dbRes = json_decode(json_encode($dbRes), true);
         //$dbRes = ShangJi::runBySql("ALTER TABLE shang_ji  add COLUMN `suo_shu_qv_yu` VARCHAR(200) DEFAULT ''");
         $datas = [
             'name' => [
