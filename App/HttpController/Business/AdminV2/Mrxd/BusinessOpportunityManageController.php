@@ -170,10 +170,16 @@ class BusinessOpportunityManageController extends ControllerBase
     public function getStage(){
         $requestData =  $this->getRequestData();
 
-        return $this->writeJson(200, [  ], [
-            "xin_jian_shang_ji"=>"新建商机",
-            "shang_ji_ces_hi"=>"商机_测试",
-        ],'成功');
+        $allFields = ShangJiFields::findAllByCondition([]);
+        $datas = [];
+        foreach ($allFields as $fieldItem){
+            $datas[$fieldItem['field_name']] = [
+                'field_name'=> $fieldItem['field_name'],
+                'field_cname'=>   $fieldItem['field_cname'],
+            ];
+        }
+
+        return $this->writeJson(200, [],  $datas,'成功');
     }
 
     public function getBasicData(){
