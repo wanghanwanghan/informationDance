@@ -103,6 +103,8 @@ class BusinessOpportunityManageController extends ControllerBase
     //录入商机
     public function addOne(){
         $requestData =  $this->getRequestData();
+        unset($requestData['phone']);
+        ShangJi::addRecordV2($requestData);
         return $this->writeJson(200, [],$requestData,'成功');
     }
 
