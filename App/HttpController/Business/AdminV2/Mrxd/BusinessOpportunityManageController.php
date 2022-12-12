@@ -135,7 +135,12 @@ class BusinessOpportunityManageController extends ControllerBase
 
     public function changeFields(){
         $requestData =  $this->getRequestData();
-        $allSubmitFields = array_column($requestData['data'],"text");
+
+        $allSubmitFields = [];
+        foreach ($requestData['data'] as $datum){
+            $tmpArr = json_decode($datum,true);
+            $allSubmitFields[] = $tmpArr['text'];
+        }
 
        // PinYinService::getPinyin();
 //        $fieldsToAdd = [
