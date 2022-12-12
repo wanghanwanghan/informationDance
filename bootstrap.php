@@ -264,7 +264,32 @@ function sqlRawV2(string $sql, string $conn = null, $toArray = 1)
         );
         return null;
     }
-    return $toArray?$res['result']:$res;
+    return $res['result'];
+}
+function sqlRawV3(string $sql, string $conn = null )
+{
+    if (empty($conn)) {
+        $conn = CreateConf::getInstance()->getConf('env.mysqlDatabase');
+    }
+
+    try {
+        $queryBuilder = new QueryBuilder();
+        $queryBuilder->raw($sql);
+        $res = DbManager::getInstance()
+            ->query($queryBuilder, true, $conn);
+    } catch (\Throwable $e) {
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    '查询数据库错误',
+                    $sql,
+                    $e->getMessage()
+                ],JSON_UNESCAPED_UNICODE
+            )
+        );
+        return null;
+    }
+    return $res;
 }
 
 //随机字符串
