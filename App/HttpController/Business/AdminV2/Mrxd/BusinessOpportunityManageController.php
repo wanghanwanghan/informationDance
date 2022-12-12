@@ -184,11 +184,12 @@ class BusinessOpportunityManageController extends ControllerBase
 
     public function getBasicData(){
         $requestData =  $this->getRequestData();
-
-        return $this->writeJson(200, [  ], [
-            "name"=>"每日心动公司",
-            "ying_shou_gui_mo"=>"营收规模",
-        ],'成功');
+        $res = ShangJi::findById(1);
+        $res = $res->toArray();
+        unset($res['id']);
+        unset($res['created_at']);
+        unset($res['updated_at']);
+        return $this->writeJson(200, [  ], $res,'成功');
     }
 
     public function changeBasicData(){
