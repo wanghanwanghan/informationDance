@@ -52,7 +52,7 @@ class BusinessOpportunityManageController extends ControllerBase
         foreach ($allFields as $fieldItem){
             $datas[$fieldItem['field_name']] = [
                 'field_name'=> $fieldItem['field_name'],
-                'field_cname'=>   $fieldItem['field_name'],
+                'field_cname'=>   $fieldItem['field_cname'],
             ];
         }
 
