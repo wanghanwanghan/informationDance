@@ -43,7 +43,7 @@ class BusinessOpportunityManageController extends ControllerBase
     //获取之前配置的基本信息的维度
     public function getFields(){
         $requestData =  $this->getRequestData();
-        $dbRes = ShangJi::findBySql("SHOW COLUMNS from shang_ji ");
+        $dbRes = ShangJi::findBySql("ALTER TABLE shang_ji  add COLUMN shang_ji_jie_duan VARCHAR(200) DEFAULT ''");
         $datas = [
             'name' => [
                 'field_name'=>'name',
