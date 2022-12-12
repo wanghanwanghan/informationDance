@@ -139,4 +139,9 @@ class ShangJi extends ModelBase
         return $data;
     }
 
+    public static function findBySql($Sql){
+        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        return $data;
+    }
+
 }
