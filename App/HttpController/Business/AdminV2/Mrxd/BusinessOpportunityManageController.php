@@ -85,6 +85,10 @@ class BusinessOpportunityManageController extends ControllerBase
                     '商机名称'=>'测试公司',
                     '商机阶段'=>'测试结算',
                 ],
+                'show_field3'=>[
+                    '商机名称'=>'测试公司',
+                    '商机阶段'=>'测试结算',
+                ],
             ]
         ];
         $total = $datas['total'];
