@@ -171,7 +171,7 @@ class BusinessOpportunityManageController extends ControllerBase
         ShangJi::updateById(
             $requestData['id'],
             [
-                'remark'=>json_encode($reamrkArr,JSON_UNESCAPED_UNICODE)
+                'remark'=>json_encode($reamrkArr)
             ]
         );
         return $this->writeJson(200, [  ], [],'成功');
