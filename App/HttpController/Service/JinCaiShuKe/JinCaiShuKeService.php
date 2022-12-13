@@ -88,7 +88,7 @@ class JinCaiShuKeService extends ServiceBase
         if ($type === 'wupan') {
             return $this->createReturn($res['code'],
                 null,
-                jsonDecode(base64_decode($res['data'])),
+                jsonDecode(control::aesDecode($res['data'], $this->appSecret_new)),
                 $res['msg']);
         } else {
             $res['code'] !== '0000' ?: $res['code'] = 200;
@@ -445,6 +445,7 @@ class JinCaiShuKeService extends ServiceBase
         }
 
         $post_data = [
+            'jtsh' => $this->jtnsrsbh,
             'nsrsbh' => trim($nsrsbh),
             'province' => trim($province_tmp),
             'taskCode' => trim($taskCode),
@@ -452,7 +453,8 @@ class JinCaiShuKeService extends ServiceBase
         ];
 
         $encryptStr = jsonEncode($post_data);
-        $encryptStr = control::aesEncode($encryptStr, $this->appSecret_new, 128, 'base64');
+        $encryptStr = control::aesEncode($encryptStr, $this->appSecret_new);
+        $encryptStr = strtoupper($encryptStr);
 
         $timestamp = microTimeNew();
 
@@ -465,9 +467,7 @@ class JinCaiShuKeService extends ServiceBase
             ->needJsonDecode(true)
             ->send($this->wupan_url_new . $url, $post_data, [], [], 'postjson');
 
-        dd($res, $this->wupan_url_new . $url, jsonEncode($post_data));
-
-        CommonService::getInstance()->log4PHP($res, 'info', 'wupantest.log');
+        // dd($this->wupan_url_new . $url, jsonEncode($post_data) . $res);
 
         return $this->checkResp($res, 'wupan');
     }
@@ -485,6 +485,33 @@ class JinCaiShuKeService extends ServiceBase
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken], [], 'postjson');
+
+        return $this->checkResp($res, 'wupan');
+    }
+
+    //无盘 用于客户获取各个采集任务的流水号
+    function obtainFpTraceNoList(string $traceNo): array
+    {
+        $url = 'distribute/api/obtainFpTraceNoList';
+
+        $post_data = [
+            'traceNo' => trim($traceNo),
+        ];
+
+        $encryptStr = jsonEncode($post_data);
+        $encryptStr = control::aesEncode($encryptStr, $this->appSecret_new);
+        $encryptStr = strtoupper($encryptStr);
+
+        $timestamp = microTimeNew();
+
+        $sign = md5($this->appKey_new . $this->appSecret_new . $encryptStr . $timestamp);
+
+        $url .= "?appKey={$this->appKey_new}&encryptStr={$encryptStr}&sign={$sign}&timestamp={$timestamp}";
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($this->wupan_url_new . $url, $post_data, [], [], 'postjson');
 
         return $this->checkResp($res, 'wupan');
     }
@@ -507,6 +534,37 @@ class JinCaiShuKeService extends ServiceBase
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken, 'cliTimeout' => 120], [], 'postjson');
+
+        return $this->checkResp($res, 'wupan');
+    }
+
+    //无盘 取数 主票
+    function obtainFpInfoNew(bool $isDetail, string $nsrsbh, string $startTime, string $endTime, int $pageNo): array
+    {
+        $url = 'distribute/api/obtainFpInfo';
+
+        $post_data = [
+            'nsrsbh' => $nsrsbh,
+            'startTime' => $startTime,// YY-MM-DD
+            'endTime' => $endTime,
+            'isDetail' => $isDetail,
+            'pageNo' => $pageNo,
+        ];
+
+        $encryptStr = jsonEncode($post_data);
+        $encryptStr = control::aesEncode($encryptStr, $this->appSecret_new);
+        $encryptStr = strtoupper($encryptStr);
+
+        $timestamp = microTimeNew();
+
+        $sign = md5($this->appKey_new . $this->appSecret_new . $encryptStr . $timestamp);
+
+        $url .= "?appKey={$this->appKey_new}&encryptStr={$encryptStr}&sign={$sign}&timestamp={$timestamp}";
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($this->wupan_url_new . $url, $post_data, [], [], 'postjson');
 
         return $this->checkResp($res, 'wupan');
     }
@@ -546,6 +604,33 @@ class JinCaiShuKeService extends ServiceBase
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken], [], 'postjson');
+
+        return $this->checkResp($res, 'wupan');
+    }
+
+    //无盘 发票文件
+    function obtainFpFile(string $traceNo): array
+    {
+        $url = 'distribute/api/obtainFpFile';
+
+        $post_data = [
+            'traceNo' => $traceNo,
+        ];
+
+        $encryptStr = jsonEncode($post_data);
+        $encryptStr = control::aesEncode($encryptStr, $this->appSecret_new);
+        $encryptStr = strtoupper($encryptStr);
+
+        $timestamp = microTimeNew();
+
+        $sign = md5($this->appKey_new . $this->appSecret_new . $encryptStr . $timestamp);
+
+        $url .= "?appKey={$this->appKey_new}&encryptStr={$encryptStr}&sign={$sign}&timestamp={$timestamp}";
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($this->wupan_url_new . $url, $post_data, [], [], 'postjson');
 
         return $this->checkResp($res, 'wupan');
     }
