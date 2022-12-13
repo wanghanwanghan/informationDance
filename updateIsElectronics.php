@@ -37,16 +37,19 @@ class updateIsElectronics extends AbstractProcess
 {
     protected function run($arg)
     {
-        // 459
         $list = AntAuthList::create()
-            ->where('id', 512)
+            ->where('belong', 41)
+            ->where('id', 828, '<=')
+            ->where('getDataSource', 2)
+            ->where('isElectronics', '%属%成功%', 'not like')
+            ->where('isElectronics', '%全电%', 'not like')
+            ->where('isElectronics', '%非一般%', 'not like')
+            ->where('isElectronics', '%平台密码%', 'not like')
             ->all();
 
         foreach ($list as $one) {
             $isElectronics = $one->getAttr('isElectronics');
-            if (
-                mb_strpos($isElectronics, '全电试点企业') === false
-            ) {
+            if (mb_strpos($isElectronics, '全电试点企业') === false) {
                 $info = (new JinCaiShuKeService())->S000502($one->getAttr('socialCredit'));
                 $one->update(['isElectronics' => $info['msg']]);
                 echo $one->getAttr('id') . '|' . $info['msg'] . PHP_EOL;
