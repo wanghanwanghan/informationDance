@@ -76,8 +76,9 @@ class BusinessOpportunityManageController extends ControllerBase
         $datas = ShangJi::findByConditionV2($conditions,$page);
         foreach ($datas['data'] as &$datum){
             $datum['show_fields'] = [];
-            $json = json_decode($datum['remark'],true) ;
-            $datum['show_fields'][] = $json;
+
+            $arr = explode("&%&%&%&%&%&",$datum['remark']) ;
+            $datum['show_fields'][] = $arr;
         }
         $total = $datas['total'];
         return $this->writeJson(200, [
@@ -166,12 +167,12 @@ class BusinessOpportunityManageController extends ControllerBase
         $requestData =  $this->getRequestData();
         $dataObj = ShangJi::findById($requestData['id']);
         $reamrk = $dataObj->remark;
-        $reamrkArr = json_decode($reamrk,true);
-        $reamrkArr[] = $requestData['remark'];
+        $reamrk .=  $requestData['remark']."&%&%&%&%&%&";
+
         ShangJi::updateById(
             $requestData['id'],
             [
-                'remark'=>json_encode($reamrkArr)
+                'remark'=>$reamrk
             ]
         );
         return $this->writeJson(200, [  ], [],'成功');
