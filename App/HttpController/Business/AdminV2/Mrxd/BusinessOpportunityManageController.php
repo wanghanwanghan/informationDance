@@ -74,6 +74,19 @@ class BusinessOpportunityManageController extends ControllerBase
 
         }
         $datas = ShangJi::findByConditionV2($conditions,$page);
+        $datas['data'] = [
+            [
+                'id'=>1,
+                'show_field1'=>[
+                    '商机名称'=>'测试公司',
+                    '商机阶段'=>'测试结算',
+                ],
+                'show_field2'=>[
+                    '商机名称'=>'测试公司',
+                    '商机阶段'=>'测试结算',
+                ],
+            ]
+        ];
         $total = $datas['total'];
         return $this->writeJson(200, [
             'page' => $page,
@@ -146,6 +159,18 @@ class BusinessOpportunityManageController extends ControllerBase
     }
 
     public function changeStage(){
+        $requestData =  $this->getRequestData();
+
+        return $this->writeJson(200, [  ], [],'成功');
+    }
+
+    public function setStage(){
+        $requestData =  $this->getRequestData();
+
+        return $this->writeJson(200, [  ], [],'成功');
+    }
+
+    public function setRemark(){
         $requestData =  $this->getRequestData();
 
         return $this->writeJson(200, [  ], [],'成功');
