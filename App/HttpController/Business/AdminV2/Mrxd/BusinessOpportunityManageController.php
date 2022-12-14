@@ -20,6 +20,7 @@ use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\MRXD\ShangJi;
 use App\HttpController\Models\MRXD\ShangJiFields;
+use App\HttpController\Models\MRXD\ShangJiStage;
 use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
@@ -96,6 +97,8 @@ class BusinessOpportunityManageController extends ControllerBase
             $datum['show_fields'] = [
                 $showDatas,$remarkArr
             ];
+
+            //商机阶段
 
 
 //            $datum['show_fields'] = [
@@ -214,7 +217,7 @@ class BusinessOpportunityManageController extends ControllerBase
     public function getStage(){
         $requestData =  $this->getRequestData();
 
-        $allFields = ShangJiFields::findAllByCondition([]);
+        $allFields = ShangJiStage::findAllByCondition([]);
         $datas = [];
         foreach ($allFields as $fieldItem){
             $datas[$fieldItem['field_name']] = [
