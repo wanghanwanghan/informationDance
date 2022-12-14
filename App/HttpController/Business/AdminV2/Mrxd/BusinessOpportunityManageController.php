@@ -79,7 +79,7 @@ class BusinessOpportunityManageController extends ControllerBase
             $arr = explode("&%&%&%&%&%&",$datum['remark']) ;
             $remarkArr = [];
             foreach ($arr as $key => $reamrkStr){
-                if(trim($reamrkStr)){
+                if(!trim($reamrkStr)){
                     continue;
                 }
                 $remarkArr['备注'.$key]= $reamrkStr;
