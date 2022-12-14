@@ -99,12 +99,24 @@ class BusinessOpportunityManageController extends ControllerBase
             ];
 
             //商机阶段
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'shang_ji_jie_duan'=>$datum['shang_ji_jie_duan']
+                ],JSON_UNESCAPED_UNICODE)
+            );
             if(trim($datum['shang_ji_jie_duan'])){
                 $jieduan = ShangJiStage::findByFieldName($datum['shang_ji_jie_duan']);
                 $datum['show_fields'][] = [
                     '商机阶段'=>$jieduan->field_cname
                 ];
-            } 
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '商机阶段'=>$jieduan->field_cname
+                    ],JSON_UNESCAPED_UNICODE)
+                );
+            }
 
 
 //            $datum['show_fields'] = [
