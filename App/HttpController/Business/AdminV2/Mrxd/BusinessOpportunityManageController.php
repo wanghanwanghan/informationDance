@@ -81,7 +81,7 @@ class BusinessOpportunityManageController extends ControllerBase
             //其他信息
             $showDatas = [];
             foreach ($showfields as $fieldsData){
-                $showDatas[$datum[$fieldsData['field_cname']]] = $datum[$fieldsData['field_name']];
+                $showDatas[$fieldsData['field_cname']] = $datum[$fieldsData['field_name']];
             }
 
             //备注信息
