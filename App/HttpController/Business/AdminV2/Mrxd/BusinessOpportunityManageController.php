@@ -96,6 +96,7 @@ class BusinessOpportunityManageController extends ControllerBase
                     '备注'.$key=>$reamrkStr
                 ];
             }
+            $datum['show_fields'] = [];
             $datum['show_fields'][] = $remarkArr;
         }
         $total = $datas['total'];
