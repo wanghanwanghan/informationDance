@@ -78,7 +78,9 @@ class BusinessOpportunityManageController extends ControllerBase
             $arr = explode("&%&%&%&%&%&",$datum['remark']) ;
             $remarkArr = [];
             foreach ($arr as $reamrkStr){
-                $remarkArr['备注']= $reamrkStr;
+                $remarkArr[]= [
+                    '备注'=>$reamrkStr
+                ];
             }
             $datum['show_fields'][] = $remarkArr;
         }
