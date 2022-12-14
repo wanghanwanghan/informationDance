@@ -79,26 +79,29 @@ class BusinessOpportunityManageController extends ControllerBase
             $arr = explode("&%&%&%&%&%&",$datum['remark']) ;
             $remarkArr = [];
             foreach ($arr as $key => $reamrkStr){
+                if(trim($reamrkStr)){
+                    continue;
+                }
                 $remarkArr['备注'.$key]= $reamrkStr;
             }
             $datum['show_fields'] = [
                 $remarkArr
             ];
 
-            $datum['show_fields'] = [
-                [
-                    '商机名称'=>'测试公司',
-                    '商机阶段'=>'测试结算',
-                ],
-                [
-                    '商机名称'=>'测试公司',
-                    '商机阶段'=>'测试结算',
-                ],
-                [
-                    '商机名称'=>'测试公司',
-                    '商机阶段'=>'测试结算',
-                ],
-            ];
+//            $datum['show_fields'] = [
+//                [
+//                    '商机名称'=>'测试公司',
+//                    '商机阶段'=>'测试结算',
+//                ],
+//                [
+//                    '商机名称'=>'测试公司',
+//                    '商机阶段'=>'测试结算',
+//                ],
+//                [
+//                    '商机名称'=>'测试公司',
+//                    '商机阶段'=>'测试结算',
+//                ],
+//            ];
         }
         $total = $datas['total'];
         return $this->writeJson(200, [
