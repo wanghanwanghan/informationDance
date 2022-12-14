@@ -240,6 +240,12 @@ class BusinessOpportunityManageController extends ControllerBase
     public function setStage(){
         $requestData =  $this->getRequestData();
 
+        ShangJi::updateById(
+            $requestData['id'],
+            [
+                'shang_ji_jie_duan'=>$requestData['stage']
+            ]
+        );
         return $this->writeJson(200, [  ], [],'成功');
     }
 
