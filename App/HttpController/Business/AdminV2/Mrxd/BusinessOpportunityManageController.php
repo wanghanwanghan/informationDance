@@ -94,9 +94,7 @@ class BusinessOpportunityManageController extends ControllerBase
                 }
                 $remarkArr['备注'.$key]= $reamrkStr;
             }
-            $datum['show_fields'] = [
-                $showDatas,$remarkArr
-            ];
+
 
             //商机阶段
             CommonService::getInstance()->log4PHP(
@@ -107,15 +105,22 @@ class BusinessOpportunityManageController extends ControllerBase
             );
             if(trim($datum['shang_ji_jie_duan'])){
                 $jieduan = ShangJiStage::findByFieldName($datum['shang_ji_jie_duan']);
-                $datum['show_fields'][] = [
-                    '商机阶段'=>$jieduan->field_cname
-                ];
+
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
                         '商机阶段'=>$jieduan->field_cname
                     ],JSON_UNESCAPED_UNICODE)
                 );
+                $datum['show_fields'] = [
+                    $showDatas,[
+                        '商机阶段'=>$jieduan->field_cname
+                    ],$remarkArr
+                ];
+            }else{
+                $datum['show_fields'] = [
+                    $showDatas,$remarkArr
+                ];
             }
 
 
