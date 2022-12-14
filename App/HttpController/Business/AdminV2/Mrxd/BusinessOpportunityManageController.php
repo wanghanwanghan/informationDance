@@ -104,10 +104,7 @@ class BusinessOpportunityManageController extends ControllerBase
                 $datum['show_fields'][] = [
                     '商机阶段'=>$jieduan->field_cname
                 ];
-            }
-
-
-
+            } 
 
 
 //            $datum['show_fields'] = [
