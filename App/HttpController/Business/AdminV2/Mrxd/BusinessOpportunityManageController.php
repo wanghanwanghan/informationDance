@@ -99,6 +99,15 @@ class BusinessOpportunityManageController extends ControllerBase
             ];
 
             //商机阶段
+            if(trim($datum['shang_ji_jie_duan'])){
+                $jieduan = ShangJiStage::findByFieldName($datum['shang_ji_jie_duan']);
+                $datum['show_fields'][] = [
+                    '商机阶段'=>$jieduan->field_cname
+                ];
+            }
+
+
+
 
 
 //            $datum['show_fields'] = [
