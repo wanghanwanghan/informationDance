@@ -74,8 +74,17 @@ class BusinessOpportunityManageController extends ControllerBase
 
         }
         $datas = ShangJi::findByConditionV2($conditions,$page);
+        $showfields = ShangJiFields::findAllByCondition([
+            'is_show'=>1
+        ]);
         foreach ($datas['data'] as &$datum){
+            //其他信息
+            $showDatas = [];
+            foreach ($showfields as $fieldsData){
+                $showDatas[$datum[$fieldsData['field_cname']]] = $datum[$fieldsData['field_name']];
+            }
 
+            //备注信息
             $arr = explode("&%&%&%&%&%&",$datum['remark']) ;
             $remarkArr = [];
             foreach ($arr as $key => $reamrkStr){
@@ -85,8 +94,9 @@ class BusinessOpportunityManageController extends ControllerBase
                 $remarkArr['备注'.$key]= $reamrkStr;
             }
             $datum['show_fields'] = [
-                $remarkArr
+                $showDatas,$remarkArr
             ];
+
 
 //            $datum['show_fields'] = [
 //                [
