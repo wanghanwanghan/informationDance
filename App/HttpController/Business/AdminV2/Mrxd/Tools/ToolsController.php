@@ -50,6 +50,7 @@ use App\HttpController\Service\Common\XlsWriter;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\LongXin\FinanceRange;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
 use App\HttpController\Service\Zip\ZipService;
 use Vtiful\Kernel\Format;
@@ -1469,6 +1470,21 @@ class ToolsController extends ControllerBase
 
         }
 
+        if($requestData['type'] == 136 ){
+            $response  = [];
+
+            $file = "/home/wwwroot/informationDance_test/Static/Temp/桃树.txt";
+            $handle = fopen($file, "r");
+            if ($handle) {
+                while (($line = fgets($handle)) !== false) {
+                    $response[]  =  trim($line);
+                }
+
+                fclose($handle);
+            }
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+        }
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -1525,6 +1541,7 @@ class ToolsController extends ControllerBase
             133 => '导出山西官网数据',
             134 => '解析top500_列表',
             135 => '解析top500_详情',
+            136 => '根据企业名字取套数接口',
         ],'成功');
     }
 
