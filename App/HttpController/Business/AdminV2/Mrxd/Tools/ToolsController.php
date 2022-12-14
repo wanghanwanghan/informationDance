@@ -1477,7 +1477,23 @@ class ToolsController extends ControllerBase
             $handle = fopen($file, "r");
             if ($handle) {
                 while (($line = fgets($handle)) !== false) {
-                    $response[]  =  trim($line);
+                    $entName = trim($line);
+                    $postData = [
+                        'entName' => $entName,
+                        'pageNo' => 1,
+                        'pageSize' => 100,
+                    ];
+
+                    $res = (new TaoShuService())->post($postData, __FUNCTION__);
+                    if ($res['code'] == 200 && !empty($res['result'])) {
+                        foreach ($res['result'] as &$one) {
+                            $one['CONRATIO'] = formatPercent($one['CONRATIO']);
+                        }
+                        unset($one);
+                    }
+                    $response[]  =  $entName;
+                    $response[]  =  $res;
+                    break;
                 }
 
                 fclose($handle);
