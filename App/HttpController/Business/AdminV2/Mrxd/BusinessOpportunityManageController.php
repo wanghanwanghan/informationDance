@@ -190,7 +190,51 @@ class BusinessOpportunityManageController extends ControllerBase
     public function changeStage(){
         $requestData =  $this->getRequestData();
 
-        return $this->writeJson(200, [  ], [],'成功');
+        //前端传过来的是
+        //{"text":"阶段1"}
+        //data[]:
+        //{"text":"阶段2"}
+
+        //取到所有配置的字段
+        $allSubmitFields = [];
+        foreach ($requestData['data'] as $datum){
+            $tmpArr = json_decode($datum,true);
+            $allSubmitFields[] = $tmpArr['text'];
+        }
+
+        //把字段转换为横杠分隔的英文字符
+        $fieldsToAdd = [];
+        foreach ($allSubmitFields as $field){
+            $length = strlen($field);
+            $wordNums = $length/3;
+            $newstr = "";
+            for ($i=0; $i<$wordNums; $i++){
+                $tmpStr  = mb_substr($field, $i, 1, 'utf-8');
+                $newstr  .= PinYinService::getPinyin($tmpStr)."_";
+            }
+            $newstr = substr($newstr, 0, -1);
+            $fieldsToAdd[$newstr] =  $field;
+        }
+
+        $allFields = ShangJiStage::findAllByCondition([]);
+        $existsFieldsInfo = array_column($allFields,"field_name");
+        foreach ($fieldsToAdd as $Field=>$FieldCname){
+            //存在的就不加了
+            if(
+                in_array($Field,$existsFieldsInfo)
+            ){
+                continue;
+            }
+
+            ShangJiStage::addRecordV2(
+                [
+                    'field_name' => $Field,
+                    'field_cname' => $FieldCname,
+                ]
+            );
+        }
+
+        return $this->writeJson(200, [  ], [$allFields],'成功');
     }
 
     public function setStage(){
