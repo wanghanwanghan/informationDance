@@ -75,11 +75,25 @@ class BusinessOpportunityManageController extends ControllerBase
         }
         $datas = ShangJi::findByConditionV2($conditions,$page);
         foreach ($datas['data'] as &$datum){
+//            'show_fields'=>[
+//                [
+//                    '商机名称'=>'测试公司',
+//                    '商机阶段'=>'测试结算',
+//                ],
+//                [
+//                    '商机名称'=>'测试公司',
+//                    '商机阶段'=>'测试结算',
+//                ],
+//                [
+//                    '商机名称'=>'测试公司',
+//                    '商机阶段'=>'测试结算',
+//                ],
+//            ],
             $arr = explode("&%&%&%&%&%&",$datum['remark']) ;
             $remarkArr = [];
-            foreach ($arr as $reamrkStr){
+            foreach ($arr as $key => $reamrkStr){
                 $remarkArr[]= [
-                    '备注'=>$reamrkStr
+                    '备注'.$key=>$reamrkStr
                 ];
             }
             $datum['show_fields'][] = $remarkArr;
