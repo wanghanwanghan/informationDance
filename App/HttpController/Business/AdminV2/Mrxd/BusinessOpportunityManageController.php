@@ -76,9 +76,11 @@ class BusinessOpportunityManageController extends ControllerBase
         $datas = ShangJi::findByConditionV2($conditions,$page);
         foreach ($datas['data'] as &$datum){
             $arr = explode("&%&%&%&%&%&",$datum['remark']) ;
-            $datum['show_fields'] = [
-                '备注'=>$arr
-            ];
+            $remarkArr = [];
+            foreach ($arr as $reamrkStr){
+                $remarkArr['备注']= $reamrkStr;
+            }
+            $datum['show_fields'][] = $remarkArr;
         }
         $total = $datas['total'];
         return $this->writeJson(200, [
