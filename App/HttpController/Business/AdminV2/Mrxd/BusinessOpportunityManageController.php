@@ -92,11 +92,11 @@ class BusinessOpportunityManageController extends ControllerBase
             $arr = explode("&%&%&%&%&%&",$datum['remark']) ;
             $remarkArr = [];
             foreach ($arr as $key => $reamrkStr){
-                $remarkArr[]= [
-                    '备注'.$key=>$reamrkStr
-                ];
+                $remarkArr['备注'.$key]= $reamrkStr;
             }
-            $datum['show_fields'] = [$remarkArr]; 
+            $datum['show_fields'] = [
+                $remarkArr
+            ];
         }
         $total = $datas['total'];
         return $this->writeJson(200, [
