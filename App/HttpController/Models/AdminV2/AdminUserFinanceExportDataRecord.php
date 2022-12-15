@@ -24,12 +24,12 @@ class AdminUserFinanceExportDataRecord extends ModelBase
 
 
     static  function  addRecordV2($dataItem){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'export data record addRecordV2    '=> 'start',
-                '$dataItem' =>$dataItem,
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'export data record addRecordV2    '=> 'start',
+//                '$dataItem' =>$dataItem,
+//            ])
+//        );
 
         $AdminUserFinanceExportRecord =  AdminUserFinanceExportDataRecord::findByBatch($dataItem['batch']);
         if(
