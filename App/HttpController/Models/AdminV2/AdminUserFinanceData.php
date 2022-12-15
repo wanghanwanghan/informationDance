@@ -245,14 +245,14 @@ class AdminUserFinanceData extends ModelBase
         // $adminFinanceDataId 上次拉取时间| 没超过一年 就不拉
         $financeData =  AdminUserFinanceData::findById($adminFinanceDataId)
             ->toArray();
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    '财务数据-判断到底从服务商取数据还是从数据库取数据',
-                    'params $adminFinanceDataId' => $adminFinanceDataId,
-                ],JSON_UNESCAPED_UNICODE
-            )
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode(
+//                [
+//                    '财务数据-判断到底从服务商取数据还是从数据库取数据',
+//                    'params $adminFinanceDataId' => $adminFinanceDataId,
+//                ],JSON_UNESCAPED_UNICODE
+//            )
+//        );
 
         // 从财务数据表取数据
         $realFinanceDataRes = NewFinanceData::findByEntAndYear(
