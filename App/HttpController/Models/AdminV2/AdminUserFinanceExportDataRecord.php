@@ -147,12 +147,6 @@ class AdminUserFinanceExportDataRecord extends ModelBase
     }
 
     public static function addExportRecord($requestData){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'export data record addExportRecord' => 'start',
-               '$requestData' =>$requestData,
-            ])
-        );
         try {
            $res =  AdminUserFinanceExportDataRecord::create()->data([
                 'user_id' => $requestData['user_id'], 
@@ -169,10 +163,8 @@ class AdminUserFinanceExportDataRecord extends ModelBase
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'export data record addExportRecord' => 'start',
-                    '$requestData' =>$requestData,
-                    'getMessage' => $e->getMessage(),
-                ])
+                    'AdminUserFinanceExportDataRecord入库失败' =>  $e->getMessage(),
+                ],JSON_UNESCAPED_UNICODE)
             );
         }  
 
