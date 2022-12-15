@@ -44,13 +44,13 @@ class AdminUserFinanceChargeInfo extends ModelBase
 
 
     public static function addRecord($requestData){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'finance charge info  addRecord' => 'start',
-                '$requestData' =>$requestData,
-
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'finance charge info  addRecord' => 'start',
+//                '$requestData' =>$requestData,
+//
+//            ])
+//        );
         try {
            $res =  AdminUserFinanceChargeInfo::create()->data([
                 'user_id' => $requestData['user_id'],
@@ -69,10 +69,8 @@ class AdminUserFinanceChargeInfo extends ModelBase
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'finance charge info  addRecord' => 'start',
-                    '$requestData' =>$requestData,
-                    $e->getMessage(),
-                ])
+                    'AdminUserFinanceChargeInfo入库异常' =>$e->getMessage(),
+                ],JSON_UNESCAPED_UNICODE)
             );
         }  
 
@@ -80,13 +78,13 @@ class AdminUserFinanceChargeInfo extends ModelBase
     }
 
     public static function addRecordV2($requestData){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'finance charge info  addRecordV2' => 'start',
-                '$requestData' =>$requestData,
-
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'finance charge info  addRecordV2' => 'start',
+//                '$requestData' =>$requestData,
+//
+//            ])
+//        );
         $res = self::findByBatch($requestData['batch']);
 
 
@@ -110,14 +108,14 @@ class AdminUserFinanceChargeInfo extends ModelBase
                 'batch' => $batch
             ])
             ->get();
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'finance charge info  findByBatch' => 'start',
-                '$batch' =>$batch,
-                '$res' =>$res,
-
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'finance charge info  findByBatch' => 'start',
+//                '$batch' =>$batch,
+//                '$res' =>$res,
+//
+//            ])
+//        );
         return $res;
     }
 
