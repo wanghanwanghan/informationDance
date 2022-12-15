@@ -8,6 +8,8 @@ use App\HttpController\Service\Common\CommonService;
 
 // use App\HttpController\Models\AdminRole;
 
+//  what  the fuc
+
 class AdminUserFinanceExportDataRecord extends ModelBase
 {
     protected $tableName = 'admin_user_finance_export_data_record';
@@ -66,13 +68,13 @@ class AdminUserFinanceExportDataRecord extends ModelBase
             'batch' => $batch,
             // 'status' => 1,
         ])->get();
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'export data record findByBatch    '=> 'start',
-                '$batch' =>$batch,
-                '$res' =>$res,
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'export data record findByBatch    '=> 'start',
+//                '$batch' =>$batch,
+//                '$res' =>$res,
+//            ])
+//        );
         return $res;
     }
 
