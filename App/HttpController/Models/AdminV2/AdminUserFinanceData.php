@@ -454,12 +454,12 @@ class AdminUserFinanceData extends ModelBase
                         entName = '".self::unicodeDecode($financeData['entName'])."' AND 
                         year in $needSetYears   
                     ";
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'changeNoNeedsConfirmToNeedsConfirm $sql' =>$sql
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'changeNoNeedsConfirmToNeedsConfirm $sql' =>$sql
+//            ])
+//        );
         return self::findBySql($sql);
 
     }
@@ -1048,11 +1048,11 @@ class AdminUserFinanceData extends ModelBase
     }
 
     public static function updateStatus($id,$status){
-        CommonService::getInstance()->log4PHP(
-           json_encode([
-               'updateStatus  ',$id,$status
-           ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//           json_encode([
+//               'updateStatus  ',$id,$status
+//           ])
+//        );
         $info = AdminUserFinanceData::create()
                     ->where('id',$id)
                     ->get(); 
@@ -1214,12 +1214,12 @@ class AdminUserFinanceData extends ModelBase
         return  true;
     }
     public static function findBySql($where){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'User Finance Data findBySql',
-                '$where' => $where
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'User Finance Data findBySql',
+//                '$where' => $where
+//            ])
+//        );
         $Sql = " select *  
                             from  
                         `admin_user_finance_data` 
