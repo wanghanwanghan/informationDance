@@ -833,7 +833,7 @@ class RunDealToolsFile extends AbstractCronTask
             if(
                 $InitData['type'] == 13
             ){
-                $tmpXlsxDatas = self::getYieldDataForZhiFuBao($InitData['upload_file_name']);
+                $tmpXlsxDatas = self::getYieldDataForZhiFuBao2($InitData['upload_file_name']);
                 $tmpXlsxHeaders = [];
             }
 
