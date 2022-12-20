@@ -4381,6 +4381,46 @@ class XinDongService extends ServiceBase
 
         return [];
     }
+    function matchContactNameByZhiFuBaoNameV2($entName, $zhiFuBao)
+    {
+
+        $staffsDatas =  (new TaoShuService())
+            ->setCheckRespFlag(true)
+            ->post([
+             'entName' => $entName,
+             'pageNo' => 1 . '',
+             'pageSize' => 100 . '',
+         ], 'getMainManagerInfo');
+        CommonService::getInstance()->log4PHP(
+           json_encode(
+               [
+                   '企业名'=>$entName,
+                   '支付宝'=>$zhiFuBao,
+                   '桃树返回结果'=>$staffsDatas,
+               ],
+               JSON_UNESCAPED_UNICODE
+           )
+        );
+
+        foreach ($staffsDatas['result'] as $staffsDataItem) {
+            $tmpName = trim($staffsDataItem['NAME']);
+            if (!$tmpName) {
+                continue;
+            };
+            $res = (new XinDongService())->matchNamesForZhiFuBao($tmpName, $zhiFuBao);
+            if ($res['res'] == '成功') {
+//                CommonService::getInstance()->log4PHP(
+//                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin
+//                );
+                return [
+                    'data' => $staffsDataItem,
+                    'match_res' => $res
+                ];
+            }
+        }
+
+        return [];
+    }
 
     function matchContactNameByWeiXinNameV3($entName, $WeiXin)
     {
