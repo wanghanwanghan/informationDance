@@ -4391,16 +4391,16 @@ class XinDongService extends ServiceBase
              'pageNo' => 1 . '',
              'pageSize' => 100 . '',
          ], 'getMainManagerInfo');
-        CommonService::getInstance()->log4PHP(
-           json_encode(
-               [
-                   '企业名'=>$entName,
-                   '支付宝'=>$zhiFuBao,
-                   '桃树返回结果'=>$staffsDatas,
-               ],
-               JSON_UNESCAPED_UNICODE
-           )
-        );
+//        CommonService::getInstance()->log4PHP(
+//           json_encode(
+//               [
+//                   '企业名'=>$entName,
+//                   '支付宝'=>$zhiFuBao,
+//                   '桃树返回结果'=>$staffsDatas,
+//               ],
+//               JSON_UNESCAPED_UNICODE
+//           )
+//        );
 
         foreach ($staffsDatas['result'] as $staffsDataItem) {
             $tmpName = trim($staffsDataItem['NAME']);
