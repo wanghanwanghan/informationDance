@@ -33,7 +33,7 @@ require_once './bootstrap.php';
 
 Core::getInstance()->initialize();
 
-class jincai_shoudong extends AbstractProcess
+class jincai_shoudong1 extends AbstractProcess
 {
     public $currentAesKey = 'rycn45bmdklhshfs';
     public $iv = '1234567890abcdef';
@@ -339,29 +339,13 @@ EOF;
 
     protected function run($arg)
     {
-//        $list = JinCaiTrace::create()->all();
-//
-//        foreach ($list as $key => $item) {
-//
-//            if ($key <= 42) continue;
-//
-//            $nsrsbh = $item->getAttr('socialCredit');
-//
-//            echo $key . '|' . $nsrsbh . '|' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
-//
-//            $this->sendToOSS($nsrsbh, '');
-//
-//        }
-//
-//        dd('over');
-
         $list = JinCaiTrace::create()->all();
 
         // 主票
         foreach ($list as $key => $item) {
-            if ($key % 2 === 0) continue;
+            if ($key % 2 === 1) continue;
             $nsrsbh = $item->getAttr('socialCredit');
-            if ($key <= 230) continue;
+            if ($key <= 388) continue;
 
             // 进项
             $maxId = 0;
@@ -712,7 +696,7 @@ for ($i = 1; $i--;) {
     $conf = new Config();
     $conf->setArg(['foo' => $i]);
     $conf->setEnableCoroutine(true);
-    $process = new jincai_shoudong($conf);
+    $process = new jincai_shoudong1($conf);
     $process->getProcess()->start();
 }
 

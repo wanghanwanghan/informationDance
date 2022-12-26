@@ -44,13 +44,13 @@ class CrontabService
         $this->deleteTimeoutOrder();
         $this->runSupervisor();
         $this->runMoveOut();
-//        $this->getAuthBook();
+        // $this->getAuthBook();
         $this->getAuthBookDZQ();
         $this->RunDianZiQianGetPdf();
         $this->getInvData();//123123123
-        $this->GetJinCaiTrace();//金财
-        $this->GetJinCaiRwh();//金财
-        $this->GetJinCaiDataThroughRwh();//金财
+        // $this->GetJinCaiTrace();//金财
+        // $this->GetJinCaiRwh();//金财
+        // $this->GetJinCaiDataThroughRwh();//金财
         $this->RunSaiMengHuiZhiCaiWu();
         $this->RunSouKeUploadFiles();
         $this->RunCompleteCompanyData();
