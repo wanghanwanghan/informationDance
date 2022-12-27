@@ -3359,6 +3359,8 @@ class XinDongController extends ProvideBase
     {
         $entName = $this->getRequestData('entName', '');
 
+        CommonService::getInstance()->log4PHP($entName, 'getBidInfo1');
+
         if (empty($entName)) {
             return $this->writeJson(201, null, null, '参数entName不可以都为空');
         }

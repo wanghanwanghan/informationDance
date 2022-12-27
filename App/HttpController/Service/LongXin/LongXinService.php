@@ -207,7 +207,7 @@ class LongXinService extends ServiceBase
             ->useCache(false)
             ->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
 
-        CommonService::getInstance()->log4PHP($res);
+        CommonService::getInstance()->log4PHP($res, 'getBidInfo3');
 
         $this->recodeSourceCurl([
             'sourceName' => $this->sourceName,
@@ -588,6 +588,8 @@ class LongXinService extends ServiceBase
             $postData['entName'];
 
         $entId = $this->getEntid($cond);
+
+        CommonService::getInstance()->log4PHP($entId, 'getBidInfo2');
 
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
 
