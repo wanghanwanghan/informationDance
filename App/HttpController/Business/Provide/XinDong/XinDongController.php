@@ -3,7 +3,6 @@
 namespace App\HttpController\Business\Provide\XinDong;
 
 use App\Csp\Service\CspService;
-use App\HttpController\Business\Provide\JingZhun\JingZhunController;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Models\Api\NeoCrmPendingEnt;
 use App\HttpController\Models\EntDb\EntDbEnt;
@@ -13,11 +12,8 @@ use App\HttpController\Models\Provide\RequestRecode;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
-use App\HttpController\Models\RDS3\HdSaicExtension\AggreListedH;
-use App\HttpController\Models\RDS3\HdSaicExtension\AqsiqAnccH;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
-use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\Export\Report\Word\ReportWordService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\JingZhun\JingZhunService;
@@ -27,13 +23,9 @@ use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\MaYi\MaYiService;
 use App\HttpController\Service\Sms\SmsService;
 use App\HttpController\Service\TaoShu\TaoShuService;
-use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
 use Carbon\Carbon;
-use EasySwoole\Redis\Redis;
 use wanghanwanghan\someUtils\control;
-use EasySwoole\Component\Csp;
-use wanghanwanghan\someUtils\moudles\resp\create;
 
 class XinDongController extends ProvideBase
 {
