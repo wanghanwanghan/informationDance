@@ -339,14 +339,14 @@ class BusinessOpportunityManageController extends ControllerBase
         $requestData =  $this->getRequestData();
         return $this->writeJson(200, [  ], [
             [
-                'communicate_type' => '沟通方式1',
-                'communicate_subject' => '沟通主题1',
-                'communicate_remark' => '备注1',
+                'time' => '2022-12-12 23:22:22',
+                'subject' => '沟通主题1',
+                'details' => '备注1',
             ],
             [
-                'communicate_type' => '沟通方式2',
-                'communicate_subject' => '沟通主题2',
-                'communicate_remark' => '备注2',
+                'time' => '2022-12-12 23:22:22',
+                'subject' => '沟通主题1',
+                'details' => '备注1',
             ],
         ],'成功');
     }
