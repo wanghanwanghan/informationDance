@@ -158,6 +158,7 @@ class jincai_shoudong extends AbstractProcess
                     OPENSSL_RAW_DATA,
                     $this->iv
                 ));
+                echo "put 中 {$filename}" . PHP_EOL;
                 file_put_contents($store . $filename, $content . PHP_EOL);
             }
         }
@@ -339,21 +340,23 @@ EOF;
 
     protected function run($arg)
     {
-//        $list = JinCaiTrace::create()->all();
-//
-//        foreach ($list as $key => $item) {
-//
-//            if ($key <= 42) continue;
-//
-//            $nsrsbh = $item->getAttr('socialCredit');
-//
-//            echo $key . '|' . $nsrsbh . '|' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
-//
-//            $this->sendToOSS($nsrsbh, '');
-//
-//        }
-//
-//        dd('over');
+        $list = JinCaiTrace::create()->all();
+
+        foreach ($list as $key => $item) {
+
+            if ($key <= 42) continue;
+
+            if ($key % 2 === 0) continue;
+
+            $nsrsbh = $item->getAttr('socialCredit');
+
+            echo $key . '|' . $nsrsbh . '|' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
+
+            $this->sendToOSS($nsrsbh, '');
+
+        }
+
+        dd('over');
 
         $list = JinCaiTrace::create()->all();
 
@@ -361,7 +364,7 @@ EOF;
         foreach ($list as $key => $item) {
             if ($key % 2 === 0) continue;
             $nsrsbh = $item->getAttr('socialCredit');
-            if ($key <= 230) continue;
+            if ($key < 347) continue;
 
             // 进项
             $maxId = 0;

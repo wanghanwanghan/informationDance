@@ -158,6 +158,7 @@ class jincai_shoudong1 extends AbstractProcess
                     OPENSSL_RAW_DATA,
                     $this->iv
                 ));
+                echo "put 中 {$filename}" . PHP_EOL;
                 file_put_contents($store . $filename, $content . PHP_EOL);
             }
         }
@@ -339,6 +340,24 @@ EOF;
 
     protected function run($arg)
     {
+        $list = JinCaiTrace::create()->all();
+
+        foreach ($list as $key => $item) {
+
+            if ($key <= 86) continue;
+
+            if ($key % 2 === 1) continue;
+
+            $nsrsbh = $item->getAttr('socialCredit');
+
+            echo $key . '|' . $nsrsbh . '|' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
+
+            $this->sendToOSS($nsrsbh, '');
+
+        }
+
+        dd('over');
+
         $list = JinCaiTrace::create()->all();
 
         // 主票
