@@ -322,10 +322,18 @@ class BusinessOpportunityManageController extends ControllerBase
         $requestData =  $this->getRequestData();
         return $this->writeJson(200, [  ],
             [
-                'name'=>'联系人名称',
-                'contact_type'=>'联系人类型',
-                'contact'=>'联系方式',
-                'reamrk'=>'备注',
+                [
+                    'name'=>'联系人名称1',
+                    'contact_type'=>'联系人类型1',
+                    'contact'=>'联系方式1',
+                    'reamrk'=>'备注1',
+                ],
+                [
+                    'name'=>'联系人名称',
+                    'contact_type'=>'联系人类型',
+                    'contact'=>'联系方式',
+                    'reamrk'=>'备注',
+                ]
             ]
             ,'成功');
     }
