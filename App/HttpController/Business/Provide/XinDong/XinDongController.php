@@ -58,7 +58,7 @@ class XinDongController extends ProvideBase
         } else {
             $this->responseCode = $res[$this->cspKey]['code'];
             $this->responsePaging = $res[$this->cspKey]['paging'];
-            $this->responseData = $res[$this->cspKey]['result']??$res[$this->cspKey]['data'];
+            $this->responseData = $res[$this->cspKey]['result'] ?? $res[$this->cspKey]['data'];
             $this->responseMsg = $res[$this->cspKey]['msg'];
 
             $res[$this->cspKey]['code'] === 200 ?: $this->spendMoney = 0;
@@ -3307,7 +3307,7 @@ class XinDongController extends ProvideBase
     {
         $entName = $this->getRequestData('entName', '');
 
-        if (empty($entName) ) {
+        if (empty($entName)) {
             return $this->writeJson(201, null, null, '参数entName不可以都为空');
         }
         $this->csp->add($this->cspKey, function () use ($entName) {
@@ -3318,15 +3318,16 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //鲸准 公司融资事件
     function enterpriseList(): bool
     {
         $entName = $this->getRequestData('entName', '');
 
-        if (empty($entName) ) {
+        if (empty($entName)) {
             return $this->writeJson(201, null, null, '参数entName不可以都为空');
         }
-        dingAlarm('鲸准 公司融资事件',['$entName'=>$entName]);
+        dingAlarm('鲸准 公司融资事件', ['$entName' => $entName]);
         $this->csp->add($this->cspKey, function () use ($entName) {
             return (new JingZhunService())
                 ->setCheckRespFlag(true)
@@ -3335,12 +3336,13 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //鲸准 企业搜索
     function searchComs(): bool
     {
         $entName = $this->getRequestData('entName', '');
 
-        if (empty($entName) ) {
+        if (empty($entName)) {
             return $this->writeJson(201, null, null, '参数entName不可以都为空');
         }
         $this->csp->add($this->cspKey, function () use ($entName) {
@@ -3351,4 +3353,26 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
+    //招投标
+    function getBidInfo(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, '参数entName不可以都为空');
+        }
+
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getBidInfo(['entName' => $entName, 'node' => 'G1']);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+
 }
