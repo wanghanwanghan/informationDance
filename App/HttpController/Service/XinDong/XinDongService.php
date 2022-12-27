@@ -48,6 +48,7 @@ use App\HttpController\Models\RDS3\HdSaicExtension\AggreListedH;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggrePicsH;
 use App\HttpController\Models\RDS3\HdSaicExtension\AqsiqAnccH;
+use App\HttpController\Models\RDS3\HdSaicExtension\ArLabel2021;
 use App\HttpController\Models\RDS3\HdSaicExtension\CncaRzGltxH;
 use App\HttpController\Models\RDS3\HdSaicExtension\WindData;
 use App\HttpController\Service\Common\CommonService;
