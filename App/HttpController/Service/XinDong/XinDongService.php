@@ -1097,9 +1097,10 @@ class XinDongService extends ServiceBase
         ];
     }
 
-    //2020年营收规模
+    //2020年营收规模XXXXXXXXXXXXXXXXXX
     function getVendincScale(?string $code, int $year = 2020): ?string
     {
+        return $this->getVendincScaleV2($code,$year);
         if (empty($code)) return '';
 
         if (substr($code, 0, 1) === '9') {
@@ -1111,6 +1112,21 @@ class XinDongService extends ServiceBase
         $scale = VendincScale2020Model::create()->where($where)->get();
 
         return empty($scale) ? '' : $scale->getAttr('label');
+    }
+
+    function getVendincScaleV2(?string $code, int $year = 2020): ?string
+    {
+        if (empty($code)) return '';
+
+        if (substr($code, 0, 1) === '9') {
+            $where = ['UNISCID' => $code];
+        } else {
+            $where = ['ENTNAME' => $code];
+        }
+
+        $scale = ArLabel2021::create()->where($where)->get();
+
+        return empty($scale) ? '' : $scale->getAttr('vendinc');
     }
 
     //2020年营收规模标签转换
