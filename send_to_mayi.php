@@ -29,18 +29,14 @@ class send_to_mayi extends AbstractProcess
 {
     protected function run($arg)
     {
-        $reportNum = 'wanghan123';
+        //$res = \App\HttpController\Service\ShuMeng\ShuMengService::getInstance()->getBidsResult_c('北京佑安医院', 1);
 
-        $tmp = new TemplateProcessor(REPORT_MODEL_PATH . 'br_test.docx');
+        $res = (new \App\HttpController\Service\LongXin\LongXinService())->getBidInfo([
+            'entName' => '北京佑安医院',
+            'node' => 'G1',
+        ]);
 
-        $path = '<w:br/>' . '1.wanghan';
-        $path .= '<w:br/>' . '2.hanwang';
-        $path .= '<w:br/>' . '3.duanran';
-        $path .= '<w:br/>' . '4.randuan';
-
-        $tmp->setValue('entName', $path);
-
-        $tmp->saveAs(REPORT_PATH . $reportNum . '.docx');
+        dd($res);
     }
 
     protected function onShutDown()
