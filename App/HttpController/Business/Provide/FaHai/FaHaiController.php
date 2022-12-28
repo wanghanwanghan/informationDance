@@ -742,7 +742,7 @@ class FaHaiController extends ProvideBase
             return  (new FaYanYuanService())
                     //->setCheckRespFlag(false)
                     ->setCheckRespFlag(true)
-                    ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+                    ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . $postData['doc_type'], $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         CommonService::writeTestLog(json_encode([
@@ -796,7 +796,7 @@ class FaHaiController extends ProvideBase
             return  (new FaYanYuanService())
                 //->setCheckRespFlag(false)
                 ->setCheckRespFlag(true)
-                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . $postData['doc_type'], $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         CommonService::writeTestLog(json_encode([
@@ -848,7 +848,7 @@ class FaHaiController extends ProvideBase
             return  (new FaYanYuanService())
                 //->setCheckRespFlag(false)
                 ->setCheckRespFlag(true)
-                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') .$postData['doc_type'], $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         CommonService::writeTestLog(json_encode([
@@ -900,7 +900,7 @@ class FaHaiController extends ProvideBase
             return  (new FaYanYuanService())
                 //->setCheckRespFlag(false)
                 ->setCheckRespFlag(true)
-                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . $postData['doc_type'], $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         CommonService::writeTestLog(json_encode([
@@ -952,7 +952,7 @@ class FaHaiController extends ProvideBase
             return  (new FaYanYuanService())
                 //->setCheckRespFlag(false)
                 ->setCheckRespFlag(true)
-                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . $postData['doc_type'], $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         CommonService::writeTestLog(json_encode([
@@ -1003,7 +1003,7 @@ class FaHaiController extends ProvideBase
             return  (new FaYanYuanService())
                 //->setCheckRespFlag(false)
                 ->setCheckRespFlag(true)
-                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . $postData['doc_type'], $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -1050,7 +1050,7 @@ class FaHaiController extends ProvideBase
             return  (new FaYanYuanService())
                 //->setCheckRespFlag(false)
                 ->setCheckRespFlag(true)
-                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . $postData['doc_type'], $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -1097,7 +1097,7 @@ class FaHaiController extends ProvideBase
             return  (new FaYanYuanService())
                 //->setCheckRespFlag(false)
                 ->setCheckRespFlag(true)
-                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . $postData['doc_type'], $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -1144,7 +1144,7 @@ class FaHaiController extends ProvideBase
             return  (new FaYanYuanService())
                 //->setCheckRespFlag(false)
                 ->setCheckRespFlag(true)
-                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') .$postData['doc_type'], $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -1191,7 +1191,7 @@ class FaHaiController extends ProvideBase
             return  (new FaYanYuanService())
                 //->setCheckRespFlag(false)
                 ->setCheckRespFlag(true)
-                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . $postData['doc_type'], $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -1239,7 +1239,7 @@ class FaHaiController extends ProvideBase
             return  (new FaYanYuanService())
                 //->setCheckRespFlag(false)
                 ->setCheckRespFlag(true)
-                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . $postData['doc_type'], $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -1304,7 +1304,7 @@ class FaHaiController extends ProvideBase
             return  (new FaYanYuanService())
                 //->setCheckRespFlag(false)
                 ->setCheckRespFlag(true)
-                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'pbc', $postData);
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . $postData['doc_type'], $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
