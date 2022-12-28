@@ -344,7 +344,7 @@ EOF;
 
         foreach ($list as $key => $item) {
 
-            if ($key <= 184) continue;
+            if ($key < 224) continue;
 
             if ($key % 2 === 1) continue;
 
