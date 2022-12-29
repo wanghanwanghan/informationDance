@@ -130,7 +130,7 @@ class jincai_shoudong extends AbstractProcess
                     ])->limit($offset, $dataInFile)->all();
                 //没有数据了
                 if (empty($list)) break;
-                foreach ($list as $oneInv) {
+                foreach ($list as $key => $oneInv) {
                     //每张添加明细
                     $detail = EntInvoiceDetail::create()
                         ->addSuffix($oneInv->getAttr('fpdm'), $oneInv->getAttr('fphm'), 'test')
@@ -148,6 +148,7 @@ class jincai_shoudong extends AbstractProcess
                             'ggxh',//
                         ])->all();
                     empty($detail) ? $oneInv->fpxxMxs = null : $oneInv->fpxxMxs = $detail;
+                    echo $NSRSBH . '的' . '第' . $key . '张详情' . PHP_EOL;
                 }
                 $content = jsonEncode($list, false);
                 //AES-128-CTR
@@ -214,7 +215,7 @@ class jincai_shoudong extends AbstractProcess
         ];
 
         $list = JinCaiTrace::create()->where('socialCredit', [
-            '91320594711533671W', '913302121445201877'
+            '9132020579537200XR', '91350800MA2Y53LK4G', '913205095754058428'
         ], 'IN')->all();
 
         foreach ($list as $oneReadyToSend) {
@@ -346,9 +347,8 @@ EOF;
 
         dd('over');
 
-
         $list = JinCaiTrace::create()->where('socialCredit', [
-            '91320594711533671W', '913302121445201877'
+            '9132020579537200XR', '91350800MA2Y53LK4G', '913205095754058428'
         ], 'IN')->all();
 
         foreach ($list as $key => $item) {
