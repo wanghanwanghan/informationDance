@@ -3351,5 +3351,41 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+    //招投标
+    function getBidInfo(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
 
+        CommonService::getInstance()->log4PHP($entName, 'getBidInfo1');
+
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, '参数entName不可以都为空');
+        }
+
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getBidInfo(['entName' => $entName, 'node' => 'G1']);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+    //二次特征分数
+    function getFeatures()
+    {
+        $entName = $this->getRequestData('entName', '');
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, '参数entName不可以都为空');
+        }
+
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getFeatures($entName);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
 }
