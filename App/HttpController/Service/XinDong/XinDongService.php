@@ -897,7 +897,10 @@ class XinDongService extends ServiceBase
     {
         //查看经营范围
         $companyBasic = CompanyBasic::create()->where("ENTNAME = '".$entName."'")->get();
-        $OPSCOPE = $companyBasic->getAttr('OPSCOPE');
+        $OPSCOPE = '';
+        if(!empty($companyBasic)){
+            $OPSCOPE = $companyBasic->getAttr('OPSCOPE');
+        }
         if(empty($companyBasic) || empty($OPSCOPE)){
             $postData = ['entName' => $entName];
             $OPSCOPE = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getRegisterInfo');
