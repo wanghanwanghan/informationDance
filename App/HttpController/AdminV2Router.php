@@ -277,6 +277,19 @@ class AdminV2Router
         $prefix = '/Business/AdminV2/Mrxd/BusinessOpportunityManageController/';
         $routeCollector->addGroup('/businessopportunitymamage', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getLists', $prefix . 'getLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/getFields', $prefix . 'getFields');
+            $routeCollector->addRoute(['GET', 'POST'], '/changeFields', $prefix . 'changeFields');
+            $routeCollector->addRoute(['GET', 'POST'], '/changeStage', $prefix . 'changeStage');
+            $routeCollector->addRoute(['GET', 'POST'], '/setStage', $prefix . 'setStage');
+            $routeCollector->addRoute(['GET', 'POST'], '/setReamrk', $prefix . 'setReamrk');
+            $routeCollector->addRoute(['GET', 'POST'], '/getStage', $prefix . 'getStage');
+            $routeCollector->addRoute(['GET', 'POST'], '/addOne', $prefix . 'addOne');
+            $routeCollector->addRoute(['GET', 'POST'], '/getBasicData', $prefix . 'getBasicData');
+            $routeCollector->addRoute(['GET', 'POST'], '/changeBasicData', $prefix . 'changeBasicData');
+            $routeCollector->addRoute(['GET', 'POST'], '/getContactData', $prefix . 'getContactData');
+            $routeCollector->addRoute(['GET', 'POST'], '/setContactData', $prefix . 'setContactData');
+            $routeCollector->addRoute(['GET', 'POST'], '/getcommunicationrecord', $prefix . 'getcommunicationrecord');
+            $routeCollector->addRoute(['GET', 'POST'], '/addcommunicationrecord', $prefix . 'addcommunicationrecord');
         });
 
         return true;
@@ -290,7 +303,9 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/redownloadBussinessFile', $prefix . 'redownloadBussinessFile');
             $routeCollector->addRoute(['GET', 'POST'], '/bussinessFilesList', $prefix . 'bussinessFilesList');
             $routeCollector->addRoute(['GET', 'POST'], '/uploadWeiXinFile', $prefix . 'uploadWeiXinFile');
+            $routeCollector->addRoute(['GET', 'POST'], '/uploadZhiFuBaoFile', $prefix . 'uploadZhiFuBaoFile');
             $routeCollector->addRoute(['GET', 'POST'], '/WeiXinFilesList', $prefix . 'WeiXinFilesList');
+            $routeCollector->addRoute(['GET', 'POST'], '/ZhiFuBaoFilesList', $prefix . 'ZhiFuBaoFilesList');
         });
 
         return true;

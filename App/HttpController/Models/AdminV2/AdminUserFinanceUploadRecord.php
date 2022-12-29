@@ -366,13 +366,16 @@ class AdminUserFinanceUploadRecord extends ModelBase
 
     static function  resetArray($rawArray,$allowedField){
         $returnArr = [];
-        foreach ($rawArray as $field => $value){
-            if(
-                in_array($field,$allowedField)
-            ){
-                $returnArr[$field] = $value;
-            }
+        foreach ($allowedField as $field ){
+            $returnArr[$field] = $rawArray[$field];
         }
+//        foreach ($rawArray as $field => $value){
+//            if(
+//                in_array($field,$allowedField)
+//            ){
+//                $returnArr[$field] = $value;
+//            }
+//        }
         return $returnArr;
     }
 

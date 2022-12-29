@@ -277,6 +277,12 @@ class NewFinanceData extends ModelBase
         return $res;
     }
 
+
+    /**
+    'ASSGRO' => '资产总额',
+    'LIAGRO' => '负债总额',
+    'DEBTL' => '资产负债率',
+     */
     static function getFieldCname($getALl = true){
         $rawArr = [
             'ASSGRO' => '资产总额',

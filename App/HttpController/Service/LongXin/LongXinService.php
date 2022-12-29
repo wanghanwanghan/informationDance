@@ -192,6 +192,40 @@ class LongXinService extends ServiceBase
         return $tmp;
     }
 
+    //招投标
+    private function getBID($entId, $node)
+    {
+        $arr = [
+            'entid' => $entId,
+            'version' => $node !== 'G1' ? 'G1-2' : $node,
+            'usercode' => $this->usercode
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
+
+        CommonService::getInstance()->log4PHP($res, 'getBidInfo3');
+
+        $this->recodeSourceCurl([
+            'sourceName' => $this->sourceName,
+            'apiName' => last(explode('/', trim($this->baseUrl . 'company_detail/', '/'))),
+            'requestUrl' => trim(trim($this->baseUrl . 'company_detail/'), '/'),
+            'requestData' => $arr,
+            'responseData' => $res,
+        ], true);
+
+        if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
+            $tmp = $res['data'];
+        } else {
+            $tmp = null;
+        }
+
+        return $tmp;
+    }
+
     //企业详情
     function getEntDetail($postData)
     {
@@ -544,6 +578,24 @@ class LongXinService extends ServiceBase
         $readyReturn = ['F' => $res, 'S' => $social];
 
         return $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $readyReturn]);
+    }
+
+    //招投标
+    function getBidInfo($postData): array
+    {
+        $cond = !empty($postData['code']) && strlen(trim($postData['code'])) > 15 ?
+            trim($postData['code']) :
+            $postData['entName'];
+
+        $entId = $this->getEntid($cond);
+
+        CommonService::getInstance()->log4PHP($entId, 'getBidInfo2');
+
+        if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
+
+        $bid = $this->getBID($entId, trim($postData['node']));
+
+        return $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $bid]);
     }
 
     function formatFinanceReturnData($data)

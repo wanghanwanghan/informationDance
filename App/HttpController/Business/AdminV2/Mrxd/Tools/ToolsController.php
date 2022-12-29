@@ -50,6 +50,7 @@ use App\HttpController\Service\Common\XlsWriter;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\LongXin\FinanceRange;
 use App\HttpController\Service\LongXin\LongXinService;
+use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\XinDongService;
 use App\HttpController\Service\Zip\ZipService;
 use Vtiful\Kernel\Format;
@@ -80,8 +81,12 @@ class ToolsController extends ControllerBase
                 'path' => '/Static/Template/模糊匹配企业名称模板.xlsx',
             ],
             [
-                'name' => '补全联系人姓名职位等信息[主要基于微信名和联系人库]',
+                'name' => '根据微信名补全联系人姓名职位等信息',
                 'path' => '/Static/Template/补全联系人姓名职位等信息[主要基于微信名和联系人库].xlsx',
+            ],
+            [
+                'name' => '根据支付宝名补全联系人姓名职位等信息',
+                'path' => '/Static/Template/根据支付宝名匹配联系人名称.xlsx',
             ],
             [
                 'name' => '将表格根据手机号拆分成多行',
@@ -99,12 +104,13 @@ class ToolsController extends ControllerBase
 
         return $this->writeJson(200, [], [
                 5   =>  '补全企业联系人信息(并检测手机状态)',
-                10  =>  '补全联系人姓名职位等信息(主要基于微信名和联系人库)',
+                10  =>  '根据微信名补全联系人姓名职位等信息',
+                12  =>  '根据支付宝名补全联系人姓名职位等信息',
+                13  =>  '根据支付宝名补全桃树对应得联系人姓名职位等信息',
                 15  =>  '模糊匹配企业名称',
                 20  =>  '将表格根据手机号拆分成多行',
-                25  =>  '补全企业字段',
+                //25  =>  '补全企业字段',
                 30  =>  '剔除代理记账并去空号',
-
         ],'');
     }
 
@@ -1465,6 +1471,37 @@ class ToolsController extends ControllerBase
 
         }
 
+        if($requestData['type'] == 136 ){
+            $response  = [];
+
+            $file = "/home/wwwroot/informationDance_test/Static/Temp/桃树.txt";
+            $handle = fopen($file, "r");
+            if ($handle) {
+                while (($line = fgets($handle)) !== false) {
+                    $entName = trim($line);
+                    $postData = [
+                        'entName' => $entName,
+                        'pageNo' => 1,
+                        'pageSize' => 100,
+                    ];
+
+                    $res = (new TaoShuService())->post($postData, __FUNCTION__);
+                    if ($res['code'] == 200 && !empty($res['result'])) {
+                        foreach ($res['result'] as &$one) {
+                            $one['CONRATIO'] = formatPercent($one['CONRATIO']);
+                        }
+                        unset($one);
+                    }
+                    $response[]  =  $entName;
+                    $response[]  =  $res;
+                    break;
+                }
+
+                fclose($handle);
+            }
+            $response[] = "http://api.test.meirixindong.com/Static/OtherFile/".$fileName;
+        }
+
         return $this->writeJson(200, [], [
             [
                 'params'=> json_encode([
@@ -1521,6 +1558,7 @@ class ToolsController extends ControllerBase
             133 => '导出山西官网数据',
             134 => '解析top500_列表',
             135 => '解析top500_详情',
+            136 => '根据企业名字取套数接口',
         ],'成功');
     }
 

@@ -48,6 +48,7 @@ use App\HttpController\Models\RDS3\HdSaicExtension\AggreListedH;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Models\RDS3\HdSaicExtension\AggrePicsH;
 use App\HttpController\Models\RDS3\HdSaicExtension\AqsiqAnccH;
+use App\HttpController\Models\RDS3\HdSaicExtension\ArLabel2021;
 use App\HttpController\Models\RDS3\HdSaicExtension\CncaRzGltxH;
 use App\HttpController\Models\RDS3\HdSaicExtension\WindData;
 use App\HttpController\Service\Common\CommonService;
@@ -1097,9 +1098,10 @@ class XinDongService extends ServiceBase
         ];
     }
 
-    //2020年营收规模
+    //2020年营收规模XXXXXXXXXXXXXXXXXX
     function getVendincScale(?string $code, int $year = 2020): ?string
     {
+        return $this->getVendincScaleV2($code,$year);
         if (empty($code)) return '';
 
         if (substr($code, 0, 1) === '9') {
@@ -1111,6 +1113,21 @@ class XinDongService extends ServiceBase
         $scale = VendincScale2020Model::create()->where($where)->get();
 
         return empty($scale) ? '' : $scale->getAttr('label');
+    }
+
+    function getVendincScaleV2(?string $code, int $year = 2020): ?string
+    {
+        if (empty($code)) return '';
+
+        if (substr($code, 0, 1) === '9') {
+            $where = ['UNISCID' => $code];
+        } else {
+            $where = ['ENTNAME' => $code];
+        }
+
+        $scale = ArLabel2021::create()->where($where)->get();
+
+        return empty($scale) ? '' : $scale->getAttr('vendinc');
     }
 
     //2020年营收规模标签转换
@@ -4138,6 +4155,31 @@ class XinDongService extends ServiceBase
 
     }
 
+    // $tobeMatch 姓名   $target：支付宝
+    function matchNamesForZhiFuBao($tobeMatch, $target)
+    {
+
+        //包含匹配  张三0808    张三
+        $res = $this->matchNamesByContain($tobeMatch, $target);
+
+        if ($res) {
+            return [
+                'type' => '近似匹配',
+                'details' => '中文包含匹配',
+                'res' => '成功',
+                'percentage' => '',
+            ];
+        }
+
+        return [
+            'type' => '',
+            'details' => '',
+            'res' => '失败',
+            'percentage' => 0,
+        ];
+
+    }
+
     function checkIfArrayEqual($array1, $array2)
     {
 
@@ -4315,6 +4357,74 @@ class XinDongService extends ServiceBase
                 continue;
             };
             $res = (new XinDongService())->matchNamesV2($tmpName, $WeiXin);
+            if ($res['res'] == '成功') {
+//                CommonService::getInstance()->log4PHP(
+//                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin
+//                );
+                return [
+                    'data' => $staffsDataItem,
+                    'match_res' => $res
+                ];
+            }
+        }
+
+        return [];
+    }
+    function matchContactNameByZhiFuBaoName($entName, $zhiFuBao)
+    {
+
+        //获取所有联系人
+        $staffsDatas = LongXinService::getLianXiByNameV2($entName);
+        if (empty($staffsDatas)) {
+            return [];
+        }
+
+        foreach ($staffsDatas as $staffsDataItem) {
+            $tmpName = trim($staffsDataItem['NAME']);
+            if (!$tmpName) {
+                continue;
+            };
+            $res = (new XinDongService())->matchNamesForZhiFuBao($tmpName, $zhiFuBao);
+            if ($res['res'] == '成功') {
+//                CommonService::getInstance()->log4PHP(
+//                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin
+//                );
+                return [
+                    'data' => $staffsDataItem,
+                    'match_res' => $res
+                ];
+            }
+        }
+
+        return [];
+    }
+    function matchContactNameByZhiFuBaoNameV2($entName, $zhiFuBao)
+    {
+
+        $staffsDatas =  (new TaoShuService())
+            ->setCheckRespFlag(true)
+            ->post([
+             'entName' => $entName,
+             'pageNo' => 1 . '',
+             'pageSize' => 100 . '',
+         ], 'getMainManagerInfo');
+//        CommonService::getInstance()->log4PHP(
+//           json_encode(
+//               [
+//                   '企业名'=>$entName,
+//                   '支付宝'=>$zhiFuBao,
+//                   '桃树返回结果'=>$staffsDatas,
+//               ],
+//               JSON_UNESCAPED_UNICODE
+//           )
+//        );
+
+        foreach ($staffsDatas['result'] as $staffsDataItem) {
+            $tmpName = trim($staffsDataItem['NAME']);
+            if (!$tmpName) {
+                continue;
+            };
+            $res = (new XinDongService())->matchNamesForZhiFuBao($tmpName, $zhiFuBao);
             if ($res['res'] == '成功') {
 //                CommonService::getInstance()->log4PHP(
 //                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin

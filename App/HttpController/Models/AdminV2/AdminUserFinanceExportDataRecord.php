@@ -8,6 +8,8 @@ use App\HttpController\Service\Common\CommonService;
 
 // use App\HttpController\Models\AdminRole;
 
+//  what  the fuc
+
 class AdminUserFinanceExportDataRecord extends ModelBase
 {
     protected $tableName = 'admin_user_finance_export_data_record';
@@ -22,12 +24,12 @@ class AdminUserFinanceExportDataRecord extends ModelBase
 
 
     static  function  addRecordV2($dataItem){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'export data record addRecordV2    '=> 'start',
-                '$dataItem' =>$dataItem,
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'export data record addRecordV2    '=> 'start',
+//                '$dataItem' =>$dataItem,
+//            ])
+//        );
 
         $AdminUserFinanceExportRecord =  AdminUserFinanceExportDataRecord::findByBatch($dataItem['batch']);
         if(
@@ -66,13 +68,13 @@ class AdminUserFinanceExportDataRecord extends ModelBase
             'batch' => $batch,
             // 'status' => 1,
         ])->get();
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'export data record findByBatch    '=> 'start',
-                '$batch' =>$batch,
-                '$res' =>$res,
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'export data record findByBatch    '=> 'start',
+//                '$batch' =>$batch,
+//                '$res' =>$res,
+//            ])
+//        );
         return $res;
     }
 
@@ -147,12 +149,6 @@ class AdminUserFinanceExportDataRecord extends ModelBase
     }
 
     public static function addExportRecord($requestData){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'export data record addExportRecord' => 'start',
-               '$requestData' =>$requestData,
-            ])
-        );
         try {
            $res =  AdminUserFinanceExportDataRecord::create()->data([
                 'user_id' => $requestData['user_id'], 
@@ -169,10 +165,8 @@ class AdminUserFinanceExportDataRecord extends ModelBase
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'export data record addExportRecord' => 'start',
-                    '$requestData' =>$requestData,
-                    'getMessage' => $e->getMessage(),
-                ])
+                    'AdminUserFinanceExportDataRecord入库失败' =>  $e->getMessage(),
+                ],JSON_UNESCAPED_UNICODE)
             );
         }  
 
