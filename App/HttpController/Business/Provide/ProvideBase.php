@@ -97,7 +97,7 @@ class ProvideBase extends Index
             ]);
             $info = RequestUserInfo::create()->where('id', $this->userId)->get();
             if($info->getAttr('money') < 500){
-                dingAlarmKeKe('余额提醒', ['userId' => $this->userId, '公司/用户名称' => $info->getAttr('username'),'余额'=>$info->getAttr('money')], [17600747572,18501224247,18310241782,17319337516,18511881968]);
+                dingAlarmKeKe('余额提醒', ['userId' => $this->userId, '公司/用户名称' => $info->getAttr('username'),'余额'=>$info->getAttr('money')], [17600747572,18501224247,18511881968]);
             }
         } catch (\Throwable $e) {
             $this->writeErr($e, __FUNCTION__);
