@@ -896,11 +896,14 @@ class XinDongService extends ServiceBase
     function getFeatures($entName): array
     {
         //查看经营范围
-        $postData = ['entName' => $entName];
-        $OPSCOPE = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getRegisterInfo');
-        $OPSCOPE = current($OPSCOPE['result']);
-        $OPSCOPE = $OPSCOPE['OPSCOPE'];
-
+        $companyBasic = CompanyBasic::create()->where("ENTNAME = ".$entName)->get();
+        $OPSCOPE = $companyBasic->getAttr('OPSCOPE');
+        if(empty($companyBasic) || empty($OPSCOPE)){
+            $postData = ['entName' => $entName];
+            $OPSCOPE = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getRegisterInfo');
+            $OPSCOPE = current($OPSCOPE['result']);
+            $OPSCOPE = $OPSCOPE['OPSCOPE'];
+        }
         if (mb_strpos($OPSCOPE, '教育') !== false) {
             $topList = [
                 '新东方教育科技集团有限公司',
