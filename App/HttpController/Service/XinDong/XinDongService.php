@@ -896,7 +896,7 @@ class XinDongService extends ServiceBase
     function getFeatures($entName): array
     {
         //查看经营范围
-        $companyBasic = CompanyBasic::create()->where("ENTNAME = ".$entName)->get();
+        $companyBasic = CompanyBasic::create()->where("ENTNAME = '".$entName."'")->get();
         $OPSCOPE = $companyBasic->getAttr('OPSCOPE');
         if(empty($companyBasic) || empty($OPSCOPE)){
             $postData = ['entName' => $entName];
