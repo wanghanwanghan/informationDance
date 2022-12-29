@@ -334,11 +334,15 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/getCompanyStockImpawn_h', $prefix . 'getCompanyStockImpawn_h');// 工商-股权质押
             $routeCollector->addRoute(['GET', 'POST'], '/getListedIndexLLJ', $prefix . 'getListedIndexLLJ');//
             $routeCollector->addRoute(['GET', 'POST'], '/getCommodityCode', $prefix . 'getCommodityCode');
+            $routeCollector->addRoute(['GET', 'POST'], '/getFeatures', $prefix . 'getFeatures');//二次特征分数
 
             //鲸准
             $routeCollector->addRoute(['GET', 'POST'], '/enterpriseList', $prefix . 'enterpriseList');// 投资事件
             $routeCollector->addRoute(['GET', 'POST'], '/investmentList', $prefix . 'investmentList');// 公司融资事件
             $routeCollector->addRoute(['GET', 'POST'], '/searchComs', $prefix . 'searchComs');// 企业搜索
+
+
+
         });
 
         return true;

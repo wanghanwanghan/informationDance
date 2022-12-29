@@ -53,7 +53,7 @@ class JingZhunService extends ServiceBase
     public function enterpriseList($full_name){
         $entInfo = $this->getEntInfo($full_name);
         CommonService::getInstance()->log4PHP($entInfo, 'info', 'enterpriseList');
-        dingAlarm('鲸准 公司融资事件',['$entInfo'=>json_encode($entInfo)]);
+//        dingAlarm('鲸准 公司融资事件',['$entInfo'=>json_encode($entInfo)]);
         if($entInfo['code']!=0){
             return $this->createReturn(200, null, $entInfo['data'], $entInfo['msg']);
         }
