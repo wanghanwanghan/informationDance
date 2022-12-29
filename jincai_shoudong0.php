@@ -296,6 +296,8 @@ class jincai_shoudong extends AbstractProcess
                 'content-type' => 'application/json;charset=UTF-8',
             ];
 
+            dd($collectNotify);
+
             //通知
             CommonService::getInstance()->log4PHP(jsonEncode($collectNotify, false), 'send', 'notify_fp');
             $ret = (new CoHttpClient())
@@ -340,23 +342,24 @@ EOF;
 
     protected function run($arg)
     {
-        $list = JinCaiTrace::create()->all();
-
-        foreach ($list as $key => $item) {
-
-            if ($key < 385) continue;
-
-            if ($key % 2 === 0) continue;
-
-            $nsrsbh = $item->getAttr('socialCredit');
-
-            echo $key . '|' . $nsrsbh . '|' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
-
-            $this->sendToOSS($nsrsbh, '');
-
-        }
-
-        dd('over');
+        $this->sendToAnt();
+//        $list = JinCaiTrace::create()->all();
+//
+//        foreach ($list as $key => $item) {
+//
+//            if ($key < 385) continue;
+//
+//            if ($key % 2 === 0) continue;
+//
+//            $nsrsbh = $item->getAttr('socialCredit');
+//
+//            echo $key . '|' . $nsrsbh . '|' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
+//
+//            $this->sendToOSS($nsrsbh, '');
+//
+//        }
+//
+//        dd('over');
 
         $list = JinCaiTrace::create()->all();
 
