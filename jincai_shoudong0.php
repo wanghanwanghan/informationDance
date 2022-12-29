@@ -341,6 +341,9 @@ EOF;
     protected function run($arg)
     {
         $this->sendToAnt();
+
+        dd('over');
+
 //        $list = JinCaiTrace::create()->all();
 //
 //        foreach ($list as $key => $item) {
