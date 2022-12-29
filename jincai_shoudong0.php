@@ -213,7 +213,9 @@ class jincai_shoudong extends AbstractProcess
             41 => 'https://trustdata.antgroup.com/api/wezTech/collectNotify',
         ];
 
-        $list = JinCaiTrace::create()->all();
+        $list = JinCaiTrace::create()->where('socialCredit', [
+            '91320594711533671W', '913302121445201877'
+        ], 'IN')->all();
 
         foreach ($list as $oneReadyToSend) {
 
@@ -344,23 +346,20 @@ EOF;
 
         dd('over');
 
-//        $list = JinCaiTrace::create()->all();
-//
-//        foreach ($list as $key => $item) {
-//
-//            if ($key < 385) continue;
-//
-//            if ($key % 2 === 0) continue;
-//
-//            $nsrsbh = $item->getAttr('socialCredit');
-//
-//            echo $key . '|' . $nsrsbh . '|' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
-//
-//            $this->sendToOSS($nsrsbh, '');
-//
-//        }
-//
-//        dd('over');
+
+        $list = JinCaiTrace::create()->where('socialCredit', [
+            '91320594711533671W', '913302121445201877'
+        ], 'IN')->all();
+
+        foreach ($list as $key => $item) {
+
+            $nsrsbh = $item->getAttr('socialCredit');
+
+            $this->sendToOSS($nsrsbh, '');
+
+        }
+
+        dd('over');
 
         $list = JinCaiTrace::create()->all();
 
