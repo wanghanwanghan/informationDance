@@ -340,23 +340,27 @@ EOF;
 
     protected function run($arg)
     {
-        $list = JinCaiTrace::create()->all();
-
-        foreach ($list as $key => $item) {
-
-            if ($key < 385) continue;
-
-            if ($key % 2 === 0) continue;
-
-            $nsrsbh = $item->getAttr('socialCredit');
-
-            echo $key . '|' . $nsrsbh . '|' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
-
-            $this->sendToOSS($nsrsbh, '');
-
-        }
+        $this->sendToAnt();
 
         dd('over');
+
+//        $list = JinCaiTrace::create()->all();
+//
+//        foreach ($list as $key => $item) {
+//
+//            if ($key < 385) continue;
+//
+//            if ($key % 2 === 0) continue;
+//
+//            $nsrsbh = $item->getAttr('socialCredit');
+//
+//            echo $key . '|' . $nsrsbh . '|' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
+//
+//            $this->sendToOSS($nsrsbh, '');
+//
+//        }
+//
+//        dd('over');
 
         $list = JinCaiTrace::create()->all();
 
