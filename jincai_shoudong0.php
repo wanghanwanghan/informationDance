@@ -296,8 +296,6 @@ class jincai_shoudong extends AbstractProcess
                 'content-type' => 'application/json;charset=UTF-8',
             ];
 
-            dd($collectNotify);
-
             //通知
             CommonService::getInstance()->log4PHP(jsonEncode($collectNotify, false), 'send', 'notify_fp');
             $ret = (new CoHttpClient())
