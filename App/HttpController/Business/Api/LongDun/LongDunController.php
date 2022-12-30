@@ -661,7 +661,7 @@ class LongDunController extends LongDunBase
         $StockNumber = '';
 
         if (isset($res['Result']) && !empty($res['Result']) && isset($res['Result']['StockNumber'])) {
-            empty($res['Result']['StockNumber']) ? $StockNumber = '' : $StockNumber = $res['Result']['StockNumber'];
+            empty($res['Result']['StockNumber']) ?: $StockNumber = $res['Result']['StockNumber'];
         }
 
         return $StockNumber;
@@ -685,10 +685,10 @@ class LongDunController extends LongDunBase
 
         $res['Result']['VENDINC'] = ['entname' => $tmp[0], 'label' => $tmp[1], 'desc' => $tmp[2]];
 
-        (!isset($res['Result']['StartDate']) || empty($res['Result']['StartDate'])) ?: $res['Result']['StartDate'] = substr($res['Result']['StartDate'], 0, 10);
-        (!isset($res['Result']['CheckDate']) || empty($res['Result']['CheckDate'])) ?: $res['Result']['CheckDate'] = substr($res['Result']['CheckDate'], 0, 10);
-        (!isset($res['Result']['TermStart']) || empty($res['Result']['TermStart'])) ?: $res['Result']['TermStart'] = substr($res['Result']['TermStart'], 0, 10);
-        (!isset($res['Result']['TeamEnd']) || empty($res['Result']['TeamEnd'])) ?: $res['Result']['TeamEnd'] = substr($res['Result']['TeamEnd'], 0, 10);
+        (empty($res['Result']['StartDate'])) ?: $res['Result']['StartDate'] = substr($res['Result']['StartDate'], 0, 10);
+        (empty($res['Result']['CheckDate'])) ?: $res['Result']['CheckDate'] = substr($res['Result']['CheckDate'], 0, 10);
+        (empty($res['Result']['TermStart'])) ?: $res['Result']['TermStart'] = substr($res['Result']['TermStart'], 0, 10);
+        (empty($res['Result']['TeamEnd'])) ?: $res['Result']['TeamEnd'] = substr($res['Result']['TeamEnd'], 0, 10);
 
         $temp = $res['Result'];
         $res['Result'] = [$temp];
