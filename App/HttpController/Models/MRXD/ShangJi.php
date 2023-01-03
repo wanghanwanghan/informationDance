@@ -91,12 +91,12 @@ class ShangJi extends ModelBase
         ];
     }
 
-    public static function findByConditionV2($whereArr,$page){
+    public static function findByConditionV2($whereArr,$page,$pageSize){
         $model = ShangJi::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
-        $model->page($page)
+        $model->page($page,$pageSize)
             ->order('id', 'DESC')
             ->withTotalCount();
 

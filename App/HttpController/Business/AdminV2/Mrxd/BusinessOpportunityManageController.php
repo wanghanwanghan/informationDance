@@ -62,7 +62,7 @@ class BusinessOpportunityManageController extends ControllerBase
 
     public function getLists(){
         $requestData =  $this->getRequestData();
-        $page = $requestData['page']?:1;
+        $page = $requestData['page']?:1 ;
         $pageSize = $requestData['pageSize']?:10;
 
         $conditions = [];
@@ -74,7 +74,7 @@ class BusinessOpportunityManageController extends ControllerBase
             ];
 
         }
-        $datas = ShangJi::findByConditionV2($conditions,$page);
+        $datas = ShangJi::findByConditionV2($conditions,$page,$pageSize);
         $showfields = ShangJiFields::findAllByCondition([
             'is_show'=>1
         ]);
