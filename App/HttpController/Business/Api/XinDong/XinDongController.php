@@ -3039,7 +3039,7 @@ eof;
                 else{
                     ShangJi::addRecordV2($tmpDatas);
                 }
-                break;
+//                break;
             }
 
             return $this->writeJson(200, null, $datas_arr3);
