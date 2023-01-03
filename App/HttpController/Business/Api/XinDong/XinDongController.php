@@ -2818,7 +2818,13 @@ eof;
             $result = json_decode($result,true);
             curl_close($ch);
 
-            return $this->writeJson(200, null, $result);
+            $references_arr = $result['data']['references'];
+            $datas_arr = $result['data']['value'];
+
+            return $this->writeJson(200, null, [
+                $references_arr,
+                $datas_arr
+            ]);
         }
 
 
