@@ -3026,7 +3026,7 @@ eof;
                     "shang_ji_ming_cheng"=>$data_arr3['company_name'],
                     "shang_ji_jie_duan"=>$data_arr3['state'],
                     "suo_shu_qu_yu"=>"",
-                    "remark"=> json_encode($data_arr3["remarks"],true),
+                    "remark"=> json_encode($data_arr3["remarks"],JSON_UNESCAPED_UNICODE),
                     "gong_si_wang_zhan"=> "",
                     "he_xin_ye_wu"=> "",
                     "fu_ze_ren"=> $data_arr3['assignee'],
