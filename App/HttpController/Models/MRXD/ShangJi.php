@@ -117,6 +117,13 @@ class ShangJi extends ModelBase
         return $res;
     }
 
+    public static function findByName($shang_ji_ming_cheng){
+        $res =  ShangJi::create()
+            ->where('shang_ji_ming_cheng',$shang_ji_ming_cheng)
+            ->get();
+        return $res;
+    }
+
     public static function setData($id,$field,$value){
         $info = ShangJi::findById($id);
         return $info->update([

@@ -35,6 +35,7 @@ use App\HttpController\Models\Api\User;
 use App\HttpController\Models\BusinessBase\CompanyClue;
 use App\HttpController\Models\MRXD\InsuranceDataHuiZhong;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
+use App\HttpController\Models\MRXD\ShangJi;
 use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\MRXD\XinDongKeDongFrontEndAnalyzeList;
 use App\HttpController\Models\RDS3\CompanyInvestor;
@@ -3017,6 +3018,29 @@ eof;
                 $datas_arr3[$companyName]['priority'] = $data_arr2['priority'];
             }
 
+            foreach ($datas_arr3 as $data_arr3){
+                $tmpRes = ShangJi::findByName($data_arr3['company_name']);
+                $tmpDatas = [
+                    "created_at"=>$data_arr3['created_at'],
+                    "updated_at"=>$data_arr3['created_at'],
+                    "shang_ji_ming_cheng"=>$data_arr3['company_name'],
+                    "shang_ji_jie_duan"=>$data_arr3['state'],
+                    "suo_shu_qu_yu"=>"",
+                    "remark"=> json_encode($data_arr3["remarks"],true),
+                    "gong_si_wang_zhan"=> "",
+                    "he_xin_ye_wu"=> "",
+                    "fu_ze_ren"=> $data_arr3['assignee'],
+                    "gong_si_jian_jie"=> $data_arr3['description'],
+                    "biao_qian"=> $data_arr3['tags'],
+                ];
+                if($tmpRes){
+                    ShangJi::updateById($tmpRes->id,$tmpDatas);
+                }
+                else{
+                    ShangJi::addRecordV2($tmpDatas);
+                }
+                break;
+            }
 
             return $this->writeJson(200, null, $datas_arr3);
         }
