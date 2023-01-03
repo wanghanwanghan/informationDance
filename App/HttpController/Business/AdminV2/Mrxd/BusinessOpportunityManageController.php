@@ -287,6 +287,40 @@ class BusinessOpportunityManageController extends ControllerBase
         return $this->writeJson(200, [  ], [],'成功');
     }
 
+    public function setTags(){
+        $requestData =  $this->getRequestData();
+//        $dataObj = ShangJi::findById($requestData['id']);
+//        $reamrk = $dataObj->content;
+//        $reamrk .=  $requestData['remark']."&%&%&%&%&%&";
+//
+//        ShangJi::updateById(
+//            $requestData['id'],
+//            [
+//                'remark'=>$reamrk
+//            ]
+//        );
+        return $this->writeJson(200, [  ], [],'成功');
+    }
+
+
+    public function getTags(){
+        $requestData =  $this->getRequestData();
+        $dataObj = ShangJi::findById($requestData['id']);
+//        $reamrk = $dataObj->content;
+//        $reamrk .=  $requestData['remark']."&%&%&%&%&%&";
+//
+//        ShangJi::updateById(
+//            $requestData['id'],
+//            [
+//                'remark'=>$reamrk
+//            ]
+//        );
+        return $this->writeJson(200, [  ], [
+            "标签1",
+            "标签2",
+        ],'成功');
+    }
+
     public function getStage(){
         $requestData =  $this->getRequestData();
 
