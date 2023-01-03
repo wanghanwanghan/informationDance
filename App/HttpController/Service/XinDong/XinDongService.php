@@ -61,6 +61,7 @@ use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\Score\xds;
 use EasySwoole\Pool\Manager;
+use updc\utils\CommonUtil;
 use wanghanwanghan\someUtils\control;
 use wanghanwanghan\someUtils\traits\Singleton;
 use EasySwoole\ElasticSearch\Config;
@@ -6487,7 +6488,10 @@ class XinDongService extends ServiceBase
         $s    = ($a + $b) / 2;
         //计算
         $fx['sifa'] = 0.25 * $s;
-        return $fx;
+        CommonService::getInstance()->log4PHP($fx,'info','getFengXian');
+        return $this->checkResp(200, null, $fx, '成功');
+//        return $fx;
+
     }
 
     private function getZxgg($entName)
