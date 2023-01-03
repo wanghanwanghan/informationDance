@@ -341,7 +341,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/enterpriseList', $prefix . 'enterpriseList');// 投资事件
             $routeCollector->addRoute(['GET', 'POST'], '/investmentList', $prefix . 'investmentList');// 公司融资事件
             $routeCollector->addRoute(['GET', 'POST'], '/searchComs', $prefix . 'searchComs');// 企业搜索
-
+            $routeCollector->addRoute(['GET', 'POST'], '/getFengXian', $prefix . 'getFengXian');// 获取企业的风险分
 
 
         });

@@ -3388,4 +3388,19 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+    //获取企业的风险分
+    function getFengXian(){
+        $entName = $this->getRequestData('entName', '');
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, '参数entName不可以都为空');
+        }
+
+        $this->csp->add($this->cspKey, function () use ($entName) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getFengXian($entName);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $this->checkResponse($res);
+    }
 }
