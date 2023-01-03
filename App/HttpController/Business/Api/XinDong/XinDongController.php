@@ -2776,6 +2776,15 @@ eof;
         return true;
     }
 
+    function get_string_between($string, $start, $end){
+        $string = ' ' . $string;
+        $ini = strpos($string, $start);
+        if ($ini == 0) return '';
+        $ini += strlen($start);
+        $len = strpos($string, $end, $ini) - $ini;
+        return substr($string, $ini, $len);
+    }
+
     function testExport()
     {
 
@@ -2821,10 +2830,195 @@ eof;
             $references_arr = $result['data']['references'];
             $datas_arr = $result['data']['value'];
 
-            return $this->writeJson(200, null, [
-                $references_arr,
-                $datas_arr
-            ]);
+            //优先级
+            $you_xian_ji = $references_arr['properties'][24]['options'];
+            $you_xian_ji2 = [];
+            foreach ($you_xian_ji as $item){
+                $you_xian_ji2[$item['_id']] = $item['text'];
+            }
+
+            //风险
+            $feng_xian = $references_arr['properties'][26]['options'];
+            $feng_xian2 = [];
+            foreach ($feng_xian as $item){
+                $feng_xian2[$item['_id']] = $item['text'];
+            }
+
+            // lookups  states   状态
+            $states = $references_arr['lookups']['states'];
+            $states2 = [];
+            foreach ($states as $item){
+                $states2[$item['_id']] = $item['name'];
+            }
+
+            //lookups  members   状态 display_name   uid
+            $members = $references_arr['lookups']['members'];
+            $members2 = [];
+            foreach ($members as $item){
+                $members2[$item['uid']] = $item['display_name'];
+            }
+
+            // lookups  parents       [_id] => 6333f25122541456bbb794ce  [title] => 四、前台售前支持
+            $parents = $references_arr['lookups']['parents'];
+            $parents2  = [];
+            foreach ($parents as $item){
+                $parents2[$item['_id']] = $item['title'];
+            }
+
+
+            // projects
+            $projects = $references_arr['projects'];
+            $projects2  = [];
+            foreach ($projects as $item){
+                $projects2[$item['_id']] = $item['name'];
+            }
+
+            // tags
+            $tags = $references_arr['lookups']['tags'];
+            $tags2  = [];
+            foreach ($tags as $item){
+                $tags2[$item['_id']] = $item['name'];
+            }
+
+            $no_nees_titles = [
+                "一、KA拓新【实时更新】",
+                "二、测试对接【动态更新】",
+                "三、重点推进【定期更新】",
+                "四、前台售前支持",
+            ];
+            $datas_arr2 = [];
+            foreach ($datas_arr as $item){
+                $participants = "";
+                foreach ($item["participants"] as $p_item){
+                    $participants .=  $members2[$p_item['uid']].";";
+                }
+
+                $tags = "";
+                foreach ($item["tags"] as $p_item){
+                    $tags .=  $tags2[$p_item].";";
+                }
+                $datas_arr2[$item['_id']] = [
+                    'project' => $projects2[$item['project_id']] ,
+                    'title' => $item['title'] ,
+                    'type' => $item['type'] ,
+                    'assignee' => $members2[$item['assignee']] ,
+                    'state' => $states2[$item['state_id']] ,
+                    'created_at' =>  $item['created_at'] ,
+                    //'created_at' =>  date("Y-m-d H:i:s",$item['created_at']) ,
+                    'created_by' =>  $members2[$item['created_by']] ,
+                    'participants' =>  $participants ,
+                    'parent' =>  $parents2[$item['parent_id']] ,
+                    'is_deleted' =>  $item['is_deleted'],
+                    'description' =>  $item['description'],
+                    'priority' =>  $you_xian_ji2[$item['priority']],
+                    'tags' =>  $tags,
+                ];
+            }
+
+            $datas_arr3 = [];
+            $state_maps = [
+                "进行中"=>"jin_xing_zhong",
+                "长期"=>"chang_qi",
+                "未开始"=>"wei_kai_shi",
+                "打开"=>"da_kai",
+            ];
+            foreach ($datas_arr2 as $data_arr2){
+                if(empty($data_arr2['parent'])){
+                    continue;
+                }
+
+                if($data_arr2['type'] != 3){
+                    continue;
+                }
+
+                $remars = [];
+                $companyName = $data_arr2['parent'];
+                $remark = $this->get_string_between($companyName,"（","）");
+                if(!empty($remark)){
+                    $remars[] = $remark;
+                    $companyName = str_replace($remark,"",$companyName);
+                    $companyName = str_replace("（","",$companyName);
+                    $companyName = str_replace("）","",$companyName);
+                }
+                if(
+                    in_array(
+                        $data_arr2['parent'],
+                        $no_nees_titles
+                    )
+                ){
+                    $companyName = $data_arr2['title'];
+                }else{
+                    $remars[] = $data_arr2['title'];
+                }
+
+                if(
+                    in_array(
+                        $companyName,
+                        $no_nees_titles
+                    )
+                ){
+                    continue;
+                }
+
+                $remars[] = $data_arr2['project'];
+                $remars[] = $data_arr2['priority'];
+
+                $datas_arr3[$companyName] = [
+                    "company_name" => $companyName,
+                    "remarks" => $remars,
+                    "assignee" => $data_arr2["assignee"],
+                    "created_at" => $data_arr2["created_at"],
+                    "description" => $data_arr2["description"],
+                    "priority" => $data_arr2["priority"],
+                    "tags" => $data_arr2["tags"],
+                    "state" => $state_maps[$data_arr2["state"]],
+                ];
+
+            }
+
+            foreach ($datas_arr2 as $data_arr2){
+                if(empty($data_arr2['parent'])){
+                    continue;
+                }
+
+                if($data_arr2['type'] != 2){
+                    continue;
+                }
+
+                $remars = [];
+                $companyName = $data_arr2['parent'];
+                $remark = $this->get_string_between($companyName,"（","）");
+                if(!empty($remark)){
+                    $remars[] = $remark;
+                    $companyName = str_replace($remark,"",$companyName);
+                    $companyName = str_replace("（","",$companyName);
+                    $companyName = str_replace("）","",$companyName);
+                }
+                if(
+                    in_array(
+                        $data_arr2['parent'],
+                        $no_nees_titles
+                    )
+                ){
+                    $companyName = $data_arr2['title'];
+                }
+                if(
+                    in_array(
+                        $companyName,
+                        $no_nees_titles
+                    )
+                ){
+                    continue;
+                }
+
+                $datas_arr3[$companyName]['description'] = $data_arr2['description'];
+                $datas_arr3[$companyName]['assignee'] = $data_arr2['assignee'];
+                $datas_arr3[$companyName]['tags'] = $data_arr2['tags'];
+                $datas_arr3[$companyName]['priority'] = $data_arr2['priority'];
+            }
+
+
+            return $this->writeJson(200, null, $datas_arr3);
         }
 
 
