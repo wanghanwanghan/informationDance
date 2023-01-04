@@ -20,6 +20,7 @@ use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\MRXD\ShangJi;
 use App\HttpController\Models\MRXD\ShangJiContacts;
+use App\HttpController\Models\MRXD\ShangJiDevelopRecord;
 use App\HttpController\Models\MRXD\ShangJiFields;
 use App\HttpController\Models\MRXD\ShangJiStage;
 use App\HttpController\Models\MRXD\ToolsFileLists;
@@ -423,22 +424,34 @@ class BusinessOpportunityManageController extends ControllerBase
 
     public function getcommunicationrecord(){
         $requestData =  $this->getRequestData();
-        return $this->writeJson(200, [  ], [
-            [
-                'time' => '2022-12-12 23:22:22',
-                'subject' => '沟通主题1',
-                'details' => '备注1',
-            ],
-            [
-                'time' => '2022-12-12 23:22:22',
-                'subject' => '沟通主题1',
-                'details' => '备注1',
-            ],
-        ],'成功');
+        $res = ShangJiDevelopRecord::findByShangJiId($requestData['id']);
+        return $this->writeJson(200, [  ],$res,'成功');
     }
 
     public function addcommunicationrecord(){
         $requestData =  $this->getRequestData();
+        $dbData = [
+            'shang_ji_id' => $requestData['id'],
+            'subject' => $requestData['subject'],
+            'time' => $requestData['time'],
+            'details' => $requestData['details'],
+            'contact_type' => $requestData['contact_type'],
+        ];
+        $res = ShangJiDevelopRecord::addRecordV2(
+            $dbData
+        );
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '设置商机的拓客过程'=>[
+                    '请求数据' => $requestData,
+                    '入库数据' => $dbData,
+                    '更新结果' => $res,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         return $this->writeJson(200, [  ], [],'成功');
     }
 
