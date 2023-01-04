@@ -354,6 +354,27 @@ class BusinessOpportunityManageController extends ControllerBase
     public function changeBasicData(){
         $requestData =  $this->getRequestData();
 
+        $allFeilds = ShangJiFields::findAllByCondition([]);
+        $allFeilds = array_column($allFeilds,"field_name");
+        $dbDatas = [];
+        foreach ($allFeilds as $Feild){
+            $dbDatas[$Feild] = $requestData[$Feild];
+        }
+
+        $res = ShangJi::updateById(
+            $requestData["id"],
+            $dbDatas
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '设置商机的基本信息'=>[
+                    '商机id' => $requestData["id"],
+                    '入库数据' => $dbDatas,
+                    '更新结果' => $res,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
         return $this->writeJson(200, [  ], [],'成功');
     }
 
@@ -375,15 +396,28 @@ class BusinessOpportunityManageController extends ControllerBase
         contact:  13269706193
         reamrk:  测试备注
          *************/
+
+        $dbDatas = [
+            "shang_ji_id" => $requestData["id"],
+            "name" => $requestData["name"],
+            "contact" => $requestData["contact"],
+            "contact_type" => $requestData["contact_type"],
+            "reamrk" => $requestData["reamrk"],
+        ];
         $res = ShangJiContacts::addRecordV2(
-            [
-                "shang_ji_id" => $requestData["id"],
-                "name" => $requestData["name"],
-                "contact" => $requestData["contact"],
-                "contact_type" => $requestData["contact_type"],
-                "reamrk" => $requestData["reamrk"],
-            ]
+            $dbDatas
         );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '设置商机的联系人'=>[
+                    '请求数据' => $requestData,
+                    '入库数据' => $dbDatas,
+                    '更新结果' => $res,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         return $this->writeJson(200, [  ], [],'成功');
     }
 
