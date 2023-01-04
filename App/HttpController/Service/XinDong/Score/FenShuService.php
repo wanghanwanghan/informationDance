@@ -479,4 +479,10 @@ class FenShuService extends ServiceBase
 
         return 0;
     }
+
+    //处理结果给信息controller
+    private function checkResp($code, $paging, $result, $msg)
+    {
+        return $this->createReturn((int)$code, $paging, $result, $msg);
+    }
 }
