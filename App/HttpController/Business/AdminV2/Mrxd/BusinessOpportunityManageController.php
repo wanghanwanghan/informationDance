@@ -19,6 +19,7 @@ use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\MRXD\ShangJi;
+use App\HttpController\Models\MRXD\ShangJiContacts;
 use App\HttpController\Models\MRXD\ShangJiFields;
 use App\HttpController\Models\MRXD\ShangJiStage;
 use App\HttpController\Models\MRXD\ToolsFileLists;
@@ -358,21 +359,9 @@ class BusinessOpportunityManageController extends ControllerBase
 
     public function getContactData(){
         $requestData =  $this->getRequestData();
+        $res = ShangJiContacts::findByShangJiId($requestData['id']);
         return $this->writeJson(200, [  ],
-            [
-                [
-                    'name'=>'联系人名称1',
-                    'contact_type'=>'联系人类型1',
-                    'contact'=>'联系方式1',
-                    'reamrk'=>'备注1',
-                ],
-                [
-                    'name'=>'联系人名称',
-                    'contact_type'=>'联系人类型',
-                    'contact'=>'联系方式',
-                    'reamrk'=>'备注',
-                ]
-            ]
+            $res
             ,'成功');
     }
 
