@@ -278,14 +278,21 @@ class BusinessOpportunityManageController extends ControllerBase
         $requestData =  $this->getRequestData();
         $dataObj = ShangJi::findById($requestData['id']);
         $reamrk = $dataObj->remark;
-        $reamrk .=  $requestData['remark']."&%&%&%&%&%&";
-
-        ShangJi::updateById(
-            $requestData['id'],
-            [
-                'remark'=>$reamrk
-            ]
+//        $requestData['remark'];
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '设置商机的基本信息'=>[
+                    '商机id' => $reamrk,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
         );
+//        ShangJi::updateById(
+//            $requestData['id'],
+//            [
+//                'remark'=>$reamrk
+//            ]
+//        );
         return $this->writeJson(200, [  ], [],'成功');
     }
 
