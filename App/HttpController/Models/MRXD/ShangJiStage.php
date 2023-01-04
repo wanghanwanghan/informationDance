@@ -117,6 +117,13 @@ class ShangJiStage extends ModelBase
         return $res;
     }
 
+    public static function findByName($name){
+        $res =  ShangJiStage::create()
+            ->where('field_name',$name)
+            ->get();
+        return $res;
+    }
+
     public static function findByFieldName($name){
         $res =  ShangJiStage::create()
             ->where('field_name',$name)
