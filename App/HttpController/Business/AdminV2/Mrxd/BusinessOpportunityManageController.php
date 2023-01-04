@@ -292,7 +292,7 @@ class BusinessOpportunityManageController extends ControllerBase
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 '设置商机的基本信息'=>[
-                    '商机id' => $reamrk,
+                    '商机id' => $requestData['id'],
                     '数据' => $dbData,
                     '结果' => $res,
                 ]
@@ -303,16 +303,27 @@ class BusinessOpportunityManageController extends ControllerBase
 
     public function setTags(){
         $requestData =  $this->getRequestData();
-//        $dataObj = ShangJi::findById($requestData['id']);
-//        $reamrk = $dataObj->content;
-//        $reamrk .=  $requestData['remark']."&%&%&%&%&%&";
-//
-//        ShangJi::updateById(
-//            $requestData['id'],
-//            [
-//                'remark'=>$reamrk
-//            ]
-//        );
+        $dataObj = ShangJi::findById($requestData['id']);
+        $biao_qian = $dataObj->biao_qian;
+        $biao_qian_arr = json_decode($biao_qian,true);
+        $biao_qian_arr[] = $requestData['content'];
+        $dbData = [
+            'biao_qian'=>json_encode($biao_qian_arr,true)
+        ];
+        $res = ShangJi::updateById(
+            $requestData['id'],
+            $dbData
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '设置商机的基本信息'=>[
+                    '商机id' => $requestData['id'],
+                    '数据' => $dbData,
+                    '结果' => $res,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
         return $this->writeJson(200, [  ], [],'成功');
     }
 
@@ -320,19 +331,8 @@ class BusinessOpportunityManageController extends ControllerBase
     public function getTags(){
         $requestData =  $this->getRequestData();
         $dataObj = ShangJi::findById($requestData['id']);
-//        $reamrk = $dataObj->content;
-//        $reamrk .=  $requestData['remark']."&%&%&%&%&%&";
-//
-//        ShangJi::updateById(
-//            $requestData['id'],
-//            [
-//                'remark'=>$reamrk
-//            ]
-//        );
-        return $this->writeJson(200, [  ], [
-            "标签1",
-            "标签2",
-        ],'成功');
+        $biao_arr  = json_decode($dataObj,true);
+        return $this->writeJson(200, [  ], $biao_arr,'成功');
     }
 
     public function getStage(){
