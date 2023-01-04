@@ -2896,7 +2896,7 @@ eof;
 
                 $tags = [];
                 foreach ($item["tags"] as $p_item){
-                    $tags .=  $tags2[$p_item].";";
+                    $tags[]=  $tags2[$p_item];
                 }
                 $datas_arr2[$item['_id']] = [
                     'project' => $projects2[$item['project_id']] ,
