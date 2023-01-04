@@ -27,6 +27,7 @@ use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\MaYi\MaYiService;
 use App\HttpController\Service\Sms\SmsService;
 use App\HttpController\Service\TaoShu\TaoShuService;
+use App\HttpController\Service\XinDong\Score\FenShuService;
 use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
 use Carbon\Carbon;
@@ -3396,7 +3397,7 @@ class XinDongController extends ProvideBase
         }
 
         $this->csp->add($this->cspKey, function () use ($entName) {
-            return (new XinDongService())
+            return (new FenShuService())
                 ->setCheckRespFlag(true)
                 ->getFengXian($entName);
         });
