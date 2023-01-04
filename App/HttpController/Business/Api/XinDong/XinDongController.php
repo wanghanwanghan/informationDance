@@ -2894,7 +2894,7 @@ eof;
                     $participants .=  $members2[$p_item['uid']].";";
                 }
 
-                $tags = "";
+                $tags = [];
                 foreach ($item["tags"] as $p_item){
                     $tags .=  $tags2[$p_item].";";
                 }
@@ -3031,7 +3031,7 @@ eof;
                     "he_xin_ye_wu"=> "",
                     "fu_ze_ren"=> $data_arr3['assignee'],
                     "gong_si_jian_jie"=> $data_arr3['description'],
-                    "biao_qian"=> $data_arr3['tags'],
+                    "biao_qian"=>json_encode($data_arr3["tags"],JSON_UNESCAPED_UNICODE),
                 ];
                 if($tmpRes){
                     ShangJi::updateById($tmpRes->id,$tmpDatas);
