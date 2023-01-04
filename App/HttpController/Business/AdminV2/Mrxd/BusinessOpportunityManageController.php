@@ -367,6 +367,23 @@ class BusinessOpportunityManageController extends ControllerBase
 
     public function setContactData(){
         $requestData =  $this->getRequestData();
+        /************
+        id:  61
+        phone: 13269706193
+        name:   这是技术在测试-田永
+        contact_type:  手机
+        contact:  13269706193
+        reamrk:  测试备注
+         *************/
+        $res = ShangJiContacts::addRecordV2(
+            [
+                "shang_ji_id" => $requestData["id"],
+                "name" => $requestData["name"],
+                "contact" => $requestData["contact"],
+                "contact_type" => $requestData["contact_type"],
+                "reamrk" => $requestData["reamrk"],
+            ]
+        );
         return $this->writeJson(200, [  ], [],'成功');
     }
 
