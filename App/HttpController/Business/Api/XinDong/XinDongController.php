@@ -2894,9 +2894,9 @@ eof;
                     $participants .=  $members2[$p_item['uid']].";";
                 }
 
-                $tags = [];
+                $tagsXX = [];
                 foreach ($item["tags"] as $p_item){
-                    $tags[]=  $tags2[$p_item];
+                    $tagsXX[]=  $tags2[$p_item];
                 }
                 $datas_arr2[$item['_id']] = [
                     'project' => $projects2[$item['project_id']] ,
@@ -2912,7 +2912,7 @@ eof;
                     'is_deleted' =>  $item['is_deleted'],
                     'description' =>  $item['description'],
                     'priority' =>  $you_xian_ji2[$item['priority']],
-                    'tags' =>  $tags,
+                    'tags' =>  $tagsXX,
                 ];
             }
 
