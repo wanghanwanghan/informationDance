@@ -282,7 +282,7 @@ class BusinessOpportunityManageController extends ControllerBase
         $reamrkArr[] = $requestData['remark'];
 //        $requestData['remark'];
         $dbData = [
-            'remark'=>json_encode($reamrkArr,true)
+            'remark'=>json_encode($reamrkArr,JSON_UNESCAPED_UNICODE)
         ];
         $res = ShangJi::updateById(
             $requestData['id'],
@@ -308,7 +308,7 @@ class BusinessOpportunityManageController extends ControllerBase
         $biao_qian_arr = json_decode($biao_qian,true);
         $biao_qian_arr[] = $requestData['content'];
         $dbData = [
-            'biao_qian'=>json_encode($biao_qian_arr,true)
+            'biao_qian'=>json_encode($biao_qian_arr,JSON_UNESCAPED_UNICODE)
         ];
         $res = ShangJi::updateById(
             $requestData['id'],
