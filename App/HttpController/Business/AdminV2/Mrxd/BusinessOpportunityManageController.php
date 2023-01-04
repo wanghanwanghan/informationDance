@@ -342,7 +342,7 @@ class BusinessOpportunityManageController extends ControllerBase
         $res = $res->toArray();
         if(trim($res['shang_ji_jie_duan'])){
             $stateRes =  ShangJiStage::findByName(trim($res['shang_ji_jie_duan']));
-            $res['shang_ji_jie_duan'] = $stateRes->field_cname
+            $res['shang_ji_jie_duan'] = $stateRes->field_cname;
         } ;
 //        unset($res['id']);
 //        unset($res['created_at']);
