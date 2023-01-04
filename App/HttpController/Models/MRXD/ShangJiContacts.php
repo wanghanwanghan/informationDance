@@ -23,10 +23,11 @@ use EasySwoole\RedisPool\Redis;
 
 // use App\HttpController\Models\AdminRole;
 
-class ShangJiStage extends ModelBase
+//商机联系人
+class ShangJiContacts extends ModelBase
 {
 
-    protected $tableName = 'shang_ji_stage';
+    protected $tableName = 'shang_ji_contacts';
 
     static  function  stateMaps(){
 
@@ -37,20 +38,20 @@ class ShangJiStage extends ModelBase
 
     static  function  addRecordV2($info){
 
-        return ShangJiStage::addRecord(
+        return ShangJiContacts::addRecord(
             $info
         );
     }
 
     public static function addRecord($requestData){
         try {
-           $res =  ShangJiStage::create()->data($requestData)->save();
+           $res =  ShangJiContacts::create()->data($requestData)->save();
 
         } catch (\Throwable $e) {
             return CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'shang_ji_stage_入库失败'=>[
+                    'shang_ji_contacts_入库失败'=>[
                         '参数' => $requestData,
                         '错误信息' => $e->getMessage(),
                     ]
@@ -62,7 +63,7 @@ class ShangJiStage extends ModelBase
 
 
     public static function findAllByCondition($whereArr){
-        $res =  ShangJiStage::create()
+        $res =  ShangJiContacts::create()
             ->where($whereArr)
             ->all();
         return $res;
@@ -76,7 +77,7 @@ class ShangJiStage extends ModelBase
     }
 
     public static function findByConditionWithCountInfo($whereArr,$page){
-        $model = ShangJiStage::create()
+        $model = ShangJiContacts::create()
                 ->where($whereArr)
                 ->page($page)
                 ->order('id', 'DESC')
@@ -91,12 +92,12 @@ class ShangJiStage extends ModelBase
         ];
     }
 
-    public static function findByConditionV2($whereArr,$page){
-        $model = ShangJiStage::create();
+    public static function findByConditionV2($whereArr,$page,$pageSize){
+        $model = ShangJiContacts::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
-        $model->page($page)
+        $model->page($page,$pageSize)
             ->order('id', 'DESC')
             ->withTotalCount();
 
@@ -111,42 +112,43 @@ class ShangJiStage extends ModelBase
 
 
     public static function findById($id){
-        $res =  ShangJiStage::create()
+        $res =  ShangJiContacts::create()
             ->where('id',$id)            
             ->get();  
         return $res;
     }
 
-    public static function findByName($name){
-        $res =  ShangJiStage::create()
-            ->where('field_name',$name)
-            ->get();
+    public static function findByShangJiId($shangJiId){
+        $res =  ShangJiContacts::create()
+            ->where('shang_ji_id',$shangJiId)
+            ->all();
         return $res;
     }
 
-    public static function findByFieldName($name){
-        $res =  ShangJiStage::create()
-            ->where('field_name',$name)
+
+    public static function findByName($shang_ji_contacts_ming_cheng){
+        $res =  ShangJiContacts::create()
+            ->where('shang_ji_contacts_ming_cheng',$shang_ji_contacts_ming_cheng)
             ->get();
         return $res;
     }
 
     public static function setData($id,$field,$value){
-        $info = ShangJiStage::findById($id);
+        $info = ShangJiContacts::findById($id);
         return $info->update([
             "$field" => $value,
         ]);
     }
 
     public static function runBySql($Sql){
-        $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
+        $data = sqlRawV3($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'),0);
         return $data;
     }
 
     public static function findByWhere($where){
         $Sql = " select *  
                             from  
-                        `shang_ji_stage` 
+                        `shang_ji_contacts` 
                             $where
       " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));

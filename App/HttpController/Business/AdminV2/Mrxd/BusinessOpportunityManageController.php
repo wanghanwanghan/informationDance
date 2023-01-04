@@ -19,6 +19,8 @@ use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\MRXD\ShangJi;
+use App\HttpController\Models\MRXD\ShangJiContacts;
+use App\HttpController\Models\MRXD\ShangJiDevelopRecord;
 use App\HttpController\Models\MRXD\ShangJiFields;
 use App\HttpController\Models\MRXD\ShangJiStage;
 use App\HttpController\Models\MRXD\ToolsFileLists;
@@ -62,7 +64,7 @@ class BusinessOpportunityManageController extends ControllerBase
 
     public function getLists(){
         $requestData =  $this->getRequestData();
-        $page = $requestData['page']?:1;
+        $page = $requestData['page']?:1 ;
         $pageSize = $requestData['pageSize']?:10;
 
         $conditions = [];
@@ -74,7 +76,7 @@ class BusinessOpportunityManageController extends ControllerBase
             ];
 
         }
-        $datas = ShangJi::findByConditionV2($conditions,$page);
+        $datas = ShangJi::findByConditionV2($conditions,$page,$pageSize);
         $showfields = ShangJiFields::findAllByCondition([
             'is_show'=>1
         ]);
@@ -276,29 +278,52 @@ class BusinessOpportunityManageController extends ControllerBase
         $requestData =  $this->getRequestData();
         $dataObj = ShangJi::findById($requestData['id']);
         $reamrk = $dataObj->remark;
-        $reamrk .=  $requestData['remark']."&%&%&%&%&%&";
-
-        ShangJi::updateById(
+        $reamrkArr = json_decode($dataObj->remark,true);
+        $reamrkArr[] = $requestData['remark'];
+//        $requestData['remark'];
+        $dbData = [
+            'remark'=>json_encode($reamrkArr,true)
+        ];
+        $res = ShangJi::updateById(
             $requestData['id'],
-            [
-                'remark'=>$reamrk
-            ]
+            $dbData
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '设置商机的基本信息'=>[
+                    '商机id' => $requestData['id'],
+                    '数据' => $dbData,
+                    '结果' => $res,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
         );
         return $this->writeJson(200, [  ], [],'成功');
     }
 
     public function setTags(){
         $requestData =  $this->getRequestData();
-//        $dataObj = ShangJi::findById($requestData['id']);
-//        $reamrk = $dataObj->content;
-//        $reamrk .=  $requestData['remark']."&%&%&%&%&%&";
-//
-//        ShangJi::updateById(
-//            $requestData['id'],
-//            [
-//                'remark'=>$reamrk
-//            ]
-//        );
+        $dataObj = ShangJi::findById($requestData['id']);
+        $biao_qian = $dataObj->biao_qian;
+        $biao_qian_arr = json_decode($biao_qian,true);
+        $biao_qian_arr[] = $requestData['content'];
+        $dbData = [
+            'biao_qian'=>json_encode($biao_qian_arr,true)
+        ];
+        $res = ShangJi::updateById(
+            $requestData['id'],
+            $dbData
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '设置商机的基本信息'=>[
+                    '商机id' => $requestData['id'],
+                    '数据' => $dbData,
+                    '结果' => $res,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
         return $this->writeJson(200, [  ], [],'成功');
     }
 
@@ -306,19 +331,8 @@ class BusinessOpportunityManageController extends ControllerBase
     public function getTags(){
         $requestData =  $this->getRequestData();
         $dataObj = ShangJi::findById($requestData['id']);
-//        $reamrk = $dataObj->content;
-//        $reamrk .=  $requestData['remark']."&%&%&%&%&%&";
-//
-//        ShangJi::updateById(
-//            $requestData['id'],
-//            [
-//                'remark'=>$reamrk
-//            ]
-//        );
-        return $this->writeJson(200, [  ], [
-            "标签1",
-            "标签2",
-        ],'成功');
+        $biao_arr  = json_decode($dataObj,true);
+        return $this->writeJson(200, [  ], $biao_arr,'成功');
     }
 
     public function getStage(){
@@ -338,63 +352,118 @@ class BusinessOpportunityManageController extends ControllerBase
 
     public function getBasicData(){
         $requestData =  $this->getRequestData();
-        $res = ShangJi::findById(2);
+        $res = ShangJi::findById($requestData['id']);
         $res = $res->toArray();
-        unset($res['id']);
-        unset($res['created_at']);
-        unset($res['updated_at']);
+        if(trim($res['shang_ji_jie_duan'])){
+            $stateRes =  ShangJiStage::findByName(trim($res['shang_ji_jie_duan']));
+            $res['shang_ji_jie_duan'] = $stateRes->field_cname;
+        } ;
+//        unset($res['id']);
+//        unset($res['created_at']);
+//        unset($res['updated_at']);
         return $this->writeJson(200, [  ], $res,'成功');
     }
 
     public function changeBasicData(){
         $requestData =  $this->getRequestData();
 
+        $allFeilds = ShangJiFields::findAllByCondition([]);
+        $allFeilds = array_column($allFeilds,"field_name");
+        $dbDatas = [];
+        foreach ($allFeilds as $Feild){
+            $dbDatas[$Feild] = $requestData[$Feild];
+        }
+
+        $res = ShangJi::updateById(
+            $requestData["id"],
+            $dbDatas
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '设置商机的基本信息'=>[
+                    '商机id' => $requestData["id"],
+                    '入库数据' => $dbDatas,
+                    '更新结果' => $res,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
         return $this->writeJson(200, [  ], [],'成功');
     }
 
     public function getContactData(){
         $requestData =  $this->getRequestData();
+        $res = ShangJiContacts::findByShangJiId($requestData['id']);
         return $this->writeJson(200, [  ],
-            [
-                [
-                    'name'=>'联系人名称1',
-                    'contact_type'=>'联系人类型1',
-                    'contact'=>'联系方式1',
-                    'reamrk'=>'备注1',
-                ],
-                [
-                    'name'=>'联系人名称',
-                    'contact_type'=>'联系人类型',
-                    'contact'=>'联系方式',
-                    'reamrk'=>'备注',
-                ]
-            ]
+            $res
             ,'成功');
     }
 
     public function setContactData(){
         $requestData =  $this->getRequestData();
+        /************
+        id:  61
+        phone: 13269706193
+        name:   这是技术在测试-田永
+        contact_type:  手机
+        contact:  13269706193
+        reamrk:  测试备注
+         *************/
+
+        $dbDatas = [
+            "shang_ji_id" => $requestData["id"],
+            "name" => $requestData["name"],
+            "contact" => $requestData["contact"],
+            "contact_type" => $requestData["contact_type"],
+            "reamrk" => $requestData["reamrk"],
+        ];
+        $res = ShangJiContacts::addRecordV2(
+            $dbDatas
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '设置商机的联系人'=>[
+                    '请求数据' => $requestData,
+                    '入库数据' => $dbDatas,
+                    '更新结果' => $res,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         return $this->writeJson(200, [  ], [],'成功');
     }
 
     public function getcommunicationrecord(){
         $requestData =  $this->getRequestData();
-        return $this->writeJson(200, [  ], [
-            [
-                'time' => '2022-12-12 23:22:22',
-                'subject' => '沟通主题1',
-                'details' => '备注1',
-            ],
-            [
-                'time' => '2022-12-12 23:22:22',
-                'subject' => '沟通主题1',
-                'details' => '备注1',
-            ],
-        ],'成功');
+        $res = ShangJiDevelopRecord::findByShangJiId($requestData['id']);
+        return $this->writeJson(200, [  ],$res,'成功');
     }
 
     public function addcommunicationrecord(){
         $requestData =  $this->getRequestData();
+        $dbData = [
+            'shang_ji_id' => $requestData['id'],
+            'subject' => $requestData['subject'],
+            'time' => $requestData['time'],
+            'details' => $requestData['details'],
+            'contact_type' => $requestData['contact_type'],
+        ];
+        $res = ShangJiDevelopRecord::addRecordV2(
+            $dbData
+        );
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '设置商机的拓客过程'=>[
+                    '请求数据' => $requestData,
+                    '入库数据' => $dbData,
+                    '更新结果' => $res,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         return $this->writeJson(200, [  ], [],'成功');
     }
 
