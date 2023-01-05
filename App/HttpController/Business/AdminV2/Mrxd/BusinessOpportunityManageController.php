@@ -138,7 +138,7 @@ class BusinessOpportunityManageController extends ControllerBase
             //前端展示有点小问题  只展示了一列  所以全放一个数组里  正常应该是不同类的数据 放在不同的数组 前端对应展示几列
             $showDatas = [];
             foreach ($showfields as $fieldsData){
-                $showDatas[$fieldsData['field_cname']] = $datum[$fieldsData['field_name']];
+                $showDatas["【".$fieldsData['field_cname']."】"] = $datum[$fieldsData['field_name']];
             }
 
             //备注信息
@@ -147,13 +147,13 @@ class BusinessOpportunityManageController extends ControllerBase
                 if(!trim($reamrkStr)){
                     continue;
                 }
-                $showDatas['备注'.$key]= $reamrkStr;
+                $showDatas['【备注'.$key.'】']= $reamrkStr;
             }
 
             //商机阶段
             if(trim($datum['shang_ji_jie_duan'])){
                 $jieduan = ShangJiStage::findByFieldName($datum['shang_ji_jie_duan']);
-                $showDatas["商机阶段"] = $jieduan->field_cname;
+                $showDatas["【商机阶段】"] = $jieduan->field_cname;
             }
 
             //标签
@@ -163,7 +163,7 @@ class BusinessOpportunityManageController extends ControllerBase
                 if(!trim($tmpStr)){
                     continue;
                 }
-                $tag_str .= "【".$tmpStr."】";
+                $tag_str .= "[".$tmpStr."]";
             }
             $showDatas['标签']= $tag_str;
 
