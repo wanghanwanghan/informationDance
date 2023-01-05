@@ -88,7 +88,7 @@ class BusinessOpportunityManageController extends ControllerBase
             }
 
             //备注信息
-            $arr = explode("&%&%&%&%&%&",$datum['remark']) ;
+            $arr =  json_decode($datum['remark'],true) ;
             $remarkArr = [];
             foreach ($arr as $key => $reamrkStr){
                 if(!trim($reamrkStr)){
