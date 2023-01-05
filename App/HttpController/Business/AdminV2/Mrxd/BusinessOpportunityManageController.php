@@ -68,10 +68,10 @@ class BusinessOpportunityManageController extends ControllerBase
         $pageSize = $requestData['pageSize']?:10;
 
         $conditions = [];
-        if($requestData['nickname']){
+        if(trim($requestData['shangJi'])){
             $conditions[]  =  [
-                'field' =>'nickname',
-                'value' =>$requestData['nickname'].'%',
+                'field' =>'shang_ji_ming_cheng',
+                'value' =>'%'.trim($requestData['nickname']).'%',
                 'operate' =>'like',
             ];
 
