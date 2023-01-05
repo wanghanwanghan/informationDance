@@ -71,10 +71,19 @@ class BusinessOpportunityManageController extends ControllerBase
         if(($requestData['shangJi'])){
             $conditions[]  =  [
                 'field' =>'shang_ji_ming_cheng',
-                'value' =>($requestData['shangJi']).'%',
+                'value' =>'%'.($requestData['shangJi']).'%',
                 'operate' =>'like',
             ];
         }
+
+        if(($requestData['xiaoShou'])){
+            $conditions[]  =  [
+                'field' =>'fu_ze_ren',
+                'value' =>'%'.($requestData['xiaoShou']).'%',
+                'operate' =>'like',
+            ];
+        }
+
 
         $datas = ShangJi::findByConditionV2($conditions,$page,$pageSize);
         $showfields = ShangJiFields::findAllByCondition([

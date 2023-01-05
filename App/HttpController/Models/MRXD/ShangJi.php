@@ -120,7 +120,7 @@ class ShangJi extends ModelBase
             ],JSON_UNESCAPED_UNICODE)
         );
 
-        
+
         $total = $model->lastQueryResult()->getTotalCount();
         return [
             'data' => $res,
