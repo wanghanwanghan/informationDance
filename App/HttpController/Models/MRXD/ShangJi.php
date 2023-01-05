@@ -107,7 +107,10 @@ class ShangJi extends ModelBase
         $model->page($page,$pageSize)
             ->order('id', 'DESC')
             ->withTotalCount();
- 
+
+        $res = $model->all();
+
+
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
@@ -117,8 +120,7 @@ class ShangJi extends ModelBase
             ],JSON_UNESCAPED_UNICODE)
         );
 
-        $res = $model->all();
-
+        
         $total = $model->lastQueryResult()->getTotalCount();
         return [
             'data' => $res,
