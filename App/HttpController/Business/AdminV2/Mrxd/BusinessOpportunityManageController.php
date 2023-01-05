@@ -81,7 +81,7 @@ class BusinessOpportunityManageController extends ControllerBase
             'is_show'=>1
         ]);
         foreach ($datas['data'] as &$datum){
-            //其他信息
+
             $showDatas = [];
             foreach ($showfields as $fieldsData){
                 $showDatas[$fieldsData['field_cname']] = $datum[$fieldsData['field_name']];
@@ -89,42 +89,21 @@ class BusinessOpportunityManageController extends ControllerBase
 
             //备注信息
             $arr =  json_decode($datum['remark'],true) ;
-            $remarkArr = [];
             foreach ($arr as $key => $reamrkStr){
                 if(!trim($reamrkStr)){
                     continue;
                 }
-                $remarkArr['备注'.$key]= $reamrkStr;
+                $showDatas['备注'.$key]= $reamrkStr;
             }
-
 
             //商机阶段
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'shang_ji_jie_duan'=>$datum['shang_ji_jie_duan']
-                ],JSON_UNESCAPED_UNICODE)
-            );
             if(trim($datum['shang_ji_jie_duan'])){
                 $jieduan = ShangJiStage::findByFieldName($datum['shang_ji_jie_duan']);
-
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '商机阶段'=>$jieduan->field_cname
-                    ],JSON_UNESCAPED_UNICODE)
-                );
-                $datum['show_fields'] = [
-                    $showDatas,[
-                        '商机阶段'=>$jieduan->field_cname
-                    ],$remarkArr
-                ];
-            }else{
-                $datum['show_fields'] = [
-                    $showDatas,$remarkArr
-                ];
+                $showDatas["商机阶段"] = $jieduan->field_cname;
             }
-
+            $datum['show_fields'] = [
+                $showDatas
+            ]; 
 
 //            $datum['show_fields'] = [
 //                [
