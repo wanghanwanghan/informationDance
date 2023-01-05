@@ -376,7 +376,7 @@ class BusinessOpportunityManageController extends ControllerBase
     public function getTags(){
         $requestData =  $this->getRequestData();
         $dataObj = ShangJi::findById($requestData['id']);
-        $biao_arr  = json_decode($dataObj,true);
+        $biao_arr  = json_decode($dataObj->biao_qian,true);
         return $this->writeJson(200, [  ], $biao_arr,'成功');
     }
 
