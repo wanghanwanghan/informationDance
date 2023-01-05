@@ -84,6 +84,44 @@ class BusinessOpportunityManageController extends ControllerBase
             ];
         }
 
+        /**
+        jianDuan:进行中
+        tags:导出
+        tkgc(托克过程):测试
+        remark:测试
+         */
+        if(($requestData['jianDuan'])){
+            $conditions[]  =  [
+                'field' =>'shang_ji_jie_duan',
+                'value' =>'%'.($requestData['jianDuan']).'%',
+                'operate' =>'like',
+            ];
+        }
+
+        if(($requestData['tags'])){
+            $conditions[]  =  [
+                'field' =>'biao_qian',
+                'value' =>'%'.($requestData['tags']).'%',
+                'operate' =>'like',
+            ];
+        }
+
+        if(($requestData['remark'])){
+            $conditions[]  =  [
+                'field' =>'bei_zhu',
+                'value' =>'%'.($requestData['remark']).'%',
+                'operate' =>'like',
+            ];
+        }
+
+        if(($requestData['tkgc'])){
+//            $conditions[]  =  [
+//                'field' =>'biao_qian',
+//                'value' =>'%'.($requestData['tkgc']).'%',
+//                'operate' =>'like',
+//            ];
+        }
+
 
         $datas = ShangJi::findByConditionV2($conditions,$page,$pageSize);
         $showfields = ShangJiFields::findAllByCondition([
