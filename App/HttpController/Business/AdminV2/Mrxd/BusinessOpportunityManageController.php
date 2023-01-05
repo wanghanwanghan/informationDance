@@ -163,7 +163,7 @@ class BusinessOpportunityManageController extends ControllerBase
                 if(!trim($tmpStr)){
                     continue;
                 }
-                $tag_str .= $tmpStr;
+                $tag_str .= "【".$tmpStr."】";
             }
             $showDatas['标签']= $tag_str;
 
