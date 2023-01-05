@@ -107,11 +107,12 @@ class ShangJi extends ModelBase
         $model->page($page,$pageSize)
             ->order('id', 'DESC')
             ->withTotalCount();
+ 
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
                 '商机执行的语句'=>[
-                    '参数' => $model->getLastQuery(),
+                    '参数' => $model->lastQuery()->getLastQuery(),
                 ]
             ],JSON_UNESCAPED_UNICODE)
         );
