@@ -71,7 +71,7 @@ class BusinessOpportunityManageController extends ControllerBase
         if(trim($requestData['shangJi'])){
             $conditions[]  =  [
                 'field' =>'shang_ji_ming_cheng',
-                'value' =>'%'.trim($requestData['nickname']).'%',
+                'value' =>'%'.trim($requestData['shangJi']).'%',
                 'operate' =>'like',
             ];
         }
