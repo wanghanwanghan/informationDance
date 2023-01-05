@@ -68,18 +68,19 @@ class BusinessOpportunityManageController extends ControllerBase
         $pageSize = $requestData['pageSize']?:10;
 
         $conditions = [];
-        if(($requestData['shangJi'])){
+        $str = trim($requestData['shangJi']);
+        if($str){
             $conditions[]  =  [
                 'field' =>'shang_ji_ming_cheng',
-                'value' =>'%'.($requestData['shangJi']).'%',
+                'value' =>'%'.($str).'%',
                 'operate' =>'like',
             ];
         }
-
-        if(($requestData['xiaoShou'])){
+        $str = trim($requestData['xiaoShou']);
+        if($str){
             $conditions[]  =  [
                 'field' =>'fu_ze_ren',
-                'value' =>'%'.($requestData['xiaoShou']).'%',
+                'value' =>'%'.($str).'%',
                 'operate' =>'like',
             ];
         }
@@ -90,31 +91,37 @@ class BusinessOpportunityManageController extends ControllerBase
         tkgc(托克过程):测试
         remark:测试
          */
-        if(($requestData['jianDuan'])){
+        $str = trim($requestData['jianDuan']);
+        if(($str)){
+            $maps = ShangJiStage::stateMaps();
+
             $conditions[]  =  [
                 'field' =>'shang_ji_jie_duan',
-                'value' =>'%'.($requestData['jianDuan']).'%',
+                'value' =>'%'.($maps[$str]).'%',
                 'operate' =>'like',
             ];
         }
 
-        if(($requestData['tags'])){
+        $str = trim($requestData['tags']);
+        if(($str)){
             $conditions[]  =  [
                 'field' =>'biao_qian',
-                'value' =>'%'.($requestData['tags']).'%',
+                'value' =>'%'.($str).'%',
                 'operate' =>'like',
             ];
         }
 
-        if(($requestData['remark'])){
+        $str = trim($requestData['remark']);
+        if(($str)){
             $conditions[]  =  [
                 'field' =>'remark',
-                'value' =>'%'.($requestData['remark']).'%',
+                'value' =>'%'.($str).'%',
                 'operate' =>'like',
             ];
         }
 
-        if(($requestData['tkgc'])){
+        $str = trim($requestData['tkgc']);
+        if(($str)){
 //            $conditions[]  =  [
 //                'field' =>'biao_qian',
 //                'value' =>'%'.($requestData['tkgc']).'%',

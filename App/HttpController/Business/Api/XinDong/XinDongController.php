@@ -36,6 +36,7 @@ use App\HttpController\Models\BusinessBase\CompanyClue;
 use App\HttpController\Models\MRXD\InsuranceDataHuiZhong;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\MRXD\ShangJi;
+use App\HttpController\Models\MRXD\ShangJiStage;
 use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\MRXD\XinDongKeDongFrontEndAnalyzeList;
 use App\HttpController\Models\RDS3\CompanyInvestor;
@@ -2917,12 +2918,7 @@ eof;
             }
 
             $datas_arr3 = [];
-            $state_maps = [
-                "进行中"=>"jin_xing_zhong",
-                "长期"=>"chang_qi",
-                "未开始"=>"wei_kai_shi",
-                "打开"=>"da_kai",
-            ];
+            $state_maps = ShangJiStage::stateMaps();
             foreach ($datas_arr2 as $data_arr2){
                 if(empty($data_arr2['parent'])){
                     continue;
