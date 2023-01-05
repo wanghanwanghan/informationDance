@@ -81,7 +81,7 @@ class BusinessOpportunityManageController extends ControllerBase
             'is_show'=>1
         ]);
         foreach ($datas['data'] as &$datum){
-
+            //前端展示有点小问题  只展示了一列  所以全放一个数组里  正常应该是不同类的数据 放在不同的数组 前端对应展示几列
             $showDatas = [];
             foreach ($showfields as $fieldsData){
                 $showDatas[$fieldsData['field_cname']] = $datum[$fieldsData['field_name']];
@@ -101,24 +101,36 @@ class BusinessOpportunityManageController extends ControllerBase
                 $jieduan = ShangJiStage::findByFieldName($datum['shang_ji_jie_duan']);
                 $showDatas["商机阶段"] = $jieduan->field_cname;
             }
+
+            //标签
+            $arr =  json_decode($datum['remark'],true) ;
+            $tag_str = "";
+            foreach ($arr as $key => $tmpStr){
+                if(!trim($tmpStr)){
+                    continue;
+                }
+                $tag_str .= $tmpStr;
+            }
+            $showDatas['标签']= $tag_str;
+
             $datum['show_fields'] = [
                 $showDatas
-            ]; 
-
-//            $datum['show_fields'] = [
-//                [
-//                    '商机名称'=>'测试公司',
-//                    '商机阶段'=>'测试结算',
-//                ],
-//                [
-//                    '商机名称'=>'测试公司',
-//                    '商机阶段'=>'测试结算',
-//                ],
-//                [
-//                    '商机名称'=>'测试公司',
-//                    '商机阶段'=>'测试结算',
-//                ],
-//            ];
+            ];
+            //前端展示有点小问题  只展示了一列  所以全放一个数组里  正常应该是不同类的数据 放在不同的数组 前端对应展示几列
+            //            $datum['show_fields'] = [
+            //                [
+            //                    '商机名称'=>'测试公司',
+            //                    '商机阶段'=>'测试结算',
+            //                ],
+            //                [
+            //                    '商机名称'=>'测试公司',
+            //                    '商机阶段'=>'测试结算',
+            //                ],
+            //                [
+            //                    '商机名称'=>'测试公司',
+            //                    '商机阶段'=>'测试结算',
+            //                ],
+            //            ];
         }
         $total = $datas['total'];
         return $this->writeJson(200, [
