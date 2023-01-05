@@ -157,7 +157,7 @@ class BusinessOpportunityManageController extends ControllerBase
             }
 
             //标签
-            $arr =  json_decode($datum['remark'],true) ;
+            $arr =  json_decode($datum['tags'],true) ;
             $tag_str = "";
             foreach ($arr as $key => $tmpStr){
                 if(!trim($tmpStr)){
