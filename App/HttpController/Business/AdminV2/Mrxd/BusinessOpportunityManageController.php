@@ -108,7 +108,7 @@ class BusinessOpportunityManageController extends ControllerBase
 
         if(($requestData['remark'])){
             $conditions[]  =  [
-                'field' =>'bei_zhu',
+                'field' =>'remark',
                 'value' =>'%'.($requestData['remark']).'%',
                 'operate' =>'like',
             ];
