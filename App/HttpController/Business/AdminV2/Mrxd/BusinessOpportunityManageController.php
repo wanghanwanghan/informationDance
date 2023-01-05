@@ -68,13 +68,14 @@ class BusinessOpportunityManageController extends ControllerBase
         $pageSize = $requestData['pageSize']?:10;
 
         $conditions = [];
-        if(trim($requestData['shangJi'])){
+        if(($requestData['shangJi'])){
             $conditions[]  =  [
                 'field' =>'shang_ji_ming_cheng',
-                'value' =>'%'.trim($requestData['shangJi']).'%',
+                'value' =>($requestData['shangJi']).'%',
                 'operate' =>'like',
             ];
         }
+
         $datas = ShangJi::findByConditionV2($conditions,$page,$pageSize);
         $showfields = ShangJiFields::findAllByCondition([
             'is_show'=>1
