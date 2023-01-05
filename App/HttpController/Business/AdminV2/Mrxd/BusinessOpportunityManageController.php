@@ -73,7 +73,7 @@ class BusinessOpportunityManageController extends ControllerBase
                 'field' =>'shang_ji_ming_cheng',
                 'value' =>'%'.trim($requestData['nickname']).'%',
                 'operate' =>'like',
-            ]; 
+            ];
         }
         $datas = ShangJi::findByConditionV2($conditions,$page,$pageSize);
         $showfields = ShangJiFields::findAllByCondition([

@@ -93,8 +93,17 @@ class ShangJi extends ModelBase
 
     public static function findByConditionV2($whereArr,$page,$pageSize){
         $model = ShangJi::create();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '商机findByConditionV2'=>[
+                    '参数' => $whereArr,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+
         }
         $model->page($page,$pageSize)
             ->order('id', 'DESC')
