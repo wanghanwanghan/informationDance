@@ -666,11 +666,13 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         $the_date = $day;
         $the_day_of_week = date("w",strtotime($the_date)); //sunday is 0
 
-        $first_day_of_week = date("Y-m-d",strtotime( $the_date )-60*60*24*($the_day_of_week)+60*60*24*1 );
-        $last_day_of_week = date("Y-m-d",strtotime($first_day_of_week)+60*60*24*4 );
+        $first_day_of_week = date("Ymd",strtotime( $the_date )-60*60*24*($the_day_of_week)+60*60*24*1 );
+        $last_day_of_week = date("Ymd",strtotime($first_day_of_week)+60*60*24*4 );
 
-        $dateStart = $first_day_of_week.' 00:00:00';
-        $dateEnd = $last_day_of_week.' 23:59:59';
+        //$dateStart = $first_day_of_week.' 00:00:00';
+        $dateStart = $first_day_of_week;
+        //$dateEnd = $last_day_of_week.' 23:59:59';
+        $dateEnd = $last_day_of_week;
 
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -742,7 +744,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
             fputcsv($f, $headerTitle);
 
             $datas =  \App\HttpController\Models\RDS3\ZhaoTouBiao\ZhaoTouBiaoAll::findBySqlV2(
-                " SELECT * FROM $table WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  "
+                " SELECT * FROM $table WHERE `公告日期` >= '$dateStart' AND  `公告日期` <= '$dateEnd'  "
             );
             CommonService::getInstance()->log4PHP(
                 json_encode([
@@ -750,7 +752,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                     '查询并写入招投标邮件数据'=>[
                         '日期'=>$day,
                         '表'=>$table,
-                        '语句'=>" SELECT * FROM $table WHERE updated_at >= '$dateStart' AND  updated_at <= '$dateEnd'  ",
+                        '语句'=>" SELECT * FROM $table WHERE `公告日期` >= '$dateStart' AND  `公告日期` <= '$dateEnd'  ",
                         '返回记录数量'=>count($datas),
                     ]
                 ],JSON_UNESCAPED_UNICODE)
