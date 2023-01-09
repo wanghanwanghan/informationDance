@@ -382,8 +382,6 @@ class ToolsFileLists extends ModelBase
             '微信匹配值',
         ];
 
-
-
        $filesDatas = self::findBySql("
             WHERE touch_time < 1
             AND type = ".self::$type_upload_pull_gong_kai_contact." 
@@ -398,7 +396,8 @@ class ToolsFileLists extends ModelBase
            $fill_weixin_by_phone = $tmp['fill_weixin_by_phone'];
            //通过微信补全联系人姓名和职位
            $fill_name_and_position_by_weixin = $tmp['fill_name_and_position_by_weixin'];
-
+           //过滤掉企查查
+           $filter_qcc_phone = $tmp['filter_qcc_phone'];
 
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
 
@@ -445,6 +444,7 @@ class ToolsFileLists extends ModelBase
                    ->getEntLianXi([
                        'entName' => $entname,
                    ])['result'];
+
 //               CommonService::getInstance()->log4PHP(
 //                   json_encode([
 //                       __CLASS__.__FUNCTION__ .__LINE__,
@@ -454,6 +454,66 @@ class ToolsFileLists extends ModelBase
 //                       ]
 //                   ])
 //               );
+
+               //取公开联系人信息
+               if(
+                   $companyRes->UNISCID &&
+                   $filter_qcc_phone
+               ){
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           __CLASS__.__FUNCTION__ .__LINE__,
+                           '拉取公开联系人' => [
+                               '需要过滤企查查的联系人' =>  $entname,
+                           ]
+                       ],JSON_UNESCAPED_UNICODE)
+                   );
+
+                   $allConatcts = CompanyClue::getAllContactByCode($companyRes->UNISCID);
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           __CLASS__.__FUNCTION__ .__LINE__,
+                           '拉取公开联系人' => [
+                               '企查查联系人' => $allConatcts,
+                           ]
+                       ],JSON_UNESCAPED_UNICODE)
+                   );
+                   $newRetData = [];
+                   foreach ($retData as $key1 => $datum1){
+                       if(
+                           !in_array($datum1['lianxi'],$allConatcts['qcc'])
+                       ){
+                           $newRetData[$key1] = $datum1;
+                           CommonService::getInstance()->log4PHP(
+                               json_encode([
+                                   __CLASS__.__FUNCTION__ .__LINE__,
+                                   '拉取公开联系人' => [
+                                       '该联系人不是企查查联系人' =>  [
+                                           "联系人" => $datum1['lianxi'],
+                                       ],
+                                   ]
+                               ],JSON_UNESCAPED_UNICODE)
+                           );
+                       }
+                       else{
+                           CommonService::getInstance()->log4PHP(
+                               json_encode([
+                                   __CLASS__.__FUNCTION__ .__LINE__,
+                                   '拉取公开联系人' => [
+                                       '该联系人不是企查查联系人' =>  [
+                                           "联系人" => $datum1['lianxi'],
+                                       ],
+                                   ]
+                               ],JSON_UNESCAPED_UNICODE)
+                           );
+                       }
+                   }
+                   $retData = $newRetData;
+               }
+
+
+
+
                //手机号状态检测 一次网络请求
                $retData = LongXinService::complementEntLianXiMobileState($retData);
 //               CommonService::getInstance()->log4PHP(
