@@ -510,6 +510,19 @@ class ToolsFileLists extends ModelBase
                    }
                    $retData = $newRetData;
                }
+               else{
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           __CLASS__.__FUNCTION__ .__LINE__,
+                           '拉取公开联系人' => [
+                               '不需要过滤' =>  [
+                                   "联系人" => $companyRes->UNISCID,
+                                   "是否需要过滤" => $filter_qcc_phone,
+                               ],
+                           ]
+                       ],JSON_UNESCAPED_UNICODE)
+                   );
+               }
 
 
 
