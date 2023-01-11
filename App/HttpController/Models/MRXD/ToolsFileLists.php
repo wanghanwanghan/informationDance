@@ -484,44 +484,44 @@ class ToolsFileLists extends ModelBase
                            !in_array($datum1['lianxi'],$allConatcts['qcc'])
                        ){
                            $newRetData[$key1] = $datum1;
-                           CommonService::getInstance()->log4PHP(
-                               json_encode([
-                                   __CLASS__.__FUNCTION__ .__LINE__,
-                                   '拉取公开联系人' => [
-                                       '该联系人不是企查查联系人' =>  [
-                                           "联系人" => $datum1['lianxi'],
-                                       ],
-                                   ]
-                               ],JSON_UNESCAPED_UNICODE)
-                           );
+//                           CommonService::getInstance()->log4PHP(
+//                               json_encode([
+//                                   __CLASS__.__FUNCTION__ .__LINE__,
+//                                   '拉取公开联系人' => [
+//                                       '该联系人不是企查查联系人' =>  [
+//                                           "联系人" => $datum1['lianxi'],
+//                                       ],
+//                                   ]
+//                               ],JSON_UNESCAPED_UNICODE)
+//                           );
                        }
                        else{
-                           CommonService::getInstance()->log4PHP(
-                               json_encode([
-                                   __CLASS__.__FUNCTION__ .__LINE__,
-                                   '拉取公开联系人' => [
-                                       '该联系人不是企查查联系人' =>  [
-                                           "联系人" => $datum1['lianxi'],
-                                       ],
-                                   ]
-                               ],JSON_UNESCAPED_UNICODE)
-                           );
+//                           CommonService::getInstance()->log4PHP(
+//                               json_encode([
+//                                   __CLASS__.__FUNCTION__ .__LINE__,
+//                                   '拉取公开联系人' => [
+//                                       '该联系人不是企查查联系人' =>  [
+//                                           "联系人" => $datum1['lianxi'],
+//                                       ],
+//                                   ]
+//                               ],JSON_UNESCAPED_UNICODE)
+//                           );
                        }
                    }
                    $retData = $newRetData;
                }
                else{
-                   CommonService::getInstance()->log4PHP(
-                       json_encode([
-                           __CLASS__.__FUNCTION__ .__LINE__,
-                           '拉取公开联系人' => [
-                               '不需要过滤' =>  [
-                                   "联系人" => $companyRes->UNISCID,
-                                   "是否需要过滤" => $filter_qcc_phone,
-                               ],
-                           ]
-                       ],JSON_UNESCAPED_UNICODE)
-                   );
+//                   CommonService::getInstance()->log4PHP(
+//                       json_encode([
+//                           __CLASS__.__FUNCTION__ .__LINE__,
+//                           '拉取公开联系人' => [
+//                               '不需要过滤' =>  [
+//                                   "联系人" => $companyRes->UNISCID,
+//                                   "是否需要过滤" => $filter_qcc_phone,
+//                               ],
+//                           ]
+//                       ],JSON_UNESCAPED_UNICODE)
+//                   );
                }
 
 
