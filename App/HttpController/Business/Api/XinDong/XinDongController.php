@@ -64,6 +64,7 @@ use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Mail\Email;
 use App\HttpController\Service\Pay\ChargeService;
 use App\HttpController\Service\Sms\SmsService;
+use App\HttpController\Service\XinDong\Score\FenShuService;
 use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongKeDongService;
 use App\HttpController\Service\XinDong\XinDongService;
@@ -5211,4 +5212,13 @@ eof;
         ], '成功', true, []);
     }
 
+    //获取企业的风险分
+    function getFengXian(){
+        $entName = $this->getRequestData('entName', '');
+        if (empty($entName)) {
+            return $this->writeJson(201, null, null, '参数entName不可以都为空');
+        }
+        $datas         = (new FenShuService())->getFengXian($entName);
+        return $this->writeJson(200, null, $datas, null, true, []);
+    }
 }

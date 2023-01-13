@@ -254,7 +254,7 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/startAnalysis', $prefix . 'startAnalysis');// 营收规模 https://api.meirixindong.com/api/v1/xd/addCompanyToAnalyzeLists
             $routeCollector->addRoute(['GET', 'POST'], '/delCompanyToAnalyzeLists', $prefix . 'delCompanyToAnalyzeLists');// 营收规模 https://api.meirixindong.com/api/v1/xd/addCompanyToAnalyzeLists
             $routeCollector->addRoute(['GET', 'POST'], '/getKeDongFeature', $prefix . 'getKeDongFeature');// 营收规模 https://api.meirixindong.com/api/v1/xd/addCompanyToAnalyzeLists
-             
+            $routeCollector->addRoute(['GET', 'POST'], '/getFengXian', $prefix . 'getFengXian');//获取企业的风险分
         });
 
         return true;
