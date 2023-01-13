@@ -67,12 +67,297 @@ class FenShuService extends ServiceBase
         $s    = ($a + $b) / 2;
         //计算
         $fx['sifa'] = 0.25 * $s;
+        //涉税处罚公示
+        $satparty_chufa = $this->satparty_chufa($entName);
+        $a = $this->sscfgs($satparty_chufa['total']);
+        //税务非正常户公示
+        $satparty_fzc = $this->satparty_fzc($entName);
+        $b = $this->swfzchgs($satparty_fzc['total']);
+        //欠税公告
+        $satparty_qs = $this->satparty_qs($entName);
+        $c = $this->qsgg($satparty_qs['total']);
+        $s = ($a + $b + $c) / 3;
+        //计算
+        $fx['shuiwu'] = 0.1 * $s;
+        //==============================================================================================================
+        //行政处罚
+        $GetAdministrativePenaltyList = $this->GetAdministrativePenaltyList($entName);
+        $a = $this->xzcf($GetAdministrativePenaltyList['total']);
+        $fx['xingzheng'] = 0.02 * $a;
+        //==============================================================================================================
+        //联合惩戒名单信息（暂无该字段接口，先以司法类中的失信公告代替）失信公告的数量
+        $shixin = $this->shixin($entName);
+        $a = $this->sxgg($shixin);
+        $fx['gaofengxian'] = 0.4 * $a;
         CommonService::getInstance()->log4PHP($fx,'info','getFengXian');
         return $this->checkResp(200, null, $fx, '成功');
 //        return $fx;
 
     }
 
+    private function shixin($entName){
+        $doc_type = 'shixin';
+        $postData = [
+            'doc_type' => $doc_type,
+            'keyword' => $entName,
+            'pageno' => 1,
+            'range' => 20,
+        ];
+
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sifa', $postData);
+
+        ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
+
+        if (!empty($res)) {
+            foreach ($res as &$one) {
+                //取详情
+                $postData = [
+                    'id' => $one['entryId'],
+                    'doc_type' => $doc_type
+                ];
+
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $doc_type, $postData);
+
+                if ($detail['code'] === 200 && !empty($detail['result'])) {
+                    $one['detail'] = current($detail['result']);
+                } else {
+                    $one['detail'] = null;
+                }
+            }
+            unset($one);
+        }
+
+        $tmp['list'] = $res;
+        $tmp['total'] = $total;
+
+        return $tmp;
+    }
+
+    private function GetAdministrativePenaltyList($entName){
+        $postData = [
+            'searchKey' => $entName,
+            'pageIndex' => 1,
+            'pageSize' => 20,
+        ];
+
+        $res = (new LongDunService())->setCheckRespFlag(true)->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'AdminPenaltyCheck/GetList', $postData);//AdministrativePenalty/GetAdministrativePenaltyList
+
+        ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result']['Data'], $res['paging']['total']] : list($res, $total) = [null, null];
+
+        if (!empty($res)) {
+            foreach ($res as &$one) {
+                //取详情
+                $postData = ['id' => $one['Id']];
+
+                $detail = (new LongDunService())->setCheckRespFlag(true)->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'AdminPenaltyCheck/GetCreditDetail', $postData);//AdministrativePenalty/GetAdministrativePenaltyDetail
+
+                if ($detail['code'] == 200 && !empty($detail['result'])) {
+                    $one['detail'] = $detail['result'];
+                } else {
+                    $one['detail'] = null;
+                }
+            }
+            unset($one);
+        }
+
+        $tmp['list'] = $res;
+        $tmp['total'] = $total;
+
+        return $tmp;
+    }
+
+    private function satparty_qs($entName){
+        $doc_type = 'satparty_qs';
+
+        $postData = [
+            'doc_type' => $doc_type,
+            'keyword' => $entName,
+            'pageno' => 1,
+            'range' => 20,
+        ];
+
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sat', $postData);
+
+        ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
+
+        if (!empty($res)) {
+            foreach ($res as &$one) {
+                //取详情
+                $postData = [
+                    'id' => $one['entryId'],
+                    'doc_type' => $doc_type
+                ];
+
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $doc_type, $postData);
+
+                if ($detail['code'] === 200 && !empty($detail['result'])) {
+                    $one['detail'] = current($detail['result']);
+                } else {
+                    $one['detail'] = null;
+                }
+            }
+            unset($one);
+        }
+
+        $tmp['list'] = $res;
+        $tmp['total'] = $total;
+
+        return $tmp;
+    }
+
+    private function satparty_fzc($entName){
+        $doc_type = 'satparty_fzc';
+
+        $postData = [
+            'doc_type' => $doc_type,
+            'keyword' => $entName,
+            'pageno' => 1,
+            'range' => 20,
+        ];
+
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sat', $postData);
+
+        ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
+
+        if (!empty($res)) {
+            foreach ($res as &$one) {
+                //取详情
+                $postData = [
+                    'id' => $one['entryId'],
+                    'doc_type' => $doc_type
+                ];
+
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $doc_type, $postData);
+
+                if ($detail['code'] === 200 && !empty($detail['result'])) {
+                    $one['detail'] = current($detail['result']);
+                } else {
+                    $one['detail'] = null;
+                }
+            }
+            unset($one);
+        }
+
+        $tmp['list'] = $res;
+        $tmp['total'] = $total;
+
+        return $tmp;
+    }
+    private function satparty_chufa($entName){
+        $doc_type = 'satparty_chufa';
+
+        $postData = [
+            'doc_type' => $doc_type,
+            'keyword' => $entName,
+            'pageno' => 1,
+            'range' => 20,
+        ];
+
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sat', $postData);
+
+        ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
+
+        if (!empty($res)) {
+            foreach ($res as &$one) {
+                //取详情
+                $postData = [
+                    'id' => $one['entryId'],
+                    'doc_type' => $doc_type
+                ];
+
+                $detail = (new FaYanYuanService())->setCheckRespFlag(true)->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $doc_type, $postData);
+
+                if ($detail['code'] === 200 && !empty($detail['result'])) {
+                    $one['detail'] = current($detail['result']);
+                } else {
+                    $one['detail'] = null;
+                }
+            }
+            unset($one);
+        }
+
+        $tmp['list'] = $res;
+        $tmp['total'] = $total;
+
+        return $tmp;
+    }
+
+    //失信公告
+    private function sxgg($data)
+    {
+        //总数
+        $num = (int)$data;
+
+        if ($num >= 3) return 100;
+        if ($num >= 2 && $num <= 1) return 90;
+        if ($num < 1) return 0;
+
+        return 0;
+    }
+
+
+    //行政处罚
+    private function xzcf($data)
+    {
+        //总数
+        $num = (int)$data;
+
+        //总数
+        if ($num > 10) return 100;
+        if ($num >= 6 && $num <= 10) return 90;
+        if ($num >= 3 && $num <= 5) return 80;
+        if ($num >= 1 && $num <= 2) return 60;
+        if ($num < 1) return 0;
+
+        return 0;
+    }
+
+
+    //欠税公告
+    private function qsgg($data)
+    {
+        //总数
+        $num = (int)$data;
+
+        //总数
+        if ($num > 10) return 100;
+        if ($num >= 6 && $num <= 10) return 90;
+        if ($num >= 3 && $num <= 5) return 80;
+        if ($num >= 1 && $num <= 2) return 60;
+        if ($num < 1) return 0;
+
+        return 0;
+    }
+    //税务非正常户公示
+    private function swfzchgs($data)
+    {
+        //总数
+        $num = (int)$data;
+
+        //总数
+        if ($num > 10) return 100;
+        if ($num >= 6 && $num <= 10) return 90;
+        if ($num >= 3 && $num <= 5) return 80;
+        if ($num >= 1 && $num <= 2) return 60;
+        if ($num < 1) return 0;
+
+        return 0;
+    }
+//涉税处罚公示
+    private function sscfgs($data)
+    {
+        //总数
+        $num = (int)$data;
+
+        //总数
+        if ($num > 10) return 100;
+        if ($num >= 6 && $num <= 10) return 90;
+        if ($num >= 3 && $num <= 5) return 80;
+        if ($num >= 1 && $num <= 2) return 60;
+        if ($num < 1) return 0;
+
+        return 0;
+    }
     private function getZxgg($entName)
     {
         $fyyList   = CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl');
