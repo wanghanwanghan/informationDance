@@ -93,6 +93,14 @@ class ShangJi extends ModelBase
 
     public static function findByConditionV2($whereArr,$page,$pageSize){
         $model = ShangJi::create();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '商机findByConditionV2'=>[
+                    '参数' => $whereArr,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -101,6 +109,17 @@ class ShangJi extends ModelBase
             ->withTotalCount();
 
         $res = $model->all();
+
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '商机执行的语句'=>[
+                    '参数' => $model->lastQuery()->getLastQuery(),
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
 
         $total = $model->lastQueryResult()->getTotalCount();
         return [

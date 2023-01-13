@@ -68,78 +68,123 @@ class BusinessOpportunityManageController extends ControllerBase
         $pageSize = $requestData['pageSize']?:10;
 
         $conditions = [];
-        if($requestData['nickname']){
+        $str = trim($requestData['shangJi']);
+        if($str){
             $conditions[]  =  [
-                'field' =>'nickname',
-                'value' =>$requestData['nickname'].'%',
+                'field' =>'shang_ji_ming_cheng',
+                'value' =>'%'.($str).'%',
                 'operate' =>'like',
             ];
-
         }
+        $str = trim($requestData['xiaoShou']);
+        if($str){
+            $conditions[]  =  [
+                'field' =>'fu_ze_ren',
+                'value' =>'%'.($str).'%',
+                'operate' =>'like',
+            ];
+        }
+
+        /**
+        jianDuan:进行中
+        tags:导出
+        tkgc(托克过程):测试
+        remark:测试
+         */
+        $str = trim($requestData['jianDuan']);
+        if(($str)){
+            $maps = ShangJiStage::stateMaps();
+
+            $conditions[]  =  [
+                'field' =>'shang_ji_jie_duan',
+                'value' =>'%'.($maps[$str]).'%',
+                'operate' =>'like',
+            ];
+        }
+
+        $str = trim($requestData['tags']);
+        if(($str)){
+            $conditions[]  =  [
+                'field' =>'biao_qian',
+                'value' =>'%'.($str).'%',
+                'operate' =>'like',
+            ];
+        }
+
+        $str = trim($requestData['remark']);
+        if(($str)){
+            $conditions[]  =  [
+                'field' =>'remark',
+                'value' =>'%'.($str).'%',
+                'operate' =>'like',
+            ];
+        }
+
+        $str = trim($requestData['tkgc']);
+        if(($str)){
+//            $conditions[]  =  [
+//                'field' =>'biao_qian',
+//                'value' =>'%'.($requestData['tkgc']).'%',
+//                'operate' =>'like',
+//            ];
+        }
+
+
         $datas = ShangJi::findByConditionV2($conditions,$page,$pageSize);
         $showfields = ShangJiFields::findAllByCondition([
             'is_show'=>1
         ]);
         foreach ($datas['data'] as &$datum){
-            //其他信息
+            //前端展示有点小问题  只展示了一列  所以全放一个数组里  正常应该是不同类的数据 放在不同的数组 前端对应展示几列
             $showDatas = [];
             foreach ($showfields as $fieldsData){
-                $showDatas[$fieldsData['field_cname']] = $datum[$fieldsData['field_name']];
+                $showDatas["【".$fieldsData['field_cname']."】"] = $datum[$fieldsData['field_name']];
             }
 
             //备注信息
-            $arr = explode("&%&%&%&%&%&",$datum['remark']) ;
-            $remarkArr = [];
+            $arr =  json_decode($datum['remark'],true) ;
             foreach ($arr as $key => $reamrkStr){
                 if(!trim($reamrkStr)){
                     continue;
                 }
-                $remarkArr['备注'.$key]= $reamrkStr;
+                $showDatas['【备注'.$key.'】']= $reamrkStr;
             }
-
 
             //商机阶段
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'shang_ji_jie_duan'=>$datum['shang_ji_jie_duan']
-                ],JSON_UNESCAPED_UNICODE)
-            );
             if(trim($datum['shang_ji_jie_duan'])){
                 $jieduan = ShangJiStage::findByFieldName($datum['shang_ji_jie_duan']);
-
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '商机阶段'=>$jieduan->field_cname
-                    ],JSON_UNESCAPED_UNICODE)
-                );
-                $datum['show_fields'] = [
-                    $showDatas,[
-                        '商机阶段'=>$jieduan->field_cname
-                    ],$remarkArr
-                ];
-            }else{
-                $datum['show_fields'] = [
-                    $showDatas,$remarkArr
-                ];
+                $showDatas["【商机阶段】"] = $jieduan->field_cname;
             }
 
+            //标签
+            $arr =  json_decode($datum['biao_qian'],true) ;
+            $tag_str = "";
+            foreach ($arr as $key => $tmpStr){
+                if(!trim($tmpStr)){
+                    continue;
+                }
+                $tag_str .= "[".$tmpStr."]";
+            }
+            $showDatas['标签']= $tag_str;
 
-//            $datum['show_fields'] = [
-//                [
-//                    '商机名称'=>'测试公司',
-//                    '商机阶段'=>'测试结算',
-//                ],
-//                [
-//                    '商机名称'=>'测试公司',
-//                    '商机阶段'=>'测试结算',
-//                ],
-//                [
-//                    '商机名称'=>'测试公司',
-//                    '商机阶段'=>'测试结算',
-//                ],
-//            ];
+            $datum['show_fields'] = [
+                $showDatas
+            ];
+            //前端展示有点小问题  只展示了一列  所以全放一个数组里  正常应该是不同类的数据 放在不同的数组 前端对应展示几列
+            //            $datum['show_fields'] = [
+            //                [
+            //                    '商机名称'=>'测试公司',
+            //                    '商机阶段'=>'测试结算',
+            //                ],
+            //                [
+            //                    '商机名称'=>'测试公司',
+            //                    '商机阶段'=>'测试结算',
+            //                ],
+            //                [
+            //                    '商机名称'=>'测试公司',
+            //                    '商机阶段'=>'测试结算',
+            //                ],
+            //            ];
         }
         $total = $datas['total'];
         return $this->writeJson(200, [
@@ -282,7 +327,7 @@ class BusinessOpportunityManageController extends ControllerBase
         $reamrkArr[] = $requestData['remark'];
 //        $requestData['remark'];
         $dbData = [
-            'remark'=>json_encode($reamrkArr,true)
+            'remark'=>json_encode($reamrkArr,JSON_UNESCAPED_UNICODE)
         ];
         $res = ShangJi::updateById(
             $requestData['id'],
@@ -308,7 +353,7 @@ class BusinessOpportunityManageController extends ControllerBase
         $biao_qian_arr = json_decode($biao_qian,true);
         $biao_qian_arr[] = $requestData['content'];
         $dbData = [
-            'biao_qian'=>json_encode($biao_qian_arr,true)
+            'biao_qian'=>json_encode($biao_qian_arr,JSON_UNESCAPED_UNICODE)
         ];
         $res = ShangJi::updateById(
             $requestData['id'],
@@ -331,7 +376,7 @@ class BusinessOpportunityManageController extends ControllerBase
     public function getTags(){
         $requestData =  $this->getRequestData();
         $dataObj = ShangJi::findById($requestData['id']);
-        $biao_arr  = json_decode($dataObj,true);
+        $biao_arr  = json_decode($dataObj->biao_qian,true);
         return $this->writeJson(200, [  ], $biao_arr,'成功');
     }
 

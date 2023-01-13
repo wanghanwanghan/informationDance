@@ -31,7 +31,10 @@ class ShangJiStage extends ModelBase
     static  function  stateMaps(){
 
         return [
-
+            "进行中"=>"jin_xing_zhong",
+            "长期"=>"chang_qi",
+            "未开始"=>"wei_kai_shi",
+            "打开"=>"da_kai",
         ] ;
     }
 
