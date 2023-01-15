@@ -33,14 +33,14 @@ require_once './bootstrap.php';
 
 Core::getInstance()->initialize();
 
-class jincai_shoudong0 extends AbstractProcess
+class jincai_shoudong1 extends AbstractProcess
 {
     public $currentAesKey = 'rycn45bmdklhshfs';
     public $iv = '1234567890abcdef';
     public $oss_bucket = 'invoice-mrxd';
     public $oss_expire_time = 86400 * 60;
 
-    public $p_index = 0;
+    public $p_index = 1;
 
     function do_strtr(?string $str): string
     {
@@ -702,7 +702,7 @@ for ($i = 1; $i--;) {
     $conf = new Config();
     $conf->setArg(['foo' => $i]);
     $conf->setEnableCoroutine(true);
-    $process = new jincai_shoudong0($conf);
+    $process = new jincai_shoudong1($conf);
     $process->getProcess()->start();
 }
 
