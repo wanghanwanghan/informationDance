@@ -343,6 +343,13 @@ EOF;
 
     protected function run($arg)
     {
+        echo CreateConf::getInstance()->getConf('env.mysqlHost') . PHP_EOL;
+        echo CreateConf::getInstance()->getConf('env.mysqlPort') . PHP_EOL;
+        echo CreateConf::getInstance()->getConf('env.mysqlUser') . PHP_EOL;
+        echo CreateConf::getInstance()->getConf('env.mysqlPassword') . PHP_EOL;
+        echo CreateConf::getInstance()->getConf('env.mysqlDatabase') . PHP_EOL;
+
+
         // addTask
         $this->addTask();
 
