@@ -33,27 +33,26 @@ require_once './bootstrap.php';
 
 Core::getInstance()->initialize();
 
-class updateIsElectronics extends AbstractProcess
+class updateIsElectronics0 extends AbstractProcess
 {
     protected function run($arg)
     {
         $list = AntAuthList::create()
             ->where('belong', 41)
-            ->where('id', 828, '<=')
+            ->where('id', 931, '>=')
+            ->where('id', 1611, '<=')
             ->where('getDataSource', 2)
-            ->where('isElectronics', '%属%成功%', 'not like')
-            ->where('isElectronics', '%全电%', 'not like')
-            ->where('isElectronics', '%非一般%', 'not like')
-            ->where('isElectronics', '%平台密码%', 'not like')
+            //->where('isElectronics', '%属%成功%', 'not like')
+            //->where('isElectronics', '%全电%', 'not like')
+            //->where('isElectronics', '%平台密码%', 'not like')
             ->all();
 
-        foreach ($list as $one) {
-            $isElectronics = $one->getAttr('isElectronics');
-            if (mb_strpos($isElectronics, '全电试点企业') === false) {
-                $info = (new JinCaiShuKeService())->S000502($one->getAttr('socialCredit'));
-                $one->update(['isElectronics' => $info['msg']]);
-                echo $one->getAttr('id') . '|' . $info['msg'] . PHP_EOL;
-            }
+        foreach ($list as $key => $one) {
+            if ($key % 2 === 0) continue;
+            $info = (new JinCaiShuKeService())
+                ->S000502($one->getAttr('socialCredit'));
+            $one->update(['isElectronics' => $info['msg']]);
+            echo $one->getAttr('id') . '|' . $info['msg'] . PHP_EOL;
         }
 
         dd('yes');
@@ -96,7 +95,7 @@ for ($i = 1; $i--;) {
     $conf = new Config();
     $conf->setArg(['foo' => $i]);
     $conf->setEnableCoroutine(true);
-    $process = new updateIsElectronics($conf);
+    $process = new updateIsElectronics0($conf);
     $process->getProcess()->start();
 }
 

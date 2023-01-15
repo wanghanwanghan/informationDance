@@ -340,24 +340,6 @@ EOF;
 
     protected function run($arg)
     {
-//        $list = JinCaiTrace::create()->all();
-//
-//        foreach ($list as $key => $item) {
-//
-//            if ($key < 224) continue;
-//
-//            if ($key % 2 === 1) continue;
-//
-//            $nsrsbh = $item->getAttr('socialCredit');
-//
-//            echo $key . '|' . $nsrsbh . '|' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
-//
-//            $this->sendToOSS($nsrsbh, '');
-//
-//        }
-//
-//        dd('over');
-
         $list = JinCaiTrace::create()->all();
 
         // 主票
