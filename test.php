@@ -51,12 +51,46 @@ $list = [
 sort($list);
 
 foreach ($list as $one) {
-    echo "GRANT SELECT ON `hd_saic`.`{$one}` TO 'dts_user'@'%';" . PHP_EOL;
+    //echo "GRANT SELECT ON `hd_saic`.`{$one}` TO 'dts_user'@'%';" . PHP_EOL;
 }
 
-echo "GRANT SELECT ON `hd_saic_extension`.`dataplus_intro_h1` TO 'dts_user'@'%';" . PHP_EOL;
-echo "GRANT SELECT ON `hd_saic_extension`.`dataplus_intro_h5` TO 'dts_user'@'%';" . PHP_EOL;
-echo "GRANT SELECT ON `hd_saic_extension`.`dataplus_intro_h6` TO 'dts_user'@'%';" . PHP_EOL;
-echo "GRANT SELECT ON `hd_saic_extension`.`aqsiq_ancc_h` TO 'dts_user'@'%';" . PHP_EOL;
+//echo "GRANT SELECT ON `hd_saic_extension`.`dataplus_intro_h1` TO 'dts_user'@'%';" . PHP_EOL;
+//echo "GRANT SELECT ON `hd_saic_extension`.`dataplus_intro_h5` TO 'dts_user'@'%';" . PHP_EOL;
+//echo "GRANT SELECT ON `hd_saic_extension`.`dataplus_intro_h6` TO 'dts_user'@'%';" . PHP_EOL;
+//echo "GRANT SELECT ON `hd_saic_extension`.`aqsiq_ancc_h` TO 'dts_user'@'%';" . PHP_EOL;
+
+$list = [
+    'https://longgov.oss-cn-beijing.aliyuncs.com/jdds/1688.7z.001' => 4,
+    'https://longgov.oss-cn-beijing.aliyuncs.com/jdds/guomei.7z' => 0,
+    'https://longgov.oss-cn-beijing.aliyuncs.com/jdds/jd.7z.001' => 7,
+    'https://longgov.oss-cn-beijing.aliyuncs.com/jdds/suning.7z' => 0,
+    'https://longgov.oss-cn-beijing.aliyuncs.com/jdds/taobao.7z.001' => 33,
+    'https://longgov.oss-cn-beijing.aliyuncs.com/jdds/tmall.7z.001' => 22,
+];
+
+foreach ($list as $url => $max) {
+
+    if ($max > 0) {
+        for ($suffix = 1; $suffix <= $max; $suffix++) {
+            if ($suffix >= 10) {
+                $downUrl = substr($url, 0, -2);
+            } else {
+                $downUrl = substr($url, 0, -1);
+            }
+            $downUrl .= $suffix;
+            // d
+            $commod = "wget --content-disposition {$downUrl}";
+            $system_res = system($commod);
+        }
+    } else {
+        // d
+        $commod = "wget --content-disposition {$url}";
+        $system_res = system($commod);
+    }
+
+
+}
+
+
 
 

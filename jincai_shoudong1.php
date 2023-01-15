@@ -610,7 +610,7 @@ EOF;
             $kprqz = Carbon::now()->subMonths(1)->endOfMonth()->timestamp;
 
             // 曾经推送过，就说明已经推送过24个月的了，本次推送只推前一个月
-            if (empty($this->lastReqUrl)) {
+            if (empty($target->getAttr('lastReqUrl'))) {
                 $kprqq = Carbon::now()->subMonths(23)->startOfMonth()->timestamp;
             } else {
                 $kprqq = Carbon::now()->subMonths(1)->startOfMonth()->timestamp;
