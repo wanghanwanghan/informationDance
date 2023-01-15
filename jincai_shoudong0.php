@@ -33,12 +33,14 @@ require_once './bootstrap.php';
 
 Core::getInstance()->initialize();
 
-class jincai_shoudong extends AbstractProcess
+class jincai_shoudong0 extends AbstractProcess
 {
     public $currentAesKey = 'rycn45bmdklhshfs';
     public $iv = '1234567890abcdef';
     public $oss_bucket = 'invoice-mrxd';
     public $oss_expire_time = 86400 * 60;
+
+    public $p_index = 0;
 
     function do_strtr(?string $str): string
     {
@@ -341,11 +343,18 @@ EOF;
 
     protected function run($arg)
     {
+        // addTask
+        $this->addTask();
+
+
+        dd('addTask完成');
+
+
         $list = JinCaiTrace::create()->all();
 
         // 主票
         foreach ($list as $key => $item) {
-            if ($key % 2 === 0) continue;
+            if ($key % 3 !== $this->p_index) continue;
             $nsrsbh = $item->getAttr('socialCredit');
 
             // 进项
@@ -579,7 +588,7 @@ EOF;
         $list = AntAuthList::create()
             ->where('getDataSource', 2)
             ->where('belong', 41)
-            ->where('id', 829, '<')
+            ->where('id', 1611, '<=')// 这个数字要改
             ->where("isElectronics LIKE '%属%成功%' OR isElectronics LIKE '%非一般%'")
             ->all();
 
@@ -587,8 +596,12 @@ EOF;
 
         foreach ($list as $key => $target) {
 
+            if ($key % 3 !== $this->p_index) {
+                continue;
+            }
+
             // ===========================================================================
-            if ($key <= -1) {
+            if ($key <= -1) {// 如果有断的需要续上，改这里的key值
                 continue;
             }
             // ===========================================================================
@@ -697,7 +710,7 @@ for ($i = 1; $i--;) {
     $conf = new Config();
     $conf->setArg(['foo' => $i]);
     $conf->setEnableCoroutine(true);
-    $process = new jincai_shoudong($conf);
+    $process = new jincai_shoudong0($conf);
     $process->getProcess()->start();
 }
 
