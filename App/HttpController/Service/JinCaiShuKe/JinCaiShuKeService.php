@@ -472,6 +472,23 @@ class JinCaiShuKeService extends ServiceBase
         return $this->checkResp($res, 'wupan');
     }
 
+    //无盘 获取采集任务状态
+    function getTaskStatus(string $traceNo): array
+    {
+        $url = 'distribute/task/getTaskStatus';
+
+        $post_data = [
+            'traceNo' => trim($traceNo)
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken], [], 'postjson');
+
+        return $this->checkResp($res, 'wupan');
+    }
+
     //无盘 用于客户获取各个采集任务的流水号
     function obtainResultTraceNo(string $traceNo): array
     {
