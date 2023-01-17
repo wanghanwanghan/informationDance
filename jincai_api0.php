@@ -344,7 +344,7 @@ EOF;
     protected function run($arg)
     {
         // addTask
-        $this->addTask();
+        $this->addTask('91420103MA49MK9F7E');
 
 
         dd('addTask完成');
@@ -583,20 +583,25 @@ EOF;
         }
     }
 
-    function addTask()
+    function addTask(string $in_socialCredit = '')
     {
-        $list = AntAuthList::create()
-            ->where('getDataSource', 2)
-            ->where('belong', 41)
-            ->where('id', 1611, '<=')// 这个数字要改
-            ->where("isElectronics LIKE '%属%成功%' OR isElectronics LIKE '%非一般%'")
-            ->all();
+        if (empty($in_socialCredit)) {
+            $list = AntAuthList::create()
+                ->where('getDataSource', 2)
+                ->where('belong', 41)
+                ->where('id', 1611, '<=')// 这个数字要改
+                ->where("isElectronics LIKE '%属%成功%' OR isElectronics LIKE '%非一般%'")
+                ->all();
+        } else {
+            $list = AntAuthList::create()
+                ->where('socialCredit', $in_socialCredit)->all();
+        }
 
         // =============================================================================================================
 
         foreach ($list as $key => $target) {
 
-            if ($key % 3 !== $this->p_index) {
+            if ($key % 3 !== $this->p_index && !empty($in_socialCredit)) {
                 continue;
             }
 
