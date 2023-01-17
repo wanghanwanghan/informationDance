@@ -86,10 +86,17 @@ class JinCaiShuKeService extends ServiceBase
     private function checkResp($res, string $type = ''): array
     {
         if ($type === 'wupan') {
-            return $this->createReturn($res['code'],
-                null,
-                jsonDecode(control::aesDecode($res['data'], $this->appSecret_new)),
-                $res['msg']);
+            if ($res['msg'] === '校验失败') {
+                return $this->createReturn($res['code'],
+                    null,
+                    $res['data'],
+                    $res['msg']);
+            } else {
+                return $this->createReturn($res['code'],
+                    null,
+                    jsonDecode(control::aesDecode($res['data'], $this->appSecret_new)),
+                    $res['msg']);
+            }
         } else {
             $res['code'] !== '0000' ?: $res['code'] = 200;
             $arr['content'] = jsonDecode(base64_decode($res['content']));
