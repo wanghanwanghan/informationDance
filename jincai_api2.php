@@ -312,80 +312,30 @@ class jincai_api2 extends AbstractProcess
         return true;
     }
 
-    // 取进项
-    private function getInPiao(int $maxId, string $nsrsbh)
-    {
-        return \App\HttpController\Models\RDS3\JinCai\MainIn::create()
-            ->where('gfsh', $nsrsbh)
-            ->where('id', $maxId, '>')
-            ->limit(500)
-            ->all();
-    }
-
-    // 取销项
-    private function getOutPiao(int $maxId, string $nsrsbh)
-    {
-        return \App\HttpController\Models\RDS3\JinCai\MainOut::create()
-            ->where('xfsh', $nsrsbh)
-            ->where('id', $maxId, '>')
-            ->limit(500)
-            ->all();
-    }
-
-    // 取详情
-    private function getDetailInfo($fpdm, $fphm, $table): ?array
-    {
-        $sql = <<<EOF
-select * from {$table} where fpdm = '{$fpdm}' and fphm = '{$fphm}';
-EOF;
-        return sqlRaw($sql, 'jin_cai');
-    }
-
+    //启动
     protected function run($arg)
     {
-        // addTask
-        $this->addTask();
-
-
-        dd('addTask完成');
-
-
         $list = JinCaiTrace::create()->all();
 
-        // 主票
         foreach ($list as $key => $item) {
             if ($key % 3 !== $this->p_index) continue;
             $nsrsbh = $item->getAttr('socialCredit');
-
-            // 进项
-            $maxId = 0;
+            $page = 1;
             while (true) {
-                echo $nsrsbh . '|' . $maxId . '|in' . PHP_EOL;
-                $main = $this->getInPiao($maxId, $nsrsbh);
-                if (empty($main)) {
+                // 开票日期起
+                $kprqq = Carbon::createFromTimestamp($item->getAttr('kprqq'))->format('Y-m-d');
+                // 开票日期止
+                $kprqz = Carbon::createFromTimestamp($item->getAttr('kprqz'))->format('Y-m-d');
+                // 主票和明细信息
+                $main = (new JinCaiShuKeService())->obtainFpInfoNew(true, $nsrsbh, $kprqq, $kprqz, $page);
+                echo $nsrsbh . '|' . $page . '|' . 'start at ' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
+                if (empty($main['result']['data']['content'])) {
+                    echo $nsrsbh . '|' . $page . '|' . 'stop at ' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
                     break;
+                } else {
+                    $page++;
                 }
-                foreach ($main as $one) {
-                    if ($one['id'] - 0 > $maxId) {
-                        $maxId = $one['id'] - 0;
-                    }
-                }
-                $this->handleMain($main, $nsrsbh);
-            }
-            // 销项目
-            $maxId = 0;
-            while (true) {
-                echo $nsrsbh . '|' . $maxId . '|out' . PHP_EOL;
-                $main = $this->getOutPiao($maxId, $nsrsbh);
-                if (empty($main)) {
-                    break;
-                }
-                foreach ($main as $one) {
-                    if ($one['id'] - 0 > $maxId) {
-                        $maxId = $one['id'] - 0;
-                    }
-                }
-                $this->handleMain($main, $nsrsbh);
+                $this->handleMain($main['result']['data']['content'], $nsrsbh);
             }
         }
 
@@ -395,7 +345,9 @@ EOF;
 
     function handleMain($main, $nsrsbh)
     {
+        // 主票
         foreach ($main as $one_main) {
+            $one_main = $one_main['invoiceMain'];
             $insert = [
                 'fpdm' => isset($one_main['fpdm']) ? $this->do_strtr($one_main['fpdm']) : '',
                 'gfsh' => isset($one_main['gfsh']) ? $this->do_strtr($one_main['gfsh']) : '',
@@ -426,11 +378,20 @@ EOF;
                 $this->mainStoreMysql($insert, $nsrsbh);
             }
         }
+
+        // 详情
+        foreach ($main as $one_main) {
+            $fpdm = $one_main['invoiceMain']['fpdm'];
+            $fphm = $one_main['invoiceMain']['fphm'];
+            if (!empty($one_main['invoiceDetailsList'])) {
+                $this->handleDetail($one_main['invoiceDetailsList'], $fpdm, $fphm);
+            }
+        }
     }
 
     private function mainStoreMysql(array $arr, string $nsrsbh): void
     {
-        // 0销项 1 进项
+        // 0销项 1进项
         $arr['cxlx'] === '0' ? $arr['cxlx'] = '02' : $arr['cxlx'] = '01';
 
         $check_exists = EntInvoice::create()
@@ -501,21 +462,10 @@ EOF;
             CommonService::getInstance()->log4PHP($content, 'main-storeMysql', __FUNCTION__);
         }
 
-        // 处理详情
-        $this->handleDetail($insert_main['fpdm'], $insert_main['fphm']);
     }
 
-    function handleDetail($fpdm, $fphm)
+    function handleDetail($detail, $fpdm, $fphm)
     {
-        $in_detail = $this->getDetailInfo($fpdm, $fphm, 'invoice_detail_input');
-        $out_detail = $this->getDetailInfo($fpdm, $fphm, 'invoice_detail_output');
-
-        if (empty($in_detail) && empty($out_detail)) {
-            return;
-        }
-
-        empty($in_detail) ? $detail = $out_detail : $detail = $in_detail;
-
         foreach ($detail as $mxxh => $one_detail) {
             // 全空就不入库了
             $check = array_filter($one_detail);
@@ -534,12 +484,12 @@ EOF;
                     'sl' => $one_detail['sl'] ?? '',// 税率
                     'se' => '',
                 ];
-                $this->detailStoreMysql($insert, '');
+                $this->detailStoreMysql($insert);
             }
         }
     }
 
-    private function detailStoreMysql(array $arr, string $nsrsbh): void
+    private function detailStoreMysql(array $arr): void
     {
         $check_exists = EntInvoiceDetail::create()
             ->addSuffix($arr['fpdm'], $arr['fphm'], 'test')
@@ -583,20 +533,25 @@ EOF;
         }
     }
 
-    function addTask()
+    function addTask(string $in_socialCredit = '')
     {
-        $list = AntAuthList::create()
-            ->where('getDataSource', 2)
-            ->where('belong', 41)
-            ->where('id', 1611, '<=')// 这个数字要改
-            ->where("isElectronics LIKE '%属%成功%' OR isElectronics LIKE '%非一般%'")
-            ->all();
+        if (empty($in_socialCredit)) {
+            $list = AntAuthList::create()
+                ->where('getDataSource', 2)
+                ->where('belong', 41)
+                ->where('id', 1611, '<=')// 这个数字要改
+                ->where("isElectronics LIKE '%属%成功%' OR isElectronics LIKE '%非一般%'")
+                ->all();
+        } else {
+            $list = AntAuthList::create()
+                ->where('socialCredit', $in_socialCredit)->all();
+        }
 
         // =============================================================================================================
 
         foreach ($list as $key => $target) {
 
-            if ($key % 3 !== $this->p_index) {
+            if ($key % 3 !== $this->p_index && !empty($in_socialCredit)) {
                 continue;
             }
 
@@ -612,7 +567,7 @@ EOF;
                 ->get();// 删除这条数据，重新add
 
             if (!empty($c_check)) {
-                $p_traceNo = $c_check->getAttr('p_traceNo');
+                $p_traceNo = $c_check->getAttr('pTraceNo');
                 if (empty($p_traceNo)) {
                     JinCaiTrace::create()->destroy([
                         'socialCredit' => $target->getAttr('socialCredit'),
