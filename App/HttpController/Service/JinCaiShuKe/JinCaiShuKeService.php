@@ -390,6 +390,37 @@ class JinCaiShuKeService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
 
+    //api 全电登记 登记后可以用无盘接口取全电企业数据 非全电也可以登记 变成全电后取数据就不影响了
+    function regSwszzh(string $nsrsbh, string $username, string $password, string $nsrdq = '')
+    {
+        //基于现有进项平台已有企业，开通全电。
+        //请务必保证提交鉴权信息的准确性，能正确登录电子税局并打开税务数字账户模块。若鉴权信息错误，则可能导致账户锁定。
+        //本接口目前仅适用对进项平台已有的企业注册全电，若有新的企业需要注册，需要提交信息给到我们。或联系我们商务开通自助新增全电企业功能。
+        //注册全电后，可调用接口获取税款所属期，系统会在当天或次天自动初始化数据，若对数据需求比较急切，也可以联系我们人工初始化。
+
+        $post_data = [
+            'appid' => $this->appKey,
+            'appsecret' => $this->appSecret,
+            'nsrsbh' => $nsrsbh,//登录电子税务局的税号
+            'nsrmc' => '',//纳税人名称 可空
+            'createToken' => '',//自主创建企业权限 可空
+            'username' => $username,//登录电子税务局的用户
+            'password' => $password,//登录电子税务局的密码
+            'nsrdq' => $nsrdq,//纳税人地区,详见纳税人地区对照表
+            'bsrzjhm' => '',//办税人员证件号码 可空
+            'bsrlx' => '',//办税人类型 可空
+            'bsrxm' => '',//办税人姓名 可空
+            'bsrmm' => '',//办税人密码 可空
+            'sjh' => '',//手机号 可空
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send('https://task.jcsk100.com/register/regSwszzh', $post_data, [], ['enableSSL' => true], 'POSTJSON');
+
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
+    }
+
     //无盘 添加任务接口（通用提交采集任务报文）
     function addTask(string $nsrsbh, string $province, string $city, array $ywBody, string $taskCode = 'A002'): array
     {
