@@ -138,7 +138,7 @@ class jincai_shoudong0 extends AbstractProcess
 
         //add销项
         for ($p_index = 1; $p_index <= $p_total; $p_index++) {
-            $csp->add('in' . $p_index, function () use ($target, $max_id_out, $start, $p_total, $p_index, $step) {
+            $csp->add('out' . $p_index, function () use ($target, $max_id_out, $start, $p_total, $p_index, $step) {
                 $start_time = Carbon::now()->format('Y-m-d H:i:s');
                 while (true) {
                     $p_start = $max_id_out - ($start * $p_total + $p_index) * $step;
