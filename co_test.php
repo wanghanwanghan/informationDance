@@ -27,9 +27,23 @@ class co_test extends AbstractProcess
     //启动
     protected function run($arg)
     {
-        $res = (new JinCaiShuKeService())
-            ->regSwszzh('91110108MA01KPGK0L', 'wanghan', 'wanghan');
-        dd($res);
+        $list = \App\HttpController\Models\Api\JinCaiTrace::create()->all();
+
+        foreach ($list as $key => $item) {
+            $nsrsbh = '913302821447175450';
+            $page = 1;
+            while (true) {
+                // 开票日期起
+                $kprqq = \Carbon\Carbon::createFromTimestamp($item->getAttr('kprqq'))->format('Y-m-d');
+                // 开票日期止
+                $kprqz = \Carbon\Carbon::createFromTimestamp($item->getAttr('kprqz'))->format('Y-m-d');
+                // 主票和明细信息
+                $main = (new JinCaiShuKeService())->obtainFpInfoNew(true, $nsrsbh, $kprqq, $kprqz, $page);
+                dd($main);
+            }
+        }
+
+        dd('run over');
     }
 
     protected function onShutDown()

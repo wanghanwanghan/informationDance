@@ -620,7 +620,7 @@ class JinCaiShuKeService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(true)
-            ->send($this->wupan_url_new . $url, $post_data, [], [], 'postjson');
+            ->send($this->wupan_url_new . $url, $post_data, [], ['cliTimeout' => 120], 'postjson');
 
         return $this->checkResp($res, 'wupan');
     }
