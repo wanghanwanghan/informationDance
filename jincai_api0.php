@@ -41,6 +41,7 @@ class jincai_api0 extends AbstractProcess
     public $oss_expire_time = 86400 * 60;
 
     public $p_index = 0;
+    public $p_total = 5;
 
     function do_strtr(?string $str): string
     {
@@ -318,7 +319,7 @@ class jincai_api0 extends AbstractProcess
         $list = JinCaiTrace::create()->all();
 
         foreach ($list as $key => $item) {
-            if ($key % 3 !== $this->p_index) continue;
+            if ($key % $this->p_total !== $this->p_index) continue;
             $nsrsbh = $item->getAttr('socialCredit');
             $page = 1;
             while (true) {

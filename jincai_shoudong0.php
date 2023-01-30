@@ -35,12 +35,143 @@ Core::getInstance()->initialize();
 
 class jincai_shoudong0 extends AbstractProcess
 {
-    public $currentAesKey = 'rycn45bmdklhshfs';
+    public $currentAesKey = '21bf9a5d127a1a8b';
     public $iv = '1234567890abcdef';
     public $oss_bucket = 'invoice-mrxd';
     public $oss_expire_time = 86400 * 60;
 
-    public $p_index = 0;
+    protected function run($arg)
+    {
+        $this->getInvoice();
+    }
+
+    //取票时候调用 从接口 未完成
+    private function _getInvoice()
+    {
+        $list = JinCaiTrace::create()->all();
+
+        // 主票
+        foreach ($list as $key => $item) {
+
+            if ($key % $this->p_total !== $this->p_index) continue;
+            $nsrsbh = $item->getAttr('socialCredit');
+
+            // 进项
+            $maxId = 0;
+            while (true) {
+                echo $nsrsbh . '|' . $maxId . '|in' . PHP_EOL;
+                $main = $this->getInPiao($maxId, $nsrsbh);
+                if (empty($main)) {
+                    break;
+                }
+                foreach ($main as $one) {
+                    if ($one['id'] - 0 > $maxId) {
+                        $maxId = $one['id'] - 0;
+                    }
+                }
+                $this->handleMain($main, $nsrsbh);
+            }
+
+            // 销项目
+            $maxId = 0;
+            while (true) {
+                echo $nsrsbh . '|' . $maxId . '|out' . PHP_EOL;
+                $main = $this->getOutPiao($maxId, $nsrsbh);
+                if (empty($main)) {
+                    break;
+                }
+                foreach ($main as $one) {
+                    if ($one['id'] - 0 > $maxId) {
+                        $maxId = $one['id'] - 0;
+                    }
+                }
+                $this->handleMain($main, $nsrsbh);
+            }
+
+        }
+    }
+
+    //取票时候调用 从数据库
+    private function getInvoice()
+    {
+        $target_t = JinCaiTrace::create()->field('socialCredit')->all();
+        $target = [];
+        foreach ($target_t as $one) {
+            $target[] = $one->getAttr('socialCredit');
+        }
+
+        preg_match_all('/\d+/', basename(__FILE__), $no);
+        $no = current(current($no)) - 0;
+
+        $start = 0;
+        $step = 500;
+        $max_id_in = 3955900;
+        $max_id_out = 1148042;
+
+        $csp = \App\Csp\Service\CspService::getInstance()->create();
+
+        $p_total = 20;
+
+        //add进项
+        for ($p_index = 1; $p_index <= $p_total; $p_index++) {
+            $csp->add('in' . $p_index, function () use ($target, $max_id_in, $start, $p_total, $p_index, $step) {
+                $start_time = Carbon::now()->format('Y-m-d H:i:s');
+                while (true) {
+                    $p_start = $max_id_in - ($start * $p_total + $p_index) * $step;
+                    $p_end = $p_start - $step;
+                    if ($p_start < 0 && $p_end < 0) break;
+                    $raw = \App\HttpController\Models\RDS3\JinCai\MainIn::create()
+                        ->where('pid', $p_start, '<=')
+                        ->where('pid', $p_end, '>')
+                        ->where('gfsh', $target, 'IN')
+                        ->all();
+                    if (!empty($raw)) {
+                        // ===============================================
+                        $this->handleMain($raw, 'in');
+                        // ===============================================
+                    }
+                    $start++;
+                }
+                return [$start_time, Carbon::now()->format('Y-m-d H:i:s')];
+            });
+        }
+
+        //add销项
+        for ($p_index = 1; $p_index <= $p_total; $p_index++) {
+            $csp->add('in' . $p_index, function () use ($target, $max_id_out, $start, $p_total, $p_index, $step) {
+                $start_time = Carbon::now()->format('Y-m-d H:i:s');
+                while (true) {
+                    $p_start = $max_id_out - ($start * $p_total + $p_index) * $step;
+                    $p_end = $p_start - $step;
+                    if ($p_start < 0 && $p_end < 0) break;
+                    $raw = \App\HttpController\Models\RDS3\JinCai\MainOut::create()
+                        ->where('pid', $p_start, '<=')
+                        ->where('pid', $p_end, '>')
+                        ->where('xfsh', $target, 'IN')
+                        ->all();
+                    if (!empty($raw)) {
+                        // ===============================================
+                        $this->handleMain($raw, 'out');
+                        // ===============================================
+                    }
+                    $start++;
+                }
+                return [$start_time, Carbon::now()->format('Y-m-d H:i:s')];
+            });
+        }
+
+        dd($csp->exec(-1));
+
+    }
+
+    private function createCurrentAesKey()
+    {
+        $timestamp_s = Carbon::now()->startOfMonth()->timestamp;
+        $timestamp_e = Carbon::now()->endOfMonth()->timestamp;
+        $ym = Carbon::now()->format('Y-m');
+        $currentAesKey = md5(implode('|', [$timestamp_s, $ym, $timestamp_e]));
+        $this->currentAesKey = substr($currentAesKey, 0, 16);
+    }
 
     function do_strtr(?string $str): string
     {
@@ -312,90 +443,15 @@ class jincai_shoudong0 extends AbstractProcess
         return true;
     }
 
-    // 取进项
-    private function getInPiao(int $maxId, string $nsrsbh)
-    {
-        return \App\HttpController\Models\RDS3\JinCai\MainIn::create()
-            ->where('gfsh', $nsrsbh)
-            ->where('id', $maxId, '>')
-            ->limit(500)
-            ->all();
-    }
-
-    // 取销项
-    private function getOutPiao(int $maxId, string $nsrsbh)
-    {
-        return \App\HttpController\Models\RDS3\JinCai\MainOut::create()
-            ->where('xfsh', $nsrsbh)
-            ->where('id', $maxId, '>')
-            ->limit(500)
-            ->all();
-    }
-
-    // 取详情
-    private function getDetailInfo($fpdm, $fphm, $table): ?array
-    {
-        $sql = <<<EOF
-select * from {$table} where fpdm = '{$fpdm}' and fphm = '{$fphm}';
-EOF;
-        return sqlRaw($sql, 'jin_cai');
-    }
-
-    protected function run($arg)
-    {
-        // addTask
-        $this->addTask();
-
-
-        dd('addTask完成');
-
-
-        $list = JinCaiTrace::create()->all();
-
-        // 主票
-        foreach ($list as $key => $item) {
-            if ($key % 3 !== $this->p_index) continue;
-            $nsrsbh = $item->getAttr('socialCredit');
-
-            // 进项
-            $maxId = 0;
-            while (true) {
-                echo $nsrsbh . '|' . $maxId . '|in' . PHP_EOL;
-                $main = $this->getInPiao($maxId, $nsrsbh);
-                if (empty($main)) {
-                    break;
-                }
-                foreach ($main as $one) {
-                    if ($one['id'] - 0 > $maxId) {
-                        $maxId = $one['id'] - 0;
-                    }
-                }
-                $this->handleMain($main, $nsrsbh);
-            }
-            // 销项目
-            $maxId = 0;
-            while (true) {
-                echo $nsrsbh . '|' . $maxId . '|out' . PHP_EOL;
-                $main = $this->getOutPiao($maxId, $nsrsbh);
-                if (empty($main)) {
-                    break;
-                }
-                foreach ($main as $one) {
-                    if ($one['id'] - 0 > $maxId) {
-                        $maxId = $one['id'] - 0;
-                    }
-                }
-                $this->handleMain($main, $nsrsbh);
-            }
-        }
-
-        dd('run over');
-
-    }
-
-    function handleMain($main, $nsrsbh)
+    function handleMain($main, $type)
     {
         foreach ($main as $one_main) {
+            $one_main = obj2Arr($one_main);
+            $fpdm = $this->do_strtr($one_main['fpdm'] ?? '');
+            $fphm = $this->do_strtr($one_main['fphm'] ?? '');
+            $type === 'in' ?
+                $nsrsbh = $this->do_strtr($one_main['gfsh']) :
+                $nsrsbh = $this->do_strtr($one_main['xfsh']);
             $insert = [
                 'fpdm' => isset($one_main['fpdm']) ? $this->do_strtr($one_main['fpdm']) : '',
                 'gfsh' => isset($one_main['gfsh']) ? $this->do_strtr($one_main['gfsh']) : '',
@@ -502,19 +558,18 @@ EOF;
         }
 
         // 处理详情
-        $this->handleDetail($insert_main['fpdm'], $insert_main['fphm']);
+        $this->handleDetail($insert_main['fpdm'], $insert_main['fphm'], $arr['cxlx']);
     }
 
-    function handleDetail($fpdm, $fphm)
+    function handleDetail($fpdm, $fphm, $cxlx)
     {
-        $in_detail = $this->getDetailInfo($fpdm, $fphm, 'invoice_detail_input');
-        $out_detail = $this->getDetailInfo($fpdm, $fphm, 'invoice_detail_output');
+        $cxlx === '02' ? $table_name = 'invoice_detail_output' : $table_name = 'invoice_detail_input';
 
-        if (empty($in_detail) && empty($out_detail)) {
+        $detail = $this->getDetailInfo($fpdm, $fphm, $table_name);
+
+        if (empty($detail)) {
             return;
         }
-
-        empty($in_detail) ? $detail = $out_detail : $detail = $in_detail;
 
         foreach ($detail as $mxxh => $one_detail) {
             // 全空就不入库了
@@ -537,6 +592,15 @@ EOF;
                 $this->detailStoreMysql($insert, '');
             }
         }
+    }
+
+    // 取详情
+    private function getDetailInfo($fpdm, $fphm, $table): ?array
+    {
+        $sql = <<<EOF
+select * from {$table} where fpdm = '{$fpdm}' and fphm = '{$fphm}';
+EOF;
+        return sqlRaw($sql, 'jin_cai');
     }
 
     private function detailStoreMysql(array $arr, string $nsrsbh): void
