@@ -27,11 +27,8 @@ class co_test extends AbstractProcess
     //启动
     protected function run($arg)
     {
-        $arr = [
-            '1','0'
-        ];
-
-        dd(array_filter($arr));
+        $res = strtotime(' sdfsdf ');
+        dd($res);
     }
 
     protected function onShutDown()

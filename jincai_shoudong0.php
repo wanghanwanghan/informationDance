@@ -42,11 +42,12 @@ class jincai_shoudong0 extends AbstractProcess
 
     protected function run($arg)
     {
-        $this->getInvoice();
+        $this->_sendToOSS();
+
     }
 
     //取票时候调用 从接口 未完成
-    private function _getInvoice()
+    function getInvoice()
     {
         $list = JinCaiTrace::create()->all();
 
@@ -92,7 +93,7 @@ class jincai_shoudong0 extends AbstractProcess
     }
 
     //取票时候调用 从数据库
-    private function getInvoice()
+    function _getInvoice()
     {
         $target_t = JinCaiTrace::create()->field('socialCredit')->all();
         $target = [];
@@ -105,11 +106,14 @@ class jincai_shoudong0 extends AbstractProcess
 
         $start = 0;
         $step = 500;
-        $max_id_in = 3955900;
-        $max_id_out = 1148042;
+        $max_id_in = 3955900;//每次改
+        $max_id_out = 1148042;//每次改
+        $max_id_in_detail = 7177096;//每次改
+        $max_id_out_detail = 2773176;//每次改
 
         $csp = \App\Csp\Service\CspService::getInstance()->create();
 
+        //总共需要80个数据库链接
         $p_total = 20;
 
         //add进项
@@ -160,11 +164,70 @@ class jincai_shoudong0 extends AbstractProcess
             });
         }
 
+        //add进项 detail
+        for ($p_index = 1; $p_index <= $p_total; $p_index++) {
+            $csp->add('in_detail' . $p_index, function () use ($target, $max_id_in_detail, $start, $p_total, $p_index, $step) {
+                $start_time = Carbon::now()->format('Y-m-d H:i:s');
+                while (true) {
+                    $p_start = $max_id_in_detail - ($start * $p_total + $p_index) * $step;
+                    $p_end = $p_start - $step;
+                    if ($p_start < 0 && $p_end < 0) break;
+                    $raw = \App\HttpController\Models\RDS3\JinCai\DetailIn::create()
+                        ->where('pid', $p_start, '<=')
+                        ->where('pid', $p_end, '>')
+                        ->all();
+                    if (!empty($raw)) {
+                        // ===============================================
+                        $this->handleDetail($raw, 'in');
+                        // ===============================================
+                    }
+                    $start++;
+                }
+                return [$start_time, Carbon::now()->format('Y-m-d H:i:s')];
+            });
+        }
+
+        //add销项 detail
+        for ($p_index = 1; $p_index <= $p_total; $p_index++) {
+            $csp->add('out_detail' . $p_index, function () use ($target, $max_id_out_detail, $start, $p_total, $p_index, $step) {
+                $start_time = Carbon::now()->format('Y-m-d H:i:s');
+                while (true) {
+                    $p_start = $max_id_out_detail - ($start * $p_total + $p_index) * $step;
+                    $p_end = $p_start - $step;
+                    if ($p_start < 0 && $p_end < 0) break;
+                    $raw = \App\HttpController\Models\RDS3\JinCai\DetailOut::create()
+                        ->where('pid', $p_start, '<=')
+                        ->where('pid', $p_end, '>')
+                        ->all();
+                    if (!empty($raw)) {
+                        // ===============================================
+                        $this->handleDetail($raw, 'out');
+                        // ===============================================
+                    }
+                    $start++;
+                }
+                return [$start_time, Carbon::now()->format('Y-m-d H:i:s')];
+            });
+        }
+
         dd($csp->exec(-1));
 
     }
 
-    private function createCurrentAesKey()
+    //上传oss时候调用
+    function _sendToOSS()
+    {
+        $all = JinCaiTrace::create()->all();
+        foreach ($all as $one) {
+            $this->sendToOSS(
+                $one->getAttr('socialCredit'),
+                $one->getAttr('kprqq'),
+                $one->getAttr('kprqz')
+            );
+        }
+    }
+
+    function createCurrentAesKey()
     {
         $timestamp_s = Carbon::now()->startOfMonth()->timestamp;
         $timestamp_e = Carbon::now()->endOfMonth()->timestamp;
@@ -194,7 +257,7 @@ class jincai_shoudong0 extends AbstractProcess
     }
 
     //上传到oss 发票已经入完mysql
-    function sendToOSS($NSRSBH, $bigKprq): bool
+    function sendToOSS($NSRSBH, $kprqq, $kprqz): bool
     {
         //只有蚂蚁的税号才上传oss
         //蚂蚁区块链dev id 36
@@ -211,12 +274,14 @@ class jincai_shoudong0 extends AbstractProcess
         $total = EntInvoice::create()
             ->addSuffix($NSRSBH, 'test')
             ->where('nsrsbh', $NSRSBH)
+            ->where('kprq_int', $kprqq, '>=')
+            ->where('kprq_int', $kprqz, '<=')
             ->count();
 
         //随机文件名
         $fileSuffix = control::getUuid(8);
 
-        if (empty($total)) {
+        if ($total === 0) {
             $filename = "{$NSRSBH}_page_1_{$fileSuffix}.json";
             file_put_contents($store . $filename, '');
         } else {
@@ -229,6 +294,8 @@ class jincai_shoudong0 extends AbstractProcess
                 $list = EntInvoice::create()
                     ->addSuffix($NSRSBH, 'test')
                     ->where('nsrsbh', $NSRSBH)
+                    ->where('kprq_int', $kprqq, '>=')
+                    ->where('kprq_int', $kprqz, '<=')
                     ->field([
                         'fpdm',//
                         'fphm',//
@@ -331,7 +398,7 @@ class jincai_shoudong0 extends AbstractProcess
                 ->update([
                     'lastReqTime' => time(),
                     'lastReqUrl' => empty($file_arr) ? '' : implode(',', $file_arr),
-                    'big_kprq' => $bigKprq
+                    'big_kprq' => $kprqz
                 ]);
         }
         closedir($dh);
@@ -484,7 +551,7 @@ class jincai_shoudong0 extends AbstractProcess
         }
     }
 
-    private function mainStoreMysql(array $arr, string $nsrsbh): void
+    function mainStoreMysql(array $arr, string $nsrsbh): void
     {
         // 0销项 1 进项
         $arr['cxlx'] === '0' ? $arr['cxlx'] = '02' : $arr['cxlx'] = '01';
@@ -525,6 +592,7 @@ class jincai_shoudong0 extends AbstractProcess
             'zfbz' => changeNull(changeFPZT($arr['fpzt'])) === '2' ? 'Y' : 'N',//'作废标志 N-未作废 Y-作废',
             'zfsj' => '',//'作废时间',
             'kprq' => changeNull($arr['kprq']),//'开票日期',
+            'kprq_int' => is_numeric(strtotime($arr['kprq'])) ? strtotime($arr['kprq']) : 0,//'范围查询用',
             'kprq_sort' => microTimeNew() - 0,//'排序用',
             'fplx' => changeNull($arr['fplx']),//'发票类型代码 01 02 03 04 10 11 14 15',
             'fpztDm' => changeNull(changeFPZT($arr['fpzt'])),//'发票状态代码 0-正常 1-失控 2-作废 3-红字 4-异常票',
@@ -556,29 +624,19 @@ class jincai_shoudong0 extends AbstractProcess
             $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
             CommonService::getInstance()->log4PHP($content, 'main-storeMysql', __FUNCTION__);
         }
-
-        // 处理详情
-        $this->handleDetail($insert_main['fpdm'], $insert_main['fphm'], $arr['cxlx']);
     }
 
-    function handleDetail($fpdm, $fphm, $cxlx)
+    function handleDetail($detail, $type)
     {
-        $cxlx === '02' ? $table_name = 'invoice_detail_output' : $table_name = 'invoice_detail_input';
-
-        $detail = $this->getDetailInfo($fpdm, $fphm, $table_name);
-
-        if (empty($detail)) {
-            return;
-        }
-
         foreach ($detail as $mxxh => $one_detail) {
+            $one_detail = obj2Arr($one_detail);
             // 全空就不入库了
             $check = array_filter($one_detail);
             if (!empty($check)) {
                 $insert = [
-                    'mxxh' => $mxxh,
-                    'fpdm' => $fpdm,
-                    'fphm' => $fphm,
+                    'mxxh' => 0,
+                    'fpdm' => $one_detail['fpdm'] ?? '',
+                    'fphm' => $one_detail['fphm'] ?? '',
                     'spbm' => $one_detail['ssflbm'] ?? '',// 税收分类编码
                     'mc' => $one_detail['hwhyslwmc'] ?? '',// 货物或应税劳务名称
                     'ggxh' => $one_detail['ggxh'] ?? '',
@@ -594,16 +652,7 @@ class jincai_shoudong0 extends AbstractProcess
         }
     }
 
-    // 取详情
-    private function getDetailInfo($fpdm, $fphm, $table): ?array
-    {
-        $sql = <<<EOF
-select * from {$table} where fpdm = '{$fpdm}' and fphm = '{$fphm}';
-EOF;
-        return sqlRaw($sql, 'jin_cai');
-    }
-
-    private function detailStoreMysql(array $arr, string $nsrsbh): void
+    function detailStoreMysql(array $arr, string $nsrsbh): void
     {
         $check_exists = EntInvoiceDetail::create()
             ->addSuffix($arr['fpdm'], $arr['fphm'], 'test')
