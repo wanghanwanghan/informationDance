@@ -277,6 +277,7 @@ class FaHaiController extends ProvideBase
             'pageno' => $page,
             'range' => $pageSize,
         ];
+        CommonService::getInstance()->log4PHP([$postData], 'info', 'getZxgg');
 
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new FaYanYuanService())
