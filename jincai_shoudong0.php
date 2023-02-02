@@ -43,7 +43,6 @@ class jincai_shoudong0 extends AbstractProcess
     protected function run($arg)
     {
         $this->_sendToOSS();
-
     }
 
     //取票时候调用 从接口 未完成
@@ -218,7 +217,15 @@ class jincai_shoudong0 extends AbstractProcess
     function _sendToOSS()
     {
         $all = JinCaiTrace::create()->all();
+        $continue = true;
+        $n = '9133010439665064X3';
         foreach ($all as $one) {
+            if ($one->getAttr('socialCredit') === $n) {
+                $continue = false;
+            }
+            if ($continue) {
+                continue;
+            }
             $this->sendToOSS(
                 $one->getAttr('socialCredit'),
                 $one->getAttr('kprqq'),
@@ -268,6 +275,7 @@ class jincai_shoudong0 extends AbstractProcess
         $dataInFile = 3000;
 
         $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
+        $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . '202301' . DIRECTORY_SEPARATOR;
         is_dir($store) || mkdir($store, 0755, true);
 
         //取全部发票写入文件
