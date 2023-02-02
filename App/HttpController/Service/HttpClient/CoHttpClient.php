@@ -25,6 +25,7 @@ class CoHttpClient extends ServiceBase
 
     function send($url = '', $postData = [], $headers = [], $options = [], $method = 'post')
     {
+        CommonService::getInstance()->log4PHP($url, 'info', 'http_return_data_url');
         //从缓存中拿
         $this->useCache ? $take = $this->takeResult($url, $postData, $options) : $take = [];
         //不是空，说明缓存里有数据，直接返回
