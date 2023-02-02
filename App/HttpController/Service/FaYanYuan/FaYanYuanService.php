@@ -159,7 +159,7 @@ class FaYanYuanService extends ServiceBase
             'sign' => $sign_num,
             'id' => $body['id']
         ];
-        CommonService::getInstance()->log4PHP($data, 'info', 'getDetail');
+        CommonService::getInstance()->log4PHP([$url, $body,$data], 'info', 'getDetail');
         $resp = (new CoHttpClient())->useCache(false)->send($url, $data);
         CommonService::getInstance()->log4PHP($resp, 'info', 'getDetail');
         $this->recodeSourceCurl([

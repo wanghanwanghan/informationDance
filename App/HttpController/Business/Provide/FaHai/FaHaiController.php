@@ -689,6 +689,8 @@ class FaHaiController extends ProvideBase
                 ->getDetail($this->detailBaseUrl . 'satparty_fzc', $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        CommonService::getInstance()->log4PHP($res, 'info', 'getSatpartyFzcDetail');
+
         return $this->checkResponse($res);
     }
 
