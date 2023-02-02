@@ -70,6 +70,8 @@ class CoHttpClient extends ServiceBase
             CommonService::getInstance()->log4PHP([$data], 'info', 'http_return_data');
 //            dingAlarm('http返回',['$url'=>$url,'$data'=>json_encode($data),'$postData'=>json_encode($postData)]);
             $d = jsonDecode($data,true);
+            $a = json_last_error_msg();
+            CommonService::getInstance()->log4PHP($a, 'info', 'http_return_data');
             CommonService::getInstance()->log4PHP([$url, $postData, \Qiniu\json_decode($data), $headers], 'info', 'http_return_data');
 
 //            if(empty($data) || (isset($d['code']) && $d['code'] != 200)){
