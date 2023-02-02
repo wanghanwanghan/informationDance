@@ -681,6 +681,7 @@ class FaHaiController extends ProvideBase
         $this->entName = $this->request()->getRequestParam('entName') ?? '';
         $postData = [
             'id' => $id,
+            'doc_type' => 'satparty_fzc'
         ];
 //        CommonService::getInstance()->log4PHP($postData, 'info', 'getSatpartyFzcDetail');
         $this->csp->add($this->cspKey, function () use ($postData) {
