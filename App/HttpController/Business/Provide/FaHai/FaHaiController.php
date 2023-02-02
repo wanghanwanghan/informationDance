@@ -690,7 +690,7 @@ class FaHaiController extends ProvideBase
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         CommonService::getInstance()->log4PHP($res, 'info', 'getSatpartyFzcDetail');
-
+        CommonService::getInstance()->log4PHP($this->checkResponse($res), 'info', 'getSatpartyFzcDetail');
         return $this->checkResponse($res);
     }
 
