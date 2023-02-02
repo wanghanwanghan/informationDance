@@ -169,8 +169,9 @@ class FaYanYuanService extends ServiceBase
             'requestData' => $data,
             'responseData' => $resp,
         ]);
-
-        return $this->checkRespFlag ? $this->checkResp($resp, $body['doc_type']??'', 'detail') : $resp;
+        $detail = $this->checkRespFlag ? $this->checkResp($resp, $body['doc_type']??'', 'detail') : $resp;
+        CommonService::getInstance()->log4PHP($detail, 'info', 'getDetail');
+        return $detail;
     }
 
     function entoutOrg($postData)
