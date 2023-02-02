@@ -55,6 +55,7 @@ class CoHttpClient extends ServiceBase
         //设置head头
         empty($headers) ?: $request->setHeaders($headers, true, false);
         try {
+            CommonService::getInstance()->log4PHP([$url, $postData], 'info', 'http_return_data_3');
             //发送请求
             if ($method === 'POST') $data = $request->post($postData);
             if ($method === 'POSTJSON') $data = $request->postJson(
