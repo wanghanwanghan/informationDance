@@ -170,7 +170,7 @@ class FaYanYuanService extends ServiceBase
             'responseData' => $resp,
         ]);
 
-        return $this->checkRespFlag ? $this->checkResp($resp, $body['doc_type'], 'detail') : $resp;
+        return $this->checkRespFlag ? $this->checkResp($resp, $body['doc_type']??'', 'detail') : $resp;
     }
 
     function entoutOrg($postData)
