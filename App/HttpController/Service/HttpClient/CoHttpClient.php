@@ -67,6 +67,7 @@ class CoHttpClient extends ServiceBase
 
             //整理结果
             $data = $data->getBody();
+            CommonService::getInstance()->log4PHP([$data], 'info', 'http_return_data');
 //            dingAlarm('http返回',['$url'=>$url,'$data'=>json_encode($data),'$postData'=>json_encode($postData)]);
             $d = jsonDecode($data,true);
             CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'http_return_data');
