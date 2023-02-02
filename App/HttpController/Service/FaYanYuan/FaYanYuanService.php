@@ -95,7 +95,7 @@ class FaYanYuanService extends ServiceBase
             'args' => $json_data
         ];
 
-        $resp = (new CoHttpClient())->send($url, $data);
+        $resp = (new CoHttpClient())->useCache(false)->send($url, $data);
 
         $this->recodeSourceCurl([
             'sourceName' => $this->sourceName,
