@@ -592,7 +592,7 @@ class FaHaiController extends ProvideBase
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new FaYanYuanService())
                 ->setCheckRespFlag(true)
-                ->getList($this->listBaseUrl . 'sifa', $postData);
+                ->getList($this->listBaseUrl . 'sat', $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -603,7 +603,10 @@ class FaHaiController extends ProvideBase
     {
         $id = $this->request()->getRequestParam('id') ?? '';
         $this->entName = $this->request()->getRequestParam('entName') ?? '';
-        $postData = ['id' => $id];
+        $postData = [
+            'id' => $id,
+            'doc_type' => 'satparty_chufa'
+        ];
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new FaYanYuanService())
                 ->setCheckRespFlag(true)
