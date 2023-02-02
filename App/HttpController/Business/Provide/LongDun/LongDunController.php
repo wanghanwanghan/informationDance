@@ -363,4 +363,70 @@ class LongDunController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+
+    //限制高消费核查 https://api.qichacha.com/SumptuaryCheck/GetList
+    function SumptuaryCheckGetList()
+    {
+        $entName  = $this->request()->getRequestParam('entName');
+        $page     = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData = [
+            'searchKey' => $entName,
+            'pageIndex' => $page,
+            'pageSize'  => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'SumptuaryCheck/GetList', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    //限制高消费详情
+    function SumptuaryCheckGetDetail()
+    {
+        $id = $this->request()->getRequestParam('id');
+
+        $postData = ['id' => $id];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'SumptuaryCheck/GetDetail', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    //限制高消费核查
+    function PersonSumptuaryCheckGetList()
+    {
+        $entName  = $this->request()->getRequestParam('entName');
+        $page     = $this->request()->getRequestParam('pageNo') ?? 1;
+        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $postData = [
+            'searchKey' => $entName,
+            'pageIndex' => $page,
+            'pageSize'  => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'PersonSumptuaryCheck/GetList', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
 }
