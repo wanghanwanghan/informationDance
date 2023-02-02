@@ -682,15 +682,15 @@ class FaHaiController extends ProvideBase
         $postData = [
             'id' => $id,
         ];
-        CommonService::getInstance()->log4PHP($postData, 'info', 'getSatpartyFzcDetail');
+//        CommonService::getInstance()->log4PHP($postData, 'info', 'getSatpartyFzcDetail');
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new FaYanYuanService())
                 ->setCheckRespFlag(true)
                 ->getDetail($this->detailBaseUrl . 'satparty_fzc', $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-        CommonService::getInstance()->log4PHP($res, 'info', 'getSatpartyFzcDetail');
-        CommonService::getInstance()->log4PHP($this->checkResponse($res), 'info', 'getSatpartyFzcDetail');
+//        CommonService::getInstance()->log4PHP($res, 'info', 'getSatpartyFzcDetail');
+//        CommonService::getInstance()->log4PHP($this->checkResponse($res), 'info', 'getSatpartyFzcDetail');
         return $this->checkResponse($res);
     }
 

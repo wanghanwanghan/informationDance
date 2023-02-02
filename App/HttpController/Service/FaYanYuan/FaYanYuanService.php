@@ -159,9 +159,9 @@ class FaYanYuanService extends ServiceBase
             'sign' => $sign_num,
             'id' => $body['id']
         ];
-        CommonService::getInstance()->log4PHP([$url, $body,$data], 'info', 'getDetail');
+//        CommonService::getInstance()->log4PHP([$url, $body,$data], 'info', 'getDetail');
         $resp = (new CoHttpClient())->useCache(false)->send($url, $data);
-        CommonService::getInstance()->log4PHP($resp, 'info', 'getDetail');
+//        CommonService::getInstance()->log4PHP($resp, 'info', 'getDetail');
         $this->recodeSourceCurl([
             'sourceName' => $this->sourceName,
             'apiName' => last(explode('/', trim($url, '/'))),
@@ -170,7 +170,7 @@ class FaYanYuanService extends ServiceBase
             'responseData' => $resp,
         ]);
         $detail = $this->checkRespFlag ? $this->checkResp($resp, $body['doc_type']??'', 'detail') : $resp;
-        CommonService::getInstance()->log4PHP($detail, 'info', 'getDetail');
+//        CommonService::getInstance()->log4PHP($detail, 'info', 'getDetail');
         return $detail;
     }
 
