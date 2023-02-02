@@ -31,7 +31,7 @@ class CoHttpClient extends ServiceBase
         //不是空，说明缓存里有数据，直接返回
         if (!empty($take)) return $this->needJsonDecode ? jsonDecode($take) : $take;
         $method = strtoupper($method);
-
+        CommonService::getInstance()->log4PHP($url, 'info', 'http_return_data_url2');
         if ($method === 'GET' && strpos($url, '?') === false) {
             $url .= '?' . http_build_query($postData);
         }
