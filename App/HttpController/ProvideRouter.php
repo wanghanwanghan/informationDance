@@ -121,7 +121,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/EquityFreezeCheckGetDetail', $prefix . 'EquityFreezeCheckGetDetail');//股权冻结详情
             $routeCollector->addRoute(['GET', 'POST'], '/SumptuaryCheckGetList', $prefix . 'SumptuaryCheckGetList');//  限制高消费核查
             $routeCollector->addRoute(['GET', 'POST'], '/SumptuaryCheckGetDetail', $prefix . 'SumptuaryCheckGetDetail');// 限制高消费详情
-            $routeCollector->addRoute(['GET', 'POST'], '/PersonSumptuaryCheckGetList', $prefix . 'PersonSumptuaryCheckGetList');//  限制高消费核查
+            $routeCollector->addRoute(['GET', 'POST'], '/PersonSumptuaryCheckGetList', $prefix . 'PersonSumptuaryCheckGetList');//  限制高消费核查【董监高】
         });
 
         return true;
