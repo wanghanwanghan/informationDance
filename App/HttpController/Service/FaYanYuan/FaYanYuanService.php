@@ -161,7 +161,7 @@ class FaYanYuanService extends ServiceBase
         ];
         CommonService::getInstance()->log4PHP($data, 'info', 'getDetail');
         $resp = (new CoHttpClient())->useCache(false)->send($url, $data);
-
+        CommonService::getInstance()->log4PHP($resp, 'info', 'getDetail');
         $this->recodeSourceCurl([
             'sourceName' => $this->sourceName,
             'apiName' => last(explode('/', trim($url, '/'))),
