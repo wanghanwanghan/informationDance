@@ -87,6 +87,7 @@ class CoHttpClient extends ServiceBase
 //                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'http_return_data');
 //            }
         } catch (\Exception $e) {
+            CommonService::getInstance()->log4PHP([$e], 'info', 'http_return_data_e');
             $this->writeErr($e, 'CoHttpClient');
             return ['coHttpErr' => 'error'];
         }
