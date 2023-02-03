@@ -217,15 +217,15 @@ class jincai_shoudong0 extends AbstractProcess
     function _sendToOSS()
     {
         $all = JinCaiTrace::create()->all();
-        $continue = true;
-        $n = '91330226MA2CK02A5T';
+        //$continue = true;
+        //$n = '91330226MA2CK02A5T';
         foreach ($all as $one) {
-            if ($one->getAttr('socialCredit') === $n) {
-                $continue = false;
-            }
-            if ($continue) {
-                continue;
-            }
+            //if ($one->getAttr('socialCredit') === $n) {
+                //$continue = false;
+            //}
+            //if ($continue) {
+            //    continue;
+            //}
             $this->sendToOSS(
                 $one->getAttr('socialCredit'),
                 $one->getAttr('kprqq'),
