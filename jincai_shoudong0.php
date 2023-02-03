@@ -275,7 +275,7 @@ class jincai_shoudong0 extends AbstractProcess
         $dataInFile = 3000;
 
         $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
-        $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . '202301' . DIRECTORY_SEPARATOR;
+
         is_dir($store) || mkdir($store, 0755, true);
 
         //取全部发票写入文件
