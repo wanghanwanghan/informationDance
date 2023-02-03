@@ -218,7 +218,7 @@ class jincai_shoudong0 extends AbstractProcess
     {
         $all = JinCaiTrace::create()->all();
         $continue = true;
-        $n = '9133010439665064X3';
+        $n = '91330226MA2CK02A5T';
         foreach ($all as $one) {
             if ($one->getAttr('socialCredit') === $n) {
                 $continue = false;
@@ -263,7 +263,7 @@ class jincai_shoudong0 extends AbstractProcess
         return trim($str);
     }
 
-    //上传到oss 发票已经入完mysql
+    //上传到oss 发票已经入完mysql 这里要改成用阿里云内网
     function sendToOSS($NSRSBH, $kprqq, $kprqz): bool
     {
         //只有蚂蚁的税号才上传oss
@@ -384,7 +384,7 @@ class jincai_shoudong0 extends AbstractProcess
                     if (strpos($file, $fileSuffix) !== false) {
                         CommonService::getInstance()->log4PHP($file, 'info', 'upload_oss.log');
                         try {
-                            $oss = new OSSService();
+                            $oss = new OSSService('internal');
                             $file_arr[] = $oss->doUploadFile(
                                 $this->oss_bucket,
                                 Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $file,

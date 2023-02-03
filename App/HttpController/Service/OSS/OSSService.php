@@ -9,14 +9,18 @@ class OSSService extends ServiceBase
 {
     private $ali_oss_cli;
 
-    function __construct()
+    function __construct(string $internal = '')
     {
         parent::__construct();
+
+        $internal === 'internal' ?
+            $endpoint = 'oss-cn-beijing-internal.aliyuncs.com' :
+            $endpoint = 'oss-cn-beijing.aliyuncs.com';
 
         $config = new \EasySwoole\Oss\AliYun\Config([
             'accessKeyId' => CreateConf::getInstance()->getConf('env.aliAk'),
             'accessKeySecret' => CreateConf::getInstance()->getConf('env.aliSk'),
-            'endpoint' => 'oss-cn-beijing.aliyuncs.com',
+            'endpoint' => $endpoint,
         ]);
 
         $this->ali_oss_cli = new \EasySwoole\Oss\AliYun\OssClient($config);

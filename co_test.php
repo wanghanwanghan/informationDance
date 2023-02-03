@@ -37,102 +37,105 @@ class co_test extends AbstractProcess
             echo $i . PHP_EOL;
             $i++;
 
-            $str = trim(fgets($fr));
+            $str = fgets($fr);
             $str = str_replace('"', '', $str);
             $str = trim($str);
-            if (empty($str) || strlen($str) !== 18) {
+
+            $arr = explode("\t", $str);
+
+            if (count($arr) !== 8 || empty($arr) || strlen($arr[7]) !== 18) {
                 continue;
             }
 
             $sql = <<<EOF
 SELECT
-	companyid,
-	ENTNAME,
-	UNISCID 
+	*
 FROM
-	company_basic 
+	company_search_guest_h_202301 
 WHERE
-	UNISCID = '{$str}' 
+	UNISCID = '{$arr[7]}' 
 	AND NIC_ID IS NOT NULL 
 	AND NIC_ID <> ''
 EOF;
             $data = \wanghanwanghan\someUtils\moudles\laravelDB\laravelDB::getInstance([
-                'hd' => [
+                'business_base' => [
                     'driver' => 'mysql',
                     'host' => 'rm-2ze1hvx2ot36cq7l2io.mysql.rds.aliyuncs.com',
                     'port' => '3306',
-                    'database' => 'hd_saic',
+                    'database' => 'business_base',
                     'username' => 'mrxd_root',
                     'password' => 'zbxlbj@2018*()',
                     'charset' => 'utf8mb4',
                     'collation' => 'utf8mb4_general_ci',
                     'strict' => false,
                     'prefix' => '',
-                ]
-            ])->connection('hd')->select($sql);
+                ],
+            ])->connection('business_base')->select($sql);
 
             if (!empty($data)) {
-                foreach ($data as $rrrrr) {
-                    fwrite($fw, implode('|', [
-                            $rrrrr->companyid,
-                            trim($rrrrr->ENTNAME),
-                            $rrrrr->UNISCID,
-                        ]) . PHP_EOL);
-                }
-            }
-
-        }
-
-
-    }
-
-    function getBidsResult_c($list)
-    {
-        $fw = fopen('zhaotoubiao_caigou.txt', 'w+');
-
-        foreach ($list as $one) {
-
-            $one = str_replace(',', '|', $one);
-
-            $arr = explode('|', $one);
-
-            $res = (new App\HttpController\Service\ShuMeng\ShuMengService())
-                ->getBidsResult_c($arr[1], 1);
-
-            if ($res['paging']['total'] === 0) {
-                echo $one . '|0' . PHP_EOL;
-                continue;
-            }
-
-            $page_total = $res['paging']['total'] / 10;
-
-            for ($page = 1; $page <= $page_total; $page++) {
-
-                $res = (new App\HttpController\Service\ShuMeng\ShuMengService())
-                    ->getBidsResult_c($arr[1], $page);
-
-                foreach ($res['result'] as $row) {
-
+                foreach ($data as $row) {
                     $content = [
-                        $this->do_strtr($row['项目编号'] ?? ''),
-                        $this->do_strtr($row['项目名称'] ?? ''),
-                        $this->do_strtr($row['行政区域'] ?? ''),
-                        $this->do_strtr($row['采购单位'] ?? ''),
-                        $this->do_strtr($row['中标供应商'] ?? ''),
-                        $this->do_strtr($row['中标金额'] ?? ''),
-                        $this->do_strtr($row['代理机构'] ?? ''),
-                        $page_total,
-                        $page,
+                        $this->do_strtr($row->ENTNAME),
+//                        $this->do_strtr($row->REGNO),
+//                        $this->do_strtr($row->NACAOID),
+//                        $this->do_strtr($row->NAME),
+//                        $this->do_strtr($row->NAMETITLE),
+//                        $this->do_strtr($row->ENTTYPE),
+//                        $this->do_strtr($row->ESDATE),
+//                        $this->do_strtr($row->APPRDATE),
+//                        $this->do_strtr($row->ENTSTATUS),
+//                        $this->do_strtr($row->REGCAP),
+//                        $this->do_strtr($row->REGCAP_NAME),
+//                        $this->do_strtr($row->REGCAPCUR),
+//                        $this->do_strtr($row->RECCAP),
+//                        $this->do_strtr($row->REGORG),
+//                        $this->do_strtr($row->OPFROM),
+//                        $this->do_strtr($row->OPTO),
+//                        $this->do_strtr($row->OPSCOPE),
+//                        $this->do_strtr($row->DOM),
+//                        $this->do_strtr($row->DOMDISTRICT),
+//                        $this->do_strtr($row->NIC_ID),
+//                        $this->do_strtr($row->CANDATE),
+//                        $this->do_strtr($row->REVDATE),
+//                        $this->do_strtr($row->updated),
+//                        $this->do_strtr($row->nic_full_name),
+//                        $this->do_strtr($row->gong_si_jian_jie),
+//                        $this->do_strtr($row->gao_xin_ji_shu),
+//                        $this->do_strtr($row->deng_ling_qi_ye),
+//                        $this->do_strtr($row->tuan_dui_ren_shu),
+//                        $this->do_strtr($row->tong_xun_di_zhi),
+//                        $this->do_strtr($row->web),
+//                        $this->do_strtr($row->yi_ban_ren),
+//                        $this->do_strtr($row->shang_shi_xin_xi),
+//                        $this->do_strtr($row->app),
+//                        $this->do_strtr($row->manager),
+//                        $this->do_strtr($row->inv),
+//                        $this->do_strtr($row->ying_shou_gui_mo),
+//                        $this->do_strtr($row->ying_shou_gui_mo_2021),
+//                        $this->do_strtr($row->na_shui_gui_mo_2021),
+//                        $this->do_strtr($row->li_run_gui_mo_2021),
+//                        $this->do_strtr($row->email),
+//                        $this->do_strtr($row->wu_liu_xin_xi),
+//                        $this->do_strtr($row->szjjcy),
+//                        $this->do_strtr($row->zlxxcy),
+//                        $this->do_strtr($row->app_data),
+//                        $this->do_strtr($row->shang_pin_data),
+//                        $this->do_strtr($row->report_year),
+//                        $this->do_strtr($row->iso),
+//                        $this->do_strtr($row->jin_chu_kou),
+//                        $this->do_strtr($row->location),
+//                        $this->do_strtr($row->iso_tags),
                     ];
-
-                    echo $one . '|' . implode('|', $content) . PHP_EOL;
-                    fwrite($fw, $one . '|' . implode('|', $content) . PHP_EOL);
-
+                    fwrite($fw, implode('|', $arr) . '|' . implode('|', $content) . PHP_EOL);
                 }
-
+            } else {
+                fwrite($fw, implode('|', $arr) . PHP_EOL);
             }
 
         }
+
+        dd('over');
+
     }
 
     function do_strtr(?string $str): string
