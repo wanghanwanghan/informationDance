@@ -227,7 +227,7 @@ class jincai_shoudong0 extends AbstractProcess
                 continue;
             }
             $this->sendToOSS(
-                $one->getAttr('socialCredit'),
+                $one->getAttr('socialCredit'),//
                 $one->getAttr('kprqq'),
                 $one->getAttr('kprqz')
             );
