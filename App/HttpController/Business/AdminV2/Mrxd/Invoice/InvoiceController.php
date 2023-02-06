@@ -18,6 +18,7 @@ use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\MaYi\MaYiService;
 use App\HttpController\Service\XinDong\XinDongService;
 use App\HttpController\Service\Zip\ZipService;
+use wanghanwanghan\someUtils\control;
 
 class InvoiceController extends ControllerBase
 {
@@ -94,7 +95,7 @@ class InvoiceController extends ControllerBase
 
         $path = '';
         $pdf = [];
-
+        CommonService::getInstance()->log4PHP([$target,$zip_arr], 'info', 'createZip');
         if (!empty($target)) {
             $filename = control::getUuid();
             $fp = fopen(TEMP_FILE_PATH . $filename . '.csv', 'w+');
