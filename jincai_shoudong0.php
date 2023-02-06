@@ -42,7 +42,7 @@ class jincai_shoudong0 extends AbstractProcess
 
     protected function run($arg)
     {
-        $this->_sendToOSS();
+        $this->sendToAnt();
     }
 
     //取票时候调用 从接口 未完成
@@ -217,15 +217,15 @@ class jincai_shoudong0 extends AbstractProcess
     function _sendToOSS()
     {
         $all = JinCaiTrace::create()->all();
-        $continue = true;
-        $n = '91330483099034744N';
+//        $continue = true;
+//        $n = '91330483099034744N';
         foreach ($all as $one) {
-            if ($one->getAttr('socialCredit') === $n) {
-                $continue = false;
-            }
-            if ($continue) {
-                continue;
-            }
+//            if ($one->getAttr('socialCredit') === $n) {
+//                $continue = false;
+//            }
+//            if ($continue) {
+//                continue;
+//            }
             $this->sendToOSS(
                 $one->getAttr('socialCredit'),//
                 $one->getAttr('kprqq'),
@@ -500,7 +500,6 @@ class jincai_shoudong0 extends AbstractProcess
 
             $url = $url_arr[$id];
 
-            // 国家政务服务平台 全网 第一个 更多 就业服务专栏
             $header = [
                 'content-type' => 'application/json;charset=UTF-8',
             ];
