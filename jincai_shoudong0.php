@@ -45,7 +45,6 @@ class jincai_shoudong0 extends AbstractProcess
         // 不要删除这行
         // $this->createCurrentAesKey();
 
-
     }
 
     //取票时候调用 从数据库
