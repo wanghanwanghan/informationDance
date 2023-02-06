@@ -49,7 +49,6 @@ class InvoiceController extends InvoiceBase
     function createZip(): bool
     {
         $zip_arr = $this->getRequestData('zip_arr');
-
         $target = [];
 
         foreach ($zip_arr as $one) {

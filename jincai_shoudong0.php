@@ -42,53 +42,10 @@ class jincai_shoudong0 extends AbstractProcess
 
     protected function run($arg)
     {
-        $this->_sendToOSS();
-    }
+        // 不要删除这行
+        // $this->createCurrentAesKey();
 
-    //取票时候调用 从接口 未完成
-    function getInvoice()
-    {
-        $list = JinCaiTrace::create()->all();
 
-        // 主票
-        foreach ($list as $key => $item) {
-
-            if ($key % $this->p_total !== $this->p_index) continue;
-            $nsrsbh = $item->getAttr('socialCredit');
-
-            // 进项
-            $maxId = 0;
-            while (true) {
-                echo $nsrsbh . '|' . $maxId . '|in' . PHP_EOL;
-                $main = $this->getInPiao($maxId, $nsrsbh);
-                if (empty($main)) {
-                    break;
-                }
-                foreach ($main as $one) {
-                    if ($one['id'] - 0 > $maxId) {
-                        $maxId = $one['id'] - 0;
-                    }
-                }
-                $this->handleMain($main, $nsrsbh);
-            }
-
-            // 销项目
-            $maxId = 0;
-            while (true) {
-                echo $nsrsbh . '|' . $maxId . '|out' . PHP_EOL;
-                $main = $this->getOutPiao($maxId, $nsrsbh);
-                if (empty($main)) {
-                    break;
-                }
-                foreach ($main as $one) {
-                    if ($one['id'] - 0 > $maxId) {
-                        $maxId = $one['id'] - 0;
-                    }
-                }
-                $this->handleMain($main, $nsrsbh);
-            }
-
-        }
     }
 
     //取票时候调用 从数据库
@@ -217,17 +174,17 @@ class jincai_shoudong0 extends AbstractProcess
     function _sendToOSS()
     {
         $all = JinCaiTrace::create()->all();
-        $continue = true;
-        $n = '9133010439665064X3';
+//        $continue = true;
+//        $n = '91330483099034744N';
         foreach ($all as $one) {
-            if ($one->getAttr('socialCredit') === $n) {
-                $continue = false;
-            }
-            if ($continue) {
-                continue;
-            }
+//            if ($one->getAttr('socialCredit') === $n) {
+//                $continue = false;
+//            }
+//            if ($continue) {
+//                continue;
+//            }
             $this->sendToOSS(
-                $one->getAttr('socialCredit'),
+                $one->getAttr('socialCredit'),//
                 $one->getAttr('kprqq'),
                 $one->getAttr('kprqz')
             );
@@ -263,7 +220,7 @@ class jincai_shoudong0 extends AbstractProcess
         return trim($str);
     }
 
-    //上传到oss 发票已经入完mysql
+    //上传到oss 发票已经入完mysql 这里要改成用阿里云内网
     function sendToOSS($NSRSBH, $kprqq, $kprqz): bool
     {
         //只有蚂蚁的税号才上传oss
@@ -275,7 +232,7 @@ class jincai_shoudong0 extends AbstractProcess
         $dataInFile = 3000;
 
         $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
-        $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . '202301' . DIRECTORY_SEPARATOR;
+
         is_dir($store) || mkdir($store, 0755, true);
 
         //取全部发票写入文件
@@ -384,7 +341,7 @@ class jincai_shoudong0 extends AbstractProcess
                     if (strpos($file, $fileSuffix) !== false) {
                         CommonService::getInstance()->log4PHP($file, 'info', 'upload_oss.log');
                         try {
-                            $oss = new OSSService();
+                            $oss = new OSSService('internal');
                             $file_arr[] = $oss->doUploadFile(
                                 $this->oss_bucket,
                                 Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $file,
@@ -500,7 +457,6 @@ class jincai_shoudong0 extends AbstractProcess
 
             $url = $url_arr[$id];
 
-            // 国家政务服务平台 全网 第一个 更多 就业服务专栏
             $header = [
                 'content-type' => 'application/json;charset=UTF-8',
             ];
