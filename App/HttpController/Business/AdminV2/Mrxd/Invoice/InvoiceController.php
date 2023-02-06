@@ -95,7 +95,7 @@ class InvoiceController extends ControllerBase
 
         $path = '';
         $pdf = [];
-        CommonService::getInstance()->log4PHP([$target,$zip_arr], 'info', 'createZip');
+//        CommonService::getInstance()->log4PHP([$target,$zip_arr], 'info', 'createZip');
         if (!empty($target)) {
             $filename = control::getUuid();
             $fp = fopen(TEMP_FILE_PATH . $filename . '.csv', 'w+');
