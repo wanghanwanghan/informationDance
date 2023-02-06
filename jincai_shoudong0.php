@@ -51,52 +51,6 @@ class jincai_shoudong0 extends AbstractProcess
 
     }
 
-    //取票时候调用 从接口 未完成
-    function getInvoice()
-    {
-        $list = JinCaiTrace::create()->all();
-
-        // 主票
-        foreach ($list as $key => $item) {
-
-            if ($key % $this->p_total !== $this->p_index) continue;
-            $nsrsbh = $item->getAttr('socialCredit');
-
-            // 进项
-            $maxId = 0;
-            while (true) {
-                echo $nsrsbh . '|' . $maxId . '|in' . PHP_EOL;
-                $main = $this->getInPiao($maxId, $nsrsbh);
-                if (empty($main)) {
-                    break;
-                }
-                foreach ($main as $one) {
-                    if ($one['id'] - 0 > $maxId) {
-                        $maxId = $one['id'] - 0;
-                    }
-                }
-                $this->handleMain($main, $nsrsbh);
-            }
-
-            // 销项目
-            $maxId = 0;
-            while (true) {
-                echo $nsrsbh . '|' . $maxId . '|out' . PHP_EOL;
-                $main = $this->getOutPiao($maxId, $nsrsbh);
-                if (empty($main)) {
-                    break;
-                }
-                foreach ($main as $one) {
-                    if ($one['id'] - 0 > $maxId) {
-                        $maxId = $one['id'] - 0;
-                    }
-                }
-                $this->handleMain($main, $nsrsbh);
-            }
-
-        }
-    }
-
     //取票时候调用 从数据库
     function _getInvoice()
     {
