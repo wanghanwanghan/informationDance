@@ -12,6 +12,7 @@ use App\HttpController\Service\MaYi\MaYiService;
 use App\HttpController\Service\Zip\ZipService;
 use App\Task\Service\TaskService;
 use Carbon\Carbon;
+use updc\utils\CommonUtil;
 use wanghanwanghan\someUtils\control;
 
 class InvoiceController extends InvoiceBase
@@ -48,7 +49,6 @@ class InvoiceController extends InvoiceBase
     function createZip(): bool
     {
         $zip_arr = $this->getRequestData('zip_arr');
-
         $target = [];
 
         foreach ($zip_arr as $one) {
@@ -64,7 +64,7 @@ class InvoiceController extends InvoiceBase
 
         $path = '';
         $pdf = [];
-
+//        CommonService::getInstance()->log4PHP([$target,$zip_arr], 'info', 'createZip');
         if (!empty($target)) {
             $filename = control::getUuid();
             $fp = fopen(TEMP_FILE_PATH . $filename . '.csv', 'w+');

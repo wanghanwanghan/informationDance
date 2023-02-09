@@ -25,13 +25,13 @@ class CoHttpClient extends ServiceBase
 
     function send($url = '', $postData = [], $headers = [], $options = [], $method = 'post')
     {
-        CommonService::getInstance()->log4PHP($url, 'info', 'http_return_data_url');
+//        CommonService::getInstance()->log4PHP($url, 'info', 'http_return_data_url');
         //从缓存中拿
         $this->useCache ? $take = $this->takeResult($url, $postData, $options) : $take = [];
         //不是空，说明缓存里有数据，直接返回
         if (!empty($take)) return $this->needJsonDecode ? jsonDecode($take) : $take;
         $method = strtoupper($method);
-        CommonService::getInstance()->log4PHP($url, 'info', 'http_return_data_url2');
+//        CommonService::getInstance()->log4PHP($url, 'info', 'http_return_data_url2');
         if ($method === 'GET' && strpos($url, '?') === false) {
             $url .= '?' . http_build_query($postData);
         }
@@ -55,7 +55,7 @@ class CoHttpClient extends ServiceBase
         //设置head头
         empty($headers) ?: $request->setHeaders($headers, true, false);
         try {
-            CommonService::getInstance()->log4PHP([$url, $postData], 'info', 'http_return_data_3');
+//            CommonService::getInstance()->log4PHP([$url, $postData], 'info', 'http_return_data_3');
             //发送请求
             if ($method === 'POST') $data = $request->post($postData);
             if ($method === 'POSTJSON') $data = $request->postJson(
@@ -67,13 +67,13 @@ class CoHttpClient extends ServiceBase
 
             //整理结果
             $data = $data->getBody();
-            CommonService::getInstance()->log4PHP([$data], 'info', 'http_return_data');
+//            CommonService::getInstance()->log4PHP([$data], 'info', 'http_return_data');
 //            dingAlarm('http返回',['$url'=>$url,'$data'=>json_encode($data),'$postData'=>json_encode($postData)]);
             $d = jsonDecode($data,true);
-            $a = json_last_error_msg();
+//            $a = json_last_error_msg();
 //            ;
             CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'http_return_data');
-            CommonService::getInstance()->log4PHP([$d,$a], 'info', 'http_return_data');
+//            CommonService::getInstance()->log4PHP([$d,$a], 'info', 'http_return_data');
 //            if(empty($data) || (isset($d['code']) && $d['code'] != 200)){
 //                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_http_return_data');
 //            }elseif (stripos($url,'qichacha') && $d['Status'] !=200){

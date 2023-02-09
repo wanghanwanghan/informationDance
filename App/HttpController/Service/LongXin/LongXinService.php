@@ -1653,7 +1653,8 @@ class LongXinService extends ServiceBase
     function vcQueryDetail($data): ?array
     {
         $entId = $this->getEntid($data['entName']);
-
+        $entId = strpos($entId,',')?explode(',',$entId):[$entId];
+        $entId = $entId['0'];
         if (empty($entId))
             return ['code' => 102, 'msg' => 'entId是空', 'result' => [], 'paging' => null];
 

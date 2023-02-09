@@ -120,7 +120,11 @@ class ProvideBase extends Index
             'requestData' => $this->requestData,
             'spendTime' => $this->spendTime,
         ];
-
+        CommonService::getInstance()->log4PHP([ $this->responseCode,
+                                                $this->responsePaging,
+                                                $this->responseData,
+                                                $this->responseMsg,
+                                                $this->responseInfo  ], 'info', 'writeJson');
         //如果之前已经输出过，那么afterAction将不再输出
         $this->alreadyWriteJson ?: $this->writeJson(
             $this->responseCode,
