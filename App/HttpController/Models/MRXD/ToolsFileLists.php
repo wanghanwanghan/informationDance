@@ -460,24 +460,24 @@ class ToolsFileLists extends ModelBase
                    $companyRes->UNISCID &&
                    $filter_qcc_phone
                ){
-                   CommonService::getInstance()->log4PHP(
-                       json_encode([
-                           __CLASS__.__FUNCTION__ .__LINE__,
-                           '拉取公开联系人' => [
-                               '需要过滤企查查的联系人' =>  $entname,
-                           ]
-                       ],JSON_UNESCAPED_UNICODE)
-                   );
+//                   CommonService::getInstance()->log4PHP(
+//                       json_encode([
+//                           __CLASS__.__FUNCTION__ .__LINE__,
+//                           '拉取公开联系人' => [
+//                               '需要过滤企查查的联系人' =>  $entname,
+//                           ]
+//                       ],JSON_UNESCAPED_UNICODE)
+//                   );
 
                    $allConatcts = CompanyClue::getAllContactByCode($companyRes->UNISCID);
-                   CommonService::getInstance()->log4PHP(
-                       json_encode([
-                           __CLASS__.__FUNCTION__ .__LINE__,
-                           '拉取公开联系人' => [
-                               '企查查联系人' => $allConatcts,
-                           ]
-                       ],JSON_UNESCAPED_UNICODE)
-                   );
+//                   CommonService::getInstance()->log4PHP(
+//                       json_encode([
+//                           __CLASS__.__FUNCTION__ .__LINE__,
+//                           '拉取公开联系人' => [
+//                               '企查查联系人' => $allConatcts,
+//                           ]
+//                       ],JSON_UNESCAPED_UNICODE)
+//                   );
                    $newRetData = [];
                    foreach ($retData as $key1 => $datum1){
                        if(
