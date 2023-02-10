@@ -18,6 +18,7 @@ use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\BusinessBase\WechatInfo;
+use App\HttpController\Models\BusinessBase\ZhifubaoInfo;
 use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
@@ -171,48 +172,6 @@ class BusinessOpportunityController extends ControllerBase
         }
 
         return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
-
-        return ;
-        $requestData =  $this->getRequestData(); ;
-        $files = $this->request()->getUploadedFiles();
-        //return $this->writeJson(200, [], [],'导入成功 入库文件数量:');
-        $succeedNums = 0;
-        foreach ($files as $key => $oneFile) {
-            try {
-                $fileName = $oneFile->getClientFilename();
-                $path = TEMP_FILE_PATH . $fileName;
-                if(file_exists($path)){
-                    return $this->writeJson(203, [], [],'文件已存在！');;
-                }
-
-                $res = $oneFile->moveTo($path);
-                if(!file_exists($path)){
-                    return $this->writeJson(203, [], [],'文件移动失败！');
-                }
-
-                $addUploadRecordRes = AdminUserWechatInfoUploadRecord::addRecordV2(
-                    [
-                        'user_id' => $this->loginUserinfo['id'],
-                        'file_path' => TEMP_FILE_PATH,
-                        'title' => $requestData['title']?:'',
-                        'size' => filesize($path),
-                        'batch' =>  'BO'.date('YmdHis'),
-                        'reamrk' => $requestData['reamrk']?:'',
-                        'name' =>  $fileName,
-                        'status' => AdminUserWechatInfoUploadRecord::$status_init,
-                    ]
-                );
-
-                if(!$addUploadRecordRes){
-                    return $this->writeJson(203, [], [],'入库失败，请联系管理员');
-                }
-                $succeedNums ++;
-            } catch (\Throwable $e) {
-                return $this->writeJson(202, [], [],'导入失败'.$e->getMessage());
-            }
-        }
-
-        return $this->writeJson(200, [], [],'导入成功 入库文件数量:'.$succeedNums);
     }
     public function uploadZhiFuBaoFile(){
 
@@ -280,48 +239,6 @@ class BusinessOpportunityController extends ControllerBase
         }
 
         return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
-
-        return ;
-        $requestData =  $this->getRequestData(); ;
-        $files = $this->request()->getUploadedFiles();
-        //return $this->writeJson(200, [], [],'导入成功 入库文件数量:');
-        $succeedNums = 0;
-        foreach ($files as $key => $oneFile) {
-            try {
-                $fileName = $oneFile->getClientFilename();
-                $path = TEMP_FILE_PATH . $fileName;
-                if(file_exists($path)){
-                    return $this->writeJson(203, [], [],'文件已存在！');;
-                }
-
-                $res = $oneFile->moveTo($path);
-                if(!file_exists($path)){
-                    return $this->writeJson(203, [], [],'文件移动失败！');
-                }
-
-                $addUploadRecordRes = AdminUserWechatInfoUploadRecord::addRecordV2(
-                    [
-                        'user_id' => $this->loginUserinfo['id'],
-                        'file_path' => TEMP_FILE_PATH,
-                        'title' => $requestData['title']?:'',
-                        'size' => filesize($path),
-                        'batch' =>  'BO'.date('YmdHis'),
-                        'reamrk' => $requestData['reamrk']?:'',
-                        'name' =>  $fileName,
-                        'status' => AdminUserWechatInfoUploadRecord::$status_init,
-                    ]
-                );
-
-                if(!$addUploadRecordRes){
-                    return $this->writeJson(203, [], [],'入库失败，请联系管理员');
-                }
-                $succeedNums ++;
-            } catch (\Throwable $e) {
-                return $this->writeJson(202, [], [],'导入失败'.$e->getMessage());
-            }
-        }
-
-        return $this->writeJson(200, [], [],'导入成功 入库文件数量:'.$succeedNums);
     }
 
     public function WeiXinFilesList(){
@@ -373,7 +290,7 @@ class BusinessOpportunityController extends ControllerBase
             ];
 
         }
-        $datas = WechatInfo::findByConditionV2(
+        $datas = ZhifubaoInfo::findByConditionV2(
             $conditions,$page,$pageSize
         );
 

@@ -8,6 +8,7 @@ use App\HttpController\Models\AdminV2\MobileCheckInfo;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\BusinessBase\CompanyClue;
 use App\HttpController\Models\BusinessBase\WechatInfo;
+use App\HttpController\Models\BusinessBase\ZhifubaoInfo;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
@@ -976,12 +977,12 @@ class ToolsFileLists extends ModelBase
                        json_encode([
                           // __CLASS__.__FUNCTION__ .__LINE__,
                            [
-                               'addWeChatInfo'=>[
-                                    '$companyDataItem' => $companyName ,
-                                    '$companyCode' => $companyCode ,
-                                    '$phone' => $phone ,
-                                    '$wechat' => $wechat ,
-                                    '$sex' => $sex ,
+                               '上传微信联系人'=>[
+                                    '企业名' => $companyName ,
+                                    '信用代码' => $companyCode ,
+                                    '手机号' => $phone ,
+                                    '微信号' => $wechat ,
+                                    '性别' => $sex ,
                                     '已生成' => $i ,
                                ]
                            ]
@@ -1016,16 +1017,7 @@ class ToolsFileLists extends ModelBase
 
                WechatInfo::addRecordV2(
                    $insert
-               );
-               if($i%500==0){
-                   CommonService    ::getInstance()->log4PHP(
-                       json_encode([
-                          // __CLASS__.__FUNCTION__ .__LINE__,
-                           $insert
-                       ])
-                   );
-               }
-
+               ); 
            }
 
            self::updateById($filesData['id'],[
@@ -1033,6 +1025,80 @@ class ToolsFileLists extends ModelBase
                'state' => self::$state_succeed,
            ]);
        }
+    }
+
+    //上传支付宝
+    static function shangChuanZhiFubao($params){
+        $filesDatas = self::findBySql("
+            WHERE touch_time < 1
+            AND type = 10 
+            AND state = 0 
+            LIMIT 1 
+       ");
+        foreach ($filesDatas as $filesData){
+            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
+
+            $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
+            $i = 1;
+            foreach ($yieldDatas as $dataItem) {
+                //企业 税号 电话 支付宝
+                $companyName = $dataItem[0];
+                $companyCode = $dataItem[1];
+                $phone = $dataItem[2];
+                $wechat = $dataItem[3];
+
+                if($i%300==0){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            // __CLASS__.__FUNCTION__ .__LINE__,
+                            [
+                                '上传支付宝'=>[
+                                    '企业' => $companyName ,
+                                    '信用代码' => $companyCode ,
+                                    '手机号' => $phone ,
+                                    '支付宝' => $wechat ,
+                                    '已生成' => $i ,
+                                ]
+                            ]
+                        ], JSON_UNESCAPED_UNICODE)
+                    );
+                }
+
+
+                if($phone<=0){
+                    continue;
+                }
+
+                if(empty($wechat)){
+                    continue;
+                }
+                if(strlen($phone) !== 11){
+                    continue;
+                }
+
+                $created_at = time();
+                $phone_aes = \wanghanwanghan\someUtils\control::aesEncode($phone, $created_at . '');
+                $phone_md5 = md5($phone);
+                $insert = [
+                    'code' => $companyCode?:'',
+                    'sex' => '',
+                    'phone' => $phone_aes,
+                    'phone_md5' => $phone_md5,
+                    'nickname' => $wechat,
+                    'created_at' => $created_at,
+                    'updated_at' => $created_at,
+                ];
+
+                ZhifubaoInfo::addRecordV2(
+                    $insert
+                );
+            }
+
+            self::updateById($filesData['id'],[
+                'new_file_name' => "",
+                'state' => self::$state_succeed,
+            ]);
+        }
     }
 
     //上传公开联系人
