@@ -298,13 +298,16 @@ class AdminV2Router
         return true;
     }
 
+    //对账模块
     private function DuiZhangRouterV1(RouteCollector $routeCollector): bool
     {
         $prefix = '/Business/AdminV2/Mrxd/DuiZhangController/';
         $routeCollector->addGroup('/duizhang', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/getList', $prefix . 'getList');
-            $routeCollector->addRoute(['GET', 'POST'], '/downloadDataList', $prefix . 'downloadDataList');
-            $routeCollector->addRoute(['GET', 'POST'], '/changeChargeState', $prefix . 'changeChargeState');
+            $routeCollector->addRoute(['GET', 'POST'], '/getList', $prefix . 'getList'); //对账列表
+            $routeCollector->addRoute(['GET', 'POST'], '/getDetailList', $prefix . 'getDetailList'); //对账详情列表
+            $routeCollector->addRoute(['GET', 'POST'], '/downloadDataList', $prefix . 'downloadDataList'); //导出
+            $routeCollector->addRoute(['GET', 'POST'], '/changeChargeState', $prefix . 'changeChargeState');//更改结算状态
+
             $routeCollector->addRoute(['GET', 'POST'], '/uploadBussinessFile', $prefix . 'uploadBussinessFile');
             $routeCollector->addRoute(['GET', 'POST'], '/redownloadBussinessFile', $prefix . 'redownloadBussinessFile');
             $routeCollector->addRoute(['GET', 'POST'], '/bussinessFilesList', $prefix . 'bussinessFilesList');
