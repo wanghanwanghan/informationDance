@@ -740,12 +740,12 @@ class ZhiJinCommisionController extends ControllerBase
                 'operate' => '<=',
             ];
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'OnlineGoodsTiXianJiLu $whereArr'  => $whereArr
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'OnlineGoodsTiXianJiLu $whereArr'  => $whereArr
+//            ])
+//        );
 
         //=================================================
 

@@ -241,13 +241,13 @@ class OnlineGoodsUserInviteRelation extends ModelBase
         if(
             OnlineGoodsUser::IsVip($tmpUser)
         ){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'getVipInviterInfo_$userId'=>$userId,
-                    'IsVip'=>true,
-                ])
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    'getVipInviterInfo_$userId'=>$userId,
+//                    'IsVip'=>true,
+//                ])
+//            );
             return  $tmpUser;
         };
 

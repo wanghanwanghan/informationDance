@@ -1017,7 +1017,7 @@ class ToolsFileLists extends ModelBase
 
                WechatInfo::addRecordV2(
                    $insert
-               ); 
+               );
            }
 
            self::updateById($filesData['id'],[
