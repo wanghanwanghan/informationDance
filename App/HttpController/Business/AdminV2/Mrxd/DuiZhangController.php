@@ -266,7 +266,9 @@ class DuiZhangController  extends ControllerBase
 
     public function downloadDataList(){
 
-        return $this->writeJson(200, [],  [],'成功');
+        return $this->writeJson(200, [],  [
+            "https://api.meirixindong.com/Static/OtherFile/2023_02_10_10_55测试上传支付宝.xlsx"
+        ],'成功');
     }
 
 
