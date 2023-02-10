@@ -218,7 +218,7 @@ class BusinessOpportunityController extends ControllerBase
                         'func_info_json' => json_encode(
                             [
                                 'class' => '\App\HttpController\Models\MRXD\ToolsFileLists',
-                                'static_func'=> 'shangChuanWeiXinHao',
+                                'static_func'=> 'shangChuanZhiFubao',
                             ]
                         ),
                         'params_json' => json_encode([
