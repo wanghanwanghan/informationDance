@@ -177,14 +177,6 @@ class ToolsFileLists extends ModelBase
 
     //补全联系人
     static function buQuanZiDuan($params){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '补全联系人开始执行'=>[
-                    '参数' => $params,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
 
        $filesDatas = self::findBySql("
             WHERE touch_time < 1
@@ -193,6 +185,16 @@ class ToolsFileLists extends ModelBase
             LIMIT 1 
        ");
        foreach ($filesDatas as $filesData){
+           CommonService::getInstance()->log4PHP(
+               json_encode([
+                   __CLASS__.__FUNCTION__ .__LINE__,
+                   '开始执行补全字段'=>[
+                       '参数' => $params,
+                       '执行的数据' => $filesData,
+                   ]
+               ],JSON_UNESCAPED_UNICODE)
+           );
+
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
 
            //写到csv里
@@ -214,7 +216,7 @@ class ToolsFileLists extends ModelBase
                if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                           '补全联系人' => [
+                           '开始执行补全字段' => [
                                '已生成'.$i,
                                $filesData['file_name']
                            ]
@@ -317,9 +319,6 @@ class ToolsFileLists extends ModelBase
                        $baseArr[] = str_split ( $res[$field], 32766 )[0] ;
                    }
                }
-
-               //====================================
-
                fputcsv($f, $baseArr);
            }
 
@@ -355,14 +354,6 @@ class ToolsFileLists extends ModelBase
      */
     //
     static function pullGongKaiContacts($params){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '拉取公开联系人开始执行'=>[
-                    '参数' => $params,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
 
         $title = [
             "企业名称",
@@ -390,6 +381,16 @@ class ToolsFileLists extends ModelBase
             LIMIT 1 
        ");
        foreach ($filesDatas as $filesData){
+           CommonService::getInstance()->log4PHP(
+               json_encode([
+                   __CLASS__.__FUNCTION__ .__LINE__,
+                   '拉取公开联系人开始执行'=>[
+                       '参数' => $params,
+                       '执行的数据' => $filesData,
+                   ]
+               ],JSON_UNESCAPED_UNICODE)
+           );
+
             $tmp = json_decode($filesData['remark'],true);
            //通过联系人名称 补全职位信息
            $fill_position_by_name = $tmp['fill_position_by_name'];
@@ -419,7 +420,6 @@ class ToolsFileLists extends ModelBase
                if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                        //   __CLASS__.__FUNCTION__ .__LINE__,
                            '拉取公开联系人_已生成' => $i
                        ], JSON_UNESCAPED_UNICODE)
                    );
@@ -446,148 +446,40 @@ class ToolsFileLists extends ModelBase
                        'entName' => $entname,
                    ])['result'];
 
-//               CommonService::getInstance()->log4PHP(
-//                   json_encode([
-//                       __CLASS__.__FUNCTION__ .__LINE__,
-//                       'pullGongKaiContacts_pull_url_contact' => [
-//                           '$retData_nums' => count($retData),
-//                           'entName' => $entname,
-//                       ]
-//                   ])
-//               );
-
-               //取公开联系人信息
+               //如果需要过滤企查查里的联系人
                if(
                    $companyRes->UNISCID &&
                    $filter_qcc_phone
                ){
-//                   CommonService::getInstance()->log4PHP(
-//                       json_encode([
-//                           __CLASS__.__FUNCTION__ .__LINE__,
-//                           '拉取公开联系人' => [
-//                               '需要过滤企查查的联系人' =>  $entname,
-//                           ]
-//                       ],JSON_UNESCAPED_UNICODE)
-//                   );
-
                    $allConatcts = CompanyClue::getAllContactByCode($companyRes->UNISCID);
-//                   CommonService::getInstance()->log4PHP(
-//                       json_encode([
-//                           __CLASS__.__FUNCTION__ .__LINE__,
-//                           '拉取公开联系人' => [
-//                               '企查查联系人' => $allConatcts,
-//                           ]
-//                       ],JSON_UNESCAPED_UNICODE)
-//                   );
                    $newRetData = [];
                    foreach ($retData as $key1 => $datum1){
                        if(
                            !in_array($datum1['lianxi'],$allConatcts['qcc'])
                        ){
                            $newRetData[$key1] = $datum1;
-//                           CommonService::getInstance()->log4PHP(
-//                               json_encode([
-//                                   __CLASS__.__FUNCTION__ .__LINE__,
-//                                   '拉取公开联系人' => [
-//                                       '该联系人不是企查查联系人' =>  [
-//                                           "联系人" => $datum1['lianxi'],
-//                                       ],
-//                                   ]
-//                               ],JSON_UNESCAPED_UNICODE)
-//                           );
-                       }
-                       else{
-//                           CommonService::getInstance()->log4PHP(
-//                               json_encode([
-//                                   __CLASS__.__FUNCTION__ .__LINE__,
-//                                   '拉取公开联系人' => [
-//                                       '该联系人不是企查查联系人' =>  [
-//                                           "联系人" => $datum1['lianxi'],
-//                                       ],
-//                                   ]
-//                               ],JSON_UNESCAPED_UNICODE)
-//                           );
                        }
                    }
                    $retData = $newRetData;
                }
-               else{
-//                   CommonService::getInstance()->log4PHP(
-//                       json_encode([
-//                           __CLASS__.__FUNCTION__ .__LINE__,
-//                           '拉取公开联系人' => [
-//                               '不需要过滤' =>  [
-//                                   "联系人" => $companyRes->UNISCID,
-//                                   "是否需要过滤" => $filter_qcc_phone,
-//                               ],
-//                           ]
-//                       ],JSON_UNESCAPED_UNICODE)
-//                   );
-               }
-
-
-
 
                //手机号状态检测 一次网络请求
                $retData = LongXinService::complementEntLianXiMobileState($retData);
-//               CommonService::getInstance()->log4PHP(
-//                   json_encode([
-//                       __CLASS__.__FUNCTION__ .__LINE__,
-//                       'pullGongKaiContacts_check_url_contact' => [
-//                           '$retData' => $retData,
-//                       ]
-//                   ])
-//               );
 
                //通过名称补全联系人职位信息 两次db请求：查询company_basic 查询 company_manager
                if($fill_position_by_name){
                    $retData = LongXinService::complementEntLianXiPositionV2($retData, $entname);
                }
 
-//               CommonService::getInstance()->log4PHP(
-//                   json_encode([
-//                       __CLASS__.__FUNCTION__ .__LINE__,
-//                       'pullGongKaiContacts_fill_position_by_name' => [
-//                           '$retData' => $retData,
-//                       ]
-//                   ])
-//               );
-
                //有效的联系人
                $validContacts = CompanyManager::getManagesNamesByCompanyId($companyRes->companyid);
-
                foreach($retData as $datautem){
                    //公开联系人姓名
                    if($datautem['name']){
                         if(
                             !in_array($datautem['name'],$validContacts)
                         ){
-//                            CommonService::getInstance()->log4PHP(
-//                                json_encode([
-//                                    __CLASS__.__FUNCTION__ .__LINE__,
-//                                    'pullGongKaiContacts' => [
-//                                        '联系人已离职' =>  [
-//                                            '企业名'=>$entname,
-//                                            '$validContacts'=>$validContacts,
-//                                            '联系人姓名'=>$datautem['name']
-//                                        ],
-//                                    ]
-//                                ], JSON_UNESCAPED_UNICODE)
-//                            );
                             continue;
-                        }else{
-//                            CommonService::getInstance()->log4PHP(
-//                                json_encode([
-//                                    __CLASS__.__FUNCTION__ .__LINE__,
-//                                    'pullGongKaiContacts' => [
-//                                        '联系人未离职' =>  [
-//                                            '企业名'=>$entname,
-//                                            '$validContacts'=>$validContacts,
-//                                            '联系人姓名'=>$datautem['name']
-//                                        ],
-//                                    ]
-//                                ], JSON_UNESCAPED_UNICODE)
-//                            );
                         }
                    }
 
@@ -623,15 +515,6 @@ class ToolsFileLists extends ModelBase
                    }
 
                    $matchedWeiXinName = WechatInfo::findByPhoneV2(($datautem['lianxi']));
-//                   CommonService::getInstance()->log4PHP(
-//                       json_encode([
-//                           __CLASS__.__FUNCTION__ .__LINE__,
-//                           'pullGongKaiContacts_fill_weixin_by_phone' => [
-//                               'lianxi' => $datautem['lianxi'],
-//                               '$matchedWeiXinName'=>$matchedWeiXinName,
-//                           ]
-//                       ])
-//                   );
 
                    if(empty($matchedWeiXinName)){
                         $tmpDataItem[] = '';//'联系人名称(疑似/通过微信名匹配)',
@@ -652,15 +535,6 @@ class ToolsFileLists extends ModelBase
 
                    //用微信名匹配联系人职位信息
                    $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV3($entname, $matchedWeiXinName['nickname']);
-//                   CommonService::getInstance()->log4PHP(
-//                       json_encode([
-//                           __CLASS__.__FUNCTION__ .__LINE__,
-//                           'pullGongKaiContacts_fill_name_and_position_by_weixin' => [
-//                               'nickname' => $matchedWeiXinName['nickname'],
-//                               '$tmpRes'=>$tmpRes,
-//                           ]
-//                       ])
-//                   );
 
                    $tmpDataItem[] =  $tmpRes['data']['NAME'];//联系人名称(疑似/通过微信名匹配)',
                    $tmpDataItem[] =  $tmpRes['data']['POSITION'];//'职位(疑似/通过微信名匹配)',
@@ -680,12 +554,6 @@ class ToolsFileLists extends ModelBase
 
     }
     static function pullFeiGongKaiContacts($params){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                //__CLASS__.__FUNCTION__ .__LINE__,
-                '拉取非公开开始执行' => $params
-            ], JSON_UNESCAPED_UNICODE)
-        );
         $title = [
             '企业名称',
             '信用代码',
@@ -708,6 +576,15 @@ class ToolsFileLists extends ModelBase
             LIMIT 1 
        ");
        foreach ($filesDatas as $filesData){
+           CommonService::getInstance()->log4PHP(
+               json_encode([
+                   '拉取非公开开始执行' => [
+                       "参数"=>$params,
+                       "执行的数据"=>$filesData,
+                   ]
+               ], JSON_UNESCAPED_UNICODE)
+           );
+
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
 
            $tmp = json_decode($filesData['remark'],true);
@@ -737,17 +614,14 @@ class ToolsFileLists extends ModelBase
                if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                           //__CLASS__.__FUNCTION__ .__LINE__,
                            '拉取非公开已生成' => $i
                        ], JSON_UNESCAPED_UNICODE)
                    );
                }
 
-
                // 企业名称：$dataItem[0]
                $entname = self::strtr_func($dataItem[0]);
                $code =  self::strtr_func($dataItem[1]);
-
 
                if($code>0){
 
@@ -782,16 +656,6 @@ class ToolsFileLists extends ModelBase
                    }
                }
 
-//               CommonService::getInstance()->log4PHP(
-//                   json_encode([
-//                       'pullFeiGongKaiContacts' =>  [
-//                           '$tmpContacts'=>$tmpContacts,
-//                           'xn'=>$allConatcts['xn'],
-//                           '$allConatcts'=>$allConatcts,
-//                       ]
-//                   ], JSON_UNESCAPED_UNICODE)
-//               );
-
                $allConatcts['xn'] = $tmpContacts;
               if(empty($tmpContacts)){
                   $tmpDataItem = [
@@ -802,15 +666,6 @@ class ToolsFileLists extends ModelBase
                   continue;
               }
 
-//               CommonService::getInstance()->log4PHP(
-//                   json_encode([
-//                       __CLASS__.__FUNCTION__ .__LINE__,
-//                       'pullFeiGongKaiContacts_db_all_contacts' => [
-//                           '$allConatcts' => $allConatcts,
-//                       ]
-//                   ])
-//               );
-
                //手机号状态检测 一次网络请求
                $needsCheckMobilesStr = join(",", $tmpContacts);
                $postData = [
@@ -820,15 +675,6 @@ class ToolsFileLists extends ModelBase
                $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
                // 转换为以手机号为key的数组
                $mobilesRes = LongXinService::shiftArrayKeys($res['data'], 'mobile');
-//               CommonService::getInstance()->log4PHP(
-//                   json_encode([
-//                       __CLASS__.__FUNCTION__ .__LINE__,
-//                       'pullFeiGongKaiContacts_check_url_contact' => [
-//                           '$retData' => $res['data'],
-//                           '$mobilesRes' => $mobilesRes,
-//                       ]
-//                   ])
-//               );
 
                foreach($tmpContacts as $item){
                    $tmpDataItem = [
@@ -837,7 +683,6 @@ class ToolsFileLists extends ModelBase
                        $item,//手机号
                        ChuangLanService::getStatusCnameMap()[$mobilesRes[$item]['status']].$mobilesRes[$item]['status'],//手机号状态
                    ];
-
 
                    if(
                        !LongXinService::isValidPhone($item)
@@ -857,15 +702,6 @@ class ToolsFileLists extends ModelBase
                     }
 
                    $matchedWeiXinName = WechatInfo::findByPhoneV2(($item));
-//                   CommonService::getInstance()->log4PHP(
-//                       json_encode([
-//                           __CLASS__.__FUNCTION__ .__LINE__,
-//                           'pullFeiGongKaiContactss_fill_weixin_by_phone' => [
-//                               'lianxi' => $item,
-//                               '$matchedWeiXinName'=>$matchedWeiXinName,
-//                           ]
-//                       ])
-//                   );
 
                    if(empty($matchedWeiXinName)){
                         $tmpDataItem[] = '';//'联系人名称(疑似/通过微信名匹配)',
@@ -886,50 +722,13 @@ class ToolsFileLists extends ModelBase
 
                    //用微信名匹配联系人职位信息
                    $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV3($entname, $matchedWeiXinName['nickname']);
+                   //需要过滤下无效的联系人、离职的联系人
                    if(
                        $tmpRes['data']['NAME'] &&
                        !in_array($tmpRes['data']['NAME'],$validContacts)
                    ){
-
-//                       $tmpDataItem[] = '';
-//                       fputcsv($f, $tmpDataItem);
-//                       CommonService::getInstance()->log4PHP(
-//                           json_encode([
-//                               __CLASS__.__FUNCTION__ .__LINE__,
-//                               'pullFeiGongKaiContacts_' => [
-//                                   '联系人已离职' =>  [
-//                                       '企业名'=>$entname,
-//                                       '$validContacts'=>$validContacts,
-//                                       '联系人姓名'=>$tmpRes['data']['NAME']
-//                                   ],
-//                               ]
-//                           ], JSON_UNESCAPED_UNICODE)
-//                       );
                        continue;
                    }
-                   else{
-//                       CommonService::getInstance()->log4PHP(
-//                           json_encode([
-//                               __CLASS__.__FUNCTION__ .__LINE__,
-//                               'pullFeiGongKaiContacts_' => [
-//                                   '联系人未离职' =>  [
-//                                       '企业名'=>$entname,
-//                                       '$validContacts'=>$validContacts,
-//                                       '联系人姓名'=>$tmpRes['data']['NAME']
-//                                   ],
-//                               ]
-//                           ], JSON_UNESCAPED_UNICODE)
-//                       );
-                   }
-//                   CommonService::getInstance()->log4PHP(
-//                       json_encode([
-//                           __CLASS__.__FUNCTION__ .__LINE__,
-//                           'pullFeiGongKaiContacts_fill_name_and_position_by_weixin' => [
-//                               'nickname' => $matchedWeiXinName['nickname'],
-//                               '$tmpRes'=>$tmpRes,
-//                           ]
-//                       ])
-//                   );
 
                    $tmpDataItem[] =  $tmpRes['data']['NAME']; //联系人名称(疑似/通过微信名匹配)',
                    $tmpDataItem[] =  $tmpRes['data']['POSITION']; //'职位(疑似/通过微信名匹配)',
@@ -960,6 +759,18 @@ class ToolsFileLists extends ModelBase
             LIMIT 1 
        ");
        foreach ($filesDatas as $filesData){
+           CommonService::getInstance()->log4PHP(
+               json_encode([
+                   // __CLASS__.__FUNCTION__ .__LINE__,
+                   [
+                       '开始处理上传的微信号文件'=>[
+                           '参数' => $params ,
+                           '数据' => $filesData ,
+                       ]
+                   ]
+               ], JSON_UNESCAPED_UNICODE)
+           );
+
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
 
            $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
@@ -1041,7 +852,7 @@ class ToolsFileLists extends ModelBase
                     // __CLASS__.__FUNCTION__ .__LINE__,
                     [
                         '通用文件-开始处理'=>[
-                            '表名' => "tools_file_lists" ,
+                            '参数' => $params,
                             '数据' =>  $filesData,
                         ]
                     ]
@@ -1075,7 +886,6 @@ class ToolsFileLists extends ModelBase
                         ], JSON_UNESCAPED_UNICODE)
                     );
                 }
-
 
                 if($phone<=0){
                     continue;
@@ -1121,18 +931,21 @@ class ToolsFileLists extends ModelBase
             AND state = 0 
             LIMIT 1 
        ");
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                [
-                    '上传公开联系人开始执行'=>[
-                        '参数'=>$params,
-                    ]
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
+
         $i = 1;
        foreach ($filesDatas as $filesData){
+           CommonService::getInstance()->log4PHP(
+               json_encode([
+                   __CLASS__.__FUNCTION__ .__LINE__,
+                   [
+                       '上传公开联系人开始执行'=>[
+                           '参数'=>$params,
+                           '数据'=>$filesData,
+                       ]
+                   ]
+               ],JSON_UNESCAPED_UNICODE)
+           );
+
            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
 
            $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
@@ -1177,7 +990,6 @@ class ToolsFileLists extends ModelBase
                    $str_aes = \wanghanwanghan\someUtils\control::aesEncode($str, $time . '');
                    $str2 = count($phonesArr)."@".$str_aes;
 
-                   //XXXX
                    $dbArr = [
                        'entname' => $companyName,
                        'code' => $companyCode?:'',
@@ -1192,7 +1004,7 @@ class ToolsFileLists extends ModelBase
                        $dbArr
                    );
 
-                   if($i%50==0){
+                   if($i%100==0){
                        CommonService::getInstance()->log4PHP(
                            json_encode([
                                //  __CLASS__.__FUNCTION__ .__LINE__,
