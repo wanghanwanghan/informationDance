@@ -264,6 +264,69 @@ class DuiZhangController  extends ControllerBase
         return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
     }
 
+    public function changeChargeState(){
+
+        return $this->writeJson(200, [],  [],'成功');
+
+        $requestData =  $this->getRequestData();
+        $page = $requestData['page']?:1;
+        $pageSize = $requestData['pageSize']?:10;
+
+        $conditions = [];
+        if($requestData['nickname']){
+            $conditions[]  =  [
+                'field' =>'nickname',
+                'value' =>$requestData['nickname'].'%',
+                'operate' =>'like',
+            ];
+
+        }
+//        $datas = WechatInfo::findByConditionV2(
+//            $conditions,$page,$pageSize
+//        );
+
+
+        $total = 2;
+        $datas = [
+            [
+                "id"=>1,
+                "client_name"=> "客户1",
+                "project_cname"=> "项目类别1",
+                "year"=> "2022",
+                "month"=> "12",
+                "total_num"=> "200",
+                "needs_charge_num"=> "100",
+                "total_cost"=> "100",
+                "unit_price"=> "1",
+                "charge_state_cname"=> "待结算",
+                "real_charge_money"=> "100",
+                "charge_time"=> "2022-12-12 12:12:12",
+                "operator_cname"=> "隔壁老王",
+            ],
+            [
+                "id"=>2,
+                "client_name"=> "客户2",
+                "project_cname"=> "项目类别1",
+                "year"=> "2022",
+                "month"=> "12",
+                "total_num"=> "200",
+                "needs_charge_num"=> "100",
+                "total_cost"=> "100",
+                "unit_price"=> "1",
+                "charge_state_cname"=> "已结算",
+                "real_charge_money"=> "100",
+                "charge_time"=> "2022-12-12 12:12:12",
+                "operator_cname"=> "隔壁老王",
+            ]
+        ];
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'totalPage' => ceil($total/$pageSize) ,
+        ],  $datas,'成功');
+    }
+
     public function getList(){
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;

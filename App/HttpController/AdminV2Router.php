@@ -303,6 +303,7 @@ class AdminV2Router
         $prefix = '/Business/AdminV2/Mrxd/DuiZhangController/';
         $routeCollector->addGroup('/duizhang', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getList', $prefix . 'getList');
+            $routeCollector->addRoute(['GET', 'POST'], '/changeChargeState', $prefix . 'changeChargeState');
             $routeCollector->addRoute(['GET', 'POST'], '/uploadBussinessFile', $prefix . 'uploadBussinessFile');
             $routeCollector->addRoute(['GET', 'POST'], '/redownloadBussinessFile', $prefix . 'redownloadBussinessFile');
             $routeCollector->addRoute(['GET', 'POST'], '/bussinessFilesList', $prefix . 'bussinessFilesList');
