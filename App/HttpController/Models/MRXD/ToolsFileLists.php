@@ -1036,6 +1036,18 @@ class ToolsFileLists extends ModelBase
             LIMIT 1 
        ");
         foreach ($filesDatas as $filesData){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    // __CLASS__.__FUNCTION__ .__LINE__,
+                    [
+                        '通用文件-开始处理'=>[
+                            '表名' => "tools_file_lists" ,
+                            '数据' =>  $filesData,
+                        ]
+                    ]
+                ], JSON_UNESCAPED_UNICODE)
+            );
+
             self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
 
             $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);

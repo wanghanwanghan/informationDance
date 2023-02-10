@@ -195,41 +195,64 @@ class BusinessOpportunityController extends ControllerBase
                 if(!file_exists($path)){
                     return $this->writeJson(203, [], [],'文件移动失败！');
                 }
-
+                $db_data1 = [
+                    'admin_id' => $this->loginUserinfo['id'],
+                    'file_name' => $fileName,
+                    'new_file_name' => '',
+                    'remark' => $requestData['remark']?:'',
+                    'type' => ToolsFileLists::$type_upload_weixin,
+                    'state' => $requestData['state']?:'',
+                    'touch_time' => $requestData['touch_time']?:'',
+                ];
                 $UploadRecordRes =  ToolsFileLists::addRecordV2(
-                    [
-                        'admin_id' => $this->loginUserinfo['id'],
-                        'file_name' => $fileName,
-                        'new_file_name' => '',
-                        'remark' => $requestData['remark']?:'',
-                        'type' => ToolsFileLists::$type_upload_weixin,
-                        'state' => $requestData['state']?:'',
-                        'touch_time' => $requestData['touch_time']?:'',
-                    ]
+                    $db_data1
                 );
                 if(!$UploadRecordRes){
                     return $this->writeJson(203, [], [],'文件上传失败');
                 }
-
-                $res = QueueLists::addRecord(
-                    [
-                        'name' => '',
-                        'desc' => '',
-                        'func_info_json' => json_encode(
-                            [
-                                'class' => '\App\HttpController\Models\MRXD\ToolsFileLists',
-                                'static_func'=> 'shangChuanZhiFubao',
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        // __CLASS__.__FUNCTION__ .__LINE__,
+                        [
+                            '上传支付宝文件'=>[
+                                '表名' => "tools_file_lists" ,
+                                '数据' => $db_data1 ,
                             ]
-                        ),
-                        'params_json' => json_encode([
+                        ]
+                    ], JSON_UNESCAPED_UNICODE)
+                );
 
-                        ]),
-                        'type' => ToolsFileLists::$type_upload_weixin,
-                        'remark' => '',
-                        'begin_date' => NULL,
-                        'msg' => '',
-                        'status' => QueueLists::$status_init,
-                    ]
+                $db_data2 = [
+                    'name' => '',
+                    'desc' => '',
+                    'func_info_json' => json_encode(
+                        [
+                            'class' => '\App\HttpController\Models\MRXD\ToolsFileLists',
+                            'static_func'=> 'shangChuanZhiFubao',
+                        ]
+                    ),
+                    'params_json' => json_encode([
+
+                    ]),
+                    'type' => ToolsFileLists::$type_upload_weixin,
+                    'remark' => '',
+                    'begin_date' => NULL,
+                    'msg' => '',
+                    'status' => QueueLists::$status_init,
+                ];
+                $res = QueueLists::addRecord(
+                    $db_data2
+                );
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        // __CLASS__.__FUNCTION__ .__LINE__,
+                        [
+                            '上传支付宝文件——队列'=>[
+                                '表名' => "queue_lists" ,
+                                '数据' =>  $db_data2,
+                            ]
+                        ]
+                    ], JSON_UNESCAPED_UNICODE)
                 );
 
                 $succeedFiels[] = $fileName;
