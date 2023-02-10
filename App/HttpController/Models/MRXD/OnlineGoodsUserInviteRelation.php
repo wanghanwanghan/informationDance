@@ -263,13 +263,13 @@ class OnlineGoodsUserInviteRelation extends ModelBase
                 break;
             }
         }
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'getVipInviterInfo_$userId'=>$userId,
-                '$topInvitor'=>$topInvitor,
-            ])
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                'getVipInviterInfo_$userId'=>$userId,
+//                '$topInvitor'=>$topInvitor,
+//            ])
+//        );
         if($topInvitor <= 0 ){
             return  [];
         }
