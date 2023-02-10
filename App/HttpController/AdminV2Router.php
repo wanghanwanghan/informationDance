@@ -305,7 +305,8 @@ class AdminV2Router
         $routeCollector->addGroup('/duizhang', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getList', $prefix . 'getList'); //对账列表
             $routeCollector->addRoute(['GET', 'POST'], '/getDetailList', $prefix . 'getDetailList'); //对账详情列表
-            $routeCollector->addRoute(['GET', 'POST'], '/downloadDataList', $prefix . 'downloadDataList'); //导出
+            $routeCollector->addRoute(['GET', 'POST'], '/downloadDataList', $prefix . 'downloadDataList'); //导出对账列表
+            $routeCollector->addRoute(['GET', 'POST'], '/downloadDetailDataList', $prefix . 'downloadDetailDataList'); //导出对账列表详情
             $routeCollector->addRoute(['GET', 'POST'], '/changeChargeState', $prefix . 'changeChargeState');//更改结算状态
 
             $routeCollector->addRoute(['GET', 'POST'], '/uploadBussinessFile', $prefix . 'uploadBussinessFile');
