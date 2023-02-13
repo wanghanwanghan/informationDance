@@ -199,7 +199,31 @@ class BusinessOpportunityManageController extends ControllerBase
     //录入商机
     public function addOne(){
         $requestData =  $this->getRequestData();
+        if($requestData['shang_ji_jie_duan']){
+            $oldJieDuan = $requestData['shang_ji_jie_duan'];
+            $requestData['shang_ji_jie_duan'] = PinYinService::getPinyin($oldJieDuan);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                     [
+                         "录入商机_商机阶段转换"=>[
+                             "前端传过来的商机阶段"=>$oldJieDuan,
+                             "转换为"=>$requestData['shang_ji_jie_duan'],
+                         ]
+                     ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
+        }
+
         unset($requestData['phone']);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                [
+                    "录入商机"=>[
+                        "入库数据"=>$requestData,
+                    ]
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
         ShangJi::addRecordV2($requestData);
         return $this->writeJson(200, [],$requestData,'成功');
     }
