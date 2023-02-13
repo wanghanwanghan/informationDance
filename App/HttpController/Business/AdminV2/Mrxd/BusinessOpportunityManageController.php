@@ -200,8 +200,17 @@ class BusinessOpportunityManageController extends ControllerBase
     public function addOne(){
         $requestData =  $this->getRequestData();
         if($requestData['shang_ji_jie_duan']){
-            $oldJieDuan = $requestData['shang_ji_jie_duan'];
-            $requestData['shang_ji_jie_duan'] = PinYinService::getPinyin($oldJieDuan);
+            $oldJieDuan = $requestData['shang_ji_jie_duan']; 
+
+            $length = strlen($oldJieDuan);
+            $wordNums = $length/3;
+            $newstr = "";
+            for ($i=0; $i<$wordNums; $i++){
+                $tmpStr  = mb_substr($oldJieDuan, $i, 1, 'utf-8');
+                $newstr  .= PinYinService::getPinyin($tmpStr)."_";
+            }
+            $requestData['shang_ji_jie_duan'] = substr($newstr, 0, -1);
+
             CommonService::getInstance()->log4PHP(
                 json_encode([
                      [
