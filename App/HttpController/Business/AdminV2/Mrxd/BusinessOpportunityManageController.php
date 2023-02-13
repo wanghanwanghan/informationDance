@@ -200,7 +200,7 @@ class BusinessOpportunityManageController extends ControllerBase
     public function addOne(){
         $requestData =  $this->getRequestData();
         if($requestData['shang_ji_jie_duan']){
-            $oldJieDuan = $requestData['shang_ji_jie_duan']; 
+            $oldJieDuan = $requestData['shang_ji_jie_duan'];
 
             $length = strlen($oldJieDuan);
             $wordNums = $length/3;

@@ -1519,6 +1519,25 @@ class ToolsController extends ControllerBase
         ],'成功 ');
     }
 
+
+    public function commonToosV2(){
+        $requestData =  $this->getRequestData();
+        return $this->writeJson(200, [], [
+           "fieldsInfo"=>[
+               "字段1",
+               "字段2",
+               "字段3",
+           ],
+            "datas"=>[
+                [
+                    "1111",
+                    "222",
+                    "333",
+                ]
+            ]
+        ],'成功 ');
+    }
+
     public function commonToosOptions(){
 
         return $this->writeJson(200, [], [
