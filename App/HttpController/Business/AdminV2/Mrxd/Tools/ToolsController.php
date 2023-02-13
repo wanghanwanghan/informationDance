@@ -1523,16 +1523,24 @@ class ToolsController extends ControllerBase
     public function commonToosV2(){
         $requestData =  $this->getRequestData();
         return $this->writeJson(200, [], [
-           "fieldsInfo"=>[
-               "show1" => "字段1",
-               "show2" => "字段1",
-           ],
-            "datas"=>[
-                [
-                    "show1"=>"1111",
-                    "show2"=>"222",
-                ]
-            ]
+           [
+               "show_1"=>[
+                   "des"=>"字段1",
+                   "data"=>"内容1",
+               ],
+               "show_2"=>[
+                   "des"=>"字段2",
+                   "data"=>"内容2",
+               ],
+               "show_3"=>[
+                   "des"=>"字段3",
+                   "data"=>"内容3",
+               ],
+               "show_4"=>[
+                   "des"=>"字段4",
+                   "data"=>"内容4",
+               ]
+           ]
         ],'成功 ');
     }
 
