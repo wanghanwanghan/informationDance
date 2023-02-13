@@ -1524,15 +1524,13 @@ class ToolsController extends ControllerBase
         $requestData =  $this->getRequestData();
         return $this->writeJson(200, [], [
            "fieldsInfo"=>[
-               "字段1",
-               "字段2",
-               "字段3",
+               "show1" => "字段1",
+               "show2" => "字段1",
            ],
             "datas"=>[
                 [
-                    "1111",
-                    "222",
-                    "333",
+                    "show1"=>"1111",
+                    "show2"=>"222",
                 ]
             ]
         ],'成功 ');
