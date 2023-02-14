@@ -1524,16 +1524,15 @@ class ToolsController extends ControllerBase
         $requestData =  $this->getRequestData();
         return $this->writeJson(200, [], [
            [
-               "show_1_key"=>'key1',
-               "show_1_value"=>'value1',
-               "show_2_key"=>'key2',
-               "show_2_value"=>'value2', 
+               "show_1_key"=>'展示字段1',
+               "show_1_value"=>'展示内容1<br/>展示内容11',
+               "show_2_key"=>'展示字段2',
+               "show_2_value"=>'展示内容2<br/>展示内容22',
            ]
         ],'成功 ');
     }
 
     public function commonToosOptions(){
-
         return $this->writeJson(200, [], [
             2 => '根据企业名称查询库里全部的联系人名称和职位(老梗)（入参格式:企业名）',
             5 => '通过企业名称查询我们库里的有职务信息的企业管理人(company_manager)（入参格式:企业名）',
