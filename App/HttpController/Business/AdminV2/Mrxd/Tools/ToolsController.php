@@ -1519,17 +1519,21 @@ class ToolsController extends ControllerBase
         ],'成功 ');
     }
 
-
+    /**
+    通用工具类
+     */
     public function commonToosV2(){
         $requestData =  $this->getRequestData();
         return $this->writeJson(200, [], [
-           [
-               'params'=>'展示字段1',
-               "return_datas_json"=>'展示内容1<br/>展示内容11',
-           ],
-            [
-                'params'=>'展示字段1',
-                "return_datas_json"=>'展示内容1<br/>展示内容11',
+            "datas" => [
+                [
+                    "show_1"=>"内容1",
+                    "show_2"=>"内容2",
+                ]
+            ],
+            "fields" => [
+                "show_1" => "字段1",
+                "show_2" => "字段2",
             ]
         ],'成功 ');
     }
