@@ -3381,7 +3381,7 @@ class CreateEasyReportTask extends TaskBase implements TaskInterface
             $postData = [
                 'entName' => $this->entName,
                 'code' => '',
-                'beginYear' => date('Y') - 1,
+                'beginYear' => date('Y') - 2,
                 'dataCount' => 4,//取最近几年的
             ];
 
