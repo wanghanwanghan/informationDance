@@ -1140,6 +1140,7 @@ class XinDongService extends ServiceBase
     //2020年营收规模标签转换
     function vendincScaleLabelChange(string $label): array
     {
+        return ['未找到', '未找到'];
         if (empty($label)) return ['未找到', '未找到'];
         if ($label === 'F') return ['F', '负数'];
 
