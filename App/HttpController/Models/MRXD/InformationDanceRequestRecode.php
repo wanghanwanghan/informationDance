@@ -221,11 +221,15 @@ class InformationDanceRequestRecode extends ModelBase
             ],JSON_UNESCAPED_UNICODE)
         );
         
-//        $allMonths = self::dateMonths(
-//            date("Y-m".strtotime($whereConditions['min_date'])),
-//            date("Y-m".strtotime($whereConditions['max_date']))
-//        );
-
+        $allMonths = self::dateMonths(
+            $whereConditions['min_date'],
+            $whereConditions['max_date']
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '对账模块-统计客户请求信息-参数'=>$whereConditions
+            ],JSON_UNESCAPED_UNICODE)
+        );
         $allDatas = [];
         foreach ($allMonths as $Month){
             //取每个月的第一个id和最后一个id 根据id统计
