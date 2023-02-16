@@ -17,6 +17,7 @@ use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\AdminV2\QueueLists;
+use App\HttpController\Models\Api\User;
 use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\BusinessBase\ZhifubaoInfo;
 use App\HttpController\Models\MRXD\InformationDanceRequestRecode;
@@ -441,13 +442,26 @@ class DuiZhangController  extends ControllerBase
         $pageSize = $requestData['pageSize']?:10;
 
         $res = InformationDanceRequestRecode::getAllUsers();
+        //information_dance_user
+        $allUsers =   User::findByConditionWithCountInfo(
+          1,500
+        );
+        $newUsersInfo = [];
+        foreach ($allUsers as $UserInfo){
+            $newUsersInfo[$UserInfo['id']] = $UserInfo;
+        }
+
+        $newRes = [];
+        foreach ($res as $resItem){
+            $newRes[$resItem["userId"]] = $newUsersInfo[$resItem["userId"]]['username'];
+        }
         $total = count($res);
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' => $pageSize,
             'total' => $total,
             'totalPage' => ceil($total/$pageSize) ,
-        ],  $res,'成功');
+        ],  $newRes,'成功');
     }
 
     public function WeiXinFilesList(){
