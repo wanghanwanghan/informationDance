@@ -148,7 +148,7 @@ class InformationDanceRequestRecode extends ModelBase
         }
 
         if( $whereConditions['max_date'] > 0 ){
-            $where .= " AND  created_at <= ".strtotime($whereConditions['min_date']);
+            $where .= " AND  created_at <= ".strtotime($whereConditions['max_date']);
         }
 
         $sql = "SELECT
