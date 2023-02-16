@@ -379,8 +379,8 @@ class DuiZhangController  extends ControllerBase
 
 
 
-        $minDate = $requestData['year']."-01-01";
-        $maxDate = $requestData['year']."-12-31";
+        $minDate = $requestData['year']."-01";
+        $maxDate = $requestData['year']."-12";
 
         if($requestData["month"]){
             if($requestData["month"]<=9){
@@ -391,13 +391,8 @@ class DuiZhangController  extends ControllerBase
                 $month = $requestData['year']."-".$requestData["month"];
             }
 
-            //本月第一天
-            $beginDate = date('Y-m-01', strtotime($month));
-            //本月最后一天
-            $endDate = date('Y-m-d', strtotime("$beginDate +1 month -1 day"));
-
-            $minDate = $beginDate;
-            $maxDate = $endDate;
+            $minDate = $month;
+            $maxDate = $month;
         }
 
     /***

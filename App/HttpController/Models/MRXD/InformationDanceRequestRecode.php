@@ -139,6 +139,74 @@ class InformationDanceRequestRecode extends ModelBase
         ]);
     }
 
+    /**
+     * 计算出两个日期之间的月份
+     * @author Eric
+     * @param  [type] $start_date [开始日期，如2014-03]
+     * @param  [type] $end_date   [结束日期，如2015-12]
+     * @param  string $explode    [年份和月份之间分隔符，此例为 - ]
+     * @param  boolean $addOne    [算取完之后最后是否加一月，用于算取时间戳用]
+     * @return [type]             [返回是两个月份之间所有月份字符串]
+     * $start_date = "2018-11";
+     * $end_date = "2019-03";
+     * var_dump(dateMonths($start_date,$end_date));
+     */
+    static function dateMonths($start_date,$end_date,$explode='-',$addOne=false){
+        //判断两个时间是不是需要调换顺序
+        $start_int = strtotime($start_date);
+        $end_int = strtotime($end_date);
+        if($start_int > $end_int){
+            $tmp = $start_date;
+            $start_date = $end_date;
+            $end_date = $tmp;
+        }
+
+
+        //结束时间月份+1，如果是13则为新年的一月份
+        $start_arr = explode($explode,$start_date);
+        $start_year = intval($start_arr[0]);
+        $start_month = intval($start_arr[1]);
+
+
+        $end_arr = explode($explode,$end_date);
+        $end_year = intval($end_arr[0]);
+        $end_month = intval($end_arr[1]);
+
+
+        $data = array();
+        $data[] = $start_date;
+
+
+        $tmp_month = $start_month;
+        $tmp_year = $start_year;
+
+
+        //如果起止不相等，一直循环
+        while (!(($tmp_month == $end_month) && ($tmp_year == $end_year))) {
+            $tmp_month ++;
+            //超过十二月份，到新年的一月份
+            if($tmp_month > 12){
+                $tmp_month = 1;
+                $tmp_year++;
+            }
+            $data[] = $tmp_year.$explode.str_pad($tmp_month,2,'0',STR_PAD_LEFT);
+        }
+
+
+        if($addOne == true){
+            $tmp_month ++;
+            //超过十二月份，到新年的一月份
+            if($tmp_month > 12){
+                $tmp_month = 1;
+                $tmp_year++;
+            }
+            $data[] = $tmp_year.$explode.str_pad($tmp_month,2,'0',STR_PAD_LEFT);
+        }
+
+
+        return $data;
+    }
+
     static function getStatictsData($whereConditions = []){
         $where = " 1 = 1 ";
 
@@ -146,35 +214,64 @@ class InformationDanceRequestRecode extends ModelBase
             $where .= " AND  userId = ".$whereConditions['userId'];
         }
 
-        if( $whereConditions['min_date'] > 0 ){
-            $where .= " AND  created_at >= ".strtotime($whereConditions['min_date']);
-        }
-
-        if( $whereConditions['max_date'] > 0 ){
-            $where .= " AND  created_at <= ".strtotime($whereConditions['max_date']);
-        }
-
-        $sql = "SELECT
-                    userId,
-                    SUM(1) as total_num,
-                    SUM(IF( `responseCode` = 200 AND spendMoney = 0 , 1, 0)) as cache_num,
-                    DATE_FORMAT( FROM_UNIXTIME( `created_at` ), '%Y-%m' ) AS date_time 
-                FROM
-                    information_dance_request_recode_".$whereConditions['year']." 
-                WHERE $where
-                GROUP BY
-                    userId,
-                    date_time
-        ";
-
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '对账模块-统计客户请求信息-sql' => $sql,
-                "参数"=>$whereConditions
-            ],JSON_UNESCAPED_UNICODE)
+        //拆分为月份 1个月一个月的取
+        $allMonths = self::dateMonths(
+            date("Y-m".strtotime($whereConditions['min_date'])),
+            date("Y-m".strtotime($whereConditions['max_date']))
         );
 
-        return self::findBySql($sql);
+        $allDatas = [];
+        foreach ($allMonths as $Month){
+            //取每个月的第一个id和最后一个id 根据id统计
+            //本月第一天
+            $beginDate = date('Y-m-01', strtotime($Month));
+            $date1 = strtotime($beginDate);
+            $res1 =  self::findBySql("SELECT
+                                                id,created_at 
+                                            FROM
+                                                information_dance_request_recode_2022 
+                                            WHERE
+                                                created_at >= $date1 
+                                                LIMIT 1");
+            $id1 = $res1[0]["id"];
+
+            //本月最后一天
+            $endDate = date('Y-m-d', strtotime("$beginDate +1 month -1 day"));
+            $date2 = strtotime($endDate);
+            $res2 =  self::findBySql("SELECT
+                                                id,created_at 
+                                            FROM
+                                                information_dance_request_recode_2022 
+                                            WHERE
+                                                created_at >= $date2 
+                                                LIMIT 1");
+            $id2 = $res2[0]["id"];
+
+            $sql = "SELECT
+                        userId,
+                        SUM(1) as total_num,
+                        SUM(IF( `responseCode` = 200 AND spendMoney = 0 , 1, 0)) as cache_num,
+                        DATE_FORMAT( FROM_UNIXTIME( `created_at` ), '%Y-%m' ) AS date_time 
+                    FROM
+                        information_dance_request_recode_".$whereConditions['year']." 
+                    WHERE $where AND id >= $id1 AND id <= $id2
+                    GROUP BY
+                        userId,
+                        date_time
+            ";
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '对账模块-统计客户请求信息-sql' => $sql,
+                    "参数"=>$whereConditions
+                ],JSON_UNESCAPED_UNICODE)
+            );
+            $tmpRes =  self::findBySql($sql);
+            foreach ($tmpRes as $tmpResItem){
+                $allDatas[] = $tmpResItem;
+            }
+        }
+
+        return $allDatas;
     }
 
     /*****
