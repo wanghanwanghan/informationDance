@@ -215,10 +215,16 @@ class InformationDanceRequestRecode extends ModelBase
         }
 
         //拆分为月份 1个月一个月的取
-        $allMonths = self::dateMonths(
-            date("Y-m".strtotime($whereConditions['min_date'])),
-            date("Y-m".strtotime($whereConditions['max_date']))
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '对账模块-统计客户请求信息-参数'=>$whereConditions
+            ],JSON_UNESCAPED_UNICODE)
         );
+        
+//        $allMonths = self::dateMonths(
+//            date("Y-m".strtotime($whereConditions['min_date'])),
+//            date("Y-m".strtotime($whereConditions['max_date']))
+//        );
 
         $allDatas = [];
         foreach ($allMonths as $Month){
