@@ -444,7 +444,7 @@ class DuiZhangController  extends ControllerBase
         $res = InformationDanceRequestRecode::getAllUsers();
         //information_dance_user
         $allUsers =   User::findByConditionWithCountInfo(
-          1,500
+          [],1,500
         );
         $newUsersInfo = [];
         foreach ($allUsers["data"] as $UserInfo){
