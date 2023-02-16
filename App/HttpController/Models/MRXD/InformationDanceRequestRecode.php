@@ -3,6 +3,8 @@
 namespace App\HttpController\Models\MRXD;
 
 use App\HttpController\Models\AdminNew\ConfigInfo;
+use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
+use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
@@ -10,6 +12,7 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\Sms\AliSms;
 use EasySwoole\RedisPool\Redis;
+use Vtiful\Kernel\Format;
 
 // use App\HttpController\Models\AdminRole;
 
@@ -157,7 +160,7 @@ class InformationDanceRequestRecode extends ModelBase
                     SUM(IF( `responseCode` = 200 AND spendMoney = 0 , 1, 0)) as cache_num,
                     DATE_FORMAT( FROM_UNIXTIME( `created_at` ), '%Y-%m' ) AS date_time 
                 FROM
-                    information_dance_request_recode_2023 
+                    information_dance_request_recode_".$whereConditions['year']." 
                 WHERE $where
                 GROUP BY
                     userId,
@@ -203,6 +206,69 @@ class InformationDanceRequestRecode extends ModelBase
     public static function findBySql($sql){
         $data = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
+    }
+
+    static  function exportData($data,$filedCname ){
+        $filename = '对账单_'.date('YmdHis').'.xlsx';
+        $config=  [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                "对账单-导出-开始执行"=>[
+                    "文件名"=>$filename,
+                    "文件路径"=>TEMP_FILE_PATH,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+        $excel = new \Vtiful\Kernel\Excel($config);
+        $fileObject = $excel->fileName($filename, 'sheet');
+        $fileHandle = $fileObject->getHandle();
+
+        $format = new Format($fileHandle);
+        $colorStyle = $format
+            ->fontColor(Format::COLOR_ORANGE)
+            ->border(Format::BORDER_DASH_DOT)
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $format = new Format($fileHandle);
+
+        $alignStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $fileObject
+            ->defaultFormat($colorStyle)
+            ->header($filedCname)
+            ->defaultFormat($alignStyle)
+        ;
+
+        $i = 1;
+        foreach ($data as $dataItem){
+            if( $i%300 == 0 ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '对账单-导出-次数' => $i,
+                    ])
+                );
+            }
+
+            $fileObject ->data([$dataItem]);
+            $i ++;
+        }
+
+        $format = new Format($fileHandle);
+        //单元格有\n解析成换行
+        $wrapStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->wrap()
+            ->toResource();
+
+        $fileObject->output();
     }
 
 }
