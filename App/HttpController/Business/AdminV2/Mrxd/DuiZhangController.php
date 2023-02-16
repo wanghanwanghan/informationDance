@@ -379,61 +379,68 @@ class DuiZhangController  extends ControllerBase
 
 
 
-        $conditions = [];
-        if($requestData['nickname']){
-            $conditions[]  =  [
-                'field' =>'nickname',
-                'value' =>$requestData['nickname'].'%',
-                'operate' =>'like',
-            ];
+        $minDate = $requestData['year']."-01-01";
+        $maxDate = $requestData['year']."-12-31";
 
+        if($requestData["month"]){
+            if($requestData["month"]<=9){
+                //补个零
+                $month = $requestData['year']."-0".$requestData["month"];
+            }
+            if($requestData["month"]>=10){
+                $month = $requestData['year']."-".$requestData["month"];
+            }
+
+            //本月第一天
+            $beginDate = date('Y-m-01', strtotime($month));
+            //本月最后一天
+            $endDate = date('Y-m-d', strtotime("$beginDate +1 month -1 day"));
+
+            $minDate = $beginDate;
+            $maxDate = $endDate;
         }
-//        $datas = WechatInfo::findByConditionV2(
-//            $conditions,$page,$pageSize
-//        );
 
+    /***
+    "id"=>2,
+    "client_name"=> "客户2",
+    "project_cname"=> "项目类别1",
+    "year"=> "2022",
+    "month"=> "12",
+    "total_num"=> "200",
+    "needs_charge_num"=> "100",
+    "total_cost"=> "100",
+    "unit_price"=> "1",
+    "charge_state_cname"=> "已结算",
+    "real_charge_money"=> "100",
+    "charge_time"=> "2022-12-12 12:12:12",
+    "operator_cname"=> "隔壁老王",
+    "remark"=> "今天是周五！！！！！",
+     */
 
-        $total = 2;
-        $datas = [
+        $res = InformationDanceRequestRecode::getStatictsData(
             [
-                "id"=>1,
-                "client_name"=> "客户1",
-                "project_cname"=> "项目类别1",
-                "year"=> "2022",
-                "month"=> "12",
-                "total_num"=> "200",
-                "needs_charge_num"=> "100",
-                "total_cost"=> "100",
-                "unit_price"=> "1",
-                "charge_state_cname"=> "待结算",
-                "real_charge_money"=> "100",
-                "charge_time"=> "2022-12-12 12:12:12",
-                "operator_cname"=> "隔壁老王",
-                "remark"=> "今天是周五！！！！",
-            ],
-            [
-                "id"=>2,
-                "client_name"=> "客户2",
-                "project_cname"=> "项目类别1",
-                "year"=> "2022",
-                "month"=> "12",
-                "total_num"=> "200",
-                "needs_charge_num"=> "100",
-                "total_cost"=> "100",
-                "unit_price"=> "1",
-                "charge_state_cname"=> "已结算",
-                "real_charge_money"=> "100",
-                "charge_time"=> "2022-12-12 12:12:12",
-                "operator_cname"=> "隔壁老王",
-                "remark"=> "今天是周五！！！！！",
+                "userId" => intval($requestData["company_name"]),
+                "min_date" => $minDate,
+                "max_date" => $maxDate,
             ]
-        ];
+        );
+        $total = count($res);
+        foreach ($res as &$resItem){
+            $userInfo = User::findById($resItem["userId"]);
+            if($userInfo){
+                $resItem["client_name"] =  $userInfo->username;
+            }
+            $resItem["year"] =  date("Y",strtotime($resItem['date_time']));
+            $resItem["month"] =  date("Y",strtotime($resItem['date_time']));
+            $resItem["needs_charge_num"] =  $resItem['total_num'] - $resItem['cache_num'];
+        }
+
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' => $pageSize,
             'total' => $total,
             'totalPage' => ceil($total/$pageSize) ,
-        ],  $datas,'成功');
+        ],  $res,'成功');
     }
 
     public function getUserList(){

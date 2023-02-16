@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Models\Api;
 
+use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Models\MRXD\InformationDanceRequestRecode;
 
@@ -12,6 +13,13 @@ class User extends ModelBase
     protected $autoTimeStamp = true;
     protected $createTime = 'created_at';
     protected $updateTime = 'updated_at';
+
+    public static function findById($id){
+        $res =  User::create()
+            ->where('id',$id)
+            ->get();
+        return $res;
+    }
 
     public static function findByConditionWithCountInfo($whereArr,$page=1,$limit=20){
         $model = User::create()

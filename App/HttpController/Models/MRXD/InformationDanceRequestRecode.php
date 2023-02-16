@@ -136,22 +136,60 @@ class InformationDanceRequestRecode extends ModelBase
         ]);
     }
 
+    static function getStatictsData($whereConditions = []){
+        $where = " 1 = 1 ";
+
+        if( $whereConditions['userId'] > 0 ){
+            $where .= " AND  userId = ".$whereConditions['userId'];
+        }
+
+        if( $whereConditions['min_date'] > 0 ){
+            $where .= " AND  created_at >= ".strtotime($whereConditions['min_date']);
+        }
+
+        if( $whereConditions['max_date'] > 0 ){
+            $where .= " AND  created_at <= ".strtotime($whereConditions['min_date']);
+        }
+
+        $sql = "SELECT
+                    userId,
+                    SUM(1) as total_num,
+                    SELECT SUM(IF( `responseCode` = 200 AND spendMoney = 0 , 1, 0)) as cache_num,
+                    DATE_FORMAT( FROM_UNIXTIME( `created_at` ), '%Y-%m' ) AS date_time 
+                FROM
+                    information_dance_request_recode_2023 
+                WHERE $where
+                GROUP BY
+                    userId,
+                    date_time
+        ";
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '对账模块-统计客户请求信息-sql' => $sql,
+                "参数"=>$whereConditions
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+        return self::findBySql($sql);
+    }
+
     /*****
     数据量小 客户少 直接查了 若是哪天多了起来了  再说
      */
     static function  getAllUsers(){
         $sql = "SELECT DISTINCT
-	( userId ) 
-FROM
-	information_dance_request_recode_2021 UNION
-SELECT DISTINCT
-	( userId ) 
-FROM
-	information_dance_request_recode_2022 UNION
-SELECT DISTINCT
-	( userId ) 
-FROM
-	information_dance_request_recode_2023
+                    ( userId ) 
+                FROM
+                    information_dance_request_recode_2021 UNION
+                SELECT DISTINCT
+                    ( userId ) 
+                FROM
+                    information_dance_request_recode_2022 UNION
+                SELECT DISTINCT
+                    ( userId ) 
+                FROM
+                    information_dance_request_recode_2023
 ";
         CommonService::getInstance()->log4PHP(
             json_encode([
