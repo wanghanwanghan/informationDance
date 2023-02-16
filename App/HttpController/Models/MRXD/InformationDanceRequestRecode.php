@@ -154,7 +154,7 @@ class InformationDanceRequestRecode extends ModelBase
         $sql = "SELECT
                     userId,
                     SUM(1) as total_num,
-                    SELECT SUM(IF( `responseCode` = 200 AND spendMoney = 0 , 1, 0)) as cache_num,
+                    SUM(IF( `responseCode` = 200 AND spendMoney = 0 , 1, 0)) as cache_num,
                     DATE_FORMAT( FROM_UNIXTIME( `created_at` ), '%Y-%m' ) AS date_time 
                 FROM
                     information_dance_request_recode_2023 
