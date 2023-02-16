@@ -251,7 +251,7 @@ class InformationDanceRequestRecode extends ModelBase
                 ],JSON_UNESCAPED_UNICODE)
             );
 
-//            $res1 =  self::findBySql($sql00);
+            $res1 =  self::findBySql($sql00);
             $id1 = $res1[0]["id"];
 
             //本月最后一天
@@ -277,13 +277,15 @@ class InformationDanceRequestRecode extends ModelBase
                         userId,
                         SUM(1) as total_num,
                         SUM(IF( `responseCode` = 200 AND spendMoney = 0 , 1, 0)) as cache_num,
-                        DATE_FORMAT( FROM_UNIXTIME( `created_at` ), '%Y-%m' ) AS date_time 
+                        created_at
+                        -- ,DATE_FORMAT( FROM_UNIXTIME( `created_at` ), '%Y-%m' ) AS date_time 
                     FROM
                         information_dance_request_recode_".$whereConditions['year']." 
                     WHERE $where AND id >= $id1 AND id <= $id2
                     GROUP BY
-                        userId,
-                        date_time
+                        userId
+                        -- ,date_time
+                        ,DATE_FORMAT( FROM_UNIXTIME( `created_at` ), '%Y-%m' )
             ";
             CommonService::getInstance()->log4PHP(
                 json_encode([
@@ -291,7 +293,7 @@ class InformationDanceRequestRecode extends ModelBase
                     "参数"=>$whereConditions
                 ],JSON_UNESCAPED_UNICODE)
             );
-//            $tmpRes =  self::findBySql($sql);
+            $tmpRes =  self::findBySql($sql);
             foreach ($tmpRes as $tmpResItem){
                 $allDatas[] = $tmpResItem;
             }
