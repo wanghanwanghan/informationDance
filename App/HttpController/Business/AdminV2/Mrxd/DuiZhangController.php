@@ -447,7 +447,7 @@ class DuiZhangController  extends ControllerBase
           1,500
         );
         $newUsersInfo = [];
-        foreach ($allUsers as $UserInfo){
+        foreach ($allUsers["data"] as $UserInfo){
             $newUsersInfo[$UserInfo['id']] = $UserInfo;
         }
 
