@@ -355,6 +355,23 @@ class DuiZhangController  extends ControllerBase
         $page = $requestData['page']?:1;
         $pageSize = $requestData['pageSize']?:10;
 
+        if( $requestData['year'] <= 0 ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    "客户对账模块" => "没指定年限，返回空",
+                ],JSON_UNESCAPED_UNICODE)
+            );
+            $total = 0;
+            return $this->writeJson(201, [
+                'page' => $page,
+                'pageSize' => $pageSize,
+                'total' => $total,
+                'totalPage' => ceil($total/$pageSize) ,
+            ],  [],'请指定年限');
+        }
+
+
+
         $conditions = [];
         if($requestData['nickname']){
             $conditions[]  =  [
