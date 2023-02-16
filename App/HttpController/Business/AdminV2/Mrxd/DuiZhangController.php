@@ -426,8 +426,8 @@ class DuiZhangController  extends ControllerBase
             if($userInfo){
                 $resItem["client_name"] =  $userInfo->username;
             }
-            $resItem["year"] =  date("Y",strtotime($resItem['date_time']));
-            $resItem["month"] =  date("m",strtotime($resItem['date_time']));
+            $resItem["year"] =  date("Y",$resItem['created_at']);
+            $resItem["month"] =  date("m",$resItem['created_at']);
             $resItem["needs_charge_num"] =  $resItem['total_num'] - $resItem['cache_num'];
         }
 
