@@ -265,7 +265,7 @@ class InformationDanceRequestRecode extends ModelBase
                     "参数"=>$whereConditions
                 ],JSON_UNESCAPED_UNICODE)
             );
-            $tmpRes =  self::findBySql($sql);
+//            $tmpRes =  self::findBySql($sql);
             foreach ($tmpRes as $tmpResItem){
                 $allDatas[] = $tmpResItem;
             }
