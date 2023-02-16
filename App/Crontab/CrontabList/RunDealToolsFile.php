@@ -552,7 +552,7 @@ class RunDealToolsFile extends AbstractCronTask
         $nums = 1;
 
         while (true) {
-            if($nums%100==0){
+            if($nums%300==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         '剔除代理记账'=>$xlsx_name,
