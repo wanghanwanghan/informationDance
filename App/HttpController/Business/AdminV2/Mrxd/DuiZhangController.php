@@ -19,6 +19,7 @@ use App\HttpController\Models\AdminV2\MailReceipt;
 use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\BusinessBase\ZhifubaoInfo;
+use App\HttpController\Models\MRXD\InformationDanceRequestRecode;
 use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
@@ -350,6 +351,11 @@ class DuiZhangController  extends ControllerBase
         ],  $datas,'成功');
     }
 
+    /****
+    请求 URL: https://api.meirixindong.com/admin/v2/duizhang/getList?
+     phone=13269706193&company_name=&project_type=&charge_state=&year=2020&month=
+
+     */
     public function getList(){
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
@@ -427,6 +433,21 @@ class DuiZhangController  extends ControllerBase
             'total' => $total,
             'totalPage' => ceil($total/$pageSize) ,
         ],  $datas,'成功');
+    }
+
+    public function getUserList(){
+        $requestData =  $this->getRequestData();
+        $page = $requestData['page']?:1;
+        $pageSize = $requestData['pageSize']?:10;
+
+        $res = InformationDanceRequestRecode::getAllUsers();
+        $total = count($res);
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'totalPage' => ceil($total/$pageSize) ,
+        ],  $res,'成功');
     }
 
     public function WeiXinFilesList(){
