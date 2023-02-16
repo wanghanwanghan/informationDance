@@ -227,7 +227,8 @@ class InformationDanceRequestRecode extends ModelBase
         );
         CommonService::getInstance()->log4PHP(
             json_encode([
-                '对账模块-统计客户请求信息-参数'=>$whereConditions
+                '对账模块-统计客户请求信息-参数'=>$whereConditions,
+                '$allMonths'=>$allMonths
             ],JSON_UNESCAPED_UNICODE)
         );
         $allDatas = [];
@@ -239,7 +240,7 @@ class InformationDanceRequestRecode extends ModelBase
             $sql00 = "SELECT
                                                 id,created_at 
                                             FROM
-                                                information_dance_request_recode_2022 
+                                                information_dance_request_recode_".$whereConditions['year']." 
                                             WHERE
                                                 created_at >= $date1 
                                                 LIMIT 1";
@@ -259,7 +260,7 @@ class InformationDanceRequestRecode extends ModelBase
             $sql11 = "SELECT
                                                 id,created_at 
                                             FROM
-                                                information_dance_request_recode_2022 
+                                                information_dance_request_recode_".$whereConditions['year']." 
                                             WHERE
                                                 created_at >= $date2 
                                                 LIMIT 1";
