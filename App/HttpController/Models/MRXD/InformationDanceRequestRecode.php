@@ -226,25 +226,40 @@ class InformationDanceRequestRecode extends ModelBase
             //本月第一天
             $beginDate = date('Y-m-01', strtotime($Month));
             $date1 = strtotime($beginDate);
-            $res1 =  self::findBySql("SELECT
+            $sql00 = "SELECT
                                                 id,created_at 
                                             FROM
                                                 information_dance_request_recode_2022 
                                             WHERE
                                                 created_at >= $date1 
-                                                LIMIT 1");
+                                                LIMIT 1";
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '对账模块-统计客户请求信息-sql' => $sql00,
+                    "参数"=>$whereConditions
+                ],JSON_UNESCAPED_UNICODE)
+            );
+
+//            $res1 =  self::findBySql($sql00);
             $id1 = $res1[0]["id"];
 
             //本月最后一天
             $endDate = date('Y-m-d', strtotime("$beginDate +1 month -1 day"));
             $date2 = strtotime($endDate);
-            $res2 =  self::findBySql("SELECT
+            $sql11 = "SELECT
                                                 id,created_at 
                                             FROM
                                                 information_dance_request_recode_2022 
                                             WHERE
                                                 created_at >= $date2 
-                                                LIMIT 1");
+                                                LIMIT 1";
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '对账模块-统计客户请求信息-sql' => $sql11,
+                    "参数"=>$whereConditions
+                ],JSON_UNESCAPED_UNICODE)
+            );
+            $res2 =  self::findBySql($sql11);
             $id2 = $res2[0]["id"];
 
             $sql = "SELECT
