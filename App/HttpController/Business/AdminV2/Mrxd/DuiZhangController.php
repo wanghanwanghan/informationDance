@@ -422,6 +422,7 @@ class DuiZhangController  extends ControllerBase
                 "userId" => intval($requestData["company_name"]),
                 "min_date" => $minDate,
                 "max_date" => $maxDate,
+                "year" => $requestData['year'],
             ]
         );
         $total = count($res);
