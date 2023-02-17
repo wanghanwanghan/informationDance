@@ -330,8 +330,10 @@ class DuiZhangController  extends ControllerBase
      ***/
     public function downloadDetailDataList(){
         $requestData =  $this->getRequestData();
-        $page = $requestData['page']?:1;
-        $pageSize = $requestData['pageSize']?:100000;
+        //$page = $requestData['page']?:1;
+        $page = 1;
+        //$pageSize = $requestData['pageSize']?:100000;
+        $pageSize = 100000;
 
         $staticInfo = InformationDanceRequestRecodeStatics::findById($requestData['id']);
 
