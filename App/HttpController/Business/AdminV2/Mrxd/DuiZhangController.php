@@ -285,7 +285,7 @@ class DuiZhangController  extends ControllerBase
             $requestData
         );
         $new_res = [];
-        foreach ($res as $resItem){
+        foreach ($res["data"] as $resItem){
             $new_res[] = [
                 "client_name" => $resItem["client_name"],
                 "year" => $resItem["year"],
