@@ -424,7 +424,7 @@ class DuiZhangController  extends ControllerBase
 
 
         $res =  InformationDanceRequestRecodeStatics::findByConditionV2(
-            $whereArr,$requestData['page'],$requestData['pageSize']
+            $whereArr,$requestData['page']?:1,$requestData['pageSize']?:20
         );
     /***
     "id"=>2,
