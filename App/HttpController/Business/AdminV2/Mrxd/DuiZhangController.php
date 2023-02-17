@@ -457,6 +457,14 @@ class DuiZhangController  extends ControllerBase
             ];
         }
 
+        //charge_state
+        if($requestData['charge_state']>0){
+            $whereArr[] = [
+                'field' => 'charge_state',
+                'value' => $requestData['charge_state'],
+                'operate' => '=',
+            ];
+        }
 
         $res =  InformationDanceRequestRecodeStatics::findByConditionV2(
             $whereArr,$requestData['page']?:1,$requestData['pageSize']?:20
