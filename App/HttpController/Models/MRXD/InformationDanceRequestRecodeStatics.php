@@ -187,17 +187,17 @@ class InformationDanceRequestRecodeStatics extends ModelBase
         );
 
         $monthLists = [
-            $year."-01",
-            $year."-02",
-            $year."-03",
-            $year."-04",
-            $year."-05",
-            $year."-06",
-            $year."-07",
-            $year."-08",
-            $year."-09",
-            $year."-10",
-            $year."-11",
+//            $year."-01",
+//            $year."-02",
+//            $year."-03",
+//            $year."-04",
+//            $year."-05",
+//            $year."-06",
+//            $year."-07",
+//            $year."-08",
+//            $year."-09",
+//            $year."-10",
+//            $year."-11",
             $year."-12",
         ];
 
