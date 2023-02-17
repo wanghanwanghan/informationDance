@@ -451,7 +451,7 @@ class DuiZhangController  extends ControllerBase
                 $resItem["client_name"] =  $userInfo->username;
             }
             $resItem["needs_charge_num"] =  $resItem['total_num'] - $resItem['cache_num'];
-            $resItem["charge_state_cname"] =  InformationDanceRequestRecodeStatics::chargeStageMaps()[$resItem['charge_state']];
+            $resItem["charge_state_cname"] =  InformationDanceRequestRecodeStatics::chargeStageMaps()[$resItem['charge_stage']];
         }
 
         return $this->writeJson(200, [
