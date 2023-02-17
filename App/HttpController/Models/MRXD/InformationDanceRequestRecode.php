@@ -186,7 +186,7 @@ class InformationDanceRequestRecode extends ModelBase
 
         $offSet = ($requestData["page"] -1 )* $requestData["pageSize"];
 
-        $sql = "SELECT * FROM $table $whereSql LIMIT $offSet ".$requestData["pageSize"];
+        $sql = "SELECT * FROM $table $whereSql LIMIT $offSet, ".$requestData["pageSize"];
         $res =  self::findBySql($sql );
 
         CommonService::getInstance()->log4PHP(
