@@ -7,6 +7,7 @@ use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\Statistics;
+use App\HttpController\Models\Api\User;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -320,6 +321,95 @@ class InformationDanceRequestRecodeStatics extends ModelBase
             ->toResource();
 
         $fileObject->output();
+    }
+
+    static function getFullDatas($requestData){
+
+        $whereArr = [];
+        $whereArr[] = [
+            'field' => 'year',
+            'value' => $requestData['year'],
+            'operate' => '=',
+        ];
+
+        //月份
+        $minDate = $requestData['year']."-01";
+        $maxDate = $requestData['year']."-12";
+
+        if($requestData["month"]){
+            if($requestData["month"]<=9){
+                //补个零
+                $month = $requestData['year']."-0".$requestData["month"];
+            }
+            if($requestData["month"]>=10){
+                $month = $requestData['year']."-".$requestData["month"];
+            }
+
+            $minDate = $month;
+            $maxDate = $month;
+        }
+
+        $whereArr[] = [
+            'field' => 'month',
+            'value' => $minDate,
+            'operate' => '>=',
+        ];
+
+        $whereArr[] = [
+            'field' => 'month',
+            'value' => $maxDate,
+            'operate' => '<=',
+        ];
+
+        //客户
+        if($requestData['company_name']>0){
+            $whereArr[] = [
+                'field' => 'userId',
+                'value' => $requestData['company_name'],
+                'operate' => '=',
+            ];
+        }
+
+        //charge_state
+        if($requestData['charge_state']>0){
+            $whereArr[] = [
+                'field' => 'charge_stage',
+                'value' => $requestData['charge_state'],
+                'operate' => '=',
+            ];
+        }
+
+        $res =  InformationDanceRequestRecodeStatics::findByConditionV2(
+            $whereArr,$requestData['page']?:1,$requestData['pageSize']?:20
+        );
+
+        /***
+        "id"=>2,
+        "client_name"=> "客户2",
+        "project_cname"=> "项目类别1",
+        "year"=> "2022",
+        "month"=> "12",
+        "total_num"=> "200",
+        "needs_charge_num"=> "100",
+        "total_cost"=> "100",
+        "unit_price"=> "1",
+        "charge_state_cname"=> "已结算",
+        "real_charge_money"=> "100",
+        "charge_time"=> "2022-12-12 12:12:12",
+        "operator_cname"=> "隔壁老王",
+        "remark"=> "今天是周五！！！！！",
+         */
+
+        foreach ($res['data'] as &$resItem){
+            $userInfo = User::findById($resItem["userId"]);
+            if($userInfo){
+                $resItem["client_name"] =  $userInfo->username;
+            }
+            $resItem["needs_charge_num"] =  $resItem['total_num'] - $resItem['cache_num'];
+            $resItem["charge_state_cname"] =  InformationDanceRequestRecodeStatics::chargeStageMaps()[$resItem['charge_stage']];
+        }
+
+        return $res;
     }
 
 }

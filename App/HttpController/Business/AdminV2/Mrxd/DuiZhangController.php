@@ -268,7 +268,18 @@ class DuiZhangController  extends ControllerBase
     }
 
     //对账列表-导出
+    /***
+    https://api.meirixindong.com/admin/v2/duizhang/downloadDataList?
+     * phone=13269706193&
+     * company_name=&
+     * project_type=&
+     * charge_state=5&year=2020&
+     * month=
+     ***/
     public function downloadDataList(){
+        $requestData =  $this->getRequestData();
+        $year = $requestData['year'];
+        $company_name = $requestData['company_name'];
 
         return $this->writeJson(200, [],  [
             "https://api.meirixindong.com/Static/OtherFile/2023_02_10_10_55测试上传支付宝.xlsx"
@@ -413,79 +424,10 @@ class DuiZhangController  extends ControllerBase
                 'totalPage' => ceil($total/$pageSize) ,
             ],  [],'请指定年限');
         }
-        $whereArr = [];
-        $whereArr[] = [
-            'field' => 'year',
-            'value' => $requestData['year'],
-            'operate' => '=',
-        ];
 
-        //月份
-        $minDate = $requestData['year']."-01";
-        $maxDate = $requestData['year']."-12";
-
-        if($requestData["month"]){
-            if($requestData["month"]<=9){
-                //补个零
-                $month = $requestData['year']."-0".$requestData["month"];
-            }
-            if($requestData["month"]>=10){
-                $month = $requestData['year']."-".$requestData["month"];
-            }
-
-            $minDate = $month;
-            $maxDate = $month;
-        }
-        $whereArr[] = [
-            'field' => 'month',
-            'value' => $minDate,
-            'operate' => '>=',
-        ];
-
-        $whereArr[] = [
-            'field' => 'month',
-            'value' => $maxDate,
-            'operate' => '<=',
-        ];
-
-        //客户
-        if($requestData['company_name']>0){
-            $whereArr[] = [
-                'field' => 'userId',
-                'value' => $requestData['company_name'],
-                'operate' => '=',
-            ];
-        }
-
-        //charge_state
-        if($requestData['charge_state']>0){
-            $whereArr[] = [
-                'field' => 'charge_stage',
-                'value' => $requestData['charge_state'],
-                'operate' => '=',
-            ];
-        }
-
-        $res =  InformationDanceRequestRecodeStatics::findByConditionV2(
-            $whereArr,$requestData['page']?:1,$requestData['pageSize']?:20
+        $res =  InformationDanceRequestRecodeStatics::getFullDatas(
+            $requestData
         );
-    /***
-    "id"=>2,
-    "client_name"=> "客户2",
-    "project_cname"=> "项目类别1",
-    "year"=> "2022",
-    "month"=> "12",
-    "total_num"=> "200",
-    "needs_charge_num"=> "100",
-    "total_cost"=> "100",
-    "unit_price"=> "1",
-    "charge_state_cname"=> "已结算",
-    "real_charge_money"=> "100",
-    "charge_time"=> "2022-12-12 12:12:12",
-    "operator_cname"=> "隔壁老王",
-    "remark"=> "今天是周五！！！！！",
-     */
-
 
         $total = $res['total'];
         foreach ($res['data'] as &$resItem){
