@@ -18,8 +18,15 @@ class RequestUserInfo extends ModelBase
         return self::create()->where('id in ('.implode(',',$ids).')')->all();
     }
 
+    public static function findById($id){
+        $res =  RequestUserInfo::create()
+            ->where('id',$id)
+            ->get();
+        return $res;
+    }
+
     public static function findByConditionWithCountInfo($whereArr,$page=1,$limit=20){
-        $model = User::create()
+        $model = RequestUserInfo::create()
             ->where($whereArr)
             ->page($page,$limit)
             ->order('id', 'DESC')

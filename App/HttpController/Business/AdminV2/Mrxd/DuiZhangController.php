@@ -522,7 +522,7 @@ class DuiZhangController  extends ControllerBase
 
         $total = $res['total'];
         foreach ($res['data'] as &$resItem){
-            $userInfo = User::findById($resItem["userId"]);
+            $userInfo = RequestUserInfo::findById($resItem["userId"]);
             if($userInfo){
                 $resItem["client_name"] =  $userInfo->username;
             }
@@ -545,8 +545,8 @@ class DuiZhangController  extends ControllerBase
 
         $res = InformationDanceRequestRecode::getAllUsers();
         //information_dance_user
-//        $allUsers =   RequestUserInfo::findByConditionWithCountInfo(
-        $allUsers =   User::findByConditionWithCountInfo(
+        $allUsers =   RequestUserInfo::findByConditionWithCountInfo(
+        //$allUsers =   User::findByConditionWithCountInfo(
           [],1,500
         );
         $newUsersInfo = [];
