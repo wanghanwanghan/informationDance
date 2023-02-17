@@ -182,7 +182,7 @@ class ToolsFileLists extends ModelBase
             WHERE touch_time < 1
             AND type = 5 
             AND state = 0 
-            LIMIT 1 
+            LIMIT 2 
        ");
        foreach ($filesDatas as $filesData){
            CommonService::getInstance()->log4PHP(
@@ -378,7 +378,7 @@ class ToolsFileLists extends ModelBase
             WHERE touch_time < 1
             AND type = ".self::$type_upload_pull_gong_kai_contact." 
             AND state = 0 
-            LIMIT 1 
+            LIMIT 2 
        ");
        foreach ($filesDatas as $filesData){
            CommonService::getInstance()->log4PHP(
@@ -436,6 +436,15 @@ class ToolsFileLists extends ModelBase
                }
 
                if(empty($companyRes)){
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           __CLASS__.__FUNCTION__ .__LINE__,
+                           '拉取公开联系人-找不到企业信息-continue'=>[
+                               '$code' => $code,
+                               '$entname' => $entname,
+                           ]
+                       ],JSON_UNESCAPED_UNICODE)
+                   );
                    continue;
                }
                $entname = $companyRes->ENTNAME;
@@ -480,6 +489,15 @@ class ToolsFileLists extends ModelBase
                             !empty($validContacts) &&
                             !in_array($datautem['name'],$validContacts)
                         ){
+                            CommonService::getInstance()->log4PHP(
+                                json_encode([
+                                    __CLASS__.__FUNCTION__ .__LINE__,
+                                    '拉取公开联系人-不是有效的-continue'=>[
+                                        '联系人名称' => $datautem['name'],
+                                        '有效联系人' => $validContacts,
+                                    ]
+                                ],JSON_UNESCAPED_UNICODE)
+                            );
                             continue;
                         }
                    }
@@ -574,7 +592,7 @@ class ToolsFileLists extends ModelBase
             WHERE touch_time < 1
             AND type = ".self::$type_upload_pull_fei_gong_kai_contact." 
             AND state = 0 
-            LIMIT 1 
+            LIMIT 2 
        ");
        foreach ($filesDatas as $filesData){
            CommonService::getInstance()->log4PHP(
@@ -758,7 +776,7 @@ class ToolsFileLists extends ModelBase
             WHERE touch_time < 1
             AND type = 10 
             AND state = 0 
-            LIMIT 1 
+            LIMIT 2 
        ");
        foreach ($filesDatas as $filesData){
            CommonService::getInstance()->log4PHP(
@@ -846,7 +864,7 @@ class ToolsFileLists extends ModelBase
             WHERE touch_time < 1
             AND type = 10 
             AND state = 0 
-            LIMIT 1 
+            LIMIT 2 
        ");
         foreach ($filesDatas as $filesData){
             CommonService::getInstance()->log4PHP(
@@ -931,7 +949,7 @@ class ToolsFileLists extends ModelBase
             WHERE touch_time < 1
             AND type = 25 
             AND state = 0 
-            LIMIT 1 
+            LIMIT 2 
        ");
 
         $i = 1;
