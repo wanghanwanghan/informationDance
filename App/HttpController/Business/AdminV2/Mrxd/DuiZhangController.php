@@ -449,8 +449,9 @@ class DuiZhangController  extends ControllerBase
             $userInfo = User::findById($resItem["userId"]);
             if($userInfo){
                 $resItem["client_name"] =  $userInfo->username;
-            } 
+            }
             $resItem["needs_charge_num"] =  $resItem['total_num'] - $resItem['cache_num'];
+            $resItem["charge_state_cname"] =  InformationDanceRequestRecodeStatics::chargeStageMaps()[$resItem['charge_state']];
         }
 
         return $this->writeJson(200, [

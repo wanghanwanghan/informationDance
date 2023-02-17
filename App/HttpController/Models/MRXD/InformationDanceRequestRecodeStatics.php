@@ -22,6 +22,18 @@ class InformationDanceRequestRecodeStatics extends ModelBase
 
     protected $tableName = 'information_dance_request_recode_statics';
 
+    static $charge_stage_init = 5;
+    static $charge_stage_init_des = "待结算";
+    static $charge_stage_done = 10;
+    static $charge_stage_done_des = "已结算";
+
+    static function chargeStageMaps(){
+        return [
+            self::$charge_stage_init => self::$charge_stage_init_des,
+            self::$charge_stage_done => self::$charge_stage_done_des,
+        ];
+    }
+
     static  function  addRecordV2($info){
         $oldRes = self::findByUserAndMonth($info['userId'],$info["year"],$info['month']);
         if(
