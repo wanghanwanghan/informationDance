@@ -224,7 +224,8 @@ class InformationDanceRequestRecodeStatics extends ModelBase
                 $beginDate = date('Y-m-01', strtotime($Month));
                 //本月最后一天
                 $endDate = date('Y-m-d', strtotime("$beginDate +1 month -1 day"));
-
+                $beginDate = $beginDate." 00:00:00";
+                $endDate = $endDate." 23:59:59";
                 $sql = "SELECT
                             userId,
                             SUM(1) as total_num,
