@@ -477,6 +477,7 @@ class ToolsFileLists extends ModelBase
                    //公开联系人姓名
                    if($datautem['name']){
                         if(
+                            !empty($validContacts) &&
                             !in_array($datautem['name'],$validContacts)
                         ){
                             continue;
@@ -725,6 +726,7 @@ class ToolsFileLists extends ModelBase
                    //需要过滤下无效的联系人、离职的联系人
                    if(
                        $tmpRes['data']['NAME'] &&
+                       !empty($validContacts) &&
                        !in_array($tmpRes['data']['NAME'],$validContacts)
                    ){
                        continue;
