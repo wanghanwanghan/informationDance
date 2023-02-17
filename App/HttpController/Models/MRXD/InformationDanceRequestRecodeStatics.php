@@ -156,6 +156,8 @@ class InformationDanceRequestRecodeStatics extends ModelBase
 
 
     static function addStaticRecordByYear($year){
+        $t1 = microtime(true);  ;
+
         CommonService::getInstance()->log4PHP(
             json_encode([
                 '对账模块-添加中间表统计数据-开始执行-年度' => $year
@@ -177,12 +179,13 @@ class InformationDanceRequestRecodeStatics extends ModelBase
             $year."-12",
         ];
 
-         $allUsers = InformationDanceRequestRecode::findBySql("SELECT   DISTINCT( userId ) as userId  FROM  information_dance_request_recode_$year");
+        $allUsers = InformationDanceRequestRecode::findBySql("SELECT   DISTINCT( userId ) as userId  FROM  information_dance_request_recode_$year");
         CommonService::getInstance()->log4PHP(
             json_encode([
                 '对账模块-添加中间表统计数据-获取所有用户' => [
                     "年度"=>$year,
                     "用户数量"=>count($allUsers),
+                    "耗时"=>'耗时'.round(microtime(true)-$t1,3).'秒',
                 ]
             ],JSON_UNESCAPED_UNICODE)
         );
@@ -192,35 +195,8 @@ class InformationDanceRequestRecodeStatics extends ModelBase
                 //取每个月的第一个id和最后一个id 根据id统计
                 //本月第一天
                 $beginDate = date('Y-m-01', strtotime($Month));
-                $sql = "SELECT id,created_at   FROM   information_dance_request_recode_".$year."   WHERE created_at >= ".strtotime($beginDate)."  LIMIT 1 ";
-                $res =  self::findBySql($sql);
-                $minId = $res[0]["id"];
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        '对账模块-添加中间表统计数据-取每个月的第一个id和最后一个id' =>  [
-                            "sql"=>$sql,
-                            "月度"=>$Month,
-                            "本月第一天"=>$beginDate,
-                            "本月最小id"=>$minId,
-                        ]
-                    ],JSON_UNESCAPED_UNICODE)
-                );
-
                 //本月最后一天
                 $endDate = date('Y-m-d', strtotime("$beginDate +1 month -1 day"));
-                $sql = "SELECT  id,created_at    FROM  information_dance_request_recode_".$year."   WHERE  created_at >= ". strtotime($endDate)."  LIMIT 1";
-                $res =  self::findBySql($sql);
-                $maxId = $res[0]["id"];
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        '对账模块-添加中间表统计数据-取每个月的第一个id和最后一个id' =>  [
-                            "sql"=>$sql,
-                            "月度"=>$Month,
-                            "本月最后一天"=>$endDate,
-                            "本月最大id"=>$maxId,
-                        ]
-                    ],JSON_UNESCAPED_UNICODE)
-                );
 
                 $sql = "SELECT
                             userId,
@@ -228,7 +204,7 @@ class InformationDanceRequestRecodeStatics extends ModelBase
                             SUM(IF( `responseCode` = 200 AND spendMoney = 0 , 1, 0)) as cache_num 
                         FROM
                             information_dance_request_recode_".$year." 
-                        WHERE userId = ".$User["userId"]."  AND id >= $minId AND id <= $maxId 
+                        WHERE userId = ".$User["userId"]."  AND created_at >= ".strtotime($beginDate)." AND created_at < ".strtotime($endDate)." 
                 ";
                 $Res =  self::findBySql($sql);
                 CommonService::getInstance()->log4PHP(
@@ -236,8 +212,11 @@ class InformationDanceRequestRecodeStatics extends ModelBase
                         '对账模块-添加中间表统计数据-sql直接统计用户本月数据' =>  [
                             "sql"=>$sql,
                             "月度"=>$Month,
+                            "该月第一天"=>$beginDate,
+                            "该月最后一天"=>$endDate,
                             "用户"=>$User["userId"],
                             "结果数量"=>count($Res),
+                            "耗时"=>'耗时'.round(microtime(true)-$t1,3).'秒',
                         ]
                     ],JSON_UNESCAPED_UNICODE)
                 );
