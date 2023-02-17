@@ -185,7 +185,7 @@ class InformationDanceRequestRecode extends ModelBase
         }
 
         if($requestData["userId"]){
-            $whereSql .= " AND userId = ".strtotime($requestData['userId']);
+            $whereSql .= " AND userId = ".$requestData['userId'];
         }
 
         $offSet = ($requestData["page"] -1 )* $requestData["pageSize"];
