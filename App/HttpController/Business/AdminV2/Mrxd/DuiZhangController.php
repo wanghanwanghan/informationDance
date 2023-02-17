@@ -382,6 +382,7 @@ class DuiZhangController  extends ControllerBase
             "page" => $page,
             "pageSize" => $pageSize,
             "year" => $staticInfo->year,
+            "userId" => $staticInfo->userId,
             "minDate" => $beginDate." 00:00:00",
             "maxDate" => $endDate." 23:59:59",
         ]);

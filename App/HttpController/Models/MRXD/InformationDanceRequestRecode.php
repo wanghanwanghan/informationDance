@@ -181,7 +181,11 @@ class InformationDanceRequestRecode extends ModelBase
         }
 
         if($requestData["maxDate"]){
-            $whereSql .= " AND created_at <= ".strtotime($requestData['minDate']);
+            $whereSql .= " AND created_at <= ".strtotime($requestData['maxDate']);
+        }
+
+        if($requestData["userId"]){
+            $whereSql .= " AND userId = ".strtotime($requestData['userId']);
         }
 
         $offSet = ($requestData["page"] -1 )* $requestData["pageSize"];
