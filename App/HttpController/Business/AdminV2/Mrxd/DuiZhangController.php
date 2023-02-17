@@ -319,10 +319,94 @@ class DuiZhangController  extends ControllerBase
     }
 
     //对账列表详情-导出
+    /***
+    https://api.meirixindong.com/admin/v2/duizhang/downloadDetailDataList?
+     * phone=13269706193
+     * &id=188&
+     * created[]=2023-01-03&
+     * created[]=2023-02-23&
+     * request_date=2023-01-03%7C%7C%7C2023-02-23
+     ***/
     public function downloadDetailDataList(){
+        $requestData =  $this->getRequestData();
+        $page = $requestData['page']?:1;
+        $pageSize = $requestData['pageSize']?:10;
+
+        $staticInfo = InformationDanceRequestRecodeStatics::findById($requestData['id']);
+
+        //本月第一天
+        $beginDate = date('Y-m-01', strtotime($staticInfo->month));
+        //本月最后一天
+        $endDate = date('Y-m-d', strtotime("$beginDate +1 month -1 day"));
+
+        //用户如果指定日期 则以用户指定的日期
+        if(
+            $requestData["created"][0] &&
+            $requestData["created"][1]
+        ){
+            $beginDate = $requestData["created"][0];
+            $endDate = $requestData["created"][1];
+        }
+
+        $res = InformationDanceRequestRecode::getFullDatas([
+            "page" => $page,
+            "pageSize" => $pageSize,
+            "year" => $staticInfo->year,
+            "userId" => $staticInfo->userId,
+            "minDate" => $beginDate." 00:00:00",
+            "maxDate" => $endDate." 23:59:59",
+        ]);
+
+        $new_res = [];
+        /***
+        {
+        "id": "5157",
+        "userId": "59",
+        "provideApiId": "65",
+        "requestIp": "47.95.255.203",
+        "requestId": "2705f0318425169beac31bbbe94533fb",
+        "requestUrl": "/provide/v1/zw/getInvoiceCheck",
+        "requestData": "{\"billingDate\":\"2022-12-16\",\"totalAmount\":\"587610.62\",\"appId\":\"294D936D3E854057ECE6719E6D2F07BE\",\"sign\":\"433D6EEF5A3E8AE763F1B75C6EEF53\",\"invoiceNumber\":\"00500237\",\"time\":\"1675207503\",\"invoiceCode\":\"115002122170\"}",
+        "responseCode": "200",
+        "responseData": "{\"requestId\":\"7d8ed20978434ebe9d735dca80d0460a\",\"invoiceCode\":\"115002122170\",\"invoiceNumber\":\"00500237\",\"billingDate\":\"2022-12-16\",\"invoiceType\":\"03\",\"purchaserTaxNo\":\"91150304MA0Q922D4J\",\"purchaserName\":\"内蒙古嘉盈物流有限公司\",\"salesTaxNo\":\"91150302MA0QN49711\",\"salesName\":\"乌海海易通银隆新能源汽车有限公司\",\"amountTax\":\"664000.00\",\"totalAmount\":\"587610.62\",\"state\":\"0\",\"machineCode\":\"661010836580\",\"checkTime\":\"2023-02-01 07:16:51\",\"idCardNo\":\"\",\"vehicleType\":\"纯电动牵引车\",\"brandModel\":\"北奔牌ND4250BBXJ7Z02BEV\",\"originPlace\":\"包头市\",\"certificateNo\":\"WBA092200000890\",\"inspectionListNo\":\"无\",\"engineNo\":\"202201160172\",\"vehicleNo\":\"LY9139BB0NALBZ309\",\"importCertificateNo\":\"无\",\"salesPhone\":\"0473-3100061\",\"salesBankNo\":\"8600024774000188\",\"salesAddress\":\"内蒙古自治区乌海市乌达区110国道东侧（华电之光酒店东）?\",\"salesBank\":\"乌海银行股份有限公司汇源支行\",\"taxRate\":\"13\",\"totalTax\":\"76389.38\",\"taxAuthorityNo\":\"11503040700\",\"paymentVoucherNo\":\"\",\"tonnage\":\"2.5\",\"passengersLimited\":\"2\",\"taxAuthorityName\":\"国家税务总局乌海市乌达区税务局三道坎街道税务所\",\"supplySign\":\"1\",\"specialPolicySign\":\" \",\"realTaxRate\":\" \",\"realTax\":\" \"}",
+        "spendTime": "1.5704",
+        "spendMoney": "1.0000",
+        "created_at": "1675207504",
+        "updated_at": "1675207504",
+        "request_date": "2023-02-01 07:25:04",
+        "if_charge_cname": "是"
+        }
+         ***/
+        foreach ($res["data"] as $resItem){
+            $new_res[] = [
+                "requestIp" => $resItem["requestIp"],
+                "requestId" => $resItem["requestId"],
+                "requestUrl" => $resItem["requestUrl"],
+                "requestData" => $resItem["requestData"],
+                "responseCode" => $resItem["responseCode"],
+                "spendTime" => $resItem["spendTime"],
+                "request_date" => $resItem["request_date"],
+                "if_charge_cname" => $resItem["if_charge_cname"],
+            ];
+        }
+        $fileName = "对账单详情_".date("Ymd").".xlsx";
+        $url = 'https://api.meirixindong.com/Static/Temp/'.$fileName;
+
+        InformationDanceRequestRecodeStatics::exportData(
+            $new_res , $fileName,[
+                "请求IP",
+                "请求id",
+                "请求url",
+                "请求参数",
+                "响应状态",
+                "请求用时",
+                "请求时间",
+                "是否计费",
+            ]
+        );
 
         return $this->writeJson(200, [],  [
-            "https://api.meirixindong.com/Static/OtherFile/2023_02_10_10_55测试上传支付宝.xlsx"
+            $url
         ],'成功');
     }
 
@@ -372,17 +456,6 @@ class DuiZhangController  extends ControllerBase
         $page = $requestData['page']?:1;
         $pageSize = $requestData['pageSize']?:10;
 
-        //created
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '对账-详情' => [
-                    'created'=>$requestData["created"],
-                    'created1'=>$requestData["created"][0],
-                    'created2'=>$requestData["created"][1],
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
-
         $staticInfo = InformationDanceRequestRecodeStatics::findById($requestData['id']);
 
         //本月第一天
@@ -396,7 +469,7 @@ class DuiZhangController  extends ControllerBase
             $requestData["created"][1]
         ){
             $beginDate = $requestData["created"][0];
-            $endDate = $requestData["created"][0];
+            $endDate = $requestData["created"][1];
         }
 
         $res = InformationDanceRequestRecode::getFullDatas([
