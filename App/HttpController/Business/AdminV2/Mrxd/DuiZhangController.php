@@ -313,6 +313,7 @@ class DuiZhangController  extends ControllerBase
                 $id,[
                     "charge_stage" => InformationDanceRequestRecodeStatics::$charge_stage_done,
                     "charge_time" => date("Y-m-d H:i:s"),
+                    "operator_cname" => $requestData['operation'],
                     "real_charge_money" =>  number_format($requestData['real_charge_money']/count($idsArr),3) ,
                     "remark" => $requestData['remark'],
                 ]
