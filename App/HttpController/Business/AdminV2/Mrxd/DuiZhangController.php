@@ -372,6 +372,16 @@ class DuiZhangController  extends ControllerBase
         $page = $requestData['page']?:1;
         $pageSize = $requestData['pageSize']?:10;
 
+        //created
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '对账-详情' => [
+                    'created'=>$requestData["created"],
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+
         $staticInfo = InformationDanceRequestRecodeStatics::findById($requestData['id']);
 
         //本月第一天
