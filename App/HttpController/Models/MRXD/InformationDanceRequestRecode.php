@@ -225,7 +225,7 @@ class InformationDanceRequestRecode extends ModelBase
         "remark"=> "今天是周五！！！！",
          ***/
         foreach ($res as &$resItem){
-            $resItem["request_date"] =  date("Y-m-d H:i:s",strtotime($resItem["created_at"]));
+            $resItem["request_date"] =  date("Y-m-d H:i:s",$resItem["created_at"]);
 
             $resItem["if_charge_cname"] =  "是";
             if(
