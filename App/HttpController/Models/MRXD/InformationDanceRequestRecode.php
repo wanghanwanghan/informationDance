@@ -6,6 +6,7 @@ use App\HttpController\Models\AdminNew\ConfigInfo;
 use App\HttpController\Models\AdminV2\AdminUserSoukeConfig;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\Api\FinancesSearch;
+use App\HttpController\Models\Api\User;
 use App\HttpController\Models\ModelBase;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
@@ -92,12 +93,12 @@ class InformationDanceRequestRecode extends ModelBase
         ];
     }
 
-    public static function findByConditionV2($whereArr,$page){
+    public static function findByConditionV2($whereArr,$page=1,$limit=20){
         $model = InformationDanceRequestRecode::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
-        $model->page($page)
+        $model->page($page,$limit)
             ->order('id', 'DESC')
             ->withTotalCount();
 
@@ -169,6 +170,74 @@ class InformationDanceRequestRecode extends ModelBase
         $data = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }
+
+    static function getFullDatas($requestData){
+        $year = $requestData["year"];
+        $table = "information_dance_request_recode_".$year;
+
+        $whereSql = "WHERE 1=1 ";
+        if($requestData["minDate"]){
+            $whereSql .= " AND created_at >= ".strtotime($requestData['minDate']);
+        }
+
+        if($requestData["maxDate"]){
+            $whereSql .= " AND created_at <= ".strtotime($requestData['minDate']);
+        }
+
+        $offSet = ($requestData["page"] -1 )* $requestData["pageSize"];
+
+        $sql = "SELECT * FROM $table $whereSql LIMIT $offSet ".$requestData["pageSize"];
+        $res =  self::findBySql($sql );
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '接口请求统计表-取第一页-sql' => $sql,
+                '接口请求统计表-取第一页-总数' => count($res),
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+        $sql = "SELECT count(1) as total  FROM $table $whereSql ";
+        $resTotal =  self::findBySql($sql );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '接口请求统计表-sql-取总数' => $sql
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+        /***
+        "id"=>1,
+        "year"=> "2022",
+        "month"=> "12",
+        "day"=> "2022-12-12",
+        "request_date"=> "2022-12-12 11:11:11",
+        "num"=> "1",
+        "if_charge_cname"=> "是",
+        "unit_price"=> "10",
+        "charge_money"=> "100",
+        "charge_state_cname"=> "待结算",
+        "real_charge_money"=> "100",
+        "charge_time"=> "2022-12-12 12:12:12",
+        "operator_cname"=> "隔壁老王",
+        "remark"=> "今天是周五！！！！",
+         ***/
+        foreach ($res as &$resItem){
+            $resItem["request_date"] =  date("Y-m-d H:i:s",strtotime($resItem["created_at"]));
+
+            $resItem["if_charge_cname"] =  "是";
+            if(
+                $resItem["responseCode"] == 200 &&
+                $resItem["spendMoney"] == 0
+            ){
+                $resItem["if_charge_cname"] =  "否";
+            }
+        }
+
+        return [
+            "data" => $res,
+            "total" => $resTotal[0]['total'],
+        ];
+    }
+
 
     static  function exportData($data,$filedCname ){
         $filename = '对账单_'.date('YmdHis').'.xlsx';

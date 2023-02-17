@@ -374,61 +374,25 @@ class DuiZhangController  extends ControllerBase
         $page = $requestData['page']?:1;
         $pageSize = $requestData['pageSize']?:10;
 
-        $conditions = [];
-        if($requestData['nickname']){
-            $conditions[]  =  [
-                'field' =>'nickname',
-                'value' =>$requestData['nickname'].'%',
-                'operate' =>'like',
-            ];
+        $staticInfo = InformationDanceRequestRecodeStatics::findById($requestData['id']);
 
-        }
-//        $datas = WechatInfo::findByConditionV2(
-//            $conditions,$page,$pageSize
-//        );
+        //本月第一天
+        $beginDate = date('Y-m-01', strtotime($staticInfo->month));
+        //本月最后一天
+        $endDate = date('Y-m-d', strtotime("$beginDate +1 month -1 day"));
+        $res = InformationDanceRequestRecode::getFullDatas([
+            "page" => $page,
+            "pageSize" => $pageSize,
+            "minDate" => $beginDate." 00:00:00",
+            "maxDate" => $endDate." 23:59:59",
+        ]);
 
-
-        $total = 2;
-        $datas = [
-            [
-                "id"=>1,
-                "year"=> "2022",
-                "month"=> "12",
-                "day"=> "2022-12-12",
-                "request_date"=> "2022-12-12 11:11:11",
-                "num"=> "1",
-                "if_charge_cname"=> "是",
-                "unit_price"=> "10",
-                "charge_money"=> "100",
-                "charge_state_cname"=> "待结算",
-                "real_charge_money"=> "100",
-                "charge_time"=> "2022-12-12 12:12:12",
-                "operator_cname"=> "隔壁老王",
-                "remark"=> "今天是周五！！！！",
-            ],
-            [
-                "id"=>1,
-                "year"=> "2022",
-                "month"=> "12",
-                "day"=> "2022-12-12",
-                "request_date"=> "2022-12-12 11:11:11",
-                "num"=> "1",
-                "if_charge_cname"=> "是",
-                "unit_price"=> "10",
-                "charge_money"=> "100",
-                "charge_state_cname"=> "待结算",
-                "real_charge_money"=> "100",
-                "charge_time"=> "2022-12-12 12:12:12",
-                "operator_cname"=> "隔壁老王",
-                "remark"=> "今天是周五！！！！",
-            ]
-        ];
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' => $pageSize,
-            'total' => $total,
-            'totalPage' => ceil($total/$pageSize) ,
-        ],  $datas,'成功');
+            'total' => $res['total'],
+            'totalPage' => ceil($res['total']/$pageSize) ,
+        ],  $res['data'],'成功');
     }
 
     /****
