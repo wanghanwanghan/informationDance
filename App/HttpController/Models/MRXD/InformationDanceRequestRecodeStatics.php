@@ -202,6 +202,11 @@ class InformationDanceRequestRecodeStatics extends ModelBase
         ];
 
         $allUsers = InformationDanceRequestRecode::findBySql("SELECT   DISTINCT( userId ) as userId  FROM  information_dance_request_recode_$year");
+        $allUsers = [
+            [
+                "userId"=>46
+            ]
+        ];
         CommonService::getInstance()->log4PHP(
             json_encode([
                 '对账模块-添加中间表统计数据-获取所有用户' => [
