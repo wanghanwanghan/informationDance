@@ -365,7 +365,7 @@ class DuiZhangController  extends ControllerBase
         return $this->writeJson(200, [],  [],'成功');
     }
 
-    /**** 
+    /****
      **/
     public function getDetailList(){
         $requestData =  $this->getRequestData();
@@ -381,6 +381,7 @@ class DuiZhangController  extends ControllerBase
         $res = InformationDanceRequestRecode::getFullDatas([
             "page" => $page,
             "pageSize" => $pageSize,
+            "year" => $staticInfo->year,
             "minDate" => $beginDate." 00:00:00",
             "maxDate" => $endDate." 23:59:59",
         ]);
