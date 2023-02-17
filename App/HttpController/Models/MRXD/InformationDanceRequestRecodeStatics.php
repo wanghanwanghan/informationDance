@@ -58,10 +58,9 @@ class InformationDanceRequestRecodeStatics extends ModelBase
         } catch (\Throwable $e) {
             return CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'failed',
-                    '$requestData' => $requestData
-                ])
+                    'information_dance_request_recode_statics入库失败' => $e->getMessage(),
+                    '入库数据' => $requestData,
+                ],JSON_UNESCAPED_UNICODE)
             );
         }
         return $res;
@@ -202,7 +201,7 @@ class InformationDanceRequestRecodeStatics extends ModelBase
         ];
 
         $allUsers = InformationDanceRequestRecode::findBySql("SELECT   DISTINCT( userId ) as userId  FROM  information_dance_request_recode_$year");
-         
+
         CommonService::getInstance()->log4PHP(
             json_encode([
                 '对账模块-添加中间表统计数据-获取所有用户' => [
