@@ -365,9 +365,7 @@ class DuiZhangController  extends ControllerBase
         return $this->writeJson(200, [],  [],'成功');
     }
 
-    /****
-
-
+    /**** 
      **/
     public function getDetailList(){
         $requestData =  $this->getRequestData();
