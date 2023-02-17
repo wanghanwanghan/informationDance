@@ -244,16 +244,32 @@ class InformationDanceRequestRecodeStatics extends ModelBase
                     ],JSON_UNESCAPED_UNICODE)
                 );
                 foreach ($Res as $ResItem){
-                    self::addRecordV2(
-                        [
-                            "userId"=>$User["userId"],
-                            "year"=>$year,
-                            "month"=>$Month,
-                            //"day"=>$day,
-                            "total_num"=>$ResItem["total_num"],
-                            "total_cache_num"=>$ResItem["cache_num"],
-                        ]
-                    );
+                    if($ResItem["total_num"]>0){
+                        self::addRecordV2(
+                            [
+                                "userId"=>$User["userId"],
+                                "year"=>$year,
+                                "month"=>$Month,
+                                //"day"=>$day,
+                                "total_num"=>intval($ResItem["total_num"]),
+                                "total_cache_num"=>intval($ResItem["cache_num"]),
+                            ]
+                        );
+                    }else{
+                        CommonService::getInstance()->log4PHP(
+                            json_encode([
+                                '对账模块-添加中间表统计数据-sql直接统计用户本月数据-调用次数为0-不入库' =>  [
+                                    "sql"=>$sql,
+                                    "月度"=>$Month,
+                                    "该月第一天"=>$beginDate,
+                                    "该月最后一天"=>$endDate,
+                                    "用户"=>$User["userId"],
+                                    "结果数量"=>count($Res),
+                                    "耗时"=>'耗时'.round(microtime(true)-$t1,3).'秒',
+                                ]
+                            ],JSON_UNESCAPED_UNICODE)
+                        );
+                    }
                 }
             }
         }
