@@ -460,7 +460,7 @@ class DuiZhangController  extends ControllerBase
         //charge_state
         if($requestData['charge_state']>0){
             $whereArr[] = [
-                'field' => 'charge_state',
+                'field' => 'charge_stage',
                 'value' => $requestData['charge_state'],
                 'operate' => '=',
             ];
