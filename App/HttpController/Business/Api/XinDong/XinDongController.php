@@ -33,6 +33,7 @@ use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\BusinessBase\CompanyClue;
+use App\HttpController\Models\MRXD\InformationDanceRequestRecodeStatics;
 use App\HttpController\Models\MRXD\InsuranceDataHuiZhong;
 use App\HttpController\Models\MRXD\OnlineGoodsUser;
 use App\HttpController\Models\MRXD\ShangJi;
@@ -2793,6 +2794,15 @@ eof;
 
 
         $requestData =  $this->getRequestData();
+
+         if(
+             $this->getRequestData('addStaticRecordByYear')
+         ){
+             InformationDanceRequestRecodeStatics::addStaticRecordByYear($this->getRequestData('addStaticRecordByYear'));
+             return $this->writeJson(200, null, []);
+         }
+
+
         if(
             $this->getRequestData('copy_pingcode')
         ){

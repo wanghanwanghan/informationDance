@@ -207,22 +207,13 @@ class InformationDanceRequestRecode extends ModelBase
         return $data;
     }
 
-    static function getStatictsData($whereConditions = []){
-        $where = " 1 = 1 ";
-
-        if( $whereConditions['userId'] > 0 ){
-            $where .= " AND  userId = ".$whereConditions['userId'];
-        }
+    static function getMonthStatictsDataByUserId($userId,$startMonth,$endMonth){
+        $where = " userId = $userId ";
 
         //拆分为月份 1个月一个月的取
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '对账模块-统计客户请求信息-参数'=>$whereConditions
-            ],JSON_UNESCAPED_UNICODE)
-        );
         
         $allMonths = self::dateMonths(
-            $whereConditions['min_date'],
+            $startMonth,
             $whereConditions['max_date']
         );
         CommonService::getInstance()->log4PHP(
@@ -232,6 +223,8 @@ class InformationDanceRequestRecode extends ModelBase
             ],JSON_UNESCAPED_UNICODE)
         );
         $allDatas = [];
+
+
         foreach ($allMonths as $Month){
             //取每个月的第一个id和最后一个id 根据id统计
             //本月第一天
@@ -243,7 +236,7 @@ class InformationDanceRequestRecode extends ModelBase
                                                 information_dance_request_recode_".$whereConditions['year']." 
                                             WHERE
                                                 created_at >= $date1 
-                                                LIMIT 1";
+                                                LIMIT 1 ";
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     '对账模块-统计客户请求信息-sql' => $sql00,
