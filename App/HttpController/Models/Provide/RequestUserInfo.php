@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Models\Provide;
 
+use App\HttpController\Models\Api\User;
 use App\HttpController\Models\ModelBase;
 
 class RequestUserInfo extends ModelBase
@@ -16,4 +17,22 @@ class RequestUserInfo extends ModelBase
         if(empty($ids)) return [];
         return self::create()->where('id in ('.implode(',',$ids).')')->all();
     }
+
+    public static function findByConditionWithCountInfo($whereArr,$page=1,$limit=20){
+        $model = User::create()
+            ->where($whereArr)
+            ->page($page,$limit)
+            ->order('id', 'DESC')
+            ->withTotalCount();
+
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+        return [
+            'data' => $res,
+            'total' =>$total,
+        ];
+    }
+
+
 }

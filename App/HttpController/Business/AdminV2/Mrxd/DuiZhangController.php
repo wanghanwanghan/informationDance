@@ -23,6 +23,7 @@ use App\HttpController\Models\BusinessBase\ZhifubaoInfo;
 use App\HttpController\Models\MRXD\InformationDanceRequestRecode;
 use App\HttpController\Models\MRXD\InformationDanceRequestRecodeStatics;
 use App\HttpController\Models\MRXD\ToolsFileLists;
+use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
@@ -544,7 +545,8 @@ class DuiZhangController  extends ControllerBase
 
         $res = InformationDanceRequestRecode::getAllUsers();
         //information_dance_user
-        $allUsers =   User::findByConditionWithCountInfo(
+        $allUsers =   RequestUserInfo::findByConditionWithCountInfo(
+//        $allUsers =   User::findByConditionWithCountInfo(
           [],1,500
         );
         $newUsersInfo = [];
