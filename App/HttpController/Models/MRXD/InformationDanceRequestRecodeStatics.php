@@ -226,7 +226,7 @@ class InformationDanceRequestRecodeStatics extends ModelBase
                             SUM(IF( `responseCode` = 200 AND spendMoney = 0 , 1, 0)) as cache_num 
                         FROM
                             information_dance_request_recode_".$year." 
-                        WHERE userId = ".$User["userId"]."  AND created_at >= ".strtotime($beginDate)." AND created_at < ".strtotime($endDate)." 
+                        WHERE userId = ".$User["userId"]."  AND created_at >= ".strtotime($beginDate)." AND created_at <=  ".strtotime($endDate)." 
                 ";
                 $Res =  self::findBySql($sql);
                 CommonService::getInstance()->log4PHP(
