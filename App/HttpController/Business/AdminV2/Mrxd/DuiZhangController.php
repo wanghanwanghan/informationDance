@@ -21,6 +21,7 @@ use App\HttpController\Models\Api\User;
 use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\BusinessBase\ZhifubaoInfo;
 use App\HttpController\Models\MRXD\InformationDanceRequestRecode;
+use App\HttpController\Models\MRXD\InformationDanceRequestRecodeStatics;
 use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
@@ -362,6 +363,7 @@ class DuiZhangController  extends ControllerBase
         $page = $requestData['page']?:1;
         $pageSize = $requestData['pageSize']?:10;
 
+        //年度
         if( $requestData['year'] <= 0 ){
             CommonService::getInstance()->log4PHP(
                 json_encode([
@@ -376,9 +378,14 @@ class DuiZhangController  extends ControllerBase
                 'totalPage' => ceil($total/$pageSize) ,
             ],  [],'请指定年限');
         }
+        $whereArr = [];
+        $whereArr[] = [
+            'field' => 'year',
+            'value' => $requestData['year'],
+            'operate' => '=',
+        ];
 
-
-
+        //月份
         $minDate = $requestData['year']."-01";
         $maxDate = $requestData['year']."-12";
 
@@ -394,7 +401,31 @@ class DuiZhangController  extends ControllerBase
             $minDate = $month;
             $maxDate = $month;
         }
+        $whereArr[] = [
+            'field' => 'month',
+            'value' => $minDate,
+            'operate' => '>=',
+        ];
 
+        $whereArr[] = [
+            'field' => 'month',
+            'value' => $maxDate,
+            'operate' => '<=',
+        ];
+
+        //客户
+        if($requestData['company_name']>0){
+            $whereArr[] = [
+                'field' => 'userId',
+                'value' => $requestData['company_name'],
+                'operate' => '=',
+            ];
+        }
+
+
+        $res =  InformationDanceRequestRecodeStatics::findByConditionV2(
+            $whereArr,$requestData['page'],$requestData['pageSize']
+        );
     /***
     "id"=>2,
     "client_name"=> "客户2",
@@ -412,16 +443,9 @@ class DuiZhangController  extends ControllerBase
     "remark"=> "今天是周五！！！！！",
      */
 
-        $res = InformationDanceRequestRecode::getStatictsData(
-            [
-                "userId" => intval($requestData["company_name"]),
-                "min_date" => $minDate,
-                "max_date" => $maxDate,
-                "year" => $requestData['year'],
-            ]
-        );
-        $total = count($res);
-        foreach ($res as &$resItem){
+
+        $total = $res['total'];
+        foreach ($res['data'] as &$resItem){
             $userInfo = User::findById($resItem["userId"]);
             if($userInfo){
                 $resItem["client_name"] =  $userInfo->username;

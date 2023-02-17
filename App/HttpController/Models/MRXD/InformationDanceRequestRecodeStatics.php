@@ -77,10 +77,10 @@ class InformationDanceRequestRecodeStatics extends ModelBase
         return $info->update($data);
     }
 
-    public static function findByConditionWithCountInfo($whereArr,$page){
+    public static function findByConditionWithCountInfo($whereArr,$page = 1,$limit = 20 ){
         $model = InformationDanceRequestRecodeStatics::create()
                 ->where($whereArr)
-                ->page($page)
+                ->page($page,$limit)
                 ->order('id', 'DESC')
                 ->withTotalCount();
 
@@ -93,18 +93,27 @@ class InformationDanceRequestRecodeStatics extends ModelBase
         ];
     }
 
-    public static function findByConditionV2($whereArr,$page){
+    public static function findByConditionV2($whereArr,$page =1 ,$limit = 20){
         $model = InformationDanceRequestRecodeStatics::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
-        $model->page($page)
+        $model->page($page,$limit)
             ->order('id', 'DESC')
             ->withTotalCount();
 
         $res = $model->all();
 
         $total = $model->lastQueryResult()->getTotalCount();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                'information_dance_request_recode_statics执行的语句'=>[
+                    'sql' => $model->lastQuery()->getLastQuery(),
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         return [
             'data' => $res,
             'total' =>$total,
