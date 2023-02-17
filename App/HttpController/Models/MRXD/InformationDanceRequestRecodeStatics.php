@@ -300,11 +300,12 @@ class InformationDanceRequestRecodeStatics extends ModelBase
 
         $i = 1;
         foreach ($data as $dataItem){
-            if( $i%300 == 0 ){
+            if( $i%10 == 0 ){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
                         '对账单-导出-次数' => $i,
+                        '$dataItem' => $dataItem,
                     ])
                 );
             }

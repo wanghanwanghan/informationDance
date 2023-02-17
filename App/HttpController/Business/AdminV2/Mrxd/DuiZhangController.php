@@ -287,14 +287,14 @@ class DuiZhangController  extends ControllerBase
         $new_res = [];
         foreach ($res as $resItem){
             $new_res[] = [
-                $resItem["client_name"],
-                $resItem["year"],
-                $resItem["month"],
-                $resItem["day"],
-                $resItem["total_num"],
-                $resItem["total_cache_num"],
-                $resItem["needs_charge_num"],
-                $resItem["charge_state_cname"],
+                "client_name" => $resItem["client_name"],
+                "year" => $resItem["year"],
+                "month" => $resItem["month"],
+                "day" => $resItem["day"],
+                "total_num" => $resItem["total_num"],
+                "total_cache_num" => $resItem["total_cache_num"],
+                "needs_charge_num" => $resItem["needs_charge_num"],
+                "charge_state_cname" => $resItem["charge_state_cname"],
             ];
         }
         $fileName = "对账单_".date("Ymd").".xlsx";
