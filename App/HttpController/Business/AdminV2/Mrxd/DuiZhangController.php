@@ -284,13 +284,38 @@ class DuiZhangController  extends ControllerBase
     }
 
 
-
+    /***
+    请求 URL:
+     * https://api.meirixindong.com/admin/v2/duizhang/changeChargeState?
+     * phone=13269706193&
+     * real_charge_money=NaN&
+     * cahrge_time=2023-02-06&
+     * ids=188,187,186,185,184,183,188,187,186,185,184,183,188,187,186,185,184,183&
+     * operation=sss&
+     * remark=sssss
+     ***/
     public function changeChargeState(){
-
+        $requestData =  $this->getRequestData();
+        $id = $requestData['id'];
+        $id = "13,14";
+        $idsArr = explode(",",$id);
+        foreach ($idsArr as $id){
+            InformationDanceRequestRecodeStatics::updateById(
+                $id,[
+                    "charge_stage" => InformationDanceRequestRecodeStatics::$charge_stage_done,
+                    "charge_time" => date("Y-m-d H:i:s"),
+                    "real_charge_money" =>  number_format($requestData['real_charge_money']/count($idsArr),3) ,
+                    "remark" => $requestData['remark'],
+                ]
+            );
+        } 
         return $this->writeJson(200, [],  [],'成功');
     }
 
+    /****
 
+
+     **/
     public function getDetailList(){
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
