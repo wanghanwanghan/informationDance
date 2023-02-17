@@ -278,11 +278,43 @@ class DuiZhangController  extends ControllerBase
      ***/
     public function downloadDataList(){
         $requestData =  $this->getRequestData();
-        $year = $requestData['year'];
-        $company_name = $requestData['company_name'];
+        $requestData['page'] = 1;
+        $requestData['pageSize'] = 100;
+
+        $res =  InformationDanceRequestRecodeStatics::getFullDatas(
+            $requestData
+        );
+        $new_res = [];
+        foreach ($res as $resItem){
+            $new_res[] = [
+                $resItem["client_name"],
+                $resItem["year"],
+                $resItem["month"],
+                $resItem["day"],
+                $resItem["total_num"],
+                $resItem["total_cache_num"],
+                $resItem["needs_charge_num"],
+                $resItem["charge_state_cname"],
+            ];
+        }
+        $fileName = "对账单_".date("Ymd").".xlsx";
+        $url = 'https://api.meirixindong.com/Static/Temp/'.$fileName;
+
+        InformationDanceRequestRecodeStatics::exportData(
+            $new_res , $fileName,[
+                "用户",
+                "年度",
+                "月份",
+                "日",
+                "总次数",
+                "缓存总次数",
+                "需要计费次数",
+                "结算状态",
+            ]
+        );
 
         return $this->writeJson(200, [],  [
-            "https://api.meirixindong.com/Static/OtherFile/2023_02_10_10_55测试上传支付宝.xlsx"
+            $url
         ],'成功');
     }
 

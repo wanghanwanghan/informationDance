@@ -260,8 +260,7 @@ class InformationDanceRequestRecodeStatics extends ModelBase
         return true;
     }
 
-    static  function exportData($data,$filedCname ){
-        $filename = '对账单_'.date('YmdHis').'.xlsx';
+    static  function exportData($data,$filename,$headerArr ){
         $config=  [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];
@@ -270,6 +269,7 @@ class InformationDanceRequestRecodeStatics extends ModelBase
             json_encode([
                 "对账单-导出-开始执行"=>[
                     "文件名"=>$filename,
+                    "表头"=>$headerArr,
                     "文件路径"=>TEMP_FILE_PATH,
                 ]
             ],JSON_UNESCAPED_UNICODE)
@@ -294,7 +294,7 @@ class InformationDanceRequestRecodeStatics extends ModelBase
 
         $fileObject
             ->defaultFormat($colorStyle)
-            ->header($filedCname)
+            ->header($headerArr)
             ->defaultFormat($alignStyle)
         ;
 
@@ -321,6 +321,7 @@ class InformationDanceRequestRecodeStatics extends ModelBase
             ->toResource();
 
         $fileObject->output();
+
     }
 
     static function getFullDatas($requestData){
