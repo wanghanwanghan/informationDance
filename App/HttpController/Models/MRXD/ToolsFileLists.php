@@ -440,8 +440,8 @@ class ToolsFileLists extends ModelBase
                        json_encode([
                            __CLASS__.__FUNCTION__ .__LINE__,
                            '拉取公开联系人-找不到企业信息-continue'=>[
-                               '$code' => $code,
-                               '$entname' => $entname,
+                               '信用代码' => $code,
+                               '企业名称' => $entname,
                            ]
                        ],JSON_UNESCAPED_UNICODE)
                    );
@@ -495,6 +495,8 @@ class ToolsFileLists extends ModelBase
                                     '拉取公开联系人-不是有效的-continue'=>[
                                         '联系人名称' => $datautem['name'],
                                         '有效联系人' => $validContacts,
+                                        '信用代码' => $code,
+                                        '企业名称' => $entname,
                                     ]
                                 ],JSON_UNESCAPED_UNICODE)
                             );
@@ -643,7 +645,6 @@ class ToolsFileLists extends ModelBase
                $code =  self::strtr_func($dataItem[1]);
 
                if($code>0){
-
                    $companyRes = CompanyBasic::findByCode($code);
                }
                else{
@@ -656,6 +657,15 @@ class ToolsFileLists extends ModelBase
                    empty($companyRes) ||
                    empty($companyRes->UNISCID)
                ){
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           __CLASS__.__FUNCTION__ .__LINE__,
+                           '拉取非公开联系人-找不到企业信息-continue'=>[
+                               '信用代码' => $code,
+                               '企业名' => $entname,
+                           ]
+                       ],JSON_UNESCAPED_UNICODE)
+                   );
                    continue;
                }
 
@@ -747,6 +757,17 @@ class ToolsFileLists extends ModelBase
                        !empty($validContacts) &&
                        !in_array($tmpRes['data']['NAME'],$validContacts)
                    ){
+                       CommonService::getInstance()->log4PHP(
+                           json_encode([
+                               __CLASS__.__FUNCTION__ .__LINE__,
+                               '拉取非公开联系人-不是有效的联系人-continue'=>[
+                                   '联系人名称' => $tmpRes['data']['NAME'],
+                                   '信用代码' => $code,
+                                   '企业名称' => $entname,
+                                   '有效联系人' => $validContacts,
+                               ]
+                           ],JSON_UNESCAPED_UNICODE)
+                       );
                        continue;
                    }
 
