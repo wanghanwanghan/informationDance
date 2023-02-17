@@ -296,9 +296,18 @@ class DuiZhangController  extends ControllerBase
      ***/
     public function changeChargeState(){
         $requestData =  $this->getRequestData();
-        $id = $requestData['id'];
-        $id = "13,14";
-        $idsArr = explode(",",$id);
+        $ids = $requestData['ids'];
+        //$id = "13,14";
+        $idsArr = explode(",",$ids);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '对账-结算' => [
+                    '$ids'=>$ids,
+                    '$idsArr'=>$idsArr,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         foreach ($idsArr as $id){
             InformationDanceRequestRecodeStatics::updateById(
                 $id,[
@@ -308,7 +317,7 @@ class DuiZhangController  extends ControllerBase
                     "remark" => $requestData['remark'],
                 ]
             );
-        } 
+        }
         return $this->writeJson(200, [],  [],'成功');
     }
 
