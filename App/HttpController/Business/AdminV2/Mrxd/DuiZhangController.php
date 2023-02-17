@@ -377,10 +377,11 @@ class DuiZhangController  extends ControllerBase
             json_encode([
                 '对账-详情' => [
                     'created'=>$requestData["created"],
+                    'created1'=>$requestData["created"][0],
+                    'created2'=>$requestData["created"][1],
                 ]
             ],JSON_UNESCAPED_UNICODE)
         );
-
 
         $staticInfo = InformationDanceRequestRecodeStatics::findById($requestData['id']);
 
@@ -388,6 +389,16 @@ class DuiZhangController  extends ControllerBase
         $beginDate = date('Y-m-01', strtotime($staticInfo->month));
         //本月最后一天
         $endDate = date('Y-m-d', strtotime("$beginDate +1 month -1 day"));
+
+        //用户如果指定日期 则以用户指定的日期
+        if(
+            $requestData["created"][0] &&
+            $requestData["created"][1]
+        ){
+            $beginDate = $requestData["created"][0];
+            $endDate = $requestData["created"][0];
+        }
+
         $res = InformationDanceRequestRecode::getFullDatas([
             "page" => $page,
             "pageSize" => $pageSize,
