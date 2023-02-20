@@ -684,8 +684,7 @@ class CommonService extends ServiceBase
     static  function generateQRfromGoogle($chl,$widhtHeight ='150',$EC_level='L',$margin='1',$chco = '07bbb0'){
 
         $chl = urlencode($chl);
-        $url = "http://chart.apis.google.com/chart?chco=$chco&chs='.
-            $widhtHeight.'x'.$widhtHeight.'&cht=qr&chld='.$EC_level.'|'.$margin.'&chl='.$chl.'";
+        $url = "http://chart.apis.google.com/chart?chco=$chco&chs='.$widhtHeight.'x'.$widhtHeight.'&cht=qr&chld='.$EC_level.'|'.$margin.'&chl='.$chl.'";
 
         CommonService::getInstance()->log4PHP(
             json_encode([
