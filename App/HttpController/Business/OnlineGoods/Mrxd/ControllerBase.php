@@ -114,21 +114,29 @@ class ControllerBase extends Index
     function checkToken(): bool
     {
         $requestToken = $this->request()->getHeaderLine('x-token');
-        CommonService::getInstance()->log4PHP(json_encode(
-            [
-                '$requestToken'=>$requestToken,
-            ]
-        ));
         if (empty($requestToken) || strlen($requestToken) < 50){
-            CommonService::getInstance()->log4PHP(' empty token  '.$requestToken);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    "checkToken异常-token为空"=>[
+                        '请求的token'=>$requestToken
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
             return false;
         } 
         try {
             $res = OnlineGoodsUser::findByToken($requestToken);
             $res && $res = $res->toArray();
         } catch (\Throwable $e) {
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    "checkToken异常-找不到token"=>[
+                        '请求的token'=>$requestToken,
+                        '报错信息'=>$e->getMessage(),
+                    ],
+                ],JSON_UNESCAPED_UNICODE)
+            );
             // $this->writeErr($e, __FUNCTION__);
-            CommonService::getInstance()->log4PHP('mysql has not find token: '.$requestToken);
             return false;
         }
 
@@ -151,34 +159,21 @@ class ControllerBase extends Index
         }
 
         $tokenPhone = current($tokenInfo);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '$tokenInfo' => $tokenInfo,
-                '$tokenPhone' => $tokenPhone,
-                '$reqPhone' => $reqPhone,
-            ])
-        );
+
         if (strlen($tokenPhone) != 11 || strlen($reqPhone) != 11){
-//            CommonService::getInstance()->log4PHP(
-//                json_encode(
-//                    [
-//                        ' $tokenPhone  error ',
-//                        '$tokenPhone' => $tokenPhone,
-//                        '$reqPhone' => $reqPhone,
-//                        '$tokenInfo'=>$tokenInfo,
-//                        'current($tokenInfo)'=>current($tokenInfo),
-//                    ]
-//                )
-//            );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    "checkToken异常-token格式异常-长度不是11位"=>[
+                        '请求的token'=>$requestToken,
+                        'token解析到的手机'=>$tokenPhone,
+                        '请求的手机号'=>$reqPhone,
+                    ],
+                ],JSON_UNESCAPED_UNICODE)
+            );
             return false;
         } 
         $res = $reqPhone - 0 === $tokenPhone - 0;
-//        CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                'check token res  ',
-//                '$res' => $res,
-//            ])
-//        );
+
         return $res;
     }
 
@@ -188,27 +183,12 @@ class ControllerBase extends Index
 
         $raw = jsonDecode($string);
         $form = $this->request()->getRequestParam();
-        // CommonService::getInstance()->log4PHP(
-        //     [
-        //         'getRequestData',
-        //         'string' => $string,
-        //         'raw' => $raw,
-        //         'form' => $form,
-        //     ]
-        // );
+
         !empty($raw) ?: $raw = [];
         !empty($form) ?: $form = [];
 
         $requestData = array_merge($raw, $form);
-        // CommonService::getInstance()->log4PHP(
-        //     [
-        //         'getRequestData',
-        //         'string' => $string,
-        //         'raw' => $raw,
-        //         'form' => $form,
-        //         'requestData' => $requestData,
-        //     ]
-        // );
+
         if($key){
             return (isset($requestData[$key])) ? $requestData[$key] : $default;
         }
