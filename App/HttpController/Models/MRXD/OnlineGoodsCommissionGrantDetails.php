@@ -171,9 +171,9 @@ class OnlineGoodsCommissionGrantDetails extends ModelBase
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                '置金-分佣详情'=>[
+                '置金-分佣详情-根据用户id查询数据'=>[
                     '用户'=>$user_id,
-                    '类型'=>$type, 
+                    '类型'=>$type,
                     'sql' => $model->lastQuery()->getLastQuery(),
                 ]
             ],JSON_UNESCAPED_UNICODE)
