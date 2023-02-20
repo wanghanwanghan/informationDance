@@ -19,8 +19,6 @@ class ControllerBase extends Index
         $this->actionName = $action;
     }
     function needsCheckToken(){
-
-        //$set = ConfigInfo::sMembers('online_needs_login');
         $noNeedsLoginAtions = [
             'login',
             'sendSms',
@@ -34,9 +32,9 @@ class ControllerBase extends Index
         CommonService::getInstance()->log4PHP(
             json_encode([
                 __CLASS__.__FUNCTION__ .__LINE__,
-                'noNeedsCheckToken set ' => $noNeedsLoginAtions,
-                'actionName'=>$this->actionName
-            ])
+                '智慧金荣-不需要登录就可以访问的方法集' => $noNeedsLoginAtions,
+                '当前方法'=>$this->actionName
+            ],JSON_UNESCAPED_UNICODE)
         );
 
         if(
