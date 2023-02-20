@@ -672,16 +672,6 @@ class jincai_shoudong0 extends AbstractProcess
 
         foreach ($list as $key => $target) {
 
-            if ($key % 3 !== $this->p_index) {
-                continue;
-            }
-
-            // ===========================================================================
-            if ($key <= -1) {// 如果有断的需要续上，改这里的key值
-                continue;
-            }
-            // ===========================================================================
-
             // 开票日期止
             $kprqz = Carbon::now()->subMonths(1)->endOfMonth()->timestamp;
 
