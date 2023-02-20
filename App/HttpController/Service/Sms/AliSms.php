@@ -94,10 +94,14 @@ class AliSms
         $easySms = $this->createObj();
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ ,
-                'sendByTemplete start'
-            ])
+                '验证码-发送-开始' => [
+                    '手机' => $phone,
+                    '模板' => $template,
+                    '数据' => $data,
+                ],
+            ],JSON_UNESCAPED_UNICODE)
         );
+
         $res = TaskService::getInstance()->create(function () use ($easySms, $phone, $template,$data) {
             $res = $easySms->send($phone, [
                 'template' =>  $template,
@@ -105,9 +109,13 @@ class AliSms
             ]);
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ ,
-                    'sendByTemplete $res' => $res
-                ])
+                    '验证码-发送-结果' => [
+                        '手机' => $phone,
+                        '模板' => $template,
+                        '数据' => $data,
+                        '$res' => $res,
+                    ],
+                ],JSON_UNESCAPED_UNICODE)
             );
             return $res;
         });

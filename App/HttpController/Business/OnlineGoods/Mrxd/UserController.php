@@ -47,9 +47,17 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
     function sendSms(): bool
     {
-        $requestData =  $this->getRequestData();
-        $phone = $requestData['phone'] ;
 
+        $requestData =  $this->getRequestData();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '智慧金融-发送验证码-开始执行' => [
+                    '参数' => $requestData
+                ],
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+        $phone = $requestData['phone'] ;
         if (empty($phone) ){
             return $this->writeJson(201, null, null, '手机号不能是空');
         }
@@ -85,29 +93,12 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $res = true;
         }
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'sendByTemplete' => [
-                    'sendByTemplete'=>$res,
-                    '$digit'=>$digit
-                ],
-            ])
-        );
         if(!$res){
             return $this->writeJson(201, null, [],  '短信发送失败');
         }
 
         //设置验证码
         OnlineGoodsUser::setRandomDigit($phone,$digit);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'setRandomDigit' => [
-                    'getRandomDigit'=>OnlineGoodsUser::getRandomDigit($phone),
-                ],
-            ])
-        );
 
         return $this->writeJson(
             200,[ ] ,$res,

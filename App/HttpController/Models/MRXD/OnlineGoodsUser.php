@@ -90,6 +90,15 @@ class OnlineGoodsUser extends ModelBase
     }
 
     static function  addDailySmsNumsV2($phone,$prx = "daily_online_sendSms_"){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '智慧金融-验证码-日发送记录' => [
+                    '手机' => $phone,
+                    '前缀' => $prx,
+                ],
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         $redis = Redis::defer('redis');
         $redis->select(ConfigInfo::$redis_db_num);
 
@@ -103,16 +112,15 @@ class OnlineGoodsUser extends ModelBase
 
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'sms_daily_send_nums'=>[
-                    'param_phone'=>$phone,
-                    'param_$prx'=>$prx,
-                    'daliy_send_nums_key'=>$daily_limit_key,
-                    'daliy_send_nums_value'=>$nums,
-                    'daliy_send_nums_date_key'=>$daily_limit_key2,
-                    'daliy_send_nums_date_value'=>$dates,
-                ]
-            ])
+                '智慧金融-验证码-日发送记录' => [
+                    '手机' => $phone,
+                    '前缀' => $prx,
+                    '每日次数-redis-key' => $daily_limit_key,
+                    '每日次数-redis-value' => $nums,
+                    '每日次数-redis-key对应的时间-redis-key' => $daily_limit_key2,
+                    '每日次数-redis-key对应的时间-redis-value' => $dates,
+                ],
+            ],JSON_UNESCAPED_UNICODE)
         );
 
         //之前没有过
@@ -123,17 +131,15 @@ class OnlineGoodsUser extends ModelBase
             $redis->set($daily_limit_key2,date('Ymd'),60*60*24);
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'sms_daily_send_nums'=>[
-                        'param_phone'=>$phone,
-                        'param_$prx'=>$prx,
-                        'msg'=>'daliy_send_nums_value_is_zero_._rest',
-                        '$daily_limit_key'=>$daily_limit_key,
-                        '$daily_limit_value'=>1,
-                        '$daily_limit_key_date_key'=>$daily_limit_key2,
-                        '$daily_limit_key_date_value'=>date('Ymd'),
-                    ]
-                ])
+                    '智慧金融-验证码-日发送记录-是为今日第一次发送' => [
+                        '手机' => $phone,
+                        '前缀' => $prx,
+                        '每日次数-redis-key' => $daily_limit_key,
+                        '每日次数-redis-value' => $nums,
+                        '每日次数-redis-key对应的时间-redis-key' => $daily_limit_key2,
+                        '每日次数-redis-key对应的时间-redis-value' => $dates,
+                    ],
+                ],JSON_UNESCAPED_UNICODE)
             );
         }
 
@@ -147,17 +153,15 @@ class OnlineGoodsUser extends ModelBase
             $redis->set($daily_limit_key2,date('Ymd'),60*60*24);
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'sms_daily_send_nums'=>[
-                        'param_phone'=>$phone,
-                        'param_$prx'=>$prx,
-                        'msg'=>'daliy_send_nums_value_is_expuired_._rest',
-                        '$daily_limit_key'=>$daily_limit_key,
-                        '$daily_limit_value'=>1,
-                        '$daily_limit_key_date_key'=>$daily_limit_key2,
-                        '$daily_limit_key_date_value'=>date('Ymd'),
-                    ]
-                ])
+                    '智慧金融-验证码-日发送记录-过期了1' => [
+                        '手机' => $phone,
+                        '前缀' => $prx,
+                        '每日次数-redis-key' => $daily_limit_key,
+                        '每日次数-redis-value' => $nums,
+                        '每日次数-redis-key对应的时间-redis-key' => $daily_limit_key2,
+                        '每日次数-redis-key对应的时间-redis-value' => $dates,
+                    ],
+                ],JSON_UNESCAPED_UNICODE)
             );
         }
         //如果过期了2
@@ -168,17 +172,15 @@ class OnlineGoodsUser extends ModelBase
             $redis->set($daily_limit_key2,date('Ymd'),60*60*24);
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'sms_daily_send_nums'=>[
-                        'param_phone'=>$phone,
-                        'param_$prx'=>$prx,
-                        'msg'=>'daliy_send_nums_value_is_expuired_2._rest',
-                        '$daily_limit_key'=>$daily_limit_key,
-                        '$daily_limit_value'=>1,
-                        '$daily_limit_date_key'=>$daily_limit_key2,
-                        '$daily_limit_date_value'=>date('Ymd'),
-                    ]
-                ])
+                    '智慧金融-验证码-日发送记录-过期了2' => [
+                        '手机' => $phone,
+                        '前缀' => $prx,
+                        '每日次数-redis-key' => $daily_limit_key,
+                        '每日次数-redis-value' => $nums,
+                        '每日次数-redis-key对应的时间-redis-key' => $daily_limit_key2,
+                        '每日次数-redis-key对应的时间-redis-value' => $dates,
+                    ],
+                ],JSON_UNESCAPED_UNICODE)
             );
         }
 
@@ -187,15 +189,15 @@ class OnlineGoodsUser extends ModelBase
         $redis->set($daily_limit_key,$nums+1);
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'sms_daily_send_nums'=>[
-                    'param_phone'=>$phone,
-                    'param_$prx'=>$prx,
-                    'msg'=>'rest_daily_send_nums',
-                    '$daily_limit_key'=>$daily_limit_key,
-                    '$daily_limit_value'=>$nums,
-                ]
-            ])
+                '智慧金融-验证码-日发送记录-更新key-value' => [
+                    '手机' => $phone,
+                    '前缀' => $prx,
+                    '每日次数-redis-key' => $daily_limit_key,
+                    '每日次数-redis-value' => $nums,
+                    '每日次数-redis-key对应的时间-redis-key' => $daily_limit_key2,
+                    '每日次数-redis-key对应的时间-redis-value' => $dates,
+                ],
+            ],JSON_UNESCAPED_UNICODE)
         );
     }
     static function  getDailySmsNumsV2($phone,$prx = "daily_online_sendSms_"){
@@ -209,34 +211,34 @@ class OnlineGoodsUser extends ModelBase
 
         $nums = $redis->get($daily_limit_key);
         $dates = $redis->get($daily_limit_key2);
+
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'getDailySmsNumsV2'=>[
-                    'param_$phone'=>$phone,
-                    'daily_send_nums_key'=>$daily_limit_key,
-                    'daily_send_nums_value'=>$nums,
-                    'daily_send_nums_date_key'=>$daily_limit_key2,
-                    'daily_send_nums_date_value'=>$dates,
-                ]
-            ])
+                '智慧金融-验证码-获取日发送记录' => [
+                    '手机' => $phone,
+                    '前缀' => $prx,
+                    '每日次数-redis-key' => $daily_limit_key,
+                    '每日次数-redis-value' => $nums,
+                    '每日次数-redis-key对应的时间-redis-key' => $daily_limit_key2,
+                    '每日次数-redis-key对应的时间-redis-value' => $dates,
+                ],
+            ],JSON_UNESCAPED_UNICODE)
         );
         return $nums;
     }
 
     static function  setRandomDigit($phone,$digit,$prx="online_sms_code_"){
-        $res = ConfigInfo::setRedisBykey($prx.$phone,$digit,600);;
+        $res = ConfigInfo::setRedisBykey($prx.$phone,$digit,600);
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'setRandomDigit' => [
-                    'params_$phone'=>$phone,
-                    'params_$digit'=>$digit,
-                    'params_$prx'=>$prx,
-                    'redis_set_key'=>$prx.$phone,
-                    'redis_set_$res'=>$res,
+                '验证码-设置有效期-' => [
+                    '手机号'=>$phone,
+                    '验证码'=>$digit,
+                    '前缀'=>$prx,
+                    'redis-key'=>$prx.$phone,
+                    'redis-res'=>$res,
                 ],
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
 
         return $res;
