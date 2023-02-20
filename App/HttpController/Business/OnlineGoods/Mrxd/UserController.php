@@ -267,9 +267,8 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         ];
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
                 'applyWithdrawalRecords $conditions'=>$conditions
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
         $res = OnlineGoodsTiXianJiLu::findByConditionWithCountInfo(
             $conditions,
@@ -346,13 +345,12 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         //todo：校验  rate 不能超出信动给的rate
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
                 [
                     'id' => $requestData['id'],
                     'commission_owner' => $userInfo['id'],
                     'state' => OnlineGoodsCommissions::$commission_state_init
                 ]
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
 
 
@@ -397,11 +395,10 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
                 [
                     'setDaiKuanCommisionRate_amount' =>  $OrderInfo->amount
                 ]
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
 
 
@@ -439,13 +436,12 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         //todo：校验  rate 不能超出信动给的rate
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
                 [
                     'id' => $requestData['id'],
                     'commission_owner' => $userInfo['id'],
                     'state' => OnlineGoodsCommissions::$commission_state_init
                 ]
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
 
 
@@ -489,11 +485,10 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
                 [
                     'setDaiKuanCommisionRate_amount' =>  $OrderInfo->amount
                 ]
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
 
 
@@ -580,11 +575,10 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
                 '置金-登录-开始' =>  [
                     "参数"=>$requestData,
                 ]
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
 
         if(
@@ -625,12 +619,11 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
 
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
                 '置金-登录-成功' =>  [
                     "参数"=>$requestData,
                     "token"=>$newToken,
                 ]
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
 
         return $this->writeJson(
@@ -649,11 +642,10 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $code = $requestData['code'] ;
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
                 '置金-注册-开始' =>  [
                     "参数"=>$requestData,
                 ]
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
 
         if(
@@ -684,13 +676,12 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $id = OnlineGoodsUser::addRecordV2($userDbData );
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
                 '置金-注册-入库' =>  [
                     "参数"=>$requestData,
                     "db数据"=>$userDbData,
                     "用户ID"=>$id,
                 ]
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
 
         //- 有邀请码的话 解析邀请码 设置邀请人
@@ -699,14 +690,13 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $invitatedBy = CommonService::decodeInvitationCodeToId($invitation_code);
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
                     '置金-注册-设置邀请人' =>  [
                         "参数"=>$requestData,
                         "邀请码"=>$invitation_code,
                         "邀请人"=>$invitatedBy,
                         "用户ID"=>$id,
                     ]
-                ])
+                ],JSON_UNESCAPED_UNICODE)
             );
 
             if($invitatedBy>0){
@@ -1068,26 +1058,24 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             $returnDatas = OnlineGoodsUserInviteRelation::getVipsAllInvitedUser($useId);
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
                     'ZhiJinFansOrderLists'=>[
                         'uid'=>$useId,
                         'IsVipV2'=>true,
                         '$returnDatas'=>$returnDatas,
                     ],
-                ])
+                ],JSON_UNESCAPED_UNICODE)
             );
         }
         else{
             $returnDatas = OnlineGoodsUserInviteRelation::getAllInvitedUser($useId);
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
                     'ZhiJinFansOrderLists'=>[
                         'uid'=>$useId,
                         'IsVipV2'=>false,
                         '$returnDatas'=>$returnDatas,
                     ],
-                ])
+                ],JSON_UNESCAPED_UNICODE)
             );
         }
 
