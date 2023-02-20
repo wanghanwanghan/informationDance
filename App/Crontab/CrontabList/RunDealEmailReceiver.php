@@ -160,13 +160,13 @@ class RunDealEmailReceiver extends AbstractCronTask
 
     //拉取收件箱
     static function  pullEmail($dayNums = 1 ){
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '邮件收件箱-开始执行'=>[
-                    '取前几天的数据？'=>$dayNums,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                '邮件收件箱-开始执行'=>[
+//                    '取前几天的数据？'=>$dayNums,
+//                ]
+//            ],JSON_UNESCAPED_UNICODE)
+//        );
 
         $mail = new Email();
         $emailAddress = CreateConf::getInstance()->getConf('mail.user_receiver');
@@ -179,17 +179,17 @@ class RunDealEmailReceiver extends AbstractCronTask
         $date = date ( "d M Y", strToTime ( "-$dayNums days" ) );
         $emailData = $mail->mailListBySinceV2($date);
         $totalCount = $mail->mailTotalCount();
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '邮件收件箱-开始取邮箱数据'=>[
-                     'Host' => CreateConf::getInstance()->getConf('mail.host_receiver'),
-                     '端口' => CreateConf::getInstance()->getConf('mail.port_receiver'),
-                     '用户' => $emailAddress,
-                     '密码' => CreateConf::getInstance()->getConf('mail.pass_receiver'),
-                     '邮箱总数' => $totalCount,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                '邮件收件箱-开始取邮箱数据'=>[
+//                     'Host' => CreateConf::getInstance()->getConf('mail.host_receiver'),
+//                     '端口' => CreateConf::getInstance()->getConf('mail.port_receiver'),
+//                     '用户' => $emailAddress,
+//                     '密码' => CreateConf::getInstance()->getConf('mail.pass_receiver'),
+//                     '邮箱总数' => $totalCount,
+//                ]
+//            ],JSON_UNESCAPED_UNICODE)
+//        );
 
         //单纯加数据
         $runNums = 0;
@@ -232,17 +232,18 @@ class RunDealEmailReceiver extends AbstractCronTask
                 'date' => date('Y-m-d H:i:s',strtotime($mailHeader['date'])) ,
             ];
 
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    '邮件收件箱-开始取邮箱数据2'=>[
-                        '收件人' => $emailAddress,
-                        '发送人' => $mailHeader['from'],
-                        '邮件序号' => $msgcount,
-                        '邮件主题' => $subject,
-                        '邮件附件' => $attachs,
-                    ]
-                ],JSON_UNESCAPED_UNICODE)
-            );
+
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    '邮件收件箱-开始取邮箱数据2'=>[
+//                        '收件人' => $emailAddress,
+//                        '发送人' => $mailHeader['from'],
+//                        '邮件序号' => $msgcount,
+//                        '邮件主题' => $subject,
+//                        '邮件附件' => $attachs,
+//                    ]
+//                ],JSON_UNESCAPED_UNICODE)
+//            );
 
             MailReceipt::addRecordV2(
                 $datas
