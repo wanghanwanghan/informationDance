@@ -192,8 +192,14 @@ class RunDealEmailReceiver extends AbstractCronTask
         );
 
         //单纯加数据
+        $runNums = 0;
         for ($msgcount = $totalCount; $msgcount > 0; $msgcount--) {
+            $runNums ++ ;
 
+            //先只拉最新60条
+            if($runNums >= 60 ){
+                break;
+            }
             //$mailHeader = $mail->mailHeader($msgcount);
             // $mailHeader['from'] == '***@***.com'
             // $mailHeader['seen'] == "U" 未读
