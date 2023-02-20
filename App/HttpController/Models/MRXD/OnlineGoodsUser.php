@@ -249,14 +249,13 @@ class OnlineGoodsUser extends ModelBase
         $res =  ConfigInfo::getRedisBykey($key);
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'getRandomDigit' => [
-                    'param_$phone'=>$phone,
-                    'param_$prx'=>$prx,
+                '获取验证码' => [
+                    '手机号'=>$phone,
+                    'redis前缀'=>$prx,
                     'redis_key'=>$key,
-                    'redis_$res'=>$res,
+                    'redis_value'=>$res,
                 ],
-            ])
+            ],JSON_UNESCAPED_UNICODE)
         );
         return $res;
     }
@@ -434,6 +433,14 @@ class OnlineGoodsUser extends ModelBase
     }
 
     public static function sendMsg($phone,$key){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '置金-发送验证码-开始' => [
+                    '手机号' => $phone,
+                    'key' => $key
+                ],
+            ],JSON_UNESCAPED_UNICODE)
+        );
 
         //记录今天发了多少次
         OnlineGoodsUser::addDailySmsNumsV2($phone,'daily_'.$key.'_sendSms_');
@@ -445,16 +452,15 @@ class OnlineGoodsUser extends ModelBase
         ){
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'sendMsg' => [
-                        'msg'=>'check_daily_send_nums_failed',
-                        'params_phone'=>$phone,
-                        'params_pre'=>'daily_'.$key.'_sendSms_',
-                        'daily_send_nums'=>$res,
-                        'daily_send_nums_limit'=>15,
+                    '置金-发送验证码-验证码发送过多-退出' => [
+                        '手机号' => $phone,
+                        'key' => $key,
+                        '今天已发送次数'=>$res,
+                        '每日发送次数限制'=>15,
                     ],
-                ])
+                ],JSON_UNESCAPED_UNICODE)
             );
+
             return [
                 'failed'=>true,
                 'msg'=> '今日发送次数过多，请明天再试',
@@ -463,15 +469,13 @@ class OnlineGoodsUser extends ModelBase
         else{
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'sendMsg' => [
-                        'msg'=>'check_daily_send_nums_succeed',
-                        'params_phone'=>$phone,
-                        'params_pre'=>'daily_'.$key.'_sendSms_',
-                        'daily_send_nums'=>$res,
-                        'daily_send_nums_limit'=>15,
+                    '置金-发送验证码-验证码发送正常' => [
+                        '手机号' => $phone,
+                        'key' => $key,
+                        '今天已发送次数'=>$res,
+                        '每日发送次数限制'=>15,
                     ],
-                ])
+                ],JSON_UNESCAPED_UNICODE)
             );
         }
 
@@ -480,17 +484,6 @@ class OnlineGoodsUser extends ModelBase
         $res = (new AliSms())->sendByTempleteV2($phone, 'SMS_218160347',[
             'code' => $digit,
         ]);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'sendMsg' => [
-                    'msg'=>'send_sms',
-                    'params_phone'=>$phone,
-                    'params_code'=>$digit,
-                    'send_sms_res'=>$res,
-                ],
-            ])
-        );
         if(!$res){
             return [
                 'failed'=>true,
@@ -501,18 +494,7 @@ class OnlineGoodsUser extends ModelBase
 
         //设置验证码
         OnlineGoodsUser::setRandomDigit($phone,$digit,$key.'_sms_code_');
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'sendMsg' => [
-                    'msg'=>'setRandomDigit',
-                    'params_phone'=>$phone,
-                    'params_code'=>$digit,
-                    'params_prx'=>$key.'_sms_code_',
-                    'redis_res_getRandomDigit'=>OnlineGoodsUser::getRandomDigit($phone,$key.'_sms_code_'),
-                ],
-            ])
-        );
+
         return [
             'success'=>true,
             'msg'=> '成功',
