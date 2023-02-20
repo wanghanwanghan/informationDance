@@ -240,6 +240,18 @@ class OnlineGoodsUserBaoXianOrder extends ModelBase
 
         $res = $model->all();
 
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '置金-保险-订单'=>[
+                    '条件'=>$whereArr,
+                    '$page'=>$page,
+                    '$size'=>$size,
+                    'sql' => $model->lastQuery()->getLastQuery(),
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         $total = $model->lastQueryResult()->getTotalCount();
         return [
             'data' => $res,
