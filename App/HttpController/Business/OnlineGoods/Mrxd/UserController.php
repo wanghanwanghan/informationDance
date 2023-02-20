@@ -574,6 +574,16 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '置金-登录-开始' =>  [
+                    "参数"=>$requestData,
+                ]
+            ])
+        );
+
         if(
             OnlineGoodsUser::getRandomDigit($phone)!= $code
         ){
@@ -609,6 +619,17 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'token'=>$newToken
             ]
         );
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '置金-登录-成功' =>  [
+                    "参数"=>$requestData,
+                    "token"=>$newToken,
+                ]
+            ])
+        );
+
         return $this->writeJson(
             200,[ ] ,$newToken,
             '成功',
@@ -623,6 +644,15 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $requestData =  $this->getRequestData();
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '置金-注册-开始' =>  [
+                    "参数"=>$requestData,
+                ]
+            ])
+        );
+
         if(
             OnlineGoodsUser::getRandomDigit($phone)!= $code
         ){
@@ -632,7 +662,6 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             ){
                 return $this->writeJson(201, null, [],  '验证码不正确或已过期');
             }
-
         }
 
         if(
@@ -640,17 +669,25 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         ){
             return $this->writeJson(201, null, [],  '该手机已经被注册');
         }
-
-        $id = OnlineGoodsUser::addRecordV2(
-            [
-                'source' => OnlineGoodsUser::$source_self_register,
-                'user_name' => $requestData['name'],
-                'phone' => $phone,
-                'password' => '',
-                'email' => '',
-                'money' => '',
-                'token' => '',
-            ]
+        $userDbData = [
+            'source' => OnlineGoodsUser::$source_self_register,
+            'user_name' => $requestData['name'],
+            'phone' => $phone,
+            'password' => '',
+            'email' => '',
+            'money' => '',
+            'token' => '',
+        ];
+        $id = OnlineGoodsUser::addRecordV2($userDbData );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '置金-注册-入库' =>  [
+                    "参数"=>$requestData,
+                    "db数据"=>$userDbData,
+                    "用户ID"=>$id,
+                ]
+            ])
         );
 
         //- 有邀请码的话 解析邀请码 设置邀请人
@@ -660,12 +697,15 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'registerZhiJin $uid' => $id,
-                    'registerZhiJin $phone' => $phone,
-                    'registerZhiJin $invitation_code' => $invitation_code,
-                    'registerZhiJin $invitatedBy' => $invitatedBy,
+                    '置金-注册-设置邀请人' =>  [
+                        "参数"=>$requestData,
+                        "邀请码"=>$invitation_code,
+                        "邀请人"=>$invitatedBy,
+                        "用户ID"=>$id,
+                    ]
                 ])
             );
+
             if($invitatedBy>0){
                 $res1 = OnlineGoodsUserInviteRelation::addRecordV2(
                     [
@@ -678,14 +718,13 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 }
             }
 
-
         }
 
         $newToken = UserService::getInstance()->createAccessToken(
             $phone,
             $phone
         );
- 
+
         $res = OnlineGoodsUser::findByPhone($phone);
         $res = $res->toArray();
         if($res['token']){

@@ -677,8 +677,6 @@ class CommonService extends ServiceBase
 
     static function decodeInvitationCodeToId($code)
     {
-
-
         // 多少进制
         $num = strlen(self::$invitationKey);
 
