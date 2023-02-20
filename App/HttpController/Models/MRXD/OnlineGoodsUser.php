@@ -306,27 +306,32 @@ class OnlineGoodsUser extends ModelBase
 
 
     public static function addRecord($requestData){
-
+        $dbInfo = [
+            'source' => $requestData['source']?:self::$source_self_register,
+            'user_name' => $requestData['user_name']?:'',
+            'phone' => $requestData['phone']?:'',
+            'password' => $requestData['password']?:'',
+            'email' => $requestData['email']?:'',
+            'money' => $requestData['money']?:'',
+            'token' => $requestData['token']?:'',
+            'created_at' => time(),
+            'updated_at' => time(),
+        ];
         try {
-           $res =  OnlineGoodsUser::create()->data([
-                'source' => $requestData['source']?:self::$source_self_register,
-                'user_name' => $requestData['user_name']?:'',
-                'phone' => $requestData['phone']?:'',
-                'password' => $requestData['password']?:'',
-                'email' => $requestData['email']?:'',
-                'money' => $requestData['money']?:'',
-                'token' => $requestData['token']?:'',
-               'created_at' => time(),
-               'updated_at' => time(),
-           ])->save();
+
+           $res =  OnlineGoodsUser::create()->data($dbInfo)->save();
 
         } catch (\Throwable $e) {
             return CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'failed',
-                    '$requestData' => $requestData
-                ])
+                    "置金用户表-入库失败"=>[
+                        '表名' => 'online_goods_user',
+                        '参数' => $requestData,
+                        '入库数据' => $dbInfo,
+                        '错误信息' => $e->getMessage(),
+                    ]
+
+                ],JSON_UNESCAPED_UNICODE)
             );
         }
         return $res;

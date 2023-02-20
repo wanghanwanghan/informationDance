@@ -137,7 +137,7 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
         $totalInomes = OnlineGoodsCommissionGrantDetails::getTotalIncomes($userInfo['id']);
         $totalCommission = OnlineGoodsCommissionGrantDetails::getTotalComission($userInfo['id']);
         $totalTiXianMoney = OnlineGoodsCommissionGrantDetails::getTotalTiXian($userInfo['id']);
-
+        $invite_code = CommonService::encodeIdToInvitationCode($userInfo['id']);
         return $this->writeJson(
             200,
             [ ] ,
@@ -151,6 +151,9 @@ class UserController extends \App\HttpController\Business\OnlineGoods\Mrxd\Contr
                 'total_commission' => $totalCommission,
                 'total_withdraw' => $totalTiXianMoney,
                 'invite_code' =>  CommonService::encodeIdToInvitationCode($userInfo['id']),
+                'invite_code_QR' =>  CommonService::generateQRfromGoogle(
+                    "https://zj.meirixindong.com/#/register?invite_code=".$invite_code
+                ),
                 'money' => $userInfo['money'],
                 'avatar' => 'http://api.test.meirixindong.com/Static/OtherFile/default_avater.png',
             ],
