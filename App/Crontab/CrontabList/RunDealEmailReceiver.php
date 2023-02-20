@@ -174,7 +174,7 @@ class RunDealEmailReceiver extends AbstractCronTask
             CreateConf::getInstance()->getConf('mail.host_receiver'),//'imap.exmail.qq.com',
             CreateConf::getInstance()->getConf('mail.port_receiver'),//'143',
             $emailAddress,//'mail@meirixindong.com',
-            CreateConf::getInstance()->getConf('mail.pass_receiver') //'Mrxd1816'
+            CreateConf::getInstance()->getConf('mail.mailPassword') //'Mrxd1816'
         );
         $date = date ( "d M Y", strToTime ( "-$dayNums days" ) );
         $emailData = $mail->mailListBySinceV2($date);
