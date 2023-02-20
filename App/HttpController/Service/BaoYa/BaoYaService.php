@@ -71,7 +71,20 @@ class BaoYaService extends ServiceBase
         if($this->debug){
             $url =  CreateConf::getInstance()->getConf('baoya.products_detail_url_test').'/'.$id;
         }
-        return $this->get($url,'');
+
+        $res =  $this->get($url,'');
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '保鸭-根据id查询详情'=>[
+                    '产品$id' => $id,
+                    '$url' => $url,
+                    '返回结果' => $res,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+        return    $res;
     }
 
     //龙盾全羁绊是get请求

@@ -39,53 +39,32 @@ class InsuranceData extends ModelBase
 
 
     /**
-    id
-    type
-    name
-    business_license_file
-    business_license
-    type_of_work
-    number_of_people
-    death_injury_limit
-    medical_limit
-    loss_of_work
-    hospital_allowance
-    license_plate
-    engine_number
-    frame_number
-    work_area
-    new_equipment_price
-    additional_insurance
-    equipment_type
-    date_of_manufacture
-    other_demands
-    last_year_underwriting_company
-    last_3_years_compensation_situation
-    status
-    created_at
-    updated_at
+
      */
     public static function addRecord($requestData){
 
         try {
-           $res =  InsuranceData::create()->data([
+            $dbData = [
                 'post_params' => $requestData['post_params'],
                 'product_id' => $requestData['product_id'],
                 'user_id' => $requestData['user_id'],
                 'type' => $requestData['type'],
                 'name' => $requestData['name'],
                 'status' => $requestData['status']?:1,
-               'created_at' => time(),
-               'updated_at' => time(),
-           ])->save();
+                'created_at' => time(),
+                'updated_at' => time(),
+            ];
+           $res =  InsuranceData::create()->data($dbData)->save();
 
         } catch (\Throwable $e) {
             return CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'failed',
-                    '$requestData' => $requestData
-                ])
+                    '置金-保险表-新增数据' => [
+                        "db数据"=>$dbData,
+                        "入参数据"=>$requestData,
+                        "报错信息"=>$e->getMessage(),
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
             );
         }
         return $res;
@@ -185,11 +164,15 @@ class InsuranceData extends ModelBase
 
     // 用完今日余额的
     public static function findBySql($where){
-        $Sql = " select *  
-                            from  
-                        `insurance_data` 
-                            $where
-        ";
+        $Sql = " select *    from   `insurance_data`    $where ";
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '置金-保险表-根据sql查询数据' => [
+                    '$Sql' => $Sql,
+                    '$where' => $where,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }
