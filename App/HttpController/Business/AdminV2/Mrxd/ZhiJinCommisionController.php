@@ -45,11 +45,6 @@ class ZhiJinCommisionController extends ControllerBase
         parent::afterAction($actionName);
     }
 
-    /**
-
-
-     */
-
     function loanOrderLists(): bool
     {
         $requestData =  $this->getRequestData();
