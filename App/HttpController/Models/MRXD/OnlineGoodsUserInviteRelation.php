@@ -43,26 +43,26 @@ class OnlineGoodsUserInviteRelation extends ModelBase
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'getFansNums' => [
-                        'uid'=>$userInfo['id'],
-                        'uname'=>$userInfo['user_name'],
-                        'IsVip'=>true,
-                        '$invitors'=>count($invitors),
+                    '置金-获取粉丝信息' => [
+                        '用户id'=>$userInfo['id'],
+                        '用户'=>$userInfo['user_name'],
+                        '是否Vip/是否一级客户/'=>true,
+                        '邀请人数'=>count($invitors),
                     ]
-                ])
+                ],JSON_UNESCAPED_UNICODE)
             );
         }else{
             $invitors =  OnlineGoodsUserInviteRelation::getAllInvitedUser($userInfo['id']);
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'getFansNums' => [
-                        'uid'=>$userInfo['id'],
-                        'uname'=>$userInfo['user_name'],
-                        'IsVip'=>false,
-                        '$invitors'=>count($invitors),
+                    '置金-获取粉丝信息' => [
+                        '用户id'=>$userInfo['id'],
+                        '用户'=>$userInfo['user_name'],
+                        '是否Vip/是否一级客户/'=>false,
+                        '邀请人数'=>count($invitors),
                     ]
-                ])
+                ],JSON_UNESCAPED_UNICODE)
             );
         }
 
