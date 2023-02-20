@@ -201,7 +201,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
         //第二次的招投标
         $week =  date('w',strtotime($day));
-        if($week == 5 ){
+        if($week == 0 ){
            self::sendEmailV4($day,[
                 'tianyongshan@meirixindong.com',
                 'minglongoc@me.com',
@@ -526,7 +526,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         $the_day_of_week = date("w",strtotime($the_date)); //sunday is 0
 
         $first_day_of_week = date("Ymd",strtotime( $the_date )-60*60*24*($the_day_of_week)+60*60*24*1 );
-        $last_day_of_week = date("Ymd",strtotime($first_day_of_week)+60*60*24*4 );
+        $last_day_of_week = date("Ymd",strtotime($first_day_of_week)+60*60*24*6 );
 
         //$dateStart = $first_day_of_week.' 00:00:00';
         $dateStart = $first_day_of_week;
