@@ -196,8 +196,8 @@ class RunDealEmailReceiver extends AbstractCronTask
         for ($msgcount = $totalCount; $msgcount > 0; $msgcount--) {
             $runNums ++ ;
 
-            //先只拉最新60条
-            if($runNums >= 60 ){
+            //先只拉最新10条
+            if($runNums >= 10 ){
                 break;
             }
             //$mailHeader = $mail->mailHeader($msgcount);
