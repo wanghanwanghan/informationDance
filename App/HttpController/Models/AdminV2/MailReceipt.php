@@ -39,14 +39,14 @@ class MailReceipt extends ModelBase
             self::findBySubjectAndDate($info['date'],$info['subject'])
         ){
 
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    '邮件收件箱数据表-数据已存在'=>[
-                        '日期' => $info['date'],
-                        '主题' => $info['subject'],
-                    ]
-                ],JSON_UNESCAPED_UNICODE)
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    '邮件收件箱数据表-数据已存在'=>[
+//                        '日期' => $info['date'],
+//                        '主题' => $info['subject'],
+//                    ]
+//                ],JSON_UNESCAPED_UNICODE)
+//            );
             return  true;
         }
 

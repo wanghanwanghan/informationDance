@@ -120,15 +120,15 @@ class RunDealEmailReceiver extends AbstractCronTask
       * */
     function run(int $taskId, int $workerIndex): bool
     {
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '邮件收件箱-开始执行'=>[
-                    '$taskId'=>$taskId,
-                    '$workerIndex'=>$workerIndex,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                '邮件收件箱-开始执行'=>[
+//                    '$taskId'=>$taskId,
+//                    '$workerIndex'=>$workerIndex,
+//                ]
+//            ],JSON_UNESCAPED_UNICODE)
+//        );
 
         /**
         //防止重复跑
@@ -261,15 +261,15 @@ class RunDealEmailReceiver extends AbstractCronTask
         $sql = " WHERE  `date`>= '".$day."' AND   `to` = '$emailAddress' AND   `status` =  ".MailReceipt::$status_init."   ";
         $emails = MailReceipt::findBySql($sql);
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '处理收到的邮件-开始执行'=>[
-                    '日期' => $day,
-                    '邮件数量' => count($emails),
-                    '$sql' => $sql,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                '处理收到的邮件-开始执行'=>[
+//                    '日期' => $day,
+//                    '邮件数量' => count($emails),
+//                    '$sql' => $sql,
+//                ]
+//            ],JSON_UNESCAPED_UNICODE)
+//        );
 
         foreach ($emails as $email){
 
@@ -605,14 +605,14 @@ class RunDealEmailReceiver extends AbstractCronTask
         $sql = " WHERE   `status` =  ".InsuranceData::$status_init." "  ;
         $datas = InsuranceData::findBySql( $sql  );
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '将用户询价信息发送邮件给保鸭'=>[
-                    '$sql' => $sql,
-                    '满足条件的数据数量' => count($datas),
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                '将用户询价信息发送邮件给保鸭'=>[
+//                    '$sql' => $sql,
+//                    '满足条件的数据数量' => count($datas),
+//                ]
+//            ],JSON_UNESCAPED_UNICODE)
+//        );
 
         foreach ($datas as $data){
             $insuranceDatas  = json_decode($data['post_params'],true);
@@ -721,15 +721,15 @@ class RunDealEmailReceiver extends AbstractCronTask
     {
         $sql = " WHERE     `status` =  ".InsuranceDataHuiZhong::$status_init."   ";
         $datas = InsuranceDataHuiZhong::findBySql(  $sql  );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '将用户询价信息发送邮件给挥众'=>[
-                    '$sql' => $sql,
-                    '满足条件的数据数量' => count($datas),
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                __CLASS__.__FUNCTION__ .__LINE__,
+//                '将用户询价信息发送邮件给挥众'=>[
+//                    '$sql' => $sql,
+//                    '满足条件的数据数量' => count($datas),
+//                ]
+//            ],JSON_UNESCAPED_UNICODE)
+//        );
 
         foreach ($datas as $data){
             $insuranceDatas  = json_decode($data['post_params'],true);
