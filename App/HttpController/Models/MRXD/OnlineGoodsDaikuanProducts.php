@@ -105,6 +105,19 @@ class OnlineGoodsDaikuanProducts extends ModelBase
         $res = $model->all();
 
         $total = $model->lastQueryResult()->getTotalCount();
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '置金-贷款产品表'=>[
+                    '$whereArr'=>$whereArr,
+                    '$page' => $page,
+                    '$size'=>$size,
+                    'sql' => $model->lastQuery()->getLastQuery(),
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         return [
             'data' => $res,
             'total' =>$total,
