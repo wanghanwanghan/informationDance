@@ -37,7 +37,18 @@ class BaoYaService extends ServiceBase
         if($this->debug){
             $url =  CreateConf::getInstance()->getConf('baoya.products_url_test');
         }
-        return $this->get($url,'');
+
+        $res =  $this->get($url,'');
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '宝押-取所有产品' => [
+                    "url" => $url,
+                    "结果" => $res,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+        return $res;
     }
 
     static function getProductsV2(){
@@ -62,7 +73,8 @@ class BaoYaService extends ServiceBase
 //                __CLASS__.__FUNCTION__ .__LINE__,
 //                'getProductsV2$returnRes' => $returnRes
 //            ])
-//        );
+//        ); 
+
         return $returnRes;
     }
 
