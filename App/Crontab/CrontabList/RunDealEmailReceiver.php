@@ -140,7 +140,8 @@ class RunDealEmailReceiver extends AbstractCronTask
 
         //设置为正在执行中
         ConfigInfo::setIsRunning(__CLASS__);
-
+        //设置为已执行完毕
+        ConfigInfo::setIsDone(__CLASS__);
          */
 
         //用户咨询后，将询价信息发送给保鸭
@@ -152,8 +153,6 @@ class RunDealEmailReceiver extends AbstractCronTask
         self::pullEmail(2);
         //收到邮件询价结果后  短信通知
         self::dealMail(date('Y-m-d'));
-        //设置为已执行完毕
-        ConfigInfo::setIsDone(__CLASS__);
 
         return true ;   
     }
