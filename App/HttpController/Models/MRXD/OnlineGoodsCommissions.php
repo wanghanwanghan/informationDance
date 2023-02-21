@@ -86,29 +86,31 @@ class OnlineGoodsCommissions extends ModelBase
     }
 
     public static function addRecord($requestData){
+        $dbData = [
+            'user_id' => $requestData['user_id'],
+            'commission_create_user_id' => $requestData['commission_create_user_id'],
+            'commission_owner' => $requestData['commission_owner'],
+            'commission_type' => $requestData['commission_type'],
+            'commission_data_type' => $requestData['commission_data_type'],
+            'comission_rate' => $requestData['comission_rate'],
+            'commission_order_id' => $requestData['commission_order_id'],
+            'state' => $requestData['state'],
+            'remark' => $requestData['remark']?:'',
+            'created_at' => time(),
+            'updated_at' => time(),
+        ];
         try {
-           $res =  OnlineGoodsCommissions::create()->data([
-                'user_id' => $requestData['user_id'],
-                'commission_create_user_id' => $requestData['commission_create_user_id'],
-                'commission_owner' => $requestData['commission_owner'],
-                'commission_type' => $requestData['commission_type'],
-                'commission_data_type' => $requestData['commission_data_type'],
-                'comission_rate' => $requestData['comission_rate'],
-                'commission_order_id' => $requestData['commission_order_id'],
-                'state' => $requestData['state'],
-                'remark' => $requestData['remark']?:'',
-               'created_at' => time(),
-               'updated_at' => time(),
-           ])->save();
+           $res =  OnlineGoodsCommissions::create()->data($dbData)->save();
 
         } catch (\Throwable $e) {
             return CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'failed',
-                    '$requestData' => $requestData,
-                    'getMessage' => $e->getMessage(),
-                ])
+                    '置金-分佣信息入库失败' =>[
+                        '入参' =>$requestData,
+                        'db数据' =>$dbData,
+                        '报错信息' => $e->getMessage(),
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
             );
         }
         return $res;
@@ -330,11 +332,30 @@ class OnlineGoodsCommissions extends ModelBase
 
     // 添加分佣信息
     static function addCommissionInfoByOrderInfo($orderInfo,$type){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '置金-添加分佣信息-开始'=>[
+                    '订单信息'=>$orderInfo,
+                    '类型'=>$type,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
 
         // 基准金额  amount
         // 置金用户
         $zhiJinUserInfo = OnlineGoodsUser::findByPhone($orderInfo['zhijin_phone']);
         if(empty($zhiJinUserInfo)){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '置金-添加分佣信息-找不到用户信息-直接返回失败'=>[
+                        '订单信息'=>$orderInfo,
+                        '类型'=>$type,
+                        '查找的手机号'=>$orderInfo['zhijin_phone'],
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
             return  false;
         }
         $zhiJinUserInfo = $zhiJinUserInfo->toArray();
@@ -342,20 +363,20 @@ class OnlineGoodsCommissions extends ModelBase
         //直接邀请人
         $directInvitorInfo = OnlineGoodsUserInviteRelation::getDirectInviterInfo($zhiJinUserInfo['id']);
         if(empty($directInvitorInfo)){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '置金-添加分佣信息-找不到邀请人-直接返回失败'=>[
+                        '订单信息'=>$orderInfo,
+                        '类型'=>$type,
+                        '置金用户id'=>$zhiJinUserInfo['id'],
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
             return false;
         }
         //vip邀请人
         $VipInvitorInfo = OnlineGoodsUserInviteRelation::getVipInviterInfo($zhiJinUserInfo['id']);
-
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'tian_jia_fen_yong_xin_xi——type' => $type,
-                'tian_jia_fen_yong_xin_xi——order_id' => $orderInfo['id'],
-                'tian_jia_fen_yong_xin_xi——$directInvitorInfo' => $directInvitorInfo,
-                'tian_jia_fen_yong_xin_xi_$VipInvitorInfo' => $VipInvitorInfo,
-            ])
-        );
 
         /**
         如果有VIP :
@@ -367,23 +388,37 @@ class OnlineGoodsCommissions extends ModelBase
         :邀请人给被邀请人分佣
          */
         if(!empty($VipInvitorInfo)){
-            //信动给VIP分佣
-            $res = OnlineGoodsCommissions::addRecordV2(
-                [
-                    //受益人
-                    'user_id' => $VipInvitorInfo['id'],
-                    //收益创造者
-                    'commission_create_user_id' => $zhiJinUserInfo['id'],
-                    //发放人
-                    'commission_owner' => self::$xin_dong_account_id,
-                    'comission_rate' => $orderInfo['commission_rate'],
-                    'commission_type' => $type,
-                    'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_xindong_to_vip,
-                    'state' => OnlineGoodsCommissions::$commission_state_seted,
-                    'commission_order_id' => $orderInfo['id'],
-                    'remark' => '信动给VIP分佣',
-                ]
+            $tmpDbData =  [
+                //受益人
+                'user_id' => $VipInvitorInfo['id'],
+                //收益创造者
+                'commission_create_user_id' => $zhiJinUserInfo['id'],
+                //发放人
+                'commission_owner' => self::$xin_dong_account_id,
+                'comission_rate' => $orderInfo['commission_rate'],
+                'commission_type' => $type,
+                'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_xindong_to_vip,
+                'state' => OnlineGoodsCommissions::$commission_state_seted,
+                'commission_order_id' => $orderInfo['id'],
+                'remark' => '信动给VIP分佣',
+            ];
+
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '置金-添加分佣信息-[有VIP]-信动给VIP分佣'=>[
+                        '订单信息'=>$orderInfo,
+                        '类型'=>$type,
+                        '置金用户id'=>$zhiJinUserInfo['id'],
+                        '邀请人'=>$directInvitorInfo,
+                        '对应的一级用户/最上级用户'=>$VipInvitorInfo,
+                        '分佣信息'=>$tmpDbData,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
             );
+
+            //信动给VIP分佣
+            $res = OnlineGoodsCommissions::addRecordV2($tmpDbData);
             if(empty($res)){
                 return  false;
             }
@@ -392,22 +427,37 @@ class OnlineGoodsCommissions extends ModelBase
             if(
                 $directInvitorInfo['id'] != $VipInvitorInfo['id']
             ){
-                $res = OnlineGoodsCommissions::addRecordV2(
-                    [
-                        //受益人
-                        'user_id' => $directInvitorInfo['id'],
-                        //收益创造者
-                        'commission_create_user_id' => $zhiJinUserInfo['id'],
-                        //发放人
-                        'commission_owner' => $VipInvitorInfo['id'],
-                        'comission_rate' => 0,
-                        'commission_type' => $type,
-                        'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_vip_to_invitor,
-                        'state' => OnlineGoodsCommissions::$commission_state_init,
-                        'commission_order_id' => $orderInfo['id'],
-                        'remark' => 'VIP给邀请人分佣',
-                    ]
+
+                $tmpDbData = [
+                    //受益人
+                    'user_id' => $directInvitorInfo['id'],
+                    //收益创造者
+                    'commission_create_user_id' => $zhiJinUserInfo['id'],
+                    //发放人
+                    'commission_owner' => $VipInvitorInfo['id'],
+                    'comission_rate' => 0,
+                    'commission_type' => $type,
+                    'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_vip_to_invitor,
+                    'state' => OnlineGoodsCommissions::$commission_state_init,
+                    'commission_order_id' => $orderInfo['id'],
+                    'remark' => 'VIP给邀请人分佣',
+                ];
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '置金-添加分佣信息-[有VIP]-VIP给邀请人分佣'=>[
+                            '订单信息'=>$orderInfo,
+                            '类型'=>$type,
+                            '置金用户id'=>$zhiJinUserInfo['id'],
+                            '邀请人'=>$directInvitorInfo,
+                            '对应的一级用户/最上级用户'=>$VipInvitorInfo,
+                            '分佣信息'=>$tmpDbData,
+                        ]
+                    ],JSON_UNESCAPED_UNICODE)
                 );
+
+
+                $res = OnlineGoodsCommissions::addRecordV2($tmpDbData);
                 if(empty($res)){
                     return  false;
                 }
@@ -415,23 +465,36 @@ class OnlineGoodsCommissions extends ModelBase
 
         }
         else{
-            //信动给邀请人分佣
-            $res = OnlineGoodsCommissions::addRecordV2(
-                [
-                    //受益人
-                    'user_id' => $directInvitorInfo['id'],
-                    //收益创造者
-                    'commission_create_user_id' => $zhiJinUserInfo['id'],
-                    //发放人
-                    'commission_owner' => self::$xin_dong_account_id,
-                    'comission_rate' => $orderInfo['commission_rate'],
-                    'commission_type' => $type,
-                    'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_xindong_to_vip,
-                    'state' => OnlineGoodsCommissions::$commission_state_seted,
-                    'commission_order_id' => $orderInfo['id'],
-                    'remark' => '信动给邀请人分佣',
-                ]
+            $tmpDbData = [
+                //受益人
+                'user_id' => $directInvitorInfo['id'],
+                //收益创造者
+                'commission_create_user_id' => $zhiJinUserInfo['id'],
+                //发放人
+                'commission_owner' => self::$xin_dong_account_id,
+                'comission_rate' => $orderInfo['commission_rate'],
+                'commission_type' => $type,
+                'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_xindong_to_vip,
+                'state' => OnlineGoodsCommissions::$commission_state_seted,
+                'commission_order_id' => $orderInfo['id'],
+                'remark' => '信动给邀请人分佣',
+            ];
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '置金-添加分佣信息-[没有VIP]-信动给邀请人分佣'=>[
+                        '订单信息'=>$orderInfo,
+                        '类型'=>$type,
+                        '置金用户id'=>$zhiJinUserInfo['id'],
+                        '邀请人'=>$directInvitorInfo,
+                        '对应的一级用户/最上级用户'=>$VipInvitorInfo,
+                        '分佣信息'=>$tmpDbData,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
             );
+
+            //信动给邀请人分佣
+            $res = OnlineGoodsCommissions::addRecordV2($tmpDbData );
             if(empty($res)){
                 return  false;
             }
@@ -440,22 +503,35 @@ class OnlineGoodsCommissions extends ModelBase
 
         //邀请人给用户分佣
         if($directInvitorInfo){
-            $res = OnlineGoodsCommissions::addRecordV2(
-                [
-                    //受益人
-                    'user_id' => $zhiJinUserInfo['id'],
-                    //收益创造者
-                    'commission_create_user_id' => $zhiJinUserInfo['id'],
-                    //发放人
-                    'commission_owner' => $directInvitorInfo['id'],
-                    'comission_rate' => empty($VipInvitorInfo)?15:0,
-                    'commission_type' => $type,
-                    'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_invitor_to_user,
-                    'state' => OnlineGoodsCommissions::$commission_state_init,
-                    'commission_order_id' => $orderInfo['id'],
-                    'remark' => '邀请人给用户分佣',
-                ]
+            $tmpDbData = [
+                //受益人
+                'user_id' => $zhiJinUserInfo['id'],
+                //收益创造者
+                'commission_create_user_id' => $zhiJinUserInfo['id'],
+                //发放人
+                'commission_owner' => $directInvitorInfo['id'],
+                'comission_rate' => empty($VipInvitorInfo)?15:0,
+                'commission_type' => $type,
+                'commission_data_type' => OnlineGoodsCommissions::$commission_data_type_invitor_to_user,
+                'state' => OnlineGoodsCommissions::$commission_state_init,
+                'commission_order_id' => $orderInfo['id'],
+                'remark' => '邀请人给用户分佣',
+            ];
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    '置金-添加分佣信息-[没有VIP]-邀请人给用户分佣'=>[
+                        '订单信息'=>$orderInfo,
+                        '类型'=>$type,
+                        '置金用户id'=>$zhiJinUserInfo['id'],
+                        '邀请人'=>$directInvitorInfo,
+                        '对应的一级用户/最上级用户'=>$VipInvitorInfo,
+                        '分佣信息'=>$tmpDbData,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
             );
+
+            $res = OnlineGoodsCommissions::addRecordV2($tmpDbData);
             if(empty($res)){
                 return  false;
             }

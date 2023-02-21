@@ -587,7 +587,18 @@ class ZhiJinCommisionController extends ControllerBase
 
     function grantBaoXianCommission(): bool
     {
+
         $requestData =  $this->getRequestData();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '置金-发放宝押佣金-开始'=>[
+                    '请求参数'=>$requestData,
+                    '当前用户'=>$this->loginUserinfo['user_name'],
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         $phone = $requestData['phone'] ;
         $code = $requestData['code'] ;
         $id = $requestData['id'] ;
