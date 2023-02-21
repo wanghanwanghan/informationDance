@@ -602,7 +602,7 @@ class RunDealEmailReceiver extends AbstractCronTask
 
         //保鸭
         $sql = " WHERE   `status` =  ".InsuranceData::$status_init." "  ;
-        $datas = InsuranceData::findBySql( $sql  );
+        $datas = InsuranceData::findBySql( $sql ,false );
 
 //        CommonService::getInstance()->log4PHP(
 //            json_encode([

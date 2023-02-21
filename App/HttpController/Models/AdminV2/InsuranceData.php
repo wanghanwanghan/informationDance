@@ -163,16 +163,19 @@ class InsuranceData extends ModelBase
     }
 
     // 用完今日余额的
-    public static function findBySql($where){
+    public static function findBySql($where,$showLog = true){
         $Sql = " select *    from   `insurance_data`    $where ";
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '置金-保险表-根据sql查询数据' => [
-                    '$Sql' => $Sql,
-                    '$where' => $where,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
+        if($showLog){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '置金-保险表-根据sql查询数据' => [
+                        '$Sql' => $Sql,
+                        '$where' => $where,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
+        }
+
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }
