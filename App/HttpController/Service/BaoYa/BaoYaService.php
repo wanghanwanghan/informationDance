@@ -43,7 +43,7 @@ class BaoYaService extends ServiceBase
             json_encode([
                 '宝押-取所有产品' => [
                     "url" => $url,
-                    "结果" => $res,
+                    //"结果" => $res,
                 ]
             ],JSON_UNESCAPED_UNICODE)
         );
@@ -73,7 +73,7 @@ class BaoYaService extends ServiceBase
 //                __CLASS__.__FUNCTION__ .__LINE__,
 //                'getProductsV2$returnRes' => $returnRes
 //            ])
-//        ); 
+//        );
 
         return $returnRes;
     }
