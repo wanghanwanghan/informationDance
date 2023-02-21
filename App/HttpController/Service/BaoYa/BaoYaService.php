@@ -39,14 +39,7 @@ class BaoYaService extends ServiceBase
         }
 
         $res =  $this->get($url,'');
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '宝押-取所有产品' => [
-                    "url" => $url,
-                    //"结果" => $res,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
+
 
         return $res;
     }
@@ -85,16 +78,6 @@ class BaoYaService extends ServiceBase
         }
 
         $res =  $this->get($url,'');
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '保鸭-根据id查询详情'=>[
-                    '产品$id' => $id,
-                    '$url' => $url,
-                    '返回结果' => $res,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
 
         return    $res;
     }
@@ -115,6 +98,19 @@ class BaoYaService extends ServiceBase
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($url, $body, $header, $ext, 'get');
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '宝押-get请求' => [
+                    "url" => $url,
+                    "body" => $body,
+                    "header" => $header,
+                    "ext" => $ext,
+                    //"结果" => $res,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
 //        OperatorLog::addRecord(
 //            [
 //                'user_id' => 0,
