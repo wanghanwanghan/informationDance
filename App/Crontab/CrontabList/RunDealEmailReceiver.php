@@ -165,7 +165,7 @@ class RunDealEmailReceiver extends AbstractCronTask
 //                '邮件收件箱-开始执行'=>[
 //                    '取前几天的数据？'=>$dayNums,
 //                ]
-//            ],JSON_UNESCAPED_UNICODE)
+//            ],JSON_UNESCAPED_UNICODE) ##
 //        );
 
         $mail = new Email();
