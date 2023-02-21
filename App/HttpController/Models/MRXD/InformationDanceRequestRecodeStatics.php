@@ -39,7 +39,7 @@ class InformationDanceRequestRecodeStatics extends ModelBase
         $oldRes = self::findByUserAndMonth($info['userId'],$info["year"],$info['month']);
         if(
             $oldRes
-        ){ 
+        ){
             return  self::updateById(
                 $oldRes->getAttr('id'),
                 $info
