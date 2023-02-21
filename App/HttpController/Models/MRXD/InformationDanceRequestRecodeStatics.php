@@ -39,8 +39,11 @@ class InformationDanceRequestRecodeStatics extends ModelBase
         $oldRes = self::findByUserAndMonth($info['userId'],$info["year"],$info['month']);
         if(
             $oldRes
-        ){
-            return  $oldRes->getAttr('id');
+        ){ 
+            return  self::updateById(
+                $oldRes->getAttr('id'),
+                $info
+            );
         }
 
         return InformationDanceRequestRecodeStatics::addRecord(
@@ -221,14 +224,7 @@ class InformationDanceRequestRecodeStatics extends ModelBase
                 $endDate = date('Y-m-d', strtotime("$beginDate +1 month -1 day"));
                 $beginDate = $beginDate." 00:00:00";
                 $endDate = $endDate." 23:59:59";
-                $sql = "SELECT
-                            userId,
-                            SUM(1) as total_num,
-                            SUM(IF( `responseCode` = 200 AND spendMoney = 0 , 1, 0)) as cache_num 
-                        FROM
-                            information_dance_request_recode_".$year." 
-                        WHERE userId = ".$User["userId"]."  AND created_at >= ".strtotime($beginDate)." AND created_at <=  ".strtotime($endDate)." 
-                ";
+                $sql = "SELECT  userId,  SUM(1) as total_num,   SUM(IF( `responseCode` = 200 AND spendMoney = 0 , 1, 0)) as cache_num     FROM    information_dance_request_recode_".$year."   WHERE userId = ".$User["userId"]."  AND created_at >= ".strtotime($beginDate)." AND created_at <=  ".strtotime($endDate)." ";
                 $Res =  self::findBySql($sql);
                 CommonService::getInstance()->log4PHP(
                     json_encode([
