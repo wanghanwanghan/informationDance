@@ -39,7 +39,8 @@ class updateIsElectronics0 extends AbstractProcess
     {
         $list = AntAuthList::create()
             ->where('belong', 41)
-            ->where('id', 1611, '<=')
+            ->where('id', 1662, '<=')
+            ->where('id', 1590, '>')
             ->where('getDataSource', 2)
 //            ->where('isElectronics', '%属%成功%', 'not like')
 //            ->where('isElectronics', '%全电%', 'not like')
@@ -49,7 +50,7 @@ class updateIsElectronics0 extends AbstractProcess
             ->all();
 
         foreach ($list as $key => $one) {
-            if ($key % 2 !== 0) continue;
+//            if ($key % 2 == 0) continue;
             $info = (new JinCaiShuKeService())
                 ->S000502($one->getAttr('socialCredit'));
             $one->update(['isElectronics' => $info['msg']]);
