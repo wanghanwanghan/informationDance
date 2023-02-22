@@ -162,10 +162,23 @@ class OnlineGoodsCommissionGrantDetails extends ModelBase
     }
 
     public static function findByUserId($user_id,$type){
-        $res =  OnlineGoodsCommissionGrantDetails::create()
+        $model = OnlineGoodsCommissionGrantDetails::create();
+        $res =  $model
             ->where('user_id',$user_id)
             ->where('type',$type)
             ->all();
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '置金-分佣详情-根据用户id查询数据'=>[
+                    '用户'=>$user_id,
+                    '类型'=>$type,
+                    'sql' => $model->lastQuery()->getLastQuery(),
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         return $res;
     }
 

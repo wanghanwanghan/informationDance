@@ -37,7 +37,11 @@ class BaoYaService extends ServiceBase
         if($this->debug){
             $url =  CreateConf::getInstance()->getConf('baoya.products_url_test');
         }
-        return $this->get($url,'');
+
+        $res =  $this->get($url,'');
+
+
+        return $res;
     }
 
     static function getProductsV2(){
@@ -63,6 +67,7 @@ class BaoYaService extends ServiceBase
 //                'getProductsV2$returnRes' => $returnRes
 //            ])
 //        );
+
         return $returnRes;
     }
 
@@ -71,7 +76,10 @@ class BaoYaService extends ServiceBase
         if($this->debug){
             $url =  CreateConf::getInstance()->getConf('baoya.products_detail_url_test').'/'.$id;
         }
-        return $this->get($url,'');
+
+        $res =  $this->get($url,'');
+
+        return    $res;
     }
 
     //龙盾全羁绊是get请求
@@ -90,6 +98,19 @@ class BaoYaService extends ServiceBase
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($url, $body, $header, $ext, 'get');
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '宝押-get请求' => [
+                    "url" => $url,
+                    "body" => $body,
+                    "header" => $header,
+                    "ext" => $ext,
+                    //"结果" => $res,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
 //        OperatorLog::addRecord(
 //            [
 //                'user_id' => 0,

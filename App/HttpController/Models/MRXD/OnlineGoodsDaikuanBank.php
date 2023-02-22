@@ -93,18 +93,32 @@ class OnlineGoodsDaikuanBank extends ModelBase
         ];
     }
 
-    public static function findByConditionV2($whereArr,$page){
+    public static function findByConditionV2($whereArr,$page=1,$size=20){
         $model = OnlineGoodsDaikuanBank::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
-        $model->page($page)
+
+        $model->page($page,$size)
             ->order('id', 'DESC')
             ->withTotalCount();
 
         $res = $model->all();
 
         $total = $model->lastQueryResult()->getTotalCount();
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '置金-银行表'=>[
+                    '$whereArr'=>$whereArr,
+                    '$page' => $page,
+                    '$size'=>$size,
+                    'sql' => $model->lastQuery()->getLastQuery(),
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         return [
             'data' => $res,
             'total' =>$total,

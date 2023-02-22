@@ -97,9 +97,20 @@ class OnlineGoodsTiXianJiLu extends ModelBase
 
 
     public static function findAllByCondition($whereArr){
-        $res =  OnlineGoodsTiXianJiLu::create()
+        $model = OnlineGoodsTiXianJiLu::create();
+        $res =  $model
             ->where($whereArr)
             ->all();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '置金-提现表'=>[
+                    '条件'=>$whereArr,
+                    'sql' => $model->lastQuery()->getLastQuery(),
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         return $res;
     }
 

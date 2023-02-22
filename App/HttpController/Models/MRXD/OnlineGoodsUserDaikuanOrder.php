@@ -102,37 +102,36 @@ class OnlineGoodsUserDaikuanOrder extends ModelBase
     }
 
     public static function addRecord($requestData){
+        $dbData = [
+            //产品
+            'product_id' => intval($requestData['product_id']),
+            //购买人
+            'purchaser_id' => intval($requestData['purchaser_id']),
+            'input_person' => intval($requestData['input_person']),
+            'amount' => $requestData['amount']?:0,
+            'purchaser_name' => $requestData['purchaser_name']?:'',
+            'purchaser_phone' => $requestData['purchaser_phone']?:'',
+            'zhijin_phone' => $requestData['zhijin_phone']?:'',
+            'xindong_commission_rate' => $requestData['xindong_commission_rate']?:'',
+            'xindong_commission' => $requestData['xindong_commission']?:'',
+            'commission_rate' => $requestData['commission_rate']?:'',
+            'order_date' => $requestData['order_date']?:'',
+            'commission_date' => $requestData['commission_date']?:'',
+            'remark' => $requestData['remark']?:'',
+            'commission_set_state' => intval($requestData['commission_set_state']),
+            'commission_state' => intval($requestData['commission_state']),
+            'created_at' => time(),
+            'updated_at' => time(),
+        ];
         try {
-           $res =  OnlineGoodsUserDaikuanOrder::create()->data([
-               //产品
-               'product_id' => intval($requestData['product_id']),
-               //购买人
-               'purchaser_id' => intval($requestData['purchaser_id']),
-               'input_person' => intval($requestData['input_person']),
-               'amount' => $requestData['amount']?:0,
-               'purchaser_name' => $requestData['purchaser_name']?:'',
-               'purchaser_phone' => $requestData['purchaser_phone']?:'',
-               'zhijin_phone' => $requestData['zhijin_phone']?:'',
-               'xindong_commission_rate' => $requestData['xindong_commission_rate']?:'',
-               'xindong_commission' => $requestData['xindong_commission']?:'',
-               'commission_rate' => $requestData['commission_rate']?:'',
-               'order_date' => $requestData['order_date']?:'',
-               'commission_date' => $requestData['commission_date']?:'',
-               'remark' => $requestData['remark']?:'',
-                'commission_set_state' => intval($requestData['commission_set_state']),
-                'commission_state' => intval($requestData['commission_state']),
-               'created_at' => time(),
-               'updated_at' => time(),
-           ])->save();
-
+           $res =  OnlineGoodsUserDaikuanOrder::create()->data($dbData)->save();
         } catch (\Throwable $e) {
             return CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'failed',
-                    '$requestData' => $requestData,
-                    'err_msg' => $e->getMessage(),
-                ])
+                    'db数据' => $dbData,
+                    '入参' => $requestData,
+                    '报错信息' => $e->getMessage(),
+                ],JSON_UNESCAPED_UNICODE)
             );
         }
         return $res;

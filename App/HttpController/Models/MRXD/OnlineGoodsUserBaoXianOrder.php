@@ -111,6 +111,14 @@ class OnlineGoodsUserBaoXianOrder extends ModelBase
     邀请人给被邀请人分佣：C→D
      */
     static function addCommissionInfoById($id){
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '置金-生成需分佣的记录-开始'=>[
+                    '订单id'=>$id,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
 
         $orderInfo = self::findById($id);
         if(empty($orderInfo)){
@@ -239,6 +247,18 @@ class OnlineGoodsUserBaoXianOrder extends ModelBase
             ->withTotalCount();
 
         $res = $model->all();
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                __CLASS__.__FUNCTION__ .__LINE__,
+                '置金-保险-订单'=>[
+                    '条件'=>$whereArr,
+                    '$page'=>$page,
+                    '$size'=>$size,
+                    'sql' => $model->lastQuery()->getLastQuery(),
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
 
         $total = $model->lastQueryResult()->getTotalCount();
         return [

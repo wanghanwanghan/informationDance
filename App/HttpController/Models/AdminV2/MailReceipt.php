@@ -38,16 +38,14 @@ class MailReceipt extends ModelBase
         if(
             self::findBySubjectAndDate($info['date'],$info['subject'])
         ){
+
 //            CommonService::getInstance()->log4PHP(
 //                json_encode([
-//                    __CLASS__.__FUNCTION__ .__LINE__,
-//                    'add_email_to_db'=>[
-//                        'msg'=>'has_old_record.excape.',
-//                        'param_email_id'=>$info['email_id'],
-//                        'param_to'=>$info['to'],
-//                        'param_mailHeader'=>$info['mailHeader'] ,
+//                    '邮件收件箱数据表-数据已存在'=>[
+//                        '日期' => $info['date'],
+//                        '主题' => $info['subject'],
 //                    ]
-//                ])
+//                ],JSON_UNESCAPED_UNICODE)
 //            );
             return  true;
         }
@@ -59,7 +57,7 @@ class MailReceipt extends ModelBase
 
     public static function addRecord($requestData){
         try {
-           $res =  MailReceipt::create()->data([
+            $dbData = [
                 'email_id' => $requestData['email_id'],
                 'to' => $requestData['to'],
                 'to_other' => $requestData['to_other']?:'',
@@ -69,24 +67,26 @@ class MailReceipt extends ModelBase
                 'from' => $requestData['from'],
                 'subject' => $requestData['subject']?:'',
                 'attachs' => $requestData['attachs']?:'',
-                 'body' => $requestData['body']?:'',
-                 'status' => $requestData['status']?:'1',
+                'body' => $requestData['body']?:'',
+                'status' => $requestData['status']?:'1',
                 'type' => $requestData['type']?:'1',
                 'reamrk' => $requestData['reamrk']?:'',
-                 'raw_return' => $requestData['raw_return'],
+                'raw_return' => $requestData['raw_return'],
                 'date' => $requestData['date'],
-               'created_at' => time(),
-               'updated_at' => time(),
-           ])->save();
+                'created_at' => time(),
+                'updated_at' => time(),
+            ];
+           $res =  MailReceipt::create()->data($dbData)->save();
 
         } catch (\Throwable $e) {
             return CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'failed',
-                    '$requestData' => $requestData,
-                    '$e'=>$e->getMessage()
-                ])
+                    '邮件收件箱数据表-新增数据失败' => [
+                        'db数据' => $dbData,
+                        '入参数据' => $requestData,
+                        '报错信息'=>$e->getMessage()
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
             );
         }
         return $res;

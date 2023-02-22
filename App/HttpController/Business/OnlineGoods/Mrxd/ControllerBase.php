@@ -79,28 +79,25 @@ class ControllerBase extends Index
         if($this->needsCheckToken()){
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'needsCheckToken ' => [
-                        'yes',
-                        '$action'=>$action
+                    '需要checkToken ' => [
+                        '方法名'=>$action
                     ],
-                ])
+                ],JSON_UNESCAPED_UNICODE)
             );
             if (!$this->checkToken() ){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        'checkToken pass' => false,
-                    ])
+                        '需要checkToken ' => [
+                            '方法名'=>$action,
+                            'checkToken失败'=>'',
+                        ],
+                    ],JSON_UNESCAPED_UNICODE)
                 );
                 $this->writeJson(243, null, null, 'token错误');
                 return false;
             }
             else{
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        'checkToken pass' => true,
-                    ])
-                );
+
             }
         }
         return parent::onRequest($action);

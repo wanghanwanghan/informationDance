@@ -144,19 +144,7 @@ class InformationDanceRequestRecode extends ModelBase
     数据量小 客户少 直接查了 若是哪天多了起来了  再说
      */
     static function  getAllUsers(){
-        $sql = "SELECT DISTINCT
-                    ( userId ) 
-                FROM
-                    information_dance_request_recode_2021 UNION
-                SELECT DISTINCT
-                    ( userId ) 
-                FROM
-                    information_dance_request_recode_2022 UNION
-                SELECT DISTINCT
-                    ( userId ) 
-                FROM
-                    information_dance_request_recode_2023
-";
+        $sql = "SELECT DISTINCT   ( userId )    FROM information_dance_request_recode_2021 UNION   SELECT DISTINCT  ( userId )   FROM  information_dance_request_recode_2022 UNION  SELECT DISTINCT   ( userId )    FROM information_dance_request_recode_2023";
         CommonService::getInstance()->log4PHP(
             json_encode([
                 "对账单模块-查所有客户-sql" => $sql,
