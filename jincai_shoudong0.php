@@ -44,8 +44,10 @@ class jincai_shoudong0 extends AbstractProcess
     {
         // 不要删除这行
         // $this->createCurrentAesKey();
-
+//        $this->addTask();
+        $this->getTaskStatus();
     }
+
 
     //取票时候调用 从数据库
     function _getInvoice()
@@ -169,6 +171,15 @@ class jincai_shoudong0 extends AbstractProcess
 
     }
 
+    function getTaskStatus(){
+//        $all = JinCaiTrace::create()->all();
+//        foreach ($all as $one) {
+//            if( $one->getAttr('code')== 'S000'){
+                $addTaskInfo = (new JinCaiShuKeService())->getTaskStatus('aacd1990009814b1d183b30e6051f06c');//$one->getAttr('pTraceNo')
+                var_dump($addTaskInfo);
+//            }
+//        }
+    }
     //上传oss时候调用
     function _sendToOSS()
     {
@@ -661,17 +672,29 @@ class jincai_shoudong0 extends AbstractProcess
 
     function addTask()
     {
+//        334，485 ，486，496,521,666
         $list = AntAuthList::create()
-            ->where('getDataSource', 2)
-            ->where('belong', 41)
-            ->where('id', 1611, '<=')// 这个数字要改
-            ->where("isElectronics LIKE '%属%成功%' OR isElectronics LIKE '%非一般%'")
+//            ->where('getDataSource', 2)
+//            ->where('belong', 41)
+////            ->where('id', 1621, '<')// 这个数字要改
+//            ->where('id', 1611, '>')
+
+
+//        and id > 1407
+//        and id < 1612
+            ->where("
+            getDataSource = 2 
+            and belong =41
+
+           and id in (1171,828,1335,1025,985,1014,1146,1253,1550,1113,753,852,781,1606)         
+            and (isElectronics LIKE '%属%成功%' OR isElectronics LIKE '%非一般%')
+            ")
             ->all();
 
         // =============================================================================================================
-
+//        dd(count($list));
         foreach ($list as $key => $target) {
-
+            echo $target->getAttr('id');
             // 开票日期止
             $kprqz = Carbon::now()->subMonths(1)->endOfMonth()->timestamp;
 

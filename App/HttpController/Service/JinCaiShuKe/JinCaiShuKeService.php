@@ -519,10 +519,21 @@ class JinCaiShuKeService extends ServiceBase
             'traceNo' => trim($traceNo)
         ];
 
+
+        $encryptStr = jsonEncode($post_data);
+        $encryptStr = control::aesEncode($encryptStr, $this->appSecret_new);
+        $encryptStr = strtoupper($encryptStr);
+
+        $timestamp = microTimeNew();
+
+        $sign = md5($this->appKey_new . $this->appSecret_new . $encryptStr . $timestamp);
+
+        $url .= "?appKey={$this->appKey_new}&encryptStr={$encryptStr}&sign={$sign}&timestamp={$timestamp}";
+
         $res = (new CoHttpClient())
             ->useCache(false)
             ->needJsonDecode(true)
-            ->send($this->wupan_url . $url, $post_data, ['oauthToken' => $this->oauthToken], [], 'postjson');
+            ->send($this->wupan_url_new . $url, $post_data, ['oauthToken' => $this->oauthToken], [], 'postjson');
 
         return $this->checkResp($res, 'wupan');
     }
