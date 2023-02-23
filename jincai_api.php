@@ -323,7 +323,7 @@ class jincai_api extends AbstractProcess
             dd($one);
         }
 
-        $this->getInv();
+        //$this->getInv();
     }
 
     function getInv()
