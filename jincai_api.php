@@ -351,18 +351,18 @@ class jincai_api extends AbstractProcess
                                 $kprqz = Carbon::createFromTimestamp($item->getAttr('kprqz'))->format('Y-m-d');
                                 // 主票和明细信息
                                 $main = (new JinCaiShuKeService())->obtainFpInfoNew(
-                                    true, $item->getAttr('nsrsbh'), $kprqq, $kprqz, $page
+                                    true, $item->getAttr('socialCredit'), $kprqq, $kprqz, $page
                                 );
                                 if (empty($main['result']['data']['content'])) {
                                     // 取完了吗
                                     CommonService::getInstance()->log4PHP(
-                                        [$item->getAttr('nsrsbh'), $page],
+                                        [$item->getAttr('socialCredit'), $page],
                                         'getover',
                                         $this->error_log
                                     );
                                     break;
                                 } else {
-                                    $this->handleMain($main['result']['data']['content'], $item->getAttr('nsrsbh'));
+                                    $this->handleMain($main['result']['data']['content'], $item->getAttr('socialCredit'));
                                 }
                             }
                         }
