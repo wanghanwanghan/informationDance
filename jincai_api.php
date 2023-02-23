@@ -315,9 +315,15 @@ class jincai_api extends AbstractProcess
     //启动
     protected function run($arg)
     {
+        echo '发送时间' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
+
         $main = (new JinCaiShuKeService())->obtainFpInfoNew(
             true, '91320115MA1WTU4468', '2023-01-01', '2023-01-31', 1
         );
+
+        echo '返回时间' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
+
+        dd($main);
 
         foreach ($main['result']['data']['content'] as $one) {
             dd($one);
