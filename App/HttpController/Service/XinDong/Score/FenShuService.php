@@ -18,25 +18,25 @@ class FenShuService extends ServiceBase
         //企业变更信息
         $res = (new TaoShuService())->setCheckRespFlag(true)->post(
             [
-                'entName'  => $entName,
-                'pageNo'  => 1,
+                'entName' => $entName,
+                'pageNo' => 1,
                 'pageSize' => 10,
             ], 'getRegisterChangeInfo');
 
         ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-        $getRegisterChangeInfo['list']  = $res;
+        $getRegisterChangeInfo['list'] = $res;
         $getRegisterChangeInfo['total'] = $total;
 
         //龙盾 经营异常
         $postData = ['keyNo' => $entName];
-        $res      = (new LongDunService())
+        $res = (new LongDunService())
             ->setCheckRespFlag(true)
             ->get($this->ldUrl . 'ECIException/GetOpException', $postData);
 
         ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
-        $getOpException['list']  = $res;
+        $getOpException['list'] = $res;
         $getOpException['total'] = $total;
 
         $a = $this->qybgxx($getRegisterChangeInfo['total']);
@@ -47,7 +47,7 @@ class FenShuService extends ServiceBase
         //==============================================================================================================
         //财务资产
         $financeData = $this->getCaiWu($entName);
-        $d           = $this->cwzc($financeData['data'], 'fx');
+        $d = $this->cwzc($financeData['data'], 'fx');
         //计算
         $fx['caiwu'] = ($d[0] * 0.5 + $d[1] * 0.5) * 0.6;
         //==============================================================================================================
@@ -60,11 +60,11 @@ class FenShuService extends ServiceBase
         //==============================================================================================================
         //裁判文书
         $cpws = $this->getPjws($entName);
-        $a    = $this->pjws($cpws['total']);
+        $a = $this->pjws($cpws['total']);
         //执行公告
         $zxgg = $this->getZxgg($entName);
-        $b    = $this->zxgg($zxgg['total']);
-        $s    = ($a + $b) / 2;
+        $b = $this->zxgg($zxgg['total']);
+        $s = ($a + $b) / 2;
         //计算
         $fx['sifa'] = 0.25 * $s;
         //涉税处罚公示
@@ -89,13 +89,14 @@ class FenShuService extends ServiceBase
         $shixin = $this->shixin($entName);
         $a = $this->sxgg($shixin);
         $fx['gaofengxian'] = 0.4 * $a;
-        CommonService::getInstance()->log4PHP($fx,'info','getFengXian');
+        CommonService::getInstance()->log4PHP($fx, 'info', 'getFengXian');
         return $this->checkResp(200, null, $fx, '成功');
 //        return $fx;
 
     }
 
-    private function shixin($entName){
+    private function shixin($entName)
+    {
         $doc_type = 'shixin';
         $postData = [
             'doc_type' => $doc_type,
@@ -133,7 +134,8 @@ class FenShuService extends ServiceBase
         return $tmp;
     }
 
-    private function GetAdministrativePenaltyList($entName){
+    private function GetAdministrativePenaltyList($entName)
+    {
         $postData = [
             'searchKey' => $entName,
             'pageIndex' => 1,
@@ -166,7 +168,8 @@ class FenShuService extends ServiceBase
         return $tmp;
     }
 
-    private function satparty_qs($entName){
+    private function satparty_qs($entName)
+    {
         $doc_type = 'satparty_qs';
 
         $postData = [
@@ -205,7 +208,8 @@ class FenShuService extends ServiceBase
         return $tmp;
     }
 
-    private function satparty_fzc($entName){
+    private function satparty_fzc($entName)
+    {
         $doc_type = 'satparty_fzc';
 
         $postData = [
@@ -243,7 +247,9 @@ class FenShuService extends ServiceBase
 
         return $tmp;
     }
-    private function satparty_chufa($entName){
+
+    private function satparty_chufa($entName)
+    {
         $doc_type = 'satparty_chufa';
 
         $postData = [
@@ -328,6 +334,7 @@ class FenShuService extends ServiceBase
 
         return 0;
     }
+
     //税务非正常户公示
     private function swfzchgs($data)
     {
@@ -343,6 +350,7 @@ class FenShuService extends ServiceBase
 
         return 0;
     }
+
 //涉税处罚公示
     private function sscfgs($data)
     {
@@ -358,9 +366,10 @@ class FenShuService extends ServiceBase
 
         return 0;
     }
+
     private function getZxgg($entName)
     {
-        $fyyList   = CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl');
+        $fyyList = CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl');
         $fyyDetail = CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl');
 
 
@@ -368,9 +377,9 @@ class FenShuService extends ServiceBase
 
         $postData = [
             'doc_type' => $doc_type,
-            'keyword'  => $entName,
-            'pageno'   => 1,
-            'range'    => 20,
+            'keyword' => $entName,
+            'pageno' => 1,
+            'range' => 20,
         ];
 
         $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($fyyList . 'sifa', $postData);
@@ -381,7 +390,7 @@ class FenShuService extends ServiceBase
             foreach ($res as &$one) {
                 //取详情
                 $postData = [
-                    'id'       => $one['entryId'],
+                    'id' => $one['entryId'],
                     'doc_type' => $doc_type
                 ];
 
@@ -396,7 +405,7 @@ class FenShuService extends ServiceBase
             unset($one);
         }
 
-        $tmp['list']  = $res;
+        $tmp['list'] = $res;
         $tmp['total'] = $total;
 
         return $tmp;
@@ -405,16 +414,16 @@ class FenShuService extends ServiceBase
     private function getPjws($entName)
     {
 
-        $fyyList   = CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl');
+        $fyyList = CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl');
         $fyyDetail = CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl');
 
         $doc_type = 'cpws';
 
         $postData = [
             'doc_type' => $doc_type,
-            'keyword'  => $entName,
-            'pageno'   => 1,
-            'range'    => 20,
+            'keyword' => $entName,
+            'pageno' => 1,
+            'range' => 20,
         ];
 
         $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($fyyList . 'sifa', $postData);
@@ -425,7 +434,7 @@ class FenShuService extends ServiceBase
             foreach ($res as &$one) {
                 //取详情
                 $postData = [
-                    'id'       => $one['entryId'],
+                    'id' => $one['entryId'],
                     'doc_type' => $doc_type
                 ];
 
@@ -440,7 +449,7 @@ class FenShuService extends ServiceBase
             unset($one);
         }
 
-        $tmp['list']  = $res;
+        $tmp['list'] = $res;
         $tmp['total'] = $total;
 
         return $tmp;
@@ -451,8 +460,8 @@ class FenShuService extends ServiceBase
 
 
         $postData = [
-            'entName'   => $entName,
-            'code'    => '',
+            'entName' => $entName,
+            'code' => '',
             'beginYear' => date('Y') - 1,
             'dataCount' => 4,//取最近几年的
         ];
@@ -466,8 +475,8 @@ class FenShuService extends ServiceBase
         if (!empty($res['result'])) {
             $tmp = $lineTemp = $legend = [];
             foreach ($res['result'] as $year => $val) {
-                $legend[]                    = $year;
-                $tmp[]    = [
+                $legend[] = $year;
+                $tmp[] = [
                     sRound($val['ASSGRO_yoy'] * 100),
                     sRound($val['LIAGRO_yoy'] * 100),
                     sRound($val['VENDINC_yoy'] * 100),
@@ -478,50 +487,50 @@ class FenShuService extends ServiceBase
                     sRound($val['TOTEQU_yoy'] * 100),
                 ];
                 $lineTemp['MAIBUSINC_yoy'][] = sRound($val['MAIBUSINC_yoy'] * 100);//主营业务收入
-                $lineTemp['PROGRO_yoy'][]    = sRound($val['PROGRO_yoy'] * 100);   //利润总额
-                $lineTemp['ASSGRO_yoy'][]    = sRound($val['ASSGRO_yoy'] * 100);   //资产总额
-                $lineTemp['RATGRO_yoy'][]    = sRound($val['RATGRO_yoy'] * 100);   //纳税总额
-                $lineTemp['LIAGRO_yoy'][]    = sRound($val['LIAGRO_yoy'] * 100);   //负债总额
+                $lineTemp['PROGRO_yoy'][] = sRound($val['PROGRO_yoy'] * 100);   //利润总额
+                $lineTemp['ASSGRO_yoy'][] = sRound($val['ASSGRO_yoy'] * 100);   //资产总额
+                $lineTemp['RATGRO_yoy'][] = sRound($val['RATGRO_yoy'] * 100);   //纳税总额
+                $lineTemp['LIAGRO_yoy'][] = sRound($val['LIAGRO_yoy'] * 100);   //负债总额
             }
-            $res['data']   = $res['result'];
+            $res['data'] = $res['result'];
             $res['result'] = $tmp;
         }
 
         $labels = ['资产总额', '负债总额', '营业总收入', '主营业务收入', '利润总额', '净利润', '纳税总额', '所有者权益'];
 
         $extension = [
-            'width'     => 1200,
+            'width' => 1200,
             'height' => 700,
-            'title'  => $entName . ' - 同比',
+            'title' => $entName . ' - 同比',
             'xTitle' => '此图为概况信息',
             //'yTitle'=>$this->entName,
             'titleSize' => 14,
-            'legend'    => $legend
+            'legend' => $legend
         ];
 
         $tmp = [];
         //$tmp['pic'] = CommonService::getInstance()->createBarPic($res['result'], $labels, $extension);
         $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['MAIBUSINC_yoy'], $legend, [
-            'title'    => $entName,
+            'title' => $entName,
             'subTitle' => '营收规模同比 此图为概况信息',
         ]);
         $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['PROGRO_yoy'], $legend, [
-            'title'    => $entName,
+            'title' => $entName,
             'subTitle' => '盈利能力同比 此图为概况信息',
         ]);
         $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['ASSGRO_yoy'], $legend, [
-            'title'    => $entName,
+            'title' => $entName,
             'subTitle' => '资产规模同比 此图为概况信息',
         ]);
         $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['RATGRO_yoy'], $legend, [
-            'title'    => $entName,
+            'title' => $entName,
             'subTitle' => '纳税能力同比 此图为概况信息',
         ]);
         $tmp['pic'][] = CommonService::getInstance()->createLinePic($lineTemp['LIAGRO_yoy'], $legend, [
-            'title'    => $entName,
+            'title' => $entName,
             'subTitle' => '负债规模同比 此图为概况信息',
         ]);
-        $tmp['data']  = $res['data'];
+        $tmp['data'] = $res['data'];
         return $tmp;
     }
 
