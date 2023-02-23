@@ -18,12 +18,11 @@ class FenShuService extends ServiceBase
         $ldUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
 
         //企业变更信息
-        $res = (new TaoShuService())->setCheckRespFlag(true)->post(
-            [
-                'entName' => $entName,
-                'pageNo' => 1,
-                'pageSize' => 10,
-            ], 'getRegisterChangeInfo');
+        $res = (new TaoShuService())->setCheckRespFlag(true)->post([
+            'entName' => $entName,
+            'pageNo' => 1,
+            'pageSize' => 10,
+        ], 'getRegisterChangeInfo');
 
         ($res['code'] === 200 && !empty($res['result'])) ?
             list($res, $total) = [$res['result'], $res['paging']['total']] :
@@ -93,7 +92,7 @@ class FenShuService extends ServiceBase
         //==============================================================================================================
         //联合惩戒名单信息（暂无该字段接口，先以司法类中的失信公告代替）失信公告的数量
         $shixin = $this->shixin($entName);
-        $a = $this->sxgg($shixin);
+        $a = $this->sxgg($shixin['total']);
         $fx['gaofengxian'] = 0.4 * $a;
         CommonService::getInstance()->log4PHP($fx, 'info', 'getFengXian');
         return $this->checkResp(200, null, $fx, '成功');
@@ -102,6 +101,7 @@ class FenShuService extends ServiceBase
     private function shixin($entName)
     {
         $doc_type = 'shixin';
+
         $postData = [
             'doc_type' => $doc_type,
             'keyword' => $entName,
@@ -109,28 +109,12 @@ class FenShuService extends ServiceBase
             'range' => 20,
         ];
 
-        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sifa', $postData);
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)
+            ->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sifa', $postData);
 
-        ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
-
-        if (!empty($res)) {
-            foreach ($res as &$one) {
-                //取详情
-                $postData = [
-                    'id' => $one['entryId'],
-                    'doc_type' => $doc_type
-                ];
-
-                $detail = (new FaYanYuanService())->setCheckRespFlag(true)->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $doc_type, $postData);
-
-                if ($detail['code'] === 200 && !empty($detail['result'])) {
-                    $one['detail'] = current($detail['result']);
-                } else {
-                    $one['detail'] = null;
-                }
-            }
-            unset($one);
-        }
+        ($res['code'] === 200 && !empty($res['result'])) ?
+            list($res, $total) = [$res['result'], $res['paging']['total']] :
+            list($res, $total) = [null, null];
 
         $tmp['list'] = $res;
         $tmp['total'] = $total;
@@ -146,25 +130,12 @@ class FenShuService extends ServiceBase
             'pageSize' => 20,
         ];
 
-        $res = (new LongDunService())->setCheckRespFlag(true)->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'AdminPenaltyCheck/GetList', $postData);//AdministrativePenalty/GetAdministrativePenaltyList
+        $res = (new LongDunService())->setCheckRespFlag(true)
+            ->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'AdminPenaltyCheck/GetList', $postData);
 
-        ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result']['Data'], $res['paging']['total']] : list($res, $total) = [null, null];
-
-        if (!empty($res)) {
-            foreach ($res as &$one) {
-                //取详情
-                $postData = ['id' => $one['Id']];
-
-                $detail = (new LongDunService())->setCheckRespFlag(true)->get(CreateConf::getInstance()->getConf('longdun.baseUrl') . 'AdminPenaltyCheck/GetCreditDetail', $postData);//AdministrativePenalty/GetAdministrativePenaltyDetail
-
-                if ($detail['code'] == 200 && !empty($detail['result'])) {
-                    $one['detail'] = $detail['result'];
-                } else {
-                    $one['detail'] = null;
-                }
-            }
-            unset($one);
-        }
+        ($res['code'] === 200 && !empty($res['result'])) ?
+            list($res, $total) = [$res['result']['Data'], $res['paging']['total']] :
+            list($res, $total) = [null, null];
 
         $tmp['list'] = $res;
         $tmp['total'] = $total;
@@ -183,28 +154,12 @@ class FenShuService extends ServiceBase
             'range' => 20,
         ];
 
-        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sat', $postData);
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)
+            ->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sat', $postData);
 
-        ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
-
-        if (!empty($res)) {
-            foreach ($res as &$one) {
-                //取详情
-                $postData = [
-                    'id' => $one['entryId'],
-                    'doc_type' => $doc_type
-                ];
-
-                $detail = (new FaYanYuanService())->setCheckRespFlag(true)->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $doc_type, $postData);
-
-                if ($detail['code'] === 200 && !empty($detail['result'])) {
-                    $one['detail'] = current($detail['result']);
-                } else {
-                    $one['detail'] = null;
-                }
-            }
-            unset($one);
-        }
+        ($res['code'] === 200 && !empty($res['result'])) ?
+            list($res, $total) = [$res['result'], $res['paging']['total']] :
+            list($res, $total) = [null, null];
 
         $tmp['list'] = $res;
         $tmp['total'] = $total;
@@ -223,28 +178,12 @@ class FenShuService extends ServiceBase
             'range' => 20,
         ];
 
-        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sat', $postData);
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)
+            ->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sat', $postData);
 
-        ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
-
-        if (!empty($res)) {
-            foreach ($res as &$one) {
-                //取详情
-                $postData = [
-                    'id' => $one['entryId'],
-                    'doc_type' => $doc_type
-                ];
-
-                $detail = (new FaYanYuanService())->setCheckRespFlag(true)->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $doc_type, $postData);
-
-                if ($detail['code'] === 200 && !empty($detail['result'])) {
-                    $one['detail'] = current($detail['result']);
-                } else {
-                    $one['detail'] = null;
-                }
-            }
-            unset($one);
-        }
+        ($res['code'] === 200 && !empty($res['result'])) ?
+            list($res, $total) = [$res['result'], $res['paging']['total']] :
+            list($res, $total) = [null, null];
 
         $tmp['list'] = $res;
         $tmp['total'] = $total;
@@ -263,28 +202,12 @@ class FenShuService extends ServiceBase
             'range' => 20,
         ];
 
-        $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sat', $postData);
+        $res = (new FaYanYuanService())->setCheckRespFlag(true)
+            ->getList(CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . 'sat', $postData);
 
-        ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
-
-        if (!empty($res)) {
-            foreach ($res as &$one) {
-                //取详情
-                $postData = [
-                    'id' => $one['entryId'],
-                    'doc_type' => $doc_type
-                ];
-
-                $detail = (new FaYanYuanService())->setCheckRespFlag(true)->getDetail(CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl') . $doc_type, $postData);
-
-                if ($detail['code'] === 200 && !empty($detail['result'])) {
-                    $one['detail'] = current($detail['result']);
-                } else {
-                    $one['detail'] = null;
-                }
-            }
-            unset($one);
-        }
+        ($res['code'] === 200 && !empty($res['result'])) ?
+            list($res, $total) = [$res['result'], $res['paging']['total']] :
+            list($res, $total) = [null, null];
 
         $tmp['list'] = $res;
         $tmp['total'] = $total;
@@ -374,7 +297,6 @@ class FenShuService extends ServiceBase
         $fyyList = CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl');
         $fyyDetail = CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl');
 
-
         $doc_type = 'zxgg';
 
         $postData = [
@@ -386,26 +308,9 @@ class FenShuService extends ServiceBase
 
         $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($fyyList . 'sifa', $postData);
 
-        ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
-
-        if (!empty($res)) {
-            foreach ($res as &$one) {
-                //取详情
-                $postData = [
-                    'id' => $one['entryId'],
-                    'doc_type' => $doc_type
-                ];
-
-                $detail = (new FaYanYuanService())->setCheckRespFlag(true)->getDetail($fyyDetail . $doc_type, $postData);
-
-                if ($detail['code'] === 200 && !empty($detail['result'])) {
-                    $one['detail'] = current($detail['result']);
-                } else {
-                    $one['detail'] = null;
-                }
-            }
-            unset($one);
-        }
+        ($res['code'] === 200 && !empty($res['result'])) ?
+            list($res, $total) = [$res['result'], $res['paging']['total']] :
+            list($res, $total) = [null, null];
 
         $tmp['list'] = $res;
         $tmp['total'] = $total;
@@ -415,7 +320,6 @@ class FenShuService extends ServiceBase
 
     private function getPjws($entName)
     {
-
         $fyyList = CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl');
         $fyyDetail = CreateConf::getInstance()->getConf('fayanyuan.detailBaseUrl');
 
@@ -430,26 +334,9 @@ class FenShuService extends ServiceBase
 
         $res = (new FaYanYuanService())->setCheckRespFlag(true)->getList($fyyList . 'sifa', $postData);
 
-        ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
-
-        if (!empty($res)) {
-            foreach ($res as &$one) {
-                //取详情
-                $postData = [
-                    'id' => $one['entryId'],
-                    'doc_type' => $doc_type
-                ];
-
-                $detail = (new FaYanYuanService())->setCheckRespFlag(true)->getDetail($fyyDetail . $doc_type, $postData);
-
-                if ($detail['code'] === 200 && !empty($detail['result'])) {
-                    $one['detail'] = current($detail['result']);
-                } else {
-                    $one['detail'] = null;
-                }
-            }
-            unset($one);
-        }
+        ($res['code'] === 200 && !empty($res['result'])) ?
+            list($res, $total) = [$res['result'], $res['paging']['total']] :
+            list($res, $total) = [null, null];
 
         $tmp['list'] = $res;
         $tmp['total'] = $total;
@@ -459,8 +346,6 @@ class FenShuService extends ServiceBase
 
     private function getCaiWu($entName)
     {
-
-
         $postData = [
             'entName' => $entName,
             'code' => '',
