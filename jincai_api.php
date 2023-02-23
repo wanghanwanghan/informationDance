@@ -315,6 +315,14 @@ class jincai_api extends AbstractProcess
     //启动
     protected function run($arg)
     {
+        $main = (new JinCaiShuKeService())->obtainFpInfoNew(
+            true, '91320115MA1WTU4468', '2023-01-01', '2023-01-31', 1
+        );
+
+        foreach ($main['result']['data']['content'] as $one) {
+            dd($one);
+        }
+
         $this->getInv();
     }
 
@@ -382,11 +390,6 @@ class jincai_api extends AbstractProcess
         // 主票
         foreach ($main as $one_main) {
             $one_main = $one_main['invoiceMain'];
-
-            if (empty($one_main['fpdm']) || $one_main['fphm']) {
-                dd($one_main, $nsrsbh);
-            }
-
             $insert = [
                 'fpdm' => isset($one_main['fpdm']) ? $this->do_strtr($one_main['fpdm']) : '',
                 'gfsh' => isset($one_main['gfsh']) ? $this->do_strtr($one_main['gfsh']) : '',
