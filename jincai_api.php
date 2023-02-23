@@ -65,8 +65,8 @@ class jincai_api extends AbstractProcess
     //启动
     protected function run($arg)
     {
-        $this->_sendToOSS();
-        dd('over1111');
+        $this->sendToAnt();
+        dd('dsdfsdf');
     }
 
     //上传oss时候调用
