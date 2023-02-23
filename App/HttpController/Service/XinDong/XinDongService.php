@@ -2624,7 +2624,7 @@ class XinDongService extends ServiceBase
         $offset = ($page - 1) * $size;
         $ElasticSearchService->addSize($size);
         $ElasticSearchService->addFrom($offset);
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202211');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202301');
         $responseArr = @json_decode($responseJson, true);
         // CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
         //     [
@@ -2695,7 +2695,7 @@ class XinDongService extends ServiceBase
         $offset = ($page - 1) * $size;
         $ElasticSearchService->addSize($size);
         $ElasticSearchService->addFrom($offset);
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202211');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202301');
         $responseArr = @json_decode($responseJson, true);
         // CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
         //     [
@@ -3621,8 +3621,8 @@ class XinDongService extends ServiceBase
         $companyEsModel
             ->addSize($size)
             ->addFrom(0)
-            //->searchFromEs('company_202211',true);
-            ->searchFromEs('company_202211');
+            //->searchFromEs('company_202301',true);
+            ->searchFromEs('company_202301');
 
         $returnData = [];
         foreach ($companyEsModel->return_data['hits']['hits'] as $dataItem) {
