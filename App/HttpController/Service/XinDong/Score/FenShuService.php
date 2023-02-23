@@ -25,7 +25,9 @@ class FenShuService extends ServiceBase
                 'pageSize' => 10,
             ], 'getRegisterChangeInfo');
 
-        ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
+        ($res['code'] === 200 && !empty($res['result'])) ?
+            list($res, $total) = [$res['result'], $res['paging']['total']] :
+            list($res, $total) = [null, null];
 
         $getRegisterChangeInfo['list'] = $res;
         $getRegisterChangeInfo['total'] = $total;
@@ -36,7 +38,9 @@ class FenShuService extends ServiceBase
             ->setCheckRespFlag(true)
             ->get($ldUrl . 'ECIException/GetOpException', $postData);
 
-        ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
+        ($res['code'] === 200 && !empty($res['result'])) ?
+            list($res, $total) = [$res['result'], $res['paging']['total']] :
+            list($res, $total) = [null, null];
 
         $getOpException['list'] = $res;
         $getOpException['total'] = $total;
@@ -93,8 +97,6 @@ class FenShuService extends ServiceBase
         $fx['gaofengxian'] = 0.4 * $a;
         CommonService::getInstance()->log4PHP($fx, 'info', 'getFengXian');
         return $this->checkResp(200, null, $fx, '成功');
-//        return $fx;
-
     }
 
     private function shixin($entName)
@@ -303,7 +305,6 @@ class FenShuService extends ServiceBase
         return 0;
     }
 
-
     //行政处罚
     private function xzcf($data)
     {
@@ -319,7 +320,6 @@ class FenShuService extends ServiceBase
 
         return 0;
     }
-
 
     //欠税公告
     private function qsgg($data)
@@ -353,7 +353,7 @@ class FenShuService extends ServiceBase
         return 0;
     }
 
-//涉税处罚公示
+    //涉税处罚公示
     private function sscfgs($data)
     {
         //总数
@@ -781,4 +781,5 @@ class FenShuService extends ServiceBase
     {
         return $this->createReturn((int)$code, $paging, $result, $msg);
     }
+
 }
