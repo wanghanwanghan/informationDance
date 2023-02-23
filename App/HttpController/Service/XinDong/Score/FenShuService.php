@@ -12,9 +12,11 @@ use App\HttpController\Service\TaoShu\TaoShuService;
 
 class FenShuService extends ServiceBase
 {
-//获取企业的风险分
+    //获取企业的风险分
     public function getFengXian($entName)
     {
+        $ldUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
+
         //企业变更信息
         $res = (new TaoShuService())->setCheckRespFlag(true)->post(
             [
@@ -32,7 +34,7 @@ class FenShuService extends ServiceBase
         $postData = ['keyNo' => $entName];
         $res = (new LongDunService())
             ->setCheckRespFlag(true)
-            ->get($this->ldUrl . 'ECIException/GetOpException', $postData);
+            ->get($ldUrl . 'ECIException/GetOpException', $postData);
 
         ($res['code'] === 200 && !empty($res['result'])) ? list($res, $total) = [$res['result'], $res['paging']['total']] : list($res, $total) = [null, null];
 
