@@ -382,6 +382,11 @@ class jincai_api extends AbstractProcess
         // 主票
         foreach ($main as $one_main) {
             $one_main = $one_main['invoiceMain'];
+
+            if (empty($one_main['fpdm']) || $one_main['fphm']) {
+                dd($one_main, $nsrsbh);
+            }
+
             $insert = [
                 'fpdm' => isset($one_main['fpdm']) ? $this->do_strtr($one_main['fpdm']) : '',
                 'gfsh' => isset($one_main['gfsh']) ? $this->do_strtr($one_main['gfsh']) : '',
@@ -417,11 +422,6 @@ class jincai_api extends AbstractProcess
         foreach ($main as $one_main) {
             $fpdm = $one_main['invoiceMain']['fpdm'];
             $fphm = $one_main['invoiceMain']['fphm'];
-
-            if (empty($one_main['invoiceMain']['fpdm']) || empty($one_main['invoiceMain']['fphm'])) {
-                dd($one_main);
-            }
-
             if (!empty($one_main['invoiceDetailsList'])) {
                 $this->handleDetail($one_main['invoiceDetailsList'], $fpdm, $fphm);
             }
