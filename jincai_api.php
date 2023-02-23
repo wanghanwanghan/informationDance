@@ -315,21 +315,17 @@ class jincai_api extends AbstractProcess
     //启动
     protected function run($arg)
     {
-        echo '发送时间' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
+//        echo '发送时间' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
+//
+//        $main = (new JinCaiShuKeService())->obtainFpInfoNew(
+//            true, '91320115MA1WTU4468', '2023-01-01', '2023-01-31', 1
+//        );
+//
+//        echo '返回时间' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
+//
+//        dd($main);
 
-        $main = (new JinCaiShuKeService())->obtainFpInfoNew(
-            true, '91320115MA1WTU4468', '2023-01-01', '2023-01-31', 1
-        );
-
-        echo '返回时间' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
-
-        dd($main);
-
-        foreach ($main['result']['data']['content'] as $one) {
-            dd($one);
-        }
-
-        //$this->getInv();
+        $this->getInv();
     }
 
     function getInv()
@@ -431,6 +427,10 @@ class jincai_api extends AbstractProcess
         foreach ($main as $one_main) {
             $fpdm = $one_main['invoiceMain']['fpdm'];
             $fphm = $one_main['invoiceMain']['fphm'];
+            if (empty($fpdm) || empty($fphm)) {
+                CommonService::getInstance()->log4PHP([$main, $nsrsbh], '详情里没有发票代码', $this->error_log);
+                continue;
+            }
             if (!empty($one_main['invoiceDetailsList'])) {
                 $this->handleDetail($one_main['invoiceDetailsList'], $fpdm, $fphm);
             }
