@@ -417,6 +417,11 @@ class jincai_api extends AbstractProcess
         foreach ($main as $one_main) {
             $fpdm = $one_main['invoiceMain']['fpdm'];
             $fphm = $one_main['invoiceMain']['fphm'];
+
+            if (empty($one_main['invoiceMain']['fpdm']) || empty($one_main['invoiceMain']['fphm'])) {
+                dd($one_main);
+            }
+
             if (!empty($one_main['invoiceDetailsList'])) {
                 $this->handleDetail($one_main['invoiceDetailsList'], $fpdm, $fphm);
             }
