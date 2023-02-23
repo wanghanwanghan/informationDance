@@ -65,7 +65,7 @@ class jincai_api extends AbstractProcess
     //启动
     protected function run($arg)
     {
-        $this->_sendToOSS();
+        $this->sendToAnt();
         dd('over');
     }
 
@@ -80,6 +80,109 @@ class jincai_api extends AbstractProcess
                 $one->getAttr('kprqz')
             );
         }
+    }
+
+    //通知蚂蚁
+    function sendToAnt(): bool
+    {
+        //根据三个id，通知不同的url
+        $url_arr = [
+            41 => 'https://trustdata.antgroup.com/api/wezTech/collectNotify',
+        ];
+
+        $list = JinCaiTrace::create()->all();
+
+        foreach ($list as $oneReadyToSend) {
+
+            $socialCredit = $oneReadyToSend->getAttr('socialCredit');
+
+            //拿私钥
+            $id = 41;
+            $info = RequestUserInfo::create()->get($id);
+            $rsa_pub_name = $info->getAttr('rsaPub');
+            $rsa_pri_name = $info->getAttr('rsaPri');
+
+            $authResultCode = '0000';
+
+            //拿公钥加密
+            $stream = file_get_contents(RSA_KEY_PATH . $rsa_pub_name);
+            //AES加密key用RSA加密
+            $fileSecret = control::rsaEncrypt($this->currentAesKey, $stream, 'pub');
+
+            $check_file = AntAuthList::create()->where('socialCredit', $socialCredit)->get();
+
+            if (empty($check_file)) continue;
+
+            $fileKeyList = empty($check_file->getAttr('lastReqUrl')) ?
+                [] :
+                array_filter(explode(',', $check_file->getAttr('lastReqUrl')));
+
+            //拿一下这个企业的进项销项总发票数字
+            $in = EntInvoice::create()->addSuffix($oneReadyToSend->getAttr('socialCredit'), 'test')->where([
+                'nsrsbh' => $socialCredit,
+                'direction' => '01',//01-进项
+            ])->count();
+            $out = EntInvoice::create()->addSuffix($oneReadyToSend->getAttr('socialCredit'), 'test')->where([
+                'nsrsbh' => $socialCredit,
+                'direction' => '02',//02-销项
+            ])->count();
+
+            $body = [
+                'nsrsbh' => $check_file->getAttr('socialCredit'),//授权的企业税号
+                'authResultCode' => $authResultCode,//取数结果状态码 0000取数成功 XXXX取数失败
+                'fileSecret' => $fileSecret,//对称钥秘⽂
+                'companyName' => $check_file->getAttr('entName'),//公司名称
+                'authTime' => date('Y-m-d H:i:s', $check_file->getAttr('requestDate')),//授权时间
+                'totalCount' => ($in + $out) . '',
+                'fileKeyList' => $fileKeyList,//文件路径
+                //'notifyType' => 'INVOICE' //通知发票
+            ];
+
+            $num = $in + $out;
+
+            $dateM = (time() - $check_file->getAttr('requestDate')) / 86400;
+
+            if (empty($num) && $dateM < 30) {
+                $body['authResultCode'] = '9000';//'没准备好';
+                AntEmptyLog::create()->data([
+                    'nsrsbh' => $body['nsrsbh'],
+                    'data' => json_encode($body)
+                ])->save();
+            }
+
+            ksort($body);//周平说参数升序
+
+            //sign md5 with rsa
+            $private_key = file_get_contents(RSA_KEY_PATH . $rsa_pri_name);
+            $pkeyid = openssl_pkey_get_private($private_key);
+            $verify = openssl_sign(jsonEncode([$body], false), $signature, $pkeyid, OPENSSL_ALGO_MD5);
+
+            //准备通知
+            $collectNotify = [
+                'body' => [$body],
+                'head' => [
+                    'sign' => base64_encode($signature),//签名
+                    'notifyChannel' => 'ELEPHANT',//通知 渠道
+                ],
+            ];
+
+            $url = $url_arr[$id];
+
+            $header = [
+                'content-type' => 'application/json;charset=UTF-8',
+            ];
+
+            //通知
+            CommonService::getInstance()->log4PHP(jsonEncode($collectNotify, false), 'send', 'notify_fp');
+            $ret = (new CoHttpClient())
+                ->useCache(false)
+                ->needJsonDecode(true)
+                ->send($url, jsonEncode($collectNotify, false), $header, [], 'postjson');
+            CommonService::getInstance()->log4PHP($ret, 'return', 'notify_fp');
+
+        }
+
+        return true;
     }
 
     //上传到oss 发票已经入完mysql 这里要改成用阿里云内网
