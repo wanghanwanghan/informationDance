@@ -360,6 +360,9 @@ class jincai_api extends AbstractProcess
                                 // 开票日期止
                                 $kprqz = Carbon::createFromTimestamp($item->getAttr('kprqz'))->format('Y-m-d');
                                 // 主票和明细信息
+                                CommonService::getInstance()->log4PHP([
+                                    $item->getAttr('socialCredit'), $page
+                                ], '取了几页', $this->error_log);
                                 $main = (new JinCaiShuKeService())->obtainFpInfoNew(
                                     true, $item->getAttr('socialCredit'), $kprqq, $kprqz, $page
                                 );
@@ -425,8 +428,8 @@ class jincai_api extends AbstractProcess
 
         // 详情
         foreach ($main as $one_main) {
-            $fpdm = $one_main['invoiceMain']['fpdm'];
-            $fphm = $one_main['invoiceMain']['fphm'];
+            $fpdm = $one_main['invoiceMain']['fpdm'] ?? '';
+            $fphm = $one_main['invoiceMain']['fphm'] ?? '';
             if (empty($fpdm) || empty($fphm)) {
                 CommonService::getInstance()->log4PHP([$main, $nsrsbh], '详情里没有发票代码', $this->error_log);
                 continue;
