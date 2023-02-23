@@ -65,7 +65,7 @@ class jincai_api extends AbstractProcess
     //启动
     protected function run($arg)
     {
-        $this->sendToAnt();
+        $this->_sendToOSS();
         dd('over');
     }
 
@@ -323,6 +323,14 @@ class jincai_api extends AbstractProcess
                     }
                 }
             }
+
+            //这里要改成外网url 因为蚂蚁的服务器不在阿里云
+            if (!empty($file_arr)) {
+                $file_arr = array_map(function ($row) {
+                    return str_replace('-internal', '', $row);
+                }, $file_arr);
+            }
+
             AntAuthList::create()
                 ->where('socialCredit', $NSRSBH)
                 ->update([
