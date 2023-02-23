@@ -45,7 +45,6 @@ class EasySwooleEvent implements Event
         });
     }
 
-
     static function IsProductionEnv(): bool
     {
         if (

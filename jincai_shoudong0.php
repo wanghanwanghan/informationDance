@@ -180,19 +180,12 @@ class jincai_shoudong0 extends AbstractProcess
 //            }
 //        }
     }
+
     //上传oss时候调用
     function _sendToOSS()
     {
         $all = JinCaiTrace::create()->all();
-//        $continue = true;
-//        $n = '91330483099034744N';
         foreach ($all as $one) {
-//            if ($one->getAttr('socialCredit') === $n) {
-//                $continue = false;
-//            }
-//            if ($continue) {
-//                continue;
-//            }
             $this->sendToOSS(
                 $one->getAttr('socialCredit'),//
                 $one->getAttr('kprqq'),
