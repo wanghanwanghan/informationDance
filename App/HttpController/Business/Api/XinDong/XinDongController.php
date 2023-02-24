@@ -856,7 +856,7 @@ eof;
             ->setDefault()
             //按照营收排序
             ->addSortV2('li_run_gui_mo_2021',$searchOptionArr)
-            ->searchFromEs('company_202211')
+            ->searchFromEs('company_202301')
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
@@ -2204,7 +2204,7 @@ eof;
         $ElasticSearchService->addSize(1) ;
         $ElasticSearchService->addFrom(0) ;
 
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202211');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202301');
         $responseArr = @json_decode($responseJson,true);
         CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
                 [

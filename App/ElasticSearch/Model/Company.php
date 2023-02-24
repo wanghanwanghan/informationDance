@@ -290,7 +290,7 @@ class Company extends ServiceBase
         return $this;
     }
 
-    function searchFromEs($index = 'company_202211',$showLog = false)
+    function searchFromEs($index = 'company_202301',$showLog = false)
     {
 
         $responseJson = (new XinDongService())->advancedSearch($this->es,$index);
@@ -1482,7 +1482,7 @@ class Company extends ServiceBase
             $showLog = true;
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202211',$showLog)
+                ->searchFromEs('company_202301',$showLog)
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();
@@ -1638,7 +1638,7 @@ class Company extends ServiceBase
             $showLog = true;
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202211',$showLog)
+                ->searchFromEs('company_202301',$showLog)
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();
@@ -1698,7 +1698,7 @@ class Company extends ServiceBase
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202211')
+            ->searchFromEs('company_202301')
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
@@ -1801,7 +1801,7 @@ class Company extends ServiceBase
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202211')
+            ->searchFromEs('company_202301')
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
@@ -1970,7 +1970,7 @@ class Company extends ServiceBase
             // 格式化下日期和时间
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202211')
+                ->searchFromEs('company_202301')
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();
@@ -2144,7 +2144,7 @@ class Company extends ServiceBase
             // 格式化下日期和时间
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202211')
+                ->searchFromEs('company_202301')
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();
@@ -2259,7 +2259,7 @@ class Company extends ServiceBase
             // 格式化下日期和时间
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202211')
+                ->searchFromEs('company_202301')
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();

@@ -217,7 +217,6 @@ class InformationDanceRequestRecodeStatics extends ModelBase
 
         foreach ($monthLists as $Month){
             foreach ($allUsers as $User){
-                //取每个月的第一个id和最后一个id 根据id统计
                 //本月第一天
                 $beginDate = date('Y-m-01', strtotime($Month));
                 //本月最后一天
@@ -376,7 +375,7 @@ class InformationDanceRequestRecodeStatics extends ModelBase
             'operate' => '<=',
         ];
 
-        //客户
+        //根据用户id 进行筛选  前端传过来的是Id
         if($requestData['company_name']>0){
             $whereArr[] = [
                 'field' => 'userId',
@@ -385,7 +384,7 @@ class InformationDanceRequestRecodeStatics extends ModelBase
             ];
         }
 
-        //charge_state
+        //结算状态
         if($requestData['charge_state']>0){
             $whereArr[] = [
                 'field' => 'charge_stage',
