@@ -65,8 +65,20 @@ class jincai_api extends AbstractProcess
     //启动
     protected function run($arg)
     {
-        $this->sendToAnt();
-        dd('dsdfsdf');
+        $this->getInvOne();
+    }
+
+    function apiAddTask($socialCredit)
+    {
+        for ($month_num = 1; $month_num <= 24; $month_num++) {
+            $kprqq = Carbon::now()->subMonths($month_num)->startOfMonth()->format('Y-m-d');
+            $kprqz = Carbon::now()->subMonths($month_num)->endOfMonth()->format('Y-m-d');
+            $info = (new JinCaiShuKeService())->S000519($socialCredit, $kprqq, $kprqz);
+            $arr = jsonDecode(base64_decode($info['content']));
+            foreach ($arr as $one) {
+                file_put_contents('rwh.txt', $one['rwh'] . PHP_EOL, FILE_APPEND);
+            }
+        }
     }
 
     //上传oss时候调用
@@ -342,6 +354,44 @@ class jincai_api extends AbstractProcess
         closedir($dh);
 
         return true;
+    }
+
+    function getInvOne()
+    {
+        $entname = '北京华品博睿网络技术有限公司';
+        $socialCredit = '911101050896860603';
+        $province = '北京市';
+        $city = '北京市';
+        $p = '88ee872c568054029fc9325b27b4d381';
+
+        $entname = '凌雄技术（深圳）有限公司';
+        $socialCredit = '914403000685577373';
+        $province = '深圳市';
+        $city = '福田区';
+        $p = 'fc160cd1955bce6392a7a4c100f2ab41';
+
+        $list = [
+            '914403000685577373'
+        ];
+
+        $kprqq = Carbon::now()->subMonths(23)->startOfMonth()->format('Y-m-d');
+        $kprqz = Carbon::now()->subMonths(1)->endOfMonth()->format('Y-m-d');
+
+        foreach ($list as $socialCredit) {
+            $page = 0;
+            while (true) {
+                $page++;
+                $main = (new JinCaiShuKeService())->obtainFpInfoNew(
+                    true, $socialCredit, $kprqq, $kprqz, $page
+                );
+                if (empty($main['result']['data']['content'])) {
+                    dd('没了');
+                } else {
+                    $this->handleMain($main['result']['data']['content'], $socialCredit);
+                }
+            }
+        }
+
     }
 
     function getInv()

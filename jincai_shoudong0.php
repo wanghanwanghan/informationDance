@@ -44,10 +44,7 @@ class jincai_shoudong0 extends AbstractProcess
     {
         // 不要删除这行
         // $this->createCurrentAesKey();
-//        $this->addTask();
-        $this->getTaskStatus();
     }
-
 
     //取票时候调用 从数据库
     function _getInvoice()
@@ -171,12 +168,13 @@ class jincai_shoudong0 extends AbstractProcess
 
     }
 
-    function getTaskStatus(){
+    function getTaskStatus()
+    {
 //        $all = JinCaiTrace::create()->all();
 //        foreach ($all as $one) {
 //            if( $one->getAttr('code')== 'S000'){
-                $addTaskInfo = (new JinCaiShuKeService())->getTaskStatus('aacd1990009814b1d183b30e6051f06c');//$one->getAttr('pTraceNo')
-                var_dump($addTaskInfo);
+        $addTaskInfo = (new JinCaiShuKeService())->getTaskStatus('aacd1990009814b1d183b30e6051f06c');//$one->getAttr('pTraceNo')
+        var_dump($addTaskInfo);
 //            }
 //        }
     }
@@ -744,6 +742,34 @@ class jincai_shoudong0 extends AbstractProcess
         }
 
         dd('完成');
+    }
+
+    function addTaskOne()
+    {
+        $entname = '北京华品博睿网络技术有限公司';
+        $socialCredit = '911101050896860603';
+        $province = '北京市';
+        $city = '北京市';
+
+        $entname = '凌雄技术（深圳）有限公司';
+        $socialCredit = '914403000685577373';
+        $province = '深圳市';
+        $city = '福田区';
+
+        $kprqq = Carbon::now()->subMonths(23)->startOfMonth()->timestamp;
+        $kprqz = Carbon::now()->subMonths(1)->endOfMonth()->timestamp;
+
+        $ywBody = [
+            'kprqq' => date('Y-m-d', $kprqq),// 开票日期起
+            'kprqz' => date('Y-m-d', $kprqz),// 开票日期止
+            'nsrsbh' => $socialCredit,// 纳税人识别号
+        ];
+
+        $addTaskInfo = (new JinCaiShuKeService())->addTaskNew(
+            $socialCredit, $province, $city, $ywBody
+        );
+
+        dd($addTaskInfo, $kprqq, $kprqz);
     }
 
     protected function onShutDown()
