@@ -32,7 +32,7 @@ class InformationDanceRequestRecodeStatics extends ModelBase
     static $type_api_cname = "API接口" ;
 
     static $type_invoice = 5 ;
-    static $type_invoice_cname = "发票类" ;
+    static $type_invoice_cname = "蚂蚁-发票" ;
 
 
     static function chargeStageMaps(){
@@ -230,7 +230,7 @@ class InformationDanceRequestRecodeStatics extends ModelBase
                 $endDate = date('Y-m-d', strtotime("$beginDate +1 month -1 day"));
                 $beginDate = $beginDate." 00:00:00";
                 $endDate = $endDate." 23:59:59";
-                $sql = "SELECT  userId,  SUM(1) as total_num,   SUM(IF( `responseCode` = 200 AND spendMoney = 0 , 1, 0)) as cache_num     FROM    information_dance_request_recode_".$year."   WHERE userId = ".$User["userId"]."  AND created_at >= ".strtotime($beginDate)." AND created_at <=  ".strtotime($endDate)." ";
+                $sql = "SELECT  userId,  SUM(1) as total_num,,   SUM(IF( `responseCode` = 200 , 1, 0)) as succeed_num,   SUM(IF( `responseCode` = 200 AND spendMoney = 0 , 1, 0)) as cache_num     FROM    information_dance_request_recode_".$year."   WHERE userId = ".$User["userId"]."  AND created_at >= ".strtotime($beginDate)." AND created_at <=  ".strtotime($endDate)." ";
                 $Res =  self::findBySql($sql);
                 CommonService::getInstance()->log4PHP(
                     json_encode([
@@ -250,6 +250,8 @@ class InformationDanceRequestRecodeStatics extends ModelBase
                         self::addRecordV2(
                             [
                                 "userId"=>$User["userId"],
+                                "total_succeed_num"=>$User["succeed_num"],
+                                "type"=>self::$type_api,
                                 "year"=>$year,
                                 "month"=>$Month,
                                 //"day"=>$day,
@@ -330,6 +332,7 @@ class InformationDanceRequestRecodeStatics extends ModelBase
                     self::addRecordV2(
                         [
                             "userId"=>$ResItem["belong"],
+                            "type"=>self::$type_invoice,
                             "year"=>$year,
                             "month"=>$Month,
                             //"day"=>$day,
