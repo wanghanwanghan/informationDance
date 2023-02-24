@@ -417,14 +417,13 @@ class ToolsFileLists extends ModelBase
            $i = 0;
            foreach ($yieldDatas as $dataItem) {
                $i++;
-//               if($i%300==0){
+               if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                           '拉取公开联系人_已生成' => $i,
-                           '$dataItem' => $dataItem,
+                           '拉取公开联系人_已生成' => $i
                        ], JSON_UNESCAPED_UNICODE)
                    );
-//               }
+               }
 
 
                // 企业名称：$dataItem[0]
@@ -483,17 +482,6 @@ class ToolsFileLists extends ModelBase
 
                //有效的联系人
                $validContacts = CompanyManager::getManagesNamesByCompanyId($companyRes->companyid);
-               CommonService::getInstance()->log4PHP(
-                   json_encode([
-                       __CLASS__.__FUNCTION__ .__LINE__,
-                       '拉取公开联系人-找不到企业信息-continue'=>[
-                           '信用代码' => $code,
-                           '企业名称' => $entname,
-                           '有效的联系人' => $validContacts,
-                       ]
-                   ],JSON_UNESCAPED_UNICODE)
-               );
-
                foreach($retData as $datautem){
                    //公开联系人姓名
                    if($datautem['name']){
