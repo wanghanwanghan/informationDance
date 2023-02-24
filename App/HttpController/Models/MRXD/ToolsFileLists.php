@@ -420,7 +420,8 @@ class ToolsFileLists extends ModelBase
                if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
-                           '拉取公开联系人_已生成' => $i
+                           '拉取公开联系人_已生成' => $i,
+                           '$dataItem' => $dataItem,
                        ], JSON_UNESCAPED_UNICODE)
                    );
                }
@@ -467,6 +468,18 @@ class ToolsFileLists extends ModelBase
                            !in_array($datum1['lianxi'],$allConatcts['qcc'])
                        ){
                            $newRetData[$key1] = $datum1;
+                       }else{
+//                           CommonService::getInstance()->log4PHP(
+//                               json_encode([
+//                                   __CLASS__.__FUNCTION__ .__LINE__,
+//                                   '拉取公开联系人-企查查掉了-'=>[
+//                                       '信用代码' => $code,
+//                                       '企业名称' => $entname,
+//                                       'qcc' => $allConatcts['qcc'],
+//                                       'lianxi' => $datum1['lianxi'],
+//                                   ]
+//                               ],JSON_UNESCAPED_UNICODE)
+//                           );
                        }
                    }
                    $retData = $newRetData;
@@ -533,6 +546,7 @@ class ToolsFileLists extends ModelBase
                        $tmpDataItem[] = '';//'公开手机微信号码',
                        $tmpDataItem[] = '';//'联系人名称(疑似/通过微信名匹配)',
                        fputcsv($f, $tmpDataItem);
+                       continue;
                    }
 
                    $matchedWeiXinName = WechatInfo::findByPhoneV2(($datautem['lianxi']));
@@ -549,8 +563,7 @@ class ToolsFileLists extends ModelBase
                    //不需要微信匹配职位
                    if(!$fill_name_and_position_by_weixin){
                        $tmpDataItem[] = '';
-                       fputcsv($f, $tmpDataItem);
-
+                       fputcsv($f, $tmpDataItem); 
                        continue;
                    }
 
