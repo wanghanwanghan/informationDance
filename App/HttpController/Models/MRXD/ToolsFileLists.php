@@ -563,7 +563,7 @@ class ToolsFileLists extends ModelBase
                    //不需要微信匹配职位
                    if(!$fill_name_and_position_by_weixin){
                        $tmpDataItem[] = '';
-                       fputcsv($f, $tmpDataItem); 
+                       fputcsv($f, $tmpDataItem);
                        continue;
                    }
 

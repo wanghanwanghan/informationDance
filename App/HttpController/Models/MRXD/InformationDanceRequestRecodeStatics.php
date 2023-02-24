@@ -28,6 +28,13 @@ class InformationDanceRequestRecodeStatics extends ModelBase
     static $charge_stage_done = 10;
     static $charge_stage_done_des = "已结算";
 
+    static $type_api = 1 ;
+    static $type_api_cname = "API接口" ;
+
+    static $type_invoice = 5 ;
+    static $type_invoice_cname = "发票类" ;
+
+
     static function chargeStageMaps(){
         return [
             self::$charge_stage_init => self::$charge_stage_init_des,
@@ -178,7 +185,7 @@ class InformationDanceRequestRecodeStatics extends ModelBase
         return $data;
     }
 
-
+    //添加API接口类统计
     static function addStaticRecordByYear($year){
         $t1 = microtime(true);  ;
 
@@ -265,6 +272,84 @@ class InformationDanceRequestRecodeStatics extends ModelBase
                             ],JSON_UNESCAPED_UNICODE)
                         );
                     }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    //添加蚂蚁-发票数据的对账
+    static function addMaYiInvoiceStaticRecordByYear($year){
+        $t1 = microtime(true);  ;
+
+        $maYiUserId = 41 ;
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '对账模块-蚂蚁发票-添加中间表统计数据-开始执行-年度' => $year
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+        $monthLists = [
+            $year."-01",
+            $year."-02",
+            $year."-03",
+            $year."-04",
+            $year."-05",
+            $year."-06",
+            $year."-07",
+            $year."-08",
+            $year."-09",
+            $year."-10",
+            $year."-11",
+            $year."-12",
+        ];
+
+
+        foreach ($monthLists as $Month){
+            //本月第一天
+            $beginDate = date('Y-m-01', strtotime($Month));
+            $beginDate = $beginDate." 00:00:00";
+
+            $sql = "SELECT   SUM(1) as total_num,   SUM(IF( isElectronics LIKE '%属%成功%' OR isElectronics LIKE '%非一般%' , 1, 0)) as succeed_num     FROM    information_dance_ant_auth_list   WHERE  `belong` = $maYiUserId   AND lastReqTime >= ".strtotime($beginDate)." AND canGetDataDate <=  ".strtotime($beginDate)." ";
+            $Res =  self::findBySql($sql);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '对账模块-蚂蚁发票-添加中间表统计数据-sql直接统计用户本月数据' =>  [
+                        "sql"=>$sql,
+                        "月度"=>$Month,
+                        "该月第一天"=>$beginDate,
+                        "结果数量"=>count($Res),
+                        "耗时"=>'耗时'.round(microtime(true)-$t1,3).'秒',
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
+            foreach ($Res as $ResItem){
+                if($ResItem["total_num"]>0){
+                    self::addRecordV2(
+                        [
+                            "userId"=>$ResItem["belong"],
+                            "year"=>$year,
+                            "month"=>$Month,
+                            //"day"=>$day,
+                            "total_num"=>intval($ResItem["total_num"]),
+                            "total_succeed_num"=>intval($ResItem["succeed_num"]),
+                            "total_cache_num"=>0,
+                        ]
+                    );
+                }else{
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            '对账模块-蚂蚁发票-添加中间表统计数据-sql直接统计用户本月数据-调用次数为0-不入库' =>  [
+                                "sql"=>$sql,
+                                "月度"=>$Month,
+                                "该月第一天"=>$beginDate,
+                                "结果数量"=>count($Res),
+                                "耗时"=>'耗时'.round(microtime(true)-$t1,3).'秒',
+                            ]
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
                 }
             }
         }
