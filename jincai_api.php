@@ -382,10 +382,10 @@ class jincai_api extends AbstractProcess
             while (true) {
                 $page++;
                 $main = (new JinCaiShuKeService())->obtainFpInfoNew(
-                    true, $socialCredit, $kprqq, $kprqz, $page
+                    false, $socialCredit, $kprqq, $kprqz, $page
                 );
                 if (empty($main['result']['data']['content'])) {
-                    dd('没了');
+                    dd('没了', $page);
                 } else {
                     $this->handleMain($main['result']['data']['content'], $socialCredit);
                 }
