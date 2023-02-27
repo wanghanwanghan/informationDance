@@ -378,7 +378,7 @@ class jincai_api extends AbstractProcess
         $kprqz = Carbon::now()->subMonths(1)->endOfMonth()->format('Y-m-d');
 
         foreach ($list as $socialCredit) {
-            $page = 198;
+            $page = 199;
             while (true) {
                 $page++;
                 $main = (new JinCaiShuKeService())->obtainFpInfoNew(
