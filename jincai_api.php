@@ -381,9 +381,12 @@ class jincai_api extends AbstractProcess
             $page = 199;
             while (true) {
                 $page++;
+                echo '开始取:' . $page . '页' . PHP_EOL;
+                echo '开始取的开始时间:' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
                 $main = (new JinCaiShuKeService())->obtainFpInfoNew(
                     false, $socialCredit, $kprqq, $kprqz, $page
                 );
+                echo '取到的时间:' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
                 if (empty($main['result']['data']['content'])) {
                     dd('没了', $page);
                 } else {
