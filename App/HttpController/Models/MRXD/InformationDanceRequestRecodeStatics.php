@@ -187,8 +187,7 @@ class InformationDanceRequestRecodeStatics extends ModelBase
 
     //添加API接口类统计
     static function addStaticRecordByYear($year){
-        $t1 = microtime(true);  ;
-
+        $t1 = microtime(true);
         CommonService::getInstance()->log4PHP(
             json_encode([
                 '对账模块-添加中间表统计数据-开始执行-年度' => $year

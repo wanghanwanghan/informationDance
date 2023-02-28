@@ -158,9 +158,10 @@ class GuoPiaoService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
-    //实时ocr查验
+    //实时ocr查验 readyToSendV2
     function getInvoiceOcr($image)
     {
+        return $this->getInvoiceOcrV2($image);
         //图片steam的base64编码
         $body = $param = [];
         $param['content'] = $image;
@@ -170,6 +171,32 @@ class GuoPiaoService extends ServiceBase
         $api_path = 'invoice/realTimeRecognize';
 
         $res = $this->readyToSend($api_path, $body, false, true, true);
+
+        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+    }
+
+    /***
+    参数 参数类型 参数说明 是否必填 备注
+    fileName String 文件名 否 支持常规图片、PDF格式以及ofd格式文件
+    base64Content String base64字符串 否 base64Content和imageUrl任选其一必填，如果二者均不为空，优先识别imageUrl。
+    imageUrl String 图片链接地址 否
+     ***/
+    function getInvoiceOcrV2($fileName,$base64Content,$imageUrl)
+    {
+        //图片steam的base64编码
+//        $body = $param = [];
+//        $param['content'] = $image;
+//        $body['param'] = $param;
+//        $body['taxNo'] = $this->taxNo;
+
+        $body = [
+            "fileName" =>$fileName,
+            "base64Content" =>$base64Content,
+            "imageUrl" =>$imageUrl,
+        ];
+        $api_path = 'ocr/realTimeRecognize';
+
+        $res = $this->readyToSendV2($api_path, $body, false, true, true);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
@@ -529,6 +556,35 @@ class GuoPiaoService extends ServiceBase
             $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
             $res = base64_decode($res);
             $res = $this->decrypt($res, $isTest);
+            return jsonDecode($res);
+        } else {
+            return (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
+        }
+    }
+    private function readyToSendV2($api_path, $body, $isTest = false, $encryption = true, $zwUrl = false)
+    {
+        if (preg_match('/^http/', $api_path)) {
+            $url = $api_path;
+        } elseif ($isTest) {
+            $url = $this->urlTest . $api_path;
+        } else {
+            $url = $this->url . $api_path;
+        }
+
+        if ($encryption) {
+//            $param = $body['param'];
+//            $json_param = jsonEncode($param);
+//            $encryptedData = $this->encrypt($json_param, $isTest);
+//            $base64_str = base64_encode($encryptedData);
+//            $body['param'] = $base64_str;
+
+//            if ($zwUrl) {
+//                $url = 'http://api.zoomwant.com:50001/api/' . $api_path;
+//            }
+
+            $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($this->url, $body);
+//            $res = base64_decode($res);
+//            $res = $this->decrypt($res, $isTest);
             return jsonDecode($res);
         } else {
             return (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
