@@ -190,9 +190,11 @@ class GuoPiaoController extends GuoPiaoBase
     //发票实时ocr
     function getInvoiceOcrV2()
     {
-        $image = $this->request()->getRequestParam('image') ?? '';
+        $fileName = $this->request()->getRequestParam('fileName') ?? '';
+        $base64Content = $this->request()->getRequestParam('base64Content') ?? '';
+        $imageUrl = $this->request()->getRequestParam('imageUrl') ?? '';
 
-        $res = (new GuoPiaoService())->getInvoiceOcrV2($image);
+        $res = (new GuoPiaoService())->getInvoiceOcrV2($fileName,$base64Content,$imageUrl);
 
         return $this->checkResponse($res, __FUNCTION__);
     }

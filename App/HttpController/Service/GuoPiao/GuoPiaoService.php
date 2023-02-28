@@ -188,6 +188,16 @@ class GuoPiaoService extends ServiceBase
 //        $body['param'] = $param;
 //        $body['taxNo'] = $this->taxNo;
 
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'api 实时识别图片' => [
+                    '文件名' => $fileName,
+                    'base64字符串' => $base64Content,
+                    '图片链接地址' => $imageUrl
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         $body = [
             "fileName" =>$fileName,
             "base64Content" =>$base64Content,
@@ -582,11 +592,32 @@ class GuoPiaoService extends ServiceBase
 //            }
 
             $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($this->guopiao_url, $body);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '国票-发起请求' => [
+                        'url' => $this->guopiao_url,
+                        'body' => $body,
+                        '返回' => $res,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
+
 //            $res = base64_decode($res);
 //            $res = $this->decrypt($res, $isTest);
             return jsonDecode($res);
         } else {
-            return (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
+            $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '国票-发起请求' => [
+                        'url' => $url,
+                        'body' => $body,
+                        '返回' => $res,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
+
+            return $res
         }
     }
 
