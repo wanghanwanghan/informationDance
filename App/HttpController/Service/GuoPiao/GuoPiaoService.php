@@ -198,12 +198,15 @@ class GuoPiaoService extends ServiceBase
             ],JSON_UNESCAPED_UNICODE)
         );
 
-        $body = [
+        $tmp = [
             "fileName" =>$fileName,
             "base64Content" =>$base64Content,
             "imageUrl" =>$imageUrl,
         ];
         $api_path = 'ocr/realTimeRecognize';
+
+        //图片steam的base64编码
+        $body['param'] = $tmp;
 
         $res = $this->readyToSendV2($api_path, $body, false, true, true);
 
@@ -581,15 +584,11 @@ class GuoPiaoService extends ServiceBase
         }
 
         if ($encryption) {
-//            $param = $body['param'];
-//            $json_param = jsonEncode($param);
-//            $encryptedData = $this->encrypt($json_param, $isTest);
-//            $base64_str = base64_encode($encryptedData);
-//            $body['param'] = $base64_str;
-
-//            if ($zwUrl) {
-//                $url = 'http://api.zoomwant.com:50001/api/' . $api_path;
-//            }
+            $param = $body['param'];
+            $json_param = jsonEncode($param);
+            $encryptedData = $this->encrypt($json_param, $isTest);
+            $base64_str = base64_encode($encryptedData);
+            $body['param'] = $base64_str;
 
             $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($this->guopiao_url, $body);
             CommonService::getInstance()->log4PHP(
@@ -602,8 +601,58 @@ class GuoPiaoService extends ServiceBase
                 ],JSON_UNESCAPED_UNICODE)
             );
 
-//            $res = base64_decode($res);
-//            $res = $this->decrypt($res, $isTest);
+            $res = base64_decode($res);
+            $res = $this->decrypt($res, $isTest);
+            return jsonDecode($res);
+        } else {
+            $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '国票-发起请求' => [
+                        'url' => $url,
+                        'body' => $body,
+                        '返回' => $res,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
+
+            return $res;
+        }
+    }
+    private function readyToSendV3($api_path, $body, $isTest = false, $encryption = true, $zwUrl = false)
+    {
+        if (preg_match('/^http/', $api_path)) {
+            $url = $api_path;
+        } elseif ($isTest) {
+            $url = $this->guopiao_url . $api_path;
+        } else {
+            $url = $this->guopiao_url . $api_path;
+        }
+
+        if ($encryption) {
+            $param = $body['param'];
+            $json_param = jsonEncode($param);
+            $encryptedData = $this->encrypt($json_param, $isTest);
+            $base64_str = base64_encode($encryptedData);
+            $body['param'] = $base64_str;
+
+            if ($zwUrl) {
+                $url = 'http://api.zoomwant.com:50001/api/' . $api_path;
+            }
+
+            $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($this->guopiao_url, $body);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '国票-发起请求' => [
+                        'url' => $this->guopiao_url,
+                        'body' => $body,
+                        '返回' => $res,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
+
+            $res = base64_decode($res);
+            $res = $this->decrypt($res, $isTest);
             return jsonDecode($res);
         } else {
             $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
