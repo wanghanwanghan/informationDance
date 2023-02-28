@@ -161,7 +161,6 @@ class GuoPiaoService extends ServiceBase
     //实时ocr查验 readyToSendV2
     function getInvoiceOcr($image)
     {
-        return $this->getInvoiceOcrV2($image);
         //图片steam的base64编码
         $body = $param = [];
         $param['content'] = $image;
@@ -566,9 +565,9 @@ class GuoPiaoService extends ServiceBase
         if (preg_match('/^http/', $api_path)) {
             $url = $api_path;
         } elseif ($isTest) {
-            $url = $this->urlTest . $api_path;
+            $url = $this->guopiao_url . $api_path;
         } else {
-            $url = $this->url . $api_path;
+            $url = $this->guopiao_url . $api_path;
         }
 
         if ($encryption) {
@@ -582,7 +581,7 @@ class GuoPiaoService extends ServiceBase
 //                $url = 'http://api.zoomwant.com:50001/api/' . $api_path;
 //            }
 
-            $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($this->url, $body);
+            $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($this->guopiao_url, $body);
 //            $res = base64_decode($res);
 //            $res = $this->decrypt($res, $isTest);
             return jsonDecode($res);
