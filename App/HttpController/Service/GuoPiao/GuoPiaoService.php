@@ -617,7 +617,7 @@ class GuoPiaoService extends ServiceBase
                 ],JSON_UNESCAPED_UNICODE)
             );
 
-            return $res
+            return $res;
         }
     }
 
