@@ -198,6 +198,7 @@ class GuoPiaoService extends ServiceBase
             ],JSON_UNESCAPED_UNICODE)
         );
         $url = $this->guopiao_url.'/api/ocr/realTimeRecognize';
+        $url = 'http://ivs.fapiao.com/mars/api/ocr/realTimeRecognize';
 
         ksort($data);
 
