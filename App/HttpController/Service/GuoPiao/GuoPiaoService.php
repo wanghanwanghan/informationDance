@@ -221,10 +221,11 @@ class GuoPiaoService extends ServiceBase
             'Content-Type:'.$contentType
         ];
 
-
-
-        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send(
-            $url, $data,$headers
+//        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send(
+//            $url, $data,$headers
+//        );
+        $res =self::postCurl(
+            $data, $url,$headers
         );
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -240,6 +241,28 @@ class GuoPiaoService extends ServiceBase
         return $res;
 
         //return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+    }
+
+    static function postCurl(array $postFields, string $url,array $headers)
+    {
+        $post = $postFields;
+        //if (count($post) == 0) {
+        //    return false;
+        //}
+        $url = trim($url);
+
+        $postdata = json_encode($post,JSON_UNESCAPED_UNICODE);
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $result = curl_exec($ch);
+        curl_close($ch);
+        return $result;
     }
 
     /**
