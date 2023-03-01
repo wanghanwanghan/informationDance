@@ -196,6 +196,7 @@ class GuoPiaoController extends GuoPiaoBase
 
         $res = (new GuoPiaoService())->getInvoiceOcrV2($fileName,$base64Content,$imageUrl);
 
+        return $res;
         return $this->checkResponse($res, __FUNCTION__);
     }
 

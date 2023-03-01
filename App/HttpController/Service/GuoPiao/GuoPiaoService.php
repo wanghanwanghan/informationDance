@@ -180,13 +180,13 @@ class GuoPiaoService extends ServiceBase
     base64Content String base64字符串 否 base64Content和imageUrl任选其一必填，如果二者均不为空，优先识别imageUrl。
     imageUrl String 图片链接地址 否
      ***/
-    function getInvoiceOcrV2($fileName,$base64Content,$imageUrl)
+    function getInvoiceOcrV2($fileName,$base64Content,$imageUrl,$showLog = false)
     {
-        //图片steam的base64编码
-//        $body = $param = [];
-//        $param['content'] = $image;
-//        $body['param'] = $param;
-//        $body['taxNo'] = $this->taxNo;
+        $data = [
+            "fileName" => "invoice.png",
+            "base64Content" => "",
+            "imageUrl" => "https://api.meirixindong.com/Static/Temp/invoice.png",
+        ];
 
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -197,20 +197,70 @@ class GuoPiaoService extends ServiceBase
                 ]
             ],JSON_UNESCAPED_UNICODE)
         );
+        $url = $this->guopiao_url.'/api/ocr/realTimeRecognize';
 
-        $tmp = [
-            "fileName" =>$fileName,
-            "base64Content" =>$base64Content,
-            "imageUrl" =>$imageUrl,
+        ksort($data);
+
+        $date = gmdate('D, d M Y H:i:s', time()+3600 * 8)." GMT";
+        $rand = strtolower(self::guid());
+
+        $accept = '*/*';
+        $contentType= 'application/json; charset=utf-8';
+
+        $customHeaderStr = "x-mars-api-version:20190618\nx-mars-signature-nonce:$rand\n";
+        //$ContentMD5 = base64_encode(md5(json_encode($data,JSON_UNESCAPED_UNICODE)));
+        $httpHeaderStr = "POST\n$accept\nnull\n$contentType\n$date\n";
+        $stringToSign = $httpHeaderStr.$customHeaderStr.$url;
+
+        $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true));
+        $headers = [
+            'date:'.$date,
+            'signature:mars '.$this->client_id.':'.$Signature,
+            'x-mars-api-version:20190618',
+            'x-mars-signature-nonce:'.$rand,
+            'Content-Type:'.$contentType
         ];
-        $api_path = 'ocr/realTimeRecognize';
 
-        //图片steam的base64编码
-        $body['param'] = $tmp;
 
-        $res = $this->readyToSendV2($api_path, $body, false, true, true);
 
-        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send(
+            $url, $data,$headers
+        );
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '国票-发起请求' => [
+                    'url' => $url,
+                    'data' => $data,
+                    'headers' => $headers,
+                    '返回' => $res,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+        return $res;
+
+        //return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+    }
+
+    /**
+     * uuid生成
+     * @return string
+     */
+    public static function guid(){
+        if (function_exists('com_create_guid')){
+            return com_create_guid();
+        }else{
+            mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
+            $charid = strtoupper(md5(uniqid(rand(), true)));
+            $hyphen = chr(45);// "-"
+            $uuid =substr($charid, 0, 8).$hyphen
+                .substr($charid, 8, 4).$hyphen
+                .substr($charid,12, 4).$hyphen
+                .substr($charid,16, 4).$hyphen
+                .substr($charid,20,12)
+            ;
+            return $uuid;
+        }
     }
 
     //实时查验
@@ -573,6 +623,14 @@ class GuoPiaoService extends ServiceBase
             return (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
         }
     }
+
+    private function postGuoPiao()
+    {
+
+
+
+    }
+
     private function readyToSendV2($api_path, $body, $isTest = false, $encryption = true, $zwUrl = false)
     {
         if (preg_match('/^http/', $api_path)) {
