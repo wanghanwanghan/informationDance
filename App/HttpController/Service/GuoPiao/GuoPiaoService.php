@@ -66,6 +66,7 @@ class GuoPiaoService extends ServiceBase
         $res['code'] - 0 === 0 ? $res['code'] = 200 : $res['code'] = 600;
         if( in_array($type,['checkInvoice','realTimeRecognize']) ){
             $res['failCode'] - 0 === 0 ? $res['code'] = 200 : $res['code'] = 600;
+            $res['msg'] = $res['result']  ;
         }
 
         //拿结果

@@ -195,7 +195,7 @@ class GuoPiaoController extends GuoPiaoBase
         $imageUrl = $this->request()->getRequestParam('imageUrl') ?? '';
 
         $res = (new GuoPiaoService())->setCheckRespFlag(true)->realTimeRecognize($fileName,$base64Content,$imageUrl);
-        return $this->writeJson($res['code'], null, $res['result'], $res['message']); 
+        return $this->writeJson($res['code'], null, $res['result'], $res['message']);
     }
 
 
