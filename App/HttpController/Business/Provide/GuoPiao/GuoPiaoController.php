@@ -102,7 +102,12 @@ class GuoPiaoController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         CommonService::getInstance()->log4PHP(
-            json_encode($res,JSON_UNESCAPED_UNICODE)
+            json_encode(
+                [
+                    $res[$this->csp]['code'],
+                    $res[$this->csp]['result'],
+                    $res[$this->csp]['message']
+                ],JSON_UNESCAPED_UNICODE)
         );
         return $this->writeJson($res[$this->csp]['code'], null, $res[$this->csp]['result'], $res[$this->csp]['message']) ;
         //return $this->checkResponse($res);
@@ -141,6 +146,16 @@ class GuoPiaoController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    $res[$this->csp]['code'],
+                    $res[$this->csp]['result'],
+                    $res[$this->csp]['message']
+                ],JSON_UNESCAPED_UNICODE)
+        );
+
         return $this->writeJson($res[$this->csp]['code'], null, $res[$this->csp]['result'], $res[$this->csp]['message']) ;
         //return $this->checkResponse($res);
     }
