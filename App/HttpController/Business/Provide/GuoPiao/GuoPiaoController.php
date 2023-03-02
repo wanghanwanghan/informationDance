@@ -104,13 +104,11 @@ class GuoPiaoController extends ProvideBase
         CommonService::getInstance()->log4PHP(
             json_encode(
                 [
-                    $res[$this->csp]['code'],
-                    $res[$this->csp]['result'],
-                    $res[$this->csp]['message']
+                    $res,$this->csp
                 ],JSON_UNESCAPED_UNICODE)
         );
-        return $this->writeJson($res[$this->csp]['code'], null, $res[$this->csp]['result'], $res[$this->csp]['message']) ;
-        //return $this->checkResponse($res);
+        //return $this->writeJson($res[$this->csp]['code'], null, $res[$this->csp]['result'], $res[$this->csp]['message']) ;
+        return $this->checkResponse($res);
     }
 
 
@@ -150,14 +148,12 @@ class GuoPiaoController extends ProvideBase
         CommonService::getInstance()->log4PHP(
             json_encode(
                 [
-                    $res[$this->csp]['code'],
-                    $res[$this->csp]['result'],
-                    $res[$this->csp]['message']
+                    $res,$this->csp
                 ],JSON_UNESCAPED_UNICODE)
         );
 
-        return $this->writeJson($res[$this->csp]['code'], null, $res[$this->csp]['result'], $res[$this->csp]['message']) ;
-        //return $this->checkResponse($res);
+       // return $this->writeJson($res[$this->csp]['code'], null, $res[$this->csp]['result'], $res[$this->csp]['message']) ;
+        return $this->checkResponse($res);
     }
 
     function getAuthentication(): bool
