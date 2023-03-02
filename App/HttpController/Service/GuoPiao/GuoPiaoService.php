@@ -184,87 +184,6 @@ class GuoPiaoService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
-    /***
-    参数 参数类型 参数说明 是否必填 备注
-    fileName String 文件名 否 支持常规图片、PDF格式以及ofd格式文件
-    base64Content String base64字符串 否 base64Content和imageUrl任选其一必填，如果二者均不为空，优先识别imageUrl。
-    imageUrl String 图片链接地址 否
-     ***/
-    function getInvoiceOcrV2($fileName,$base64Content,$imageUrl,$showLog = false)
-    {
-        $data = [
-            "fileName" => "invoice.png",
-            "base64Content" => "",
-            "imageUrl" => "https://api.meirixindong.com/Static/Temp/invoice.png",
-        ];
-
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'api 实时识别图片' => [
-                    '文件名' => $fileName,
-                    'base64字符串' => $base64Content,
-                    '图片链接地址' => $imageUrl
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
-
-        $url = $this->guopiao_url.'api/ocr/realTimeRecognize';
-        //$url = 'http://ivs.fapiao.com/mars/api/ocr/realTimeRecognize';
-
-        ksort($data);
-
-        $date = gmdate('D, d M Y H:i:s', time()+3600 * 8)." GMT";
-        $rand = strtolower(self::guid());
-
-        $accept = '*/*';
-        $contentType= 'application/json; charset=utf-8';
-
-        $customHeaderStr = "x-mars-api-version:20190618\nx-mars-signature-nonce:$rand\n";
-        //$ContentMD5 = base64_encode(md5(json_encode($data,JSON_UNESCAPED_UNICODE)));
-        $httpHeaderStr = "POST\n$accept\nnull\n$contentType\n$date\n";
-        $stringToSign = $httpHeaderStr.$customHeaderStr.$url;
-
-        $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true));
-
-        $headers = [
-            'date' => $date,
-            'signature' => 'mars '.$this->client_id.':'.$Signature,
-            'x-mars-api-version' => '20190618',
-            'x-mars-signature-nonce'=>$rand,
-            'Content-Type' => $contentType
-        ];
-
-        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send(
-            $url, $data,$headers,[],"POSTJSON"
-        );
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                '国票-发起请求' => [
-                    'url' => $url,
-                    'data' => $data,
-                    'headers' => $headers,
-                    '返回' => $res,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
-
-        return $res;
-
-        //return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
-    }
-
-
-    function getRequestSignature($rand,$contentType,$date,$accept,$url,$method){
-        $customHeaderStr = "x-mars-api-version:20190618\nx-mars-signature-nonce:$rand\n";
-
-        //$ContentMD5 = base64_encode(md5(json_encode($data,JSON_UNESCAPED_UNICODE)));
-        $httpHeaderStr = "$method\n$accept\nnull\n$contentType\n$date\n";
-        $stringToSign = $httpHeaderStr.$customHeaderStr.$url;
-
-        $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true));
-
-        return $Signature;
-    }
     static function  getGetRequestUrl($url,$data){
         $str = http_build_query($data);
         $url = $url.'?'.$str;
@@ -318,23 +237,19 @@ class GuoPiaoService extends ServiceBase
         return $headers;
     }
 
-    function realTimeRecognize($fileName,$base64Content,$imageUrl,$showLog = false)
+    /***
+    参数 参数类型 参数说明 是否必填 备注
+    fileName String 文件名 否 支持常规图片、PDF格式以及ofd格式文件
+    base64Content String base64字符串 否 base64Content和imageUrl任选其一必填，如果二者均不为空，优先识别imageUrl。
+    imageUrl String 图片链接地址 否
+     ***/
+    function realTimeRecognize($fileName,$base64Content,$imageUrl,$showLog = true)
     {
         $data = [
             "fileName" => $fileName,
             "base64Content" => $base64Content,
             "imageUrl" => $imageUrl,
         ];
-
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                'api实时识别图片' => [
-                    '文件名' => $fileName,
-                    'base64字符串' => $base64Content,
-                    '图片链接地址' => $imageUrl
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
 
         $url = $this->guopiao_url.'api/ocr/realTimeRecognize';
         ksort($data);
@@ -349,9 +264,12 @@ class GuoPiaoService extends ServiceBase
             $newRes =  $this->checkResp($res, __FUNCTION__) ;
         }
 
-        CommonService::getInstance()->log4PHP(
+        $showLog &&  CommonService::getInstance()->log4PHP(
             json_encode([
                 '国票-发起请求' => [
+                    '文件名' => $fileName,
+                    'base64字符串' => $base64Content,
+                    '图片链接地址' => $imageUrl,
                     'url' => $url,
                     'data' => $data,
                     'headers' => $headers,
@@ -362,6 +280,18 @@ class GuoPiaoService extends ServiceBase
         );
 
         return $newRes;
+    }
+
+    static function getHeaderAccepet(){
+        return '*/*';
+    }
+
+    static function getContentType(){
+        return 'application/json; charset=utf-8';
+    }
+
+    static function getRequestDate(){
+        return  gmdate('D, d M Y H:i:s', time()+3600 * 8)." GMT";
     }
 
     /***
@@ -384,25 +314,15 @@ class GuoPiaoService extends ServiceBase
     ];
      ***/
 
-    static function getHeaderAccepet(){
-        return '*/*';
-    }
 
-    static function getContentType(){
-        return 'application/json; charset=utf-8';
-    }
+    function checkInvoice($invoiceCode,$invoiceNumber,$billingDate,$totalAmount,$checkCode,$showLog = true){
 
-    static function getRequestDate(){
-        return  gmdate('D, d M Y H:i:s', time()+3600 * 8)." GMT";
-    }
-    function checkInvoice($invoiceCode,$invoiceNumber,$billingDate,$totalAmount,$checkCode){
-        $invoiceNumber = "021022200104";
         $data = [
-            "invoiceCode" => "021022200104",
-            "invoiceNumber" => "03660056",
-            "billingDate" => "2022-11-25",
-            "totalAmount" => "3301.89",
-            "checkCode" => "203465",
+            "invoiceCode" => $invoiceCode,
+            "invoiceNumber" => $invoiceNumber,
+            "billingDate" => $billingDate,
+            "totalAmount" => $totalAmount,
+            "checkCode" => $checkCode,
             "flowId" => date("YYYYMMDD")."_".$invoiceCode.rand(10000000,99999999),
         ];
 
@@ -410,7 +330,7 @@ class GuoPiaoService extends ServiceBase
 
         $url = self::getGetRequestUrl($this->guopiao_url.'api/check/invoice',$data) ;
 
-        $headers = self::getGetRequestHeader( $url   );
+        $headers = self::getGetRequestHeader( $url);
 
         $res = (new CoHttpClient())->useCache(false)->needJsonDecode(true)->send(
             $url, [],$headers,[],"GET"
@@ -421,7 +341,7 @@ class GuoPiaoService extends ServiceBase
             $newRes =  $this->checkResp($res, __FUNCTION__) ;
         }
 
-        CommonService::getInstance()->log4PHP(
+        $showLog &&  CommonService::getInstance()->log4PHP(
             json_encode([
                 '国票-发起请求' => [
                     'url' => $url,

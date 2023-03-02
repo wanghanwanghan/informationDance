@@ -195,6 +195,7 @@ class GuoPiaoController extends GuoPiaoBase
         $imageUrl = $this->request()->getRequestParam('imageUrl') ?? '';
 
         $res = (new GuoPiaoService())->setCheckRespFlag(true)->realTimeRecognize($fileName,$base64Content,$imageUrl);
+
         return $this->writeJson($res['code'], null, $res['result'], $res['message']);
     }
 
@@ -208,6 +209,7 @@ class GuoPiaoController extends GuoPiaoBase
         $checkCode = $this->request()->getRequestParam('checkCode') ?? '';
 
         $res = (new GuoPiaoService())->setCheckRespFlag(true)->checkInvoice($invoiceCode, $base64Content, $billingDate, $totalAmount, $checkCode);
+
         return $this->writeJson($res['code'], null, $res['result'], $res['message']);
     }
 
