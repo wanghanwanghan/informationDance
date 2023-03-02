@@ -64,9 +64,15 @@ class GuoPiaoService extends ServiceBase
         if (isset($res['coHttpErr'])) return $this->createReturn(500, $res['Paging'], [], 'co请求错误');
 
         $res['code'] - 0 === 0 ? $res['code'] = 200 : $res['code'] = 600;
+        if( in_array($type,['checkInvoice','realTimeRecognize']) ){
+            $res['failCode'] - 0 === 0 ? $res['code'] = 200 : $res['code'] = 600;
+        }
 
         //拿结果
         switch ($type) {
+            case 'realTimeRecognize':
+                $res['Result'] = $res['dataDetails'];
+                break;
             case 'getReceiptDetailByClient':
             case 'getReceiptDetailByCert':
                 $res['Result'] = $res['data']['invoices'];
@@ -214,7 +220,7 @@ class GuoPiaoService extends ServiceBase
         $httpHeaderStr = "POST\n$accept\nnull\n$contentType\n$date\n";
         $stringToSign = $httpHeaderStr.$customHeaderStr.$url;
 
-        $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true)); 
+        $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true));
 
         $headers = [
             'date' => $date,
@@ -241,6 +247,66 @@ class GuoPiaoService extends ServiceBase
         return $res;
 
         //return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+    }
+    function getInvoiceOcrV3($fileName,$base64Content,$imageUrl,$showLog = false)
+    {
+        $data = [
+            "fileName" => $fileName,
+            "base64Content" => $base64Content,
+            "imageUrl" => $imageUrl,
+        ];
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                'api实时识别图片' => [
+                    '文件名' => $fileName,
+                    'base64字符串' => $base64Content,
+                    '图片链接地址' => $imageUrl
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+        $url = $this->guopiao_url.'api/ocr/realTimeRecognize';
+
+        ksort($data);
+
+        $date = gmdate('D, d M Y H:i:s', time()+3600 * 8)." GMT";
+        $rand = strtolower(self::guid());
+
+        $accept = '*/*';
+        $contentType= 'application/json; charset=utf-8';
+
+        $customHeaderStr = "x-mars-api-version:20190618\nx-mars-signature-nonce:$rand\n";
+        //$ContentMD5 = base64_encode(md5(json_encode($data,JSON_UNESCAPED_UNICODE)));
+        $httpHeaderStr = "POST\n$accept\nnull\n$contentType\n$date\n";
+        $stringToSign = $httpHeaderStr.$customHeaderStr.$url;
+
+        $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true));
+
+        $headers = [
+            'date' => $date,
+            'signature' => 'mars '.$this->client_id.':'.$Signature,
+            'x-mars-api-version' => '20190618',
+            'x-mars-signature-nonce'=>$rand,
+            'Content-Type' => $contentType
+        ];
+
+        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(true)->send(
+            $url, $data,$headers,[],"POSTJSON"
+        );
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '国票-发起请求' => [
+                    'url' => $url,
+                    'data' => $data,
+                    'headers' => $headers,
+                    '返回' => $res,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
     /**
