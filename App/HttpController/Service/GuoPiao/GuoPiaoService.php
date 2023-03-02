@@ -222,8 +222,19 @@ class GuoPiaoService extends ServiceBase
             'Content-Type:'.$contentType
         ];
 
+        $headers = [
+            'date' => $date,
+            'signature' => 'mars '.$this->client_id.':'.$Signature,
+            'x-mars-api-version' => '20190618',
+            'x-mars-signature-nonce'=>$rand,
+            'Content-Type' => $contentType
+        ];
+
         $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send(
-            $url, $data,$headers,[],"POSTJSON"
+            $url, $data,$headers,[
+                'CURLOPT_HTTPHEADER'=>$headers,
+                'CURLOPT_RETURNTRANSFER'=>1,
+        ],"POSTJSON"
         );
 //        $res =self::postCurl(
 //            $data, $url,$headers
