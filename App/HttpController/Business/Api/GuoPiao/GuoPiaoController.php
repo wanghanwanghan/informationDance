@@ -194,9 +194,8 @@ class GuoPiaoController extends GuoPiaoBase
         $base64Content = $this->request()->getRequestParam('base64Content') ?? '';
         $imageUrl = $this->request()->getRequestParam('imageUrl') ?? '';
 
-        $res = (new GuoPiaoService())->getInvoiceOcrV2($fileName,$base64Content,$imageUrl);
-
-        return $res;
+        $res = (new GuoPiaoService())->getInvoiceOcrV3($fileName,$base64Content,$imageUrl);
+        
         return $this->checkResponse($res, __FUNCTION__);
     }
 
