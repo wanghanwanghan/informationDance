@@ -266,7 +266,7 @@ class GuoPiaoService extends ServiceBase
         return $Signature;
     }
 
-    function getRequestHeaders($url){
+    function getPostRequestHeaders($url){
 
         $date = self::getRequestDate();
         $rand = strtolower(self::guid());
@@ -282,6 +282,26 @@ class GuoPiaoService extends ServiceBase
             'x-mars-api-version' => '20190618',
             'x-mars-signature-nonce'=>$rand,
             'Content-Type' => $contentType
+        ];
+
+        return $headers;
+    }
+    function getGetRequestHeaders($url){
+
+        $date = self::getRequestDate();
+        $rand = strtolower(self::guid());
+
+        $accept =  self::getHeaderAccepet();
+        $contentType= self::getContentType();
+
+        $Signature = $this->getRequestSignature($rand,$contentType,$date,$accept,$url);
+
+        $headers = [
+            'date' => $date,
+            'signature' => 'mars '.$this->client_id.':'.$Signature,
+            'x-mars-api-version' => '20190618',
+            'x-mars-signature-nonce'=>$rand,
+            //'Content-Type' => $contentType
         ];
 
         return $headers;
@@ -308,7 +328,7 @@ class GuoPiaoService extends ServiceBase
         $url = $this->guopiao_url.'api/ocr/realTimeRecognize';
         ksort($data);
 
-        $headers = $this->getRequestHeaders($url);
+        $headers = $this->getPostRequestHeaders($url);
 
         $res = (new CoHttpClient())->useCache(false)->needJsonDecode(true)->send(
             $url, $data,$headers,[],"POSTJSON"
@@ -379,7 +399,7 @@ class GuoPiaoService extends ServiceBase
 
         $url = $this->guopiao_url.'api/check/invoice?'.$str;
 
-        $headers = $this->getRequestHeaders($url);
+        $headers = $this->getGetRequestHeaders($url);
         $res = (new CoHttpClient())->useCache(false)->needJsonDecode(true)->send(
             $url, [],$headers,[],"GET"
         );
