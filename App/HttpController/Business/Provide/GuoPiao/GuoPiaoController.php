@@ -71,6 +71,40 @@ class GuoPiaoController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getInvoiceOcrV2(): bool
+    {
+        $fileName = $this->getRequestData('fileName', '') ;
+        $imageUrl = $this->getRequestData('imageUrl', '') ;
+
+        $imageStr = $this->getRequestData('image', '');
+        $imageJpg = $this->request()->getUploadedFile('image');
+
+        $image = $imageStr;
+
+        if (empty($imageStr) && $imageJpg instanceof UploadFile) {
+            $image = base64_encode($imageJpg->getStream()->__toString());
+        }
+
+        $size = strlen(base64_decode($image));
+
+        if ($size / 1024 / 1024 > 3) {
+            return $this->checkResponse([
+                $this->cspKey => '',
+                'msg' => '图片大小不能超过3m',
+            ]);
+        }
+
+        $this->csp->add($this->cspKey, function () use ($fileName,$image,$imageUrl) {
+            //return (new GuoPiaoService())->setCheckRespFlag(true)->getInvoiceOcr($image);
+            return (new GuoPiaoService())->setCheckRespFlag(true)->realTimeRecognize($fileName,$image,$imageUrl);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+
     function getInvoiceCheck(): bool
     {
         $postData = [
@@ -83,6 +117,24 @@ class GuoPiaoController extends ProvideBase
 
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new GuoPiaoService())->setCheckRespFlag(true)->getInvoiceCheck($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getInvoiceCheckV2(): bool
+    {
+        $invoiceCode =  $this->getRequestData('invoiceCode');
+        $invoiceNumber =  $this->getRequestData('invoiceNumber');
+        $billingDate =  $this->getRequestData('billingDate');
+        $totalAmount =  $this->getRequestData('totalAmount');
+        $checkCode =  $this->getRequestData('checkCode');
+
+        $this->csp->add($this->cspKey, function () use ($invoiceCode,$invoiceNumber,$billingDate,$totalAmount,$checkCode) {
+            //return (new GuoPiaoService())->setCheckRespFlag(true)->getInvoiceCheck($postData);
+            return (new GuoPiaoService())->setCheckRespFlag(true)->checkInvoice($invoiceCode,$invoiceNumber,$billingDate,$totalAmount,$checkCode);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
