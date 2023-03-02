@@ -248,7 +248,7 @@ class GuoPiaoService extends ServiceBase
 
         //return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
-    function getInvoiceOcrV3($fileName,$base64Content,$imageUrl,$showLog = false)
+    function realTimeRecognize($fileName,$base64Content,$imageUrl,$showLog = false)
     {
         $data = [
             "fileName" => $fileName,
@@ -294,6 +294,10 @@ class GuoPiaoService extends ServiceBase
         $res = (new CoHttpClient())->useCache(false)->needJsonDecode(true)->send(
             $url, $data,$headers,[],"POSTJSON"
         );
+        $newRes = $res;
+        if($this->checkRespFlag){
+            $newRes =  $this->checkResp($res, __FUNCTION__) ;
+        }
 
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -302,11 +306,12 @@ class GuoPiaoService extends ServiceBase
                     'data' => $data,
                     'headers' => $headers,
                     '返回' => $res,
+                    'checkResp返回' => $newRes,
                 ]
             ],JSON_UNESCAPED_UNICODE)
         );
 
-        return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+        return $newRes;
     }
 
     /**
