@@ -223,7 +223,7 @@ class GuoPiaoService extends ServiceBase
         ];
 
         $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send(
-            $url, $data,$headers
+            $url, $data,$headers,[],"POSTJSON"
         );
 //        $res =self::postCurl(
 //            $data, $url,$headers
