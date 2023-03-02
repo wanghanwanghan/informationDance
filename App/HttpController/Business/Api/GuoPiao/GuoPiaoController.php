@@ -203,12 +203,12 @@ class GuoPiaoController extends GuoPiaoBase
     function checkInvoice()
     {
         $invoiceCode = $this->request()->getRequestParam('invoiceCode') ?? '';
-        $base64Content = $this->request()->getRequestParam('base64Content') ?? '';
+        $invoiceNumber = $this->request()->getRequestParam('invoiceNumber') ?? '';
         $billingDate = $this->request()->getRequestParam('billingDate') ?? '';
         $totalAmount = $this->request()->getRequestParam('totalAmount') ?? '';
         $checkCode = $this->request()->getRequestParam('checkCode') ?? '';
 
-        $res = (new GuoPiaoService())->setCheckRespFlag(true)->checkInvoice($invoiceCode, $base64Content, $billingDate, $totalAmount, $checkCode);
+        $res = (new GuoPiaoService())->setCheckRespFlag(true)->checkInvoice($invoiceCode, $invoiceNumber, $billingDate, $totalAmount, $checkCode);
 
         return $this->writeJson($res['code'], null, $res['result'], $res['message']);
     }
