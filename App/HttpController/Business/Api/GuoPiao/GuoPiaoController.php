@@ -187,7 +187,7 @@ class GuoPiaoController extends GuoPiaoBase
         return $this->checkResponse($res, __FUNCTION__);
     }
 
-    //发票实时ocr
+    //发票实时ocr api 实时识别图片接口
     function getInvoiceOcrV2()
     {
         $fileName = $this->request()->getRequestParam('fileName') ?? '';
@@ -195,6 +195,19 @@ class GuoPiaoController extends GuoPiaoBase
         $imageUrl = $this->request()->getRequestParam('imageUrl') ?? '';
 
         $res = (new GuoPiaoService())->setCheckRespFlag(true)->realTimeRecognize($fileName,$base64Content,$imageUrl);
+        return $this->writeJson($res['code'], null, $res['result'], $res['message']);
+    }
+
+    //发票查验接⼝(API)
+    function checkInvoice()
+    {
+        $invoiceCode = $this->request()->getRequestParam('invoiceCode') ?? '';
+        $base64Content = $this->request()->getRequestParam('base64Content') ?? '';
+        $billingDate = $this->request()->getRequestParam('billingDate') ?? '';
+        $totalAmount = $this->request()->getRequestParam('totalAmount') ?? '';
+        $checkCode = $this->request()->getRequestParam('checkCode') ?? '';
+
+        $res = (new GuoPiaoService())->setCheckRespFlag(true)->checkInvoice($invoiceCode, $base64Content, $billingDate, $totalAmount, $checkCode);
         return $this->writeJson($res['code'], null, $res['result'], $res['message']);
     }
 
