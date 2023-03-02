@@ -254,11 +254,11 @@ class GuoPiaoService extends ServiceBase
     }
 
 
-    function getRequestSignature($rand,$contentType,$date,$accept,$url){
+    function getRequestSignature($rand,$contentType,$date,$accept,$url,$method){
         $customHeaderStr = "x-mars-api-version:20190618\nx-mars-signature-nonce:$rand\n";
 
         //$ContentMD5 = base64_encode(md5(json_encode($data,JSON_UNESCAPED_UNICODE)));
-        $httpHeaderStr = "POST\n$accept\nnull\n$contentType\n$date\n";
+        $httpHeaderStr = "$method\n$accept\nnull\n$contentType\n$date\n";
         $stringToSign = $httpHeaderStr.$customHeaderStr.$url;
 
         $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true));
@@ -266,7 +266,7 @@ class GuoPiaoService extends ServiceBase
         return $Signature;
     }
 
-    function getPostRequestHeaders($url){
+    function getRequestHeaders($url,$method){
 
         $date = self::getRequestDate();
         $rand = strtolower(self::guid());
@@ -274,35 +274,27 @@ class GuoPiaoService extends ServiceBase
         $accept =  self::getHeaderAccepet();
         $contentType= self::getContentType();
 
-        $Signature = $this->getRequestSignature($rand,$contentType,$date,$accept,$url);
+        $Signature = $this->getRequestSignature($rand,$contentType,$date,$accept,$url,$method);
 
-        $headers = [
-            'date' => $date,
-            'signature' => 'mars '.$this->client_id.':'.$Signature,
-            'x-mars-api-version' => '20190618',
-            'x-mars-signature-nonce'=>$rand,
-            'Content-Type' => $contentType
-        ];
+        if($method == "POST"){
+            $headers = [
+                'date' => $date,
+                'signature' => 'mars '.$this->client_id.':'.$Signature,
+                'x-mars-api-version' => '20190618',
+                'x-mars-signature-nonce'=>$rand,
+                'Content-Type' => $contentType
+            ];
+        }
 
-        return $headers;
-    }
-    function getGetRequestHeaders($url){
+        if($method == "GET"){
+            $headers = [
+                'date' => $date,
+                'signature' => 'mars '.$this->client_id.':'.$Signature,
+                'x-mars-api-version' => '20190618',
+                'x-mars-signature-nonce'=>$rand,
+            ];
+        }
 
-        $date = self::getRequestDate();
-        $rand = strtolower(self::guid());
-
-        $accept =  self::getHeaderAccepet();
-        $contentType= self::getContentType();
-
-        $Signature = $this->getRequestSignature($rand,$contentType,$date,$accept,$url);
-
-        $headers = [
-            'date' => $date,
-            'signature' => 'mars '.$this->client_id.':'.$Signature,
-            'x-mars-api-version' => '20190618',
-            'x-mars-signature-nonce'=>$rand,
-            //'Content-Type' => $contentType
-        ];
 
         return $headers;
     }
@@ -328,7 +320,7 @@ class GuoPiaoService extends ServiceBase
         $url = $this->guopiao_url.'api/ocr/realTimeRecognize';
         ksort($data);
 
-        $headers = $this->getPostRequestHeaders($url);
+        $headers = $this->getRequestHeaders($url,"POST");
 
         $res = (new CoHttpClient())->useCache(false)->needJsonDecode(true)->send(
             $url, $data,$headers,[],"POSTJSON"
@@ -399,7 +391,7 @@ class GuoPiaoService extends ServiceBase
 
         $url = $this->guopiao_url.'api/check/invoice?'.$str;
 
-        $headers = $this->getGetRequestHeaders($url);
+        $headers = $this->getRequestHeaders($url,"GET");
         $res = (new CoHttpClient())->useCache(false)->needJsonDecode(true)->send(
             $url, [],$headers,[],"GET"
         );
