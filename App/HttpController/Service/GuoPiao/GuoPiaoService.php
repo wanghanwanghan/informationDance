@@ -266,6 +266,28 @@ class GuoPiaoService extends ServiceBase
         return $Signature;
     }
 
+    function  getGetRequestHeader($accept,$rand,$date,$url){
+        $customHeaderStr = "x-mars-api-version:20190618\nx-mars-signature-nonce:$rand\n";
+        $httpHeaderStr = "GET\n$accept\nnull\nnull\n$date\n";
+        $stringToSign = $httpHeaderStr.$customHeaderStr.$url;
+        $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true));
+        $headers = [
+            'date:'.$date,
+            'signature:mars '.$this->client_id.':'.$Signature,
+            'x-mars-api-version:20190618',
+            'x-mars-signature-nonce:'.$rand
+        ];
+
+        $headers = [
+            'date' => $date,
+            'signature' =>'mars '.$this->client_id.':'.$Signature,
+            'x-mars-api-version' => '20190618',
+            'x-mars-signature-nonce' =>$rand
+        ];
+
+        return $headers;
+    }
+
     function getRequestHeaders($url,$method){
 
         $date = self::getRequestDate();
@@ -377,6 +399,7 @@ class GuoPiaoService extends ServiceBase
         return  gmdate('D, d M Y H:i:s', time()+3600 * 8)." GMT";
     }
     function checkInvoice($invoiceCode,$invoiceNumber,$billingDate,$totalAmount,$checkCode){
+        $invoiceNumber = "021022200104";
         $data = [
             "invoiceCode" => "021022200104",
             "invoiceNumber" => "03660056",
@@ -391,7 +414,14 @@ class GuoPiaoService extends ServiceBase
 
         $url = $this->guopiao_url.'api/check/invoice?'.$str;
 
-        $headers = $this->getRequestHeaders($url,"GET");
+        $accept = self::getHeaderAccepet();
+
+        $date =  self::getRequestDate();
+        $rand = strtolower(self::guid());
+
+
+        $headers = self::getGetRequestHeader($accept,$rand,$date,$url);
+
         $res = (new CoHttpClient())->useCache(false)->needJsonDecode(true)->send(
             $url, [],$headers,[],"GET"
         );
