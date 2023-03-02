@@ -104,8 +104,7 @@ class GuoPiaoController extends ProvideBase
         CommonService::getInstance()->log4PHP(
             json_encode($res,JSON_UNESCAPED_UNICODE)
         );
-        return $res[$this->csp];
-        return $this->writeJson($res['code'], null, $res['result'], $res['message']);
+        return $this->writeJson($res[$this->csp]['code'], null, $res[$this->csp]['result'], $res[$this->csp]['message']) ;
         //return $this->checkResponse($res);
     }
 
@@ -125,10 +124,7 @@ class GuoPiaoController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-        return $res[$this->csp];
-       //
-       // return $this->writeJson($res['code'], null, $res['result'], $res['message']);
-        //return $this->checkResponse($res);
+        return $this->checkResponse($res);
     }
 
     function getInvoiceCheckV2(): bool
@@ -145,8 +141,8 @@ class GuoPiaoController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-
-        return $this->checkResponse($res);
+        return $this->writeJson($res[$this->csp]['code'], null, $res[$this->csp]['result'], $res[$this->csp]['message']) ;
+        //return $this->checkResponse($res);
     }
 
     function getAuthentication(): bool
