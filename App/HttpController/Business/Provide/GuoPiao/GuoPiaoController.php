@@ -125,6 +125,7 @@ class GuoPiaoController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        return $res[$this->csp];
         return $this->writeJson($res['code'], null, $res['result'], $res['message']);
         //return $this->checkResponse($res);
     }
