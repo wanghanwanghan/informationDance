@@ -417,8 +417,7 @@ class GuoPiaoService extends ServiceBase
         $accept = self::getHeaderAccepet();
 
         $date =  self::getRequestDate();
-        $rand = strtolower(self::guid());
-
+        $rand = strtolower(self::guid()); 
 
         $headers = self::getGetRequestHeader($accept,$rand,$date,$url);
 
