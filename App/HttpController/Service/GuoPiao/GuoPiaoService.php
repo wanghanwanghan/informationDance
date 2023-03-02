@@ -197,8 +197,9 @@ class GuoPiaoService extends ServiceBase
                 ]
             ],JSON_UNESCAPED_UNICODE)
         );
-        $url = $this->guopiao_url.'/api/ocr/realTimeRecognize';
-        $url = 'http://ivs.fapiao.com/mars/api/ocr/realTimeRecognize';
+
+        $url = $this->guopiao_url.'api/ocr/realTimeRecognize';
+        //$url = 'http://ivs.fapiao.com/mars/api/ocr/realTimeRecognize';
 
         ksort($data);
 
@@ -213,14 +214,7 @@ class GuoPiaoService extends ServiceBase
         $httpHeaderStr = "POST\n$accept\nnull\n$contentType\n$date\n";
         $stringToSign = $httpHeaderStr.$customHeaderStr.$url;
 
-        $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true));
-        $headers = [
-            'date:'.$date,
-            'signature:mars '.$this->client_id.':'.$Signature,
-            'x-mars-api-version:20190618',
-            'x-mars-signature-nonce:'.$rand,
-            'Content-Type:'.$contentType
-        ];
+        $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true)); 
 
         $headers = [
             'date' => $date,
@@ -231,14 +225,8 @@ class GuoPiaoService extends ServiceBase
         ];
 
         $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send(
-            $url, $data,$headers,[
-                'CURLOPT_HTTPHEADER'=>$headers,
-                'CURLOPT_RETURNTRANSFER'=>1,
-        ],"POSTJSON"
+            $url, $data,$headers,[],"POSTJSON"
         );
-//        $res =self::postCurl(
-//            $data, $url,$headers
-//        );
         CommonService::getInstance()->log4PHP(
             json_encode([
                 '国票-发起请求' => [
@@ -253,28 +241,6 @@ class GuoPiaoService extends ServiceBase
         return $res;
 
         //return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
-    }
-
-    static function postCurl(array $postFields, string $url,array $headers)
-    {
-        $post = $postFields;
-        //if (count($post) == 0) {
-        //    return false;
-        //}
-        $url = trim($url);
-
-        $postdata = json_encode($post,JSON_UNESCAPED_UNICODE);
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        $result = curl_exec($ch);
-        curl_close($ch);
-        return $result;
     }
 
     /**
