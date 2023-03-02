@@ -222,12 +222,12 @@ class GuoPiaoService extends ServiceBase
             'Content-Type:'.$contentType
         ];
 
-//        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send(
-//            $url, $data,$headers
-//        );
-        $res =self::postCurl(
-            $data, $url,$headers
+        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send(
+            $url, $data,$headers
         );
+//        $res =self::postCurl(
+//            $data, $url,$headers
+//        );
         CommonService::getInstance()->log4PHP(
             json_encode([
                 '国票-发起请求' => [
