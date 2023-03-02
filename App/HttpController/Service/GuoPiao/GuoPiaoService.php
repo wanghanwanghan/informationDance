@@ -252,6 +252,41 @@ class GuoPiaoService extends ServiceBase
 
         //return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
+
+
+    function getRequestSignature($rand,$contentType,$date,$accept,$url){
+        $customHeaderStr = "x-mars-api-version:20190618\nx-mars-signature-nonce:$rand\n";
+
+        //$ContentMD5 = base64_encode(md5(json_encode($data,JSON_UNESCAPED_UNICODE)));
+        $httpHeaderStr = "POST\n$accept\nnull\n$contentType\n$date\n";
+        $stringToSign = $httpHeaderStr.$customHeaderStr.$url;
+
+        $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true));
+
+        return $Signature;
+    }
+
+    function getRequestHeaders($url){
+
+        $date = self::getRequestDate();
+        $rand = strtolower(self::guid());
+
+        $accept =  self::getHeaderAccepet();
+        $contentType= self::getContentType();
+
+        $Signature = $this->getRequestSignature($rand,$contentType,$date,$accept,$url);
+
+        $headers = [
+            'date' => $date,
+            'signature' => 'mars '.$this->client_id.':'.$Signature,
+            'x-mars-api-version' => '20190618',
+            'x-mars-signature-nonce'=>$rand,
+            'Content-Type' => $contentType
+        ];
+
+        return $headers;
+    }
+
     function realTimeRecognize($fileName,$base64Content,$imageUrl,$showLog = false)
     {
         $data = [
@@ -271,29 +306,9 @@ class GuoPiaoService extends ServiceBase
         );
 
         $url = $this->guopiao_url.'api/ocr/realTimeRecognize';
-
         ksort($data);
 
-        $date = gmdate('D, d M Y H:i:s', time()+3600 * 8)." GMT";
-        $rand = strtolower(self::guid());
-
-        $accept = '*/*';
-        $contentType= 'application/json; charset=utf-8';
-
-        $customHeaderStr = "x-mars-api-version:20190618\nx-mars-signature-nonce:$rand\n";
-        //$ContentMD5 = base64_encode(md5(json_encode($data,JSON_UNESCAPED_UNICODE)));
-        $httpHeaderStr = "POST\n$accept\nnull\n$contentType\n$date\n";
-        $stringToSign = $httpHeaderStr.$customHeaderStr.$url;
-
-        $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true));
-
-        $headers = [
-            'date' => $date,
-            'signature' => 'mars '.$this->client_id.':'.$Signature,
-            'x-mars-api-version' => '20190618',
-            'x-mars-signature-nonce'=>$rand,
-            'Content-Type' => $contentType
-        ];
+        $headers = $this->getRequestHeaders($url);
 
         $res = (new CoHttpClient())->useCache(false)->needJsonDecode(true)->send(
             $url, $data,$headers,[],"POSTJSON"
@@ -328,17 +343,28 @@ class GuoPiaoService extends ServiceBase
     totalAmount String 否 发票金额 发票类型为 01、03、15、20时不可为空；01、03、20填写发票不含税金额；15填写发票车价合计
     ；09、90填写发票价税合计
     checkCode String 否 校验码 发票校验码后6位。发票类型为04、10、11、14时此项不可为空。
+    $data = [
+        "invoiceCode" =>$invoiceCode,
+        "invoiceNumber" => $invoiceNumber,
+        "billingDate" => $billingDate,
+        "totalAmount" => $totalAmount,
+        "checkCode" => $checkCode,
+        "flowId" => date("YYYYMMDD")."_".$invoiceCode.rand(10000000,99999999),
+    ];
      ***/
-    function checkInvoice($invoiceCode,$invoiceNumber,$billingDate,$totalAmount,$checkCode){
-        $data = [
-            "invoiceCode" =>$invoiceCode,
-            "invoiceNumber" => $invoiceNumber,
-            "billingDate" => $billingDate,
-            "totalAmount" => $totalAmount,
-            "checkCode" => $checkCode,
-            "flowId" => date("YYYYMMDD")."_".$invoiceCode.rand(10000000,99999999),
-        ];
 
+    static function getHeaderAccepet(){
+        return '*/*';
+    }
+
+    static function getContentType(){
+        return 'application/json; charset=utf-8';
+    }
+
+    static function getRequestDate(){
+        return  gmdate('D, d M Y H:i:s', time()+3600 * 8)." GMT";
+    }
+    function checkInvoice($invoiceCode,$invoiceNumber,$billingDate,$totalAmount,$checkCode){
         $data = [
             "invoiceCode" => "021022200104",
             "invoiceNumber" => "03660056",
@@ -348,29 +374,12 @@ class GuoPiaoService extends ServiceBase
             "flowId" => date("YYYYMMDD")."_".$invoiceCode.rand(10000000,99999999),
         ];
 
-        //根据实际获取的accept填写
-        $accept = '*/*';
-
         ksort($data);
         $str = http_build_query($data);
 
         $url = $this->guopiao_url.'api/check/invoice?'.$str;
-        $date = gmdate('D, d M Y H:i:s', time()+3600 * 8)." GMT";
-        $rand = strtolower(self::guid());
-        $contentType= 'application/json; charset=utf-8';
-        $customHeaderStr = "x-mars-api-version:20190618\nx-mars-signature-nonce:$rand\n";
-        //$ContentMD5 = base64_encode(md5(json_encode($data,JSON_UNESCAPED_UNICODE)));
-        $httpHeaderStr = "GET\n$accept\nnull\nnull\n$date\n";
-        $stringToSign = $httpHeaderStr.$customHeaderStr.$url;
-        $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true));
 
-        $headers = [
-            'date' => $date,
-            'signature' => 'mars '.$this->client_id.':'.$Signature,
-            'x-mars-api-version' => '20190618',
-            'x-mars-signature-nonce' =>$rand
-        ];
-
+        $headers = $this->getRequestHeaders($url);
         $res = (new CoHttpClient())->useCache(false)->needJsonDecode(true)->send(
             $url, [],$headers,[],"GET"
         );
