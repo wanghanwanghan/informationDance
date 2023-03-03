@@ -33,15 +33,14 @@ require_once './bootstrap.php';
 
 Core::getInstance()->initialize();
 
-class jincai_api0 extends AbstractProcess
+class jincai_api extends AbstractProcess
 {
     public $currentAesKey = 'rycn45bmdklhshfs';
     public $iv = '1234567890abcdef';
     public $oss_bucket = 'invoice-mrxd';
     public $oss_expire_time = 86400 * 60;
 
-    public $p_index = 0;
-    public $p_total = 5;
+    public $error_log = 'jincai_log_error.log';
 
     function do_strtr(?string $str): string
     {
@@ -63,150 +62,36 @@ class jincai_api0 extends AbstractProcess
         return trim($str);
     }
 
-    //上传到oss 发票已经入完mysql
-    function sendToOSS($NSRSBH, $bigKprq): bool
+    //启动
+    protected function run($arg)
     {
-        //只有蚂蚁的税号才上传oss
-        //蚂蚁区块链dev id 36
-        //蚂蚁区块链pre id 41
-        //蚂蚁区块链pro id 42
+        $this->getInvOne();
+    }
 
-        //每个文件存多少张发票
-        $dataInFile = 3000;
-
-        $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
-        is_dir($store) || mkdir($store, 0755, true);
-
-        //取全部发票写入文件
-        $total = EntInvoice::create()
-            ->addSuffix($NSRSBH, 'test')
-            ->where('nsrsbh', $NSRSBH)
-            ->count();
-
-        //随机文件名
-        $fileSuffix = control::getUuid(8);
-
-        if (empty($total)) {
-            $filename = "{$NSRSBH}_page_1_{$fileSuffix}.json";
-            file_put_contents($store . $filename, '');
-        } else {
-            $totalPage = $total / $dataInFile + 1;
-            //每个文件存3000张发票
-            for ($page = 1; $page <= $totalPage; $page++) {
-                //每个文件存3000张发票
-                $filename = "{$NSRSBH}_page_{$page}_{$fileSuffix}.json";
-                $offset = ($page - 1) * $dataInFile;
-                $list = EntInvoice::create()
-                    ->addSuffix($NSRSBH, 'test')
-                    ->where('nsrsbh', $NSRSBH)
-                    ->field([
-                        'fpdm',//
-                        'fphm',//
-                        'kplx',//
-                        'xfsh',//
-                        'xfmc',//
-                        'xfdzdh',//
-                        'xfyhzh',//
-                        'gfsh',//
-                        'gfmc',//
-                        'gfdzdh',//
-                        'gfyhzh',//
-                        'kpr',//
-                        'skr',//
-                        'fhr',//
-                        'yfpdm',
-                        'yfphm',
-                        'je',//
-                        'se',//
-                        'jshj',//
-                        'bz',//
-                        'zfbz',//
-                        'zfsj',//
-                        'kprq',//
-                        'fplx',//
-                        'fpztDm',//
-                        'slbz',
-                        'rzdklBdjgDm',
-                        'rzdklBdrq',
-                        'direction',
-                        'nsrsbh',
-                    ])->limit($offset, $dataInFile)->all();
-                //没有数据了
-                if (empty($list)) break;
-                foreach ($list as $key => $oneInv) {
-                    //每张添加明细
-                    $detail = EntInvoiceDetail::create()
-                        ->addSuffix($oneInv->getAttr('fpdm'), $oneInv->getAttr('fphm'), 'test')
-                        ->where(['fpdm' => $oneInv->getAttr('fpdm'), 'fphm' => $oneInv->getAttr('fphm')])
-                        ->field([
-                            'spbm',//
-                            'mc',//
-                            'jldw',//
-                            'shul',//
-                            'je',//
-                            'sl',//
-                            'se',//
-                            'mxxh',//
-                            'dj',//
-                            'ggxh',//
-                        ])->all();
-                    empty($detail) ? $oneInv->fpxxMxs = null : $oneInv->fpxxMxs = $detail;
-                    echo $NSRSBH . '的' . '第' . $key . '张详情' . PHP_EOL;
-                }
-                $content = jsonEncode($list, false);
-                //AES-128-CTR
-                $content = base64_encode(openssl_encrypt(
-                    $content,
-                    'AES-128-CTR',
-                    $this->currentAesKey,
-                    OPENSSL_RAW_DATA,
-                    $this->iv
-                ));
-                echo "put 中 {$filename}" . PHP_EOL;
-                file_put_contents($store . $filename, $content . PHP_EOL);
+    function apiAddTask($socialCredit)
+    {
+        for ($month_num = 1; $month_num <= 24; $month_num++) {
+            $kprqq = Carbon::now()->subMonths($month_num)->startOfMonth()->format('Y-m-d');
+            $kprqz = Carbon::now()->subMonths($month_num)->endOfMonth()->format('Y-m-d');
+            $info = (new JinCaiShuKeService())->S000519($socialCredit, $kprqq, $kprqz);
+            $arr = jsonDecode(base64_decode($info['content']));
+            foreach ($arr as $one) {
+                file_put_contents('rwh.txt', $one['rwh'] . PHP_EOL, FILE_APPEND);
             }
         }
+    }
 
-        //上传oss
-        $file_arr = [];
-
-        if ($dh = opendir($store)) {
-            $ignore = [
-                '.', '..', '.gitignore',
-            ];
-            while (false !== ($file = readdir($dh))) {
-                if (!in_array($file, $ignore, true)) {
-                    if (strpos($file, $fileSuffix) !== false) {
-                        CommonService::getInstance()->log4PHP($file, 'info', 'upload_oss.log');
-                        try {
-                            $oss = new OSSService();
-                            $file_arr[] = $oss->doUploadFile(
-                                $this->oss_bucket,
-                                Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $file,
-                                $store . $file,
-                                $this->oss_expire_time
-                            );
-                        } catch (\Throwable $e) {
-                            $file = $e->getFile();
-                            $line = $e->getLine();
-                            $msg = $e->getMessage();
-                            $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-                            CommonService::getInstance()->log4PHP($content, 'sendToOSS', 'send_fapiao_err.log');
-                        }
-                    }
-                }
-            }
-            AntAuthList::create()
-                ->where('socialCredit', $NSRSBH)
-                ->update([
-                    'lastReqTime' => time(),
-                    'lastReqUrl' => empty($file_arr) ? '' : implode(',', $file_arr),
-                    'big_kprq' => $bigKprq
-                ]);
+    //上传oss时候调用
+    function _sendToOSS()
+    {
+        $all = JinCaiTrace::create()->all();
+        foreach ($all as $one) {
+            $this->sendToOSS(
+                $one->getAttr('socialCredit'),//
+                $one->getAttr('kprqq'),
+                $one->getAttr('kprqz')
+            );
         }
-        closedir($dh);
-
-        return true;
     }
 
     //通知蚂蚁
@@ -246,13 +131,13 @@ class jincai_api0 extends AbstractProcess
 
             //拿一下这个企业的进项销项总发票数字
             $in = EntInvoice::create()->addSuffix($oneReadyToSend->getAttr('socialCredit'), 'test')->where([
-                'nsrsbh' => $socialCredit,
-                'direction' => '01',//01-进项
-            ])->count();
+                                                                                                               'nsrsbh' => $socialCredit,
+                                                                                                               'direction' => '01',//01-进项
+                                                                                                           ])->count();
             $out = EntInvoice::create()->addSuffix($oneReadyToSend->getAttr('socialCredit'), 'test')->where([
-                'nsrsbh' => $socialCredit,
-                'direction' => '02',//02-销项
-            ])->count();
+                                                                                                                'nsrsbh' => $socialCredit,
+                                                                                                                'direction' => '02',//02-销项
+                                                                                                            ])->count();
 
             $body = [
                 'nsrsbh' => $check_file->getAttr('socialCredit'),//授权的企业税号
@@ -272,9 +157,9 @@ class jincai_api0 extends AbstractProcess
             if (empty($num) && $dateM < 30) {
                 $body['authResultCode'] = '9000';//'没准备好';
                 AntEmptyLog::create()->data([
-                    'nsrsbh' => $body['nsrsbh'],
-                    'data' => json_encode($body)
-                ])->save();
+                                                'nsrsbh' => $body['nsrsbh'],
+                                                'data' => json_encode($body)
+                                            ])->save();
             }
 
             ksort($body);//周平说参数升序
@@ -295,7 +180,6 @@ class jincai_api0 extends AbstractProcess
 
             $url = $url_arr[$id];
 
-            // 国家政务服务平台 全网 第一个 更多 就业服务专栏
             $header = [
                 'content-type' => 'application/json;charset=UTF-8',
             ];
@@ -313,34 +197,266 @@ class jincai_api0 extends AbstractProcess
         return true;
     }
 
-    //启动
-    protected function run($arg)
+    //上传到oss 发票已经入完mysql 这里要改成用阿里云内网
+    private function sendToOSS($NSRSBH, $kprqq, $kprqz): bool
     {
-        $list = JinCaiTrace::create()->all();
+        //只有蚂蚁的税号才上传oss
+        //蚂蚁区块链dev id 36
+        //蚂蚁区块链pre id 41
+        //蚂蚁区块链pro id 42
 
-        foreach ($list as $key => $item) {
-            if ($key % $this->p_total !== $this->p_index) continue;
-            $nsrsbh = $item->getAttr('socialCredit');
-            $page = 1;
-            while (true) {
-                // 开票日期起
-                $kprqq = Carbon::createFromTimestamp($item->getAttr('kprqq'))->format('Y-m-d');
-                // 开票日期止
-                $kprqz = Carbon::createFromTimestamp($item->getAttr('kprqz'))->format('Y-m-d');
-                // 主票和明细信息
-                $main = (new JinCaiShuKeService())->obtainFpInfoNew(true, $nsrsbh, $kprqq, $kprqz, $page);
-                echo $nsrsbh . '|' . $kprqq . '|' . $kprqz . '|' . $page . '|' . 'start at ' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
-                if (empty($main['result']['data']['content'])) {
-                    echo $nsrsbh . '|' . $kprqq . '|' . $kprqz . '|' . $page . '|' . 'stop at ' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
-                    break;
-                } else {
-                    $page++;
+        //每个文件存多少张发票
+        $dataInFile = 3000;
+
+        $store = MYJF_PATH . $NSRSBH . DIRECTORY_SEPARATOR . Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR;
+
+        is_dir($store) || mkdir($store, 0755, true);
+
+        //取全部发票写入文件
+        $total = EntInvoice::create()
+            ->addSuffix($NSRSBH, 'test')
+            ->where('nsrsbh', $NSRSBH)
+            ->where('kprq_int', $kprqq, '>=')
+            ->where('kprq_int', $kprqz, '<=')
+            ->count();
+
+        //随机文件名
+        $fileSuffix = control::getUuid(8);
+
+        if ($total === 0) {
+            $filename = "{$NSRSBH}_page_1_{$fileSuffix}.json";
+            file_put_contents($store . $filename, '');
+        } else {
+            $totalPage = $total / $dataInFile + 1;
+            //每个文件存3000张发票
+            for ($page = 1; $page <= $totalPage; $page++) {
+                //每个文件存3000张发票
+                $filename = "{$NSRSBH}_page_{$page}_{$fileSuffix}.json";
+                $offset = ($page - 1) * $dataInFile;
+                $list = EntInvoice::create()
+                    ->addSuffix($NSRSBH, 'test')
+                    ->where('nsrsbh', $NSRSBH)
+                    ->where('kprq_int', $kprqq, '>=')
+                    ->where('kprq_int', $kprqz, '<=')
+                    ->field([
+                                'fpdm',//
+                                'fphm',//
+                                'kplx',//
+                                'xfsh',//
+                                'xfmc',//
+                                'xfdzdh',//
+                                'xfyhzh',//
+                                'gfsh',//
+                                'gfmc',//
+                                'gfdzdh',//
+                                'gfyhzh',//
+                                'kpr',//
+                                'skr',//
+                                'fhr',//
+                                'yfpdm',
+                                'yfphm',
+                                'je',//
+                                'se',//
+                                'jshj',//
+                                'bz',//
+                                'zfbz',//
+                                'zfsj',//
+                                'kprq',//
+                                'fplx',//
+                                'fpztDm',//
+                                'slbz',
+                                'rzdklBdjgDm',
+                                'rzdklBdrq',
+                                'direction',
+                                'nsrsbh',
+                            ])->limit($offset, $dataInFile)->all();
+                //没有数据了
+                if (empty($list)) break;
+                foreach ($list as $key => $oneInv) {
+                    //每张添加明细
+                    $detail = EntInvoiceDetail::create()
+                        ->addSuffix($oneInv->getAttr('fpdm'), $oneInv->getAttr('fphm'), 'test')
+                        ->where(['fpdm' => $oneInv->getAttr('fpdm'), 'fphm' => $oneInv->getAttr('fphm')])
+                        ->field([
+                                    'spbm',//
+                                    'mc',//
+                                    'jldw',//
+                                    'shul',//
+                                    'je',//
+                                    'sl',//
+                                    'se',//
+                                    'mxxh',//
+                                    'dj',//
+                                    'ggxh',//
+                                ])->all();
+                    empty($detail) ? $oneInv->fpxxMxs = null : $oneInv->fpxxMxs = $detail;
+                    echo $NSRSBH . '的' . '第' . $key . '张详情' . PHP_EOL;
                 }
-                $this->handleMain($main['result']['data']['content'], $nsrsbh);
+                $content = jsonEncode($list, false);
+                //AES-128-CTR
+                $content = base64_encode(openssl_encrypt(
+                                             $content,
+                                             'AES-128-CTR',
+                                             $this->currentAesKey,
+                                             OPENSSL_RAW_DATA,
+                                             $this->iv
+                                         ));
+                echo "put 中 {$filename}" . PHP_EOL;
+                file_put_contents($store . $filename, $content . PHP_EOL);
             }
         }
 
-        dd('run over');
+        //上传oss
+        $file_arr = [];
+
+        if ($dh = opendir($store)) {
+            $ignore = [
+                '.', '..', '.gitignore',
+            ];
+            while (false !== ($file = readdir($dh))) {
+                if (!in_array($file, $ignore, true)) {
+                    if (strpos($file, $fileSuffix) !== false) {
+                        CommonService::getInstance()->log4PHP($file, 'info', 'upload_oss.log');
+                        try {
+                            $oss = new OSSService('internal');
+                            $file_arr[] = $oss->doUploadFile(
+                                $this->oss_bucket,
+                                Carbon::now()->format('Ym') . DIRECTORY_SEPARATOR . $file,
+                                $store . $file,
+                                $this->oss_expire_time
+                            );
+                        } catch (\Throwable $e) {
+                            $file = $e->getFile();
+                            $line = $e->getLine();
+                            $msg = $e->getMessage();
+                            $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
+                            CommonService::getInstance()->log4PHP($content, 'sendToOSS', 'send_fapiao_err.log');
+                        }
+                    }
+                }
+            }
+
+            //这里要改成外网url 因为蚂蚁的服务器不在阿里云
+            if (!empty($file_arr)) {
+                $file_arr = array_map(function ($row) {
+                    return str_replace('-internal', '', $row);
+                }, $file_arr);
+            }
+
+            AntAuthList::create()
+                ->where('socialCredit', $NSRSBH)
+                ->update([
+                             'lastReqTime' => time(),
+                             'lastReqUrl' => empty($file_arr) ? '' : implode(',', $file_arr),
+                             'big_kprq' => $kprqz
+                         ]);
+        }
+        closedir($dh);
+
+        return true;
+    }
+
+    function getInvOne()
+    {
+        $entname = '北京华品博睿网络技术有限公司';
+        $socialCredit = '911101050896860603';
+        $province = '北京市';
+        $city = '北京市';
+        $p = '88ee872c568054029fc9325b27b4d381';
+
+        $entname = '凌雄技术（深圳）有限公司';
+        $socialCredit = '914403000685577373';
+        $province = '深圳市';
+        $city = '福田区';
+        $p = 'fc160cd1955bce6392a7a4c100f2ab41';
+
+        $list = [
+            '911101050896860603'
+        ];
+
+        $kprqq = Carbon::now()->subMonths(23)->startOfMonth()->format('Y-m-d');
+        $kprqz = Carbon::now()->subMonths(1)->endOfMonth()->format('Y-m-d');
+
+        foreach ($list as $socialCredit) {
+            $page = 199;
+            while (true) {
+                $page++;
+                echo '===========================' . PHP_EOL;
+                echo '开始取:' . $page . '页' . PHP_EOL;
+                echo '开始取的开始时间:' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
+                $main = (new JinCaiShuKeService())->obtainFpInfoNew(
+                    false, $socialCredit, $kprqq, $kprqz, $page
+                );
+                echo '取到的时间:' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
+                if (empty($main['result']['data']['content'])) {
+                    dd('没了', $page);
+                } else {
+                    $this->handleMain($main['result']['data']['content'], $socialCredit);
+                }
+            }
+        }
+
+    }
+
+    function getInv()
+    {
+        $start = 0;
+        $step = 5;
+        $max_id = 2474;//每次改
+
+        $csp = \App\Csp\Service\CspService::getInstance()->create();
+
+        //总共需要80个数据库链接
+        $p_total = 80;
+
+        for ($p_index = 0; $p_index < $p_total; $p_index++) {
+            $csp->add('getInv' . $p_index, function () use ($max_id, $start, $p_total, $p_index, $step) {
+                while (true) {
+                    $p_start = $max_id - ($start * $p_total + $p_index) * $step;
+                    $p_end = $p_start - $step;
+                    if ($p_start < 0 && $p_end < 0) break;
+                    $list = JinCaiTrace::create()
+                        ->where('id', $p_start, '<=')
+                        ->where('id', $p_end, '>')
+                        ->field(['socialCredit', 'kprqq', 'kprqz'])
+                        ->all();
+                    if (!empty($list)) {
+                        foreach ($list as $item) {
+                            $page = 0;
+                            while (true) {
+                                $page++;
+                                // 开票日期起
+                                $kprqq = Carbon::createFromTimestamp($item->getAttr('kprqq'))->format('Y-m-d');
+                                // 开票日期止
+                                $kprqz = Carbon::createFromTimestamp($item->getAttr('kprqz'))->format('Y-m-d');
+                                // 主票和明细信息
+                                CommonService::getInstance()->log4PHP([
+                                                                          $item->getAttr('socialCredit'), $page
+                                                                      ], '取了几页', $this->error_log);
+                                $main = (new JinCaiShuKeService())->obtainFpInfoNew(
+                                    true, $item->getAttr('socialCredit'), $kprqq, $kprqz, $page
+                                );
+                                if (empty($main['result']['data']['content'])) {
+                                    // 取完了吗
+                                    CommonService::getInstance()->log4PHP(
+                                        [$item->getAttr('socialCredit'), $page],
+                                        'getover',
+                                        $this->error_log
+                                    );
+                                    break;
+                                } else {
+                                    $this->handleMain($main['result']['data']['content'], $item->getAttr('socialCredit'));
+                                }
+                            }
+                        }
+                    }
+                    $start++;
+                }
+                return [Carbon::now()->format('Y-m-d H:i:s')];
+            });
+        }
+
+        CommonService::getInstance()->log4PHP($csp->exec(-1), 'execover', $this->error_log);
 
     }
 
@@ -381,13 +497,17 @@ class jincai_api0 extends AbstractProcess
         }
 
         // 详情
-        foreach ($main as $one_main) {
-            $fpdm = $one_main['invoiceMain']['fpdm'];
-            $fphm = $one_main['invoiceMain']['fphm'];
-            if (!empty($one_main['invoiceDetailsList'])) {
-                $this->handleDetail($one_main['invoiceDetailsList'], $fpdm, $fphm);
-            }
-        }
+//        foreach ($main as $one_main) {
+//            $fpdm = $one_main['invoiceMain']['fpdm'] ?? '';
+//            $fphm = $one_main['invoiceMain']['fphm'] ?? '';
+//            if (empty($fpdm) || empty($fphm)) {
+//                CommonService::getInstance()->log4PHP([$main, $nsrsbh], '详情里没有发票代码', $this->error_log);
+//                continue;
+//            }
+//            if (!empty($one_main['invoiceDetailsList'])) {
+//                $this->handleDetail($one_main['invoiceDetailsList'], $fpdm, $fphm);
+//            }
+//        }
     }
 
     private function mainStoreMysql(array $arr, string $nsrsbh): void
@@ -398,10 +518,10 @@ class jincai_api0 extends AbstractProcess
         $check_exists = EntInvoice::create()
             ->addSuffix($nsrsbh, 'test')
             ->where([
-                'fpdm' => $arr['fpdm'],
-                'fphm' => $arr['fphm'],
-                'direction' => $arr['cxlx'],//01-购买方 02-销售方
-            ])->get();
+                        'fpdm' => $arr['fpdm'],
+                        'fphm' => $arr['fphm'],
+                        'direction' => $arr['cxlx'],//01-购买方 02-销售方
+                    ])->get();
 
         // 已经存在了
         if (!empty($check_exists)) return;
@@ -460,7 +580,7 @@ class jincai_api0 extends AbstractProcess
             $line = $e->getLine();
             $msg = $e->getMessage();
             $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-            CommonService::getInstance()->log4PHP($content, 'main-storeMysql', __FUNCTION__);
+            CommonService::getInstance()->log4PHP($content, 'main-storeMysql', $this->error_log);
         }
 
     }
@@ -495,10 +615,10 @@ class jincai_api0 extends AbstractProcess
         $check_exists = EntInvoiceDetail::create()
             ->addSuffix($arr['fpdm'], $arr['fphm'], 'test')
             ->where([
-                'fpdm' => $arr['fpdm'],
-                'fphm' => $arr['fphm'],
-                'mxxh' => $arr['mxxh']
-            ])->get();
+                        'fpdm' => $arr['fpdm'],
+                        'fphm' => $arr['fphm'],
+                        'mxxh' => $arr['mxxh']
+                    ])->get();
 
         // 已经存在了
         if (!empty($check_exists)) return;
@@ -530,7 +650,7 @@ class jincai_api0 extends AbstractProcess
             $line = $e->getLine();
             $msg = $e->getMessage();
             $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
-            CommonService::getInstance()->log4PHP($content, 'detail-storeMysql', __FUNCTION__);
+            CommonService::getInstance()->log4PHP($content, 'detail-storeMysql', $this->error_log);
         }
     }
 
@@ -571,8 +691,8 @@ class jincai_api0 extends AbstractProcess
                 $p_traceNo = $c_check->getAttr('pTraceNo');
                 if (empty($p_traceNo)) {
                     JinCaiTrace::create()->destroy([
-                        'socialCredit' => $target->getAttr('socialCredit'),
-                    ]);
+                                                       'socialCredit' => $target->getAttr('socialCredit'),
+                                                   ]);
                 } else {
                     continue;// 正在采集，跳过
                 }
@@ -622,14 +742,14 @@ class jincai_api0 extends AbstractProcess
             }
 
             JinCaiTrace::create()->data([
-                'entName' => $target->getAttr('entName'),
-                'socialCredit' => $target->getAttr('socialCredit'),
-                'code' => $addTaskInfo['code'] ?? '未返回',
-                'msg' => $addTaskInfo['msg'] ?? '未返回',
-                'pTraceNo' => $error ? '' : $p_traceNo,
-                'kprqq' => $kprqq,
-                'kprqz' => $kprqz,
-            ])->save();
+                                            'entName' => $target->getAttr('entName'),
+                                            'socialCredit' => $target->getAttr('socialCredit'),
+                                            'code' => $addTaskInfo['code'] ?? '未返回',
+                                            'msg' => $addTaskInfo['msg'] ?? '未返回',
+                                            'pTraceNo' => $error ? '' : $p_traceNo,
+                                            'kprqq' => $kprqq,
+                                            'kprqz' => $kprqz,
+                                        ])->save();
 
             \co::sleep(1);
 
@@ -678,7 +798,7 @@ for ($i = 1; $i--;) {
     $conf = new Config();
     $conf->setArg(['foo' => $i]);
     $conf->setEnableCoroutine(true);
-    $process = new jincai_api0($conf);
+    $process = new jincai_api($conf);
     $process->getProcess()->start();
 }
 

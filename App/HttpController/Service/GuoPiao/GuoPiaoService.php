@@ -28,6 +28,10 @@ class GuoPiaoService extends ServiceBase
         $this->url = CreateConf::getInstance()->getConf('guopiao.url');
         $this->urlTest = CreateConf::getInstance()->getConf('guopiao.urlTest');
 
+        $this->guopiao_url = CreateConf::getInstance()->getConf('guopiao.guopiao_url');
+        $this->client_id = CreateConf::getInstance()->getConf('guopiao.client_id');
+        $this->client_secret = CreateConf::getInstance()->getConf('guopiao.client_secret');
+
         return true;
     }
 
@@ -60,9 +64,19 @@ class GuoPiaoService extends ServiceBase
         if (isset($res['coHttpErr'])) return $this->createReturn(500, $res['Paging'], [], 'co请求错误');
 
         $res['code'] - 0 === 0 ? $res['code'] = 200 : $res['code'] = 600;
+        if( in_array($type,['checkInvoice','realTimeRecognize']) ){
+            $res['failCode'] - 0 === 0 ? $res['code'] = 200 : $res['code'] = 600;
+            $res['msg'] = $res['result']?:"success"  ;
+        }
 
         //拿结果
         switch ($type) {
+            case 'realTimeRecognize':
+                $res['Result'] = $res['dataDetails'];
+                break;
+            case 'checkInvoice':
+                $res['Result'] = $res;
+                break;
             case 'getReceiptDetailByClient':
             case 'getReceiptDetailByCert':
                 $res['Result'] = $res['data']['invoices'];
@@ -154,7 +168,7 @@ class GuoPiaoService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
-    //实时ocr查验
+    //实时ocr查验 readyToSendV2
     function getInvoiceOcr($image)
     {
         //图片steam的base64编码
@@ -168,6 +182,198 @@ class GuoPiaoService extends ServiceBase
         $res = $this->readyToSend($api_path, $body, false, true, true);
 
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
+    }
+
+    static function  getGetRequestUrl($url,$data){
+        $str = http_build_query($data);
+        $url = $url.'?'.$str;
+        return $url;
+    }
+
+    function  getGetRequestHeader($url){
+        $accept =  self::getHeaderAccepet();
+        $rand = strtolower(self::guid()) ;
+        $date = self::getRequestDate();
+
+        $customHeaderStr = "x-mars-api-version:20190618\nx-mars-signature-nonce:$rand\n";
+        $httpHeaderStr = "GET\n$accept\nnull\nnull\n$date\n";
+        $stringToSign = $httpHeaderStr.$customHeaderStr.$url;
+        $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true));
+
+        $headers = [
+            'date' => $date,
+            'signature' =>'mars '.$this->client_id.':'.$Signature,
+            'x-mars-api-version' => '20190618',
+            'x-mars-signature-nonce' =>$rand
+        ];
+
+        return $headers;
+    }
+
+    function getPostRequestHeaders($url){
+
+        $date = self::getRequestDate();
+        $rand = strtolower(self::guid());
+
+        $accept =  self::getHeaderAccepet();
+        $contentType= self::getContentType();
+
+        $customHeaderStr = "x-mars-api-version:20190618\nx-mars-signature-nonce:$rand\n";
+
+        //$ContentMD5 = base64_encode(md5(json_encode($data,JSON_UNESCAPED_UNICODE)));
+        $httpHeaderStr = "POST\n$accept\nnull\n$contentType\n$date\n";
+        $stringToSign = $httpHeaderStr.$customHeaderStr.$url;
+
+        $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true));
+
+        $headers = [
+            'date' => $date,
+            'signature' => 'mars '.$this->client_id.':'.$Signature,
+            'x-mars-api-version' => '20190618',
+            'x-mars-signature-nonce'=>$rand,
+            'Content-Type' => $contentType
+        ];
+
+        return $headers;
+    }
+
+    /***
+    参数 参数类型 参数说明 是否必填 备注
+    fileName String 文件名 否 支持常规图片、PDF格式以及ofd格式文件
+    base64Content String base64字符串 否 base64Content和imageUrl任选其一必填，如果二者均不为空，优先识别imageUrl。
+    imageUrl String 图片链接地址 否
+     ***/
+    function realTimeRecognize($fileName,$base64Content,$imageUrl,$showLog = true)
+    {
+        $data = [
+            "fileName" => $fileName,
+            "base64Content" => $base64Content,
+            "imageUrl" => $imageUrl,
+        ];
+
+        $url = $this->guopiao_url.'api/ocr/realTimeRecognize';
+        ksort($data);
+         
+        $headers = $this->getPostRequestHeaders($url);
+
+        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(true)->send(
+            $url, $data,$headers,[],"POSTJSON"
+        );
+        $newRes = $res;
+        if($this->checkRespFlag){
+            $newRes =  $this->checkResp($res, __FUNCTION__) ;
+        }
+
+        $showLog &&  CommonService::getInstance()->log4PHP(
+            json_encode([
+                '国票-发起请求' => [
+                    '文件名' => $fileName,
+                    'base64字符串' => $base64Content,
+                    '图片链接地址' => $imageUrl,
+                    'url' => $url,
+                    'data' => $data,
+                    'headers' => $headers,
+                    '返回' => $res,
+                    'checkResp返回' => $newRes,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+        return $newRes;
+    }
+
+    static function getHeaderAccepet(){
+        return '*/*';
+    }
+
+    static function getContentType(){
+        return 'application/json; charset=utf-8';
+    }
+
+    static function getRequestDate(){
+        return  gmdate('D, d M Y H:i:s', time()+3600 * 8)." GMT";
+    }
+
+    /***
+
+    名称 类 型 是否必填 说明 备注
+    flowId String 否 客户请求流水 推荐格式：YYYYMMDD+发票代码+发票号码+8位随机数
+    invoiceCode String 否 发票代码 10或12位的发票代码(发票类型非09或90不可为空,即非全电发票时)
+    invoiceNumber String 是 发票号码 8位数字的发票号码
+    billingDate String 是 开票日期 格式为YYYY-MM-DD
+    totalAmount String 否 发票金额 发票类型为 01、03、15、20时不可为空；01、03、20填写发票不含税金额；15填写发票车价合计
+    ；09、90填写发票价税合计
+    checkCode String 否 校验码 发票校验码后6位。发票类型为04、10、11、14时此项不可为空。
+    $data = [
+        "invoiceCode" =>$invoiceCode,
+        "invoiceNumber" => $invoiceNumber,
+        "billingDate" => $billingDate,
+        "totalAmount" => $totalAmount,
+        "checkCode" => $checkCode,
+        "flowId" => date("YYYYMMDD")."_".$invoiceCode.rand(10000000,99999999),
+    ];
+     ***/
+
+
+    function checkInvoice($invoiceCode,$invoiceNumber,$billingDate,$totalAmount,$checkCode,$showLog = true){
+
+        $data = [
+            "invoiceCode" => $invoiceCode,
+            "invoiceNumber" => $invoiceNumber,
+            "billingDate" => $billingDate,
+            "totalAmount" => $totalAmount,
+            "checkCode" => $checkCode,
+            "flowId" => date("YYYYMMDD")."_".$invoiceCode.rand(10000000,99999999),
+        ];
+
+        ksort($data);
+
+        $url = self::getGetRequestUrl($this->guopiao_url.'api/check/invoice',$data) ;
+
+        $headers = self::getGetRequestHeader( $url);
+
+        $res = (new CoHttpClient())->useCache(false)->needJsonDecode(true)->send(
+            $url, [],$headers,[],"GET"
+        );
+
+        $newRes = $res;
+        if($this->checkRespFlag){
+            $newRes =  $this->checkResp($res, __FUNCTION__) ;
+        }
+
+        $showLog &&  CommonService::getInstance()->log4PHP(
+            json_encode([
+                '国票-发起请求' => [
+                    'url' => $url,
+                    'data' => $data,
+                    'headers' => $headers,
+                    '返回' => $res,
+                    'checkResp返回' => $newRes,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+        return $newRes;
+    }
+    /**
+     * uuid生成
+     * @return string
+     */
+    public static function guid(){
+        if (function_exists('com_create_guid')){
+            return com_create_guid();
+        }else{
+            mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
+            $charid = strtoupper(md5(uniqid(rand(), true)));
+            $hyphen = chr(45);// "-"
+            $uuid =substr($charid, 0, 8).$hyphen
+                .substr($charid, 8, 4).$hyphen
+                .substr($charid,12, 4).$hyphen
+                .substr($charid,16, 4).$hyphen
+                .substr($charid,20,12)
+            ;
+            return $uuid;
+        }
     }
 
     //实时查验
@@ -234,19 +440,20 @@ class GuoPiaoService extends ServiceBase
     }
 
     //进销项发票信息 信动专用
-    /**
 
-    "invoiceCode": "051002100204", //发票代码
-    "invoiceNumber": "03013525", //发票号码
-    "billingDate": "2022-09-29 ",//开票日期
-    "totalAmount": "1051.07",//总金额
-    "totalTax": "62.03",//总税额
-    "invoiceType": "04",//发票类型
-    "state": "0",//发票状态
-    "salesTaxNo": "91510104723445820B",//卖方税号
-    "salesTaxName": "成都万科物业服务有限公司",//卖方名称
-    "purchaserTaxNo": "91510106MA7FM5BL90",//买方税号
-    "purchaserName": "四川账三丰互联网科技有限公司"//买方名称
+    /**
+     *
+     * "invoiceCode": "051002100204", //发票代码
+     * "invoiceNumber": "03013525", //发票号码
+     * "billingDate": "2022-09-29 ",//开票日期
+     * "totalAmount": "1051.07",//总金额
+     * "totalTax": "62.03",//总税额
+     * "invoiceType": "04",//发票类型
+     * "state": "0",//发票状态
+     * "salesTaxNo": "91510104723445820B",//卖方税号
+     * "salesTaxName": "成都万科物业服务有限公司",//卖方名称
+     * "purchaserTaxNo": "91510106MA7FM5BL90",//买方税号
+     * "purchaserName": "四川账三丰互联网科技有限公司"//买方名称
      */
     function getInvoiceMain($code, $dataType, $startDate, $endDate, $page)
     {
@@ -267,18 +474,19 @@ class GuoPiaoService extends ServiceBase
     }
 
     //进销项发票商品明细 信动专用 $dataType：0  $dataType：1
+
     /**
-    "invoiceCode": "051002100204",//发票代码
-    "invoiceNumber": "03013525",//发票号码
-    "billingDate": "2022-09-29 ",//开票日期
-    "amount": "1051.07",//开票金额
-    "tax": "62.03",//含税单价？
-    "invoiceType": "04",//规格型号？
-    "goodName": "-",//商品名？
-    "taxRate": "0",//税率？
-    "unitPrice": "-",//单价？
-    "quantity": "1",//数量
-    "specificationModel": "-"//？
+     * "invoiceCode": "051002100204",//发票代码
+     * "invoiceNumber": "03013525",//发票号码
+     * "billingDate": "2022-09-29 ",//开票日期
+     * "amount": "1051.07",//开票金额
+     * "tax": "62.03",//含税单价？
+     * "invoiceType": "04",//规格型号？
+     * "goodName": "-",//商品名？
+     * "taxRate": "0",//税率？
+     * "unitPrice": "-",//单价？
+     * "quantity": "1",//数量
+     * "specificationModel": "-"//？
      */
     function getInvoiceGoods($code, $dataType, $startDate, $endDate, $page)
     {
@@ -299,24 +507,21 @@ class GuoPiaoService extends ServiceBase
     }
 
     //企业税务基本信息查询
+
     /**
-    essential	LIST	基本信息-纳税信用等级
-    overdueFine	Text	近12个月滞纳金次数(次)（废弃字段）
-    owingType	Text	是否欠税（是/否）
-    payTaxes	Text	纳税状态 = 正常/异常
-    regulations	Text	违章稽查记录（条）
-    nature	Text	纳税人性质
-
-    essential:
-    名称	类型	说明
-    creditLevel	Text	税务征信等级，枚举值[A、B、C、D、M、不参评、暂无、该纳税人还未终审完成]
-    year	string(date-time)	年份
-    taxpayerId	Text	纳税人识别号
-    creditPoint	Text	评价分数
-
-
-
-
+     * essential    LIST    基本信息-纳税信用等级
+     * overdueFine    Text    近12个月滞纳金次数(次)（废弃字段）
+     * owingType    Text    是否欠税（是/否）
+     * payTaxes    Text    纳税状态 = 正常/异常
+     * regulations    Text    违章稽查记录（条）
+     * nature    Text    纳税人性质
+     *
+     * essential:
+     * 名称    类型    说明
+     * creditLevel    Text    税务征信等级，枚举值[A、B、C、D、M、不参评、暂无、该纳税人还未终审完成]
+     * year    string(date-time)    年份
+     * taxpayerId    Text    纳税人识别号
+     * creditPoint    Text    评价分数
      */
 
     function getEssential($code)
@@ -336,24 +541,23 @@ class GuoPiaoService extends ServiceBase
     //企业所得税-月（季）度申报表查询
 
     /**
-    "declarationDate": "2022-10-24 00:00:00",//申报日期
-    "endDate": "2022-09-30 00:00:00",//所属时期止
-    "levyProjectName": "2021版企业所得税A类申报",//征收项目
-    "accumulativeAmount": 0E-8,//累计金额
-    "projectType": "预缴税款计算",//项目类型
-    "projectSubType": "",//项目父类型
-    "currentAmount": 0.0,//本期金额(2015版专有)
-    "beginDate": "2022-07-01 00:00:00",//所属时期起
-    "sequence": 5,//顺序
-    "tableType": "A",
-    "columnSequence": "5",//栏次
-    "projectNameCode": "070127",//项目代码
-    "bureau": "SICHUAN",//所属税务局
-    "taxNo": "TAX_NO_0120221110113032OYH",//授权批次号
-    "projectName": "减：不征税收入",//项目名称
-    "deadline": null,
-    "taxpayerId": "91510106MA7FM5BL90" //纳税识别号
-
+     * "declarationDate": "2022-10-24 00:00:00",//申报日期
+     * "endDate": "2022-09-30 00:00:00",//所属时期止
+     * "levyProjectName": "2021版企业所得税A类申报",//征收项目
+     * "accumulativeAmount": 0E-8,//累计金额
+     * "projectType": "预缴税款计算",//项目类型
+     * "projectSubType": "",//项目父类型
+     * "currentAmount": 0.0,//本期金额(2015版专有)
+     * "beginDate": "2022-07-01 00:00:00",//所属时期起
+     * "sequence": 5,//顺序
+     * "tableType": "A",
+     * "columnSequence": "5",//栏次
+     * "projectNameCode": "070127",//项目代码
+     * "bureau": "SICHUAN",//所属税务局
+     * "taxNo": "TAX_NO_0120221110113032OYH",//授权批次号
+     * "projectName": "减：不征税收入",//项目名称
+     * "deadline": null,
+     * "taxpayerId": "91510106MA7FM5BL90" //纳税识别号
      *
      */
     function getIncometaxMonthlyDeclaration($code)
@@ -410,21 +614,22 @@ class GuoPiaoService extends ServiceBase
     }
 
     //利润表查询
+
     /**
-    "currentMonthAmount",//本月累计金额
-    "declarationDate",//申报日期
-    "endDate",//所属时期止
-    "levyProjectName",//征收项目
-    "reportType",
-    "beginDate",//所属时期起
-    "sequence",//顺序
-    "columnSequence",//栏次
-    "currentYearAccumulativeAmount",//本年累计金额
-    "projectNameCode",//项目代码
-    "taxNo",//授权批次号
-    "projectName",//项目名称
-    "taxpayerId",//纳税识别号
-    "SQJE"
+     * "currentMonthAmount",//本月累计金额
+     * "declarationDate",//申报日期
+     * "endDate",//所属时期止
+     * "levyProjectName",//征收项目
+     * "reportType",
+     * "beginDate",//所属时期起
+     * "sequence",//顺序
+     * "columnSequence",//栏次
+     * "currentYearAccumulativeAmount",//本年累计金额
+     * "projectNameCode",//项目代码
+     * "taxNo",//授权批次号
+     * "projectName",//项目名称
+     * "taxpayerId",//纳税识别号
+     * "SQJE"
      */
     function getFinanceIncomeStatement($code)
     {
@@ -532,6 +737,110 @@ class GuoPiaoService extends ServiceBase
         }
     }
 
+    private function postGuoPiao()
+    {
+
+
+
+    }
+
+    private function readyToSendV2($api_path, $body, $isTest = false, $encryption = true, $zwUrl = false)
+    {
+        if (preg_match('/^http/', $api_path)) {
+            $url = $api_path;
+        } elseif ($isTest) {
+            $url = $this->guopiao_url . $api_path;
+        } else {
+            $url = $this->guopiao_url . $api_path;
+        }
+
+        if ($encryption) {
+            $param = $body['param'];
+            $json_param = jsonEncode($param);
+            $encryptedData = $this->encrypt($json_param, $isTest);
+            $base64_str = base64_encode($encryptedData);
+            $body['param'] = $base64_str;
+
+            $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($this->guopiao_url, $body);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '国票-发起请求' => [
+                        'url' => $this->guopiao_url,
+                        'body' => $body,
+                        '返回' => $res,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
+
+            $res = base64_decode($res);
+            $res = $this->decrypt($res, $isTest);
+            return jsonDecode($res);
+        } else {
+            $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '国票-发起请求' => [
+                        'url' => $url,
+                        'body' => $body,
+                        '返回' => $res,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
+
+            return $res;
+        }
+    }
+    private function readyToSendV3($api_path, $body, $isTest = false, $encryption = true, $zwUrl = false)
+    {
+        if (preg_match('/^http/', $api_path)) {
+            $url = $api_path;
+        } elseif ($isTest) {
+            $url = $this->guopiao_url . $api_path;
+        } else {
+            $url = $this->guopiao_url . $api_path;
+        }
+
+        if ($encryption) {
+            $param = $body['param'];
+            $json_param = jsonEncode($param);
+            $encryptedData = $this->encrypt($json_param, $isTest);
+            $base64_str = base64_encode($encryptedData);
+            $body['param'] = $base64_str;
+
+            if ($zwUrl) {
+                $url = 'http://api.zoomwant.com:50001/api/' . $api_path;
+            }
+
+            $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($this->guopiao_url, $body);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '国票-发起请求' => [
+                        'url' => $this->guopiao_url,
+                        'body' => $body,
+                        '返回' => $res,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
+
+            $res = base64_decode($res);
+            $res = $this->decrypt($res, $isTest);
+            return jsonDecode($res);
+        } else {
+            $res = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($url, $body);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '国票-发起请求' => [
+                        'url' => $url,
+                        'body' => $body,
+                        '返回' => $res,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
+
+            return $res;
+        }
+    }
+
     function getAuthenticationManage(
         $entName,
         $phone
@@ -547,11 +856,11 @@ class GuoPiaoService extends ServiceBase
         $res = (new GuoPiaoService())->getAuthentication($entName, $callback, $orderNo);
         CommonService::getInstance()->log4PHP(json_encode(
             [
-                'getAuthentication_res'=>$res,
-                'getAuthentication_param'=>[
-                    '$entName'=>$entName,
-                    '$callback'=>$callback,
-                    '$orderNo'=>$orderNo
+                'getAuthentication_res' => $res,
+                'getAuthentication_param' => [
+                    '$entName' => $entName,
+                    '$callback' => $callback,
+                    '$orderNo' => $orderNo
                 ],
             ]
         ));

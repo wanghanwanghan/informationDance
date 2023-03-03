@@ -197,7 +197,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         );
 
         //第一次的招投标
-        self::sendEmail($day);
+        //self::sendEmail($day);
 
         //第二次的招投标
         $week =  date('w',strtotime($day));
@@ -208,7 +208,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
                 'zhengmeng@meirixindong.com',
                 'luoyuting@huoyan.cn',
                 'liqingfeng@huoyan.cn',
-                'luoyuting@huoyan.cn',
+                //'luoyuting@huoyan.cn',
             ]);
         }else{
             CommonService::getInstance()->log4PHP(
