@@ -329,9 +329,9 @@ class jincai_api0 extends AbstractProcess
                 $kprqz = Carbon::createFromTimestamp($item->getAttr('kprqz'))->format('Y-m-d');
                 // 主票和明细信息
                 $main = (new JinCaiShuKeService())->obtainFpInfoNew(true, $nsrsbh, $kprqq, $kprqz, $page);
-                echo $nsrsbh . '|' . $page . '|' . 'start at ' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
+                echo $nsrsbh . '|' . $kprqq . '|' . $kprqz . '|' . $page . '|' . 'start at ' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
                 if (empty($main['result']['data']['content'])) {
-                    echo $nsrsbh . '|' . $page . '|' . 'stop at ' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
+                    echo $nsrsbh . '|' . $kprqq . '|' . $kprqz . '|' . $page . '|' . 'stop at ' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
                     break;
                 } else {
                     $page++;

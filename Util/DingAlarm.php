@@ -145,3 +145,28 @@ function action($webhook,$title,$text,$user){
     curl_close($ch);
     return $data;
 }
+
+function feishuTishi($title,$text){
+    $tishi = "https://open.feishu.cn/open-apis/bot/v2/hook/e9cf2c4b-d94e-4735-8616-6d913cbb6709";
+    feishu($tishi,$title,$text);
+}
+function feishu($url,$title,$text){
+    $webhook = $url;
+    $content = [];
+    foreach ($text as $k=>$item) {
+        $content[$k] = [['tag'=>'text','text'=>$item['name'].':'.$item['msg']]];
+    }
+
+    $msg = ['post'=> ['zh_cn'=> ['title'=>$title, 'content'=>$content]]];;
+    $data = array ('msg_type' => 'post','content' => $msg);
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $webhook);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array ('Content-Type: application/json;'));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $data = curl_exec($ch);
+    curl_close($ch);
+    return $data;
+}

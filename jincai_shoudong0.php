@@ -44,8 +44,10 @@ class jincai_shoudong0 extends AbstractProcess
     {
         // 不要删除这行
         // $this->createCurrentAesKey();
-//        $this->addTask();
-        $this->getTaskStatus();
+        $this->addTask();
+//        $this->getTaskStatus();
+       $res =  (new JinCaiShuKeService())->obtainFpInfoNew(true, '913308006807447901', '2021-02-01', '2022-12-31', 2);
+       dd($res);
     }
 
 
@@ -172,13 +174,27 @@ class jincai_shoudong0 extends AbstractProcess
     }
 
     function getTaskStatus(){
-//        $all = JinCaiTrace::create()->all();
-//        foreach ($all as $one) {
-//            if( $one->getAttr('code')== 'S000'){
-                $addTaskInfo = (new JinCaiShuKeService())->getTaskStatus('aacd1990009814b1d183b30e6051f06c');//$one->getAttr('pTraceNo')
-                var_dump($addTaskInfo);
-//            }
-//        }
+
+//        $addTaskInfo = (new JinCaiShuKeService())->getTaskStatus('aacd1990009814b1d183b30e6051f06c');//'aacd1990009814b1d183b30e6051f06c'
+//        dd($addTaskInfo['result']['data']);
+
+
+        $all = JinCaiTrace::create()->all();
+        foreach ($all as $one) {
+            if( $one->getAttr('code')== 'S000'){
+                echo $one->getAttr('pTraceNo')."\n";
+                $addTaskInfo = (new JinCaiShuKeService())->getTaskStatus($one->getAttr('pTraceNo'));//
+//                if(!empty($addTaskInfo['result'])){
+
+                    echo $addTaskInfo['msg']."\n";
+                    $one->update(['code' => $addTaskInfo['code'],'msg'=>$addTaskInfo['msg']]);
+
+//                }else
+//                dd($addTaskInfo);
+//                dd($res);
+
+            }
+        }
     }
     //上传oss时候调用
     function _sendToOSS()
@@ -679,14 +695,13 @@ class jincai_shoudong0 extends AbstractProcess
 ////            ->where('id', 1621, '<')// 这个数字要改
 //            ->where('id', 1611, '>')
 
-
+//205,562,752
 //        and id > 1407
 //        and id < 1612
             ->where("
             getDataSource = 2 
             and belong =41
-
-           and id in (1171,828,1335,1025,985,1014,1146,1253,1550,1113,753,852,781,1606)         
+           and id in (562,752)         
             and (isElectronics LIKE '%属%成功%' OR isElectronics LIKE '%非一般%')
             ")
             ->all();
