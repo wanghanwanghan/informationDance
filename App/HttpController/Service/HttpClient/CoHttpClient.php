@@ -54,11 +54,11 @@ class CoHttpClient extends ServiceBase
 
         //设置head头
         empty($headers) ?: $request->setHeaders($headers, true, false);
-        empty($headers) ?:  CommonService::getInstance()->log4PHP(
-            json_encode([
-                'http-set-headers' => $headers
-            ],JSON_UNESCAPED_UNICODE)
-        );
+//        empty($headers) ?:  CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                'http-set-headers' => $headers
+//            ],JSON_UNESCAPED_UNICODE)
+//        );
 
         try {
 //            CommonService::getInstance()->log4PHP([$url, $postData], 'info', 'http_return_data_3');
@@ -73,11 +73,11 @@ class CoHttpClient extends ServiceBase
 
             //整理结果
             $data = $data->getBody();
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    'http-get-$data' => $data
-                ],JSON_UNESCAPED_UNICODE)
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    'http-get-$data' => $data
+//                ],JSON_UNESCAPED_UNICODE)
+//            );
 //            CommonService::getInstance()->log4PHP([$data], 'info', 'http_return_data');
 //            dingAlarm('http返回',['$url'=>$url,'$data'=>json_encode($data),'$postData'=>json_encode($postData)]);
             $d = jsonDecode($data,true);

@@ -99,7 +99,7 @@ class GuoPiaoController extends ProvideBase
             return (new GuoPiaoService())->setCheckRespFlag(true)->realTimeRecognize($fileName,$image,$imageUrl);
         });
 
-        $res = CspService::getInstance()->exec($this->csp, 20);
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         CommonService::getInstance()->log4PHP(
             json_encode(
