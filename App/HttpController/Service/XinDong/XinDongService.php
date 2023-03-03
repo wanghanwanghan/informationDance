@@ -4799,8 +4799,8 @@ class XinDongService extends ServiceBase
             return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:' . $postData['code'] . '）的信息');
         }
         $data = [
-//            'UNISCID'     => $info->getAttr('UNISCID'),
-//            'REGNO'       => $info->getAttr('REGNO'),
+            'UNISCID'     => $info->getAttr('UNISCID'),
+            'REGNO'       => $info->getAttr('REGNO'),
             'NACAOID' => $info->getAttr('NACAOID'),
             'NAME' => $info->getAttr('NAME'),
             'NAMETITLE' => $info->getAttr('NAMETITLE'),
