@@ -374,11 +374,11 @@ class jincai_api extends AbstractProcess
             '911101050896860603'
         ];
 
-        $kprqq = Carbon::now()->subMonths(23)->startOfMonth()->format('Y-m-d');
-        $kprqz = Carbon::now()->subMonths(1)->endOfMonth()->format('Y-m-d');
+        $kprqq = '2021-03-01';
+        $kprqz = '2023-01-31';
 
         foreach ($list as $socialCredit) {
-            $page = 199;
+            $page = 0;
             while (true) {
                 $page++;
                 echo '===========================' . PHP_EOL;
