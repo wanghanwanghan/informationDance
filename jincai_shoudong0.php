@@ -263,37 +263,37 @@ class jincai_shoudong0 extends AbstractProcess
                     ->where('kprq_int', $kprqq, '>=')
                     ->where('kprq_int', $kprqz, '<=')
                     ->field([
-                        'fpdm',//
-                        'fphm',//
-                        'kplx',//
-                        'xfsh',//
-                        'xfmc',//
-                        'xfdzdh',//
-                        'xfyhzh',//
-                        'gfsh',//
-                        'gfmc',//
-                        'gfdzdh',//
-                        'gfyhzh',//
-                        'kpr',//
-                        'skr',//
-                        'fhr',//
-                        'yfpdm',
-                        'yfphm',
-                        'je',//
-                        'se',//
-                        'jshj',//
-                        'bz',//
-                        'zfbz',//
-                        'zfsj',//
-                        'kprq',//
-                        'fplx',//
-                        'fpztDm',//
-                        'slbz',
-                        'rzdklBdjgDm',
-                        'rzdklBdrq',
-                        'direction',
-                        'nsrsbh',
-                    ])->limit($offset, $dataInFile)->all();
+                                'fpdm',//
+                                'fphm',//
+                                'kplx',//
+                                'xfsh',//
+                                'xfmc',//
+                                'xfdzdh',//
+                                'xfyhzh',//
+                                'gfsh',//
+                                'gfmc',//
+                                'gfdzdh',//
+                                'gfyhzh',//
+                                'kpr',//
+                                'skr',//
+                                'fhr',//
+                                'yfpdm',
+                                'yfphm',
+                                'je',//
+                                'se',//
+                                'jshj',//
+                                'bz',//
+                                'zfbz',//
+                                'zfsj',//
+                                'kprq',//
+                                'fplx',//
+                                'fpztDm',//
+                                'slbz',
+                                'rzdklBdjgDm',
+                                'rzdklBdrq',
+                                'direction',
+                                'nsrsbh',
+                            ])->limit($offset, $dataInFile)->all();
                 //没有数据了
                 if (empty($list)) break;
                 foreach ($list as $key => $oneInv) {
@@ -302,29 +302,29 @@ class jincai_shoudong0 extends AbstractProcess
                         ->addSuffix($oneInv->getAttr('fpdm'), $oneInv->getAttr('fphm'), 'test')
                         ->where(['fpdm' => $oneInv->getAttr('fpdm'), 'fphm' => $oneInv->getAttr('fphm')])
                         ->field([
-                            'spbm',//
-                            'mc',//
-                            'jldw',//
-                            'shul',//
-                            'je',//
-                            'sl',//
-                            'se',//
-                            'mxxh',//
-                            'dj',//
-                            'ggxh',//
-                        ])->all();
+                                    'spbm',//
+                                    'mc',//
+                                    'jldw',//
+                                    'shul',//
+                                    'je',//
+                                    'sl',//
+                                    'se',//
+                                    'mxxh',//
+                                    'dj',//
+                                    'ggxh',//
+                                ])->all();
                     empty($detail) ? $oneInv->fpxxMxs = null : $oneInv->fpxxMxs = $detail;
                     echo $NSRSBH . '的' . '第' . $key . '张详情' . PHP_EOL;
                 }
                 $content = jsonEncode($list, false);
                 //AES-128-CTR
                 $content = base64_encode(openssl_encrypt(
-                    $content,
-                    'AES-128-CTR',
-                    $this->currentAesKey,
-                    OPENSSL_RAW_DATA,
-                    $this->iv
-                ));
+                                             $content,
+                                             'AES-128-CTR',
+                                             $this->currentAesKey,
+                                             OPENSSL_RAW_DATA,
+                                             $this->iv
+                                         ));
                 echo "put 中 {$filename}" . PHP_EOL;
                 file_put_contents($store . $filename, $content . PHP_EOL);
             }
@@ -362,10 +362,10 @@ class jincai_shoudong0 extends AbstractProcess
             AntAuthList::create()
                 ->where('socialCredit', $NSRSBH)
                 ->update([
-                    'lastReqTime' => time(),
-                    'lastReqUrl' => empty($file_arr) ? '' : implode(',', $file_arr),
-                    'big_kprq' => $kprqz
-                ]);
+                             'lastReqTime' => time(),
+                             'lastReqUrl' => empty($file_arr) ? '' : implode(',', $file_arr),
+                             'big_kprq' => $kprqz
+                         ]);
         }
         closedir($dh);
 
@@ -409,13 +409,13 @@ class jincai_shoudong0 extends AbstractProcess
 
             //拿一下这个企业的进项销项总发票数字
             $in = EntInvoice::create()->addSuffix($oneReadyToSend->getAttr('socialCredit'), 'test')->where([
-                'nsrsbh' => $socialCredit,
-                'direction' => '01',//01-进项
-            ])->count();
+                                                                                                               'nsrsbh' => $socialCredit,
+                                                                                                               'direction' => '01',//01-进项
+                                                                                                           ])->count();
             $out = EntInvoice::create()->addSuffix($oneReadyToSend->getAttr('socialCredit'), 'test')->where([
-                'nsrsbh' => $socialCredit,
-                'direction' => '02',//02-销项
-            ])->count();
+                                                                                                                'nsrsbh' => $socialCredit,
+                                                                                                                'direction' => '02',//02-销项
+                                                                                                            ])->count();
 
             $body = [
                 'nsrsbh' => $check_file->getAttr('socialCredit'),//授权的企业税号
@@ -435,9 +435,9 @@ class jincai_shoudong0 extends AbstractProcess
             if (empty($num) && $dateM < 30) {
                 $body['authResultCode'] = '9000';//'没准备好';
                 AntEmptyLog::create()->data([
-                    'nsrsbh' => $body['nsrsbh'],
-                    'data' => json_encode($body)
-                ])->save();
+                                                'nsrsbh' => $body['nsrsbh'],
+                                                'data' => json_encode($body)
+                                            ])->save();
             }
 
             ksort($body);//周平说参数升序
@@ -524,10 +524,10 @@ class jincai_shoudong0 extends AbstractProcess
         $check_exists = EntInvoice::create()
             ->addSuffix($nsrsbh, 'test')
             ->where([
-                'fpdm' => $arr['fpdm'],
-                'fphm' => $arr['fphm'],
-                'direction' => $arr['cxlx'],//01-购买方 02-销售方
-            ])->get();
+                        'fpdm' => $arr['fpdm'],
+                        'fphm' => $arr['fphm'],
+                        'direction' => $arr['cxlx'],//01-购买方 02-销售方
+                    ])->get();
 
         // 已经存在了
         if (!empty($check_exists)) return;
@@ -622,10 +622,10 @@ class jincai_shoudong0 extends AbstractProcess
         $check_exists = EntInvoiceDetail::create()
             ->addSuffix($arr['fpdm'], $arr['fphm'], 'test')
             ->where([
-                'fpdm' => $arr['fpdm'],
-                'fphm' => $arr['fphm'],
-                'mxxh' => $arr['mxxh']
-            ])->get();
+                        'fpdm' => $arr['fpdm'],
+                        'fphm' => $arr['fphm'],
+                        'mxxh' => $arr['mxxh']
+                    ])->get();
 
         // 已经存在了
         if (!empty($check_exists)) return;
@@ -726,14 +726,14 @@ class jincai_shoudong0 extends AbstractProcess
             }
 
             JinCaiTrace::create()->data([
-                'entName' => $target->getAttr('entName'),
-                'socialCredit' => $target->getAttr('socialCredit'),
-                'code' => $addTaskInfo['code'] ?? '未返回',
-                'msg' => $addTaskInfo['msg'] ?? '未返回',
-                'pTraceNo' => $p_traceNo,
-                'kprqq' => $kprqq,
-                'kprqz' => $kprqz,
-            ])->save();
+                                            'entName' => $target->getAttr('entName'),
+                                            'socialCredit' => $target->getAttr('socialCredit'),
+                                            'code' => $addTaskInfo['code'] ?? '未返回',
+                                            'msg' => $addTaskInfo['msg'] ?? '未返回',
+                                            'pTraceNo' => $p_traceNo,
+                                            'kprqq' => $kprqq,
+                                            'kprqz' => $kprqz,
+                                        ])->save();
 
             \co::sleep(1);
 
