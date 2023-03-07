@@ -477,6 +477,7 @@ class ToolsController extends ControllerBase
                             'fill_weixin_by_phone' => $requestData['get_wxname']?1:0,
                             'fill_name_and_position_by_weixin' => $requestData['get_namezhiwei']?1:0,
                             'filter_qcc_phone' => $requestData['get_filterQccPhone']?1:0,
+                            'pull_gong_shang_shu_ju' => $requestData['pull_gong_shang_shu_ju']?1:0,
                         ]),
                         'type' => ToolsFileLists::$type_upload_pull_fei_gong_kai_contact,
                         'state' => $requestData['state']?:'',
