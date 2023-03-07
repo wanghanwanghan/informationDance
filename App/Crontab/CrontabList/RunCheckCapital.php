@@ -21,7 +21,7 @@ class RunCheckCapital extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '0 12 00 * * *';
+        return '40 13 * * *';
     }
 
     static function getTaskName(): string
