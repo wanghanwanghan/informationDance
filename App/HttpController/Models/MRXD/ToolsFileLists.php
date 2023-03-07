@@ -858,6 +858,14 @@ class ToolsFileLists extends ModelBase
                //需要取工商数据
                if($pull_gong_shang_shu_ju){
                    $allContactsDatas = $allConatcts['xn_with_pxd'];
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           __CLASS__.__FUNCTION__ .__LINE__,
+                           '拉取非公开联系人-需要取工商数据-'=>[
+                               '$allContactsDatas' => $allContactsDatas,
+                           ]
+                       ],JSON_UNESCAPED_UNICODE)
+                   );
                }
 
                $tmpContacts = [];
@@ -871,7 +879,7 @@ class ToolsFileLists extends ModelBase
                    }
 
                    //需要过滤企查查
-                   if(in_array($tmpPhone,$allConatcts['qcc']) ){
+                   if(  in_array($tmpPhone,$allConatcts['qcc'])   ){
                        CommonService::getInstance()->log4PHP(
                            json_encode([
                                __CLASS__.__FUNCTION__ .__LINE__,
@@ -888,7 +896,14 @@ class ToolsFileLists extends ModelBase
 
                    $tmpContacts[$tmpPhone] = $tmpPhone;
                }
-
+               CommonService::getInstance()->log4PHP(
+                   json_encode([
+                       __CLASS__.__FUNCTION__ .__LINE__,
+                       '拉取非公开联系人-需要取工商数据-'=>[
+                           '$tmpContacts' => $tmpContacts,
+                       ]
+                   ],JSON_UNESCAPED_UNICODE)
+               );
              //$allConatcts['xn'] = $tmpContacts;
              if(empty($tmpContacts)){
                   $tmpDataItem = [
