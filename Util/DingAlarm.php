@@ -148,7 +148,8 @@ function action($webhook,$title,$text,$user){
 
 function feishuTishi($title,$text){
     $tishi = "https://open.feishu.cn/open-apis/bot/v2/hook/e9cf2c4b-d94e-4735-8616-6d913cbb6709";
-    feishu($tishi,$title,$text);
+    $res = feishu($tishi,$title,$text);
+    CommonService::getInstance()->log4PHP($res,'info','feishuTishi');
 }
 function feishu($url,$title,$text){
     $webhook = $url;

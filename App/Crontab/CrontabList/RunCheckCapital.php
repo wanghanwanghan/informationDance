@@ -21,7 +21,7 @@ class RunCheckCapital extends AbstractCronTask
     static function getRule(): string
     {
         //每分钟执行一次
-        return '0 11 50 * * *';
+        return '0 12 00 * * *';
     }
 
     static function getTaskName(): string
@@ -37,7 +37,7 @@ class RunCheckCapital extends AbstractCronTask
         $resp      = (new CoHttpClient())
             ->useCache($DianZiQianService->curl_use_cache)
             ->send($DianZiQianService->url . $path, $param,[], ['enableSSL' => true], 'GET');
-        if($resp['description'] == 'success' && $resp['data']['availableAmount']<10000){
+        if($resp['description'] == 'success' && $resp['data']['availableAmount']<100000){
             dingAlarmAtUser('本公司在电子牵的账户信息',
                             [
                                 '累计充值下单金额总额' => $resp['data']['totalAmount'],
