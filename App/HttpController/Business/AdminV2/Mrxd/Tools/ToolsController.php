@@ -569,6 +569,9 @@ class ToolsController extends ControllerBase
                 '非公开联系人来源1（pub）'=>$response['pub'],
                 '非公开联系人来源2（pri）'=>$response['pri'],
                 '非公开联系人来源3（qcc）'=>$response['qcc'],
+                '非公开联系人来源3（prd）'=>$response['prd'],
+                '非公开联系人（xn）'=>$response['xn'],
+                '非公开联系人（xn_with_pxd）'=>$response['xn_with_pxd'],
             ];
         }
         //通过手机号检测号码状态（多个手机号英文逗号分隔）
