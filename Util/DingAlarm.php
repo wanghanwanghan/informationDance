@@ -66,15 +66,15 @@ function dingAlarmUser($title,$arr,$user){
     CommonService::getInstance()->log4PHP($res,'info','dingAlarm');
 }
 function dingAlarmAtUser($title,$arr,$user){
-    $text = [];
-    foreach ($arr as $key=>$item) {
-        $text[] = [
-            'name' => $key,
-            'msg' => $item,
-        ];
-    }
-    $res = dingAlarmMarkdownForWorkAtUser($title,$text,$user);
-    CommonService::getInstance()->log4PHP($res,'info','dingAlarm');
+//    $text = [];
+//    foreach ($arr as $key=>$item) {
+//        $text[] = [
+//            'name' => $key,
+//            'msg' => $item,
+//        ];
+//    }
+//    $res = dingAlarmMarkdownForWorkAtUser($title,$text,$user);
+//    CommonService::getInstance()->log4PHP($res,'info','dingAlarm');
 }
 //老板群
 function dingAlarmMarkdownForWorkAtUser($title,$text,$user){
@@ -155,7 +155,7 @@ function feishu($url,$title,$text){
     $webhook = $url;
     $content = [];
     foreach ($text as $k=>$item) {
-        $content[] = [['tag'=>'text','text'=>$k.':'.$item]];
+//        $content[] = [['tag'=>'text','text'=>$k.':'.$item]];
     }
 
     $msg = ['post'=> ['zh_cn'=> ['title'=>$title, 'content'=>$content]]];;
