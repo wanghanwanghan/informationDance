@@ -155,7 +155,7 @@ function feishu($url,$title,$text){
     $webhook = $url;
     $content = [];
     foreach ($text as $k=>$item) {
-        $content[$k] = [['tag'=>'text','text'=>$item['name'].':'.$item['msg']]];
+        $content[] = [['tag'=>'text','text'=>$k.':'.$item]];
     }
 
     $msg = ['post'=> ['zh_cn'=> ['title'=>$title, 'content'=>$content]]];;
