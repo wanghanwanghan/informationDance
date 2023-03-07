@@ -69,7 +69,7 @@ class CompanyClue extends ModelBase
         return $res;
     }
 
-    static function getAllContactByCode($code, $returnPub = true, $returnPri = true, $returnQcc = true){
+    static function getAllContactByCode($code, $returnPub = true, $returnPri = true, $returnQcc = true, $returnPrd = true){
         $all = self::findAllByCondition(['code'=>$code]);
 //        CommonService::getInstance()->log4PHP(
 //            json_encode(
@@ -80,7 +80,7 @@ class CompanyClue extends ModelBase
 //                ]
 //            )
 //        );
-        $pub = $pri = $qcc = [];
+        $pub = $pri = $qcc = $prd = [];
 
         foreach ($all as $one) {
             if (strpos($one['pub'], '@')) {
@@ -107,13 +107,23 @@ class CompanyClue extends ModelBase
                 $_qcc = [];
             }
 
+            if (strpos($one['prd'], '@')) {
+                $prd = explode(';', \wanghanwanghan\someUtils\control::aesDecode(
+                    substr($one['prd'], strpos($one['prd'], '@') + 1), $one['created_at'] . ''
+                ));
+            } else {
+                $prd = [];
+            }
+
             $pub = array_merge($pub, $_pub);
             $pri = array_merge($pri, $_pri);
             $qcc = array_merge($qcc, $_qcc);
+            $prd = array_merge($prd, $prd);
 
         }
 
         $xn = array_values(array_unique(array_merge($pub, $pri)));
+        $xn2 = array_values(array_unique(array_merge($pub, $pri, $prd)));
 
         sort($xn);
         return [
@@ -121,6 +131,8 @@ class CompanyClue extends ModelBase
             'pri' =>$pri,
             'qcc' =>$qcc,
             'xn' =>$xn,
+            'xn_with_pxd' =>$xn2,
+            'prd' =>$prd,
         ];
     }
 
