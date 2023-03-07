@@ -540,6 +540,55 @@ class DuiZhangController  extends ControllerBase
         ],  $res['data'],'成功');
     }
 
+    /****
+    对账单：
+     * 1：不同接口对应的不同的返回形式，计费方式也不一样，有的依赖于返回内容：没法搞成通用的
+     * 2：建议直接搞成定制化的：直接查询账单下载
+     *
+     ****/
+    public function getListV2(){
+        $requestData =  $this->getRequestData();
+        $page = $requestData['page']?:1;
+        $pageSize = $requestData['pageSize']?:10;
+
+        //年度
+        if( $requestData['year'] <= 0 ){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    "客户对账模块" => "没指定年限，返回空",
+                ],JSON_UNESCAPED_UNICODE)
+            );
+            $total = 0;
+            return $this->writeJson(201, [
+                'page' => $page,
+                'pageSize' => $pageSize,
+                'total' => $total,
+                'totalPage' => ceil($total/$pageSize) ,
+            ],  [],'请指定年限');
+        }
+
+        $res =  InformationDanceRequestRecodeStatics::getFullDatas(
+            $requestData
+        );
+
+        $total = $res['total'];
+        foreach ($res['data'] as &$resItem){
+            $userInfo = RequestUserInfo::findById($resItem["userId"]);
+            if($userInfo){
+                $resItem["client_name"] =  $userInfo->username;
+            }
+            $resItem["needs_charge_num"] =  $resItem['total_num'] - $resItem['cache_num'];
+            $resItem["charge_state_cname"] =  InformationDanceRequestRecodeStatics::chargeStageMaps()[$resItem['charge_stage']];
+        }
+
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'totalPage' => ceil($total/$pageSize) ,
+        ],  $res['data'],'成功');
+    }
+
     public function getUserList(){
         $requestData =  $this->getRequestData();
         $page = $requestData['page']?:1;
