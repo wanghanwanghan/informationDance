@@ -37,16 +37,7 @@ class RunCheckCapital extends AbstractCronTask
         $resp      = (new CoHttpClient())
             ->useCache($DianZiQianService->curl_use_cache)
             ->send($DianZiQianService->url . $path, $param,[], ['enableSSL' => true], 'GET');
-        if($resp['description'] == 'success' && $resp['data']['availableAmount']<100000){
-            dingAlarmAtUser('本公司在电子牵的账户信息',
-                            [
-                                '累计充值下单金额总额' => $resp['data']['totalAmount'],
-                                '已使用金额总额' => $resp['data']['usedAmount'],
-                                '目前可用金额' => "<font color='#FF0000'>".$resp['data']['availableAmount']."</font>",
-                                '查看人'=>"<font color='#000000'>".'@18501224247'."</font>",//18501224247
-                            ],
-                            ['18501224247']
-            );
+        if($resp['description'] == 'success' && $resp['data']['availableAmount']<10000){
             feishuTishi('本公司在电子牵的账户信息',
                         [
                             '累计充值下单金额总额' => $resp['data']['totalAmount'],
