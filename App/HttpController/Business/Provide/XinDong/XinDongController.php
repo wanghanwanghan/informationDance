@@ -59,7 +59,7 @@ class XinDongController extends ProvideBase
         } else {
             $this->responseCode = $res[$this->cspKey]['code'];
             $this->responsePaging = $res[$this->cspKey]['paging'];
-            $this->responseData = $res[$this->cspKey]['result']??$res[$this->cspKey]['data'];
+            $this->responseData = $res[$this->cspKey]['result'] ?? $res[$this->cspKey]['data'];
             $this->responseMsg = $res[$this->cspKey]['msg'];
 
             $res[$this->cspKey]['code'] === 200 ?: $this->spendMoney = 0;
@@ -175,6 +175,20 @@ class XinDongController extends ProvideBase
             return (new LongXinService())
                 ->setCheckRespFlag(true)
                 ->getFinanceDataXD($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    function getPersonalInformation(): bool
+    {
+        $idno = $this->getRequestData('idno', '');
+
+        $this->csp->add($this->cspKey, function () use ($idno) {
+            return (new LongXinService())
+                ->getPersonalInformation($idno);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
@@ -3308,7 +3322,7 @@ class XinDongController extends ProvideBase
     {
         $entName = $this->getRequestData('entName', '');
 
-        if (empty($entName) ) {
+        if (empty($entName)) {
             return $this->writeJson(201, null, null, '参数entName不可以都为空');
         }
         $this->csp->add($this->cspKey, function () use ($entName) {
@@ -3319,15 +3333,16 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //鲸准 公司融资事件
     function enterpriseList(): bool
     {
         $entName = $this->getRequestData('entName', '');
 
-        if (empty($entName) ) {
+        if (empty($entName)) {
             return $this->writeJson(201, null, null, '参数entName不可以都为空');
         }
-        dingAlarm('鲸准 公司融资事件',['$entName'=>$entName]);
+        dingAlarm('鲸准 公司融资事件', ['$entName' => $entName]);
         $this->csp->add($this->cspKey, function () use ($entName) {
             return (new JingZhunService())
                 ->setCheckRespFlag(true)
@@ -3336,12 +3351,13 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //鲸准 企业搜索
     function searchComs(): bool
     {
         $entName = $this->getRequestData('entName', '');
 
-        if (empty($entName) ) {
+        if (empty($entName)) {
             return $this->writeJson(201, null, null, '参数entName不可以都为空');
         }
         $this->csp->add($this->cspKey, function () use ($entName) {
@@ -3352,6 +3368,7 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //招投标
     function getBidInfo(): bool
     {
@@ -3373,6 +3390,7 @@ class XinDongController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+
     //二次特征分数
     function getFeatures()
     {
@@ -3389,8 +3407,10 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //获取企业的风险分
-    function getFengXian(){
+    function getFengXian()
+    {
         $entName = $this->getRequestData('entName', '');
         if (empty($entName)) {
             return $this->writeJson(201, null, null, '参数entName不可以都为空');
