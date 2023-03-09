@@ -301,7 +301,8 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/createEntReportD', $prefix . 'createEntReportD');//对外报告
             $routeCollector->addRoute(['GET', 'POST'], '/getEntMarketInfo', $prefix . 'getEntMarketInfo');//企业上市信息
             $routeCollector->addRoute(['GET', 'POST'], '/getEntLiquidation', $prefix . 'getEntLiquidation');//清算
-            $routeCollector->addRoute(['GET', 'POST'], '/fuzzyMatchEntName', $prefix . 'fuzzyMatchEntName');//清算
+            $routeCollector->addRoute(['GET', 'POST'], '/fuzzyMatchEntName', $prefix . 'fuzzyMatchEntName');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getPersonalInformation', $prefix . 'getPersonalInformation');//
 
             //获取本库中的数据接口
             $routeCollector->addRoute(['GET', 'POST'], '/getCncaRzGltx_h', $prefix . 'getCncaRzGltx_h');//认监委-ISO管理体系认证

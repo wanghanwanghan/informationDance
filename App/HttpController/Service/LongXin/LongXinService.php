@@ -1653,7 +1653,7 @@ class LongXinService extends ServiceBase
     function vcQueryDetail($data): ?array
     {
         $entId = $this->getEntid($data['entName']);
-        $entId = strpos($entId,',')?explode(',',$entId):[$entId];
+        $entId = strpos($entId, ',') ? explode(',', $entId) : [$entId];
         $entId = $entId['0'];
         if (empty($entId))
             return ['code' => 102, 'msg' => 'entId是空', 'result' => [], 'paging' => null];
@@ -3058,5 +3058,41 @@ class LongXinService extends ServiceBase
 
         return $this->checkResp($res);
     }
+
+    // 获取法人-股东-高管-个体信息接口文档 截止2021 不再更新
+    function getPersonalInformation(string $idno): array
+    {
+        strlen($idno) === 32 ?: $idno = md5($idno);
+
+        // create token
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send('http://39.103.125.222/access_token/', [
+                'client_id' => CreateConf::getInstance()->getConf('longxin.p_client_id'),
+                'client_key' => CreateConf::getInstance()->getConf('longxin.p_client_key'),
+            ]);
+
+        CommonService::getInstance()->log4PHP($res);
+
+        if (empty($res['data']['token'])) {
+            return $this->checkResp($res);
+        } else {
+            $token = trim($res['data']['token']);
+        }
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send('http://39.103.125.222/api_open/common/inv_manager_individual/', [
+                'idno' => $idno
+            ], ['authorization' => $token, 'clientid' => CreateConf::getInstance()->getConf('longxin.p_client_id')]);
+
+        CommonService::getInstance()->log4PHP($res);
+
+        return $this->checkResp($res);
+    }
+
+
 }
 
