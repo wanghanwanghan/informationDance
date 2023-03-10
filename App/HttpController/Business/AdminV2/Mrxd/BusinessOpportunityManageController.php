@@ -300,7 +300,7 @@ class BusinessOpportunityManageController extends ControllerBase
             ],JSON_UNESCAPED_UNICODE)
         );
         foreach ($allFiels['data'] as $Field){
-            if(!in_array($Field['field_name'],$fieldsToAdd)){
+            if(!in_array($Field['field_name'],array_keys($fieldsToAdd))){
                 ShangJiFields::updateById($Field['id'],[
                     'is_show' => 0
                 ]);
