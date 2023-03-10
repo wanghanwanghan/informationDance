@@ -383,10 +383,12 @@ class BusinessOpportunityManageController extends ControllerBase
         return $this->writeJson(200, [  ], [
             [
                 "id" => 1,
+                "operator" => "老王",
                 "msg" => "xXXX",
             ],
             [
                 "id" => 2,
+                "operator" => "老王",
                 "msg" => "xXXX",
             ]
         ],'成功');
