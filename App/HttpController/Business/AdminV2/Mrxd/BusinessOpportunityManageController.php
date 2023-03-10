@@ -362,6 +362,16 @@ class BusinessOpportunityManageController extends ControllerBase
             );
         }
 
+        //是否展示
+        $allFiels = ShangJiStage::findByConditionV2([],1,200);
+        foreach ($allFiels['data'] as $Field){
+            if(!in_array($Field['field_name'],array_keys($fieldsToAdd))){
+                ShangJiFields::updateById($Field['id'],[
+                    'is_show' => 0
+                ]);
+            }
+        }
+
         return $this->writeJson(200, [  ], [$allFields],'成功');
     }
 
@@ -465,6 +475,7 @@ class BusinessOpportunityManageController extends ControllerBase
         foreach ($allFields as $fieldItem){
             $datas[$fieldItem['field_name']] = [
                 'field_name'=> $fieldItem['field_name'],
+                'is_show'=>   $fieldItem['is_show'],
                 'field_cname'=>   $fieldItem['field_cname'],
             ];
         }
