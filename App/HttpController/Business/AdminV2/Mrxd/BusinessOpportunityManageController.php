@@ -54,6 +54,7 @@ class BusinessOpportunityManageController extends ControllerBase
         $datas = [];
         foreach ($allFields as $fieldItem){
             $datas[$fieldItem['field_name']] = [
+                'is_show'=> $fieldItem['is_show'],
                 'field_name'=> $fieldItem['field_name'],
                 'field_cname'=>   $fieldItem['field_cname'],
             ];
@@ -142,7 +143,7 @@ class BusinessOpportunityManageController extends ControllerBase
                     $fieldsData['is_show']
                 ){
                     $showDatas["【".$fieldsData['field_cname']."】"] = $datum[$fieldsData['field_name']];
-                } 
+                }
             }
 
             //备注信息
