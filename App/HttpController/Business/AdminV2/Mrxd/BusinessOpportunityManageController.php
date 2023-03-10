@@ -300,11 +300,11 @@ class BusinessOpportunityManageController extends ControllerBase
                     ]
                 ],JSON_UNESCAPED_UNICODE)
             );
-//            if(!in_array($Field['field_name'],$fieldsToAdd)){
-//                ShangJiFields::updateById($Field['id'],[
-//                    'is_show' => 0
-//                ]);
-//            }
+            if(!in_array($Field['field_name'],$fieldsToAdd)){
+                ShangJiFields::updateById($Field['id'],[
+                    'is_show' => 0
+                ]);
+            }
         }
 
         return $this->writeJson(200, [  ], [$allFields],'成功');
