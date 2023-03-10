@@ -290,14 +290,23 @@ class BusinessOpportunityManageController extends ControllerBase
         }
 
         //删除字段
-        $allFiels = ShangJiFields::findByConditionV2([],1,200);
-        foreach ($allFiels as $Field){
-            if(!in_array($Field['field_name'],$fieldsToAdd)){
-                ShangJiFields::updateById($Field['id'],[
-                    'is_show' => 0
-                ]);
-            }
-        }
+//        $allFiels = ShangJiFields::findByConditionV2([],1,200);
+//        foreach ($allFiels as $Field){
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    __CLASS__.__FUNCTION__ .__LINE__,
+//                    '$Field'=>[
+//                        '参数' => $Field,
+//                        '错误信息' => $e->getMessage(),
+//                    ]
+//                ],JSON_UNESCAPED_UNICODE)
+//            );
+//            if(!in_array($Field['field_name'],$fieldsToAdd)){
+//                ShangJiFields::updateById($Field['id'],[
+//                    'is_show' => 0
+//                ]);
+//            }
+//        }
 
         return $this->writeJson(200, [  ], [$allFields],'成功');
     }
