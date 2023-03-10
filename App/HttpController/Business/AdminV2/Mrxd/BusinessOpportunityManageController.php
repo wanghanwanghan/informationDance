@@ -138,7 +138,11 @@ class BusinessOpportunityManageController extends ControllerBase
             //前端展示有点小问题  只展示了一列  所以全放一个数组里  正常应该是不同类的数据 放在不同的数组 前端对应展示几列
             $showDatas = [];
             foreach ($showfields as $fieldsData){
-                $showDatas["【".$fieldsData['field_cname']."】"] = $datum[$fieldsData['field_name']];
+                if(
+                    $fieldsData['is_show']
+                ){
+                    $showDatas["【".$fieldsData['field_cname']."】"] = $datum[$fieldsData['field_name']];
+                } 
             }
 
             //备注信息
