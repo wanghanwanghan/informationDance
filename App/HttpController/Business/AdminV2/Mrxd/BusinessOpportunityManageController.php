@@ -392,6 +392,8 @@ class BusinessOpportunityManageController extends ControllerBase
         ],'成功');
     }
 
+
+
     public function setReamrk(){
         $requestData =  $this->getRequestData();
         $dataObj = ShangJi::findById($requestData['id']);
