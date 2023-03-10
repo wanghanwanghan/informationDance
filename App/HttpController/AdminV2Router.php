@@ -283,6 +283,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/changeFields', $prefix . 'changeFields');
             $routeCollector->addRoute(['GET', 'POST'], '/changeStage', $prefix . 'changeStage');
             $routeCollector->addRoute(['GET', 'POST'], '/setStage', $prefix . 'setStage');
+            $routeCollector->addRoute(['GET', 'POST'], '/getReamrk', $prefix . 'getReamrk');
             $routeCollector->addRoute(['GET', 'POST'], '/setReamrk', $prefix . 'setReamrk');
             $routeCollector->addRoute(['GET', 'POST'], '/setTags', $prefix . 'setTags');
             $routeCollector->addRoute(['GET', 'POST'], '/getTags', $prefix . 'getTags');

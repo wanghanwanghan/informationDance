@@ -294,7 +294,7 @@ class BusinessOpportunityManageController extends ControllerBase
             );
         }
 
-        //删除字段
+        //是否展示
         $allFiels = ShangJiFields::findByConditionV2([],1,200);
         CommonService::getInstance()->log4PHP(
             json_encode([
@@ -375,6 +375,21 @@ class BusinessOpportunityManageController extends ControllerBase
             ]
         );
         return $this->writeJson(200, [  ], [],'成功');
+    }
+
+    public function getReamrk(){
+        $requestData =  $this->getRequestData();
+
+        return $this->writeJson(200, [  ], [
+            [
+                "id" => 1,
+                "msg" => "xXXX",
+            ],
+            [
+                "id" => 2,
+                "msg" => "xXXX",
+            ]
+        ],'成功');
     }
 
     public function setReamrk(){
