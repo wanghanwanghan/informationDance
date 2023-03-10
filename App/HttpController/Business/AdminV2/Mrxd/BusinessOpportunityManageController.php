@@ -268,6 +268,8 @@ class BusinessOpportunityManageController extends ControllerBase
 
         $allFields = ShangJiFields::findAllByCondition([]);
         $existsFieldsInfo = array_column($allFields,"field_name");
+
+        //添加字段
         foreach ($fieldsToAdd as $Field=>$FieldCname){
             //存在的就不加了
             if(
@@ -285,6 +287,16 @@ class BusinessOpportunityManageController extends ControllerBase
                     'field_cname' => $FieldCname,
                 ]
             );
+        }
+
+        //删除字段
+        $allFiels = ShangJiFields::findByConditionV2([],1,200);
+        foreach ($allFiels as $Field){
+            if(!in_array($Field['field_name'],$fieldsToAdd)){
+                ShangJiFields::updateById($Field['id'],[
+                    'is_show' => 0
+                ]);
+            }
         }
 
         return $this->writeJson(200, [  ], [$allFields],'成功');
