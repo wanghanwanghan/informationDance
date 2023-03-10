@@ -243,6 +243,7 @@ class BusinessOpportunityManageController extends ControllerBase
     }
 
     public function changeFields(){
+        return $this->writeJson(200, [  ], [],'成功');
         $requestData =  $this->getRequestData();
 
         //前端传过来的是
@@ -316,6 +317,7 @@ class BusinessOpportunityManageController extends ControllerBase
     }
 
     public function changeStage(){
+        return $this->writeJson(200, [  ], [],'成功');
         $requestData =  $this->getRequestData();
 
         //前端传过来的是
@@ -376,6 +378,7 @@ class BusinessOpportunityManageController extends ControllerBase
     }
 
     public function setStage(){
+
         $requestData =  $this->getRequestData();
 
         ShangJi::updateById(
@@ -407,6 +410,7 @@ class BusinessOpportunityManageController extends ControllerBase
 
 
     public function setReamrk(){
+        return $this->writeJson(200, [  ], [],'成功');
         $requestData =  $this->getRequestData();
         $dataObj = ShangJi::findById($requestData['id']);
         $reamrk = $dataObj->remark;
@@ -434,6 +438,8 @@ class BusinessOpportunityManageController extends ControllerBase
     }
 
     public function setTags(){
+        return $this->writeJson(200, [  ], [],'成功');
+
         $requestData =  $this->getRequestData();
         $dataObj = ShangJi::findById($requestData['id']);
         $biao_qian = $dataObj->biao_qian;
