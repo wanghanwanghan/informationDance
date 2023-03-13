@@ -147,13 +147,13 @@ class BusinessOpportunityManageController extends ControllerBase
             }
 
             //备注信息
-            $arr =  json_decode($datum['remark'],true) ;
-            foreach ($arr as $key => $reamrkStr){
-                if(!trim($reamrkStr)){
-                    continue;
-                }
-                $showDatas['【备注'.$key.'】']= $reamrkStr;
-            }
+            //            $arr =  json_decode($datum['remark'],true) ;
+            //            foreach ($arr as $key => $reamrkStr){
+            //                if(!trim($reamrkStr)){
+            //                    continue;
+            //                }
+            //                $showDatas['【备注'.$key.'】']= $reamrkStr;
+            //            }
 
             //商机阶段
             if(trim($datum['shang_ji_jie_duan'])){
@@ -161,7 +161,7 @@ class BusinessOpportunityManageController extends ControllerBase
                 $showDatas["【商机阶段】"] = $jieduan->field_cname;
             }
 
-            //标签
+            //标签 XXXXXXXX
             $arr =  json_decode($datum['biao_qian'],true) ;
             $tag_str = "";
             foreach ($arr as $key => $tmpStr){
