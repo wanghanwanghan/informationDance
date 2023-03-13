@@ -242,75 +242,77 @@ class BusinessOpportunityManageController extends ControllerBase
         return $this->writeJson(200, [],$requestData,'成功');
     }
 
+    /****
+    phone: 13269706193
+    data[]: {"text":"商机名称","is_show":1}
+    data[]: {"text":"所属区域","is_show":0}
+    data[]: {"text":"公司网站","is_show":0}
+    data[]: {"text":"核心业务","is_show":0}
+    data[]: {"text":"负责人","is_show":0}
+    data[]: {"text":"公司简介","is_show":0}
+     ***/
     public function changeFields(){
-        return $this->writeJson(200, [  ], [],'成功');
         $requestData =  $this->getRequestData();
-
-        //前端传过来的是
-        //{"text":"姓名"}
-        //data[]:
-        //{"text":"营收规模"}
 
         //取到所有配置的字段
         $allSubmitFields = [];
         foreach ($requestData['data'] as $datum){
             $tmpArr = json_decode($datum,true);
-            $allSubmitFields[] = $tmpArr['text'];
+            $allSubmitFields[$tmpArr['text']] = $tmpArr['is_show'];
         }
 
-        //把字段转换为横杠分隔的英文字符
         $fieldsToAdd = [];
-        foreach ($allSubmitFields as $field){
+        foreach ($allSubmitFields as $field => $is_show){
             $length = strlen($field);
+            //长度：几个汉字
             $wordNums = $length/3;
+
+            //转换为下划线分割的拼音
             $newstr = "";
             for ($i=0; $i<$wordNums; $i++){
                 $tmpStr  = mb_substr($field, $i, 1, 'utf-8');
                 $newstr  .= PinYinService::getPinyin($tmpStr)."_";
             }
+
             $newstr = substr($newstr, 0, -1);
-            $fieldsToAdd[$newstr] =  $field;
+            $fieldsToAdd[$newstr] =  [
+                'cname' =>$field,
+                'is_show' =>$is_show,
+            ];
         }
 
+        //现有字段
         $allFields = ShangJiFields::findAllByCondition([]);
         $existsFieldsInfo = array_column($allFields,"field_name");
 
-        //添加字段
-        foreach ($fieldsToAdd as $Field=>$FieldCname){
-            //存在的就不加了
+        //添加新的字段
+        foreach ($fieldsToAdd as $Field => $FieldInfo){
+            //若是存在的就不加了
             if(
                 in_array($Field,$existsFieldsInfo)
             ){
                 continue;
             }
 
-            //改表结构
-            $dbRes = ShangJi::runBySql("ALTER TABLE shang_ji  add COLUMN `$Field` VARCHAR(200) COMMENT '$FieldCname' DEFAULT ''");
-            // 框架暂时没开放 SHOW COLUMNS from tablename ; 只好先存到表里.....
+            //改表结构 加个字段
+            $dbRes = ShangJi::runBySql("ALTER TABLE shang_ji  add COLUMN `$Field` VARCHAR(200) COMMENT '".$FieldInfo["cname"]."' DEFAULT ''");
+        
             ShangJiFields::addRecordV2(
                 [
                     'field_name' => $Field,
-                    'field_cname' => $FieldCname,
+                    //'is_show' => $FieldInfo["is_show"],
+                    'field_cname' => $FieldInfo["cname"],
                 ]
             );
         }
 
-        //是否展示
+        //设置是否展示
         $allFiels = ShangJiFields::findByConditionV2([],1,200);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                '$Field'=>[
-                    '$fieldsToAdd' => $fieldsToAdd,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
         foreach ($allFiels['data'] as $Field){
-            if(!in_array($Field['field_name'],array_keys($fieldsToAdd))){
-                ShangJiFields::updateById($Field['id'],[
-                    'is_show' => 0
-                ]);
-            }
+            $isShow = $fieldsToAdd[$Field['field_name']]['is_show'];
+            ShangJiFields::updateById($Field['id'],[
+                'is_show' => intval($isShow)
+            ]);
         }
 
         return $this->writeJson(200, [  ], [$allFields],'成功');
