@@ -22,7 +22,10 @@ use App\HttpController\Models\MRXD\ShangJi;
 use App\HttpController\Models\MRXD\ShangJiContacts;
 use App\HttpController\Models\MRXD\ShangJiDevelopRecord;
 use App\HttpController\Models\MRXD\ShangJiFields;
+use App\HttpController\Models\MRXD\ShangJiReamrks;
+use App\HttpController\Models\MRXD\ShangJiRemarkRelations;
 use App\HttpController\Models\MRXD\ShangJiStage;
+use App\HttpController\Models\MRXD\ShangJiTagsRelations;
 use App\HttpController\Models\MRXD\ToolsFileLists;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Models\RDS3\CompanyInvestor;
@@ -161,10 +164,10 @@ class BusinessOpportunityManageController extends ControllerBase
                 $showDatas["【商机阶段】"] = $jieduan->field_cname;
             }
 
-            //标签 XXXXXXXX
-            $arr =  json_decode($datum['biao_qian'],true) ;
+            //标签
+            $allTags = ShangJiTagsRelations::findAllByClueId($datum['id']);
             $tag_str = "";
-            foreach ($arr as $key => $tmpStr){
+            foreach ($allTags as $key => $tmpStr){
                 if(!trim($tmpStr)){
                     continue;
                 }
@@ -191,6 +194,7 @@ class BusinessOpportunityManageController extends ControllerBase
             //                ],
             //            ];
         }
+
         $total = $datas['total'];
         return $this->writeJson(200, [
             'page' => $page,

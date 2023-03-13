@@ -60,6 +60,19 @@ class ShangJiRemarkRelations extends ModelBase
         return $res;
     }
 
+    public static function findAllByClueId($clueId){
+        $realtions = self::findAllByCondition(
+            [
+                "clue_id" => $clueId
+            ]
+        );
+        foreach ($realtions as &$realtion){
+            $remarkObj = ShangJiReamrks::findById($realtion['remark_id']);
+            $realtion['content'] = $remarkObj->content;
+        }
+
+        return $realtions;
+    }
 
     public static function findAllByCondition($whereArr){
         $res =  ShangJiRemarkRelations::create()
@@ -112,8 +125,8 @@ class ShangJiRemarkRelations extends ModelBase
 
     public static function findById($id){
         $res =  ShangJiRemarkRelations::create()
-            ->where('id',$id)            
-            ->get();  
+            ->where('id',$id)
+            ->get();
         return $res;
     }
 

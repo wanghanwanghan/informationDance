@@ -23,10 +23,10 @@ use EasySwoole\RedisPool\Redis;
 
 // use App\HttpController\Models\AdminRole;
 
-class ShangJiTags extends ModelBase
+class ShangJiTagsRelations extends ModelBase
 {
 
-    protected $tableName = 'shang_ji_tags';
+    protected $tableName = 'shang_ji_tags_relations';
 
     static  function  stateMaps(){
 
@@ -37,20 +37,20 @@ class ShangJiTags extends ModelBase
 
     static  function  addRecordV2($info){
 
-        return ShangJiTags::addRecord(
+        return ShangJiTagsRelations::addRecord(
             $info
         );
     }
 
     public static function addRecord($requestData){
         try {
-           $res =  ShangJiTags::create()->data($requestData)->save();
+           $res =  ShangJiTagsRelations::create()->data($requestData)->save();
 
         } catch (\Throwable $e) {
             return CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
-                    'shang_ji_tags_入库失败'=>[
+                    'shang_ji_tags_relations_入库失败'=>[
                         '参数' => $requestData,
                         '错误信息' => $e->getMessage(),
                     ]
@@ -60,9 +60,22 @@ class ShangJiTags extends ModelBase
         return $res;
     }
 
+    public static function findAllByClueId($clueId){
+        $realtions = self::findAllByCondition(
+            [
+                "clue_id" => $clueId
+            ]
+        );
+        foreach ($realtions as &$realtion){
+            $remarkObj = ShangJiTags::findById($realtion['tag_id']);
+            $realtion['content'] = $remarkObj->content;
+        }
+
+        return $realtions;
+    }
 
     public static function findAllByCondition($whereArr){
-        $res =  ShangJiTags::create()
+        $res =  ShangJiTagsRelations::create()
             ->where($whereArr)
             ->all();
         return $res;
@@ -76,7 +89,7 @@ class ShangJiTags extends ModelBase
     }
 
     public static function findByConditionWithCountInfo($whereArr,$page){
-        $model = ShangJiTags::create()
+        $model = ShangJiTagsRelations::create()
                 ->where($whereArr)
                 ->page($page)
                 ->order('id', 'DESC')
@@ -92,7 +105,7 @@ class ShangJiTags extends ModelBase
     }
 
     public static function findByConditionV2($whereArr,$page,$limit = 20 ){
-        $model = ShangJiTags::create();
+        $model = ShangJiTagsRelations::create();
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -111,14 +124,14 @@ class ShangJiTags extends ModelBase
 
 
     public static function findById($id){
-        $res =  ShangJiTags::create()
-            ->where('id',$id)            
-            ->get();  
+        $res =  ShangJiTagsRelations::create()
+            ->where('id',$id)
+            ->get();
         return $res;
     }
 
     public static function setData($id,$field,$value){
-        $info = ShangJiTags::findById($id);
+        $info = ShangJiTagsRelations::findById($id);
         return $info->update([
             "$field" => $value,
         ]);
@@ -132,7 +145,7 @@ class ShangJiTags extends ModelBase
     public static function findByWhere($where){
         $Sql = " select *  
                             from  
-                        `shang_ji_tags` 
+                        `shang_ji_tags_relations` 
                             $where
       " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
