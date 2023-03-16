@@ -432,16 +432,19 @@ class BusinessOpportunityManageController extends ControllerBase
         ],'成功');
     }
 
-
-
+    /***
+    id: 329
+    phone: 13269706193
+    remark: xXXX
+    clue_id: 1
+     ***/
     public function setReamrk(){
-        return $this->writeJson(200, [  ], [],'成功');
         $requestData =  $this->getRequestData();
         $dataObj = ShangJi::findById($requestData['id']);
         $reamrk = $dataObj->remark;
         $reamrkArr = json_decode($dataObj->remark,true);
         $reamrkArr[] = $requestData['remark'];
-//        $requestData['remark'];
+        //        $requestData['remark'];
         $dbData = [
             'remark'=>json_encode($reamrkArr,JSON_UNESCAPED_UNICODE)
         ];

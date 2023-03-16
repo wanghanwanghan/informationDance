@@ -3302,17 +3302,26 @@ class XinDongService extends ServiceBase
 
     }
 
+    function end_with($str,$pattern) {
+        $length = strlen($pattern);
+        if ($length == 0) {
+            return true;
+        }
+        return (substr($str, -$length) === $pattern);
+    }
+
     // $tobeMatch 姓名   $target：支付宝
     function matchNamesForZhiFuBao($tobeMatch, $target)
     {
 
         //包含匹配  张三0808    张三
-        $res = $this->matchNamesByContain($tobeMatch, $target);
+        //$res = $this->matchNamesByContain($tobeMatch, $target);
+        $res = $this->end_with($tobeMatch, $target);
 
         if ($res) {
             return [
-                'type' => '近似匹配',
-                'details' => '中文包含匹配',
+                'type' => '名字里最后一个字和支付宝一致',
+                'details' => '支付宝名称匹配',
                 'res' => '成功',
                 'percentage' => '',
             ];
