@@ -326,7 +326,12 @@ class RunDealToolsFile extends AbstractCronTask
             $value3 = self::strtr_func($one[3]);
             //
             $value4 = self::strtr_func($one[4]);
-            $tmpRes = (new XinDongService())->matchContactNameByZhiFuBaoName($value0,$value2);
+
+            if(trim($value2)){
+                $tmpRes = (new XinDongService())->matchContactNameByZhiFuBaoName($value0,trim($value2));
+            } else{
+                $tmpRes = [];
+            }
 
             yield $datas[] = [
                 $value0,
