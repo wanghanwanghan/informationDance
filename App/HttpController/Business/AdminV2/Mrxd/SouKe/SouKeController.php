@@ -214,7 +214,7 @@ class SouKeController extends ControllerBase
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202301',true)
+            ->searchFromEs('company_202301',true,$this->loginUserinfo['user_name'] )
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额

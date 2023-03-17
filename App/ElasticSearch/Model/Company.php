@@ -290,7 +290,7 @@ class Company extends ServiceBase
         return $this;
     }
 
-    function searchFromEs($index = 'company_202301',$showLog = false)
+    function searchFromEs($index = 'company_202301',$showLog = false,$userName = "")
     {
 
         $responseJson = (new XinDongService())->advancedSearch($this->es,$index);
@@ -303,6 +303,7 @@ class Company extends ServiceBase
                         '搜索es' => [
                             '命中数' => $responseArr['hits']['total'],
                             '条件' => $this->es->query,
+                            '用户' => $userName,
                         ]
 
                     ], JSON_UNESCAPED_UNICODE
