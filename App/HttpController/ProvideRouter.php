@@ -41,7 +41,7 @@ class ProvideRouter
     private function JinCaiV1(RouteCollector $routeCollector)
     {
         $prefix = '/Business/Provide/JinCai/JinCaiController/';
-        $routeCollector->addGroup('/jc', function (RouteCollector $routeCollector) use ($prefix) {
+        $routeCollector->addGroup('/xd', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/obtainFpInfoNew', $prefix . 'obtainFpInfoNew');
         });
         return true;
