@@ -1573,7 +1573,7 @@ class XinDongService extends ServiceBase
     {
         $elasticsearch = new ElasticSearch(
             new  Config([
-                'host' => "es-cn-7mz2m3tqe000cxkfn.public.elasticsearch.aliyuncs.com",
+                'host' => "es-cn-pe3340cqu0006uyny.public.elasticsearch.aliyuncs.com",
                 'port' => 9200,
                 'username' => 'elastic',
                 'password' => 'zbxlbj@2018*()',
