@@ -296,7 +296,7 @@ class Company extends ServiceBase
         $responseJson = (new XinDongService())->advancedSearch($this->es,$index);
         $responseArr = @json_decode($responseJson,true);
         $this->setReturnData($responseArr);
-        if($showLog){
+        //if($showLog){
             CommonService::getInstance()->log4PHP(@json_encode(
                     [
 
@@ -308,7 +308,7 @@ class Company extends ServiceBase
 
                     ], JSON_UNESCAPED_UNICODE
             ));
-        }
+        //}
         return $this;
     }
 
@@ -1809,7 +1809,7 @@ class Company extends ServiceBase
             ->formatEsMoney('REGCAP')
         ;
 
-        //if($dataConfig['show_log']){
+        //f($dataConfig['show_log']){
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
