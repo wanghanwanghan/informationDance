@@ -52,7 +52,7 @@ class JinCaiController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-
+        CommonService::getInstance()->log4PHP($res,'info','obtainFpInfoNew');
         return $this->checkResponse($res);
     }
 }
