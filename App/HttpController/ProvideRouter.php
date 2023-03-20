@@ -35,6 +35,16 @@ class ProvideRouter
         $this->DianZiQianV1($routeCollector);
         $this->NanJingXiaoAnV1($routeCollector);
         $this->ShenZhouYunHeV1($routeCollector);
+        $this->JinCaiV1($routeCollector);
+    }
+
+    private function JinCaiV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/JinCai/JinCaiController/';
+        $routeCollector->addGroup('/jc', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/obtainFpInfoNew', $prefix . 'obtainFpInfoNew');
+        });
+        return true;
     }
 
     private function ShenZhouYunHeV1(RouteCollector $routeCollector)
