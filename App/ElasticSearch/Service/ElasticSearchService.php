@@ -374,7 +374,7 @@ class ElasticSearchService extends ServiceBase
         );
     }
 
-    function Search($index = 'company_202207')
+    function Search($index = 'company_202303')
     {
         $elasticsearch = new ElasticSearch(
             new  Config([
