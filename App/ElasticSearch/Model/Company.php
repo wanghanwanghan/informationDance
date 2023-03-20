@@ -1809,14 +1809,14 @@ class Company extends ServiceBase
             ->formatEsMoney('REGCAP')
         ;
 
-        if($dataConfig['show_log']){
+        //if($dataConfig['show_log']){
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'hits_count' =>  count($companyEsModel->return_data['hits']['hits'])
                 ])
             );
-        }
+        //}
 
         foreach($companyEsModel->return_data['hits']['hits'] as &$dataItem){
             if($dataConfig['fill_short_name']){
