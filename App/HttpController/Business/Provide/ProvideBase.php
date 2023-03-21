@@ -187,7 +187,7 @@ class ProvideBase extends Index
         CommonService::getInstance()->log4PHP(
             json_encode(
                 [
-                    "getRequestData" => [
+                    "getRequestData-s" => [
                         '$requestData' => $requestData,
                         '$raw' => $raw,
                         '$form' => $form,
@@ -221,7 +221,20 @@ class ProvideBase extends Index
 
         $this->requestData = $requestData;
 
-        return (isset($requestData[$key])) ? $requestData[$key] : $default;
+
+        $value =  (isset($requestData[$key])) ? $requestData[$key] : $default;
+
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    "getRequestData-e" => [
+                        '$requestData' => $requestData,
+                        '$value' => $value, 
+                    ]
+                ],JSON_UNESCAPED_UNICODE
+            )
+        );
+        return $value;
     }
 
     function requestUserCheck(): bool
