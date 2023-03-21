@@ -527,7 +527,7 @@ class RunDealZhaoTouBiao extends AbstractCronTask
         if($the_day_of_week ==0){
             $the_day_of_week = 7;
         }
-        
+
         $first_day_of_week = date("Ymd",strtotime( $the_date )- 60*60*24*($the_day_of_week)+60*60*24*1 );
         $last_day_of_week = date("Ymd",strtotime($first_day_of_week)+60*60*24*6 );
 

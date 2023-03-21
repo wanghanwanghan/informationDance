@@ -184,7 +184,17 @@ class ProvideBase extends Index
         !empty($form) ?: $form = [];
 
         $requestData = array_merge($raw, $form);
-
+        CommonService::getInstance()->log4PHP(
+            json_encode(
+                [
+                    "getRequestData" => [
+                        '$requestData' => $requestData,
+                        '$raw' => $raw,
+                        '$form' => $form,
+                    ]
+                ],JSON_UNESCAPED_UNICODE
+            )
+        );
         //有可能是rsa + aes的数据
         if (isset($requestData['encrypt']) && isset($requestData['content'])) {
             if (!empty($requestData['appId'])) {
@@ -221,6 +231,17 @@ class ProvideBase extends Index
         $sign = $this->requestData['sign'] ?? '';
 
         if (empty($appId) || empty($time) || empty($sign)) {
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        "requestUserCheck-鉴权参数不能是空" => [
+                            '$appId' => $appId,
+                            '$time' => $time,
+                            '$sign' => $sign,
+                        ]
+                    ],JSON_UNESCAPED_UNICODE
+                )
+            );
             $this->writeJson(600, null, null, '鉴权参数不能是空');
             return false;
         }

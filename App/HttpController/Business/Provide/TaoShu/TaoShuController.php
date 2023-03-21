@@ -99,6 +99,7 @@ class TaoShuController extends ProvideBase
             'pageNo' => $pageNo,
             'pageSize' => $pageSize,
         ];
+
         CommonService::getInstance()->log4PHP($postData,'info','getBranchInfo');
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new TaoShuService())
