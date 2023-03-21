@@ -5275,6 +5275,14 @@ class XinDongService extends ServiceBase
             return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:' . $postData['code'] . '）的信息');
         }
         $list = CompanyInvestment::create()->where('companyid', $info->getAttr('companyid'))->all();
+        CommonService::getInstance()->log4PHP(json_encode(
+            [
+                '$postData' =>$postData,
+                'companyid' =>$info->getAttr('companyid'),
+                '$list' =>$list,
+
+            ],JSON_UNESCAPED_UNICODE
+        ));
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key] = [

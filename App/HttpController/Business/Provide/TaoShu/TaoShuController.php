@@ -89,7 +89,7 @@ class TaoShuController extends ProvideBase
 
     //企业分支机构
     function getBranchInfo(): bool
-    { 
+    {
 
         $entName = $this->getRequestData('entName', '');
         $pageNo = $this->getRequestData('pageNo', 1);
