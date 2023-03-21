@@ -229,7 +229,8 @@ class ProvideBase extends Index
                 [
                     "getRequestData-e" => [
                         '$requestData' => $requestData,
-                        '$value' => $value, 
+                        '$value' => $value,
+                        '$key' => $key,
                     ]
                 ],JSON_UNESCAPED_UNICODE
             )
