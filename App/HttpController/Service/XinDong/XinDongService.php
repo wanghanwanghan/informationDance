@@ -5274,6 +5274,7 @@ class XinDongService extends ServiceBase
         if (empty($info)) {
             return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:' . $postData['code'] . '）的信息');
         }
+
         $list = CompanyInvestment::create()->where('companyid', $info->getAttr('companyid'))->all();
         CommonService::getInstance()->log4PHP(json_encode(
             [
