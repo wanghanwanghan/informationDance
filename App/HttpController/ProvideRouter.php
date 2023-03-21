@@ -36,6 +36,16 @@ class ProvideRouter
         $this->NanJingXiaoAnV1($routeCollector);
         $this->ShenZhouYunHeV1($routeCollector);
         $this->JinCaiV1($routeCollector);
+        $this->WhTest($routeCollector);
+    }
+
+    private function WhTest(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/WhTest/WhTestController/';
+        $routeCollector->addGroup('/whtest', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getBranchInfo', $prefix . 'getBranchInfo');
+        });
+        return true;
     }
 
     private function JinCaiV1(RouteCollector $routeCollector)
