@@ -5031,8 +5031,8 @@ eof;
         ){
 
             $model = AdminUserFinanceData::create()
-                ->where(['id' => 22])
-                ->page(1,2)
+                ->where(['id' => 481])
+                //->page(1,2)
                 ->order('id', 'DESC') ;
             $res = $model->all();
             return $this->writeJson(200, null, $model->builder->getLastPrepareQuery(), null, true, []);
