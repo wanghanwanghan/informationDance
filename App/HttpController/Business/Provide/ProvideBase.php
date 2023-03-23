@@ -184,17 +184,17 @@ class ProvideBase extends Index
         !empty($form) ?: $form = [];
 
         $requestData = array_merge($raw, $form);
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    "getRequestData-s" => [
-                        '$requestData' => $requestData,
-                        '$raw' => $raw,
-                        '$form' => $form,
-                    ]
-                ],JSON_UNESCAPED_UNICODE
-            )
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode(
+//                [
+//                    "getRequestData-s" => [
+//                        '$requestData' => $requestData,
+//                        '$raw' => $raw,
+//                        '$form' => $form,
+//                    ]
+//                ],JSON_UNESCAPED_UNICODE
+//            )
+//        );
         //有可能是rsa + aes的数据
         if (isset($requestData['encrypt']) && isset($requestData['content'])) {
             if (!empty($requestData['appId'])) {
@@ -224,17 +224,17 @@ class ProvideBase extends Index
 
         $value =  (isset($requestData[$key])) ? $requestData[$key] : $default;
 
-        CommonService::getInstance()->log4PHP(
-            json_encode(
-                [
-                    "getRequestData-e" => [
-                        '$requestData' => $requestData,
-                        '$value' => $value,
-                        '$key' => $key,
-                    ]
-                ],JSON_UNESCAPED_UNICODE
-            )
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode(
+//                [
+//                    "getRequestData-e" => [
+//                        '$requestData' => $requestData,
+//                        '$value' => $value,
+//                        '$key' => $key,
+//                    ]
+//                ],JSON_UNESCAPED_UNICODE
+//            )
+//        );
         return $value;
     }
 
