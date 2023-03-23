@@ -302,12 +302,13 @@ class ProvideBase extends Index
                 return false;
             }
             $this->provideApiId = $apiInfo->getAttr('id');
-            $relationshipCheck = RequestUserApiRelationship::create()
+            $dbModel = RequestUserApiRelationship::create()
                 ->where([
                     'userId' => $this->userId,
                     'apiId' => $this->provideApiId,
                     'status' => 1
-                ])->get();
+                ]);
+            $relationshipCheck = $dbModel->get();
 
             if (empty($relationshipCheck)) {
 
@@ -318,7 +319,7 @@ class ProvideBase extends Index
                             'userId' => $this->userId,
                             'apiId' => $this->provideApiId,
                             'status' => 1,
-                           // "sql语句" => $relationshipCheck->getLastPrepareQuery()
+                            "sql语句" => $dbModel->builder->getLastPrepareQuery()
                         ],JSON_UNESCAPED_UNICODE
                     )
                 );
