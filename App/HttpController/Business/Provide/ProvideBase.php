@@ -318,7 +318,7 @@ class ProvideBase extends Index
                             'userId' => $this->userId,
                             'apiId' => $this->provideApiId,
                             'status' => 1,
-                            "sql语句" => $relationshipCheck->getLastPrepareQuery()
+                           // "sql语句" => $relationshipCheck->getLastPrepareQuery()
                         ],JSON_UNESCAPED_UNICODE
                     )
                 );
