@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Index;
+use App\HttpController\Models\AdminV2\AdminUserFinanceData;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\Provide\RequestRecode;
 use App\HttpController\Models\Provide\RequestUserApiRelationship;
@@ -307,12 +308,21 @@ class ProvideBase extends Index
                     'apiId' => $this->provideApiId,
                     'status' => 1
                 ])->get();
-            // CommonService::getInstance()->log4PHP(json_encode([
-            //     'userId' => $this->userId,
-            //     'apiId' => $this->provideApiId,
-            //     'status' => 1
-            // ]));
+
             if (empty($relationshipCheck)) {
+
+                CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [
+                            "requestUserCheck" => "没有接口请求权限",
+                            'userId' => $this->userId,
+                            'apiId' => $this->provideApiId,
+                            'status' => 1,
+                            "sql语句" => $relationshipCheck->builder->getLastPrepareQuery()
+                        ],JSON_UNESCAPED_UNICODE
+                    )
+                );
+
                 $this->writeJson(608, null, null, '没有接口请求权限');
                 return false;
             }
