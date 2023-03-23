@@ -319,7 +319,7 @@ class ProvideBase extends Index
                             'userId' => $this->userId,
                             'apiId' => $this->provideApiId,
                             'status' => 1,
-                            "sql语句" => $dbModel->builder->getLastPrepareQuery()
+//                            "sql语句" => $dbModel->builder->getLastPrepareQuery()
                         ],JSON_UNESCAPED_UNICODE
                     )
                 );
