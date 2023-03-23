@@ -315,6 +315,7 @@ class ProvideBase extends Index
                 CommonService::getInstance()->log4PHP(
                     json_encode(
                         [
+                            "table" => "information_dance_request_user_api_relationship",
                             "requestUserCheck" => "没有接口请求权限",
                             'userId' => $this->userId,
                             'apiId' => $this->provideApiId,
