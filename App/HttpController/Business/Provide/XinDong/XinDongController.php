@@ -3373,17 +3373,17 @@ class XinDongController extends ProvideBase
     function getBidInfo(): bool
     {
         $entName = $this->getRequestData('entName', '');
-
-        CommonService::getInstance()->log4PHP($entName, 'getBidInfo1');
+        $node = $this->getRequestData('node', 'G1');
+        $node === 'G1-2' ?: $node = 'G1';
 
         if (empty($entName)) {
             return $this->writeJson(201, null, null, '参数entName不可以都为空');
         }
 
-        $this->csp->add($this->cspKey, function () use ($entName) {
+        $this->csp->add($this->cspKey, function () use ($entName, $node) {
             return (new LongXinService())
                 ->setCheckRespFlag(true)
-                ->getBidInfo(['entName' => $entName, 'node' => 'G1']);
+                ->getBidInfo(['entName' => $entName, 'node' => $node]);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
