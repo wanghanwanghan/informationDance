@@ -3374,16 +3374,24 @@ class XinDongController extends ProvideBase
     {
         $entName = $this->getRequestData('entName', '');
         $node = $this->getRequestData('node', 'G1');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 300);
+
         $node === 'G1-2' ?: $node = 'G1';
 
         if (empty($entName)) {
             return $this->writeJson(201, null, null, '参数entName不可以都为空');
         }
 
-        $this->csp->add($this->cspKey, function () use ($entName, $node) {
+        $this->csp->add($this->cspKey, function () use ($entName, $node, $page, $pageSize) {
             return (new LongXinService())
                 ->setCheckRespFlag(true)
-                ->getBidInfo(['entName' => $entName, 'node' => $node]);
+                ->getBidInfo([
+                    'entName' => $entName,
+                    'node' => $node,
+                    'page' => $page,
+                    'pageSize' => $pageSize
+                ]);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

@@ -193,12 +193,14 @@ class LongXinService extends ServiceBase
     }
 
     //招投标
-    private function getBID($entId, $node)
+    private function getBID($entId, $node, $page, $pageSize)
     {
         $arr = [
             'entid' => $entId,
             'version' => $node !== 'G1' ? 'G1-2' : $node,
-            'usercode' => $this->usercode
+            'usercode' => $this->usercode,
+            'pageIndex' => $page,
+            'pageSize' => $pageSize,
         ];
 
         $this->sendHeaders['authorization'] = $this->createToken($arr);
@@ -206,8 +208,6 @@ class LongXinService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
-
-        CommonService::getInstance()->log4PHP($res, 'getBidInfo3');
 
         $this->recodeSourceCurl([
             'sourceName' => $this->sourceName,
@@ -589,11 +589,14 @@ class LongXinService extends ServiceBase
 
         $entId = $this->getEntid($cond);
 
-        CommonService::getInstance()->log4PHP($entId, 'getBidInfo2');
-
         if (empty($entId)) return ['code' => 102, 'msg' => 'entId是空', 'data' => []];
 
-        $bid = $this->getBID($entId, trim($postData['node']));
+        $bid = $this->getBID(
+            $entId,
+            trim($postData['node']),
+            trim($postData['page']),
+            trim($postData['pageSize'])
+        );
 
         return $this->checkResp(['code' => 200, 'msg' => '查询成功', 'data' => $bid]);
     }
