@@ -229,6 +229,7 @@ class jincai_api extends AbstractProcess
         if ($total === 0) {
             $filename = "{$NSRSBH}_page_1_{$fileSuffix}.json";
             file_put_contents($store . $filename, '');
+            CommonService::getInstance()->log4PHP([$NSRSBH.'获取到的发票为空'], 'info', 'upload_oss_error.log');
         } else {
             $totalPage = $total / $dataInFile + 1;
             //每个文件存3000张发票
@@ -311,7 +312,7 @@ class jincai_api extends AbstractProcess
 
         //上传oss
         $file_arr = [];
-
+        $i=0;
         if ($dh = opendir($store)) {
             $ignore = [
                 '.', '..', '.gitignore',
@@ -319,7 +320,8 @@ class jincai_api extends AbstractProcess
             while (false !== ($file = readdir($dh))) {
                 if (!in_array($file, $ignore, true)) {
                     if (strpos($file, $fileSuffix) !== false) {
-                        CommonService::getInstance()->log4PHP($file, 'info', 'upload_oss.log');
+                        $i++;
+                        CommonService::getInstance()->log4PHP($file.'-'.$i, 'info', 'upload_oss.log');
                         try {
                             $oss = new OSSService('internal');
                             $file_arr[] = $oss->doUploadFile(
@@ -335,7 +337,11 @@ class jincai_api extends AbstractProcess
                             $content = "[file ==> {$file}] [line ==> {$line}] [msg ==> {$msg}]";
                             CommonService::getInstance()->log4PHP($content, 'sendToOSS', 'send_fapiao_err.log');
                         }
+                    }else{
+                        CommonService::getInstance()->log4PHP([$NSRSBH.'strpos失败'], 'info', 'upload_oss_error.log');
                     }
+                }else{
+                    CommonService::getInstance()->log4PHP([$NSRSBH.'in_array失败'], 'info', 'upload_oss_error.log');
                 }
             }
 
@@ -353,9 +359,11 @@ class jincai_api extends AbstractProcess
                              'lastReqUrl' => empty($file_arr) ? '' : implode(',', $file_arr),
                              'big_kprq' => $kprqz
                          ]);
+        }else{
+            CommonService::getInstance()->log4PHP([$NSRSBH.'打开文件失败'], 'info', 'upload_oss_error.log');
         }
         closedir($dh);
-
+        CommonService::getInstance()->log4PHP(['完成'], 'info', 'upload_oss.log');
         return true;
     }
 
