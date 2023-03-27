@@ -35,7 +35,7 @@ Core::getInstance()->initialize();
 
 class jincai_api extends AbstractProcess
 {
-    public $currentAesKey = 'rycn45bmdklhshfs';
+    public $currentAesKey = 'jghf5tu8bjytd6hj';//rycn45bmdklhshfs   用来加密的唯一key,每月生成都需要改变
     public $iv = '1234567890abcdef';
     public $oss_bucket = 'invoice-mrxd';
     public $oss_expire_time = 86400 * 60;
@@ -66,8 +66,9 @@ class jincai_api extends AbstractProcess
     protected function run($arg)
     {
 //        $this->getInvOne();
-        $this->getInv();
+//        $this->getInv();
 //        var_dump($res);
+        $this->_sendToOSS();
     }
 
     function apiAddTask($socialCredit)
