@@ -7,7 +7,7 @@ use App\HttpController\Service\CreateConf;
 
 class CompanyInvestment extends ModelBase
 {
-    protected $tableName = 'company_certificate';
+    protected $tableName = 'company_investment';
 
     function __construct(array $data = [])
     {

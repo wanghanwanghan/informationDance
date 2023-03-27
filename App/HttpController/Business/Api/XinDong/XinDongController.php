@@ -856,7 +856,7 @@ eof;
             ->setDefault()
             //按照营收排序
             ->addSortV2('li_run_gui_mo_2021',$searchOptionArr)
-            ->searchFromEs('company_202301')
+            ->searchFromEs('company_202303')
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
@@ -2204,7 +2204,7 @@ eof;
         $ElasticSearchService->addSize(1) ;
         $ElasticSearchService->addFrom(0) ;
 
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202301');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202303');
         $responseArr = @json_decode($responseJson,true);
         CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
                 [
@@ -5031,8 +5031,8 @@ eof;
         ){
 
             $model = AdminUserFinanceData::create()
-                ->where(['id' => 22])
-                ->page(1,2)
+                ->where(['id' => 481])
+                //->page(1,2)
                 ->order('id', 'DESC') ;
             $res = $model->all();
             return $this->writeJson(200, null, $model->builder->getLastPrepareQuery(), null, true, []);

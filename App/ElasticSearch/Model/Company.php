@@ -290,13 +290,13 @@ class Company extends ServiceBase
         return $this;
     }
 
-    function searchFromEs($index = 'company_202301',$showLog = false,$userName = "")
+    function searchFromEs($index = 'company_202303',$showLog = false,$userName = "")
     {
 
         $responseJson = (new XinDongService())->advancedSearch($this->es,$index);
         $responseArr = @json_decode($responseJson,true);
         $this->setReturnData($responseArr);
-        if($showLog){
+        //if($showLog){
             CommonService::getInstance()->log4PHP(@json_encode(
                     [
 
@@ -308,7 +308,7 @@ class Company extends ServiceBase
 
                     ], JSON_UNESCAPED_UNICODE
             ));
-        }
+        //}
         return $this;
     }
 
@@ -1483,7 +1483,7 @@ class Company extends ServiceBase
             $showLog = true;
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202301',$showLog)
+                ->searchFromEs('company_202303',$showLog)
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();
@@ -1639,7 +1639,7 @@ class Company extends ServiceBase
             $showLog = true;
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202301',$showLog)
+                ->searchFromEs('company_202303',$showLog)
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();
@@ -1699,7 +1699,7 @@ class Company extends ServiceBase
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202301')
+            ->searchFromEs('company_202303')
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
@@ -1802,21 +1802,21 @@ class Company extends ServiceBase
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202301')
+            ->searchFromEs('company_202303')
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
             ->formatEsMoney('REGCAP')
         ;
 
-        if($dataConfig['show_log']){
+        //f($dataConfig['show_log']){
             CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'hits_count' =>  count($companyEsModel->return_data['hits']['hits'])
                 ])
             );
-        }
+        //}
 
         foreach($companyEsModel->return_data['hits']['hits'] as &$dataItem){
             if($dataConfig['fill_short_name']){
@@ -1971,7 +1971,7 @@ class Company extends ServiceBase
             // 格式化下日期和时间
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202301')
+                ->searchFromEs('company_202303')
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();
@@ -2145,7 +2145,7 @@ class Company extends ServiceBase
             // 格式化下日期和时间
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202301')
+                ->searchFromEs('company_202303')
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();
@@ -2260,7 +2260,7 @@ class Company extends ServiceBase
             // 格式化下日期和时间
             $companyEsModel
                 ->setDefault()
-                ->searchFromEs('company_202301')
+                ->searchFromEs('company_202303')
                 ->formatEsDate()
                 // 格式化下金额
                 ->formatEsMoney();

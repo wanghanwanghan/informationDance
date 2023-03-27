@@ -90,15 +90,17 @@ class TaoShuController extends ProvideBase
     //企业分支机构
     function getBranchInfo(): bool
     {
-        $entName = $this->request()->getRequestParam('entName') ?? '';
-        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
-        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $entName = $this->getRequestData('entName', '');
+        $pageNo = $this->getRequestData('pageNo', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
 
         $postData = [
             'entName' => $entName,
             'pageNo' => $pageNo,
             'pageSize' => $pageSize,
         ];
+
         CommonService::getInstance()->log4PHP($postData,'info','getBranchInfo');
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new TaoShuService())

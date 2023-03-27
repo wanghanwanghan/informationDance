@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Index;
+use App\HttpController\Models\AdminV2\AdminUserFinanceData;
 use App\HttpController\Models\Provide\RequestApiInfo;
 use App\HttpController\Models\Provide\RequestRecode;
 use App\HttpController\Models\Provide\RequestUserApiRelationship;
@@ -184,7 +185,17 @@ class ProvideBase extends Index
         !empty($form) ?: $form = [];
 
         $requestData = array_merge($raw, $form);
-
+//        CommonService::getInstance()->log4PHP(
+//            json_encode(
+//                [
+//                    "getRequestData-s" => [
+//                        '$requestData' => $requestData,
+//                        '$raw' => $raw,
+//                        '$form' => $form,
+//                    ]
+//                ],JSON_UNESCAPED_UNICODE
+//            )
+//        );
         //有可能是rsa + aes的数据
         if (isset($requestData['encrypt']) && isset($requestData['content'])) {
             if (!empty($requestData['appId'])) {
@@ -211,7 +222,21 @@ class ProvideBase extends Index
 
         $this->requestData = $requestData;
 
-        return (isset($requestData[$key])) ? $requestData[$key] : $default;
+
+        $value =  (isset($requestData[$key])) ? $requestData[$key] : $default;
+
+//        CommonService::getInstance()->log4PHP(
+//            json_encode(
+//                [
+//                    "getRequestData-e" => [
+//                        '$requestData' => $requestData,
+//                        '$value' => $value,
+//                        '$key' => $key,
+//                    ]
+//                ],JSON_UNESCAPED_UNICODE
+//            )
+//        );
+        return $value;
     }
 
     function requestUserCheck(): bool
@@ -221,6 +246,17 @@ class ProvideBase extends Index
         $sign = $this->requestData['sign'] ?? '';
 
         if (empty($appId) || empty($time) || empty($sign)) {
+            CommonService::getInstance()->log4PHP(
+                json_encode(
+                    [
+                        "requestUserCheck-鉴权参数不能是空" => [
+                            '$appId' => $appId,
+                            '$time' => $time,
+                            '$sign' => $sign,
+                        ]
+                    ],JSON_UNESCAPED_UNICODE
+                )
+            );
             $this->writeJson(600, null, null, '鉴权参数不能是空');
             return false;
         }
@@ -266,18 +302,29 @@ class ProvideBase extends Index
                 return false;
             }
             $this->provideApiId = $apiInfo->getAttr('id');
-            $relationshipCheck = RequestUserApiRelationship::create()
+            $dbModel = RequestUserApiRelationship::create()
                 ->where([
                     'userId' => $this->userId,
                     'apiId' => $this->provideApiId,
                     'status' => 1
-                ])->get();
-            // CommonService::getInstance()->log4PHP(json_encode([
-            //     'userId' => $this->userId,
-            //     'apiId' => $this->provideApiId,
-            //     'status' => 1
-            // ]));
+                ]);
+            $relationshipCheck = $dbModel->get();
+
             if (empty($relationshipCheck)) {
+
+                CommonService::getInstance()->log4PHP(
+                    json_encode(
+                        [
+                            "table" => "information_dance_request_user_api_relationship",
+                            "requestUserCheck" => "没有接口请求权限",
+                            'userId' => $this->userId,
+                            'apiId' => $this->provideApiId,
+                            'status' => 1,
+//                            "sql语句" => $dbModel->builder->getLastPrepareQuery()
+                        ],JSON_UNESCAPED_UNICODE
+                    )
+                );
+
                 $this->writeJson(608, null, null, '没有接口请求权限');
                 return false;
             }

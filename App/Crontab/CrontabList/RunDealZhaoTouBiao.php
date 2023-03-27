@@ -524,8 +524,11 @@ class RunDealZhaoTouBiao extends AbstractCronTask
 
         $the_date = $day;
         $the_day_of_week = date("w",strtotime($the_date)); //sunday is 0
+        if($the_day_of_week ==0){
+            $the_day_of_week = 7;
+        }
 
-        $first_day_of_week = date("Ymd",strtotime( $the_date )-60*60*24*($the_day_of_week)+60*60*24*1 );
+        $first_day_of_week = date("Ymd",strtotime( $the_date )- 60*60*24*($the_day_of_week)+60*60*24*1 );
         $last_day_of_week = date("Ymd",strtotime($first_day_of_week)+60*60*24*6 );
 
         //$dateStart = $first_day_of_week.' 00:00:00';

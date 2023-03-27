@@ -1241,7 +1241,7 @@ class FaHaiController extends ProvideBase
         $pageno = $this->request()->getRequestParam('page') ?? '1';
         $range = $this->request()->getRequestParam('pageSize') ?? '20';
         $entName = $this->request()->getRequestParam('entName') ?? '';
-        $doc_type = 'shixin';
+        $doc_type = 'sifa';
         $postData = [
             'doc_type' => $doc_type,
             'keyword' => $entName,

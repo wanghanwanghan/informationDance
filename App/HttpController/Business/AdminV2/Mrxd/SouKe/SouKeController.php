@@ -214,7 +214,7 @@ class SouKeController extends ControllerBase
             ->addFrom($offset)
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
-            ->searchFromEs('company_202301',true,$this->loginUserinfo['user_name'] )
+            ->searchFromEs('company_202303',true,$this->loginUserinfo['user_name'] )
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
@@ -1040,7 +1040,7 @@ class SouKeController extends ControllerBase
         $ElasticSearchService->addSize(1) ;
         $ElasticSearchService->addFrom(0) ;
 
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202301');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202303');
         $responseArr = @json_decode($responseJson,true);
         CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
                 [

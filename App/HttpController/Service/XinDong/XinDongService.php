@@ -1573,7 +1573,7 @@ class XinDongService extends ServiceBase
     {
         $elasticsearch = new ElasticSearch(
             new  Config([
-                'host' => "es-cn-7mz2m3tqe000cxkfn.public.elasticsearch.aliyuncs.com",
+                'host' => "es-cn-pe3340cqu0006uyny.public.elasticsearch.aliyuncs.com",
                 'port' => 9200,
                 'username' => 'elastic',
                 'password' => 'zbxlbj@2018*()',
@@ -1585,7 +1585,7 @@ class XinDongService extends ServiceBase
         $bean->setType('_doc');
         $bean->setBody($elasticSearchService->query);
         $response = $elasticsearch->client()->search($bean)->getBody();
-//        CommonService::getInstance()->log4PHP(json_encode(['es_query'=>$elasticSearchService->query]));
+       // CommonService::getInstance()->log4PHP(json_encode(['es_query'=>$elasticSearchService->query]));
         return $response;
     }
 
@@ -2624,7 +2624,7 @@ class XinDongService extends ServiceBase
         $offset = ($page - 1) * $size;
         $ElasticSearchService->addSize($size);
         $ElasticSearchService->addFrom($offset);
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202301');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202303');
         $responseArr = @json_decode($responseJson, true);
         // CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
         //     [
@@ -2695,7 +2695,7 @@ class XinDongService extends ServiceBase
         $offset = ($page - 1) * $size;
         $ElasticSearchService->addSize($size);
         $ElasticSearchService->addFrom($offset);
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202301');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202303');
         $responseArr = @json_decode($responseJson, true);
         // CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
         //     [
@@ -3631,8 +3631,8 @@ class XinDongService extends ServiceBase
         $companyEsModel
             ->addSize($size)
             ->addFrom(0)
-            //->searchFromEs('company_202301',true);
-            ->searchFromEs('company_202301');
+            //->searchFromEs('company_202303',true);
+            ->searchFromEs('company_202303');
 
         $returnData = [];
         foreach ($companyEsModel->return_data['hits']['hits'] as $dataItem) {
@@ -5274,7 +5274,16 @@ class XinDongService extends ServiceBase
         if (empty($info)) {
             return $this->checkResp(203, null, [], '没有查询到这个企业（entName:' . $postData['entName'] . ',code:' . $postData['code'] . '）的信息');
         }
+
         $list = CompanyInvestment::create()->where('companyid', $info->getAttr('companyid'))->all();
+        CommonService::getInstance()->log4PHP(json_encode(
+            [
+                '$postData' =>$postData,
+                'companyid' =>$info->getAttr('companyid'),
+                '$list' =>$list,
+
+            ],JSON_UNESCAPED_UNICODE
+        ));
         $data = [];
         foreach ($list as $key => $item) {
             $data[$key] = [
