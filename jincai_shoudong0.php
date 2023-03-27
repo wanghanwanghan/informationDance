@@ -44,6 +44,8 @@ class jincai_shoudong0 extends AbstractProcess
     {
         // 不要删除这行
         // $this->createCurrentAesKey();
+
+        $this->addTask();
     }
 
     //取票时候调用 从数据库
@@ -663,21 +665,22 @@ class jincai_shoudong0 extends AbstractProcess
 
     function addTask()
     {
-//        334，485 ，486，496,521,666
+//205,497,383
         $list = AntAuthList::create()
 //            ->where('getDataSource', 2)
 //            ->where('belong', 41)
-////            ->where('id', 1621, '<')// 这个数字要改
+////            ->where('id', 1621, '<=')// 这个数字要改
 //            ->where('id', 1611, '>')
-
+//and id > 1245
 
 //        and id > 1407
 //        and id < 1612
+//        and id <= 1694
+//        and id > 1132
             ->where("
             getDataSource = 2 
             and belong =41
-
-           and id in (1171,828,1335,1025,985,1014,1146,1253,1550,1113,753,852,781,1606)         
+            and id in(497)
             and (isElectronics LIKE '%属%成功%' OR isElectronics LIKE '%非一般%')
             ")
             ->all();

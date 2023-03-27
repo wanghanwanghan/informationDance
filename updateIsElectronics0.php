@@ -39,14 +39,15 @@ class updateIsElectronics0 extends AbstractProcess
     {
         $list = AntAuthList::create()
             ->where('belong', 41)
-            ->where('id', 1662, '<=')
-            ->where('id', 1590, '>')
+            ->where('id', 1691, '<')
+//            ->where('id', 1694, '<=')//下一次 1695-1734,只改最大值
+//            ->where('id', 1590, '>')
             ->where('getDataSource', 2)
-//            ->where('isElectronics', '%属%成功%', 'not like')
-//            ->where('isElectronics', '%全电%', 'not like')
-//            ->where('isElectronics', '%平台密码%', 'not like')
-//            ->where('isElectronics', '%非一般%', 'not like')
-//            ->where('isElectronics', '%不存在%', 'not like')
+            ->where('isElectronics', '%属%成功%', 'not like')
+            ->where('isElectronics', '%全电%', 'not like')
+            ->where('isElectronics', '%平台密码%', 'not like')
+            ->where('isElectronics', '%非一般%', 'not like')
+            ->where('isElectronics', '%不存在%', 'not like')
             ->all();
 
         foreach ($list as $key => $one) {
@@ -54,7 +55,7 @@ class updateIsElectronics0 extends AbstractProcess
             $info = (new JinCaiShuKeService())
                 ->S000502($one->getAttr('socialCredit'));
             $one->update(['isElectronics' => $info['msg']]);
-            echo $one->getAttr('id') . '|' . $info['msg'] . PHP_EOL;
+            echo $one->getAttr('id') . '|' .$one->getAttr('socialCredit') . '|'. $info['msg'] . PHP_EOL;
         }
 
         dd('yes');

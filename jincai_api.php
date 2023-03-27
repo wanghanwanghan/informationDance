@@ -65,7 +65,9 @@ class jincai_api extends AbstractProcess
     //启动
     protected function run($arg)
     {
-        $this->getInvOne();
+//        $this->getInvOne();
+        $this->getInv();
+//        var_dump($res);
     }
 
     function apiAddTask($socialCredit)
@@ -402,7 +404,7 @@ class jincai_api extends AbstractProcess
     {
         $start = 0;
         $step = 5;
-        $max_id = 2474;//每次改
+        $max_id = 1233;//每次改
 
         $csp = \App\Csp\Service\CspService::getInstance()->create();
 
