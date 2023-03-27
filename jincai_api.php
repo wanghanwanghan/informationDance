@@ -499,17 +499,17 @@ class jincai_api extends AbstractProcess
         }
 
         // 详情
-//        foreach ($main as $one_main) {
-//            $fpdm = $one_main['invoiceMain']['fpdm'] ?? '';
-//            $fphm = $one_main['invoiceMain']['fphm'] ?? '';
-//            if (empty($fpdm) || empty($fphm)) {
-//                CommonService::getInstance()->log4PHP([$main, $nsrsbh], '详情里没有发票代码', $this->error_log);
-//                continue;
-//            }
-//            if (!empty($one_main['invoiceDetailsList'])) {
-//                $this->handleDetail($one_main['invoiceDetailsList'], $fpdm, $fphm);
-//            }
-//        }
+        foreach ($main as $one_main) {
+            $fpdm = $one_main['invoiceMain']['fpdm'] ?? '';
+            $fphm = $one_main['invoiceMain']['fphm'] ?? '';
+            if (empty($fpdm) || empty($fphm)) {
+                CommonService::getInstance()->log4PHP([$main, $nsrsbh], '详情里没有发票代码', $this->error_log);
+                continue;
+            }
+            if (!empty($one_main['invoiceDetailsList'])) {
+                $this->handleDetail($one_main['invoiceDetailsList'], $fpdm, $fphm);
+            }
+        }
     }
 
     private function mainStoreMysql(array $arr, string $nsrsbh): void
