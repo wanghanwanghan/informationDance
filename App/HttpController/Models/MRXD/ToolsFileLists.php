@@ -167,28 +167,29 @@ class ToolsFileLists extends ModelBase
 
     public static function findBySql($where){
         $Sql = " select *  
-                            from  
-                        `tools_file_lists` 
-                            $where
+                    from  
+                `tools_file_lists` 
+                    $where
       " ;
         $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabase'));
         return $data;
     }
 
     //补全联系人
-    static function buQuanZiDuan($params){
+    static function buQuanZiDuan($params = []){
        $filesDatas = self::findBySql("
             WHERE touch_time < 1
             AND type = 5 
             AND state = 0 
             LIMIT 2 
        ");
+
        foreach ($filesDatas as $filesData){
            CommonService::getInstance()->log4PHP(
                json_encode([
                    __CLASS__.__FUNCTION__ .__LINE__,
                    '开始执行补全字段'=>[
-                       '参数' => $params,
+                       //'参数' => $params,
                        '执行的数据' => $filesData,
                    ]
                ],JSON_UNESCAPED_UNICODE)
@@ -230,6 +231,7 @@ class ToolsFileLists extends ModelBase
                else{
                    $res = (new XinDongService())->getEsBasicInfoV3($dataItem[0],'ENTNAME',[]);
                }
+
                $baseArr = [];
                //====================================
                foreach ($allFields as $field=>$cname){
@@ -301,7 +303,6 @@ class ToolsFileLists extends ModelBase
                        $res['jin_chu_kou'] =  $res['jin_chu_kou']?'有':'无';
                    }
 
-
                    // 高新技术
                    if(
                        $field=='gao_xin_ji_shu'
@@ -318,7 +319,9 @@ class ToolsFileLists extends ModelBase
                        $baseArr[] = str_split ( $res[$field], 32766 )[0] ;
                    }
                }
+
                fputcsv($f, $baseArr);
+
            }
 
            self::updateById($filesData['id'],[
@@ -503,7 +506,7 @@ class ToolsFileLists extends ModelBase
 
      */
     //
-    static function pullGongKaiContacts($params){
+    static function pullGongKaiContacts($params=[]){
         $title = [
             "企业名称",
             '联系人职位',
@@ -535,23 +538,24 @@ class ToolsFileLists extends ModelBase
                json_encode([
                    __CLASS__.__FUNCTION__ .__LINE__,
                    '拉取公开联系人开始执行'=>[
-                       '参数' => $params,
+                       //'参数' => $params,
                        '执行的数据' => $filesData,
                    ]
                ],JSON_UNESCAPED_UNICODE)
            );
 
             $tmp = json_decode($filesData['remark'],true);
-           //通过联系人名称 补全职位信息
-           $fill_position_by_name = $tmp['fill_position_by_name'];
-           //补全微信名称
-           $fill_weixin_by_phone = $tmp['fill_weixin_by_phone'];
-           //通过微信补全联系人姓名和职位
-           $fill_name_and_position_by_weixin = $tmp['fill_name_and_position_by_weixin'];
-           //过滤掉企查查
-           $filter_qcc_phone = $tmp['filter_qcc_phone'];
 
-           self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
+            //通过联系人名称 补全职位信息
+            $fill_position_by_name = $tmp['fill_position_by_name'];
+            //补全微信名称
+            $fill_weixin_by_phone = $tmp['fill_weixin_by_phone'];
+            //通过微信补全联系人姓名和职位
+            $fill_name_and_position_by_weixin = $tmp['fill_name_and_position_by_weixin'];
+            //过滤掉企查查
+            $filter_qcc_phone = $tmp['filter_qcc_phone'];
+
+            self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
 
            //写到csv里
            $fileName = pathinfo($filesData['file_name'])['filename'];
@@ -565,9 +569,9 @@ class ToolsFileLists extends ModelBase
            $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
 
            $i = 0;
-           foreach ($yieldDatas as $dataItem) {
-               $i++;
-               if($i%300==0){
+            foreach ($yieldDatas as $dataItem) {
+                $i++;
+                if( $i%300 == 0 ){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
                            '拉取公开联系人_已生成' => $i,
@@ -593,10 +597,12 @@ class ToolsFileLists extends ModelBase
                                '信用代码' => $code,
                                '企业名称' => $entname,
                            ]
-                       ],JSON_UNESCAPED_UNICODE)
+                       ],JSON_UNESCAPED_UNICODE),"info","拉取公开联系人过滤的"
                    );
+
                    continue;
                }
+
                $entname = $companyRes->ENTNAME;
 
                //取公开联系人信息
@@ -615,6 +621,7 @@ class ToolsFileLists extends ModelBase
                    $newRetData = [];
                    foreach ($retData as $key1 => $datum1){
                        if(in_array($datum1['lianxi'],$allConatcts['qcc'])  ){
+
                            CommonService::getInstance()->log4PHP(
                                json_encode([
                                    __CLASS__.__FUNCTION__ .__LINE__,
@@ -624,7 +631,7 @@ class ToolsFileLists extends ModelBase
                                        'qcc' => $allConatcts['qcc'],
                                        'lianxi' => $datum1['lianxi'],
                                    ]
-                               ],JSON_UNESCAPED_UNICODE)
+                               ],JSON_UNESCAPED_UNICODE),"info","拉取公开联系人过滤的"
                            );
                            continue;
                        }
@@ -661,7 +668,7 @@ class ToolsFileLists extends ModelBase
                                         '信用代码' => $code,
                                         '企业名称' => $entname,
                                     ]
-                                ],JSON_UNESCAPED_UNICODE)
+                                ],JSON_UNESCAPED_UNICODE),"info","拉取公开联系人过滤的"
                             );
                             continue;
                         }
@@ -738,7 +745,7 @@ class ToolsFileLists extends ModelBase
 
     }
 
-    static function pullFeiGongKaiContacts($params){
+    static function pullFeiGongKaiContacts($params = []){
         $title = [
             '企业名称',
             '信用代码',
@@ -760,23 +767,23 @@ class ToolsFileLists extends ModelBase
        ";
        $filesDatas = self::findBySql($sql);
 
-//        if(count($filesDatas) <= 0 ){
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    '拉取非公开-结束' => [
-//                        "参数"=>$params,
-//                        "sql"=>$sql,
-//                        "sql查到的数据了数据量为空"=>count($filesDatas),
-//                    ]
-//                ], JSON_UNESCAPED_UNICODE)
-//            );
-//        }
+        //        if(count($filesDatas) <= 0 ){
+        //            CommonService::getInstance()->log4PHP(
+        //                json_encode([
+        //                    '拉取非公开-结束' => [
+        //                        "参数"=>$params,
+        //                        "sql"=>$sql,
+        //                        "sql查到的数据了数据量为空"=>count($filesDatas),
+        //                    ]
+        //                ], JSON_UNESCAPED_UNICODE)
+        //            );
+        //        }
 
        foreach ($filesDatas as $filesData){
            CommonService::getInstance()->log4PHP(
                json_encode([
                    '拉取非公开开始执行' => [
-                       "参数"=>$params,
+                      // "参数"=>$params,
                        "执行的数据"=>$filesData,
                    ]
                ], JSON_UNESCAPED_UNICODE)
@@ -847,7 +854,7 @@ class ToolsFileLists extends ModelBase
                                '信用代码' => $code,
                                '企业名' => $entname,
                            ]
-                       ],JSON_UNESCAPED_UNICODE)
+                       ],JSON_UNESCAPED_UNICODE),"info","拉取非公开联系人过滤的"
                    );
                    continue;
                }
@@ -858,14 +865,14 @@ class ToolsFileLists extends ModelBase
                //需要取工商数据
                if($pull_gong_shang_shu_ju){
                    $allContactsDatas = $allConatcts['xn_with_pxd'];
-//                   CommonService::getInstance()->log4PHP(
-//                       json_encode([
-//                           __CLASS__.__FUNCTION__ .__LINE__,
-//                           '拉取非公开联系人-需要取工商数据-'=>[
-//                               '$allContactsDatas' => $allContactsDatas,
-//                           ]
-//                       ],JSON_UNESCAPED_UNICODE)
-//                   );
+                    //                   CommonService::getInstance()->log4PHP(
+                    //                       json_encode([
+                    //                           __CLASS__.__FUNCTION__ .__LINE__,
+                    //                           '拉取非公开联系人-需要取工商数据-'=>[
+                    //                               '$allContactsDatas' => $allContactsDatas,
+                    //                           ]
+                    //                       ],JSON_UNESCAPED_UNICODE)
+                    //                   );
                }
 
                $tmpContacts = [];
@@ -889,21 +896,21 @@ class ToolsFileLists extends ModelBase
                                    'qcc' => $allConatcts['qcc'],
                                    'lianxi' => $tmpPhone,
                                ]
-                           ],JSON_UNESCAPED_UNICODE)
+                           ],JSON_UNESCAPED_UNICODE),"info","拉取非公开联系人过滤的"
                        );
                        continue;
                    }
 
                    $tmpContacts[$tmpPhone] = $tmpPhone;
                }
-//               CommonService::getInstance()->log4PHP(
-//                   json_encode([
-//                       __CLASS__.__FUNCTION__ .__LINE__,
-//                       '拉取非公开联系人-需要取工商数据-'=>[
-//                           '$tmpContacts' => $tmpContacts,
-//                       ]
-//                   ],JSON_UNESCAPED_UNICODE)
-//               );
+                //               CommonService::getInstance()->log4PHP(
+                //                   json_encode([
+                //                       __CLASS__.__FUNCTION__ .__LINE__,
+                //                       '拉取非公开联系人-需要取工商数据-'=>[
+                //                           '$tmpContacts' => $tmpContacts,
+                //                       ]
+                //                   ],JSON_UNESCAPED_UNICODE)
+                //               );
              //$allConatcts['xn'] = $tmpContacts;
              if(empty($tmpContacts)){
                   $tmpDataItem = [
@@ -985,7 +992,7 @@ class ToolsFileLists extends ModelBase
                                    '企业名称' => $entname,
                                    '有效联系人' => $validContacts,
                                ]
-                           ],JSON_UNESCAPED_UNICODE)
+                           ],JSON_UNESCAPED_UNICODE),"info","拉取非公开联系人过滤的"
                        );
                        continue;
                    }
@@ -1011,20 +1018,21 @@ class ToolsFileLists extends ModelBase
 
 
     //上传微信联系人
-    static function shangChuanWeiXinHao($params){
+    static function shangChuanWeiXinHao($params=[]){
        $filesDatas = self::findBySql("
             WHERE touch_time < 1
             AND type = 10 
             AND state = 0 
             LIMIT 2 
        ");
+
        foreach ($filesDatas as $filesData){
            CommonService::getInstance()->log4PHP(
                json_encode([
                    // __CLASS__.__FUNCTION__ .__LINE__,
                    [
                        '开始处理上传的微信号文件'=>[
-                           '参数' => $params ,
+                           //'参数' => $params ,
                            '数据' => $filesData ,
                        ]
                    ]
@@ -1099,7 +1107,7 @@ class ToolsFileLists extends ModelBase
     }
 
     //上传支付宝
-    static function shangChuanZhiFubao($params){
+    static function shangChuanZhiFubao($params = [] ){
         $filesDatas = self::findBySql("
             WHERE touch_time < 1
             AND type = 10 
@@ -1112,7 +1120,7 @@ class ToolsFileLists extends ModelBase
                     // __CLASS__.__FUNCTION__ .__LINE__,
                     [
                         '通用文件-开始处理'=>[
-                            '参数' => $params,
+                            //'参数' => $params,
                             '数据' =>  $filesData,
                         ]
                     ]
@@ -1184,7 +1192,7 @@ class ToolsFileLists extends ModelBase
     }
 
     //上传公开联系人
-    static function shangChuanGongKaiContact($params){
+    static function shangChuanGongKaiContact($params = [] ){
        $filesDatas = self::findBySql("
             WHERE touch_time < 1
             AND type = 25 
@@ -1199,7 +1207,7 @@ class ToolsFileLists extends ModelBase
                    __CLASS__.__FUNCTION__ .__LINE__,
                    [
                        '上传公开联系人开始执行'=>[
-                           '参数'=>$params,
+                          // '参数'=>$params,
                            '数据'=>$filesData,
                        ]
                    ]
@@ -1212,12 +1220,24 @@ class ToolsFileLists extends ModelBase
 
            foreach ($yieldDatas as $dataItem) {
                $companysContacts = [];
+
                //企业 税号 电话 微信名 性别
                $companyName = $dataItem[0];
                $companyRes = CompanyBasic::findByName($companyName);
 
                //$companyCode = $dataItem[1];
                if(empty($companyRes)){
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           __CLASS__.__FUNCTION__ .__LINE__,
+                           [
+                               '上传公开联系人-没找到企业-continue'=>[
+                                   // '参数'=>$params,
+                                   '企业名'=>$companyName,
+                               ]
+                           ]
+                       ],JSON_UNESCAPED_UNICODE)
+                   );
                    continue;
                }
                $companyCode = $companyRes->UNISCID;
