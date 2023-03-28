@@ -619,9 +619,14 @@ class FaHaiController extends ProvideBase
     //欠税公告
     function getSatpartyQs()
     {
-        $entName = $this->request()->getRequestParam('entName');
-        $page = $this->request()->getRequestParam('page') ?? 1;
-        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+        //        $entName = $this->request()->getRequestParam('entName');
+        //        $page = $this->request()->getRequestParam('page') ?? 1;
+        //        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $entName = $this->getRequestData('entName');
+        $page      = $this->getRequestData('page', 1);
+        $pageSize  = $this->getRequestData('pageSize', 10);
+
 
         $docType = 'satparty_qs';
 
@@ -643,8 +648,12 @@ class FaHaiController extends ProvideBase
     //欠税公告详情
     function getSatpartyQsDetail()
     {
-        $id = $this->request()->getRequestParam('id') ?? '';
-        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+        $id = $this->getRequestData('id');
+        //$id = $this->request()->getRequestParam('id') ?? '';
+
+        //$this->entName = $this->request()->getRequestParam('entName') ?? '';
+        $this->entName = $this->getRequestData('entName');
+
         $postData = ['id' => $id];
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new FaYanYuanService())
