@@ -23,7 +23,7 @@ class InformationDanceRequestRecode extends ModelBase
     protected $tableName = '';
 
     function  setTableNameByYear($year){
-        $this->tableName = $year;
+        $this->tableName = "information_dance_request_recode_".$year;
     }
 
     static  function  addRecordV2($info){
