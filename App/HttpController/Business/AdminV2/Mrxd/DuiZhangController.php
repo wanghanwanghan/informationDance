@@ -502,6 +502,39 @@ class DuiZhangController  extends ControllerBase
         $page = $requestData['page']?:1;
         $pageSize = $requestData['pageSize']?:10;
 
+        $start_date = $requestData['start_date'];
+        $start_date = "2021-01-01";
+        $end_date = $requestData['end_date'];
+        $end_date = "2021-03-31";
+        if(
+            $start_date <= 1 ||
+            $end_date <= 1
+        ){
+            return $this->writeJson(201, [
+                'page' => $page,
+                'pageSize' => $pageSize,
+                'total' => 0,
+                'totalPage' => 1,
+            ],  [],'请选择开始结束日期');
+        }
+
+
+        InformationDanceRequestRecode::findByConditionV2(
+            date("Y",strtotime($start_date)),
+            [
+
+            ],
+            $page,
+            $pageSize
+        );
+
+        return $this->writeJson(200, [
+            'page' => $page,
+            'pageSize' => $pageSize,
+            'total' => $total,
+            'totalPage' => ceil($total/$pageSize) ,
+        ],  $res['data'],'成功');
+
         //年度
         if( $requestData['year'] <= 0 ){
             CommonService::getInstance()->log4PHP(

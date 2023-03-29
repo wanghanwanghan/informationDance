@@ -22,6 +22,10 @@ class InformationDanceRequestRecode extends ModelBase
 
     protected $tableName = '';
 
+    function  setTableNameByYear($year){
+        $this->tableName = $year;
+    }
+
     static  function  addRecordV2($info){
         $oldRes = self::findByPhone($info['phone']);
         if(
@@ -93,8 +97,11 @@ class InformationDanceRequestRecode extends ModelBase
         ];
     }
 
-    public static function findByConditionV2($whereArr,$page=1,$limit=20){
+    public static function findByConditionV2($year,$whereArr,$page=1,$limit=20){
+
         $model = InformationDanceRequestRecode::create();
+        $model->setTableNameByYear($year);
+
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
