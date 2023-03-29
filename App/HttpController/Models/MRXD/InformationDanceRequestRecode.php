@@ -111,6 +111,19 @@ class InformationDanceRequestRecode extends ModelBase
 
         $res = $model->all();
 
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                "请求统计表-参数" => [
+                    '年度' => $year,
+                    '条件' => $whereArr,
+                    'page' => $page,
+                    'limit' => $limit
+                ],
+                "请求统计表-sql" => $model->builder->getLastPrepareQuery(),
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         $total = $model->lastQueryResult()->getTotalCount();
         return [
             'data' => $res,
