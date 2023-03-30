@@ -1168,6 +1168,15 @@ class FaHaiController extends ProvideBase
             'pageno' => $pageno,
             'range' => $range,
         ];
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([ "法海-caiPanWenShuList"=>[
+                '$range'=>$range,
+                '$postData'=>$postData,
+                'getRequestData'=>$this->getRequestData(),
+            ]],JSON_UNESCAPED_UNICODE)
+        );
+
         $this->csp->add($this->cspKey, function () use ($postData) {
 
             return  (new FaYanYuanService())
