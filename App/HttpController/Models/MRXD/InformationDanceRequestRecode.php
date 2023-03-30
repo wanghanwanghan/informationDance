@@ -20,7 +20,7 @@ use Vtiful\Kernel\Format;
 class InformationDanceRequestRecode extends ModelBase
 {
 
-    protected $tableName = '';
+    protected $tableName = 'information_dance_request_recode_2023';
 
     function  setTableNameByYear($year){
         $this->tableName = "information_dance_request_recode_".$year;
