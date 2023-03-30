@@ -519,7 +519,7 @@ class DuiZhangController  extends ControllerBase
         }
 
 
-        InformationDanceRequestRecode::findByConditionV2(
+        $res = InformationDanceRequestRecode::findByConditionV2(
             date("Y",strtotime($start_date)),
             [
 
@@ -527,7 +527,7 @@ class DuiZhangController  extends ControllerBase
             $page,
             $pageSize
         );
-
+        $total = $res["total"];
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' => $pageSize,
