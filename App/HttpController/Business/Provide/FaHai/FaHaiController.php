@@ -1153,13 +1153,13 @@ class FaHaiController extends ProvideBase
     function caiPanWenShuList()
     {
         //$pageno = $this->request()->getRequestParam('page') ?? '1';
-        $pageno = $this->getRequestData('page') ?? '1';
+        $pageno = $this->getRequestData('page') ;
 
         //$range = $this->request()->getRequestParam('pageSize') ?? '10';
-        $range = $this->getRequestData('pageSize') ?? '10';
+        $range = $this->getRequestData('pageSize');
 
         //$entName = $this->request()->getRequestParam('entName') ?? '';
-        $entName = $this->getRequestData('entName') ?? '';
+        $entName = $this->getRequestData('entName');
 
         $doc_type = 'cpws';
         $postData = [
