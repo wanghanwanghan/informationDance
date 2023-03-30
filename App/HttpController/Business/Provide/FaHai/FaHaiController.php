@@ -1161,7 +1161,7 @@ class FaHaiController extends ProvideBase
         //$entName = $this->request()->getRequestParam('entName') ?? '';
         $entName = $this->getRequestData('entName') ?? '';
 
-        $doc_type = 'sf';
+        $doc_type = 'sifa';
         $postData = [
             'doc_type' => $doc_type,
             'keyword' => $entName,
