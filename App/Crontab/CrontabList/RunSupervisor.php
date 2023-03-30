@@ -53,7 +53,7 @@ class RunSupervisor extends AbstractCronTask
         //可以用task，也可以用process
 
         if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) {
-            CommonService::getInstance()->log4PHP('不开始');
+            //CommonService::getInstance()->log4PHP('不开始');
             return true;
         }
 
