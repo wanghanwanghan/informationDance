@@ -528,6 +528,9 @@ class DuiZhangController  extends ControllerBase
             $pageSize
         );
         $total = $res["total"];
+
+
+
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' => $pageSize,

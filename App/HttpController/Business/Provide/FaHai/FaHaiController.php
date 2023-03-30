@@ -1152,10 +1152,16 @@ class FaHaiController extends ProvideBase
     //裁判文书列表
     function caiPanWenShuList()
     {
-        $pageno = $this->request()->getRequestParam('page') ?? '1';
-        $range = $this->request()->getRequestParam('pageSize') ?? '20';
-        $entName = $this->request()->getRequestParam('entName') ?? '';
-        $doc_type = 'cpws';
+        //$pageno = $this->request()->getRequestParam('page') ?? '1';
+        $pageno = $this->getRequestData('page') ?? '1';
+
+        //$range = $this->request()->getRequestParam('pageSize') ?? '10';
+        $range = $this->getRequestData('pageSize') ?? '10';
+
+        //$entName = $this->request()->getRequestParam('entName') ?? '';
+        $entName = $this->getRequestData('entName') ?? '';
+
+        $doc_type = 'sf';
         $postData = [
             'doc_type' => $doc_type,
             'keyword' => $entName,

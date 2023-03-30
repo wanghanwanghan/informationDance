@@ -314,4 +314,26 @@ class InformationDanceRequestRecode extends ModelBase
         $fileObject->output();
     }
 
+    static  function  formatData($data){
+        foreach ($data as &$datum){
+            /**
+            created_at :  1680142119
+            id  :  147537
+            provideApiId  :  319
+            requestData   :  "{\"billingDate\":\"2023-03-30\",\"totalAmount\":\"54840.71\",\"appId\":\"294D936D3E854057ECE6719E6D2F07BE\",\"sign\":\"1020C30E2A7BDBBBEC150707BBDBE8\",\"invoiceNumber\":\"00545667\",\"time\":\"1680142118\",\"invoiceCode\":\"132002222363\"}"
+            requestId :  "6866ddd6799a94501db1766fd6d90102"
+            requestIp  :  "47.95.255.203"
+            requestUrl :  "/provide/v1/zw/getInvoiceCheckV2"
+            responseCode  :  200
+            responseData :  "{\"requestId\":\"c8cd803825a44268ab34acff0fa96f03\",\"hostId\":\"https://ivs.fapiao.com/mars/api/check/invoice\",\"code\":200,\"message\":\"查验成功发票不一致\",\"sfkccs\":\"1\",\"Paging\":null,\"msg\":\"success\"}"
+            spendMoney  : "0.2100"
+            spendTime  :  "1.0513"
+            updated_at :  1680142119
+            userId  : 59
+             */
+
+            $datum["created_at"] = date("Y-m-d",$datum['created_at']);
+        }
+    }
+
 }
