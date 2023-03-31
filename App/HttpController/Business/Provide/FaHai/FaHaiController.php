@@ -1073,7 +1073,7 @@ class FaHaiController extends ProvideBase
             return  (new FaYanYuanService())
                 //->setCheckRespFlag(false)
                 ->setCheckRespFlag(true)
-                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . $postData['doc_type'], $postData);
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') ."sifa", $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -1171,9 +1171,9 @@ class FaHaiController extends ProvideBase
 
         CommonService::getInstance()->log4PHP(
             json_encode([ "法海-caiPanWenShuList"=>[
-                '$range'=>$range,
-                '$postData'=>$postData,
-                'getRequestData'=>$this->getRequestData(),
+                '$range' => $range,
+                '$postData' => $postData,
+                'getRequestData' => $this->getRequestData(),
             ]],JSON_UNESCAPED_UNICODE)
         );
 
