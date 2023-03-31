@@ -1120,7 +1120,7 @@ class FaHaiController extends ProvideBase
             return  (new FaYanYuanService())
                 //->setCheckRespFlag(false)
                 ->setCheckRespFlag(true)
-                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . $postData['doc_type'], $postData);
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') ."sifa", $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
