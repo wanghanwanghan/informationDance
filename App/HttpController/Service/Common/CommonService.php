@@ -478,7 +478,7 @@ class CommonService extends ServiceBase
         $config->setUsername(CreateConf::getInstance()->getConf('env.mailUsername'));
         $config->setPassword(CreateConf::getInstance()->getConf('env.mailPassword'));
         $config->setMailFrom(CreateConf::getInstance()->getConf('env.mailFrom'));
-        $config->setTimeout(10);//设置客户端连接超时时间
+        $config->setTimeout(60);//设置客户端连接超时时间
         $config->setMaxPackage(1024 * 1024 * 5);//设置包发送的大小：5M
 
         //设置文本或者html格式
