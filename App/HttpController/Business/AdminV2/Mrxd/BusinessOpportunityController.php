@@ -314,6 +314,16 @@ class BusinessOpportunityController extends ControllerBase
             ];
 
         }
+
+        if($requestData['phone']){
+            $conditions[]  =  [
+                'field' =>'phone_md5',
+                'value' =>md5(intval($requestData['phone'])),
+                'operate' =>'=',
+            ];
+
+        }
+
         $datas = ZhifubaoInfo::findByConditionV2(
             $conditions,$page,$pageSize
         );
