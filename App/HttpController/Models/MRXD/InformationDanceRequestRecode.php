@@ -390,19 +390,21 @@ class InformationDanceRequestRecode extends ModelBase
 
         $i = 1;
         foreach ($data as $dataItem){
-            if( $i%50 == 0 ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '对账单-导出-次数' => $i,
-                        '$dataItem' => $dataItem,
-                    ])
-                );
-            }
             $tmp = [];
             foreach ($headerArr as $key=>$cname){
                 $tmp[] = $dataItem[$key];
             }
+
+            if( $i%300 == 0 ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '对账单-导出-次数' => $i,
+                        '$tmp' => $tmp,
+                    ],JSON_UNESCAPED_UNICODE)
+                );
+            }
+
             $fileObject ->data([$tmp]);
             $i ++;
         }

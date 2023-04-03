@@ -337,6 +337,14 @@ class DuiZhangController  extends ControllerBase
                 'operate' =>'=',
             ];
         }
+        else {
+            return $this->writeJson(201, [
+                'page' => $page,
+                'pageSize' => $pageSize,
+                'total' => 0,
+                'totalPage' => 1,
+            ],  [],'请选择客户');
+        }
 
         $res = InformationDanceRequestRecode::findByConditionV2(
             date("Y",strtotime($start_date)),
