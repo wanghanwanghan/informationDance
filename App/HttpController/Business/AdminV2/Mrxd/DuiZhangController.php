@@ -177,6 +177,7 @@ class DuiZhangController  extends ControllerBase
 
         return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
     }
+
     public function uploadZhiFuBaoFile(){
 
         $requestData =  $this->getRequestData();
@@ -278,39 +279,61 @@ class DuiZhangController  extends ControllerBase
      * month=
      ***/
     public function downloadDataList(){
-        $requestData =  $this->getRequestData();
-        $requestData['page'] = 1;
-        $requestData['pageSize'] = 100;
 
-        $res =  InformationDanceRequestRecodeStatics::getFullDatas(
-            $requestData
-        );
-        $new_res = [];
-        foreach ($res["data"] as $resItem){
-            $new_res[] = [
-                "client_name" => $resItem["client_name"],
-                "year" => $resItem["year"],
-                "month" => $resItem["month"],
-                "day" => $resItem["day"],
-                "total_num" => $resItem["total_num"],
-                "total_cache_num" => $resItem["total_cache_num"],
-                "needs_charge_num" => $resItem["needs_charge_num"],
-                "charge_state_cname" => $resItem["charge_state_cname"],
-            ];
+        $requestData =  $this->getRequestData();
+        $page = $requestData['page']?:1;
+        $pageSize = $requestData['pageSize']?:10;
+
+        $start_date = $requestData['start_date'];
+        $start_date = "2023-01-01";
+        $end_date = $requestData['end_date'];
+        $end_date = "2023-03-31";
+        if(
+            $start_date <= 1 ||
+            $end_date <= 1
+        ){
+            return $this->writeJson(201, [
+                'page' => $page,
+                'pageSize' => $pageSize,
+                'total' => 0,
+                'totalPage' => 1,
+            ],  [],'请选择开始结束日期');
         }
+
+        $res = InformationDanceRequestRecode::findByConditionV2(
+            date("Y",strtotime($start_date)),
+            [
+
+            ],
+            $page,
+            $pageSize
+        );
+
+        $res['data'] = InformationDanceRequestRecode::formatData($res['data']);
+        $total = $res["total"];
+
+
         $fileName = "对账单_".date("Ymd").".xlsx";
         $url = 'https://api.meirixindong.com/Static/Temp/'.$fileName;
 
-        InformationDanceRequestRecodeStatics::exportData(
-            $new_res , $fileName,[
-                "用户",
-                "年度",
-                "月份",
-                "日",
-                "总次数",
-                "缓存总次数",
-                "需要计费次数",
-                "结算状态",
+        InformationDanceRequestRecode::exportData(
+            $res['data'] ,
+            $fileName,
+            [
+                "id" => "ID",
+                "user_name" => "用户名",
+                "requestUrl" => "请求地址",
+                "provideApiName" => "接口描述",
+                "needs_charge_cname" => "是否需要计费",
+                "requestId" => "请求ID",
+                "requestIp" => "请求IP",
+                "requestData" => "请求数据",
+                "is_success_cname" => "请求是否成功",
+                "responseCode" => "响应Code",
+                "is_cached_cname" => "是否是缓存数据",
+                "created_at" => "请求时间",
+                //"provideApiPrice" => "推荐单价",
+                //"responseData" => "响应数据",
             ]
         );
 
@@ -517,7 +540,6 @@ class DuiZhangController  extends ControllerBase
                 'totalPage' => 1,
             ],  [],'请选择开始结束日期');
         }
-
 
         $res = InformationDanceRequestRecode::findByConditionV2(
             date("Y",strtotime($start_date)),

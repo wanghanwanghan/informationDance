@@ -253,69 +253,6 @@ class InformationDanceRequestRecode extends ModelBase
     }
 
 
-    static  function exportData($data,$filedCname ){
-        $filename = '对账单_'.date('YmdHis').'.xlsx';
-        $config=  [
-            'path' => TEMP_FILE_PATH // xlsx文件保存路径
-        ];
-
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                "对账单-导出-开始执行"=>[
-                    "文件名"=>$filename,
-                    "文件路径"=>TEMP_FILE_PATH,
-                ]
-            ],JSON_UNESCAPED_UNICODE)
-        );
-
-        $excel = new \Vtiful\Kernel\Excel($config);
-        $fileObject = $excel->fileName($filename, 'sheet');
-        $fileHandle = $fileObject->getHandle();
-
-        $format = new Format($fileHandle);
-        $colorStyle = $format
-            ->fontColor(Format::COLOR_ORANGE)
-            ->border(Format::BORDER_DASH_DOT)
-            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-            ->toResource();
-
-        $format = new Format($fileHandle);
-
-        $alignStyle = $format
-            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-            ->toResource();
-
-        $fileObject
-            ->defaultFormat($colorStyle)
-            ->header($filedCname)
-            ->defaultFormat($alignStyle)
-        ;
-
-        $i = 1;
-        foreach ($data as $dataItem){
-            if( $i%300 == 0 ){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
-                        '对账单-导出-次数' => $i,
-                    ])
-                );
-            }
-
-            $fileObject ->data([$dataItem]);
-            $i ++;
-        }
-
-        $format = new Format($fileHandle);
-        //单元格有\n解析成换行
-        $wrapStyle = $format
-            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
-            ->wrap()
-            ->toResource();
-
-        $fileObject->output();
-    }
-
     static  function  formatData($data){
         foreach ($data as &$datum){
             /**
@@ -409,6 +346,74 @@ class InformationDanceRequestRecode extends ModelBase
         }
 
         return $data;
+    }
+
+    static  function exportData($data,$filename,$headerArr ){
+        $config=  [
+            'path' => TEMP_FILE_PATH // xlsx文件保存路径
+        ];
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                "对账单-导出-开始执行"=>[
+                    "文件名"=>$filename,
+                    "表头"=>$headerArr,
+                    "文件路径"=>TEMP_FILE_PATH,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+        $excel = new \Vtiful\Kernel\Excel($config);
+        $fileObject = $excel->fileName($filename, 'sheet');
+        $fileHandle = $fileObject->getHandle();
+
+        $format = new Format($fileHandle);
+        $colorStyle = $format
+            ->fontColor(Format::COLOR_ORANGE)
+            ->border(Format::BORDER_DASH_DOT)
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $format = new Format($fileHandle);
+
+        $alignStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->toResource();
+
+        $fileObject
+            ->defaultFormat($colorStyle)
+            ->header(array_values($headerArr))
+            ->defaultFormat($alignStyle)
+        ;
+
+        $i = 1;
+        foreach ($data as $dataItem){
+            if( $i%50 == 0 ){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        __CLASS__.__FUNCTION__ .__LINE__,
+                        '对账单-导出-次数' => $i,
+                        '$dataItem' => $dataItem,
+                    ])
+                );
+            }
+            $tmp = [];
+            foreach ($headerArr as $key=>$cname){
+                $tmp[] = $dataItem[$key];
+            }
+            $fileObject ->data([$tmp]);
+            $i ++;
+        }
+
+        $format = new Format($fileHandle);
+        //单元格有\n解析成换行
+        $wrapStyle = $format
+            ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
+            ->wrap()
+            ->toResource();
+
+        $fileObject->output();
+
     }
 
 }
