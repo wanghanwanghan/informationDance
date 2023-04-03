@@ -340,6 +340,7 @@ class InformationDanceRequestRecode extends ModelBase
             $datum["updated_at"] && $datum["updated_at"] =  date("Y-m-d H:i:s",$datum["updated_at"] );
             $datum["created_at"] && $datum["created_at"] =  date("Y-m-d H:i:s",$datum["created_at"] );
 
+            //请求的接口信息
             if($datum["provideApiId"]){
                 $apiInfo =  RequestApiInfo::findById($datum["provideApiId"]);
                 $apiInfo && $datum["provideApiName"] =  $apiInfo->name;
@@ -349,13 +350,36 @@ class InformationDanceRequestRecode extends ModelBase
                 $apiInfo && $datum["provideApiPath"] =  $apiInfo->path;
             }
 
+            //是否需要付费
+            $datum["needs_charge"] =  1;
+            $datum["needs_charge_cname"] =  "是";
+
+
+            //请求是否成功
+            $datum["is_success"] =  0;
+            $datum["is_success_cname"] =  "否";
+            if($datum["responseCode"] == 200 ){
+                $datum["is_success"] =  0;
+                $datum["is_success_cname"] =  "是";
+
+                $datum["needs_charge"] =  0;
+                $datum["needs_charge_cname"] =  "否(请求没有成功)";
+            }
+
+            //是否是缓存数据
             $datum["is_cached"] =  0;
+            $datum["is_cached_cname"] =  "否";
             if(
                 $datum["responseCode"] == 200 &&
                 $datum["spendMoney"] == 0
             ){
                 $datum["is_cached"] =  0;
+                $datum["is_cached_cname"] =  "是";
+
+                $datum["needs_charge"] =  0;
+                $datum["needs_charge_cname"] =  "否(是缓存数据)";
             }
+
 
             //是否全为空
             //$datum["DataArr"] = json_decode($datum['responseData'],true);
@@ -363,14 +387,20 @@ class InformationDanceRequestRecode extends ModelBase
             // 200
             //财务数据专属
             if($datum["provideApiId"] == 151){
-                $datum["cai_wu_data_is_invalid"] = 1;
+                $datum["cai_wu_data_is_valid"] = 1;
+                $datum["cai_wu_data_is_valid_cname"] = "是";
                 foreach ($datum["DataArr"] as $caiwu_datum){
                     foreach ($caiwu_datum as $caiwu_sub_datum){
                         if(
                             $caiwu_sub_datum != "" &&
                             $caiwu_sub_datum != "0"
                         ){
-                            $datum["cai_wu_data_is_invalid"] = 0;
+                            $datum["cai_wu_data_is_valid"] = 0;
+                            $datum["cai_wu_data_is_valid_cname"] = "否(返回财务数据全部为空)";
+
+                            $datum["needs_charge"] =  0;
+                            $datum["needs_charge_cname"] =  "否(返回财务数据全部为空)";
+
                             break;
                         }
                     }
