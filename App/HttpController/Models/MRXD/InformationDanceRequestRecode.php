@@ -356,29 +356,23 @@ class InformationDanceRequestRecode extends ModelBase
             ){
                 $datum["is_cached"] =  0;
             }
-        }
 
-        //是否全为空
-        $datum["DataArr"] = json_decode($datum['responseData'],true);
+            //是否全为空
+            $datum["DataArr"] = json_decode($datum['responseData'],true);
 
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                "DataArr" =>$datum["DataArr"]
-            ],JSON_UNESCAPED_UNICODE)
-        );
-
-        // 200
-        //财务数据专属
-        $datum["cai_wu_data_is_invalid"] = 1;
-        if($datum["provideApiId"] == 151){
-            foreach ($datum["DataArr"] as $caiwu_datum){
-                foreach ($caiwu_datum as $caiwu_sub_datum){
-                    if(
-                        $caiwu_sub_datum != "" &&
-                        $caiwu_sub_datum != "0"
-                    ){
-                        $datum["cai_wu_data_is_invalid"] = 0;
-                        break;
+            // 200
+            //财务数据专属
+            $datum["cai_wu_data_is_invalid"] = 1;
+            if($datum["provideApiId"] == 151){
+                foreach ($datum["DataArr"] as $caiwu_datum){
+                    foreach ($caiwu_datum as $caiwu_sub_datum){
+                        if(
+                            $caiwu_sub_datum != "" &&
+                            $caiwu_sub_datum != "0"
+                        ){
+                            $datum["cai_wu_data_is_invalid"] = 0;
+                            break;
+                        }
                     }
                 }
             }
