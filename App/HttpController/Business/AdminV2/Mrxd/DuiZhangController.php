@@ -352,7 +352,7 @@ class DuiZhangController  extends ControllerBase
             date("Y",strtotime($start_date)),
             $conditions,
             $page,
-            10000
+            1000000
         );
 
         $res['data'] = InformationDanceRequestRecode::formatData($res['data']);
