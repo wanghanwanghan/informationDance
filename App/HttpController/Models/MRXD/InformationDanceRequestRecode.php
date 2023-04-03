@@ -288,19 +288,21 @@ class InformationDanceRequestRecode extends ModelBase
             }
 
             //是否需要付费
-            $datum["needs_charge"] =  1;
-            $datum["needs_charge_cname"] =  "是";
+            $datum["needs_charge"] =  0;
+            $datum["needs_charge_cname"] =  "否(请求没有成功)";
 
 
             //请求是否成功
             $datum["is_success"] =  0;
             $datum["is_success_cname"] =  "否";
+
             if($datum["responseCode"] == 200 ){
                 $datum["is_success"] =  0;
                 $datum["is_success_cname"] =  "是";
 
-                $datum["needs_charge"] =  0;
-                $datum["needs_charge_cname"] =  "否(请求没有成功)";
+                $datum["needs_charge"] =  1;
+                $datum["needs_charge_cname"] =  "是";
+
             }
 
             //是否是缓存数据

@@ -320,7 +320,7 @@ class DuiZhangController  extends ControllerBase
             $res['data'] ,
             $fileName,
             [
-                "id" => "ID",
+                //"id" => "ID",
                 "user_name" => "用户名",
                 "requestUrl" => "请求地址",
                 "provideApiName" => "接口描述",
