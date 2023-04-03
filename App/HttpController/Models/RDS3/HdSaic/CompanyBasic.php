@@ -38,10 +38,31 @@ class CompanyBasic extends ModelBase
         return $res;
     }
 
+    static function str_containsV1($haystack, $needle) {
+        return $needle !== '' && mb_strpos($haystack, $needle) !== false;
+    }
+
     public static function findByName($name){
         $res =  CompanyBasic::create()
             ->where('ENTNAME',$name)
             ->get();
+
+        if(empty($res)){
+            //没找到公司 又带括号的
+            if(self::str_containsV1($name,"(")){
+                $name = str_replace("(","（",$name);
+                $name = str_replace(")","）",$name);
+            }
+
+            elseif (self::str_containsV1($name,"（")){
+                $name = str_replace("（","(",$name);
+                $name = str_replace("）",")",$name);
+            }
+            $res =  CompanyBasic::create()
+                ->where('ENTNAME',$name)
+                ->get();
+        }
+
         return $res;
     }
 
