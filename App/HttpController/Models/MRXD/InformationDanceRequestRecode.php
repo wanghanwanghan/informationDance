@@ -360,7 +360,13 @@ class InformationDanceRequestRecode extends ModelBase
 
         //是否全为空
         $datum["responseDataArr"] = json_decode($datum['responseData'],true);
-        
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                "responseDataArr" =>$datum["responseDataArr"]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         // 200
         //财务数据专属
         if($datum["provideApiId"] == 151){
