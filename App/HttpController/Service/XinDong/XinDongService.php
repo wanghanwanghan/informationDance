@@ -3542,6 +3542,19 @@ class XinDongService extends ServiceBase
                 continue;
             };
             $res = (new XinDongService())->matchNamesForZhiFuBao($tmpName, $zhiFuBao);
+            CommonService::getInstance()->log4PHP(
+                  json_encode(
+                      [
+                        "匹配支付宝" => [
+                            "姓名" => $tmpName,
+                            "支付宝名" => $zhiFuBao,
+                            "匹配结果" => $res,
+                        ]
+
+                      ],JSON_UNESCAPED_UNICODE
+                  )
+            );
+
             if ($res['res'] == '成功') {
 //                CommonService::getInstance()->log4PHP(
 //                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin
