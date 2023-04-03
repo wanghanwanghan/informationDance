@@ -356,7 +356,13 @@ class InformationDanceRequestRecode extends ModelBase
             ){
                 $datum["is_cached"] =  0;
             }
+        }
 
+        // 200
+        //财务数据专属
+        if($datum["provideApiId"] == 151){
+            //是否全为空
+            $datum["responseDataArr"] = json_decode($datum['responseData'],true);
         }
 
         return $data;

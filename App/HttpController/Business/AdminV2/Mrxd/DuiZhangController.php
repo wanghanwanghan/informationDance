@@ -536,7 +536,7 @@ class DuiZhangController  extends ControllerBase
             'pageSize' => $pageSize,
             'total' => $total,
             'totalPage' => ceil($total/$pageSize) ,
-        ],  $res['data'],'成功'); 
+        ],  $res['data'],'成功');
     }
 
     /****
