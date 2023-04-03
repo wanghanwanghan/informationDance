@@ -368,16 +368,18 @@ class DuiZhangController  extends ControllerBase
             [
                 //"id" => "ID",
                 "user_name" => "用户名",
-                "requestUrl" => "请求地址",
+                "created_at" => "请求时间",
+                "requestUrl" => "请求接口",
                 "provideApiName" => "接口描述",
                 "needs_charge_cname" => "是否需要计费",
+                "is_cached_cname" => "是否是缓存数据",
                 "requestId" => "请求ID",
                 "requestIp" => "请求IP",
                 "requestData" => "请求数据",
                 "is_success_cname" => "请求是否成功",
                 "responseCode" => "响应Code",
-                "is_cached_cname" => "是否是缓存数据",
-                "created_at" => "请求时间",
+
+
                 //"provideApiPrice" => "推荐单价",
                 //"responseData" => "响应数据",
             ]
