@@ -289,7 +289,7 @@ class DuiZhangController  extends ControllerBase
         $end_date = $requestData['end_date'];
         $end_date = "2023-04-31";
 
-        $requestData['user_id']  = 2;
+        $requestData['user_id']  = 59;
         if(
             date("Y",strtotime($start_date)) != date("Y",strtotime($end_date))
         ){
