@@ -287,7 +287,19 @@ class DuiZhangController  extends ControllerBase
         $start_date = $requestData['start_date'];
         $start_date = "2023-01-01";
         $end_date = $requestData['end_date'];
-        $end_date = "2023-03-31";
+        $end_date = "2023-04-31";
+
+        if(
+            date("Y",strtotime($start_date)) != date("Y",strtotime($end_date))
+        ){
+            return $this->writeJson(201, [
+                'page' => $page,
+                'pageSize' => $pageSize,
+                'total' => 0,
+                'totalPage' => 1,
+            ],  [],'不能跨年');
+        }
+
         if(
             $start_date <= 1 ||
             $end_date <= 1
@@ -300,13 +312,37 @@ class DuiZhangController  extends ControllerBase
             ],  [],'请选择开始结束日期');
         }
 
+        $conditions = [];
+
+        if($start_date){
+            $conditions[]  =  [
+                'field' =>'created_at',
+                'value' => strtotime($start_date),
+                'operate' =>'>=',
+            ];
+        }
+
+        if($end_date){
+            $conditions[]  =  [
+                'field' =>'created_at',
+                'value' => strtotime($end_date),
+                'operate' =>'<=',
+            ];
+        }
+
+        if($requestData['user_id']){
+            $conditions[]  =  [
+                'field' =>'userId',
+                'value' => $requestData['user_id'],
+                'operate' =>'=',
+            ];
+        }
+
         $res = InformationDanceRequestRecode::findByConditionV2(
             date("Y",strtotime($start_date)),
-            [
-
-            ],
+            $conditions,
             $page,
-            $pageSize
+            10000
         );
 
         $res['data'] = InformationDanceRequestRecode::formatData($res['data']);
@@ -529,6 +565,18 @@ class DuiZhangController  extends ControllerBase
         $start_date = "2023-01-01";
         $end_date = $requestData['end_date'];
         $end_date = "2023-03-31";
+
+        if(
+            date("Y",strtotime($start_date)) != date("Y",strtotime($end_date))
+        ){
+            return $this->writeJson(201, [
+                'page' => $page,
+                'pageSize' => $pageSize,
+                'total' => 0,
+                'totalPage' => 1,
+            ],  [],'不能跨年');
+        }
+
         if(
             $start_date <= 1 ||
             $end_date <= 1
@@ -541,11 +589,35 @@ class DuiZhangController  extends ControllerBase
             ],  [],'请选择开始结束日期');
         }
 
+        $conditions = [];
+
+        if($start_date){
+            $conditions[]  =  [
+                'field' =>'created_at',
+                'value' => strtotime($start_date),
+                'operate' =>'>=',
+            ];
+        }
+
+        if($end_date){
+            $conditions[]  =  [
+                'field' =>'created_at',
+                'value' => strtotime($end_date),
+                'operate' =>'<=',
+            ];
+        }
+
+        if($requestData['user_id']){
+            $conditions[]  =  [
+                'field' =>'userId',
+                'value' => $requestData['user_id'],
+                'operate' =>'=',
+            ];
+        }
+
         $res = InformationDanceRequestRecode::findByConditionV2(
             date("Y",strtotime($start_date)),
-            [
-
-            ],
+            $conditions,
             $page,
             $pageSize
         );
