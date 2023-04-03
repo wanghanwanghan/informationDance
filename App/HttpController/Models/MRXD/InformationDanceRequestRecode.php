@@ -358,12 +358,12 @@ class InformationDanceRequestRecode extends ModelBase
             }
 
             //是否全为空
-            $datum["DataArr"] = json_decode($datum['responseData'],true);
+            //$datum["DataArr"] = json_decode($datum['responseData'],true);
 
             // 200
             //财务数据专属
-            $datum["cai_wu_data_is_invalid"] = 1;
             if($datum["provideApiId"] == 151){
+                $datum["cai_wu_data_is_invalid"] = 1;
                 foreach ($datum["DataArr"] as $caiwu_datum){
                     foreach ($caiwu_datum as $caiwu_sub_datum){
                         if(
