@@ -254,6 +254,9 @@ class InformationDanceRequestRecode extends ModelBase
 
 
     static  function  formatData($data){
+        $cacheUserInfo = [];
+        $cacheApiInfo = [];
+
         foreach ($data as &$datum){
             /**
             created_at :  1680142119
@@ -271,20 +274,43 @@ class InformationDanceRequestRecode extends ModelBase
             userId  : 59
              */
 
-            $userInfo = RequestUserInfo::findById($datum["userId"]);
-            $userInfo &&   $datum["user_name"] =  $userInfo->username;
+            if($cacheUserInfo[$datum["userId"]]){
+                $datum["user_name"] =  $cacheUserInfo[$datum["userId"]];
+            } else {
+                $userInfo = RequestUserInfo::findById($datum["userId"]);
+                $userInfo &&   $datum["user_name"] =  $userInfo->username;
+                $cacheUserInfo[$datum["userId"]] = $userInfo->username;
+            }
+
 
             $datum["updated_at"] && $datum["updated_at"] =  date("Y-m-d H:i:s",$datum["updated_at"] );
             $datum["created_at"] && $datum["created_at"] =  date("Y-m-d H:i:s",$datum["created_at"] );
 
             //请求的接口信息
             if($datum["provideApiId"]){
-                $apiInfo =  RequestApiInfo::findById($datum["provideApiId"]);
-                $apiInfo && $datum["provideApiName"] =  $apiInfo->name;
-                $apiInfo && $datum["provideApiDesc"] =  $apiInfo->desc;
-                $apiInfo && $datum["provideApiSource"] =  $apiInfo->source;
-                $apiInfo && $datum["provideApiPrice"] =  $apiInfo->price;
-                $apiInfo && $datum["provideApiPath"] =  $apiInfo->path;
+                if($cacheApiInfo[$datum["userId"]]){
+                    $datum["provideApiName"] =  $cacheApiInfo[$datum["userId"]]["provideApiName"];
+                    $datum["provideApiDesc"] =   $cacheApiInfo[$datum["userId"]]["provideApiDesc"];
+                    $datum["provideApiSource"] =  $cacheApiInfo[$datum["userId"]]["provideApiSource"];
+                    $datum["provideApiPrice"] =   $cacheApiInfo[$datum["userId"]]["provideApiPrice"];
+                    $datum["provideApiPath"] =   $cacheApiInfo[$datum["userId"]]["provideApiPath"];
+                }
+                else{
+                    $apiInfo =  RequestApiInfo::findById($datum["provideApiId"]);
+                    $apiInfo && $datum["provideApiName"] =  $apiInfo->name;
+                    $apiInfo && $datum["provideApiDesc"] =  $apiInfo->desc;
+                    $apiInfo && $datum["provideApiSource"] =  $apiInfo->source;
+                    $apiInfo && $datum["provideApiPrice"] =  $apiInfo->price;
+                    $apiInfo && $datum["provideApiPath"] =  $apiInfo->path;
+
+
+                    $cacheApiInfo[$datum["userId"]]["provideApiName"] =  $datum["provideApiName"];
+                    $cacheApiInfo[$datum["userId"]]["provideApiDesc"] =   $datum["provideApiDesc"];
+                    $cacheApiInfo[$datum["userId"]]["provideApiSource"] =  $datum["provideApiSource"];
+                    $cacheApiInfo[$datum["userId"]]["provideApiPrice"] =   $datum["provideApiPrice"];
+                    $cacheApiInfo[$datum["userId"]]["provideApiPath"] =   $datum["provideApiPath"];
+
+                }
             }
 
             //是否需要付费
@@ -395,7 +421,7 @@ class InformationDanceRequestRecode extends ModelBase
                 $tmp[] = $dataItem[$key];
             }
 
-            if( $i%300 == 0 ){
+            if( $i%100 == 0 ){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
