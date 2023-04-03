@@ -368,7 +368,9 @@ class DuiZhangController  extends ControllerBase
             [
                 //"id" => "ID",
                 "user_name" => "用户名",
-                "created_at" => "请求时间",
+                "request_day" => "请求时间(天)",
+                "request_month" => "请求时间(月)",
+                "created_at" => "具体请求时间",
                 "requestUrl" => "请求接口",
                 "provideApiName" => "接口描述",
                 "needs_charge_cname" => "是否需要计费",

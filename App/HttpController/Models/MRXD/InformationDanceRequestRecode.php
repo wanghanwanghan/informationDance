@@ -285,6 +285,8 @@ class InformationDanceRequestRecode extends ModelBase
 
             $datum["updated_at"] && $datum["updated_at"] =  date("Y-m-d H:i:s",$datum["updated_at"] );
             $datum["created_at"] && $datum["created_at"] =  date("Y-m-d H:i:s",$datum["created_at"] );
+            $datum["created_at"] && $datum["request_day"] =  date("Y-m-d",$datum["created_at"] );
+            $datum["created_at"] && $datum["request_month"] =  date("Y-m",$datum["created_at"] );
 
             //请求的接口信息
             if($datum["provideApiId"]){
