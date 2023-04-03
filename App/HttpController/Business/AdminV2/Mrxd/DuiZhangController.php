@@ -527,53 +527,16 @@ class DuiZhangController  extends ControllerBase
             $page,
             $pageSize
         );
+
+        $res['data'] = InformationDanceRequestRecode::formatData($res['data']);
         $total = $res["total"];
 
-
-
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' => $pageSize,
             'total' => $total,
             'totalPage' => ceil($total/$pageSize) ,
-        ],  $res['data'],'成功');
-
-        //年度
-        if( $requestData['year'] <= 0 ){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    "客户对账模块" => "没指定年限，返回空",
-                ],JSON_UNESCAPED_UNICODE)
-            );
-            $total = 0;
-            return $this->writeJson(201, [
-                'page' => $page,
-                'pageSize' => $pageSize,
-                'total' => $total,
-                'totalPage' => ceil($total/$pageSize) ,
-            ],  [],'请指定年限');
-        }
-
-        $res =  InformationDanceRequestRecodeStatics::getFullDatas(
-            $requestData
-        );
-
-        $total = $res['total'];
-        foreach ($res['data'] as &$resItem){
-            $userInfo = RequestUserInfo::findById($resItem["userId"]);
-            if($userInfo){
-                $resItem["client_name"] =  $userInfo->username;
-            }
-            $resItem["needs_charge_num"] =  $resItem['total_num'] - $resItem['cache_num'];
-            $resItem["charge_state_cname"] =  InformationDanceRequestRecodeStatics::chargeStageMaps()[$resItem['charge_stage']];
-        }
-
-        return $this->writeJson(200, [
-            'page' => $page,
-            'pageSize' => $pageSize,
-            'total' => $total,
-            'totalPage' => ceil($total/$pageSize) ,
-        ],  $res['data'],'成功');
+        ],  $res['data'],'成功'); 
     }
 
     /****

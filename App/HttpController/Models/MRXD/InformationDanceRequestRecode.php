@@ -8,6 +8,8 @@ use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\ModelBase;
+use App\HttpController\Models\Provide\RequestApiInfo;
+use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongXin\LongXinService;
@@ -332,8 +334,32 @@ class InformationDanceRequestRecode extends ModelBase
             userId  : 59
              */
 
-            $datum["created_at"] = date("Y-m-d",$datum['created_at']);
+            $userInfo = RequestUserInfo::findById($datum["userId"]);
+            $userInfo &&   $datum["user_name"] =  $userInfo->username;
+
+            $datum["updated_at"] && $datum["updated_at"] =  date("Y-m-d H:i:s",$datum["updated_at"] );
+            $datum["created_at"] && $datum["created_at"] =  date("Y-m-d H:i:s",$datum["created_at"] );
+
+            if($datum["provideApiId"]){
+                $apiInfo =  RequestApiInfo::findById($datum["provideApiId"]);
+                $apiInfo && $datum["provideApiName"] =  $apiInfo->name;
+                $apiInfo && $datum["provideApiDesc"] =  $apiInfo->desc;
+                $apiInfo && $datum["provideApiSource"] =  $apiInfo->source;
+                $apiInfo && $datum["provideApiPrice"] =  $apiInfo->price;
+                $apiInfo && $datum["provideApiPath"] =  $apiInfo->path;
+            }
+
+            $datum["is_cached"] =  0;
+            if(
+                $datum["responseCode"] == 200 &&
+                $datum["spendMoney"] == 0
+            ){
+                $datum["is_cached"] =  0;
+            }
+
         }
+
+        return $data;
     }
 
 }
