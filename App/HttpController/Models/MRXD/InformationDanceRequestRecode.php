@@ -424,7 +424,7 @@ class InformationDanceRequestRecode extends ModelBase
                 $tmp[] = $dataItem[$key];
             }
 
-            if( $i%100 == 0 ){
+            if( $i%300 == 0 ){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
