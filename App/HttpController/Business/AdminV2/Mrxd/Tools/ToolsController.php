@@ -81,6 +81,10 @@ class ToolsController extends ControllerBase
                 'path' => '/Static/Template/模糊匹配企业名称模板.xlsx',
             ],
             [
+                'name' => '根据企业微信名补全联系人姓名职位等信息',
+                'path' => '/Static/Template/企业微信匹配真实姓名[主要基于微信名和联系人库].xlsx',
+            ],
+            [
                 'name' => '根据微信名补全联系人姓名职位等信息',
                 'path' => '/Static/Template/补全联系人姓名职位等信息[主要基于微信名和联系人库].xlsx',
             ],
