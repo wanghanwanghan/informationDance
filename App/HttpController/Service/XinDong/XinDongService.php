@@ -3608,7 +3608,7 @@ class XinDongService extends ServiceBase
         return [];
     }
 
-    function matchContactNameByQiYeWeiXinName($companyName, $phones, $weiXinNames)
+    function matchContactNameByQiYeWeiXinName($companyName, $phones, $weiXinNames,$showLog = false)
     {
 
         //获取所有联系人
@@ -3624,18 +3624,21 @@ class XinDongService extends ServiceBase
                 $pattern = "/[^\\x{4e00}-\\x{9fa5}a-zA-Z0-9]/u";
                 $newWeiXin = preg_replace($pattern, "", $WeiXin);
                 $res = (new XinDongService())->matchNamesV2($tmpName, $newWeiXin);
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        "根据企业微信匹配真实姓名" => [
-                            '企业名' => $companyName ,
-                            '手机' => $phones ,
-                            '原始微信' => $WeiXin ,
-                            '删除特殊字符的微信' => $newWeiXin ,
-                            '联系人姓名' => $tmpName ,
-                            '匹配结果' => $res ,
-                        ],
-                    ],JSON_UNESCAPED_UNICODE)
-                );
+                if($showLog){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            "根据企业微信匹配真实姓名" => [
+                                '企业名' => $companyName ,
+                                '手机' => $phones ,
+                                '原始微信' => $WeiXin ,
+                                '删除特殊字符的微信' => $newWeiXin ,
+                                '联系人姓名' => $tmpName ,
+                                '匹配结果' => $res ,
+                            ],
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
+
                 if ($res['res'] == '成功') {
                     return [
                         'data' => $staffsDataItem,
