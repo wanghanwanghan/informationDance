@@ -273,6 +273,11 @@ class InformationDanceRequestRecode extends ModelBase
             updated_at :  1680142119
             userId  : 59
              */
+            //entName
+            //请求企业
+            $requestDataArr = json_decode($datum["requestData"],true);
+            $datum["entName"] = "";
+            $requestDataArr['entName'] && $datum["entName"] = $requestDataArr['entName'];
 
             if($cacheUserInfo[$datum["userId"]]){
                 $datum["user_name"] =  $cacheUserInfo[$datum["userId"]];

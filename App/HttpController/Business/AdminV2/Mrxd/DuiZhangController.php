@@ -386,6 +386,7 @@ class DuiZhangController  extends ControllerBase
                 "created_at" => "具体请求时间",
                 "requestUrl" => "请求接口",
                 "provideApiName" => "接口描述",
+                "entName" => "企业名称",
                 "needs_charge_cname" => "是否需要计费",
                 "is_cached_cname" => "是否是缓存数据",
                 "requestId" => "请求ID",
