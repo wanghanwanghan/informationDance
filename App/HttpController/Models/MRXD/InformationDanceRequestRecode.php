@@ -122,7 +122,7 @@ class InformationDanceRequestRecode extends ModelBase
                     'page' => $page,
                     'limit' => $limit
                 ],
-                "请求统计表-sql" => $model->builder? $model->builder->getLastPrepareQuery():"",
+                "请求统计表-sql" => $model->lastQuery()->getLastQuery(),
             ],JSON_UNESCAPED_UNICODE)
         );
 
