@@ -326,7 +326,7 @@ class InformationDanceRequestRecode extends ModelBase
             $datum["is_success_cname"] =  "否";
 
             if($datum["responseCode"] == 200 ){
-                $datum["is_success"] =  0;
+                $datum["is_success"] =  1;
                 $datum["is_success_cname"] =  "是";
 
                 $datum["needs_charge"] =  1;
@@ -341,7 +341,7 @@ class InformationDanceRequestRecode extends ModelBase
                 $datum["responseCode"] == 200 &&
                 $datum["spendMoney"] == 0
             ){
-                $datum["is_cached"] =  0;
+                $datum["is_cached"] =  1;
                 $datum["is_cached_cname"] =  "是";
 
                 $datum["needs_charge"] =  0;
