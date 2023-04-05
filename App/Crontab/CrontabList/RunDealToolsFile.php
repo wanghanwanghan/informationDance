@@ -301,17 +301,15 @@ class RunDealToolsFile extends AbstractCronTask
             //第一行是标题  不是数据
             if($nums==1){
                 $nums ++;
-                yield $datas[] = [
+                yield $datas[] = [  
                     '企业名称',
                     '手机号',
-                    '微信名',
-                    '联系人名称（疑似）',
-                    '职位（疑似）',
-                    '真实联系人',
-                    '实际职位',
+                    '匹配到的联系人',
+                    '匹配到的职位',
                     '匹配类型',
-                    '匹配子类型',
-                    '匹配值',
+                    '匹配详情',
+                    '匹配分值',
+                    '微信名',
                 ];
                 continue;
             }
@@ -350,19 +348,17 @@ class RunDealToolsFile extends AbstractCronTask
             $value = self::strtr_func($one[4]);
             $value && $weiXinNames[] = $value;
 
-            $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($companyName, $phones, $weiXinNames);
+            $tmpRes = (new XinDongService())->matchContactNameByQiYeWeiXinName($companyName, $phones, $weiXinNames);
 
             yield $datas[] = [
-                $value0,
-                $value1,
-                $value2,
-                $value3,
-                $value4,
+                $companyName,
+                $phones,
                 $tmpRes['data']['stff_name'],
                 $tmpRes['data']['staff_type_name'],
                 $tmpRes['match_res']['type'],
                 $tmpRes['match_res']['details'],
                 $tmpRes['match_res']['percentage'],
+                json_encode($weiXinNames,JSON_UNESCAPED_UNICODE),
             ];
         }
     }
