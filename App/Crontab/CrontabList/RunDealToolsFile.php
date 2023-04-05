@@ -322,31 +322,31 @@ class RunDealToolsFile extends AbstractCronTask
             $weiXinNames = [];
             //微信名1
             $value = self::strtr_func($one[2]);
-            $value && $weiXinNames[] = $value;
+            $value && $weiXinNames[$value] = $value;
 
             //微信名2
             $value = self::strtr_func($one[3]);
-            $value && $weiXinNames[] = $value;
+            $value && $weiXinNames[$value] = $value;
 
             //微信名3
             $value = self::strtr_func($one[4]);
-            $value && $weiXinNames[] = $value;
+            $value && $weiXinNames[$value] = $value;
 
             //微信名4
             $value = self::strtr_func($one[4]);
-            $value && $weiXinNames[] = $value;
+            $value && $weiXinNames[$value] = $value;
 
             //微信名5
             $value = self::strtr_func($one[4]);
-            $value && $weiXinNames[] = $value;
+            $value && $weiXinNames[$value] = $value;
 
             //微信名6
             $value = self::strtr_func($one[4]);
-            $value && $weiXinNames[] = $value;
+            $value && $weiXinNames[$value] = $value;
 
             //微信名7
             $value = self::strtr_func($one[4]);
-            $value && $weiXinNames[] = $value;
+            $value && $weiXinNames[$value] = $value;
 
             $showLog = false;
             if($nums%100==0){
