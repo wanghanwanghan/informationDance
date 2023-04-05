@@ -285,11 +285,11 @@ class DuiZhangController  extends ControllerBase
         $pageSize = $requestData['pageSize']?:10;
 
         $start_date = $requestData['start_date'];
-        $start_date = "2023-01-01";
+        //$start_date = "2023-01-01";
         $end_date = $requestData['end_date'];
-        $end_date = "2023-04-31";
+        //$end_date = "2023-04-31";
 
-        $requestData['user_id']  = 59;
+        //$requestData['user_id']  = 59;
         if(
             date("Y",strtotime($start_date)) != date("Y",strtotime($end_date))
         ){
@@ -313,6 +313,18 @@ class DuiZhangController  extends ControllerBase
             ],  [],'请选择开始结束日期');
         }
 
+        if(
+            strtotime($end_date) - strtotime($start_date) >= 60*60*24*61
+        ){
+            return $this->writeJson(201, [
+                'page' => $page,
+                'pageSize' => $pageSize,
+                'total' => 0,
+                'totalPage' => 1,
+            ],  [],'时间跨度太大！');
+        }
+
+
         $conditions = [];
 
         if($start_date){
@@ -330,6 +342,7 @@ class DuiZhangController  extends ControllerBase
                 'operate' =>'<=',
             ];
         }
+
 
 
         if($requestData['user_id']){
@@ -574,9 +587,9 @@ class DuiZhangController  extends ControllerBase
         $pageSize = $requestData['pageSize']?:10;
 
         $start_date = $requestData['start_date'];
-        $start_date = "2023-01-01";
+        //$start_date = "2023-01-01";
         $end_date = $requestData['end_date'];
-        $end_date = "2023-03-31";
+        //$end_date = "2023-03-31";
 
         if(
             date("Y",strtotime($start_date)) != date("Y",strtotime($end_date))
