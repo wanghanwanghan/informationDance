@@ -394,7 +394,7 @@ class DuiZhangController  extends ControllerBase
                 "is_success_cname" => "请求是否成功",
                 "responseCode" => "响应Code",
                 //"provideApiPrice" => "推荐单价",
-                "responseData" => "响应数据",
+                // "responseData" => "响应数据",
             ]
         );
 
