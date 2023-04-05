@@ -284,9 +284,9 @@ class DuiZhangController  extends ControllerBase
         $page = $requestData['page']?:1;
         $pageSize = $requestData['pageSize']?:10;
 
-        $start_date = $requestData['start_date'];
+        $start_date = $requestData['start_date'] ?$requestData['start_date']." 00:00:00":"";
         //$start_date = "2023-01-01";
-        $end_date = $requestData['end_date'];
+        $end_date = $requestData['end_date']?$requestData['end_date']." 23:59:59":"";
         //$end_date = "2023-04-31";
 
         //$requestData['user_id']  = 59;
