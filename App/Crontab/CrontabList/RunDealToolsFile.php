@@ -270,6 +270,103 @@ class RunDealToolsFile extends AbstractCronTask
         }
     }
 
+    // 根据企业微信名匹配职位数据
+    static function  getYieldDataForQiYeWeinXin($xlsx_name){
+        $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
+        $excel_read->openFile($xlsx_name)->openSheet();
+
+        $datas = [];
+        $nums = 1;
+        while (true) {
+            if($nums%100==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        '根据企业微信名匹配职位数据'=>[
+                            '文件名'=>$xlsx_name,
+                            '已执行'=>$nums,
+                        ],
+                    ],JSON_UNESCAPED_UNICODE)
+                );
+            }
+            $one = $excel_read->nextRow([
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+            ]);
+
+            if (empty($one)) {
+                break;
+            }
+
+            //第一行是标题  不是数据
+            if($nums==1){
+                $nums ++;
+                yield $datas[] = [
+                    '企业名称',
+                    '手机号',
+                    '微信名',
+                    '联系人名称（疑似）',
+                    '职位（疑似）',
+                    '真实联系人',
+                    '实际职位',
+                    '匹配类型',
+                    '匹配子类型',
+                    '匹配值',
+                ];
+                continue;
+            }
+            $nums ++ ;
+            //企业名称
+            $companyName = self::strtr_func($one[0]);
+            //手机号
+            $phones = self::strtr_func($one[1]);
+
+            $weiXinNames = [];
+            //微信名1
+            $value = self::strtr_func($one[2]);
+            $value && $weiXinNames[] = $value;
+
+            //微信名2
+            $value = self::strtr_func($one[3]);
+            $value && $weiXinNames[] = $value;
+
+            //微信名3
+            $value = self::strtr_func($one[4]);
+            $value && $weiXinNames[] = $value;
+
+            //微信名4
+            $value = self::strtr_func($one[4]);
+            $value && $weiXinNames[] = $value;
+
+            //微信名5
+            $value = self::strtr_func($one[4]);
+            $value && $weiXinNames[] = $value;
+
+            //微信名6
+            $value = self::strtr_func($one[4]);
+            $value && $weiXinNames[] = $value;
+
+            //微信名7
+            $value = self::strtr_func($one[4]);
+            $value && $weiXinNames[] = $value;
+
+            $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($companyName, $phones, $weiXinNames);
+
+            yield $datas[] = [
+                $value0,
+                $value1,
+                $value2,
+                $value3,
+                $value4,
+                $tmpRes['data']['stff_name'],
+                $tmpRes['data']['staff_type_name'],
+                $tmpRes['match_res']['type'],
+                $tmpRes['match_res']['details'],
+                $tmpRes['match_res']['percentage'],
+            ];
+        }
+    }
+
     // 根据支付宝匹配职位数据
     static function  getYieldDataForZhiFuBao($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
@@ -823,6 +920,13 @@ class RunDealToolsFile extends AbstractCronTask
                 $tmpXlsxDatas = self::getYieldDataForUrl($InitData['upload_file_name']);
                 $tmpXlsxHeaders = [];
             }
+            if(
+                $InitData['type'] == 6
+            ){
+                $tmpXlsxDatas = self::getYieldDataForQiYeWeinXin($InitData['upload_file_name']);
+                $tmpXlsxHeaders = [];
+            }
+
             if(
                 $InitData['type'] == 10
             ){

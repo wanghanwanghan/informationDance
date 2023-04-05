@@ -104,6 +104,7 @@ class ToolsController extends ControllerBase
 
         return $this->writeJson(200, [], [
                 5   =>  '补全企业联系人信息(并检测手机状态)',
+                6  =>  '根据企业微信补全联系人姓名职位等信息',
                 10  =>  '根据微信名补全联系人姓名职位等信息',
                 12  =>  '根据支付宝名补全联系人姓名职位等信息',
                 13  =>  '根据支付宝名补全桃树对应得联系人姓名职位等信息',
@@ -527,6 +528,7 @@ class ToolsController extends ControllerBase
         $requestData =  $this->getRequestData();
         $key = trim($requestData['key']);
         $arr = explode('&&&',$key);
+
         //根据企业名称查询库里全部的联系人名称和职位(老梗)
         if($requestData['type'] == 2 ){
             $response = LongXinService::getLianXiByName($key);

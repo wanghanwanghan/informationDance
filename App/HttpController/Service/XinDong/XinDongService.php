@@ -3526,6 +3526,7 @@ class XinDongService extends ServiceBase
 
         return [];
     }
+
     function matchContactNameByZhiFuBaoName($entName, $zhiFuBao)
     {
 

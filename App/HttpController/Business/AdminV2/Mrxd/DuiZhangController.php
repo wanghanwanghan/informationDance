@@ -314,7 +314,7 @@ class DuiZhangController  extends ControllerBase
         }
 
         if(
-            strtotime($end_date) - strtotime($start_date) >= 60*60*24*61
+            strtotime($end_date) - strtotime($start_date) >= 60*60*24*95
         ){
             return $this->writeJson(201, [
                 'page' => $page,
