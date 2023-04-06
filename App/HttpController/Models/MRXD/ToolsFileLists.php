@@ -298,7 +298,7 @@ class ToolsFileLists extends ModelBase
             $code = str_replace("',","",$code);
             $code = str_replace("'","",$code);
 
-//            if($i%300==0){
+            if($i%300==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         '开始执行补全字段' => [
@@ -309,7 +309,7 @@ class ToolsFileLists extends ModelBase
                         ]
                     ], JSON_UNESCAPED_UNICODE)
                 );
-//            }
+            }
 
             $baseArr = self::generateQuanZiDuan($allFields,"",$code);
             fputcsv($f, $baseArr);
