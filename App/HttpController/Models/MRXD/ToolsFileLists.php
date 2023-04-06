@@ -175,6 +175,152 @@ class ToolsFileLists extends ModelBase
         return $data;
     }
 
+    static function generateQuanZiDuan($allFields,$entName,$entCode){
+        //需要补全字段
+        if($entCode){
+            $res = (new XinDongService())->getEsBasicInfoV3($entCode,'UNISCID',[]);
+        }
+        else{
+            $res = (new XinDongService())->getEsBasicInfoV3($entName,'ENTNAME',[]);
+        }
+
+        $baseArr = [];
+        //====================================
+        foreach ($allFields as $field=>$cname){
+            if($field=='UNISCID'){
+
+                $res['UNISCID'] = ''.$res['UNISCID']. "\t";
+            }
+            if($field=='ENTTYPE'){
+                $cname =   CodeCa16::findByCode($res['ENTTYPE']);
+                $res['ENTTYPE'] =  $cname?$cname->getAttr('name'):'';
+            }
+            if($field=='ENTSTATUS'){
+                $cname =   CodeEx02::findByCode($res['ENTSTATUS']);
+                $res['ENTSTATUS'] =  $cname?$cname->getAttr('name'):'';
+            }
+
+            //地区
+            if(
+                $field=='DOMDISTRICT' &&
+                $res['DOMDISTRICT'] >0
+            ){
+                $res['DOMDISTRICT'] =  $res['DOM'];
+            }
+
+            //行业分类代码  findNICID
+            if(
+                $field=='NIC_ID' &&
+                !empty( $res['NIC_ID'])
+            ){
+                $res['NIC_ID'] =  $res['nic_full_name'];
+            }
+
+            //一般人
+            if(
+                $field=='yi_ban_ren'
+            ){
+                $res['yi_ban_ren'] =  $res['yi_ban_ren']?'有':'无';
+            }
+
+            //战略新兴产业
+            if(
+                $field=='zlxxcy'
+            ){
+                $res['zlxxcy'] =  $res['zlxxcy']?'有':'无';
+            }
+
+            //数字经济产业
+            if(
+                $field=='szjjcy'
+            ){
+                $res['szjjcy'] =  $res['szjjcy']?'有':'无';
+            }
+
+
+            //iso_tags
+            if(
+                $field=='iso_tags'
+            ){
+                $str = "";
+                foreach ($res['iso_tags'] as $subItem){
+                    $str.= $subItem['cert_project'];
+                }
+                $res['iso_tags'] =  $str;
+            }
+
+            if(
+                $field=='jin_chu_kou'
+            ){
+                $res['jin_chu_kou'] =  $res['jin_chu_kou']?'有':'无';
+            }
+
+            // 高新技术
+            if(
+                $field=='gao_xin_ji_shu'
+            ){
+                $res['gao_xin_ji_shu'] =  $res['gao_xin_ji_shu']?'有':'无';
+            }
+
+            if(
+                is_array($res[$field])
+            ){
+                $baseArr[] = empty($res[$field])?'无':'有' ;
+            }else{
+
+                $baseArr[] = str_split ( $res[$field], 32766 )[0] ;
+            }
+        }
+
+        return $baseArr;
+    }
+
+    static function buQuanZiDuanByTxt($filePath){
+
+        $fileName = date("YmdHi").pathinfo($filePath)['filename'];
+        $f = fopen(OTHER_FILE_PATH.$fileName.".csv", "w");
+        fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+
+        $allFields = AdminUserSoukeConfig::getAllFieldsV2();
+        foreach ($allFields as $field=>$cname){
+            $title[] = $cname ;
+        }
+        fputcsv($f, $title);
+
+        $file = fopen($filePath,"r");
+        $i = 1;
+        while(! feof($file))
+        {
+            $code = fgets($file);
+            $code = str_replace("\r\n","",$code);
+            $code = str_replace("\n","",$code);
+            $code = str_replace("\r","",$code);
+            $code = str_replace("',","",$code);
+            $code = str_replace("'","",$code);
+
+            if($i%300==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        '开始执行补全字段' => [
+                            '已生成'.$i,
+                            $code,
+                            $filePath,
+                            OTHER_FILE_PATH.$fileName.".csv",
+                        ]
+                    ], JSON_UNESCAPED_UNICODE)
+                );
+            }
+
+            $baseArr = self::generateQuanZiDuan($allFields,"",$code);
+            fputcsv($f, $baseArr);
+            $i ++;
+        }
+
+        fclose($file);
+
+        return OTHER_FILE_PATH.$fileName.".csv";
+    }
+
     //补全联系人
     static function buQuanZiDuan($params = []){
        $filesDatas = self::findBySql("
@@ -224,102 +370,7 @@ class ToolsFileLists extends ModelBase
                    );
                }
 
-               //需要补全字段
-               if($dataItem[1]){
-                   $res = (new XinDongService())->getEsBasicInfoV3($dataItem[1],'UNISCID',[]);
-               }
-               else{
-                   $res = (new XinDongService())->getEsBasicInfoV3($dataItem[0],'ENTNAME',[]);
-               }
-
-               $baseArr = [];
-               //====================================
-               foreach ($allFields as $field=>$cname){
-                   if($field=='UNISCID'){
-
-                       $res['UNISCID'] = ''.$res['UNISCID']. "\t";
-                   }
-                   if($field=='ENTTYPE'){
-                       $cname =   CodeCa16::findByCode($res['ENTTYPE']);
-                       $res['ENTTYPE'] =  $cname?$cname->getAttr('name'):'';
-                   }
-                   if($field=='ENTSTATUS'){
-                       $cname =   CodeEx02::findByCode($res['ENTSTATUS']);
-                       $res['ENTSTATUS'] =  $cname?$cname->getAttr('name'):'';
-                   }
-
-                   //地区
-                   if(
-                       $field=='DOMDISTRICT' &&
-                       $res['DOMDISTRICT'] >0
-                   ){
-                       $res['DOMDISTRICT'] =  $res['DOM'];
-                   }
-
-                   //行业分类代码  findNICID
-                   if(
-                       $field=='NIC_ID' &&
-                       !empty( $res['NIC_ID'])
-                   ){
-                       $res['NIC_ID'] =  $res['nic_full_name'];
-                   }
-
-                   //一般人
-                   if(
-                       $field=='yi_ban_ren'
-                   ){
-                       $res['yi_ban_ren'] =  $res['yi_ban_ren']?'有':'无';
-                   }
-
-                   //战略新兴产业
-                   if(
-                       $field=='zlxxcy'
-                   ){
-                       $res['zlxxcy'] =  $res['zlxxcy']?'有':'无';
-                   }
-
-                   //数字经济产业
-                   if(
-                       $field=='szjjcy'
-                   ){
-                       $res['szjjcy'] =  $res['szjjcy']?'有':'无';
-                   }
-
-
-                   //iso_tags
-                   if(
-                       $field=='iso_tags'
-                   ){
-                       $str = "";
-                       foreach ($dataItem['iso_tags'] as $subItem){
-                           $str.= $subItem['cert_project'];
-                       }
-                       $dataItem['iso_tags'] =  $str;
-                   }
-
-                   if(
-                       $field=='jin_chu_kou'
-                   ){
-                       $res['jin_chu_kou'] =  $res['jin_chu_kou']?'有':'无';
-                   }
-
-                   // 高新技术
-                   if(
-                       $field=='gao_xin_ji_shu'
-                   ){
-                       $res['gao_xin_ji_shu'] =  $res['gao_xin_ji_shu']?'有':'无';
-                   }
-
-                   if(
-                       is_array($res[$field])
-                   ){
-                       $baseArr[] = empty($res[$field])?'无':'有' ;
-                   }else{
-
-                       $baseArr[] = str_split ( $res[$field], 32766 )[0] ;
-                   }
-               }
-
+               $baseArr = self::generateQuanZiDuan($allFields,$dataItem[0],$dataItem[1]);
                fputcsv($f, $baseArr);
 
            }
@@ -330,157 +381,7 @@ class ToolsFileLists extends ModelBase
            ]);
        }
     }
-    static function buQuanZiDuanES($params){
-       $filesDatas = self::findBySql("
-            WHERE touch_time < 1
-            AND type = 5 
-            AND state = 0 
-            LIMIT 2 
-       ");
-       foreach ($filesDatas as $filesData){
-           CommonService::getInstance()->log4PHP(
-               json_encode([
-                   __CLASS__.__FUNCTION__ .__LINE__,
-                   '开始执行补全字段'=>[
-                       '参数' => $params,
-                       '执行的数据' => $filesData,
-                   ]
-               ],JSON_UNESCAPED_UNICODE)
-           );
 
-           self::setTouchTime($filesData['id'],date('Y-m-d H:i:s'));
-
-           //写到csv里
-           $fileName = pathinfo($filesData['file_name'])['filename'];
-           $f = fopen(OTHER_FILE_PATH.$fileName.".csv", "w");
-           fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
-
-           $allFields = AdminUserSoukeConfig::getAllFieldsV2();
-           foreach ($allFields as $field=>$cname){
-               $title[] = $cname ;
-           }
-
-           fputcsv($f, $title);
-
-           $yieldDatas = self::getXlsxYieldData($filesData['file_name'],OTHER_FILE_PATH);
-           $i = 1;
-           foreach ($yieldDatas as $dataItem) {
-               $i ++;
-               if($i%300==0){
-                   CommonService::getInstance()->log4PHP(
-                       json_encode([
-                           '开始执行补全字段' => [
-                               '已生成'.$i,
-                               $filesData['file_name']
-                           ]
-                       ], JSON_UNESCAPED_UNICODE)
-                   );
-               }
-
-               //需要补全字段
-               if($dataItem[1]){
-                   $res = (new XinDongService())->getEsBasicInfoV3($dataItem[1],'UNISCID',[]);
-               }
-               else{
-                   $res = (new XinDongService())->getEsBasicInfoV3($dataItem[0],'ENTNAME',[]);
-               }
-               $baseArr = [];
-               //====================================
-               foreach ($allFields as $field=>$cname){
-                   if($field=='UNISCID'){
-
-                       $res['UNISCID'] = ''.$res['UNISCID']. "\t";
-                   }
-                   if($field=='ENTTYPE'){
-                       $cname =   CodeCa16::findByCode($res['ENTTYPE']);
-                       $res['ENTTYPE'] =  $cname?$cname->getAttr('name'):'';
-                   }
-                   if($field=='ENTSTATUS'){
-                       $cname =   CodeEx02::findByCode($res['ENTSTATUS']);
-                       $res['ENTSTATUS'] =  $cname?$cname->getAttr('name'):'';
-                   }
-
-                   //地区
-                   if(
-                       $field=='DOMDISTRICT' &&
-                       $res['DOMDISTRICT'] >0
-                   ){
-                       $res['DOMDISTRICT'] =  $res['DOM'];
-                   }
-
-                   //行业分类代码  findNICID
-                   if(
-                       $field=='NIC_ID' &&
-                       !empty( $res['NIC_ID'])
-                   ){
-                       $res['NIC_ID'] =  $res['nic_full_name'];
-                   }
-
-                   //一般人
-                   if(
-                       $field=='yi_ban_ren'
-                   ){
-                       $res['yi_ban_ren'] =  $res['yi_ban_ren']?'有':'无';
-                   }
-
-                   //战略新兴产业
-                   if(
-                       $field=='zlxxcy'
-                   ){
-                       $res['zlxxcy'] =  $res['zlxxcy']?'有':'无';
-                   }
-
-                   //数字经济产业
-                   if(
-                       $field=='szjjcy'
-                   ){
-                       $res['szjjcy'] =  $res['szjjcy']?'有':'无';
-                   }
-
-
-                   //iso_tags
-                   if(
-                       $field=='iso_tags'
-                   ){
-                       $str = "";
-                       foreach ($dataItem['iso_tags'] as $subItem){
-                           $str.= $subItem['cert_project'];
-                       }
-                       $dataItem['iso_tags'] =  $str;
-                   }
-
-                   if(
-                       $field=='jin_chu_kou'
-                   ){
-                       $res['jin_chu_kou'] =  $res['jin_chu_kou']?'有':'无';
-                   }
-
-
-                   // 高新技术
-                   if(
-                       $field=='gao_xin_ji_shu'
-                   ){
-                       $res['gao_xin_ji_shu'] =  $res['gao_xin_ji_shu']?'有':'无';
-                   }
-
-                   if(
-                       is_array($res[$field])
-                   ){
-                       $baseArr[] = empty($res[$field])?'无':'有' ;
-                   }else{
-
-                       $baseArr[] = str_split ( $res[$field], 32766 )[0] ;
-                   }
-               }
-               fputcsv($f, $baseArr);
-           }
-
-           self::updateById($filesData['id'],[
-               'new_file_name' => $fileName.".csv",
-               'state' => self::$state_succeed,
-           ]);
-       }
-    }
 
     /**
     上传公开联系人
