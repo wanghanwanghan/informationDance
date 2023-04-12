@@ -1775,7 +1775,7 @@ class XinDongController extends ProvideBase
                    '$pageNo'=>$pageNo,
                 ],
                 '返回'=>[
-                    'data' =>$res[$this->cspKey]['data'],
+                    'data' =>$res[$this->cspKey],
                     'content' =>$res[$this->cspKey]['data']['content'],
                     'code' =>$res[$this->cspKey]['code'],
                     'msg' =>$res[$this->cspKey]['msg'],
