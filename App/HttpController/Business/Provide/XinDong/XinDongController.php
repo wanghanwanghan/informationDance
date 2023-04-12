@@ -1767,7 +1767,7 @@ class XinDongController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         $formatedReturnRes =  [
-            'result' => $res[$this->cspKey]['result']['data']['content'],
+            'result' => isset($res[$this->cspKey]['result']['data']['content']) && $res[$this->cspKey]['result']['success'] == true ?$res[$this->cspKey]['result']['data']['content']:[] ,
             'code' => $res[$this->cspKey]['result']['success'] == true ? 200:210,
             'msg' => $res[$this->cspKey]['result']['msg'],
             'paging' => $res[$this->cspKey]['result']['success'] == true ? ['pageSize'=>1000,'totalPages'=>$res[$this->cspKey]['result']['data']['totalPages']] :[],
