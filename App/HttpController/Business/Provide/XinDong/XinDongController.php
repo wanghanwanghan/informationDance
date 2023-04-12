@@ -1760,14 +1760,22 @@ class XinDongController extends ProvideBase
         $endTime = $this->getRequestData('endTime');
         $pageNo = $this->getRequestData('pageNo');
 
-        CommonService::getInstance()->log4PHP([$isDetail,  $nsrsbh,  $startTime,  $endTime,  $pageNo],'info','obtainFpInfoNew');
         $this->csp->add($this->cspKey, function () use ($isDetail,  $nsrsbh,  $startTime,  $endTime,  $pageNo) {
-
             return (new JinCaiShuKeService())->setCheckRespFlag(true)->obtainFpInfoNew( $isDetail,  $nsrsbh,  $startTime,  $endTime,  $pageNo);
         });
-        
+
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-        CommonService::getInstance()->log4PHP($res,'info','obtainFpInfoNew');
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '参数' => [
+                   '$isDetail'=>$isDetail,
+                   '$nsrsbh'=>$nsrsbh,
+                   '$startTime'=>$startTime,
+                   '$endTime'=>$endTime,
+                   '$pageNo'=>$pageNo,
+                ],
+                '返回'=>$res[$this->cspKey],
+            ],JSON_UNESCAPED_UNICODE),'info','发票_授权取数'.date("Ymd").'.log');
         return $this->checkResponse($res);
     }
 
