@@ -1775,8 +1775,11 @@ class XinDongController extends ProvideBase
                    '$pageNo'=>$pageNo,
                 ],
                 '返回'=>[
-                    'code' =>$res[$this->cspKey]['code'],
+                    'data' =>$res[$this->cspKey]['data'],
                     'content' =>$res[$this->cspKey]['data']['content'],
+                    'code' =>$res[$this->cspKey]['code'],
+                    'msg' =>$res[$this->cspKey]['msg'],
+                    'success' =>$res[$this->cspKey]['success'],
                     'totalPages' =>$res[$this->cspKey]['data']['totalPages'],
                 ],
             ],JSON_UNESCAPED_UNICODE),'info','发票_授权取数'.date("Ymd").'.log');
