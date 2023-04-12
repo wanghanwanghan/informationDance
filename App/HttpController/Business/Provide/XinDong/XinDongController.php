@@ -1761,7 +1761,7 @@ class XinDongController extends ProvideBase
         $pageNo = $this->getRequestData('pageNo');
 
         $this->csp->add($this->cspKey, function () use ($isDetail,  $nsrsbh,  $startTime,  $endTime,  $pageNo) {
-            return (new JinCaiShuKeService())->setCheckRespFlag(true)->obtainFpInfoNew( $isDetail,  $nsrsbh,  $startTime,  $endTime,  $pageNo);
+            return (new JinCaiShuKeService())->setCheckRespFlag(false)->obtainFpInfoNew( $isDetail,  $nsrsbh,  $startTime,  $endTime,  $pageNo);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
@@ -1775,7 +1775,7 @@ class XinDongController extends ProvideBase
                    '$pageNo'=>$pageNo,
                 ],
                 '返回'=>[
-                    'data' =>$res[$this->cspKey],
+                    'data' =>$res[$this->cspKey]['res'],
                     'content' =>$res[$this->cspKey]['data']['content'],
                     'code' =>$res[$this->cspKey]['code'],
                     'msg' =>$res[$this->cspKey]['msg'],
