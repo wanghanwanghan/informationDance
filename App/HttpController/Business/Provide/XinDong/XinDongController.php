@@ -1752,6 +1752,25 @@ class XinDongController extends ProvideBase
 //        return $this->checkResponse($res);
     }
 
+    function obtainFpInfoNew(): bool
+    {
+        $isDetail = $this->getRequestData('isDetail');
+        $nsrsbh = $this->getRequestData('nsrsbh');
+        $startTime = $this->getRequestData('startTime');
+        $endTime = $this->getRequestData('endTime');
+        $pageNo = $this->getRequestData('pageNo');
+
+        CommonService::getInstance()->log4PHP([$isDetail,  $nsrsbh,  $startTime,  $endTime,  $pageNo],'info','obtainFpInfoNew');
+        $this->csp->add($this->cspKey, function () use ($isDetail,  $nsrsbh,  $startTime,  $endTime,  $pageNo) {
+
+            return (new JinCaiShuKeService())->setCheckRespFlag(true)->obtainFpInfoNew( $isDetail,  $nsrsbh,  $startTime,  $endTime,  $pageNo);
+        });
+        
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+        CommonService::getInstance()->log4PHP($res,'info','obtainFpInfoNew');
+        return $this->checkResponse($res);
+    }
+
     //除了蚂蚁以外的发过来的企业五要素
     function invEntList(): bool
     {
