@@ -619,9 +619,14 @@ class FaHaiController extends ProvideBase
     //欠税公告
     function getSatpartyQs()
     {
-        $entName = $this->request()->getRequestParam('entName');
-        $page = $this->request()->getRequestParam('page') ?? 1;
-        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+        //        $entName = $this->request()->getRequestParam('entName');
+        //        $page = $this->request()->getRequestParam('page') ?? 1;
+        //        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+
+        $entName = $this->getRequestData('entName');
+        $page      = $this->getRequestData('page', 1);
+        $pageSize  = $this->getRequestData('pageSize', 10);
+
 
         $docType = 'satparty_qs';
 
@@ -643,8 +648,12 @@ class FaHaiController extends ProvideBase
     //欠税公告详情
     function getSatpartyQsDetail()
     {
-        $id = $this->request()->getRequestParam('id') ?? '';
-        $this->entName = $this->request()->getRequestParam('entName') ?? '';
+        $id = $this->getRequestData('id');
+        //$id = $this->request()->getRequestParam('id') ?? '';
+
+        //$this->entName = $this->request()->getRequestParam('entName') ?? '';
+        $this->entName = $this->getRequestData('entName');
+
         $postData = ['id' => $id];
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new FaYanYuanService())
@@ -1064,7 +1073,7 @@ class FaHaiController extends ProvideBase
             return  (new FaYanYuanService())
                 //->setCheckRespFlag(false)
                 ->setCheckRespFlag(true)
-                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . $postData['doc_type'], $postData);
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') ."sifa", $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -1111,7 +1120,7 @@ class FaHaiController extends ProvideBase
             return  (new FaYanYuanService())
                 //->setCheckRespFlag(false)
                 ->setCheckRespFlag(true)
-                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') . $postData['doc_type'], $postData);
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') ."sifa", $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -1143,9 +1152,15 @@ class FaHaiController extends ProvideBase
     //裁判文书列表
     function caiPanWenShuList()
     {
-        $pageno = $this->request()->getRequestParam('page') ?? '1';
-        $range = $this->request()->getRequestParam('pageSize') ?? '20';
-        $entName = $this->request()->getRequestParam('entName') ?? '';
+        //$pageno = $this->request()->getRequestParam('page') ?? '1';
+        $pageno = $this->getRequestData('page') ;
+
+        //$range = $this->request()->getRequestParam('pageSize') ?? '10';
+        $range = $this->getRequestData('pageSize');
+
+        //$entName = $this->request()->getRequestParam('entName') ?? '';
+        $entName = $this->getRequestData('entName');
+
         $doc_type = 'cpws';
         $postData = [
             'doc_type' => $doc_type,
@@ -1153,12 +1168,21 @@ class FaHaiController extends ProvideBase
             'pageno' => $pageno,
             'range' => $range,
         ];
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([ "法海-caiPanWenShuList"=>[
+                '$range' => $range,
+                '$postData' => $postData,
+                'getRequestData' => $this->getRequestData(),
+            ]],JSON_UNESCAPED_UNICODE)
+        );
+
         $this->csp->add($this->cspKey, function () use ($postData) {
 
             return  (new FaYanYuanService())
                 //->setCheckRespFlag(false)
                 ->setCheckRespFlag(true)
-                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') .$postData['doc_type'], $postData);
+                ->getList( CreateConf::getInstance()->getConf('fayanyuan.listBaseUrl') ."sifa", $postData);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);

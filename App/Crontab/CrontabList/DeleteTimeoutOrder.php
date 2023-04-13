@@ -36,7 +36,7 @@ class DeleteTimeoutOrder extends AbstractCronTask
         //可以用task，也可以用process
 
         if (!$this->crontabBase->withoutOverlapping(self::getTaskName())) {
-            CommonService::getInstance()->log4PHP(__CLASS__ . '不开始');
+            //CommonService::getInstance()->log4PHP(__CLASS__ . '不开始');
             return true;
         }
 

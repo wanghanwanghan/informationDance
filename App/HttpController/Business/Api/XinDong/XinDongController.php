@@ -2794,6 +2794,14 @@ eof;
 
 
         $requestData =  $this->getRequestData();
+        //XXXXXXXXXX
+
+        if(
+            $this->getRequestData('buQuanZiDuanByTxt')
+        ){
+
+            return $this->writeJson(200, null, [ToolsFileLists::buQuanZiDuanByTxt($this->getRequestData('buQuanZiDuanByTxt'))]);
+        }
 
          if(
              $this->getRequestData('addStaticRecordByYear')

@@ -51,7 +51,7 @@ class ProvideRouter
     private function JinCaiV1(RouteCollector $routeCollector)
     {
         $prefix = '/Business/Provide/JinCai/JinCaiController/';
-        $routeCollector->addGroup('/xd', function (RouteCollector $routeCollector) use ($prefix) {
+        $routeCollector->addGroup('/jc', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/obtainFpInfoNew', $prefix . 'obtainFpInfoNew');
         });
         return true;
@@ -368,6 +368,9 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/investmentList', $prefix . 'investmentList');// 公司融资事件
             $routeCollector->addRoute(['GET', 'POST'], '/searchComs', $prefix . 'searchComs');// 企业搜索
             $routeCollector->addRoute(['GET', 'POST'], '/getFengXian', $prefix . 'getFengXian');// 获取企业的风险分
+
+
+            $routeCollector->addRoute(['GET', 'POST'], '/obtainFpInfoNew', $prefix . 'obtainFpInfoNew');//  s
 
 
         });

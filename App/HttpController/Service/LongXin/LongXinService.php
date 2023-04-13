@@ -1121,9 +1121,10 @@ class LongXinService extends ServiceBase
         return $staffsDatas;
     }
 
+
+
     static function getLianXiByNameV2($entName)
     {
-
         $companyDataObj = CompanyBasic::findByName($entName);
 
         $returnData = [];
@@ -1140,6 +1141,7 @@ class LongXinService extends ServiceBase
 //                ]
 //            ])
 //        );
+
         foreach ($allManages as $Manage) {
             if (
                 !empty($Manage['POSITION']) &&

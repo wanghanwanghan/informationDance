@@ -177,6 +177,7 @@ class DuiZhangController  extends ControllerBase
 
         return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
     }
+
     public function uploadZhiFuBaoFile(){
 
         $requestData =  $this->getRequestData();
@@ -278,39 +279,123 @@ class DuiZhangController  extends ControllerBase
      * month=
      ***/
     public function downloadDataList(){
-        $requestData =  $this->getRequestData();
-        $requestData['page'] = 1;
-        $requestData['pageSize'] = 100;
 
-        $res =  InformationDanceRequestRecodeStatics::getFullDatas(
-            $requestData
-        );
-        $new_res = [];
-        foreach ($res["data"] as $resItem){
-            $new_res[] = [
-                "client_name" => $resItem["client_name"],
-                "year" => $resItem["year"],
-                "month" => $resItem["month"],
-                "day" => $resItem["day"],
-                "total_num" => $resItem["total_num"],
-                "total_cache_num" => $resItem["total_cache_num"],
-                "needs_charge_num" => $resItem["needs_charge_num"],
-                "charge_state_cname" => $resItem["charge_state_cname"],
+        $requestData =  $this->getRequestData();
+        $page = $requestData['page']?:1;
+        $pageSize = $requestData['pageSize']?:10;
+
+        $start_date = $requestData['start_date'] ?$requestData['start_date']." 00:00:00":"";
+        //$start_date = "2023-01-01";
+        $end_date = $requestData['end_date']?$requestData['end_date']." 23:59:59":"";
+        //$end_date = "2023-04-31";
+
+        //$requestData['user_id']  = 59;
+        if(
+            date("Y",strtotime($start_date)) != date("Y",strtotime($end_date))
+        ){
+            return $this->writeJson(201, [
+                'page' => $page,
+                'pageSize' => $pageSize,
+                'total' => 0,
+                'totalPage' => 1,
+            ],  [],'不能跨年');
+        }
+
+        if(
+            $start_date <= 1 ||
+            $end_date <= 1
+        ){
+            return $this->writeJson(201, [
+                'page' => $page,
+                'pageSize' => $pageSize,
+                'total' => 0,
+                'totalPage' => 1,
+            ],  [],'请选择开始结束日期');
+        }
+
+        if(
+            strtotime($end_date) - strtotime($start_date) >= 60*60*24*95
+        ){
+            return $this->writeJson(201, [
+                'page' => $page,
+                'pageSize' => $pageSize,
+                'total' => 0,
+                'totalPage' => 1,
+            ],  [],'时间跨度太大！');
+        }
+
+
+        $conditions = [];
+
+        if($start_date){
+            $conditions[]  =  [
+                'field' =>'created_at',
+                'value' => strtotime($start_date),
+                'operate' =>'>=',
             ];
         }
+
+        if($end_date){
+            $conditions[]  =  [
+                'field' =>'created_at',
+                'value' => strtotime($end_date),
+                'operate' =>'<=',
+            ];
+        }
+
+
+
+        if($requestData['user_id']){
+            $conditions[]  =  [
+                'field' =>'userId',
+                'value' => $requestData['user_id'],
+                'operate' =>'=',
+            ];
+        }
+        else {
+            return $this->writeJson(201, [
+                'page' => $page,
+                'pageSize' => $pageSize,
+                'total' => 0,
+                'totalPage' => 1,
+            ],  [],'请选择客户');
+        }
+
+        $res = InformationDanceRequestRecode::findByConditionV2(
+            date("Y",strtotime($start_date)),
+            $conditions,
+            $page,
+            1000000
+        );
+
+        $res['data'] = InformationDanceRequestRecode::formatData($res['data']);
+        $total = $res["total"];
+
+
         $fileName = "对账单_".date("Ymd").".xlsx";
         $url = 'https://api.meirixindong.com/Static/Temp/'.$fileName;
 
-        InformationDanceRequestRecodeStatics::exportData(
-            $new_res , $fileName,[
-                "用户",
-                "年度",
-                "月份",
-                "日",
-                "总次数",
-                "缓存总次数",
-                "需要计费次数",
-                "结算状态",
+        InformationDanceRequestRecode::exportData(
+            $res['data'] ,
+            $fileName,
+            [
+                //"id" => "ID",
+                "user_name" => "用户名",
+                "request_day" => "请求时间(天)",
+                "request_month" => "请求时间(月)",
+                "created_at" => "具体请求时间",
+                "requestUrl" => "请求接口",
+                "provideApiName" => "接口描述",
+                "entName" => "企业名称",
+                "needs_charge_cname" => "是否需要计费",
+                "is_cached_cname" => "是否是缓存数据",
+                "requestId" => "请求ID",
+                "requestIp" => "请求IP",
+                "requestData" => "请求数据",
+                "is_success_cname" => "请求是否成功",
+                "responseCode" => "响应Code",
+                //"provideApiPrice" => "推荐单价",
+                // "responseData" => "响应数据",
             ]
         );
 
@@ -502,35 +587,69 @@ class DuiZhangController  extends ControllerBase
         $page = $requestData['page']?:1;
         $pageSize = $requestData['pageSize']?:10;
 
-        //年度
-        if( $requestData['year'] <= 0 ){
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    "客户对账模块" => "没指定年限，返回空",
-                ],JSON_UNESCAPED_UNICODE)
-            );
-            $total = 0;
+        $start_date = $requestData['start_date'];
+        //$start_date = "2023-01-01";
+        $end_date = $requestData['end_date'];
+        //$end_date = "2023-03-31";
+
+        if(
+            date("Y",strtotime($start_date)) != date("Y",strtotime($end_date))
+        ){
             return $this->writeJson(201, [
                 'page' => $page,
                 'pageSize' => $pageSize,
-                'total' => $total,
-                'totalPage' => ceil($total/$pageSize) ,
-            ],  [],'请指定年限');
+                'total' => 0,
+                'totalPage' => 1,
+            ],  [],'不能跨年');
         }
 
-        $res =  InformationDanceRequestRecodeStatics::getFullDatas(
-            $requestData
+        if(
+            $start_date <= 1 ||
+            $end_date <= 1
+        ){
+            return $this->writeJson(201, [
+                'page' => $page,
+                'pageSize' => $pageSize,
+                'total' => 0,
+                'totalPage' => 1,
+            ],  [],'请选择开始结束日期');
+        }
+
+        $conditions = [];
+
+        if($start_date){
+            $conditions[]  =  [
+                'field' =>'created_at',
+                'value' => strtotime($start_date),
+                'operate' =>'>=',
+            ];
+        }
+
+        if($end_date){
+            $conditions[]  =  [
+                'field' =>'created_at',
+                'value' => strtotime($end_date),
+                'operate' =>'<=',
+            ];
+        }
+
+        if($requestData['user_id']){
+            $conditions[]  =  [
+                'field' =>'userId',
+                'value' => $requestData['user_id'],
+                'operate' =>'=',
+            ];
+        }
+
+        $res = InformationDanceRequestRecode::findByConditionV2(
+            date("Y",strtotime($start_date)),
+            $conditions,
+            $page,
+            $pageSize
         );
 
-        $total = $res['total'];
-        foreach ($res['data'] as &$resItem){
-            $userInfo = RequestUserInfo::findById($resItem["userId"]);
-            if($userInfo){
-                $resItem["client_name"] =  $userInfo->username;
-            }
-            $resItem["needs_charge_num"] =  $resItem['total_num'] - $resItem['cache_num'];
-            $resItem["charge_state_cname"] =  InformationDanceRequestRecodeStatics::chargeStageMaps()[$resItem['charge_stage']];
-        }
+        $res['data'] = InformationDanceRequestRecode::formatData($res['data']);
+        $total = $res["total"];
 
         return $this->writeJson(200, [
             'page' => $page,

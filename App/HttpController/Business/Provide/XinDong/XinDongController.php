@@ -1752,6 +1752,50 @@ class XinDongController extends ProvideBase
 //        return $this->checkResponse($res);
     }
 
+    function obtainFpInfoNew(): bool
+    {
+        $isDetail = $this->getRequestData('isDetail');
+        $nsrsbh = $this->getRequestData('nsrsbh');
+        $startTime = $this->getRequestData('startTime');
+        $endTime = $this->getRequestData('endTime');
+        $pageNo = $this->getRequestData('pageNo');
+
+        $this->csp->add($this->cspKey, function () use ($isDetail,  $nsrsbh,  $startTime,  $endTime,  $pageNo) {
+            return (new JinCaiShuKeService())->setCheckRespFlag(true)->obtainFpInfoNew( $isDetail,  $nsrsbh,  $startTime,  $endTime,  $pageNo);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        $formatedReturnRes =  [
+            'result' => isset($res[$this->cspKey]['result']['data']['content']) && $res[$this->cspKey]['result']['success'] == true ?$res[$this->cspKey]['result']['data']['content']:[] ,
+            'code' => $res[$this->cspKey]['result']['success'] == true ? 200:210,
+            'msg' => $res[$this->cspKey]['result']['msg'],
+            'paging' => $res[$this->cspKey]['result']['success'] == true ? ['pageSize'=>1000,'totalPages'=>$res[$this->cspKey]['result']['data']['totalPages']] :[],
+        ];
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '参数' => [
+                   '$isDetail'=>$isDetail,
+                   '$nsrsbh'=>$nsrsbh,
+                   '$startTime'=>$startTime,
+                   '$endTime'=>$endTime,
+                   '$pageNo'=>$pageNo,
+                ],
+                '原始返回'=>[
+                    'content' =>$res[$this->cspKey]['result']['data']['content'],
+                    'code' =>$res[$this->cspKey]['result']['code'],
+                    'msg' =>$res[$this->cspKey]['result']['msg'],
+                    'success' =>$res[$this->cspKey]['result']['success'],
+                    'totalPages' =>$res[$this->cspKey]['result']['data']['totalPages'],
+                ],
+                '格式化后的结果'=>$formatedReturnRes,
+            ],JSON_UNESCAPED_UNICODE),'info','发票_授权取数'.date("Ymd").'.log');
+
+        return $this->writeJson($formatedReturnRes['code'],
+            $formatedReturnRes['paging'], $formatedReturnRes['result'], $formatedReturnRes['msg']);
+    }
+
     //除了蚂蚁以外的发过来的企业五要素
     function invEntList(): bool
     {

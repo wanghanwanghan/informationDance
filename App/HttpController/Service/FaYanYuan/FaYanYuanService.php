@@ -85,6 +85,12 @@ class FaYanYuanService extends ServiceBase
             'pageno' => $pageno,
             'range' => $range
         ];
+        CommonService::getInstance()->log4PHP(
+                json_encode([ "法海-getlist"=>[
+                    '$body'=>$body,
+                    '$json_data'=>$json_data,
+                ]],JSON_UNESCAPED_UNICODE)
+        );
 
         $json_data = jsonEncode($json_data, false);
 

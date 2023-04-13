@@ -17,4 +17,11 @@ class RequestApiInfo extends ModelBase
         return self::create()->where('id in ('.implode(',',$ids).')')->all();
     }
 
+    public static function findById($id){
+        $res =  RequestApiInfo::create()
+            ->where('id',$id)
+            ->get();
+        return $res;
+    }
+
 }

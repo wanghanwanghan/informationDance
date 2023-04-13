@@ -25,13 +25,21 @@ class CoHttpClient extends ServiceBase
 
     function send($url = '', $postData = [], $headers = [], $options = [], $method = 'post')
     {
-//        CommonService::getInstance()->log4PHP($url, 'info', 'http_return_data_url');
+        //CommonService::getInstance()->log4PHP($url, 'info', 'http_return_data_url');
+
         //从缓存中拿
         $this->useCache ? $take = $this->takeResult($url, $postData, $options) : $take = [];
+
         //不是空，说明缓存里有数据，直接返回
-        if (!empty($take)) return $this->needJsonDecode ? jsonDecode($take) : $take;
+        if (!empty($take)){
+            CommonService::getInstance()->log4PHP(json_encode(
+                ['类型'=>'直接从缓存取'  ,'请求地址' => $url, '请求数据' => $postData, '头部' => $headers,'返回结果'=>jsonDecode($take) ],JSON_UNESCAPED_UNICODE
+            ), 'info', 'http_return_data');
+            return $this->needJsonDecode ? jsonDecode($take) : $take;
+        }
+
         $method = strtoupper($method);
-//        CommonService::getInstance()->log4PHP($url, 'info', 'http_return_data_url2');
+        //CommonService::getInstance()->log4PHP($url, 'info', 'http_return_data_url2');
         if ($method === 'GET' && strpos($url, '?') === false) {
             $url .= '?' . http_build_query($postData);
         }
@@ -54,57 +62,64 @@ class CoHttpClient extends ServiceBase
 
         //设置head头
         empty($headers) ?: $request->setHeaders($headers, true, false);
-//        empty($headers) ?:  CommonService::getInstance()->log4PHP(
-//            json_encode([
-//                'http-set-headers' => $headers
-//            ],JSON_UNESCAPED_UNICODE)
-//        );
+        /**
+        empty($headers) ?:  CommonService::getInstance()->log4PHP(
+        json_encode([
+        'http-set-headers' => $headers
+        ],JSON_UNESCAPED_UNICODE)
+        );
+         */
 
         try {
-//            CommonService::getInstance()->log4PHP([$url, $postData], 'info', 'http_return_data_3');
+            //CommonService::getInstance()->log4PHP([$url, $postData], 'info', 'http_return_data_3');
+
             //发送请求
             if ($method === 'POST') $data = $request->post($postData);
             if ($method === 'POSTJSON') $data = $request->postJson(
                 is_string($postData) ? $postData : jsonEncode($postData)
             );
-//            CommonService::getInstance()->log4PHP([$url,$postData],'info','http_return_data');
+            //CommonService::getInstance()->log4PHP([$url,$postData],'info','http_return_data');
 
             if ($method === 'GET') $data = $request->get();
 
             //整理结果
             $data = $data->getBody();
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    'http-get-$data' => $data
-//                ],JSON_UNESCAPED_UNICODE)
-//            );
-//            CommonService::getInstance()->log4PHP([$data], 'info', 'http_return_data');
-//            dingAlarm('http返回',['$url'=>$url,'$data'=>json_encode($data),'$postData'=>json_encode($postData)]);
+            /**
+            CommonService::getInstance()->log4PHP([$data], 'info', 'http_return_data');
+            dingAlarm('http返回',['$url'=>$url,'$data'=>json_encode($data),'$postData'=>json_encode($postData)]);
+             */
             $d = jsonDecode($data,true);
 
-//            $a = json_last_error_msg();
-//            ;
-            CommonService::getInstance()->log4PHP([$url, $postData, $d,$data, $headers], 'info', 'http_return_data');
-//            CommonService::getInstance()->log4PHP([$d,$a], 'info', 'http_return_data');
-//            if(empty($data) || (isset($d['code']) && $d['code'] != 200)){
-//                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_http_return_data');
-//            }elseif (stripos($url,'qichacha') && $d['Status'] !=200){
-////                dingAlarmUser('企查查'.$d['Message'], ['$url' => $url, '$postData' => json_encode($postData), '$d' => json_encode($d)], [18511881968]);
-//                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_qichacha_http_return_data');
-//            }elseif (stripos($url,'qichacha') && $d['Status'] ==200){
-////                dingAlarmUser('企查查'.$d['Message'], ['$url' => $url, '$postData' => json_encode($postData), '$d' => json_encode($d)], [18511881968]);
-//                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'qichacha_http_return_data');
-//            }elseif(stripos($url,'api.wanvdata.com') && !empty($d)){
-//                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'taoshu_http_return_data');
-//            }elseif(stripos($url,'api.wanvdata.com') && empty($d)){
-////                dingAlarmUser('陶数返回为空', ['$url' => $url, '$postData' => json_encode($postData), '$d' => json_encode($d)], [18511881968]);
-//                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_taoshu_http_return_data');
-//            } else{
-//                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'http_return_data');
-//            }
+            //$a = json_last_error_msg();
+
+            CommonService::getInstance()->log4PHP(json_encode(
+                ['类型'=>'直接请求'  ,'请求地址' => $url, '请求数据' => $postData, '头部' => $headers,'返回原始结果'=>$data, '返回原始结果-解析为数组'=>$d, ],JSON_UNESCAPED_UNICODE
+            ), 'info', 'http_return_data');
+
+            //            CommonService::getInstance()->log4PHP([$d,$a], 'info', 'http_return_data');
+            //            if(empty($data) || (isset($d['code']) && $d['code'] != 200)){
+            //                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_http_return_data');
+            //            }elseif (stripos($url,'qichacha') && $d['Status'] !=200){
+            ////                dingAlarmUser('企查查'.$d['Message'], ['$url' => $url, '$postData' => json_encode($postData), '$d' => json_encode($d)], [18511881968]);
+            //                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_qichacha_http_return_data');
+            //            }elseif (stripos($url,'qichacha') && $d['Status'] ==200){
+            ////                dingAlarmUser('企查查'.$d['Message'], ['$url' => $url, '$postData' => json_encode($postData), '$d' => json_encode($d)], [18511881968]);
+            //                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'qichacha_http_return_data');
+            //            }elseif(stripos($url,'api.wanvdata.com') && !empty($d)){
+            //                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'taoshu_http_return_data');
+            //            }elseif(stripos($url,'api.wanvdata.com') && empty($d)){
+            ////                dingAlarmUser('陶数返回为空', ['$url' => $url, '$postData' => json_encode($postData), '$d' => json_encode($d)], [18511881968]);
+            //                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'error_taoshu_http_return_data');
+            //            } else{
+            //                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'http_return_data');
+            //            }
         } catch (\Exception $e) {
-            CommonService::getInstance()->log4PHP([$e], 'info', 'http_return_data_e');
+            CommonService::getInstance()->log4PHP(json_encode([
+                ['类型'=>'异常'  ,'请求地址' => $url, '请求数据' => $postData, '头部' => $headers,'异常信息'=>$e->getMessage(), ]
+            ],JSON_UNESCAPED_UNICODE), 'info', 'http_return_data_e');
+
             $this->writeErr($e, 'CoHttpClient');
+
             return ['coHttpErr' => 'error'];
         }
 

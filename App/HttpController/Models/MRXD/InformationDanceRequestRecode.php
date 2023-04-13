@@ -8,6 +8,8 @@ use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\Api\FinancesSearch;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\ModelBase;
+use App\HttpController\Models\Provide\RequestApiInfo;
+use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\LongXin\LongXinService;
@@ -20,7 +22,11 @@ use Vtiful\Kernel\Format;
 class InformationDanceRequestRecode extends ModelBase
 {
 
-    protected $tableName = '';
+    protected $tableName = 'information_dance_request_recode_2023';
+
+    function  setTableNameByYear($year){
+        $this->tableName = "information_dance_request_recode_".$year;
+    }
 
     static  function  addRecordV2($info){
         $oldRes = self::findByPhone($info['phone']);
@@ -93,8 +99,11 @@ class InformationDanceRequestRecode extends ModelBase
         ];
     }
 
-    public static function findByConditionV2($whereArr,$page=1,$limit=20){
+    public static function findByConditionV2($year,$whereArr,$page=1,$limit=20){
+
         $model = InformationDanceRequestRecode::create();
+        $model->setTableNameByYear($year);
+
         foreach ($whereArr as $whereItem){
             $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
         }
@@ -103,6 +112,19 @@ class InformationDanceRequestRecode extends ModelBase
             ->withTotalCount();
 
         $res = $model->all();
+
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                "请求统计表-参数" => [
+                    '年度' => $year,
+                    '条件' => $whereArr,
+                    'page' => $page,
+                    'limit' => $limit
+                ],
+                "请求统计表-sql" => $model->lastQuery()->getLastQuery(),
+            ],JSON_UNESCAPED_UNICODE)
+        );
 
         $total = $model->lastQueryResult()->getTotalCount();
         return [
@@ -231,8 +253,138 @@ class InformationDanceRequestRecode extends ModelBase
     }
 
 
-    static  function exportData($data,$filedCname ){
-        $filename = '对账单_'.date('YmdHis').'.xlsx';
+    static  function  formatData($data){
+        $cacheUserInfo = [];
+        $cacheApiInfo = [];
+
+        foreach ($data as &$datum){
+            /**
+            created_at :  1680142119
+            id  :  147537
+            provideApiId  :  319
+            requestData   :  "{\"billingDate\":\"2023-03-30\",\"totalAmount\":\"54840.71\",\"appId\":\"294D936D3E854057ECE6719E6D2F07BE\",\"sign\":\"1020C30E2A7BDBBBEC150707BBDBE8\",\"invoiceNumber\":\"00545667\",\"time\":\"1680142118\",\"invoiceCode\":\"132002222363\"}"
+            requestId :  "6866ddd6799a94501db1766fd6d90102"
+            requestIp  :  "47.95.255.203"
+            requestUrl :  "/provide/v1/zw/getInvoiceCheckV2"
+            responseCode  :  200
+            responseData :  "{\"requestId\":\"c8cd803825a44268ab34acff0fa96f03\",\"hostId\":\"https://ivs.fapiao.com/mars/api/check/invoice\",\"code\":200,\"message\":\"查验成功发票不一致\",\"sfkccs\":\"1\",\"Paging\":null,\"msg\":\"success\"}"
+            spendMoney  : "0.2100"
+            spendTime  :  "1.0513"
+            updated_at :  1680142119
+            userId  : 59
+             */
+            //entName
+            //请求企业
+            $requestDataArr = json_decode($datum["requestData"],true);
+            $datum["entName"] = "";
+            $requestDataArr['entName'] && $datum["entName"] = $requestDataArr['entName'];
+
+            if($cacheUserInfo[$datum["userId"]]){
+                $datum["user_name"] =  $cacheUserInfo[$datum["userId"]];
+            } else {
+                $userInfo = RequestUserInfo::findById($datum["userId"]);
+                $userInfo &&   $datum["user_name"] =  $userInfo->username;
+                $cacheUserInfo[$datum["userId"]] = $userInfo->username;
+            }
+
+
+            $datum["updated_at"] && $datum["updated_at"] =  date("Y-m-d H:i:s",$datum["updated_at"] );
+            $datum["created_at"] && $datum["created_at"] =  date("Y-m-d H:i:s",$datum["created_at"] );
+            //2023-04-03 10:10:10
+            $datum["created_at"] && $datum["request_day"] =  substr($datum["created_at"], 0, 10);
+            $datum["created_at"] && $datum["request_month"] =  substr($datum["created_at"], 0, 7);
+
+            //请求的接口信息
+            if($datum["provideApiId"]){
+                if($cacheApiInfo[$datum["userId"]]){
+                    $datum["provideApiName"] =  $cacheApiInfo[$datum["userId"]]["provideApiName"];
+                    $datum["provideApiDesc"] =   $cacheApiInfo[$datum["userId"]]["provideApiDesc"];
+                    $datum["provideApiSource"] =  $cacheApiInfo[$datum["userId"]]["provideApiSource"];
+                    $datum["provideApiPrice"] =   $cacheApiInfo[$datum["userId"]]["provideApiPrice"];
+                    $datum["provideApiPath"] =   $cacheApiInfo[$datum["userId"]]["provideApiPath"];
+                }
+                else{
+                    $apiInfo =  RequestApiInfo::findById($datum["provideApiId"]);
+                    $apiInfo && $datum["provideApiName"] =  $apiInfo->name;
+                    $apiInfo && $datum["provideApiDesc"] =  $apiInfo->desc;
+                    $apiInfo && $datum["provideApiSource"] =  $apiInfo->source;
+                    $apiInfo && $datum["provideApiPrice"] =  $apiInfo->price;
+                    $apiInfo && $datum["provideApiPath"] =  $apiInfo->path;
+
+
+                    $cacheApiInfo[$datum["userId"]]["provideApiName"] =  $datum["provideApiName"];
+                    $cacheApiInfo[$datum["userId"]]["provideApiDesc"] =   $datum["provideApiDesc"];
+                    $cacheApiInfo[$datum["userId"]]["provideApiSource"] =  $datum["provideApiSource"];
+                    $cacheApiInfo[$datum["userId"]]["provideApiPrice"] =   $datum["provideApiPrice"];
+                    $cacheApiInfo[$datum["userId"]]["provideApiPath"] =   $datum["provideApiPath"];
+
+                }
+            }
+
+            //是否需要付费
+            $datum["needs_charge"] =  0;
+            $datum["needs_charge_cname"] =  "否(请求没有成功)";
+
+
+            //请求是否成功
+            $datum["is_success"] =  0;
+            $datum["is_success_cname"] =  "否";
+
+            if($datum["responseCode"] == 200 ){
+                $datum["is_success"] =  1;
+                $datum["is_success_cname"] =  "是";
+
+                $datum["needs_charge"] =  1;
+                $datum["needs_charge_cname"] =  "是";
+
+            }
+
+            //是否是缓存数据
+            $datum["is_cached"] =  0;
+            $datum["is_cached_cname"] =  "否";
+            if(
+                $datum["responseCode"] == 200 &&
+                $datum["spendMoney"] == 0
+            ){
+                $datum["is_cached"] =  1;
+                $datum["is_cached_cname"] =  "是";
+
+                $datum["needs_charge"] =  0;
+                $datum["needs_charge_cname"] =  "否(是缓存数据)";
+            }
+
+
+            //是否全为空
+            //$datum["DataArr"] = json_decode($datum['responseData'],true);
+
+            // 200
+            //财务数据专属
+            if($datum["provideApiId"] == 151){
+                $datum["cai_wu_data_is_valid"] = 1;
+                $datum["cai_wu_data_is_valid_cname"] = "是";
+                foreach ($datum["DataArr"] as $caiwu_datum){
+                    foreach ($caiwu_datum as $caiwu_sub_datum){
+                        if(
+                            $caiwu_sub_datum != "" &&
+                            $caiwu_sub_datum != "0"
+                        ){
+                            $datum["cai_wu_data_is_valid"] = 0;
+                            $datum["cai_wu_data_is_valid_cname"] = "否(返回财务数据全部为空)";
+
+                            $datum["needs_charge"] =  0;
+                            $datum["needs_charge_cname"] =  "否(返回财务数据全部为空)";
+
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    static  function exportData($data,$filename,$headerArr ){
         $config=  [
             'path' => TEMP_FILE_PATH // xlsx文件保存路径
         ];
@@ -241,6 +393,7 @@ class InformationDanceRequestRecode extends ModelBase
             json_encode([
                 "对账单-导出-开始执行"=>[
                     "文件名"=>$filename,
+                    "表头"=>$headerArr,
                     "文件路径"=>TEMP_FILE_PATH,
                 ]
             ],JSON_UNESCAPED_UNICODE)
@@ -265,22 +418,28 @@ class InformationDanceRequestRecode extends ModelBase
 
         $fileObject
             ->defaultFormat($colorStyle)
-            ->header($filedCname)
+            ->header(array_values($headerArr))
             ->defaultFormat($alignStyle)
         ;
 
         $i = 1;
         foreach ($data as $dataItem){
+            $tmp = [];
+            foreach ($headerArr as $key=>$cname){
+                $tmp[] = $dataItem[$key];
+            }
+
             if( $i%300 == 0 ){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
                         '对账单-导出-次数' => $i,
-                    ])
+                        '$tmp' => $tmp,
+                    ],JSON_UNESCAPED_UNICODE)
                 );
             }
 
-            $fileObject ->data([$dataItem]);
+            $fileObject ->data([$tmp]);
             $i ++;
         }
 
@@ -292,6 +451,7 @@ class InformationDanceRequestRecode extends ModelBase
             ->toResource();
 
         $fileObject->output();
+
     }
 
 }

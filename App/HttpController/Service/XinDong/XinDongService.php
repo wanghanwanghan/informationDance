@@ -3005,7 +3005,6 @@ class XinDongService extends ServiceBase
     // $tobeMatch 姓名   $target：微信名
     function matchNamesV2($tobeMatch, $target)
     {
-
         //完全匹配
         $res = $this->matchNamesByEqual($tobeMatch, $target);
         if ($res) {
@@ -3030,7 +3029,7 @@ class XinDongService extends ServiceBase
 
         //拼音全等
         $tobeMatchArr = $this->getPinYin($tobeMatch);
-//        CommonService::getInstance()->log4PHP(json_encode(['$tobeMatchArr'=>$tobeMatchArr]));
+        //CommonService::getInstance()->log4PHP(json_encode(['$tobeMatchArr'=>$tobeMatchArr]));
 
         if (
             count($tobeMatchArr) == 2
@@ -3039,7 +3038,7 @@ class XinDongService extends ServiceBase
             $str1 = $tobeMatchArr[0] . $tobeMatchArr[1];
             //逆序拼音
             $str2 = $tobeMatchArr[1] . $tobeMatchArr[0];
-//            CommonService::getInstance()->log4PHP(json_encode(['match pinyin '=>[$str1,$str2]]));
+            //CommonService::getInstance()->log4PHP(json_encode(['match pinyin '=>[$str1,$str2]]));
 
             if (
                 $str1 == $target ||
@@ -3063,7 +3062,7 @@ class XinDongService extends ServiceBase
             $str4 = $tobeMatchArr[1] . $tobeMatchArr[2] . $tobeMatchArr[0];
             $str5 = $tobeMatchArr[2] . $tobeMatchArr[0] . $tobeMatchArr[1];
             $str6 = $tobeMatchArr[2] . $tobeMatchArr[1] . $tobeMatchArr[0];
-//            CommonService::getInstance()->log4PHP(json_encode(['match pinyin2 '=>[$str1,$str2,$str3,$str4,$str5,$str6]]));
+            //CommonService::getInstance()->log4PHP(json_encode(['match pinyin2 '=>[$str1,$str2,$str3,$str4,$str5,$str6]]));
             if (
                 $str1 == $target ||
                 $str2 == $target ||
@@ -3087,7 +3086,7 @@ class XinDongService extends ServiceBase
         ) {
             $name1 = PinYinService::getShortPinyin(substr($tobeMatch, 0, 3));
             $name2 = PinYinService::getShortPinyin(substr($tobeMatch, 3, 3));
-//            CommonService::getInstance()->log4PHP(json_encode(['match short  pinyin '=>[$name1,$name2]]));
+            //CommonService::getInstance()->log4PHP(json_encode(['match short  pinyin '=>[$name1,$name2]]));
 
             $str1 = $name1 . $name2;
             $str2 = $name2 . $name1;
@@ -3111,7 +3110,7 @@ class XinDongService extends ServiceBase
             $name1 = PinYinService::getShortPinyin(substr($tobeMatch, 0, 3));
             $name2 = PinYinService::getShortPinyin(substr($tobeMatch, 3, 3));
             $name3 = PinYinService::getShortPinyin(substr($tobeMatch, 6, 3));
-//            CommonService::getInstance()->log4PHP(json_encode(['match short  pinyin2 '=>[$name1,$name2,$name3]]));
+            //CommonService::getInstance()->log4PHP(json_encode(['match short  pinyin2 '=>[$name1,$name2,$name3]]));
 
             $str1 = $name1 . $name2 . $name3;
             $str2 = $name1 . $name3 . $name2;
@@ -3233,7 +3232,7 @@ class XinDongService extends ServiceBase
         $res = array_intersect($tobeMatchArr, $targetArr);
         if (
             !empty($res) &&
-            $perc >= 90
+            $perc >= 85
         ) {
             return [
                 'type' => '近似匹配',
@@ -3247,7 +3246,7 @@ class XinDongService extends ServiceBase
         //多音字匹配
         $tobeMatchArr = $this->getPinYin($tobeMatch);
         $targetArr = $this->getPinYin($target);
-//        CommonService::getInstance()->log4PHP(json_encode(['duo yin zi  '=>['$tobeMatchArr' => $tobeMatchArr,'$targetArr' =>$targetArr]]));
+        //CommonService::getInstance()->log4PHP(json_encode(['duo yin zi  '=>['$tobeMatchArr' => $tobeMatchArr,'$targetArr' =>$targetArr]]));
 
         $res = $this->checkIfArrayEqual($tobeMatchArr, $targetArr);
         if ($res) {
@@ -3542,6 +3541,19 @@ class XinDongService extends ServiceBase
                 continue;
             };
             $res = (new XinDongService())->matchNamesForZhiFuBao($tmpName, $zhiFuBao);
+//            CommonService::getInstance()->log4PHP(
+//                  json_encode(
+//                      [
+//                        "匹配支付宝" => [
+//                            "姓名" => $tmpName,
+//                            "支付宝名" => $zhiFuBao,
+//                            "匹配结果" => $res,
+//                        ]
+//
+//                      ],JSON_UNESCAPED_UNICODE
+//                  )
+//            );
+
             if ($res['res'] == '成功') {
 //                CommonService::getInstance()->log4PHP(
 //                    'matchContactNameByWeiXinName yes  :' .$tmpName . $WeiXin
@@ -3590,6 +3602,49 @@ class XinDongService extends ServiceBase
                     'data' => $staffsDataItem,
                     'match_res' => $res
                 ];
+            }
+        }
+
+        return [];
+    }
+
+    function matchContactNameByQiYeWeiXinName($companyName, $phones, $weiXinNames,$showLog = false)
+    {
+
+        //获取所有联系人
+        $staffsDatas = LongXinService::getLianXiByNameV2($companyName);
+
+        foreach ($staffsDatas as $staffsDataItem) {
+            $tmpName = trim($staffsDataItem['NAME']);
+            if (!$tmpName) {
+                continue;
+            };
+
+            foreach ($weiXinNames as $WeiXin){
+                $pattern = "/[^\\x{4e00}-\\x{9fa5}a-zA-Z0-9]/u";
+                $newWeiXin = preg_replace($pattern, "", $WeiXin);
+                $res = (new XinDongService())->matchNamesV2($tmpName, $newWeiXin);
+                if($showLog){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            "根据企业微信匹配真实姓名" => [
+                                '企业名' => $companyName ,
+                                '手机' => $phones ,
+                                '原始微信' => $WeiXin ,
+                                '删除特殊字符的微信' => $newWeiXin ,
+                                '联系人姓名' => $tmpName ,
+                                '匹配结果' => $res ,
+                            ],
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
+
+                if ($res['res'] == '成功') {
+                    return [
+                        'data' => $staffsDataItem,
+                        'match_res' => $res
+                    ];
+                }
             }
         }
 

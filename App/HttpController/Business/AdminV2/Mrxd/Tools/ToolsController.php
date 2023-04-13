@@ -81,6 +81,10 @@ class ToolsController extends ControllerBase
                 'path' => '/Static/Template/模糊匹配企业名称模板.xlsx',
             ],
             [
+                'name' => '根据企业微信名补全联系人姓名职位等信息',
+                'path' => '/Static/Template/企业微信匹配真实姓名[主要基于微信名和联系人库].xlsx',
+            ],
+            [
                 'name' => '根据微信名补全联系人姓名职位等信息',
                 'path' => '/Static/Template/补全联系人姓名职位等信息[主要基于微信名和联系人库].xlsx',
             ],
@@ -104,6 +108,7 @@ class ToolsController extends ControllerBase
 
         return $this->writeJson(200, [], [
                 5   =>  '补全企业联系人信息(并检测手机状态)',
+                6  =>  '根据企业微信补全联系人姓名职位等信息',
                 10  =>  '根据微信名补全联系人姓名职位等信息',
                 12  =>  '根据支付宝名补全联系人姓名职位等信息',
                 13  =>  '根据支付宝名补全桃树对应得联系人姓名职位等信息',
@@ -197,6 +202,7 @@ class ToolsController extends ControllerBase
         $pageSize =$requestData['pageSize']?:20;
 
         $dataRes = ToolsFileLists::findById($requestData['id']);
+
         ToolsFileLists::updateById(
             $dataRes->id,
             [
@@ -205,11 +211,10 @@ class ToolsController extends ControllerBase
                 'state'=>ToolsFileLists::$state_init,
             ]
         );
-        $config_arr = @json_decode($dataRes->remark,true);
 
         $res = QueueLists::addRecord(
             [
-                'name' => '拉取非公开联系人',
+                'name' => '重新拉取非公开联系人',
                 'desc' => '',
                 'func_info_json' => json_encode(
                     [
@@ -218,12 +223,9 @@ class ToolsController extends ControllerBase
                     ]
                 ),
                 'params_json' => json_encode([
-                    'fill_position_by_name' => intval($config_arr['fill_position_by_name']),
-                    'fill_weixin_by_phone' => intval($config_arr['fill_weixin_by_phone']),
-                    'fill_name_and_position_by_weixin' => intval($config_arr['fill_name_and_position_by_weixin']),
-                    'filter_qcc_phone' => intval($config_arr['filter_qcc_phone']),
-                    'pull_gong_shang_shu_ju' => intval($config_arr['pull_gong_shang_shu_ju']),
-                ]),
+                    "date" => date("Y-m-d"),
+                    "user_info" => $this->loginUserinfo['user_name'],
+                ],JSON_UNESCAPED_UNICODE),
                 'type' => ToolsFileLists::$type_upload_pull_fei_gong_kai_contact,
                 'remark' => '',
                 'begin_date' => NULL,
@@ -235,8 +237,8 @@ class ToolsController extends ControllerBase
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' =>$pageSize,
-            'total' => $total,
-            'totalPage' =>  ceil( $total/ $pageSize ),
+            'total' => 0,
+            'totalPage' =>  1,
         ],  $res['data'],'');
     }
 
@@ -247,6 +249,7 @@ class ToolsController extends ControllerBase
 
         $dataRes = ToolsFileLists::findById($requestData['id']);
         $config_arr = @json_decode($dataRes->remark,true);
+
         ToolsFileLists::updateById(
             $dataRes->id,
             [
@@ -267,11 +270,9 @@ class ToolsController extends ControllerBase
                     ]
                 ),
                 'params_json' => json_encode([
-                    'fill_position_by_name' => intval($config_arr['fill_position_by_name']),
-                    'fill_weixin_by_phone' => intval($config_arr['fill_weixin_by_phone']),
-                    'fill_name_and_position_by_weixin' => intval($config_arr['fill_name_and_position_by_weixin']),
-                    'filter_qcc_phone' => intval($config_arr['filter_qcc_phone']),
-                ]),
+                    "date" => date("Y-m-d"),
+                    "user_info" => $this->loginUserinfo['user_name'],
+                ],JSON_UNESCAPED_UNICODE),
                 'type' => ToolsFileLists::$type_upload_pull_gong_kai_contact,
                 'remark' => '',
                 'begin_date' => NULL,
@@ -284,15 +285,17 @@ class ToolsController extends ControllerBase
         return $this->writeJson(200, [
             'page' => $page,
             'pageSize' =>$pageSize,
-            'total' => $total,
-            'totalPage' =>  ceil( $total/ $pageSize ),
+            'total' => 0,
+            'totalPage' =>  1,
         ],  $res['data'],'');
     }
 
+    //上传补全字段
     public function uploadeBuQuanZiDuanFiles(){
         $requestData =  $this->getRequestData();
         $succeedFiels = [];
         $files = $this->request()->getUploadedFiles();
+
         foreach ($files as $key => $oneFile) {
             try {
                 $fileName = $oneFile->getClientFilename();
@@ -300,6 +303,7 @@ class ToolsController extends ControllerBase
                 if($fileInfo['extension']!='xlsx'){
                     return $this->writeJson(203, [], [],'暂时只支持xlsx文件！');
                 }
+
                 $fileName = date('Y_m_d_H_i',time()).$fileName;
                 $path = OTHER_FILE_PATH . $fileName;
                 if(file_exists($path)){
@@ -337,8 +341,9 @@ class ToolsController extends ControllerBase
                                 ]
                             ),
                             'params_json' => json_encode([
-
-                            ]),
+                                "date" => date("Y-m-d"),
+                                "user_info" => $this->loginUserinfo['user_name'],
+                            ],JSON_UNESCAPED_UNICODE),
                             'type' => QueueLists::$typle_finance,
                             'remark' => '',
                             'begin_date' => NULL,
@@ -373,7 +378,7 @@ class ToolsController extends ControllerBase
         $requestData =  $this->getRequestData();
         $succeedFiels = [];
         $files = $this->request()->getUploadedFiles();
-        //return $this->writeJson(200, [], [],'成功 入库文件:'.join(',',$succeedFiels));
+
         foreach ($files as $key => $oneFile) {
             try {
                 $fileName = $oneFile->getClientFilename();
@@ -381,6 +386,7 @@ class ToolsController extends ControllerBase
                 if($fileInfo['extension']!='xlsx'){
                     return $this->writeJson(203, [], [],'暂时只支持xlsx文件！');
                 }
+
                 $fileName = date('Y_m_d_H_i',time()).$fileName;
                 $path = OTHER_FILE_PATH . $fileName;
                 if(file_exists($path)){
@@ -402,7 +408,9 @@ class ToolsController extends ControllerBase
                             'fill_weixin_by_phone' => $requestData['get_wxname']?1:0,
                             'fill_name_and_position_by_weixin' => $requestData['get_namezhiwei']?1:0,
                             'filter_qcc_phone' => $requestData['get_filterQccPhone']?1:0,
-                        ]),
+                            "date" => date("Y-m-d"),
+                            "user_info" => $this->loginUserinfo['user_name'],
+                        ],JSON_UNESCAPED_UNICODE),
                         'type' => ToolsFileLists::$type_upload_pull_gong_kai_contact,
                         'state' => $requestData['state']?:'',
                         'touch_time' => $requestData['touch_time']?:'',
@@ -423,11 +431,9 @@ class ToolsController extends ControllerBase
                                 ]
                             ),
                             'params_json' => json_encode([
-                                'fill_position_by_name' => $requestData['get_zhiwei']?1:0,
-                                'fill_weixin_by_phone' => $requestData['get_wxname']?1:0,
-                                'fill_name_and_position_by_weixin' => $requestData['get_namezhiwei']?1:0,
-                                'filter_qcc_phone' => $requestData['get_filterQccPhone']?1:0,
-                            ]),
+                                "date" => date("Y-m-d"),
+                                "user_info" => $this->loginUserinfo['user_name'],
+                            ],JSON_UNESCAPED_UNICODE),
                             'type' => ToolsFileLists::$type_upload_pull_gong_kai_contact,
                             'remark' => '',
                             'begin_date' => NULL,
@@ -478,7 +484,9 @@ class ToolsController extends ControllerBase
                             'fill_name_and_position_by_weixin' => $requestData['get_namezhiwei']?1:0,
                             'filter_qcc_phone' => $requestData['get_filterQccPhone']?1:0,
                             'pull_gong_shang_shu_ju' => $requestData['pull_gong_shang_shu_ju']?1:0,
-                        ]),
+                            "date" => date("Y-m-d"),
+                            "user_info" => $this->loginUserinfo['user_name'],
+                        ],JSON_UNESCAPED_UNICODE),
                         'type' => ToolsFileLists::$type_upload_pull_fei_gong_kai_contact,
                         'state' => $requestData['state']?:'',
                         'touch_time' => $requestData['touch_time']?:'',
@@ -499,12 +507,9 @@ class ToolsController extends ControllerBase
                                 ]
                             ),
                             'params_json' => json_encode([
-                                'fill_position_by_name' => $requestData['get_zhiwei']?1:0,
-                                'fill_weixin_by_phone' => $requestData['get_wxname']?1:0,
-                                'fill_name_and_position_by_weixin' => $requestData['get_namezhiwei']?1:0,
-                                'filter_qcc_phone' => $requestData['get_filterQccPhone']?1:0,
-                                'pull_gong_shang_shu_ju' => $requestData['pull_gong_shang_shu_ju']?1:0,
-                            ]),
+                                "date" => date("Y-m-d"),
+                                "user_info" => $this->loginUserinfo['user_name'],
+                            ],JSON_UNESCAPED_UNICODE),
                             'type' => ToolsFileLists::$type_upload_pull_fei_gong_kai_contact,
                             'remark' => '',
                             'begin_date' => NULL,
@@ -527,6 +532,7 @@ class ToolsController extends ControllerBase
         $requestData =  $this->getRequestData();
         $key = trim($requestData['key']);
         $arr = explode('&&&',$key);
+
         //根据企业名称查询库里全部的联系人名称和职位(老梗)
         if($requestData['type'] == 2 ){
             $response = LongXinService::getLianXiByName($key);

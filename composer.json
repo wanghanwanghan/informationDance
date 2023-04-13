@@ -44,7 +44,8 @@
     "easyswoole/elasticsearch": "^1.0",
     "gemorroj/archive7z": "^5.4",
     "phpoffice/phpexcel": "^1.8",
-    "phpoffice/phpspreadsheet": "^1.23"
+    "phpoffice/phpspreadsheet": "^1.23",
+    "ext-ftp": "*"
   },
   "autoload": {
     "psr-4": {
