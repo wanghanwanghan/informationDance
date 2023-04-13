@@ -561,6 +561,7 @@ class jincai_api extends AbstractProcess
             'zfbz' => changeNull(changeFPZT($arr['fpzt'])) === '2' ? 'Y' : 'N',//'作废标志 N-未作废 Y-作废',
             'zfsj' => '',//'作废时间',
             'kprq' => changeNull($arr['kprq']),//'开票日期',
+            'kprq_int' => is_numeric(strtotime($arr['kprq'])) ? strtotime($arr['kprq']) : 0,//'范围查询用',
             'kprq_sort' => microTimeNew() - 0,//'排序用',
             'fplx' => changeNull($arr['fplx']),//'发票类型代码 01 02 03 04 10 11 14 15',
             'fpztDm' => changeNull(changeFPZT($arr['fpzt'])),//'发票状态代码 0-正常 1-失控 2-作废 3-红字 4-异常票',
