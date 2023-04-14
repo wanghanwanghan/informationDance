@@ -1585,12 +1585,12 @@ class XinDongService extends ServiceBase
         $bean->setType('_doc');
         $bean->setBody($elasticSearchService->query);
         $response = $elasticsearch->client()->search($bean)->getBody();
-        if($needLog){
+//        if($needLog){
             CommonService::getInstance()->log4PHP(json_encode([
                 'es_$index'=>$index,
                 'es_query'=>$elasticSearchService->query,
             ],JSON_UNESCAPED_UNICODE));
-        }
+//        }
         return $response;
     }
 
@@ -2701,7 +2701,7 @@ class XinDongService extends ServiceBase
         $offset = ($page - 1) * $size;
         $ElasticSearchService->addSize($size);
         $ElasticSearchService->addFrom($offset);
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202303',$configs['needs_logo']);
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202303' ,$configs['needs_logo']);
         $responseArr = @json_decode($responseJson, true);
         // CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
         //     [

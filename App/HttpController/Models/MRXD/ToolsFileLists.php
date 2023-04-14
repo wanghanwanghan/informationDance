@@ -178,17 +178,16 @@ class ToolsFileLists extends ModelBase
     static function generateQuanZiDuan($allFields,$entName,$entCode){
         //需要补全字段
         if($entCode){
-            $res = (new XinDongService())->getEsBasicInfoV3($entCode,'UNISCID',['needs_log' => true,]);
+            $res = (new XinDongService())->getEsBasicInfoV3($entCode,'UNISCID',[ ]);
         }
         else{
-            $res = (new XinDongService())->getEsBasicInfoV3($entName,'ENTNAME',['needs_log' => true,]);
+            $res = (new XinDongService())->getEsBasicInfoV3($entName,'ENTNAME',[ ]);
         }
 
         $baseArr = [];
         //====================================
         foreach ($allFields as $field=>$cname){
             if($field=='UNISCID'){
-
                 $res['UNISCID'] = ''.$res['UNISCID']. "\t";
             }
             if($field=='ENTTYPE'){
@@ -371,6 +370,7 @@ class ToolsFileLists extends ModelBase
                            $filesData['file_name'],
                            $dataItem,
                            $baseArr,
+                           $allFields,
                        ]
                    ], JSON_UNESCAPED_UNICODE)
                );
