@@ -2750,12 +2750,12 @@ class XinDongService extends ServiceBase
         }
         $res = $hits[0]['_source'];
 
-        CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
-                [
-                    'es_query' => $ElasticSearchService->query,
-                    '$res' => $res,
-                ]
-            ));
+//        CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
+//                [
+//                    'es_query' => $ElasticSearchService->query,
+//                    '$res' => $res,
+//                ]
+//        ));
 
         return !empty($res) ? $res : [];
     }
