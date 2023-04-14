@@ -181,7 +181,7 @@ class ToolsFileLists extends ModelBase
             $res = (new XinDongService())->getEsBasicInfoV3($entCode,'UNISCID',[]);
         }
         else{
-            $res = (new XinDongService())->getEsBasicInfoV3($entName,'ENTNAME',['needs_logo' => true,]);
+            $res = (new XinDongService())->getEsBasicInfoV3($entName,'ENTNAME',['needs_log' => true,]);
         }
 
         $baseArr = [];

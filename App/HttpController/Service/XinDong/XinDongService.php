@@ -1569,7 +1569,7 @@ class XinDongService extends ServiceBase
 
 
     //高级搜索
-    function advancedSearch($elasticSearchService, $index = 'company_202303')
+    function advancedSearch($elasticSearchService, $index = 'company_202303',$needLog = false)
     {
         $elasticsearch = new ElasticSearch(
             new  Config([
@@ -1585,7 +1585,12 @@ class XinDongService extends ServiceBase
         $bean->setType('_doc');
         $bean->setBody($elasticSearchService->query);
         $response = $elasticsearch->client()->search($bean)->getBody();
-       // CommonService::getInstance()->log4PHP(json_encode(['es_query'=>$elasticSearchService->query]));
+        if($needLog){
+            CommonService::getInstance()->log4PHP(json_encode([
+                'es_$index'=>$index,
+                'es_query'=>$elasticSearchService->query,
+            ],JSON_UNESCAPED_UNICODE));
+        }
         return $response;
     }
 
@@ -2681,6 +2686,7 @@ class XinDongService extends ServiceBase
     }
 
     function getEsBasicInfoV3($value, $field = 'ENTNAME', $configs = [
+        'needs_log' => true,
         'needs_logo' => true,
         'needs_email' => true,
     ]): array
@@ -2695,7 +2701,7 @@ class XinDongService extends ServiceBase
         $offset = ($page - 1) * $size;
         $ElasticSearchService->addSize($size);
         $ElasticSearchService->addFrom($offset);
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202303');
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202303',$configs['needs_logo']);
         $responseArr = @json_decode($responseJson, true);
         // CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
         //     [
