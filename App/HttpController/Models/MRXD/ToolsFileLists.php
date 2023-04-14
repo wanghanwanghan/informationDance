@@ -359,16 +359,17 @@ class ToolsFileLists extends ModelBase
            $i = 1;
            foreach ($yieldDatas as $dataItem) {
                $i ++;
-               if($i%300==0){
+//               if($i%300==0){
                    CommonService::getInstance()->log4PHP(
                        json_encode([
                            '开始执行补全字段' => [
                                '已生成'.$i,
-                               $filesData['file_name']
+                               $filesData['file_name'],
+                               $dataItem
                            ]
                        ], JSON_UNESCAPED_UNICODE)
                    );
-               }
+//               }
 
                $baseArr = self::generateQuanZiDuan($allFields,$dataItem[0],$dataItem[1]);
                fputcsv($f, $baseArr);
