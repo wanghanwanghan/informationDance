@@ -2703,12 +2703,7 @@ class XinDongService extends ServiceBase
         $ElasticSearchService->addFrom($offset);
         $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202303' ,$configs['needs_logo']);
         $responseArr = @json_decode($responseJson, true);
-        // CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
-        //     [
-        //         'es_query' => $ElasticSearchService->query,
-        //         'post_data' => $this->request()->getRequestParam(),
-        //     ]
-        // ));
+
 
         // 格式化下日期和时间
         $hits = $responseArr['hits']['hits'];
@@ -2754,6 +2749,14 @@ class XinDongService extends ServiceBase
             !empty($webArr) && $dataItem['_source']['web'] = end($webArr);
         }
         $res = $hits[0]['_source'];
+
+        CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
+                [
+                    'es_query' => $ElasticSearchService->query,
+                    '$res' => $res,
+                ]
+            ));
+
         return !empty($res) ? $res : [];
     }
 
