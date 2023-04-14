@@ -362,19 +362,19 @@ class ToolsFileLists extends ModelBase
                $baseArr = self::generateQuanZiDuan($allFields,$dataItem[0],$dataItem[1]);
 
 
-//               if($i%300==0){
-               CommonService::getInstance()->log4PHP(
-                   json_encode([
-                       '开始执行补全字段' => [
-                           '已生成'.$i,
-                           $filesData['file_name'],
-                           $dataItem,
-                           $baseArr,
-                           $allFields,
-                       ]
-                   ], JSON_UNESCAPED_UNICODE)
-               );
-//               }
+               if($i%300==0){
+                   CommonService::getInstance()->log4PHP(
+                       json_encode([
+                           '开始执行补全字段' => [
+                               '已生成'.$i,
+                               $filesData['file_name'],
+                               $dataItem,
+                               $baseArr,
+                               $allFields,
+                           ]
+                       ], JSON_UNESCAPED_UNICODE)
+                   );
+               }
 
                fputcsv($f, $baseArr);
 
