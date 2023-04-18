@@ -83,6 +83,7 @@ class YunCaiRongController extends ControllerBase
         );
     }
 
+
     function jiaoYiGongGaoList(): bool
     {
         $requestData =  $this->getRequestData();
