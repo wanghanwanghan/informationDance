@@ -75,7 +75,7 @@ class YunCaiRongController extends ControllerBase
             [
 
             ] ,
-            $resultArr
+            $resultArr['data']
             ,
             '成功',
             true,
