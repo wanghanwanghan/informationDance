@@ -25,6 +25,7 @@ class AdminV2Router
         $this->CustomerRouter($routeCollector);
         //云彩容
         $this->YunCaiRongRouter($routeCollector);
+        $this->YunCaiRongRouter2($routeCollector);
         $this->ToolsRouterV1($routeCollector);
         $this->InvoiceRouterV1($routeCollector);
         $this->ApiUserRouterV1($routeCollector);
@@ -161,6 +162,21 @@ class AdminV2Router
         $routeCollector->addGroup('/Mrxd', function (RouteCollector $routeCollector) use ($prefix) {
             //热点词条
             $routeCollector->addRoute(['GET', 'POST'], '/getProductNameHot', $prefix . 'getProductNameHot');
+            //交易查询
+            $routeCollector->addRoute(['GET', 'POST'], '/testLists', $prefix . 'testLists');
+        });
+
+        return true;
+    }
+    private function YunCaiRongRouter2(RouteCollector $routeCollector): bool
+    {
+
+        $prefix = '/Business/AdminV2/Mrxd/YunCaiRongNewController/';
+        $routeCollector->addGroup('/yuncairong', function (RouteCollector $routeCollector) use ($prefix) {
+            //热点词条
+            $routeCollector->addRoute(['GET', 'POST'], '/getJiaoYiInfo', $prefix . 'getJiaoYiInfo');
+            //交易查询
+            $routeCollector->addRoute(['GET', 'POST'], '/getHotWords', $prefix . 'getHotWords');
         });
 
         return true;
