@@ -24,7 +24,7 @@ class AdminV2Router
         //客户管理
         $this->CustomerRouter($routeCollector);
         //云彩容
-        $this->CustomerRouter($routeCollector);
+        $this->YunCaiRongRouter($routeCollector);
         $this->ToolsRouterV1($routeCollector);
         $this->InvoiceRouterV1($routeCollector);
         $this->ApiUserRouterV1($routeCollector);
