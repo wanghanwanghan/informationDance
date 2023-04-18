@@ -97,7 +97,7 @@ class YunCaiRongController extends ControllerBase
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); // Skip SSL Verification
-        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\"pageNum\":1,\"pageSize\":10,\"query\":{\"dataSetType\":0,\"infoType\":0,\"publishTimeType\":0,\"keyWord\":\"\",\"regionCode\":\"\"}}");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\"pageNum\":$page,\"pageSize\":$pageSize,\"query\":{\"dataSetType\":0,\"infoType\":0,\"publishTimeType\":0,\"keyWord\":\"\",\"regionCode\":\"\"}}");
         curl_setopt($ch, CURLOPT_ENCODING, 'gzip, deflate');
 
         $headers = array();
