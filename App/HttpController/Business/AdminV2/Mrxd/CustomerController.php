@@ -110,11 +110,19 @@ class CustomerController extends ControllerBase
                         'position' =>  '财务',
                     ]
                 ],
-                'industry_id' =>  1,
-                'industry_name' =>  '互联网',
+                'industry_info' =>  [
+                    [
+                        'id' =>  1,
+                        'name' =>  '互联网',
+                    ],
+                    [
+                        'id' =>  1,
+                        'name' =>  '互联网',
+                    ],
+                ],
                 'stage' =>  5,
                 'stage_cname' =>  "需求测试中",
-                'status' =>  5,
+                'status' =>  10,
                 'status_cname' =>  '废弃',
                 'create_by' =>  1,
                 'create_by_info' => [
@@ -131,6 +139,132 @@ class CustomerController extends ControllerBase
                 'pageSize' =>$pageSize,
                 'total' => $total,
                 'totalPage' => ceil( $total/ $pageSize ),
+            ] ,
+            $retrunDatas
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
+
+    //添加新的客户
+    function addNewCustomer(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page =  $requestData['page']?:1;
+        $pageSize =  $requestData['pageSize']?:100;
+        $total = 2;
+
+        return $this->writeJson(
+            200,
+            [] ,
+            []
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
+
+    //获取所有销售 分配用  TODO 权限问题
+    function getAllSales(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $page =  $requestData['page']? :1;
+        $pageSize =  $requestData['pageSize']? :100;
+        $total = 2;
+
+        $retrunDatas = [
+            [
+                'id' => 1,
+                'user_name' =>  '王大锤',
+            ],
+            [
+                'id' => 2,
+                'name' =>  '张姐',
+            ],
+        ];
+
+        return $this->writeJson(
+            200,
+            [
+                'page' => $page,
+                'pageSize' =>$pageSize,
+                'total' => $total,
+                'totalPage' => ceil( $total/ $pageSize ),
+            ] ,
+            $retrunDatas
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
+
+    //获取客户相关的选项
+    function getCustomerOptions(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $retrunDatas = [
+           'classification' => [
+               'describe' => '客户分类',
+               'options' => [
+                   5 => '客户线索',
+                   10 => '客户线索',
+               ],
+           ],
+            'source' => [
+                'describe' => '客户来源',
+                'options' => [
+                    5 => '企查查',
+                    10 => '自己挖掘',
+                ],
+            ],
+            'stage' => [
+                'describe' => '客户跟进阶段',
+                'options' => [
+                    5 => '待跟进',
+                    10 => '跟进中',
+                    15 => '洽谈中',
+                ],
+            ],
+            'industry' => [
+                'describe' => '所属行业',
+                'options' => [
+                    5 => '互联网',
+                    10 => '物流',
+                ],
+            ],
+            'priority' => [
+                'describe' => '优先级',
+                'options' => [
+                    5 => '一般',
+                    10 => '重要',
+                    15 => 'VIP',
+                ],
+            ],
+            'financing_stage' => [
+                'describe' => '融资阶段',
+                'options' => [
+                    5 => 'A轮',
+                    10 => 'B轮',
+                    15 => 'C轮',
+                ],
+            ],
+            'status' => [
+                'describe' => '融资阶段',
+                'options' => [
+                    5 => '启用',
+                    10 => '废弃',
+                ],
+            ],
+        ];
+
+        return $this->writeJson(
+            200,
+            [
+
             ] ,
             $retrunDatas
             ,
