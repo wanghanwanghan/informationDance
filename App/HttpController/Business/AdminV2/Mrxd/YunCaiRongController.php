@@ -81,9 +81,9 @@ class YunCaiRongController extends ControllerBase
             true,
             []
         );
-    } 
+    }
 
-    function jiaoYiGongGaoList(): bool
+    function testLists(): bool
     {
         $requestData =  $this->getRequestData();
 
