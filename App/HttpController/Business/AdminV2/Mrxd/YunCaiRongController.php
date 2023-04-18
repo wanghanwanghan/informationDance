@@ -83,7 +83,7 @@ class YunCaiRongController extends ControllerBase
         );
     }
 
-    function testLists(): bool
+    function dealInfoLists(): bool
     {
         $requestData =  $this->getRequestData();
         $requestData =  $this->getRequestData();

@@ -164,6 +164,7 @@ class AdminV2Router
             $routeCollector->addRoute(['GET', 'POST'], '/getProductNameHot', $prefix . 'getProductNameHot');
             //交易查询
             $routeCollector->addRoute(['GET', 'POST'], '/testLists', $prefix . 'testLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/dealInfoLists', $prefix . 'dealInfoLists');
         });
 
         return true;
