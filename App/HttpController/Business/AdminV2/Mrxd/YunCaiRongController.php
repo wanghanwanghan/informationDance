@@ -108,18 +108,18 @@ class YunCaiRongController extends ControllerBase
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         $result = curl_exec($ch);
-        echo $result;
-        if (curl_errno($ch)) {
-            echo 'Error:' . curl_error($ch);
-        }
+
+        $resultArr = json_decode($result,true);
         curl_close($ch);
 
         return $this->writeJson(
             200,
             [
-
+                'pageNum' => $page,
+                'pageSize' => $pageSize,
+                'total' => $resultArr['data']['total'],
             ] ,
-            $resultArr['data']
+            $resultArr['data']['list']
             ,
             '成功',
             true,
