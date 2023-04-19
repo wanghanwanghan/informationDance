@@ -1092,7 +1092,7 @@ class DianZiQianService extends ServiceBase
         // 业务方AppCode
         $param["appCode"]   = $this->app_code;
         $param["version"]   = "v1";
-        $param["timestamp"] = time();
+        $param["timestamp"] = $this->getMillisecond();
         $token              = $this->makeSign($param, $path);
         if (!empty($file)) {
             $f                   = curl_file_create($file['fileName']);
@@ -1101,7 +1101,13 @@ class DianZiQianService extends ServiceBase
         $param["token"] = $token;
         return $param;
     }
+    public function getMillisecond() {
 
+        list($t1, $t2) = explode(' ', microtime());
+
+        return (float)sprintf('%.0f',(floatval($t1)+floatval($t2))*1000);
+
+    }
     /**
      * 发送请求
      * @param $param
