@@ -190,6 +190,16 @@ class ToolsFileLists extends ModelBase
             if($field=='UNISCID'){
                 $res['UNISCID'] = ''.$res['UNISCID']. "\t";
             }
+
+            if($field=='gong_si_jian_jie'){
+                $tmpContent = $res['gong_si_jian_jie'];
+                $tmpContent =  str_replace("\r\n","",$tmpContent);
+                $tmpContent =  str_replace("\r","",$tmpContent);
+                $tmpContent =  str_replace("\n","",$tmpContent);
+                $tmpContent =  str_replace("\"","",$tmpContent);
+                $res['gong_si_jian_jie'] = $tmpContent;
+            }
+
             if($field=='ENTTYPE'){
                 $cname =   CodeCa16::findByCode($res['ENTTYPE']);
                 $res['ENTTYPE'] =  $cname?$cname->getAttr('name'):'';
