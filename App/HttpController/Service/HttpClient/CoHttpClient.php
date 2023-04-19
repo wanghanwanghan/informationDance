@@ -83,6 +83,7 @@ class CoHttpClient extends ServiceBase
             if ($method === 'GET') $data = $request->get();
 
             //整理结果
+            $rawResponse = $data;
             $data = $data->getBody();
             /**
             CommonService::getInstance()->log4PHP([$data], 'info', 'http_return_data');
@@ -90,10 +91,18 @@ class CoHttpClient extends ServiceBase
              */
             $d = jsonDecode($data,true);
 
-            //$a = json_last_error_msg();
-
+            //$a = json_last_error_msg(); 
             CommonService::getInstance()->log4PHP(@json_encode(
-                ['类型'=>'直接请求'  ,'请求地址' => $url, '请求数据' => $postData, '头部' => $headers,'返回原始结果'=>$data, '返回原始结果-解析为数组'=>$d, ],JSON_UNESCAPED_UNICODE
+                [
+                    '类型'=>'直接请求'  ,
+                    '请求地址' => $url,
+                    '请求数据' => $postData,
+                    '头部' => $headers,
+                    '返回原始结果-解析为数组'=>$d,
+                    '返回原始结果'=>$data,
+                    'HttpClient的ErrCode'=>$rawResponse->getErrCode(),
+                    'HttpClient的ErrMsg'=>$rawResponse->getErrMsg(),
+                ],JSON_UNESCAPED_UNICODE
             ), 'info', 'http_return_data');
 
             //            CommonService::getInstance()->log4PHP([$d,$a], 'info', 'http_return_data');

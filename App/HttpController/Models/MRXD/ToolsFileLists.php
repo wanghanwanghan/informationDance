@@ -191,6 +191,7 @@ class ToolsFileLists extends ModelBase
                 $res['UNISCID'] = ''.$res['UNISCID']. "\t";
             }
 
+            //公司简介  需要处理掉换行符 不然会导致错行
             if($field=='gong_si_jian_jie'){
                 $tmpContent = $res['gong_si_jian_jie'];
                 $tmpContent =  str_replace("\r\n","",$tmpContent);
