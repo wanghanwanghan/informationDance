@@ -1138,7 +1138,7 @@ return $output;
     {
         switch (strtolower($type)) {
             case 'json':
-                return ['Content-Type' => 'application/json'];
+                return [];
             case 'file':
                 return ['Content-Type' => 'multipart/form-data'];
             default:
