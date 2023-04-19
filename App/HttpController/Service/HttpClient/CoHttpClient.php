@@ -32,7 +32,7 @@ class CoHttpClient extends ServiceBase
 
         //不是空，说明缓存里有数据，直接返回
         if (!empty($take)){
-            CommonService::getInstance()->log4PHP(json_encode(
+            CommonService::getInstance()->log4PHP(@json_encode(
                 ['类型'=>'直接从缓存取'  ,'请求地址' => $url, '请求数据' => $postData, '头部' => $headers,'返回结果'=>jsonDecode($take) ],JSON_UNESCAPED_UNICODE
             ), 'info', 'http_return_data');
             return $this->needJsonDecode ? jsonDecode($take) : $take;
@@ -92,7 +92,7 @@ class CoHttpClient extends ServiceBase
 
             //$a = json_last_error_msg();
 
-            CommonService::getInstance()->log4PHP(json_encode(
+            CommonService::getInstance()->log4PHP(@json_encode(
                 ['类型'=>'直接请求'  ,'请求地址' => $url, '请求数据' => $postData, '头部' => $headers,'返回原始结果'=>$data, '返回原始结果-解析为数组'=>$d, ],JSON_UNESCAPED_UNICODE
             ), 'info', 'http_return_data');
 
@@ -114,7 +114,7 @@ class CoHttpClient extends ServiceBase
             //                CommonService::getInstance()->log4PHP([$url, $postData, $d, $headers], 'info', 'http_return_data');
             //            }
         } catch (\Exception $e) {
-            CommonService::getInstance()->log4PHP(json_encode([
+            CommonService::getInstance()->log4PHP(@json_encode([
                 ['类型'=>'异常'  ,'请求地址' => $url, '请求数据' => $postData, '头部' => $headers,'异常信息'=>$e->getMessage(), ]
             ],JSON_UNESCAPED_UNICODE), 'info', 'http_return_data_e');
 
