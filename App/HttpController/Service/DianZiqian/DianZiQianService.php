@@ -1119,7 +1119,7 @@ class DianZiQianService extends ServiceBase
     function doCurl($param, $url)
     {
         $header = [
-            "Content-Type:application/json",
+            "Content-Type:multipart/form-data",
         ];
         $ch     = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
