@@ -916,7 +916,7 @@ class DianZiQianService extends ServiceBase
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param, $this->getHeader('json'));
+            ->send($this->url . $path, $param);
 
         $r = $this->doCurl($param, $this->url . $path);
         CommonService::getInstance()->log4PHP([$this->url . $path, $param,$r,$resp], 'info', 'signerPerson');
