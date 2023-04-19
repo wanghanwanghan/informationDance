@@ -897,7 +897,7 @@ class DianZiQianService extends ServiceBase
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param, $this->getHeader('file'));
+            ->send($this->url . $path, $param, $this->getHeader('json'));
         CommonService::getInstance()->log4PHP([$this->url . $path, $param], 'info', 'signerPerson');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
@@ -916,7 +916,7 @@ class DianZiQianService extends ServiceBase
         $param     = $this->buildParam($paramData, $path);
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
-            ->send($this->url . $path, $param, $this->getHeader('file'));
+            ->send($this->url . $path, $param, $this->getHeader('json'));
 
         $r = $this->doCurl($param, $this->url . $path);
         CommonService::getInstance()->log4PHP([$this->url . $path, $param,$r,$resp], 'info', 'signerPerson');
