@@ -21,6 +21,11 @@ class AdminV2Router
         $this->FinanceRouterV1($routeCollector);
         $this->MailRouterV1($routeCollector);
         $this->SouKeRouterV1($routeCollector);
+        //客户管理
+        $this->CustomerRouter($routeCollector);
+        //云彩容
+        $this->YunCaiRongRouter($routeCollector);
+        $this->YunCaiRongRouter2($routeCollector);
         $this->ToolsRouterV1($routeCollector);
         $this->InvoiceRouterV1($routeCollector);
         $this->ApiUserRouterV1($routeCollector);
@@ -130,12 +135,59 @@ class AdminV2Router
         return true;
     }
 
+    //客户管理
+    private function CustomerRouter(RouteCollector $routeCollector): bool
+    {
+
+        $prefix = '/Business/AdminV2/Mrxd/CustomerController/';
+        $routeCollector->addGroup('/Mrxd', function (RouteCollector $routeCollector) use ($prefix) {
+            //客户管理列表
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllCustomers', $prefix . 'getAllCustomers');
+            //添加新的客户
+            $routeCollector->addRoute(['GET', 'POST'], '/addNewCustomer', $prefix . 'addNewCustomer');
+            //获取所有销售
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllSales', $prefix . 'getAllSales');
+            //相关的OPTIONs
+            $routeCollector->addRoute(['GET', 'POST'], '/getCustomerOptions', $prefix . 'getCustomerOptions');
+        });
+
+        return true;
+    }
+
+    //云彩容
+    private function YunCaiRongRouter(RouteCollector $routeCollector): bool
+    {
+
+        $prefix = '/Business/AdminV2/Mrxd/YunCaiRongController/';
+        $routeCollector->addGroup('/Mrxd', function (RouteCollector $routeCollector) use ($prefix) {
+            //热点词条
+            $routeCollector->addRoute(['GET', 'POST'], '/getProductNameHot', $prefix . 'getProductNameHot');
+            //交易查询
+            $routeCollector->addRoute(['GET', 'POST'], '/testLists', $prefix . 'testLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/dealInfoLists', $prefix . 'dealInfoLists');
+        });
+
+        return true;
+    }
+    private function YunCaiRongRouter2(RouteCollector $routeCollector): bool
+    {
+
+        $prefix = '/Business/AdminV2/Mrxd/YunCaiRongNewController/';
+        $routeCollector->addGroup('/yuncairong', function (RouteCollector $routeCollector) use ($prefix) {
+            //热点词条
+            $routeCollector->addRoute(['GET', 'POST'], '/getJiaoYiInfo', $prefix . 'getJiaoYiInfo');
+            //交易查询
+            $routeCollector->addRoute(['GET', 'POST'], '/getHotWords', $prefix . 'getHotWords');
+        });
+
+        return true;
+    }
+
     private function SouKeRouterV1(RouteCollector $routeCollector): bool
     {
         $prefix = '/Business/AdminV2/Mrxd/SouKe/SouKeController/';
 
         $routeCollector->addGroup('/souke', function (RouteCollector $routeCollector) use ($prefix) {
-
             $routeCollector->addRoute(['GET', 'POST'], '/getSearchOption', $prefix . 'getSearchOption');//所有支持的搜索选项
             $routeCollector->addRoute(['GET', 'POST'], '/calMarketShare', $prefix . 'calMarketShare');//所有支持的搜索选项
             $routeCollector->addRoute(['GET', 'POST'], '/advancedSearch', $prefix . 'advancedSearch');//高级搜索
