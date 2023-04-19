@@ -917,7 +917,9 @@ class DianZiQianService extends ServiceBase
         $resp      = (new CoHttpClient())
             ->useCache($this->curl_use_cache)
             ->send($this->url . $path, $param, $this->getHeader('file'));
-        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$resp], 'info', 'signerPerson');
+
+        $r = $this->doCurl($param, $this->url . $path);
+        CommonService::getInstance()->log4PHP([$this->url . $path, $param,$r,$resp], 'info', 'signerPerson');
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
@@ -1092,7 +1094,7 @@ class DianZiQianService extends ServiceBase
         // 业务方AppCode
         $param["appCode"]   = $this->app_code;
         $param["version"]   = "v1";
-        $param["timestamp"] = time();
+        $param["timestamp"] = $this->getMillisecond();
         $token              = $this->makeSign($param, $path);
         if (!empty($file)) {
             $f                   = curl_file_create($file['fileName']);
@@ -1101,7 +1103,13 @@ class DianZiQianService extends ServiceBase
         $param["token"] = $token;
         return $param;
     }
+    public function getMillisecond() {
 
+        list($t1, $t2) = explode(' ', microtime());
+
+        return (float)sprintf('%.0f',(floatval($t1)+floatval($t2))*1000);
+
+    }
     /**
      * 发送请求
      * @param $param
@@ -1111,7 +1119,7 @@ class DianZiQianService extends ServiceBase
     function doCurl($param, $url)
     {
         $header = [
-            "Content-Type:application/json",
+            "Content-Type:multipart/form-data",
         ];
         $ch     = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
