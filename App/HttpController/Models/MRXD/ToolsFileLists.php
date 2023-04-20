@@ -293,9 +293,9 @@ class ToolsFileLists extends ModelBase
 
         $allFields = AdminUserSoukeConfig::getAllFieldsV2();
         $allFields = $fields = [
-//            'ENTNAME' => '企业名',
+            'ENTNAME' => '企业名',
 //            'PRIPID' => '公示系统ID',
-//            'UNISCID' => '统一社会信用代码',
+            'UNISCID' => '统一社会信用代码',
 //            'REGNO' => '注册号',
 //            'NACAOID' => '组织机构代码',
 //            'NAME' => '法人姓名',
