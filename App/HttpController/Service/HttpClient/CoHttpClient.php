@@ -91,17 +91,17 @@ class CoHttpClient extends ServiceBase
              */
             $d = jsonDecode($data,true);
 
-            //$a = json_last_error_msg(); 
+            //$a = json_last_error_msg();
             CommonService::getInstance()->log4PHP(@json_encode(
                 [
-                    '类型'=>'直接请求'  ,
+                    '类型' => '直接请求'  ,
                     '请求地址' => $url,
                     '请求数据' => $postData,
                     '头部' => $headers,
-                    '返回原始结果-解析为数组'=>$d,
-                    '返回原始结果'=>$data,
-                    'HttpClient的ErrCode'=>$rawResponse->getErrCode(),
-                    'HttpClient的ErrMsg'=>$rawResponse->getErrMsg(),
+                    '返回原始结果-解析为数组'=> $d,
+                    '返回原始结果' => $data,
+                    'HttpClient的ErrCode' => $rawResponse->getErrCode(),
+                    'HttpClient的ErrMsg' => $rawResponse->getErrMsg(),
                 ],JSON_UNESCAPED_UNICODE
             ), 'info', 'http_return_data');
 
@@ -124,7 +124,7 @@ class CoHttpClient extends ServiceBase
             //            }
         } catch (\Exception $e) {
             CommonService::getInstance()->log4PHP(@json_encode([
-                ['类型'=>'异常'  ,'请求地址' => $url, '请求数据' => $postData, '头部' => $headers,'异常信息'=>$e->getMessage(), ]
+                ['类型' => '异常'  ,'请求地址' => $url, '请求数据' => $postData, '头部' => $headers,'异常信息' => $e->getMessage(), ]
             ],JSON_UNESCAPED_UNICODE), 'info', 'http_return_data_e');
 
             $this->writeErr($e, 'CoHttpClient');
