@@ -1140,7 +1140,7 @@ return $output;
             case 'json':
                 return [];
             case 'file':
-                return ['Content-Type' => 'multipart/form-data'];
+                return ['Content-Type' => 'multipart/form-data;'];
             default:
                 return [];
         }
