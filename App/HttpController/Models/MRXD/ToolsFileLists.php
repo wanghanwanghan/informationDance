@@ -474,6 +474,15 @@ class ToolsFileLists extends ModelBase
 
      */
     //
+
+    static  function delSpecialCharater($str){
+        $str =  str_replace("\r\n","",$str);
+        $str =  str_replace("\r","",$str);
+        $str =  str_replace("\n","",$str);
+        $str =  str_replace("\"","",$str);
+        return $str;
+    }
+
     static function pullGongKaiContacts($params=[]){
         $title = [
             "企业名称",
@@ -641,6 +650,15 @@ class ToolsFileLists extends ModelBase
                             continue;
                         }
                    }
+
+                   $datautem['duty'] = self::delSpecialCharater($datautem['duty']);
+                   $datautem['source'] = self::delSpecialCharater($datautem['source']);
+                   $datautem['name'] = self::delSpecialCharater($datautem['name']);
+                   $datautem['quhao'] = self::delSpecialCharater($datautem['quhao']);
+                   $datautem['url'] = self::delSpecialCharater($datautem['url']);
+                   $datautem['lianxi'] = self::delSpecialCharater($datautem['lianxi']);
+                   $datautem['lianxitype'] = self::delSpecialCharater($datautem['lianxitype']);
+
 
                    $tmpDataItem = [
                        $entname,
