@@ -42,26 +42,28 @@ class MobileCheckInfo extends ModelBase
     }
 
     public static function addRecord($requestData){
+        $tmpDb = [
+            'mobile' => $requestData['mobile'],
+            'status' => $requestData['status'],
+            'area' => $requestData['area']?:'',
+            'numberType' => $requestData['numberType']?:'',
+            'chargesStatus' => $requestData['chargesStatus'],
+            'lastTime' => $requestData['lastTime'],
+            'raw_return' => $requestData['raw_return']?:'',
+            'remark' => $requestData['remark']?:'',
+            'created_at' => time(),
+            'updated_at' => time(),
+        ];
         try {
-           $res =  MobileCheckInfo::create()->data([
-                'mobile' => $requestData['mobile'],
-                'status' => $requestData['status'],
-                'area' => $requestData['area']?:'',
-                'numberType' => $requestData['numberType']?:'',
-                'chargesStatus' => $requestData['chargesStatus'],
-                'lastTime' => $requestData['lastTime'],
-                'raw_return' => $requestData['raw_return']?:'',
-                'remark' => $requestData['remark']?:'',
-               'created_at' => time(),
-               'updated_at' => time(),
-           ])->save();
+           $res =  MobileCheckInfo::create()->data($tmpDb)->save();
 
         } catch (\Throwable $e) {
             return CommonService::getInstance()->log4PHP(
                 json_encode([
                     __CLASS__.__FUNCTION__ .__LINE__,
                     'failed',
-                    '$requestData' => $requestData
+                    '$tmpDb' => $tmpDb,
+                    'getMessage' => $e->getMessage(),
                 ])
             );
         }
