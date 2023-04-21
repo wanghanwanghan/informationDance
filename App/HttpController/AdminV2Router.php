@@ -165,6 +165,7 @@ class AdminV2Router
             //交易查询
             $routeCollector->addRoute(['GET', 'POST'], '/testLists', $prefix . 'testLists');
             $routeCollector->addRoute(['GET', 'POST'], '/dealInfoLists', $prefix . 'dealInfoLists');
+            $routeCollector->addRoute(['GET', 'POST'], '/biaoXunInfoLists', $prefix . 'biaoXunInfoLists');
         });
 
         return true;

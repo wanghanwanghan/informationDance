@@ -125,4 +125,56 @@ class YunCaiRongController extends ControllerBase
             []
         );
     }
+
+    function biaoXunInfoLists(): bool
+    {
+        $requestData =  $this->getRequestData();
+        $requestData =  $this->getRequestData();
+        $page = $requestData['pageNum']?:1;
+        $pageSize = $requestData['pageSize']?:10;
+        $keyWord = $requestData['keyWord']?:'';
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, 'https://api.qibiaoduo.com/api/bid/projects/search/projects?page=3&perPage=20');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0); // Skip SSL Verification
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "{\"regionCodes\":[],\"ownerNicCodes\":[],\"nicCodes\":[],\"infoTypes\":[],\"keywordsExclude\":[],\"keywordsExtend\":[],\"keywords\":[],\"pageOwnerCodes\":\"18\"}");
+        curl_setopt($ch, CURLOPT_ENCODING, 'gzip, deflate');
+
+        $headers = array();
+        $headers[] = 'Host: api.qibiaoduo.com';
+        $headers[] = 'Sec-Ch-Ua: \"Chromium\";v=\"112\", \"Google Chrome\";v=\"112\", \"Not:A-Brand\";v=\"99\"';
+        $headers[] = 'Sec-Ch-Ua-Mobile: ?0';
+        $headers[] = 'Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbmhhbmNlcyI6IlBDIiwidXNlcl9uYW1lIjoidWlkXzcxNTE2MzQ4Mzg5OTYzNzc2MCIsInNjb3BlIjpbInJlYWQiLCJ3cml0ZSJdLCJ1c2VyOmp3dHY6dWlkXzcxNTE2MzQ4Mzg5OTYzNzc2MCI6ImI0NzUyZDE0LWI0NTEtNDg1Ny04ZmE4LWYwNmE2MDZlNmYxMyIsImV4cCI6MTY4NDY1ODIzNywiYXV0aG9yaXRpZXMiOlsidXNlciJdLCJqdGkiOiJiMTBKbTVNQ1VjeV9qRjBINl8wYlAxdkNVbzAiLCJjbGllbnRfaWQiOiJxaWtlLWJpZC1yZW1lbWJlci1tZSJ9.SXpK9oL158fHB0w9zQROV1zLSkfRlfwEBt5bjXvgsj6wJcLGjSTA4-cR16oEaZMvT5VuyOjjSqBa3Hdct4YuSYZMxgWv_icYN5cvIS6QGKDpdBSys4vVO1zJ7Fe53ltBwfm-MO064Aah7XXfomE3Thy0TLIdZnMQwuILiStlm2HyrHf7UHakp2T4daU7fAcr0RQmXn_6Ib-MB_2JPcKFMBQRCyv88vpcyNepOwHKOEU1R6LaFStUvF9I5F2lmCsePSbmvCVZhG7mD7VBUwzw0uRC9FAYAO2Ak6lviz0Vv1czQNNsXc1aKv-bHRr23HgFp-l-kfqXIKLtJBAF1BfJng';
+        $headers[] = 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36';
+        $headers[] = 'Content-Type: application/json;charset=UTF-8';
+        $headers[] = 'Accept: application/json';
+        $headers[] = 'Productid: 20';
+        $headers[] = 'Sec-Ch-Ua-Platform: \"Windows\"';
+        $headers[] = 'Origin: https://www.qibiaoduo.com';
+        $headers[] = 'Sec-Fetch-Site: same-site';
+        $headers[] = 'Sec-Fetch-Mode: cors';
+        $headers[] = 'Sec-Fetch-Dest: empty';
+        $headers[] = 'Referer: https://www.qibiaoduo.com/';
+        $headers[] = 'Accept-Language: zh-CN,zh;q=0.9,en;q=0.8,zh-TW;q=0.7';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        $resultArr = json_decode($result,true);
+        return $this->writeJson(
+            200,
+            [
+                'pageNum' => $page,
+                'pageSize' => $pageSize,
+                'total' => $resultArr['data']['count'],
+            ] ,
+            $resultArr['data']['rows']
+            ,
+            '成功',
+            true,
+            []
+        );
+    }
 }
