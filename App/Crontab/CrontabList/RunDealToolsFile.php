@@ -1080,7 +1080,7 @@ class RunDealToolsFile extends AbstractCronTask
         $allInitDatas =  ToolsUploadQueue::findBySql(
             " WHERE status = ".ToolsUploadQueue::$state_init.
                     " AND touch_time  is NULL 
-                     LIMIT 1 
+                     LIMIT 3 
                      "
         );
 
