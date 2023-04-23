@@ -23,6 +23,7 @@ use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\BusinessBase\CompanyClueMd5;
+use App\HttpController\Models\BusinessBase\ZhifubaoInfo;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
@@ -646,7 +647,50 @@ class RunDealToolsFile extends AbstractCronTask
 
         }
     }
+
     static function  getYieldDataForTiChuDaiLiJiZhangAndKonghao($xlsx_name){
+        $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
+        $excel_read->openFile($xlsx_name)->openSheet();
+
+        $datas = [];
+        $nums = 1;
+
+        while (true) {
+            if($nums%300==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        '根据手机号查询支付宝' => $xlsx_name,
+                        '已生成' => $nums,
+                    ],JSON_UNESCAPED_UNICODE)
+                );
+            }
+            $one = $excel_read->nextRow([
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+            ]);
+
+            if (empty($one)) {
+                break;
+            }
+
+            //手机号
+            $value0 = self::strtr_func($one[0]);
+            $searchRes = ZhifubaoInfo::findByPhoneV2(
+                $value0
+            );
+            //nickname
+            yield $datas[] = [
+                //手机号
+                $value0,
+                //支付宝
+                $searchRes ?$searchRes->nickname :'',
+            ]; 
+            $nums ++;
+        }
+    }
+
+    static function  getYieldDataForGetZhiFuBaoFromDB($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
 
@@ -733,6 +777,7 @@ class RunDealToolsFile extends AbstractCronTask
             $nums ++;
         }
     }
+
     static function  getYieldDataHeaderForTiChuDaiLiJiZhangAndKonghao($xlsx_name){
         return [
             '企业',
@@ -977,6 +1022,12 @@ class RunDealToolsFile extends AbstractCronTask
                 $tmpXlsxHeaders = self::getYieldDataHeaderForTiChuDaiLiJiZhangAndKonghao($InitData['upload_file_name']);
             }
 
+            if(
+                $InitData['type'] == 35
+            ){
+                $tmpXlsxDatas = self::getYieldDataForTiChuDaiLiJiZhangAndKonghao($InitData['upload_file_name']);
+                $tmpXlsxHeaders = self::getYieldDataHeaderForTiChuDaiLiJiZhangAndKonghao($InitData['upload_file_name']);
+            }
 
             $config=  [
                 'path' => TEMP_FILE_PATH // xlsx文件保存路径

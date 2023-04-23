@@ -100,6 +100,10 @@ class ToolsController extends ControllerBase
                 'name' => '剔除代理记账并去空号',
                 'path' => '/Static/Template/剔除代理记账并去空号.xlsx',
             ],
+            [
+                'name' => '根据手机号查询库里的支付宝名称',
+                'path' => '/Static/Template/根据手机号查询库里的支付宝名称.xlsx',
+            ],
         ],'');
     }
 
@@ -116,6 +120,7 @@ class ToolsController extends ControllerBase
                 20  =>  '将表格根据手机号拆分成多行',
                 //25  =>  '补全企业字段',
                 30  =>  '剔除代理记账并去空号',
+                35  =>  '根据手机号取库里的支付宝信息',
         ],'');
     }
 
