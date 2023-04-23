@@ -685,7 +685,7 @@ class RunDealToolsFile extends AbstractCronTask
                 //手机号
                 $value0,
                 //支付宝
-                $searchRes ?$searchRes->nickname :'',
+                $searchRes ?$searchRes['nickname'] :'',
             ];
             $nums ++;
         }
@@ -721,12 +721,13 @@ class RunDealToolsFile extends AbstractCronTask
             $searchRes = ZhifubaoInfo::findByPhoneV2(
                 $value0
             );
+
             //nickname
             yield $datas[] = [
                 //手机号
                 $value0,
                 //支付宝
-                $searchRes ?$searchRes->nickname :'',
+                $searchRes ?$searchRes['nickname'] :'',
             ];
             $nums ++;
         }
@@ -832,19 +833,15 @@ class RunDealToolsFile extends AbstractCronTask
     }
     static function  getYieldDataHeaderForGetZhiFuBaoByPhone($xlsx_name){
         return [
-            '企业',
             '手机号',
-            '代理记账',
-            '手机号码检测结果',
+            '支付宝',
         ];
     }
 
     static function  getYieldDataHeaderForGetWeiXinByPhone($xlsx_name){
         return [
-            '企业',
             '手机号',
-            '代理记账',
-            '手机号码检测结果',
+            '微信',
         ];
     }
 
