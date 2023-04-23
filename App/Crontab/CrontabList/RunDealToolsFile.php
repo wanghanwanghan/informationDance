@@ -806,7 +806,7 @@ class RunDealToolsFile extends AbstractCronTask
                 $sql = "REPLACE INTO company_search_guest_h_add_list_target
                         (id,UNISCID,raw,created_at,updated_at) 
                         VALUES 
-                        ($lastId,'$value0','',".date().",".date().")
+                        ($lastId,'$value0','',".time().",".time().")
                 ";
                 $res = CompanySearchGuestHAddListTarget::runSql($sql);
                 CommonService::getInstance()->log4PHP(
@@ -822,7 +822,7 @@ class RunDealToolsFile extends AbstractCronTask
                 $sql  =  "REPLACE INTO company_search_guest_h_add_list_target
                         (UNISCID,raw,created_at,updated_at) 
                         VALUES 
-                        ('$value0','',".date().",".date().")
+                        ('$value0','',".time().",".time().")
                 ";
                 $res = CompanySearchGuestHAddListTarget::runSql($sql);
                 CommonService::getInstance()->log4PHP(
