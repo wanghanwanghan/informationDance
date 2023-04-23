@@ -108,12 +108,15 @@ class ToolsController extends ControllerBase
                 'name' => '根据手机号查询库里的微信名称',
                 'path' => '/Static/Template/根据手机号查询库里的微信名称.xlsx',
             ],
+            [
+                'name' => '根据手机号取库里的手机号状态',
+                'path' => '/Static/Template/根据手机号取库里的手机号状态.xlsx',
+            ],
         ],'');
     }
 
     // 用户-上传类型
     public function uploadeTypeLists(){
-
         return $this->writeJson(200, [], [
                 5   =>  '补全企业联系人信息(并检测手机状态)',
                 6  =>  '根据企业微信补全联系人姓名职位等信息',
@@ -126,6 +129,7 @@ class ToolsController extends ControllerBase
                 30  =>  '剔除代理记账并去空号',
                 35  =>  '根据手机号取库里的支付宝信息',
                 40  =>  '根据手机号取库里的微信信息',
+                45  =>  '根据手机号取库里的手机号状态',
         ],'');
     }
 

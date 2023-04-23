@@ -20,6 +20,7 @@ use App\HttpController\Models\AdminV2\DeliverDetailsHistory;
 use App\HttpController\Models\AdminV2\DeliverHistory;
 use App\HttpController\Models\AdminV2\DownloadSoukeHistory;
 use App\HttpController\Models\AdminV2\FinanceLog;
+use App\HttpController\Models\AdminV2\MobileCheckInfo;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\BusinessBase\CompanyClueMd5;
@@ -682,14 +683,14 @@ class RunDealToolsFile extends AbstractCronTask
                 $value0
             );
 
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    '根据手机号查询微信' => [
-                        '手机号' => $value0,
-                        '结果' => $searchRes,
-                    ]
-                ],JSON_UNESCAPED_UNICODE)
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    '根据手机号查询微信' => [
+//                        '手机号' => $value0,
+//                        '结果' => $searchRes,
+//                    ]
+//                ],JSON_UNESCAPED_UNICODE)
+//            );
 
             //nickname
             yield $datas[] = [
@@ -701,6 +702,57 @@ class RunDealToolsFile extends AbstractCronTask
             $nums ++;
         }
     }
+
+    static function  getYieldDataForGetMobileStatusFromDB($xlsx_name){
+        $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
+        $excel_read->openFile($xlsx_name)->openSheet();
+
+        $datas = [];
+        $nums = 1;
+
+        while (true) {
+            if($nums%300==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        '根据手机号查询手机号状态' => $xlsx_name,
+                        '已生成' => $nums,
+                    ],JSON_UNESCAPED_UNICODE)
+                );
+            }
+            $one = $excel_read->nextRow([
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+            ]);
+
+            if (empty($one)) {
+                break;
+            }
+
+            //手机号
+            $value0 = self::strtr_func($one[0]);
+            $searchRes =   MobileCheckInfo::findResByMobile($value0);
+
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    '根据手机号查询手机号状态' => [
+//                        '手机号' => $value0,
+//                        '结果' => $searchRes,
+//                    ]
+//                ],JSON_UNESCAPED_UNICODE)
+//            );
+
+            //nickname
+            yield $datas[] = [
+                //手机号
+                $value0,
+                json_encode($searchRes,JSON_UNESCAPED_UNICODE),
+            ];
+            $nums ++;
+        }
+    }
+
+
     static function  getYieldDataForGetZhiFuBaoFromDB($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
@@ -732,14 +784,14 @@ class RunDealToolsFile extends AbstractCronTask
             $searchRes = ZhifubaoInfo::findByPhoneV2(
                 $value0
             );
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    '根据手机号查询支付宝' => [
-                        '手机号' => $value0,
-                        '结果' => $searchRes,
-                    ]
-                ],JSON_UNESCAPED_UNICODE)
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    '根据手机号查询支付宝' => [
+//                        '手机号' => $value0,
+//                        '结果' => $searchRes,
+//                    ]
+//                ],JSON_UNESCAPED_UNICODE)
+//            );
 
             //nickname
             yield $datas[] = [
@@ -861,6 +913,13 @@ class RunDealToolsFile extends AbstractCronTask
         return [
             '手机号',
             '微信',
+        ];
+    }
+
+    static function  getYieldDataHeaderForGetPhoneRes($xlsx_name){
+        return [
+            '手机号',
+            '之前的检测结果',
         ];
     }
 
@@ -1113,6 +1172,13 @@ class RunDealToolsFile extends AbstractCronTask
             ){
                 $tmpXlsxDatas = self::getYieldDataForGetWeiXinFromDB($InitData['upload_file_name']);
                 $tmpXlsxHeaders = self::getYieldDataHeaderForGetWeiXinByPhone($InitData['upload_file_name']);
+            }
+
+            if(
+                $InitData['type'] == 45
+            ){
+                $tmpXlsxDatas = self::getYieldDataForGetMobileStatusFromDB($InitData['upload_file_name']);
+                $tmpXlsxHeaders = self::getYieldDataHeaderForGetPhoneRes($InitData['upload_file_name']);
             }
 
             $config=  [
