@@ -3371,9 +3371,9 @@ eof;
         ){
             $mobileStr = '13269706193,13269706194';
             $mobileStr = $this->getRequestData('chuangLian');
-            $res = (new ChuangLanService())->getCheckPhoneStatus([
-                'mobiles' => $mobileStr,
-            ]);
+//            $res = (new ChuangLanService())->getCheckPhoneStatus([
+//                'mobiles' => $mobileStr,
+//            ]);
 //            $res3 = (new ChuangLanService())->getCheckPhoneStatusV2([
 //                'mobiles' => $mobileStr,
 //            ]);
@@ -3381,9 +3381,9 @@ eof;
 
 
             return $this->writeJson(200, null, [
-                $res,
+//                $res,
                 $res2,
-                $res3
+//                $res3
             ]);
         }
         if(
