@@ -765,13 +765,12 @@ class RunDealToolsFile extends AbstractCronTask
 
         $datas = [];
         $nums = 1;
-        $lastId = 0;
 
         while (true) {
             if($nums%300==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        '根据信用代码更新ES' => $xlsx_name,
+                        '根据手机号查询手机号状态' => $xlsx_name,
                         '已生成' => $nums,
                     ],JSON_UNESCAPED_UNICODE)
                 );
@@ -786,59 +785,10 @@ class RunDealToolsFile extends AbstractCronTask
                 break;
             }
 
-            //企业名称
             $value0 = self::strtr_func($one[0]);
-            $companyRes = CompanyBasic::findByName($value0);
-            if(!$companyRes){
-                yield $datas[] = [
-                    $value0,
-                    "找不到该企业",
-                ];
-                $nums ++;
-                continue;
-            }
-
-            $sql = "select id FROM company_search_guest_h_add_list_target WHERE raw  <> ''  AND id >  ".$lastId. " LIMIT 1  ";
-            $res = CompanySearchGuestHAddListTarget::runSql(
-                $sql
-            );
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    '补ES' => [
-//                        'sql1' => $sql,
-//                        '$res' => $res,
-//                    ]
-//                ],JSON_UNESCAPED_UNICODE)
-//            );
-            if($res[0]){
-                $lastId = $res[0]['id'];
-                $sql = "REPLACE INTO company_search_guest_h_add_list_target    (id,UNISCID,raw,created_at,updated_at)    VALUES   ($lastId,'".$companyRes->UNISCID."','',".time().",".time().") ";
-                $res = CompanySearchGuestHAddListTarget::runSql($sql);
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        '补ES' => [
-//                            'sql2' => $sql,
-//                            '$res' => $res,
-//                        ]
-//                    ],JSON_UNESCAPED_UNICODE)
-//                );
-            }
-            else{
-                $sql  =  "REPLACE INTO company_search_guest_h_add_list_target  (UNISCID,raw,created_at,updated_at)   VALUES   ('".$companyRes->UNISCID."','',".time().",".time().") ";
-                $res = CompanySearchGuestHAddListTarget::runSql($sql);
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        '补ES' => [
-//                            'sql3' => $sql,
-//                            '$res' => $res,
-//                        ]
-//                    ],JSON_UNESCAPED_UNICODE)
-//                );
-            }
 
             yield $datas[] = [
-                $value0,
-                //$lastId,
+                $value0
             ];
             $nums ++;
         }
@@ -850,13 +800,12 @@ class RunDealToolsFile extends AbstractCronTask
 
         $datas = [];
         $nums = 1;
-        $lastId = 0;
 
         while (true) {
             if($nums%300==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        '根据信用代码更新ES' => $xlsx_name,
+                        '根据手机号查询手机号状态' => $xlsx_name,
                         '已生成' => $nums,
                     ],JSON_UNESCAPED_UNICODE)
                 );
@@ -871,50 +820,10 @@ class RunDealToolsFile extends AbstractCronTask
                 break;
             }
 
-            //信用代码
             $value0 = self::strtr_func($one[0]);
 
-            $sql = "select id FROM company_search_guest_h_add_list_target WHERE raw  <> '' AND id >  ".$lastId." LIMIT 1   ";
-            $res = CompanySearchGuestHAddListTarget::runSql(
-                $sql
-            );
-//            CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    '补ES' => [
-//                        'sql1' => $sql,
-//                        '$res' => $res,
-//                    ]
-//                ],JSON_UNESCAPED_UNICODE)
-//            );
-            if($res[0]){
-                $lastId = $res[0]['id'];
-                $sql = "REPLACE INTO company_search_guest_h_add_list_target   (id,UNISCID,raw,created_at,updated_at)    VALUES  ($lastId,'$value0','',".time().",".time().") ";
-                $res = CompanySearchGuestHAddListTarget::runSql($sql);
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        '补ES' => [
-//                            'sql2' => $sql,
-//                            '$res' => $res,
-//                        ]
-//                    ],JSON_UNESCAPED_UNICODE)
-//                );
-            }
-            else{
-                $sql  =  "REPLACE INTO company_search_guest_h_add_list_target   (UNISCID,raw,created_at,updated_at)   VALUES     ('$value0','',".time().",".time().")  ";
-                $res = CompanySearchGuestHAddListTarget::runSql($sql);
-//                CommonService::getInstance()->log4PHP(
-//                    json_encode([
-//                        '补ES' => [
-//                            'sql3' => $sql,
-//                            '$res' => $res,
-//                        ]
-//                    ],JSON_UNESCAPED_UNICODE)
-//                );
-            }
-
             yield $datas[] = [
-                $value0,
-                //$lastId,
+                $value0
             ];
             $nums ++;
         }
