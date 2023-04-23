@@ -648,7 +648,49 @@ class RunDealToolsFile extends AbstractCronTask
         }
     }
 
-    static function  getYieldDataForTiChuDaiLiJiZhangAndKonghao($xlsx_name){
+    //getYieldDataForGetWeiXinFromDB
+    static function  getYieldDataForGetWeiXinFromDB($xlsx_name){
+        $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
+        $excel_read->openFile($xlsx_name)->openSheet();
+
+        $datas = [];
+        $nums = 1;
+
+        while (true) {
+            if($nums%300==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        '根据手机号查询支付宝' => $xlsx_name,
+                        '已生成' => $nums,
+                    ],JSON_UNESCAPED_UNICODE)
+                );
+            }
+            $one = $excel_read->nextRow([
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+            ]);
+
+            if (empty($one)) {
+                break;
+            }
+
+            //手机号
+            $value0 = self::strtr_func($one[0]);
+            $searchRes = ZhifubaoInfo::findByPhoneV2(
+                $value0
+            );
+            //nickname
+            yield $datas[] = [
+                //手机号
+                $value0,
+                //支付宝
+                $searchRes ?$searchRes->nickname :'',
+            ];
+            $nums ++;
+        }
+    }
+    static function  getYieldDataForGetZhiFuBaoFromDB($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
 
@@ -690,7 +732,7 @@ class RunDealToolsFile extends AbstractCronTask
         }
     }
 
-    static function  getYieldDataForGetZhiFuBaoFromDB($xlsx_name){
+    static function  getYieldDataForTiChuDaiLiJiZhangAndKonghao($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
 
@@ -778,93 +820,7 @@ class RunDealToolsFile extends AbstractCronTask
         }
     }
 
-    static function  getYieldDataForGetWeiXinFromDB($xlsx_name){
-        $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
-        $excel_read->openFile($xlsx_name)->openSheet();
 
-        $datas = [];
-        $nums = 1;
-
-        while (true) {
-            if($nums%300==0){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        '剔除代理记账'=>$xlsx_name,
-                        '已生成'=>$nums,
-                    ],JSON_UNESCAPED_UNICODE)
-                );
-            }
-            $one = $excel_read->nextRow([
-                \Vtiful\Kernel\Excel::TYPE_STRING,
-                \Vtiful\Kernel\Excel::TYPE_STRING,
-                \Vtiful\Kernel\Excel::TYPE_STRING,
-            ]);
-
-            if (empty($one)) {
-                break;
-            }
-
-            //企业名
-            $value0 = self::strtr_func($one[0]);
-            //分号分隔的手机号
-            $value1 = self::strtr_func($one[1]);
-            $value1 = str_replace("；",";",$value1);
-            $phoneArr = explode(';',$value1);
-            $newPhonesArr = [];
-            foreach ($phoneArr as $phone){
-                if(!empty($phone)){
-                    $newPhonesArr[] = $phone;
-                }
-            }
-            // 调用接口查询手机号状态
-            $needsCheckMobilesStr =  join(',',$newPhonesArr);
-            $postData = [
-                'mobiles' => $needsCheckMobilesStr,
-            ];
-            $res = (new ChuangLanService())->getCheckPhoneStatus($postData);
-            //没有数据的话
-            if(empty($res['data'])){
-                foreach ($newPhonesArr as $newPhone) {
-                    //代理记账
-                    $daiLiJiZhang = CompanyClueMd5::daiLiJiZhang($newPhone);
-                    yield $datas[] = [
-                        $value0,
-                        $newPhone,
-                        $daiLiJiZhang,
-                        //手机号码检测结果
-                        '',
-                        '',
-                    ];
-                }
-            }
-            else{
-                /**
-                "mobile": "13269706193",
-                "lastTime": "1666262535000",
-                "area": "北京-北京",
-                "numberType": "中国联通",
-                "chargesStatus": 1,
-                "status": 1
-                 */
-                foreach ($res['data'] as $subItem) {
-                    //代理记账
-                    $daiLiJiZhang = CompanyClueMd5::daiLiJiZhang($subItem['mobile']);
-                    yield $datas[] = [
-                        //企业
-                        $value0,
-                        //手机号
-                        $subItem['mobile'],
-                        //代理记账
-                        $daiLiJiZhang,
-                        //手机号码检测结果
-                        ChuangLanService::getStatusCnameMap()[$subItem['status']],
-                    ];
-                }
-            }
-
-            $nums ++;
-        }
-    }
 
     static function  getYieldDataHeaderForTiChuDaiLiJiZhangAndKonghao($xlsx_name){
         return [
@@ -1124,6 +1080,7 @@ class RunDealToolsFile extends AbstractCronTask
             if(
                 $InitData['type'] == 30
             ){
+                //getYieldDataForTiChuDaiLiJiZhangAndKonghao
                 $tmpXlsxDatas = self::getYieldDataForTiChuDaiLiJiZhangAndKonghao($InitData['upload_file_name']);
                 $tmpXlsxHeaders = self::getYieldDataHeaderForTiChuDaiLiJiZhangAndKonghao($InitData['upload_file_name']);
             }
