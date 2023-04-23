@@ -104,6 +104,10 @@ class ToolsController extends ControllerBase
                 'name' => '根据手机号查询库里的支付宝名称',
                 'path' => '/Static/Template/根据手机号查询库里的支付宝名称.xlsx',
             ],
+            [
+                'name' => '根据手机号查询库里的微信名称',
+                'path' => '/Static/Template/根据手机号查询库里的微信名称.xlsx',
+            ],
         ],'');
     }
 
@@ -121,6 +125,7 @@ class ToolsController extends ControllerBase
                 //25  =>  '补全企业字段',
                 30  =>  '剔除代理记账并去空号',
                 35  =>  '根据手机号取库里的支付宝信息',
+                40  =>  '根据手机号取库里的微信信息',
         ],'');
     }
 

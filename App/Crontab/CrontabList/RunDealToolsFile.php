@@ -685,7 +685,7 @@ class RunDealToolsFile extends AbstractCronTask
                 $value0,
                 //支付宝
                 $searchRes ?$searchRes->nickname :'',
-            ]; 
+            ];
             $nums ++;
         }
     }
@@ -786,6 +786,15 @@ class RunDealToolsFile extends AbstractCronTask
             '手机号码检测结果',
         ];
     }
+    static function  getYieldDataHeaderForGetZhiFuBaoByPhone($xlsx_name){
+        return [
+            '企业',
+            '手机号',
+            '代理记账',
+            '手机号码检测结果',
+        ];
+    }
+
     static function  getYieldDataForCompleteCompanyInfo($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
@@ -1025,10 +1034,10 @@ class RunDealToolsFile extends AbstractCronTask
             if(
                 $InitData['type'] == 35
             ){
-                $tmpXlsxDatas = self::getYieldDataForTiChuDaiLiJiZhangAndKonghao($InitData['upload_file_name']);
-                $tmpXlsxHeaders = self::getYieldDataHeaderForTiChuDaiLiJiZhangAndKonghao($InitData['upload_file_name']);
+                $tmpXlsxDatas = self::getYieldDataForGetZhiFuBaoFromDB($InitData['upload_file_name']);
+                $tmpXlsxHeaders = self::getYieldDataHeaderForGetZhiFuBaoByPhone($InitData['upload_file_name']);
             }
-
+        
             $config=  [
                 'path' => TEMP_FILE_PATH // xlsx文件保存路径
             ];
