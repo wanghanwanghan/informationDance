@@ -797,23 +797,21 @@ class RunDealToolsFile extends AbstractCronTask
             }
 
             $sql1 = "select id FROM company_search_guest_h_add_list_target WHERE raw  <> ''  AND id >  ".$lastId. " LIMIT 1  ";
-            $res = CompanySearchGuestHAddListTarget::runSql(
-                $sql1
+            //$res = CompanySearchGuestHAddListTarget::runSql(
+            //  $sql1
+            //);
+            //$lastId = $res[0]['id'];
+            $sql2 = "REPLACE INTO company_search_guest_h_add_list_target    (id,UNISCID,raw,created_at,updated_at)    VALUES   ($lastId,'".$companyRes->UNISCID."','',".time().",".time().") ";
+            //$res = CompanySearchGuestHAddListTarget::runSql($sql);
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '补ES' => [
+                        '$sql1' => $sql1,
+                        '$sql2' => $sql2,
+                        '$lastId' => $lastId,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
             );
-            if($res[0]){
-                $lastId = $res[0]['id'];
-                $sql2 = "REPLACE INTO company_search_guest_h_add_list_target    (id,UNISCID,raw,created_at,updated_at)    VALUES   ($lastId,'".$companyRes->UNISCID."','',".time().",".time().") ";
-                //$res = CompanySearchGuestHAddListTarget::runSql($sql);
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        '补ES' => [
-                            '$sql1' => $sql1,
-                            '$sql2' => $sql2,
-                            '$lastId' => $lastId,
-                        ]
-                    ],JSON_UNESCAPED_UNICODE)
-                );
-            }
 
             yield $datas[] = [
                 $value0
