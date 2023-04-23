@@ -23,6 +23,7 @@ use App\HttpController\Models\AdminV2\FinanceLog;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\BusinessBase\CompanyClueMd5;
+use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\BusinessBase\ZhifubaoInfo;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
@@ -677,9 +678,19 @@ class RunDealToolsFile extends AbstractCronTask
 
             //手机号
             $value0 = self::strtr_func($one[0]);
-            $searchRes = ZhifubaoInfo::findByPhoneV2(
+            $searchRes = WechatInfo::findByPhoneV2(
                 $value0
             );
+
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '根据手机号查询微信' => [
+                        '手机号' => $value0,
+                        '结果' => $searchRes,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
+
             //nickname
             yield $datas[] = [
                 //手机号
@@ -720,6 +731,14 @@ class RunDealToolsFile extends AbstractCronTask
             $value0 = self::strtr_func($one[0]);
             $searchRes = ZhifubaoInfo::findByPhoneV2(
                 $value0
+            );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '根据手机号查询支付宝' => [
+                        '手机号' => $value0,
+                        '结果' => $searchRes,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
             );
 
             //nickname
