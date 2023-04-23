@@ -29,6 +29,7 @@ use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\BusinessBase\ZhifubaoInfo;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
+use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\HttpClient\CoHttpClient;
@@ -758,6 +759,98 @@ class RunDealToolsFile extends AbstractCronTask
         }
     }
 
+    static function  getYieldDataForUpdateESByName($xlsx_name){
+        $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
+        $excel_read->openFile($xlsx_name)->openSheet();
+
+        $datas = [];
+        $nums = 1;
+        $lastId = 0;
+
+        while (true) {
+            if($nums%300==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        '根据信用代码更新ES' => $xlsx_name,
+                        '已生成' => $nums,
+                    ],JSON_UNESCAPED_UNICODE)
+                );
+            }
+            $one = $excel_read->nextRow([
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+            ]);
+
+            if (empty($one)) {
+                break;
+            }
+
+            //企业名称
+            $value0 = self::strtr_func($one[0]);
+            $companyRes = CompanyBasic::findByName($value0);
+            if(!$companyRes){
+                yield $datas[] = [
+                    $value0,
+                    "找不到该企业",
+                ];
+                $nums ++;
+                continue;
+            }
+
+            $sql = "select id FROM company_search_guest_h_add_list_target WHERE raw  <> '' LIMIT 1  AND id >  ".$lastId;
+            $res = CompanySearchGuestHAddListTarget::runSql(
+                $sql
+            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    '补ES' => [
+//                        'sql1' => $sql,
+//                        '$res' => $res,
+//                    ]
+//                ],JSON_UNESCAPED_UNICODE)
+//            );
+            if($res[0]){
+                $lastId = $res[0]['id'];
+                $sql = "REPLACE INTO company_search_guest_h_add_list_target
+                        (id,UNISCID,raw,created_at,updated_at) 
+                        VALUES 
+                        ($lastId,'".$companyRes->UNISCID."','',".time().",".time().")
+                ";
+                $res = CompanySearchGuestHAddListTarget::runSql($sql);
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        '补ES' => [
+//                            'sql2' => $sql,
+//                            '$res' => $res,
+//                        ]
+//                    ],JSON_UNESCAPED_UNICODE)
+//                );
+            }
+            else{
+                $sql  =  "REPLACE INTO company_search_guest_h_add_list_target
+                        (UNISCID,raw,created_at,updated_at) 
+                        VALUES 
+                        ('".$companyRes->UNISCID."','',".time().",".time().")
+                ";
+                $res = CompanySearchGuestHAddListTarget::runSql($sql);
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        '补ES' => [
+//                            'sql3' => $sql,
+//                            '$res' => $res,
+//                        ]
+//                    ],JSON_UNESCAPED_UNICODE)
+//                );
+            }
+
+            yield $datas[] = [
+                $value0,
+                //$lastId,
+            ];
+            $nums ++;
+        }
+    }
 
     static function  getYieldDataForUpdateES($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
@@ -793,14 +886,14 @@ class RunDealToolsFile extends AbstractCronTask
             $res = CompanySearchGuestHAddListTarget::runSql(
                 $sql
             );
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    '补ES' => [
-                        'sql1' => $sql,
-                        '$res' => $res,
-                    ]
-                ],JSON_UNESCAPED_UNICODE)
-            );
+//            CommonService::getInstance()->log4PHP(
+//                json_encode([
+//                    '补ES' => [
+//                        'sql1' => $sql,
+//                        '$res' => $res,
+//                    ]
+//                ],JSON_UNESCAPED_UNICODE)
+//            );
             if($res[0]){
                 $lastId = $res[0]['id'];
                 $sql = "REPLACE INTO company_search_guest_h_add_list_target
@@ -809,14 +902,14 @@ class RunDealToolsFile extends AbstractCronTask
                         ($lastId,'$value0','',".time().",".time().")
                 ";
                 $res = CompanySearchGuestHAddListTarget::runSql($sql);
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        '补ES' => [
-                            'sql2' => $sql,
-                            '$res' => $res,
-                        ]
-                    ],JSON_UNESCAPED_UNICODE)
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        '补ES' => [
+//                            'sql2' => $sql,
+//                            '$res' => $res,
+//                        ]
+//                    ],JSON_UNESCAPED_UNICODE)
+//                );
             }
             else{
                 $sql  =  "REPLACE INTO company_search_guest_h_add_list_target
@@ -825,19 +918,19 @@ class RunDealToolsFile extends AbstractCronTask
                         ('$value0','',".time().",".time().")
                 ";
                 $res = CompanySearchGuestHAddListTarget::runSql($sql);
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        '补ES' => [
-                            'sql3' => $sql,
-                            '$res' => $res,
-                        ]
-                    ],JSON_UNESCAPED_UNICODE)
-                );
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        '补ES' => [
+//                            'sql3' => $sql,
+//                            '$res' => $res,
+//                        ]
+//                    ],JSON_UNESCAPED_UNICODE)
+//                );
             }
 
             yield $datas[] = [
                 $value0,
-                $lastId,
+                //$lastId,
             ];
             $nums ++;
         }
@@ -1011,6 +1104,18 @@ class RunDealToolsFile extends AbstractCronTask
             '手机号',
             '之前的检测结果',
             '检测结果原始返回结果',
+        ];
+    }
+
+    static function  getYieldDataHeaderForUpdateEsByCode($xlsx_name){
+        return [
+            '信用代码',
+        ];
+    }
+
+    static function  getYieldDataHeaderForUpdateEsByName($xlsx_name){
+        return [
+            '企业名称',
         ];
     }
 
@@ -1276,7 +1381,14 @@ class RunDealToolsFile extends AbstractCronTask
                 $InitData['type'] == 50
             ){
                 $tmpXlsxDatas = self::getYieldDataForUpdateES($InitData['upload_file_name']);
-                $tmpXlsxHeaders = self::getYieldDataHeaderForGetPhoneRes($InitData['upload_file_name']);
+                $tmpXlsxHeaders = self::getYieldDataHeaderForUpdateEsByCode($InitData['upload_file_name']);
+            }
+
+            if(
+                $InitData['type'] == 55
+            ){
+                $tmpXlsxDatas = self::getYieldDataForUpdateESByName($InitData['upload_file_name']);
+                $tmpXlsxHeaders = self::getYieldDataHeaderForUpdateEsByName($InitData['upload_file_name']);
             }
 
 
