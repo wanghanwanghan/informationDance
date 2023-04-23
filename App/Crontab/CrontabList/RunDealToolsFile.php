@@ -798,7 +798,7 @@ class RunDealToolsFile extends AbstractCronTask
                 continue;
             }
 
-            $sql = "select id FROM company_search_guest_h_add_list_target WHERE raw  <> '' LIMIT 1  AND id >  ".$lastId;
+            $sql = "select id FROM company_search_guest_h_add_list_target WHERE raw  <> ''  AND id >  ".$lastId. " LIMIT 1  ";
             $res = CompanySearchGuestHAddListTarget::runSql(
                 $sql
             );
@@ -812,11 +812,7 @@ class RunDealToolsFile extends AbstractCronTask
 //            );
             if($res[0]){
                 $lastId = $res[0]['id'];
-                $sql = "REPLACE INTO company_search_guest_h_add_list_target
-                        (id,UNISCID,raw,created_at,updated_at) 
-                        VALUES 
-                        ($lastId,'".$companyRes->UNISCID."','',".time().",".time().")
-                ";
+                $sql = "REPLACE INTO company_search_guest_h_add_list_target    (id,UNISCID,raw,created_at,updated_at)    VALUES   ($lastId,'".$companyRes->UNISCID."','',".time().",".time().") ";
                 $res = CompanySearchGuestHAddListTarget::runSql($sql);
 //                CommonService::getInstance()->log4PHP(
 //                    json_encode([
@@ -828,11 +824,7 @@ class RunDealToolsFile extends AbstractCronTask
 //                );
             }
             else{
-                $sql  =  "REPLACE INTO company_search_guest_h_add_list_target
-                        (UNISCID,raw,created_at,updated_at) 
-                        VALUES 
-                        ('".$companyRes->UNISCID."','',".time().",".time().")
-                ";
+                $sql  =  "REPLACE INTO company_search_guest_h_add_list_target  (UNISCID,raw,created_at,updated_at)   VALUES   ('".$companyRes->UNISCID."','',".time().",".time().") ";
                 $res = CompanySearchGuestHAddListTarget::runSql($sql);
 //                CommonService::getInstance()->log4PHP(
 //                    json_encode([
@@ -882,7 +874,7 @@ class RunDealToolsFile extends AbstractCronTask
             //信用代码
             $value0 = self::strtr_func($one[0]);
 
-            $sql = "select id FROM company_search_guest_h_add_list_target WHERE raw  <> '' LIMIT 1  AND id >  ".$lastId;
+            $sql = "select id FROM company_search_guest_h_add_list_target WHERE raw  <> '' AND id >  ".$lastId." LIMIT 1   ";
             $res = CompanySearchGuestHAddListTarget::runSql(
                 $sql
             );
@@ -896,11 +888,7 @@ class RunDealToolsFile extends AbstractCronTask
 //            );
             if($res[0]){
                 $lastId = $res[0]['id'];
-                $sql = "REPLACE INTO company_search_guest_h_add_list_target
-                        (id,UNISCID,raw,created_at,updated_at) 
-                        VALUES 
-                        ($lastId,'$value0','',".time().",".time().")
-                ";
+                $sql = "REPLACE INTO company_search_guest_h_add_list_target   (id,UNISCID,raw,created_at,updated_at)    VALUES  ($lastId,'$value0','',".time().",".time().") ";
                 $res = CompanySearchGuestHAddListTarget::runSql($sql);
 //                CommonService::getInstance()->log4PHP(
 //                    json_encode([
@@ -912,11 +900,7 @@ class RunDealToolsFile extends AbstractCronTask
 //                );
             }
             else{
-                $sql  =  "REPLACE INTO company_search_guest_h_add_list_target
-                        (UNISCID,raw,created_at,updated_at) 
-                        VALUES 
-                        ('$value0','',".time().",".time().")
-                ";
+                $sql  =  "REPLACE INTO company_search_guest_h_add_list_target   (UNISCID,raw,created_at,updated_at)   VALUES     ('$value0','',".time().",".time().")  ";
                 $res = CompanySearchGuestHAddListTarget::runSql($sql);
 //                CommonService::getInstance()->log4PHP(
 //                    json_encode([
