@@ -24,6 +24,7 @@ use App\HttpController\Models\AdminV2\MobileCheckInfo;
 use App\HttpController\Models\AdminV2\NewFinanceData;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\BusinessBase\CompanyClueMd5;
+use App\HttpController\Models\BusinessBase\CompanySearchGuestHAddListTarget;
 use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\BusinessBase\ZhifubaoInfo;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
@@ -758,6 +759,90 @@ class RunDealToolsFile extends AbstractCronTask
     }
 
 
+    static function  getYieldDataForUpdateES($xlsx_name){
+        $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
+        $excel_read->openFile($xlsx_name)->openSheet();
+
+        $datas = [];
+        $nums = 1;
+        $lastId = 0;
+
+        while (true) {
+            if($nums%300==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        '根据信用代码更新ES' => $xlsx_name,
+                        '已生成' => $nums,
+                    ],JSON_UNESCAPED_UNICODE)
+                );
+            }
+            $one = $excel_read->nextRow([
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+            ]);
+
+            if (empty($one)) {
+                break;
+            }
+
+            //信用代码
+            $value0 = self::strtr_func($one[0]);
+
+            $sql = "select id FROM company_search_guest_h_add_list_target WHERE raw  <> '' LIMIT 1  AND id >  ".$lastId;
+            $res = CompanySearchGuestHAddListTarget::runSql(
+                $sql
+            );
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    '补ES' => [
+                        'sql1' => $sql,
+                        '$res' => $res,
+                    ]
+                ],JSON_UNESCAPED_UNICODE)
+            );
+            if($res[0]){
+                $lastId = $res[0]['id'];
+                $sql = "REPLACE INTO company_search_guest_h_add_list_target
+                        (id,UNISCID,raw,created_at,updated_at) 
+                        VALUES 
+                        ($lastId,'$value0','',".date().",".date().")
+                ";
+                $res = CompanySearchGuestHAddListTarget::runSql($sql);
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        '补ES' => [
+                            'sql2' => $sql,
+                            '$res' => $res,
+                        ]
+                    ],JSON_UNESCAPED_UNICODE)
+                );
+            }
+            else{
+                $sql  =  "REPLACE INTO company_search_guest_h_add_list_target
+                        (UNISCID,raw,created_at,updated_at) 
+                        VALUES 
+                        ('$value0','',".date().",".date().")
+                ";
+                $res = CompanySearchGuestHAddListTarget::runSql($sql);
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        '补ES' => [
+                            'sql3' => $sql,
+                            '$res' => $res,
+                        ]
+                    ],JSON_UNESCAPED_UNICODE)
+                );
+            }
+
+            yield $datas[] = [
+                $value0,
+                $lastId,
+            ];
+            $nums ++;
+        }
+    }
+
     static function  getYieldDataForGetZhiFuBaoFromDB($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
@@ -1186,6 +1271,14 @@ class RunDealToolsFile extends AbstractCronTask
                 $tmpXlsxDatas = self::getYieldDataForGetMobileStatusFromDB($InitData['upload_file_name']);
                 $tmpXlsxHeaders = self::getYieldDataHeaderForGetPhoneRes($InitData['upload_file_name']);
             }
+
+            if(
+                $InitData['type'] == 50
+            ){
+                $tmpXlsxDatas = self::getYieldDataForUpdateES($InitData['upload_file_name']);
+                $tmpXlsxHeaders = self::getYieldDataHeaderForGetPhoneRes($InitData['upload_file_name']);
+            }
+
 
             $config=  [
                 'path' => TEMP_FILE_PATH // xlsx文件保存路径

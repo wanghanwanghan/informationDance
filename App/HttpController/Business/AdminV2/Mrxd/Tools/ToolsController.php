@@ -112,6 +112,10 @@ class ToolsController extends ControllerBase
                 'name' => '根据手机号取库里的手机号状态',
                 'path' => '/Static/Template/根据手机号取库里的手机号状态.xlsx',
             ],
+            [
+                'name' => '根据信用代码更新字段内容',
+                'path' => '/Static/Template/根据信用代码更新字段内容.xlsx',
+            ],
         ],'');
     }
 
@@ -130,6 +134,7 @@ class ToolsController extends ControllerBase
                 35  =>  '根据手机号取库里的支付宝信息',
                 40  =>  '根据手机号取库里的微信信息',
                 45  =>  '根据手机号取库里的手机号状态',
+                50  =>  '根据信用代码更新字段内容',
         ],'');
     }
 
