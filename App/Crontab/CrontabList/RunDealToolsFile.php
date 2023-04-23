@@ -743,9 +743,9 @@ class RunDealToolsFile extends AbstractCronTask
 //            );
 
             //nickname
-            $statusCname  =  "-777(之前未检测该手机号)";
+            $statusCname  =  "之前未检测该手机号(-777)";
             if($searchRes['status']){
-                $statusCname  =  ChuangLanService::getStatusCnameMap()[$searchRes['status']];
+                $statusCname  = ChuangLanService::getStatusCnameMap()[$searchRes['status']]."(".$searchRes['status'].')' ;
             }
             yield $datas[] = [
                 //手机号
