@@ -770,7 +770,7 @@ class RunDealToolsFile extends AbstractCronTask
             if($nums%300==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        '根据手机号查询手机号状态' => $xlsx_name,
+                        '根据名称更新ES' => $xlsx_name,
                         '已生成' => $nums,
                     ],JSON_UNESCAPED_UNICODE)
                 );
@@ -796,22 +796,28 @@ class RunDealToolsFile extends AbstractCronTask
                 continue;
             }
 
-            $sql1 = "select id FROM company_search_guest_h_add_list_target WHERE raw  <> ''  AND id >  ".$lastId. " LIMIT 1  ";
-            //$res = CompanySearchGuestHAddListTarget::runSql(
-            //  $sql1
-            //);
-            //$lastId = $res[0]['id'];
-            $sql2 = "REPLACE INTO company_search_guest_h_add_list_target    (id,UNISCID,raw,created_at,updated_at)    VALUES   ($lastId,'".$companyRes->UNISCID."','',".time().",".time().") ";
-            //$res = CompanySearchGuestHAddListTarget::runSql($sql);
-            CommonService::getInstance()->log4PHP(
-                json_encode([
-                    '补ES' => [
-                        '$sql1' => $sql1,
-                        '$sql2' => $sql2,
-                        '$lastId' => $lastId,
+            $res = CompanySearchGuestHAddListTarget::findOneToUpdate($lastId) ;
+            if($res){
+                CompanySearchGuestHAddListTarget::updateById(
+                    $res->id,
+                    [
+                        "UNISCID" => $companyRes->UNISCID,
+                        "raw" => '',
+                        "created_at" => time(),
+                        "updated_at" => time(),
                     ]
-                ],JSON_UNESCAPED_UNICODE)
-            );
+                );
+            }
+            else{
+                CompanySearchGuestHAddListTarget::addRecord(
+                    [
+                        "UNISCID" => $companyRes->UNISCID,
+                        "raw" => '',
+                        "created_at" => time(),
+                        "updated_at" => time(),
+                    ]
+                );
+            }
 
             yield $datas[] = [
                 $value0
@@ -826,12 +832,12 @@ class RunDealToolsFile extends AbstractCronTask
 
         $datas = [];
         $nums = 1;
-
+        $lastId = 0;
         while (true) {
             if($nums%300==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        '根据手机号查询手机号状态' => $xlsx_name,
+                        '根据信代更新ES' => $xlsx_name,
                         '已生成' => $nums,
                     ],JSON_UNESCAPED_UNICODE)
                 );
@@ -847,6 +853,29 @@ class RunDealToolsFile extends AbstractCronTask
             }
 
             $value0 = self::strtr_func($one[0]);
+
+            $res = CompanySearchGuestHAddListTarget::findOneToUpdate($lastId) ;
+            if($res){
+                CompanySearchGuestHAddListTarget::updateById(
+                    $res->id,
+                    [
+                        "UNISCID" => $value0,
+                        "raw" => '',
+                        "created_at" => time(),
+                        "updated_at" => time(),
+                    ]
+                );
+            }
+            else{
+                CompanySearchGuestHAddListTarget::addRecord(
+                    [
+                        "UNISCID" => $value0,
+                        "raw" => '',
+                        "created_at" => time(),
+                        "updated_at" => time(),
+                    ]
+                );
+            }
 
             yield $datas[] = [
                 $value0

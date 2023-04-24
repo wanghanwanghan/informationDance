@@ -35,33 +35,23 @@ class CompanySearchGuestHAddListTarget extends ModelBase
 //        );
 //    }
 
-//    public static function addRecord($requestData){
-//        try {
-//            $res =  ZhifubaoInfo::create()->data([
-//                'code' => $requestData['code']?:'',
-//                'phone' => $requestData['phone'],
-//                'phone_md5' => $requestData['phone_md5'],
-//                'sex' => $requestData['sex']?:'',
-//                'nickname' => $requestData['nickname']?:'',
-//                'signature' => $requestData['signature']?:'',
-//                'province' => $requestData['province']?:'',
-//                'city' => $requestData['city']?:'',
-//                'created_at' => $requestData['created_at'],
-//                'updated_at' => $requestData['updated_at'],
-//            ])->save();
-//
-//        } catch (\Throwable $e) {
-//            return CommonService::getInstance()->log4PHP(
-//                json_encode([
-//                    __CLASS__.__FUNCTION__ .__LINE__,
-//                    'failed',
-//                    '$requestData' => $requestData,
-//                    '$e' => $e->getMessage(),
-//                ])
-//            );
-//        }
-//        return $res;
-//    }
+    public static function addRecord($requestData){
+        try {
+            $model = ZhifubaoInfo::create()->data($requestData);
+            $res =  $model->save();
+
+        } catch (\Throwable $e) {
+            return CommonService::getInstance()->log4PHP(
+                json_encode([
+                    __CLASS__.__FUNCTION__ .__LINE__,
+                    'failed',
+                    $model->lastQuery()->getLastQuery(),
+                    '$e' => $e->getMessage(),
+                ])
+            );
+        }
+        return $res;
+    }
 //
 //    public static function findAllByCondition($whereArr){
 //        $res =  ZhifubaoInfo::create()
@@ -78,12 +68,12 @@ class CompanySearchGuestHAddListTarget extends ModelBase
 //        ]);
 //    }
 //
-//    public static function updateById(
-//        $id,$data
-//    ){
-//        $info = self::findById($id);
-//        return $info->update($data);
-//    }
+    public static function updateById(
+        $id,$data
+    ){
+        $info = self::findById($id);
+        return $info->update($data);
+    }
 //
 //    public static function findByConditionWithCountInfo($whereArr,$page,$pageSize){
 //        $model = ZhifubaoInfo::create()
@@ -101,37 +91,47 @@ class CompanySearchGuestHAddListTarget extends ModelBase
 //        ];
 //    }
 //
-//    public static function findByConditionV2($whereArr,$page){
-//        $model = ZhifubaoInfo::create();
-//        foreach ($whereArr as $whereItem){
-//            $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
-//        }
-//        $model->page($page)
-//            ->order('id', 'DESC')
-//            ->withTotalCount();
+    public static function findByConditionV2($whereArr,$page){
+        $model = CompanySearchGuestHAddListTarget::create();
+        foreach ($whereArr as $whereItem){
+            $model->where($whereItem['field'], $whereItem['value'], $whereItem['operate']);
+        }
+        $model->page($page)
+            ->order('id', 'DESC')
+            ->withTotalCount();
+
+        $res = $model->all();
+
+        $total = $model->lastQueryResult()->getTotalCount();
+        return [
+            'data' => $res,
+            'total' =>$total,
+        ];
+    }
 //
-//        $res = $model->all();
+    public static function findById($id){
+        $res =  CompanySearchGuestHAddListTarget::create()
+            ->where('id',$id)
+            ->get();
+        return $res;
+    }
 //
-//        $total = $model->lastQueryResult()->getTotalCount();
-//        return [
-//            'data' => $res,
-//            'total' =>$total,
-//        ];
-//    }
-//
-//    public static function findById($id){
-//        $res =  ZhifubaoInfo::create()
-//            ->where('id',$id)
-//            ->get();
-//        return $res;
-//    }
-//
-//    public static function findByPhone($phone){
-//        $res =  ZhifubaoInfo::create()
-//            ->where('phone_md5',$phone)
-//            ->get();
-//        return $res;
-//    }
+    public static function findOneToUpdate($minId){
+        $model =  CompanySearchGuestHAddListTarget::create()
+            ->where('raw','添加完成')
+            ->where('id',$minId,">=");
+        $res = $model->get();
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                '补ES' => [
+                    '找最近一个可用的' => $model->lastQuery()->getLastQuery(),
+                    '$minId' => $minId,
+                ]
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
+        return $res;
+    }
 //
 //    public static function findByPhoneV2($phone){
 //        $res =  self::findByPhone(md5($phone));
