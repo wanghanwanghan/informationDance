@@ -430,9 +430,9 @@ class ToolsFileLists extends ModelBase
                            '开始执行补全字段' => [
                                '已生成'.$i,
                                $filesData['file_name'],
-                               $dataItem,
-                               $baseArr,
-                               $allFields,
+                               //$dataItem,
+                               //$baseArr,
+                               //$allFields,
                            ]
                        ], JSON_UNESCAPED_UNICODE)
                    );
