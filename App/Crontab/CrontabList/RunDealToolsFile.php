@@ -303,7 +303,7 @@ class RunDealToolsFile extends AbstractCronTask
                 break;
             }
 
-            //第一行是标题  不是数据
+//            //第一行是标题  不是数据
             if($nums==1){
                 $nums ++;
                 yield $datas[] = [
@@ -314,7 +314,8 @@ class RunDealToolsFile extends AbstractCronTask
                     '匹配类型',
                     '匹配详情',
                     '匹配分值',
-                    '微信名',
+                    '微信名1',
+                    '微信名2',
                 ];
                 continue;
             }
@@ -324,40 +325,21 @@ class RunDealToolsFile extends AbstractCronTask
             //手机号
             $phones = self::strtr_func($one[1]);
 
-            $weiXinNames = [];
-            //微信名1
+            //尾字
+            $weiXinNames1  = '';
             $value = self::strtr_func($one[2]);
-            $value && $weiXinNames[$value] = $value;
+            $value && $weiXinNames1 = $value;
 
-            //微信名2
+            //全称
+            $weiXinNames2  = '';
             $value = self::strtr_func($one[3]);
-            $value && $weiXinNames[$value] = $value;
-
-            //微信名3
-            $value = self::strtr_func($one[4]);
-            $value && $weiXinNames[$value] = $value;
-
-            //微信名4
-            $value = self::strtr_func($one[4]);
-            $value && $weiXinNames[$value] = $value;
-
-            //微信名5
-            $value = self::strtr_func($one[4]);
-            $value && $weiXinNames[$value] = $value;
-
-            //微信名6
-            $value = self::strtr_func($one[4]);
-            $value && $weiXinNames[$value] = $value;
-
-            //微信名7
-            $value = self::strtr_func($one[4]);
-            $value && $weiXinNames[$value] = $value;
+            $value && $weiXinNames2 = $value;
 
             $showLog = false;
             if($nums%100==0){
                 $showLog = true ;
             }
-            $tmpRes = (new XinDongService())->matchContactNameByQiYeWeiXinName($companyName, $phones, $weiXinNames,$showLog);
+            $tmpRes = (new XinDongService())->matchContactNameByQiYeWeiXinName($companyName, $phones, $weiXinNames1,$weiXinNames2,$showLog);
 
             yield $datas[] = [
                 $companyName,
@@ -367,7 +349,8 @@ class RunDealToolsFile extends AbstractCronTask
                 $tmpRes['match_res']['type'],
                 $tmpRes['match_res']['details'],
                 $tmpRes['match_res']['percentage'],
-                json_encode($weiXinNames,JSON_UNESCAPED_UNICODE),
+                $weiXinNames1,
+                $weiXinNames2,
             ];
         }
     }

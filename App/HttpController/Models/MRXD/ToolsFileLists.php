@@ -733,8 +733,10 @@ class ToolsFileLists extends ModelBase
 
 
     /**
+    "REGCAP": "1000",
+       
 
-
+9:帮刘欢建模
      */
     static function pullFeiGongKaiContacts($params = []){
         $title = [
