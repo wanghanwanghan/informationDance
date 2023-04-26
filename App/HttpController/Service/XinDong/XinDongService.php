@@ -3636,7 +3636,7 @@ class XinDongService extends ServiceBase
 
             //全名
             if(
-                strpos($tmpName, $weiXinName2_2) !== false &&
+                strpos( $weiXinName2_2,$tmpName) !== false &&
                 !empty($weiXinName2_2)
             ){
                 if($showLog){
