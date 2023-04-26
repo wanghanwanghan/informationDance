@@ -3635,7 +3635,24 @@ class XinDongService extends ServiceBase
             $weiXinName2_2 = preg_replace($pattern, "", $weiXinName2);
 
             //全名
-            if(strpos($tmpName, $weiXinName2_2) !== false){
+            if(
+                strpos($tmpName, $weiXinName2_2) !== false &&
+                !empty($weiXinName2_2)
+            ){
+                if($showLog){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            "根据企业微信匹配到真实姓名[全名匹配]" => [
+                                '企业名' => $companyName ,
+                                '手机' => $phones ,
+                                '微信2' => $weiXinName2 ,
+                                '删除特殊字符的微信2' => $weiXinName2_2 ,
+                                '联系人姓名' => $tmpName ,
+                            ],
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
+
                 return [
                     'data' => $staffsDataItem,
                     'match_res' => [
@@ -3648,7 +3665,23 @@ class XinDongService extends ServiceBase
 
 
             $weiXinName1_1 = preg_replace($pattern, "", $weiXinName1);
-            if($this->end_with($tmpName, $weiXinName1_1)){
+            if(
+                $this->end_with($tmpName, $weiXinName1_1) &&
+                !empty($weiXinName1_1)
+            ){
+                if($showLog){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            "根据企业微信匹配到真实姓名[包含尾字]" => [
+                                '企业名' => $companyName ,
+                                '手机' => $phones ,
+                                '微信1' => $weiXinName1 ,
+                                '删除特殊字符的微信1' => $weiXinName1_1 ,
+                                '联系人姓名' => $tmpName ,
+                            ],
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
                 return [
                     'data' => $staffsDataItem,
                     'match_res' => [
@@ -3658,22 +3691,22 @@ class XinDongService extends ServiceBase
                     ]
                 ];
             }
-            if($showLog){
-                CommonService::getInstance()->log4PHP(
-                    json_encode([
-                        "根据企业微信匹配真实姓名" => [
-                            '企业名' => $companyName ,
-                            '手机' => $phones ,
-                            '微信1' => $weiXinName1 ,
-                            '微信2' => $weiXinName2 ,
-                            '删除特殊字符的微信1' => $weiXinName1_1 ,
-                            '删除特殊字符的微信2' => $weiXinName1_2 ,
-                            '联系人姓名' => $tmpName ,
-                            '匹配结果' => $res ,
-                        ],
-                    ],JSON_UNESCAPED_UNICODE)
-                );
-            }
+        }
+
+        if($showLog){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    "根据企业微信匹配不到真实姓名[失败]" => [
+                        '企业名' => $companyName ,
+                        '手机' => $phones ,
+                        '微信1' => $weiXinName1 ,
+                        '删除特殊字符的微信1' => $weiXinName1_1 ,
+                        '微信2' => $weiXinName2 ,
+                        '删除特殊字符的微信2' => $weiXinName2_2 ,
+                        '联系人姓名' => $tmpName ,
+                    ],
+                ],JSON_UNESCAPED_UNICODE)
+            );
         }
 
         return [];
