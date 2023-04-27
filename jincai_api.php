@@ -66,7 +66,8 @@ class jincai_api extends AbstractProcess
     protected function run($arg)
     {
         // $this->addTask();
-        $this->getInv();
+        // $this->getInv();
+        $this->_sendToOSS();
     }
 
     function apiAddTask($socialCredit)
