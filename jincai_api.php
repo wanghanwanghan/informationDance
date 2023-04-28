@@ -86,8 +86,13 @@ class jincai_api extends AbstractProcess
     //上传oss时候调用
     function _sendToOSS()
     {
+        $jump = true;
         $all = JinCaiTrace::create()->all();
         foreach ($all as $one) {
+            if ($one->getAttr('socialCredit') === '91330327693615648B') {
+                $jump = false;
+            }
+            if ($jump) continue;
             $this->sendToOSS(
                 $one->getAttr('socialCredit'),//
                 $one->getAttr('kprqq'),
