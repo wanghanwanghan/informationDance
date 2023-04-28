@@ -89,7 +89,7 @@ class jincai_api extends AbstractProcess
         $jump = true;
         $all = JinCaiTrace::create()->all();
         foreach ($all as $one) {
-            if ($one->getAttr('socialCredit') === '91330327693615648B') {
+            if ($one->getAttr('socialCredit') === '91371300MA3PPK5AXD') {
                 $jump = false;
             }
             if ($jump) continue;
