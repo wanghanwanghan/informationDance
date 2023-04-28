@@ -99,6 +99,7 @@ class jincai_api extends AbstractProcess
                 $one->getAttr('kprqz')
             );
         }
+        dd('over');
     }
 
     //通知蚂蚁
