@@ -52,7 +52,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                 $info['ys_label'], $info['NIC_ID'], substr($info['ESDATE'], 0, 4), $info['DOMDISTRICT']
             ))->expr(); 
             
-            if($runTimes%100==0){
+            if($runTimes%500==0){
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         __CLASS__.__FUNCTION__ .__LINE__,
@@ -61,7 +61,7 @@ class MatchSimilarEnterprisesProccess extends ProcessBase
                             '$score'=> $score,
                             'ENTNAME' => $info['ENTNAME']
                         ]
-                    ])
+                    ],JSON_UNESCAPED_UNICODE)
                 );
             }
 
