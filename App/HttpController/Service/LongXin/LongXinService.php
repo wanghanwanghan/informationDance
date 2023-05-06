@@ -4,6 +4,8 @@ namespace App\HttpController\Service\LongXin;
 
 use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\EntDb\EntDbEnt;
+use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
+use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyInv;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
@@ -1127,6 +1129,10 @@ class LongXinService extends ServiceBase
     {
         $companyDataObj = CompanyBasic::findByName($entName);
 
+        //ES里的基本信息
+        $res = (new XinDongService())->getEsBasicInfoV2($companyDataObj->companyid);
+         ;
+
         $returnData = [];
 
         //管理人
@@ -1143,10 +1149,23 @@ class LongXinService extends ServiceBase
 //        );
 
         foreach ($allManages as $Manage) {
+            //没有名字得不要
+            if(empty($Manage['NAME'])){
+               continue;
+            }
+
+            //检测出来是法人
             if (
-                !empty($Manage['POSITION']) &&
-                !empty($Manage['NAME'])
-            ) {
+                !empty($res['NAME']) &&
+                trim($res['NAME']) == trim($Manage['NAME'])
+            ){
+                $Manage['POSITION'] = $Manage['POSITION']."(法人)";
+                $returnData[$Manage['NAME']] = $Manage;
+                continue;
+            }
+
+            //其他得
+            if (!empty($Manage['POSITION']) ) {
                 $returnData[$Manage['NAME']] = $Manage;
             }
         }

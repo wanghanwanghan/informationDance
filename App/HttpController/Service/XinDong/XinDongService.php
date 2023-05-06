@@ -3663,7 +3663,6 @@ class XinDongService extends ServiceBase
                 ];
             }
 
-
             $weiXinName1_1 = preg_replace($pattern, "", $weiXinName1);
             if(
                 $this->end_with($tmpName, $weiXinName1_1) &&
