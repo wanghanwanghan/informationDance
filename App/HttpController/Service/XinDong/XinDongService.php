@@ -3689,6 +3689,15 @@ class XinDongService extends ServiceBase
                     );
 //                }
             }
+        }
+
+        foreach ($staffsDatas as $staffsDataItem) {
+            $tmpName = trim($staffsDataItem['NAME']);
+            if (!$tmpName) {
+                continue;
+            }
+
+            $pattern = "/[^\\x{4e00}-\\x{9fa5}a-zA-Z0-9]/u"; 
 
             $weiXinName1_1 = preg_replace($pattern, "", $weiXinName1);
             if(
@@ -3718,6 +3727,7 @@ class XinDongService extends ServiceBase
                 ];
             }
         }
+
 
         if($showLog){
             CommonService::getInstance()->log4PHP(
