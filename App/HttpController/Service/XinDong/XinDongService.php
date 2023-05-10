@@ -3706,16 +3706,16 @@ class XinDongService extends ServiceBase
             $count = substr_count($weiXinName1_1, "*");
             $weiXinName1_1 = preg_replace($pattern, "*", $weiXinName1);
             if(
-                (
-                    $this->end_with($tmpName, $weiXinName1_1) &&
-                    !empty($weiXinName1_1)
-                )  ||
-                (
+//                (
+//                    $this->end_with($tmpName, $weiXinName1_1) &&
+//                    !empty($weiXinName1_1)
+//                )  ||
+//                (
                     $count >0 &&
                     $this->end_with($tmpName, $weiXinName1_1) &&
                     !empty($weiXinName1_1)  &&
                     ($count+1) == mb_strlen($tmpName)
-                )
+//                )
             ){
                 if($showLog){
                     CommonService::getInstance()->log4PHP(
