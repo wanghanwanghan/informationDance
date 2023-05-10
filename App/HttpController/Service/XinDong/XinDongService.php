@@ -3624,17 +3624,17 @@ class XinDongService extends ServiceBase
 
         //获取所有联系人
         $staffsDatas = LongXinService::getLianXiByNameV2($companyName);
-        CommonService::getInstance()->log4PHP(
-            json_encode([
-                "matchContactNameByQiYeWeiXinName" => [
-                    '$staffsDatas' => $staffsDatas,
-                    '$companyName' => $companyName,
-                    '$phones' => $phones,
-                    '$weiXinName1' => $weiXinName1,
-                    '$weiXinName2' => $weiXinName2,
-                ],
-            ],JSON_UNESCAPED_UNICODE)
-        );
+//        CommonService::getInstance()->log4PHP(
+//            json_encode([
+//                "matchContactNameByQiYeWeiXinName" => [
+//                    '$staffsDatas' => $staffsDatas,
+//                    '$companyName' => $companyName,
+//                    '$phones' => $phones,
+//                    '$weiXinName1' => $weiXinName1,
+//                    '$weiXinName2' => $weiXinName2,
+//                ],
+//            ],JSON_UNESCAPED_UNICODE)
+//        );
 
         foreach ($staffsDatas as $staffsDataItem) {
             $tmpName = trim($staffsDataItem['NAME']);
@@ -3673,7 +3673,7 @@ class XinDongService extends ServiceBase
                     ]
                 ];
             }else{
-//                if($showLog){
+                if($showLog){
                     CommonService::getInstance()->log4PHP(
                         json_encode([
                             "根据企业微信匹配不到真实姓名[全名匹配]" => [
@@ -3687,7 +3687,7 @@ class XinDongService extends ServiceBase
                             ],
                         ],JSON_UNESCAPED_UNICODE)
                     );
-//                }
+                }
             }
         }
 
@@ -3697,7 +3697,7 @@ class XinDongService extends ServiceBase
                 continue;
             }
 
-            $pattern = "/[^\\x{4e00}-\\x{9fa5}a-zA-Z0-9]/u"; 
+            $pattern = "/[^\\x{4e00}-\\x{9fa5}a-zA-Z0-9]/u";
 
             $weiXinName1_1 = preg_replace($pattern, "", $weiXinName1);
             if(
