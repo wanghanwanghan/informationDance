@@ -3661,6 +3661,22 @@ class XinDongService extends ServiceBase
                         "percentage" => "99",
                     ]
                 ];
+            }else{
+//                if($showLog){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            "根据企业微信匹配不到真实姓名[全名匹配]" => [
+                                '企业名' => $companyName ,
+                                '手机' => $phones ,
+                                '微信2' => $weiXinName2 ,
+                                '删除特殊字符的微信2' => $weiXinName2_2 ,
+                                'res1' => strpos( $weiXinName2_2,$tmpName) ,
+                                'res2' => !empty($weiXinName2_2),
+                                '联系人姓名' => $tmpName ,
+                            ],
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+//                }
             }
 
             $weiXinName1_1 = preg_replace($pattern, "", $weiXinName1);
