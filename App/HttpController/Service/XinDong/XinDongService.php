@@ -3706,16 +3706,17 @@ class XinDongService extends ServiceBase
             $count = substr_count($weiXinName1_1, "*");
             $weiXinName1_1 = preg_replace($pattern, "*", $weiXinName1);
             if(
-//                (
-//                    $this->end_with($tmpName, $weiXinName1_1) &&
-//                    !empty($weiXinName1_1)
-//                )  ||
-//                (
+                (
+                    $count == 0 &&
+                    $this->end_with($tmpName, $weiXinName1_1) &&
+                    !empty($weiXinName1_1)
+                )  ||
+                (
                     $count >0 &&
                     $this->end_with($tmpName, $weiXinName1_1) &&
                     !empty($weiXinName1_1)  &&
                     ($count+1) == mb_strlen($tmpName)
-//                )
+                )
             ){
                 if($showLog){
                     CommonService::getInstance()->log4PHP(
@@ -3738,6 +3739,24 @@ class XinDongService extends ServiceBase
                         "percentage" => "90",
                     ]
                 ];
+            }
+            else{
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        "根据企业微信匹配不到真实姓名[包含尾字]" => [
+                            '企业名' => $companyName ,
+                            '手机' => $phones ,
+                            '微信1' => $weiXinName1 ,
+                            '删除特殊字符的微信1' => $weiXinName1_1 ,
+                            '联系人姓名' => $tmpName ,
+                            '$count ' =>  $count   ,
+                            'end_with' => $this->end_with($tmpName, $weiXinName1_1),
+                            '!empty' => !empty($weiXinName1_1)  ,
+                             '($count+1)' => ($count+1),
+                             'mb_strlen($tmpName)' =>mb_strlen($tmpName),
+                        ],
+                    ],JSON_UNESCAPED_UNICODE)
+                );
             }
         }
 
