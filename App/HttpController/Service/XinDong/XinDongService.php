@@ -3636,6 +3636,7 @@ class XinDongService extends ServiceBase
 //            ],JSON_UNESCAPED_UNICODE)
 //        );
 
+        //全名
         foreach ($staffsDatas as $staffsDataItem) {
             $tmpName = trim($staffsDataItem['NAME']);
             if (!$tmpName) {
@@ -3691,6 +3692,8 @@ class XinDongService extends ServiceBase
             }
         }
 
+        //尾字
+
         foreach ($staffsDatas as $staffsDataItem) {
             $tmpName = trim($staffsDataItem['NAME']);
             if (!$tmpName) {
@@ -3700,9 +3703,19 @@ class XinDongService extends ServiceBase
             $pattern = "/[^\\x{4e00}-\\x{9fa5}a-zA-Z0-9]/u";
 
             $weiXinName1_1 = preg_replace($pattern, "", $weiXinName1);
+            $count = substr_count($weiXinName1_1, "*");
+            $weiXinName1_1 = preg_replace($pattern, "*", $weiXinName1);
             if(
-                $this->end_with($tmpName, $weiXinName1_1) &&
-                !empty($weiXinName1_1)
+                (
+                    $this->end_with($tmpName, $weiXinName1_1) &&
+                    !empty($weiXinName1_1)
+                )  ||
+                (
+                    $count >0 &&
+                    $this->end_with($tmpName, $weiXinName1_1) &&
+                    !empty($weiXinName1_1)  &&
+                    ($count+1) == mb_strlen($tmpName)
+                )
             ){
                 if($showLog){
                     CommonService::getInstance()->log4PHP(
