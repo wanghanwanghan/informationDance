@@ -3703,7 +3703,7 @@ class XinDongService extends ServiceBase
             $pattern = "/[^\\x{4e00}-\\x{9fa5}a-zA-Z0-9]/u";
 
             $weiXinName1_1 = preg_replace($pattern, "", $weiXinName1);
-            $count = substr_count($weiXinName1_1, "*");
+            $count = substr_count($weiXinName1, "*");
             $weiXinName1_1 = preg_replace($pattern, "*", $weiXinName1);
             if(
                 (
