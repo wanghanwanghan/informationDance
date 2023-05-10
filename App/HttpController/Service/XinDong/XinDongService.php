@@ -3624,6 +3624,17 @@ class XinDongService extends ServiceBase
 
         //获取所有联系人
         $staffsDatas = LongXinService::getLianXiByNameV2($companyName);
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                "matchContactNameByQiYeWeiXinName" => [
+                    '$staffsDatas' => $staffsDatas,
+                    '$companyName' => $companyName,
+                    '$phones' => $phones,
+                    '$weiXinName1' => $weiXinName1,
+                    '$weiXinName2' => $weiXinName2,
+                ],
+            ],JSON_UNESCAPED_UNICODE)
+        );
 
         foreach ($staffsDatas as $staffsDataItem) {
             $tmpName = trim($staffsDataItem['NAME']);
