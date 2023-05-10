@@ -3704,7 +3704,7 @@ class XinDongService extends ServiceBase
 
             $weiXinName1_1 = preg_replace($pattern, "", $weiXinName1);
             $count = substr_count($weiXinName1, "*");
-            $weiXinName1_1 = preg_replace($pattern, "*", $weiXinName1);
+            $weiXinName1_1 = preg_replace($pattern, "*", $weiXinName1_1);
             if(
                 (
                     $count == 0 &&
