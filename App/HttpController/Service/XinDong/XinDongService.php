@@ -3650,7 +3650,13 @@ class XinDongService extends ServiceBase
 
             //支付宝全名
             if(
-                strpos( $zhifubao_full_2,$tmpName) !== false &&
+                (
+                    strpos( $zhifubao_full_2,$tmpName) !== false  ||
+                    (
+                        mb_strlen($zhifubao_full_2) >=2 &&
+                        strpos( $tmpName ,$zhifubao_full_2) !== false
+                    )
+                )&&
                 !empty($zhifubao_full_2)
             ){
                 if($showLog){
@@ -3696,7 +3702,13 @@ class XinDongService extends ServiceBase
 
             //企微全名
             if(
-                strpos( $qiwei_full_2,$tmpName) !== false &&
+                (
+                    strpos( $qiwei_full_2,$tmpName) !== false  ||
+                    (
+                        mb_strlen($qiwei_full_2) >=2 &&
+                        strpos( $tmpName ,$qiwei_full_2) !== false
+                    )
+                )&&
                 !empty($qiwei_full_2)
             ){
                 if($showLog){
@@ -3742,7 +3754,13 @@ class XinDongService extends ServiceBase
 
             //钉钉全名
             if(
-                strpos( $dingding_full_2,$tmpName) !== false &&
+                (
+                    strpos( $dingding_full_2,$tmpName) !== false  ||
+                    (
+                        mb_strlen($dingding_full_2) >=2 &&
+                        strpos( $tmpName ,$dingding_full_2) !== false
+                    )
+                )&& 
                 !empty($dingding_full_2)
             ){
                 if($showLog){
