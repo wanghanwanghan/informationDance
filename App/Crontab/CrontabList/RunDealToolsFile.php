@@ -276,7 +276,7 @@ class RunDealToolsFile extends AbstractCronTask
     }
 
     // 根据企业微信名匹配职位数据
-    static function  getYieldDataForQiYeWeinXin($xlsx_name){
+    static function  getYieldDataForQiYeWeinXinbak($xlsx_name){
         $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
         $excel_read->openFile($xlsx_name)->openSheet();
 
@@ -351,6 +351,102 @@ class RunDealToolsFile extends AbstractCronTask
                 $tmpRes['match_res']['percentage'],
                 $weiXinNames1,
                 $weiXinNames2,
+            ];
+        }
+    }
+    static function  getYieldDataForQiYeWeinXin($xlsx_name){
+        $excel_read = new \Vtiful\Kernel\Excel(['path' => self::$workPath]);
+        $excel_read->openFile($xlsx_name)->openSheet();
+
+        $datas = [];
+        $nums = 1;
+        while (true) {
+            if($nums%100==0){
+                CommonService::getInstance()->log4PHP(
+                    json_encode([
+                        '根据企业微信名匹配职位数据'=>[
+                            '文件名'=>$xlsx_name,
+                            '已执行'=>$nums,
+                        ],
+                    ],JSON_UNESCAPED_UNICODE)
+                );
+            }
+            $one = $excel_read->nextRow([
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+                \Vtiful\Kernel\Excel::TYPE_STRING,
+            ]);
+
+            if (empty($one)) {
+                break;
+            }
+
+//            //第一行是标题  不是数据
+            if($nums==1){
+                $nums ++;
+                yield $datas[] = [
+                    '企业名称',
+                    '手机号',
+                    '匹配到的联系人',
+                    '匹配到的职位',
+                    '匹配类型',
+                    '匹配详情',
+                    '匹配分值',
+                    '尾字',
+                    '支付宝全称',
+                    '企微全称',
+                    '钉钉全称',
+                ];
+                continue;
+            }
+            $nums ++ ;
+
+            //企业名称
+            $companyName = self::strtr_func($one[0]);
+
+            //手机号
+            $phones = self::strtr_func($one[1]);
+
+            //尾字
+            $lastWord  = '';
+            $value = self::strtr_func($one[2]);
+            $value && $lastWord = $value;
+
+            //支付宝全称
+            $zhifubao_full  = '';
+            $value = self::strtr_func($one[3]);
+            $value && $zhifubao_full = $value;
+
+            //企微全称
+            $qiwei_full  = '';
+            $value = self::strtr_func($one[4]);
+            $value && $qiwei_full = $value;
+
+            //钉钉全称
+            $dingding_full  = '';
+            $value = self::strtr_func($one[5]);
+            $value && $dingding_full = $value;
+
+            $showLog = false;
+            if($nums%100==0){
+                $showLog = true ;
+            }
+            $tmpRes = (new XinDongService())->matchContactNameByQiYeWeiXinName(
+                $companyName, $phones, $lastWord,$zhifubao_full,$qiwei_full,$dingding_full,$showLog
+            );
+
+            yield $datas[] = [
+                $companyName,
+                $phones,
+                $tmpRes['data']['NAME'],
+                $tmpRes['data']['POSITION'],
+                $tmpRes['match_res']['type'],
+                $tmpRes['match_res']['details'],
+                $tmpRes['match_res']['percentage'],
+                $lastWord,
+                $zhifubao_full,
+                $qiwei_full,
+                $dingding_full,
             ];
         }
     }

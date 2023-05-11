@@ -3619,7 +3619,264 @@ class XinDongService extends ServiceBase
 
 
     
-    function matchContactNameByQiYeWeiXinName($companyName, $phones, $weiXinName1,$weiXinName2,$showLog = false)
+    function matchContactNameByQiYeWeiXinName($companyName, $phones, $lastWord,$zhifubao_full,$qiwei_full,$dingding_full,$showLog = false)
+    {
+
+        //获取所有联系人
+        $staffsDatas = LongXinService::getLianXiByNameV2($companyName);
+        //        CommonService::getInstance()->log4PHP(
+        //            json_encode([
+        //                "matchContactNameByQiYeWeiXinName" => [
+        //                    '$staffsDatas' => $staffsDatas,
+        //                    '$companyName' => $companyName,
+        //                    '$phones' => $phones,
+        //                    '$weiXinName1' => $weiXinName1,
+        //                    '$weiXinName2' => $weiXinName2,
+        //                ],
+        //            ],JSON_UNESCAPED_UNICODE)
+        //        );
+
+        //匹配全名
+        foreach ($staffsDatas as $staffsDataItem) {
+            $tmpName = trim($staffsDataItem['NAME']);
+            if (!$tmpName) {
+                continue;
+            }
+
+            $pattern = "/[^\\x{4e00}-\\x{9fa5}a-zA-Z0-9]/u";
+            $zhifubao_full_2 = preg_replace($pattern, "", $zhifubao_full);
+            $qiwei_full_2 = preg_replace($pattern, "", $qiwei_full);
+            $dingding_full_2 = preg_replace($pattern, "", $dingding_full);
+
+            //支付宝全名
+            if(
+                strpos( $zhifubao_full_2,$tmpName) !== false &&
+                !empty($zhifubao_full_2)
+            ){
+                if($showLog){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            "根据企业微信匹配到真实姓名[全名匹配]" => [
+                                '企业名' => $companyName ,
+                                '手机' => $phones ,
+                                '支付宝全名' => $zhifubao_full ,
+                                '删除特殊字符的支付宝全名' => $zhifubao_full_2 ,
+                                '联系人姓名' => $tmpName ,
+                            ],
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
+
+                return [
+                    'data' => $staffsDataItem,
+                    'match_res' => [
+                        "type" => "全名包含",
+                        "details" => "支付宝全名包含",
+                        "percentage" => "99",
+                    ]
+                ];
+            }
+            else{
+                if($showLog){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            "根据企业微信匹配不到真实姓名[全名匹配]" => [
+                                '企业名' => $companyName ,
+                                '手机' => $phones ,
+                                '支付宝全名' => $zhifubao_full ,
+                                '删除特殊字符的支付宝全名' => $zhifubao_full_2 ,
+                                '联系人姓名' => $tmpName ,
+                                'res1' => strpos( $zhifubao_full_2,$tmpName) ,
+                                'res2' => !empty($weiXinName2_2),
+                            ],
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
+            }
+
+            //企微全名
+            if(
+                strpos( $qiwei_full_2,$tmpName) !== false &&
+                !empty($qiwei_full_2)
+            ){
+                if($showLog){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            "根据企业微信匹配到真实姓名[全名匹配]" => [
+                                '企业名' => $companyName ,
+                                '手机' => $phones ,
+                                '企微全名' => $qiwei_full ,
+                                '删除特殊字符的企微全名' => $qiwei_full_2 ,
+                                '联系人姓名' => $tmpName ,
+                            ],
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
+
+                return [
+                    'data' => $staffsDataItem,
+                    'match_res' => [
+                        "type" => "全名包含",
+                        "details" => "企微全名包含",
+                        "percentage" => "99",
+                    ]
+                ];
+            }
+            else{
+                if($showLog){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            "根据企业微信匹配不到真实姓名[全名匹配]" => [
+                                '企业名' => $companyName ,
+                                '手机' => $phones ,
+                                '企微全名' => $qiwei_full ,
+                                '删除特殊字符的企微全名' => $qiwei_full_2 ,
+                                '联系人姓名' => $tmpName ,
+                                'res1' => strpos( $qiwei_full_2,$tmpName) ,
+                                'res2' => !empty($weiXinName2_2),
+                            ],
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
+            }
+
+            //钉钉全名
+            if(
+                strpos( $dingding_full_2,$tmpName) !== false &&
+                !empty($dingding_full_2)
+            ){
+                if($showLog){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            "根据企业微信匹配到真实姓名[全名匹配]" => [
+                                '企业名' => $companyName ,
+                                '手机' => $phones ,
+                                '钉钉全名' => $dingding_full ,
+                                '删除特殊字符的钉钉全名' => $dingding_full_2 ,
+                                '联系人姓名' => $tmpName ,
+                            ],
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
+
+                return [
+                    'data' => $staffsDataItem,
+                    'match_res' => [
+                        "type" => "全名包含",
+                        "details" => "钉钉全名包含",
+                        "percentage" => "99",
+                    ]
+                ];
+            }
+            else{
+                if($showLog){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            "根据企业微信匹配不到真实姓名[全名匹配]" => [
+                                '企业名' => $companyName ,
+                                '手机' => $phones ,
+                                '钉钉全名' => $dingding_full ,
+                                '删除特殊字符的钉钉全名' => $dingding_full_2 ,
+                                '联系人姓名' => $tmpName ,
+                                'res1' => strpos( $dingding_full_2,$tmpName) ,
+                                'res2' => !empty($weiXinName2_2),
+                            ],
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
+            }
+
+        }
+
+        //尾字
+
+        foreach ($staffsDatas as $staffsDataItem) {
+            $tmpName = trim($staffsDataItem['NAME']);
+            if (!$tmpName) {
+                continue;
+            }
+
+            $pattern = "/[^\\x{4e00}-\\x{9fa5}a-zA-Z0-9]/u";
+
+            $lastWord_1 = preg_replace($pattern, "", $lastWord);
+            $count = substr_count($lastWord, "*");
+            $lastWord_1 = preg_replace($pattern, "*", $lastWord_1);
+            if(
+                (
+                    $count == 0 &&
+                    $this->end_with($tmpName, $lastWord_1) &&
+                    !empty($lastWord_1)
+                )  ||
+                (
+                    $count >0 &&
+                    $this->end_with($tmpName, $lastWord_1) &&
+                    !empty($lastWord_1)  &&
+                    ($count+1) == mb_strlen($tmpName)
+                )
+            ){
+                if($showLog){
+                    CommonService::getInstance()->log4PHP(
+                        json_encode([
+                            "根据企业微信匹配到真实姓名[包含尾字]" => [
+                                '企业名' => $companyName ,
+                                '手机' => $phones ,
+                                '尾字' => $lastWord ,
+                                '删除特殊字符的尾字' => $lastWord_1 ,
+                                '联系人姓名' => $tmpName ,
+                            ],
+                        ],JSON_UNESCAPED_UNICODE)
+                    );
+                }
+                return [
+                    'data' => $staffsDataItem,
+                    'match_res' => [
+                        "type" => "包含尾字",
+                        "details" => "包含尾字",
+                        "percentage" => "90",
+                    ]
+                ];
+            }
+            else{
+//                CommonService::getInstance()->log4PHP(
+//                    json_encode([
+//                        "根据企业微信匹配不到真实姓名[包含尾字]" => [
+//                            '企业名' => $companyName ,
+//                            '手机' => $phones ,
+//                            '微信1' => $weiXinName1 ,
+//                            '删除特殊字符的微信1' => $weiXinName1_1 ,
+//                            '联系人姓名' => $tmpName ,
+//                            '$count ' =>  $count   ,
+//                            'end_with' => $this->end_with($tmpName, $weiXinName1_1),
+//                            '!empty' => !empty($weiXinName1_1)  ,
+//                             '($count+1)' => ($count+1),
+//                             'mb_strlen($tmpName)' =>mb_strlen($tmpName),
+//                        ],
+//                    ],JSON_UNESCAPED_UNICODE)
+//                );
+            }
+        }
+
+
+        if($showLog){
+            CommonService::getInstance()->log4PHP(
+                json_encode([
+                    "根据企业微信匹配不到真实姓名[失败]" => [
+                        '企业名' => $companyName ,
+                        '手机' => $phones ,
+                        '尾字' => $lastWord,
+                        '支付宝全名' => $zhifubao_full,
+                        '企微全名' => $qiwei_full,
+                        '钉钉全名' => $dingding_full,
+                        '联系人姓名' => $tmpName ,
+                    ],
+                ],JSON_UNESCAPED_UNICODE)
+            );
+        }
+
+        return [];
+    }
+
+    function matchContactNameByQiYeWeiXinNamebak($companyName, $phones, $weiXinName1,$weiXinName2,$showLog = false)
     {
 
         //获取所有联系人
