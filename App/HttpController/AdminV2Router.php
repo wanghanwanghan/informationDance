@@ -143,8 +143,10 @@ class AdminV2Router
         $routeCollector->addGroup('/Mrxd', function (RouteCollector $routeCollector) use ($prefix) {
             //客户管理列表
             $routeCollector->addRoute(['GET', 'POST'], '/getAllCustomers', $prefix . 'getAllCustomers');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllCustomers_doc', $prefix . 'getAllCustomers_doc');
             //添加新的客户
             $routeCollector->addRoute(['GET', 'POST'], '/addNewCustomer', $prefix . 'addNewCustomer');
+            $routeCollector->addRoute(['GET', 'POST'], '/addNewCustomer_doc', $prefix . 'addNewCustomer_doc');
             //获取所有销售
             $routeCollector->addRoute(['GET', 'POST'], '/getAllSales', $prefix . 'getAllSales');
             //相关的OPTIONs

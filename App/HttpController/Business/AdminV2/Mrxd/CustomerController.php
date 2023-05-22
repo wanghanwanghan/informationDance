@@ -45,6 +45,99 @@ class CustomerController extends ControllerBase
         parent::afterAction($actionName);
     }
 
+    function getAllCustomers_doc(): bool
+    {
+        $doc =  [
+            '接口说明' => "客户管理-列表",
+            '方法名' => "getAllCustomers",
+            '域名+路由' => "http://dsjrapi.meirixindong.com/pc/v1/user/getAllCustomers",
+            '请求方式' => "POST/GET",
+            '请求参数' => [
+                '手机号' => [
+                    'key' => 'phone',
+                    '说明' => '登录成功后会返回',
+                ],
+                '鉴权TOKEN' => [
+                    'key' => 'x-token',
+                    '说明' => '登录成功后会返回',
+                ],
+            ],
+            '参数返回' => [
+                '编号/客户ID' => [
+                    'key' => 'id',
+                    '说明' => '',
+                ],
+                '客户编号' => [
+                    'key' => 'customer_number',
+                    '说明' => '',
+                ],
+                '客户名称' => [
+                    'key' => 'customer_name',
+                    '说明' => '',
+                ],
+                '客户经理' => [
+                    'key' => 'sales_info.user_name',
+                    '说明' => 'sales_info是数组',
+                ],
+                '客户来源' => [
+                    'key' => 'source_cname',
+                    '说明' => '',
+                ],
+                '客户分类' => [
+                    'key' => 'level_cname',
+                    '说明' => '',
+                ],
+                '销售阶段' => [
+                    'key' => 'stage_cname',
+                    '说明' => '',
+                ],
+                '联系方式' => [
+                    '说明' => '是数组，包含有多个联系人',
+                    '联系人姓名' =>  [
+                        "key" => "contact_info.name",
+                    ],
+                    '联系人职位' =>  [
+                        "key" => "contact_info.position",
+                    ],
+                    '联系方式' =>  [
+                        "key" => "contact_info.contact",
+                    ],
+                ],
+                '所属行业' => [
+                    'key' => 'industry_cname',
+                    '说明' => '',
+                ],
+                '所属城市' => [
+                    'key' => 'city_cname',
+                    '说明' => '',
+                ],
+                '营收规模' => [
+                    'key' => 'ying_shou_cname',
+                    '说明' => '',
+                ],
+                '客户状态/数据状态' => [
+                    'key' => 'status_cname',
+                    '说明' => '',
+                ],
+                '创建人信息/录入人信息' => [
+                    'key' => 'create_by_info.user_name',
+                    '说明' => 'create_by_info是数组',
+                ],
+                '团队人数' => [
+                    'key' => 'team_members_cname',
+                    '说明' => '',
+                ],
+                '融资阶段' => [
+                    'key' => 'financing_stage_cname',
+                    '说明' => '',
+                ],
+            ],
+            '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
+        ];
+
+        return $this->writeJson(200, $doc, '成功');
+    }
+
     //客户管理 列表
     function getAllCustomers(): bool
     {
@@ -148,13 +241,80 @@ class CustomerController extends ControllerBase
         );
     }
 
+    function addNewCustomer_doc(): bool
+    {
+        $doc =  [
+            '接口说明' => "客户管理-添加客户",
+            '方法名' => "addNewCustomer",
+            '域名+路由' => "http://dsjrapi.meirixindong.com/pc/v1/user/addNewCustomer",
+            '请求方式' => "POST/GET",
+            '请求参数' => [
+                '手机号' => [
+                    'key' => 'phone',
+                    '说明' => '登录成功后会返回',
+                ],
+                '鉴权TOKEN' => [
+                    'key' => 'x-token',
+                    '说明' => '登录成功后会返回',
+                ],
+                '客户名称' => [
+                    'key' => 'customer_name',
+                    '说明' => '',
+                ],
+                '分配给的客户经理' => [
+                    'key' => 'sales_id',
+                    '说明' => '分配的时候：下拉选择用户【用户列表数据需要从接口取】，传用户选择的id',
+                ],
+                '客户分类' => [
+                    'key' => 'level',
+                    '说明' => '具体哪些分类 从接口取',
+                ],
+                '销售阶段' => [
+                    'key' => 'stage',
+                    '说明' => '具体哪些阶段 从接口取',
+                ],
+                '客户来源' => [
+                    'key' => 'source',
+                    '说明' => '',
+                ],
+                '所属行业' => [
+                    'key' => 'industry',
+                    '说明' => '具体哪些阶段 从接口取',
+                ],
+                '所属城市' => [
+                    'key' => 'city',
+                    '说明' => '具体哪些阶段 从接口取',
+                ],
+                '营收规模' => [
+                    'key' => 'ying_shou',
+                    '说明' => '',
+                ],
+                '团队人数' => [
+                    'key' => 'team_members',
+                    '说明' => '',
+                ],
+                '融资阶段' => [
+                    'key' => 'financing_stage',
+                    '说明' => '',
+                ],
+                '客户状态/数据状态' => [
+                    'key' => 'status_cname',
+                    '说明' => '',
+                ],
+            ],
+            '参数返回' => [
+
+            ],
+            '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
+        ];
+
+        return $this->writeJson(200, $doc, '成功');
+    }
+
     //添加新的客户
     function addNewCustomer(): bool
     {
         $requestData =  $this->getRequestData();
-        $page =  $requestData['page']?:1;
-        $pageSize =  $requestData['pageSize']?:100;
-        $total = 2;
 
         DataModelExample::checkField(
             [
