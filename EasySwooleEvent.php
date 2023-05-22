@@ -71,6 +71,7 @@ class EasySwooleEvent implements Event
                 ]
             ])
         );
+
         return false;
     }
 

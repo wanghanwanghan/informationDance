@@ -3760,7 +3760,7 @@ class XinDongService extends ServiceBase
                         mb_strlen($dingding_full_2) >=2 &&
                         strpos( $tmpName ,$dingding_full_2) !== false
                     )
-                )&& 
+                )&&
                 !empty($dingding_full_2)
             ){
                 if($showLog){
