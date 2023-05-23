@@ -186,7 +186,7 @@ class RunDealQueueLists extends AbstractCronTask
     {
         //一次取十个
         $datas = QueueLists::findByConditionV2(
-           ` [
+           [
                 [
                     'field' => 'status',
                     'value' => QueueLists::$status_init,
@@ -194,7 +194,7 @@ class RunDealQueueLists extends AbstractCronTask
                 ]
             ],
             1,
-            20`
+            20
         );
 
         foreach ($datas['data'] as $data){
