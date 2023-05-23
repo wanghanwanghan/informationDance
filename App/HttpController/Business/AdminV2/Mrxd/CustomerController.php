@@ -59,7 +59,7 @@ class CustomerController extends ControllerBase
                 ],
                 '鉴权TOKEN' => [
                     'key' => 'x-token',
-                    '说明' => '登录成功后会返回',
+                    '说明' => '登录成功后会返回，传到header里',
                 ],
             ],
             '参数返回' => [
@@ -101,6 +101,12 @@ class CustomerController extends ControllerBase
                     ],
                     '联系方式' =>  [
                         "key" => "contact_info.contact",
+                    ],
+                    '联系类型' =>  [
+                        "key" => "contact_info.contact_type",
+                    ],
+                    '备注' =>  [
+                        "key" => "contact_info.remark",
                     ],
                 ],
                 '所属行业' => [
@@ -255,7 +261,7 @@ class CustomerController extends ControllerBase
                 ],
                 '鉴权TOKEN' => [
                     'key' => 'x-token',
-                    '说明' => '登录成功后会返回',
+                    '说明' => '登录成功后会返回，传到header里',
                 ],
                 '客户名称' => [
                     'key' => 'customer_name',
@@ -339,13 +345,60 @@ class CustomerController extends ControllerBase
         );
     }
 
+    function addNewCustomerContacts_doc(): bool
+    {
+        $doc =  [
+            '接口说明' => "客户管理-添加客户联系人",
+            '方法名' => "addNewCustomerContacts",
+            '域名+路由' => "http://dsjrapi.meirixindong.com/pc/v1/user/addNewCustomerContacts",
+            '请求方式' => "POST/GET",
+            '请求参数' => [
+                '手机号' => [
+                    'key' => 'phone',
+                    '说明' => '登录成功后会返回',
+                ],
+                '鉴权TOKEN' => [
+                    'key' => 'x-token',
+                    '说明' => '登录成功后会返回，传到header里',
+                ],
+                '客户ID' => [
+                    'key' => 'customer_id',
+                    '说明' => '',
+                ],
+                '联系人名称' => [
+                    'key' => 'name',
+                    '说明' => '',
+                ],
+                '联系人职位' => [
+                    'key' => 'position',
+                    '说明' => '',
+                ],
+                '联系方式' => [
+                    'key' => 'contact',
+                    '说明' => '',
+                ],
+                '联系类型' => [
+                    'key' => 'contact_type',
+                    '说明' => '',
+                ],
+                '联系人备注' => [
+                    'key' => 'remark',
+                    '说明' => '',
+                ],
+            ],
+            '参数返回' => [
+
+            ],
+            '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
+        ];
+
+        return $this->writeJson(200, $doc, '成功');
+    }
+
     //添加新的客户联系人
     function addNewCustomerContacts(): bool
     {
         $requestData =  $this->getRequestData();
-        $page =  $requestData['page']?:1;
-        $pageSize =  $requestData['pageSize']?:100;
-        $total = 2;
 
         return $this->writeJson(
             200,
@@ -356,6 +409,40 @@ class CustomerController extends ControllerBase
             true,
             []
         );
+    }
+
+    function handOverToNewSales_doc(): bool
+    {
+        $doc =  [
+            '接口说明' => "客户管理-转让/转移",
+            '方法名' => "handOverToNewSales",
+            '域名+路由' => "http://dsjrapi.meirixindong.com/pc/v1/user/handOverToNewSales",
+            '请求方式' => "POST/GET",
+            '请求参数' => [
+                '手机号' => [
+                    'key' => 'phone',
+                    '说明' => '登录成功后会返回',
+                ],
+                '鉴权TOKEN' => [
+                    'key' => 'x-token',
+                    '说明' => '登录成功后会返回，传到header里',
+                ],
+                '销售ID' => [
+                    'key' => 'sale_id',
+                    '说明' => '',
+                ],
+                '转移日期' => [
+                    'key' => 'hand_over_date',
+                    '说明' => '',
+                ],
+            ],
+            '参数返回' => [
+
+            ],
+            '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
+        ];
+
+        return $this->writeJson(200, $doc, '成功');
     }
 
     //转移 TODO 历史记录 查看  牵扯到回款
@@ -375,6 +462,65 @@ class CustomerController extends ControllerBase
             true,
             []
         );
+    }
+
+    function getAllCustomerContacts_doc(): bool
+    {
+        $doc =  [
+            '接口说明' => "客户管理-获取所有联系人",
+            '方法名' => "getAllCustomerContacts",
+            '域名+路由' => "http://dsjrapi.meirixindong.com/pc/v1/user/getAllCustomerContacts",
+            '请求方式' => "POST/GET",
+            '请求参数' => [
+                '手机号' => [
+                    'key' => 'phone',
+                    '说明' => '登录成功后会返回',
+                ],
+                '鉴权TOKEN' => [
+                    'key' => 'x-token',
+                    '说明' => '登录成功后会返回，传到header里',
+                ],
+                '客户id' => [
+                    'key' => 'customer_id',
+                    '说明' => '',
+                ],
+            ],
+            '参数返回' => [
+
+                '联系方式id' => [
+                    'key' => 'id',
+                    '说明' => '',
+                ],
+
+                '联系人姓名' => [
+                    'key' => 'name',
+                    '说明' => '',
+                ],
+
+                '联系人职位' => [
+                    'key' => 'position',
+                    '说明' => '',
+                ],
+
+                '联系方式' => [
+                    'key' => 'contact',
+                    '说明' => '',
+                ],
+
+                '联系类型' => [
+                    'key' => 'contact_type',
+                    '说明' => '',
+                ],
+
+                '备注' => [
+                    'key' => 'remark',
+                    '说明' => '',
+                ],
+            ],
+            '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
+        ];
+
+        return $this->writeJson(200, $doc, '成功');
     }
 
     //获取客户所有的联系人
@@ -414,6 +560,46 @@ class CustomerController extends ControllerBase
         );
     }
 
+    function getAllSales_doc(): bool
+    {
+        $doc =  [
+            '接口说明' => "客户管理-获取所有联系人",
+            '方法名' => "getAllCustomerContacts",
+            '域名+路由' => "http://dsjrapi.meirixindong.com/pc/v1/user/getAllCustomerContacts",
+            '请求方式' => "POST/GET",
+            '请求参数' => [
+                '手机号' => [
+                    'key' => 'phone',
+                    '说明' => '登录成功后会返回',
+                ],
+                '鉴权TOKEN' => [
+                    'key' => 'x-token',
+                    '说明' => '登录成功后会返回，传到header里',
+                ],
+                '客户id' => [
+                    'key' => 'customer_id',
+                    '说明' => '',
+                ],
+            ],
+            '参数返回' => [
+
+                '联系方式id' => [
+                    'key' => 'id',
+                    '说明' => '',
+                ],
+
+                '联系人姓名' => [
+                    'key' => 'user_name',
+                    '说明' => '',
+                ],
+
+            ],
+            '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
+        ];
+
+        return $this->writeJson(200, $doc, '成功');
+    }
+
     //获取所有销售 分配用  TODO 权限问题
     function getAllSales(): bool
     {
@@ -449,12 +635,41 @@ class CustomerController extends ControllerBase
         );
     }
 
+
+    function getCustomerOptions_doc(): bool
+    {
+        $doc =  [
+            '接口说明' => "客户管理-获取相关选项",
+            '方法名' => "getCustomerOptions",
+            '域名+路由' => "http://dsjrapi.meirixindong.com/pc/v1/user/getCustomerOptions",
+            '请求方式' => "POST/GET",
+            '请求参数' => [
+                '手机号' => [
+                    'key' => 'phone',
+                    '说明' => '登录成功后会返回',
+                ],
+                '鉴权TOKEN' => [
+                    'key' => 'x-token',
+                    '说明' => '登录成功后会返回，传到header里',
+                ],
+            ],
+            '参数返回' => [
+
+                 "详情见接口"
+
+            ],
+            '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
+        ];
+
+        return $this->writeJson(200, $doc, '成功');
+    }
+
     //获取客户相关的选项
     function getCustomerOptions(): bool
     {
         $requestData =  $this->getRequestData();
         $retrunDatas = [
-           'classification' => [
+           'level' => [
                'describe' => '客户分类',
                'options' => [
                    5 => '客户线索',
@@ -499,7 +714,7 @@ class CustomerController extends ControllerBase
                     15 => 'C轮',
                 ],
             ],
-            'revenue_scale' => [
+            'ying_shou' => [
                 'describe' => '营收规模',
                 'options' => [
                     5 => '10万以下',
@@ -507,7 +722,7 @@ class CustomerController extends ControllerBase
                     15 => '50万元-100万',
                 ],
             ],
-            'employees_number' => [
+            'team_members' => [
                 'describe' => '企业人数',
                 'options' => [
                     5 => '10人以下',
@@ -516,7 +731,7 @@ class CustomerController extends ControllerBase
                 ],
             ],
             'status' => [
-                'describe' => '融资阶段',
+                'describe' => '客户状态',
                 'options' => [
                     5 => '启用',
                     10 => '废弃',
@@ -537,87 +752,62 @@ class CustomerController extends ControllerBase
         );
     }
 
+
+    function changeCustomerOptions_doc(): bool
+    {
+        $doc =  [
+            '接口说明' => "客户管理-更改相关选项",
+            '方法名' => "changeCustomerOptions",
+            '域名+路由' => "http://dsjrapi.meirixindong.com/pc/v1/user/changeCustomerOptions",
+            '请求方式' => "POST/GET",
+            '请求参数' => [
+                '手机号' => [
+                    'key' => 'phone',
+                    '说明' => '登录成功后会返回',
+                ],
+                '鉴权TOKEN' => [
+                    'key' => 'x-token',
+                    '说明' => '登录成功后会返回，传到header里',
+                ],
+                '需要更改的选项' => [
+                    'key' => 'change_osption_key',
+                    '说明' => '指明具体要更改哪一项',
+                    '具体传什么value' => [
+                        "客户分类" => '若要改 客户分类 有哪些选项，传 level',
+                        "客户来源" => '若要改 客户来源 有哪些选项，传 source',
+                        "客户跟进阶段" => '若要改 客户跟进阶段 有哪些选项，传 stage',
+                        "所属行业" => '若要改 所属行业 有哪些选项，传 industry',
+                        "优先级" => '若要改 优先级 有哪些选项，传 priority',
+                        "融资阶段" => '若要改 融资阶段 有哪些选项，传 financing_stage',
+                        "营收规模" => '若要改 营收规模 有哪些选项，传 ying_shou',
+                        "企业人数" => '若要改 企业人数 有哪些选项，传 team_members',
+                        "客户状态" => '若要改 客户状态 有哪些选项，传 status',
+                    ],
+                ],
+                '改成什么' => [
+                    'key' => 'change_osption_value',
+                    '说明' => '具体改为哪些选项',
+                    '具体传什么value' => "用户设定的新的选项集合传到后台：json也行，数组也行，前端自己定",
+                ],
+            ],
+            '参数返回' => [  ],
+            '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
+        ];
+
+        return $this->writeJson(200, $doc, '成功');
+    }
+
     //更改客户相关的选项 TODO 历史记录
     function changeCustomerOptions(): bool
     {
         $requestData =  $this->getRequestData();
-        $retrunDatas = [
-            'classification' => [
-                'describe' => '客户分类',
-                'options' => [
-                    5 => '客户线索',
-                    10 => '客户线索',
-                ],
-            ],
-            'source' => [
-                'describe' => '客户来源',
-                'options' => [
-                    5 => '企查查',
-                    10 => '自己挖掘',
-                ],
-            ],
-            'stage' => [
-                'describe' => '客户跟进阶段',
-                'options' => [
-                    5 => '待跟进',
-                    10 => '跟进中',
-                    15 => '洽谈中',
-                ],
-            ],
-            'industry' => [
-                'describe' => '所属行业',
-                'options' => [
-                    5 => '互联网',
-                    10 => '物流',
-                ],
-            ],
-            'priority' => [
-                'describe' => '优先级',
-                'options' => [
-                    5 => '一般',
-                    10 => '重要',
-                    15 => 'VIP',
-                ],
-            ],
-            'financing_stage' => [
-                'describe' => '融资阶段',
-                'options' => [
-                    5 => 'A轮',
-                    10 => 'B轮',
-                    15 => 'C轮',
-                ],
-            ],
-            'revenue_scale' => [
-                'describe' => '营收规模',
-                'options' => [
-                    5 => '10万以下',
-                    10 => '10万-50万元',
-                    15 => '50万元-100万',
-                ],
-            ],
-            'employees_number' => [
-                'describe' => '企业人数',
-                'options' => [
-                    5 => '10人以下',
-                    10 => '10人-50人',
-                    15 => '50人-100人',
-                ],
-            ],
-            'status' => [
-                'describe' => '融资阶段',
-                'options' => [
-                    5 => '启用',
-                    10 => '废弃',
-                ],
-            ],
-        ];
 
         return $this->writeJson(
             200,
             [
 
             ] ,
-            $retrunDatas
+            []
             ,
             '成功',
             true,
@@ -656,7 +846,6 @@ class CustomerController extends ControllerBase
     //TODO 操作历史记录的问题
 
 
-
     //新建日程任务
     function addNewTask(): bool
     {
@@ -674,6 +863,95 @@ class CustomerController extends ControllerBase
             true,
             []
         );
+    }
+
+    function addNewTask_doc(): bool
+    {
+        $doc =  [
+            '接口说明' => "客户管理-添加新的任务计划",
+            '方法名' => "addNewTask",
+            '域名+路由' => "http://dsjrapi.meirixindong.com/pc/v1/user/addNewTask",
+            '请求方式' => "POST/GET",
+            '请求参数' => [
+                '手机号' => [
+                    'key' => 'phone',
+                    '说明' => '登录成功后会返回',
+                ],
+                '鉴权TOKEN' => [
+                    'key' => 'x-token',
+                    '说明' => '登录成功后会返回，传到header里',
+                ],
+                '客户ID' => [
+                    'key' => 'customer_id',
+                    '说明' => '',
+                ],
+                '跟进日期' => [
+                    'key' => 'date',
+                    '说明' => '',
+                ],
+                '跟进标题' => [
+                    'key' => 'title',
+                    '说明' => '',
+                ],
+                '具体跟进内容' => [
+                    'key' => 'content',
+                    '说明' => '',
+                ],
+                '具体跟进类型' => [
+                    'key' => 'type',
+                    '说明' => '具体哪些类型 需要和产品确认',
+                ],
+            ],
+            '参数返回' => [  ],
+            '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
+        ];
+
+        return $this->writeJson(200, $doc, '成功');
+    }
+
+
+    function changeTask_doc(): bool
+    {
+        $doc =  [
+            '接口说明' => "客户管理-添加新的任务计划",
+            '方法名' => "addNewTask",
+            '域名+路由' => "http://dsjrapi.meirixindong.com/pc/v1/user/addNewTask",
+            '请求方式' => "POST/GET",
+            '请求参数' => [
+                '手机号' => [
+                    'key' => 'phone',
+                    '说明' => '登录成功后会返回',
+                ],
+                '鉴权TOKEN' => [
+                    'key' => 'x-token',
+                    '说明' => '登录成功后会返回，传到header里',
+                ],
+                '任务ID' => [
+                    'key' => 'id',
+                    '说明' => '',
+                ],
+                '跟进日期' => [
+                    'key' => 'date',
+                    '说明' => '',
+                ],
+                '跟进标题' => [
+                    'key' => 'title',
+                    '说明' => '',
+                ],
+                '具体跟进内容' => [
+                    'key' => 'content',
+                    '说明' => '',
+                ],
+                '具体跟进类型' => [
+                    'key' => 'type',
+                    '说明' => '具体哪些类型 需要和产品确认',
+                ],
+            ],
+            '参数返回' => [  ],
+            '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
+        ];
+
+        return $this->writeJson(200, $doc, '成功');
     }
 
     //更改日程任务
@@ -713,6 +991,35 @@ class CustomerController extends ControllerBase
             []
         );
     }
+
+    function delTask_doc(): bool
+    {
+        $doc =  [
+            '接口说明' => "客户管理-添加新的任务计划",
+            '方法名' => "delTask_doc",
+            '域名+路由' => "http://dsjrapi.meirixindong.com/pc/v1/user/delTask_doc",
+            '请求方式' => "POST/GET",
+            '请求参数' => [
+                '手机号' => [
+                    'key' => 'phone',
+                    '说明' => '登录成功后会返回',
+                ],
+                '鉴权TOKEN' => [
+                    'key' => 'x-token',
+                    '说明' => '登录成功后会返回，传到header里',
+                ],
+                '任务ID' => [
+                    'key' => 'id',
+                    '说明' => '',
+                ],
+            ],
+            '参数返回' => [  ],
+            '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
+        ];
+
+        return $this->writeJson(200, $doc, '成功');
+    }
+
 
     //获取所有日常任务
     function getAllTask(): bool
@@ -755,6 +1062,51 @@ class CustomerController extends ControllerBase
             true,
             []
         );
+    }
+
+    function getAllTask_doc(): bool
+    {
+        $doc =  [
+            '接口说明' => "客户管理-添加新的任务计划",
+            '方法名' => "getAllTask",
+            '域名+路由' => "http://dsjrapi.meirixindong.com/pc/v1/user/getAllTask",
+            '请求方式' => "POST/GET",
+            '请求参数' => [
+                '手机号' => [
+                    'key' => 'phone',
+                    '说明' => '登录成功后会返回',
+                ],
+                '鉴权TOKEN' => [
+                    'key' => 'x-token',
+                    '说明' => '登录成功后会返回，传到header里',
+                ],
+            ],
+            '参数返回' => [
+                '任务ID' => [
+                    'key' => 'id',
+                    '说明' => '',
+                ],
+                '跟进日期' => [
+                    'key' => 'date',
+                    '说明' => '',
+                ],
+                '跟进标题' => [
+                    'key' => 'title',
+                    '说明' => '',
+                ],
+                '具体跟进内容' => [
+                    'key' => 'content',
+                    '说明' => '',
+                ],
+                '具体跟进类型' => [
+                    'key' => 'type',
+                    '说明' => '具体哪些类型 需要和产品确认',
+                ],
+            ],
+            '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
+        ];
+
+        return $this->writeJson(200, $doc, '成功');
     }
 
 }

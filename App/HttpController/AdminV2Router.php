@@ -147,10 +147,41 @@ class AdminV2Router
             //添加新的客户
             $routeCollector->addRoute(['GET', 'POST'], '/addNewCustomer', $prefix . 'addNewCustomer');
             $routeCollector->addRoute(['GET', 'POST'], '/addNewCustomer_doc', $prefix . 'addNewCustomer_doc');
+
+            $routeCollector->addRoute(['GET', 'POST'], '/addNewCustomerContacts', $prefix . 'addNewCustomerContacts');
+            $routeCollector->addRoute(['GET', 'POST'], '/addNewCustomerContacts_doc', $prefix . 'addNewCustomerContacts_doc');
+
             //获取所有销售
+            $routeCollector->addRoute(['GET', 'POST'], '/handOverToNewSales_doc', $prefix . 'handOverToNewSales_doc');
+            $routeCollector->addRoute(['GET', 'POST'], '/handOverToNewSales', $prefix . 'handOverToNewSales');
+
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllCustomerContacts_doc', $prefix . 'getAllCustomerContacts_doc');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllCustomerContacts', $prefix . 'getAllCustomerContacts');
+
             $routeCollector->addRoute(['GET', 'POST'], '/getAllSales', $prefix . 'getAllSales');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllSales_doc', $prefix . 'getAllSales_doc');
+
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllCitys', $prefix . 'getAllCitys');
+
+            $routeCollector->addRoute(['GET', 'POST'], '/addNewTask', $prefix . 'addNewTask');
+            $routeCollector->addRoute(['GET', 'POST'], '/addNewTask_doc', $prefix . 'addNewTask_doc');
+
+            $routeCollector->addRoute(['GET', 'POST'], '/changeTask', $prefix . 'changeTask');
+            $routeCollector->addRoute(['GET', 'POST'], '/changeTask_doc', $prefix . 'changeTask_doc');
+
+            $routeCollector->addRoute(['GET', 'POST'], '/delTask', $prefix . 'delTask');
+            $routeCollector->addRoute(['GET', 'POST'], '/delTask_doc', $prefix . 'delTask_doc');
+
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllTask', $prefix . 'getAllTask');
+            $routeCollector->addRoute(['GET', 'POST'], '/getAllTask_doc', $prefix . 'getAllTask_doc');
+
             //相关的OPTIONs
             $routeCollector->addRoute(['GET', 'POST'], '/getCustomerOptions', $prefix . 'getCustomerOptions');
+            $routeCollector->addRoute(['GET', 'POST'], '/getCustomerOptions_doc', $prefix . 'getCustomerOptions_doc');
+
+            $routeCollector->addRoute(['GET', 'POST'], '/changeCustomerOptions_doc', $prefix . 'changeCustomerOptions_doc');
+            $routeCollector->addRoute(['GET', 'POST'], '/changeCustomerOptions', $prefix . 'changeCustomerOptions');
+
         });
 
         return true;
