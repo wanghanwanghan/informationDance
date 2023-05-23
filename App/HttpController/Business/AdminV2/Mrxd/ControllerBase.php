@@ -215,4 +215,21 @@ class ControllerBase extends Index
             return false;
         }
     }
+
+    function writeJsonV2($statusCode = 200, $paging = null, $result = null, $msg = null, $ext = [])
+    {
+        $data = [
+            'code' => $statusCode,
+            'paging' => $paging,
+            'result' =>  $result,
+            'msg' => $msg,
+            'ext' => $ext
+        ];
+        $this->response()->write(json_encode($data, JSON_UNESCAPED_UNICODE));
+        $this->response()->withHeader('Content-type', 'application/json;charset=utf-8');
+        $this->response()->withStatus($statusCode);
+
+            return true;
+
+    }
 }

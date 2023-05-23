@@ -141,7 +141,7 @@ class CustomerController extends ControllerBase
             '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
         ];
 
-        return $this->writeJson(200, $doc, '成功',false);
+        return $this->writeJsonV2(200, $doc, '成功',false);
     }
 
     //客户管理 列表
@@ -314,7 +314,7 @@ class CustomerController extends ControllerBase
             '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
         ];
 
-        return $this->writeJson(200, $doc, '成功');
+        return $this->writeJsonV2(200, $doc, '成功');
     }
 
     //添加新的客户
@@ -392,7 +392,7 @@ class CustomerController extends ControllerBase
             '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
         ];
 
-        return $this->writeJson(200, $doc, '成功',false);
+        return $this->writeJsonV2(200, $doc, '成功',false);
     }
 
     //添加新的客户联系人
@@ -442,7 +442,7 @@ class CustomerController extends ControllerBase
             '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
         ];
 
-        return $this->writeJson(200, $doc, '成功',false);
+        return $this->writeJsonV2(200, $doc, '成功',false);
     }
 
     //转移 TODO 历史记录 查看  牵扯到回款
@@ -520,7 +520,7 @@ class CustomerController extends ControllerBase
             '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
         ];
 
-        return $this->writeJson(200, $doc, '成功',false);
+        return $this->writeJsonV2(200, $doc, '成功',false);
     }
 
     //获取客户所有的联系人
@@ -597,7 +597,7 @@ class CustomerController extends ControllerBase
             '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
         ];
 
-        return $this->writeJson(200, $doc, '成功',false);
+        return $this->writeJsonV2(200, $doc, '成功',false);
     }
 
     //获取所有销售 分配用  TODO 权限问题
@@ -661,7 +661,7 @@ class CustomerController extends ControllerBase
             '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
         ];
 
-        return $this->writeJson(200, $doc, '成功',false);
+        return $this->writeJsonV2(200, $doc, '成功',false);
     }
 
     //获取客户相关的选项
@@ -794,7 +794,7 @@ class CustomerController extends ControllerBase
             '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
         ];
 
-        return $this->writeJson(200, $doc, '成功',false);
+        return $this->writeJsonV2(200, $doc, '成功',false);
     }
 
     //更改客户相关的选项 TODO 历史记录
@@ -906,7 +906,7 @@ class CustomerController extends ControllerBase
             '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
         ];
 
-        return $this->writeJson(200, $doc, '成功',false);
+        return $this->writeJsonV2(200, $doc, '成功',false);
     }
 
 
@@ -951,7 +951,7 @@ class CustomerController extends ControllerBase
             '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
         ];
 
-        return $this->writeJson(200, $doc, '成功');
+        return $this->writeJsonV2(200, $doc, '成功');
     }
 
     //更改日程任务
@@ -1017,7 +1017,7 @@ class CustomerController extends ControllerBase
             '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
         ];
 
-        return $this->writeJson(200, $doc, '成功',false);
+        return $this->writeJsonV2(200, $doc, '成功',false);
     }
 
 
@@ -1106,7 +1106,7 @@ class CustomerController extends ControllerBase
             '状态码说明' => 'code为200表示成功 不为200表示异常 错误信息在msg里',
         ];
 
-        return $this->writeJson(200, $doc, '成功',false);
+        return $this->writeJsonV2(200, $doc, '成功',false);
     }
 
 }
