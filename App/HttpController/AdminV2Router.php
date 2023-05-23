@@ -171,7 +171,7 @@ class AdminV2Router
 
             $routeCollector->addRoute(['GET', 'POST'], '/delTask', $prefix . 'delTask');
             $routeCollector->addRoute(['GET', 'POST'], '/delTask_doc', $prefix . 'delTask_doc');
-
+            
             $routeCollector->addRoute(['GET', 'POST'], '/getAllTask', $prefix . 'getAllTask');
             $routeCollector->addRoute(['GET', 'POST'], '/getAllTask_doc', $prefix . 'getAllTask_doc');
 
