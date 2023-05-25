@@ -131,8 +131,8 @@ class jincai_api extends AbstractProcess
     {
         // $this->getInvOne();
         // $this->addTask();
-        $this->getInv();
-        // $this->_sendToOSS();//
+        // $this->getInv();
+         $this->_sendToOSS();//
         // $this->sendToAnt();
     }
 
@@ -155,10 +155,10 @@ class jincai_api extends AbstractProcess
         $jump = true;
         $all = JinCaiTrace::create()->all();
         foreach ($all as $one) {
-            if ($one->getAttr('socialCredit') === '91371300MA3PPK5AXD') {
-                $jump = false;
-            }
-            if ($jump) continue;
+            //if ($one->getAttr('socialCredit') === '91371300MA3PPK5AXD') {
+            //    $jump = false;
+            //}
+            //if ($jump) continue;
             $this->sendToOSS(
                 $one->getAttr('socialCredit'),//
                 $one->getAttr('kprqq'),
