@@ -62,13 +62,78 @@ class jincai_api extends AbstractProcess
         return trim($str);
     }
 
+    function do_select($type): \wanghanwanghan\someUtils\moudles\laravelDB\laravelDB
+    {
+        //内网
+        $in = 'rm-2ze1hvx2ot36cq7l2.mysql.rds.aliyuncs.com';
+        $out = 'rm-2ze1hvx2ot36cq7l2io.mysql.rds.aliyuncs.com';
+
+        if ($type === 'out') {
+            $host = $out;
+        } else {
+            $host = $in;
+        }
+
+        return \wanghanwanghan\someUtils\moudles\laravelDB\laravelDB::getInstance([
+            'hd_saic' => [
+                'driver' => 'mysql',
+                'host' => $host,
+                'port' => '3306',
+                'database' => 'hd_saic',
+                'username' => 'mrxd_root',
+                'password' => 'zbxlbj@2018*()',
+                'charset' => 'utf8mb4',
+                'collation' => 'utf8mb4_general_ci',
+                'strict' => false,
+                'prefix' => '',
+            ],
+            'hd_saic_ext' => [
+                'driver' => 'mysql',
+                'host' => $host,
+                'port' => '3306',
+                'database' => 'hd_saic_extension',
+                'username' => 'mrxd_root',
+                'password' => 'zbxlbj@2018*()',
+                'charset' => 'utf8mb4',
+                'collation' => 'utf8mb4_general_ci',
+                'strict' => false,
+                'prefix' => '',
+            ],
+            'business_base' => [
+                'driver' => 'mysql',
+                'host' => $host,
+                'port' => '3306',
+                'database' => 'business_base',
+                'username' => 'mrxd_root',
+                'password' => 'zbxlbj@2018*()',
+                'charset' => 'utf8mb4',
+                'collation' => 'utf8mb4_general_ci',
+                'strict' => false,
+                'prefix' => '',
+            ],
+            'nic_code' => [
+                'driver' => 'mysql',
+                'host' => $host,
+                'port' => '3306',
+                'database' => 'nic_code',
+                'username' => 'mrxd_root',
+                'password' => 'zbxlbj@2018*()',
+                'charset' => 'utf8mb4',
+                'collation' => 'utf8mb4_general_ci',
+                'strict' => false,
+                'prefix' => '',
+            ],
+        ]);
+    }
+
     //启动
     protected function run($arg)
     {
+        // $this->getInvOne();
         // $this->addTask();
-        // $this->getInv();
+        $this->getInv();
         // $this->_sendToOSS();//
-        $this->sendToAnt();
+        // $this->sendToAnt();
     }
 
     function apiAddTask($socialCredit)
@@ -373,40 +438,26 @@ class jincai_api extends AbstractProcess
 
     function getInvOne()
     {
-        $entname = '北京华品博睿网络技术有限公司';
-        $socialCredit = '911101050896860603';
-        $province = '北京市';
-        $city = '北京市';
-        $p = '88ee872c568054029fc9325b27b4d381';
-
-        $entname = '凌雄技术（深圳）有限公司';
-        $socialCredit = '914403000685577373';
-        $province = '深圳市';
-        $city = '福田区';
-        $p = 'fc160cd1955bce6392a7a4c100f2ab41';
-
         $list = [
-            '911101050896860603'
+            '山东省临沂市三丰化工有限公司 913713006140090858',
+            '山东三丰新材料有限公司 91371300328348377N',
         ];
 
-        $kprqq = '2021-03-01';
-        $kprqz = '2023-01-31';
+        $kprqq = '2021-06-30';
+        $kprqz = '2023-04-30';
 
         foreach ($list as $socialCredit) {
+            list($entname, $code) = explode(' ', $socialCredit);
             $page = 0;
             while (true) {
                 $page++;
-                echo '===========================' . PHP_EOL;
-                echo '开始取:' . $page . '页' . PHP_EOL;
-                echo '开始取的开始时间:' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
                 $main = (new JinCaiShuKeService())->obtainFpInfoNew(
-                    false, $socialCredit, $kprqq, $kprqz, $page
+                    false, $code, $kprqq, $kprqz, $page
                 );
-                echo '取到的时间:' . Carbon::now()->format('Y-m-d H:i:s') . PHP_EOL;
                 if (empty($main['result']['data']['content'])) {
                     dd('没了', $page);
                 } else {
-                    $this->handleMain($main['result']['data']['content'], $socialCredit);
+                    $this->handleMain($main['result']['data']['content'], $code);
                 }
             }
         }
@@ -417,7 +468,7 @@ class jincai_api extends AbstractProcess
     {
         $start = 0;
         $step = 5;
-        $max_id = 1078;//每次改
+        $max_id = 228;//每次改
 
         $csp = \App\Csp\Service\CspService::getInstance()->create();
 
@@ -676,7 +727,7 @@ class jincai_api extends AbstractProcess
             $list = AntAuthList::create()
                 ->where('getDataSource', 2)
                 ->where('belong', 41)
-                ->where('id', 1734, '<=')// 这个数字要改
+                ->where('id', 1761, '<=')// 这个数字要改
                 ->where("isElectronics LIKE '%属%成功%' OR isElectronics LIKE '%非一般%'")
                 ->all();
         } else {
@@ -771,6 +822,102 @@ class jincai_api extends AbstractProcess
         }
 
         dd('完成');
+    }
+
+    function addTaskSD()
+    {
+        $list = [
+            '山东三丰新材料有限公司 91371300328348377N',
+            '山东省临沂市三丰化工有限公司 913713006140090858',
+            '营口市向阳催化剂有限责任公司 91210800725501566A',
+            '青岛祥泰碳素有限公司 91370285773512075D',
+            '深圳市大恒数据安全科技有限责任公司 91440300MA5D92547C',
+        ];
+
+        foreach ($list as $one) {
+
+            list($entname, $code) = explode(' ', $one);
+
+            $info = $this->do_select('out')
+                ->connection('hd_saic')
+                ->table('company_basic')
+                ->where('UNISCID', $code)
+                ->first();
+
+            $DOM = $info->DOM;
+
+            $baidu = $this->baiduDOM($DOM);
+
+            $province = $baidu['result']['province'];
+            $city = $baidu['result']['city'];
+
+
+            // 开票日期止
+            $kprqz = Carbon::now()->subMonths(1)->endOfMonth()->timestamp;
+            $kprqq = Carbon::now()->subMonths(23)->startOfMonth()->timestamp;
+
+            $ywBody = [
+                'kprqq' => date('Y-m-d', $kprqq),// 开票日期起
+                'kprqz' => date('Y-m-d', $kprqz),// 开票日期止
+                'nsrsbh' => $code,// 纳税人识别号
+            ];
+
+            $addTaskInfo = (new JinCaiShuKeService())->addTaskNew(
+                $code, $province, $city, $ywBody
+            );
+
+            $p_traceNo = '';
+            $error = false;
+            if (isset($addTaskInfo['code']) && $addTaskInfo['code'] === 'S000') {
+                if (isset($addTaskInfo['result']) && !empty($addTaskInfo['result'])) {
+                    if (!empty($addTaskInfo['result']['data'])) {
+                        $p_traceNo = trim($addTaskInfo['result']['data']);
+                    } else {
+                        // dd($addTaskInfo, $ywBody, '暂停3');
+                        $error = true;
+                    }
+                } else {
+                    // dd($addTaskInfo, $ywBody, '暂停2');
+                    $error = true;
+                }
+            } else {
+                // dd($addTaskInfo, $ywBody, '暂停1');
+                $error = true;
+            }
+
+            JinCaiTrace::create()->data([
+                'entName' => $entname,
+                'socialCredit' => $code,
+                'code' => $addTaskInfo['code'] ?? '未返回',
+                'msg' => $addTaskInfo['msg'] ?? '未返回',
+                'pTraceNo' => $error ? '' : $p_traceNo,
+                'kprqq' => $kprqq,
+                'kprqz' => $kprqz,
+            ])->save();
+
+            \co::sleep(18);
+
+            echo $entname . PHP_EOL;
+
+        }
+
+
+    }
+
+    function baiduDOM($keyword)
+    {
+        $url = 'https://api.map.baidu.com/address_analyzer/v1/?address=%s&ak=%s&sn=%s';
+        $ak = '0E1KvDCpYStGPKkcp34EB8G9qDxC2evy';
+        $sk = 'MPMWnZFpC18ewyYCRFYQu3U9AEgBI57g';
+        $data = [
+            'address' => $keyword,
+            'ak' => $ak,
+        ];
+        $querystring = http_build_query($data);
+        $sn = md5(urlencode('/address_analyzer/v1/?' . $querystring . $sk));
+        $url = sprintf($url, urlencode($keyword), $ak, $sn);
+        $res = file_get_contents($url);
+        return json_decode($res, true);
     }
 
     protected function onShutDown()
