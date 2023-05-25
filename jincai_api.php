@@ -132,8 +132,8 @@ class jincai_api extends AbstractProcess
         // $this->getInvOne();
         // $this->addTask();
         // $this->getInv();
-         $this->_sendToOSS();//
-        // $this->sendToAnt();
+        // $this->_sendToOSS();//
+        $this->sendToAnt();
     }
 
     function apiAddTask($socialCredit)
