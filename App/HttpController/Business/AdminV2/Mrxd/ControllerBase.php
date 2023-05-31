@@ -74,6 +74,17 @@ class ControllerBase extends Index
     function checkToken(): bool
     {
         $requestToken = $this->request()->getHeaderLine('x-token');
+        if(empty($requestToken)){
+            $requestToken = $this->request()->getHeaderLine('X-Token');
+        }
+
+        CommonService::getInstance()->log4PHP(
+            json_encode([
+                $this->request()->getHeaderLine('x-token'),
+                $this->request()->getHeaderLine('X-Token'),
+            ],JSON_UNESCAPED_UNICODE)
+        );
+
         if (empty($requestToken) || strlen($requestToken) < 50){
             CommonService::getInstance()->log4PHP(' empty token  '.$requestToken);
             return false;
