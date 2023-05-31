@@ -50,7 +50,7 @@ class CustomerController extends ControllerBase
         $doc =  [
             '接口说明' => "客户管理-列表",
             '方法名' => "getAllCustomers",
-            '域名+路由' => "http://api.meirixindong.com/pc/v1/user/getAllCustomers",
+            '域名+路由' => "http://api.meirixindong.com/pc/v1/mrxd/getAllCustomers",
             '请求方式' => "POST/GET",
             '请求参数' => [
                 '手机号' => [
@@ -252,7 +252,7 @@ class CustomerController extends ControllerBase
         $doc =  [
             '接口说明' => "客户管理-添加客户",
             '方法名' => "addNewCustomer",
-            '域名+路由' => "http://api.meirixindong.com/pc/v1/user/addNewCustomer",
+            '域名+路由' => "http://api.meirixindong.com/pc/v1/mrxd/addNewCustomer",
             '请求方式' => "POST/GET",
             '请求参数' => [
                 '手机号' => [
@@ -350,7 +350,7 @@ class CustomerController extends ControllerBase
         $doc =  [
             '接口说明' => "客户管理-添加客户联系人",
             '方法名' => "addNewCustomerContacts",
-            '域名+路由' => "http://api.meirixindong.com/pc/v1/user/addNewCustomerContacts",
+            '域名+路由' => "http://api.meirixindong.com/pc/v1/mrxd/addNewCustomerContacts",
             '请求方式' => "POST/GET",
             '请求参数' => [
                 '手机号' => [
@@ -416,7 +416,7 @@ class CustomerController extends ControllerBase
         $doc =  [
             '接口说明' => "客户管理-转让/转移",
             '方法名' => "handOverToNewSales",
-            '域名+路由' => "http://api.meirixindong.com/pc/v1/user/handOverToNewSales",
+            '域名+路由' => "http://api.meirixindong.com/pc/v1/mrxd/handOverToNewSales",
             '请求方式' => "POST/GET",
             '请求参数' => [
                 '手机号' => [
@@ -469,7 +469,7 @@ class CustomerController extends ControllerBase
         $doc =  [
             '接口说明' => "客户管理-获取所有联系人",
             '方法名' => "getAllCustomerContacts",
-            '域名+路由' => "http://api.meirixindong.com/pc/v1/user/getAllCustomerContacts",
+            '域名+路由' => "http://api.meirixindong.com/pc/v1/mrxd/getAllCustomerContacts",
             '请求方式' => "POST/GET",
             '请求参数' => [
                 '手机号' => [
@@ -565,7 +565,7 @@ class CustomerController extends ControllerBase
         $doc =  [
             '接口说明' => "客户管理-获取所有联系人",
             '方法名' => "getAllCustomerContacts",
-            '域名+路由' => "http://api.meirixindong.com/pc/v1/user/getAllCustomerContacts",
+            '域名+路由' => "http://api.meirixindong.com/pc/v1/mrxd/getAllCustomerContacts",
             '请求方式' => "POST/GET",
             '请求参数' => [
                 '手机号' => [
@@ -641,7 +641,7 @@ class CustomerController extends ControllerBase
         $doc =  [
             '接口说明' => "客户管理-获取相关选项",
             '方法名' => "getCustomerOptions",
-            '域名+路由' => "http://api.meirixindong.com/pc/v1/user/getCustomerOptions",
+            '域名+路由' => "http://api.meirixindong.com/pc/v1/mrxd/getCustomerOptions",
             '请求方式' => "POST/GET",
             '请求参数' => [
                 '手机号' => [
@@ -758,7 +758,7 @@ class CustomerController extends ControllerBase
         $doc =  [
             '接口说明' => "客户管理-更改相关选项",
             '方法名' => "changeCustomerOptions",
-            '域名+路由' => "http://api.meirixindong.com/pc/v1/user/changeCustomerOptions",
+            '域名+路由' => "http://api.meirixindong.com/pc/v1/mrxd/changeCustomerOptions",
             '请求方式' => "POST/GET",
             '请求参数' => [
                 '手机号' => [
@@ -870,7 +870,7 @@ class CustomerController extends ControllerBase
         $doc =  [
             '接口说明' => "客户管理-添加新的任务计划",
             '方法名' => "addNewTask",
-            '域名+路由' => "http://api.meirixindong.com/pc/v1/user/addNewTask",
+            '域名+路由' => "http://api.meirixindong.com/pc/v1/mrxd/addNewTask",
             '请求方式' => "POST/GET",
             '请求参数' => [
                 '手机号' => [
@@ -915,7 +915,7 @@ class CustomerController extends ControllerBase
         $doc =  [
             '接口说明' => "客户管理-添加新的任务计划",
             '方法名' => "addNewTask",
-            '域名+路由' => "http://api.meirixindong.com/pc/v1/user/addNewTask",
+            '域名+路由' => "http://api.meirixindong.com/pc/v1/mrxd/addNewTask",
             '请求方式' => "POST/GET",
             '请求参数' => [
                 '手机号' => [
@@ -997,7 +997,7 @@ class CustomerController extends ControllerBase
         $doc =  [
             '接口说明' => "客户管理-添加新的任务计划",
             '方法名' => "delTask_doc",
-            '域名+路由' => "http://api.meirixindong.com/pc/v1/user/delTask_doc",
+            '域名+路由' => "http://api.meirixindong.com/pc/v1/mrxd/delTask_doc",
             '请求方式' => "POST/GET",
             '请求参数' => [
                 '手机号' => [
@@ -1069,7 +1069,7 @@ class CustomerController extends ControllerBase
         $doc =  [
             '接口说明' => "客户管理-添加新的任务计划",
             '方法名' => "getAllTask",
-            '域名+路由' => "http://api.meirixindong.com/pc/v1/user/getAllTask",
+            '域名+路由' => "http://api.meirixindong.com/pc/v1/mrxd/getAllTask",
             '请求方式' => "POST/GET",
             '请求参数' => [
                 '手机号' => [
