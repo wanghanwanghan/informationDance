@@ -280,15 +280,9 @@ class ToolsFileLists extends ModelBase
 
             // 2023 06 05 甩锅备注 --- 大哥说股东字段去掉股东类型和companyid
             if ($field === 'inv') {
-                preg_match_all('/[\x{4e00}-\x{9fa5}]+/u', $res['inv'], $_inv);
-                $_inv = array_unique(current($_inv));
-                $_inv = array_filter($_inv, function ($row) {
-                    $list = ['有限合伙'];
-                    return in_array($row, $list, true) ? false : $row;
-                });
-                $_inv = array_values($_inv);
-               empty($_inv) ? $_inv = '' : $_inv = implode('、', $_inv);
-                $res['inv'] = $_inv;
+                $res['inv'] = preg_replace('/\(\d+\)/', '', $res['inv']);
+                $res['inv'] = preg_replace('/\&\&\&/', '、', $res['inv']);
+                $res['inv'] = trim($res['inv'], '、');
             }
 
             if(
