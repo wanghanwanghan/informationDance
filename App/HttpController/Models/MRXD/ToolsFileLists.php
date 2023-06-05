@@ -153,8 +153,8 @@ class ToolsFileLists extends ModelBase
 
     public static function findById($id){
         $res =  ToolsFileLists::create()
-            ->where('id',$id)            
-            ->get();  
+            ->where('id',$id)
+            ->get();
         return $res;
     }
 
@@ -270,6 +270,24 @@ class ToolsFileLists extends ModelBase
                 $field=='gao_xin_ji_shu'
             ){
                 $res['gao_xin_ji_shu'] =  $res['gao_xin_ji_shu']?'有':'无';
+            }
+
+            // 2023 06 05 甩锅备注 --- 大哥说主要人员字段去掉自定义换行符
+            if ($field === 'manager') {
+                $res['manager'] = str_replace('&&&', '、', $res['manager']);
+                $res['manager'] = trim($res['manager'], '、');
+            }
+
+            // 2023 06 05 甩锅备注 --- 大哥说股东字段去掉股东类型和companyid
+            if ($field === 'inv') {
+                preg_match_all('/[\x{4e00}-\x{9fa5}]+/u', $res['inv'], $_inv);
+                $_inv = array_unique(current($_inv));
+                $_inv = array_filter($_inv, function ($row) {
+                    $list = ['有限合伙'];
+                    return in_array($row, $list, true) ? false : $row;
+                });
+                $_inv = array_values($_inv);
+               empty($_inv) ? $_inv = '' : $_inv = implode('、', $_inv);
             }
 
             if(
@@ -735,7 +753,7 @@ class ToolsFileLists extends ModelBase
 
     /**
     "REGCAP": "1000",
-       
+
 
 9:帮刘欢建模
      */
