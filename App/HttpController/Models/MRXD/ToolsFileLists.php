@@ -288,6 +288,7 @@ class ToolsFileLists extends ModelBase
                 });
                 $_inv = array_values($_inv);
                empty($_inv) ? $_inv = '' : $_inv = implode('、', $_inv);
+                $res['inv'] = $_inv;
             }
 
             if(
