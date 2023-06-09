@@ -285,6 +285,13 @@ class ToolsFileLists extends ModelBase
                 $res['inv'] = trim($res['inv'], '、');
             }
 
+            // 2023 06 09 甩锅备注 --- 大哥说邮箱字段要去掉重复
+            if ($field === 'email') {
+                $res['email'] = explode('&&&', $res['email']);
+                $res['email'] = array_values(array_unique(array_filter($res['email'])));
+                empty($res['email']) ? $res['email'] = '' : $res['email'] = implode('、', $res['email']);
+            }
+
             if(
                 is_array($res[$field])
             ){
