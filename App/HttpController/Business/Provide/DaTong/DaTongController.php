@@ -4,10 +4,7 @@ namespace App\HttpController\Business\Provide\DaTong;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
-use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
-use App\HttpController\Service\Common\CommonService;
-use App\HttpController\Service\TaoShu\TaoShuService;
-use App\HttpController\Service\TaoShu\TaoShuTwoService;
+use App\HttpController\Service\DaTong\DaTongService;
 
 class DaTongController extends ProvideBase
 {
@@ -41,20 +38,28 @@ class DaTongController extends ProvideBase
         return true;
     }
 
-    function getChattelMortgageInfo()
+    function getList(): bool
     {
-        $entName = $this->request()->getRequestParam('entName') ?? '';
-        $pageNo = $this->request()->getRequestParam('pageNo') ?? 1;
-        $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
+        //参数名称	数据类型	必填	示例	说明
+        //keyword	String[]	否	["关键词1","关键词2"]	查询关键词
+        //buyCompany	String[]	否	["招标公司1","招标公司2"]	招标公司名称
+        //winCompany	String[]	否	["中标公司1","中标公司2"]	中标公司名称
+        //index	int	否	0	索引，默认为 0 表示从第 0 条开始返回，每次调用接口会返回下一次应该传入的index。类似偏移量拿取
+        //beginDate	String	否	"yyyy-MM-dd"	公告发布时间开始时间
+        //endDate	String	否	"yyyy-MM-dd"	公告发布时间结束时间
+        //maxMoney	Decimal(22,6)	否	9999.99	招标预算最大金额
+        //minMoney	Decimal(22,6)	否	0	招标预算最小金额
+        //exclude	String[]	否	["排除词1","排除词2"]	查询排除词
+        //bidType	String[]	否	["101","107"]	公告类型
+        //modifyBeginDate	String	否	"yyyy-MM-dd HH:mm:ss"	数据最近更新时间开始时间
+        //modifyEndDate	String	否	"yyyy-MM-dd HH:mm:ss"	数据最近更新时间结束时间
 
-        $postData = [
-            'entName' => $entName,
-            'pageNo' => $pageNo,
-            'pageSize' => $pageSize,
-        ];
+        $keywordArrayJson = $this->getRequestData('keywordArrayJson', []);
 
-        $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getChattelMortgageInfo');
+        $this->csp->add($this->cspKey, function () use ($keywordArrayJson) {
+            return (new DaTongService())
+                ->setCheckRespFlag(true)
+                ->getList($keywordArrayJson);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

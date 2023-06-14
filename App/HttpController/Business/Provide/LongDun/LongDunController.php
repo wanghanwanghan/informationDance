@@ -20,25 +20,25 @@ class LongDunController extends ProvideBase
         parent::afterAction($actionName);
     }
 
-    function checkResponse($res)
+    function checkResponse($res): bool
     {
         if (empty($res[$this->cspKey])) {
-            $this->responseCode   = 500;
+            $this->responseCode = 500;
             $this->responsePaging = null;
-            $this->responseData   = $res[$this->cspKey];
-            $this->spendMoney     = 0;
-            $this->responseMsg    = '请求超时';
+            $this->responseData = $res[$this->cspKey];
+            $this->spendMoney = 0;
+            $this->responseMsg = '请求超时';
         } elseif ($res[$this->cspKey]['Status']) {
-            $this->responseCode   = $res[$this->cspKey]['Status'];
+            $this->responseCode = $res[$this->cspKey]['Status'];
             $this->responsePaging = $res[$this->cspKey]['Paging'];
-            $this->responseData   = $res[$this->cspKey]['Result'];
-            $this->responseMsg    = $res[$this->cspKey]['Message'];
+            $this->responseData = $res[$this->cspKey]['Result'];
+            $this->responseMsg = $res[$this->cspKey]['Message'];
             $res[$this->cspKey]['Status'] === 200 ?: $this->spendMoney = 0;
         } else {
-            $this->responseCode   = $res[$this->cspKey]['code'];
+            $this->responseCode = $res[$this->cspKey]['code'];
             $this->responsePaging = $res[$this->cspKey]['paging'];
-            $this->responseData   = $res[$this->cspKey]['result'];
-            $this->responseMsg    = $res[$this->cspKey]['msg'];
+            $this->responseData = $res[$this->cspKey]['result'];
+            $this->responseMsg = $res[$this->cspKey]['msg'];
 
             $res[$this->cspKey]['code'] === 200 ?: $this->spendMoney = 0;
         }
@@ -51,12 +51,12 @@ class LongDunController extends ProvideBase
     {
         $entName = $this->request()->getRequestParam('entName');
         $percent = $this->request()->getRequestParam('percent') ?? 0;
-        $mode    = $this->request()->getRequestParam('mode') ?? 0;
+        $mode = $this->request()->getRequestParam('mode') ?? 0;
 
         $postData = [
             'companyName' => $entName,
-            'percent'     => $percent - 0,
-            'mode'        => $mode - 0,
+            'percent' => $percent - 0,
+            'mode' => $mode - 0,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
@@ -71,13 +71,13 @@ class LongDunController extends ProvideBase
 
     function getIPOGuarantee()
     {
-        $entName  = $this->getRequestData('entName', '');
-        $page     = $this->getRequestData('page', 1);
+        $entName = $this->getRequestData('entName', '');
+        $page = $this->getRequestData('page', 1);
         $pageSize = $this->getRequestData('pageSize', 10);
 
         $postData = [
-            'entName'  => $entName,
-            'page'     => $page,
+            'entName' => $entName,
+            'page' => $page,
             'pageSize' => $pageSize,
         ];
 
@@ -94,7 +94,7 @@ class LongDunController extends ProvideBase
             $postData = [
                 'stockCode' => $stock,
                 'pageIndex' => $postData['page'],
-                'pageSize'  => $postData['pageSize'],
+                'pageSize' => $postData['pageSize'],
             ];
             return (new LongDunService())->setCheckRespFlag(true)
                 ->get($this->ldListUrl . 'IPO/GetIPOGuarantee', $postData);
@@ -108,13 +108,13 @@ class LongDunController extends ProvideBase
     function getProjectProductCheck()
     {
         $searchKey = $this->getRequestData('searchKey');
-        $page      = $this->getRequestData('page', 1);
-        $pageSize  = $this->getRequestData('pageSize', 10);
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
 
         $postData = [
             'searchKey' => $searchKey,
             'pageIndex' => $page,
-            'pageSize'  => $pageSize,
+            'pageSize' => $pageSize,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
@@ -150,14 +150,14 @@ class LongDunController extends ProvideBase
     //行政处罚
     function getAdministrativePenaltyList()
     {
-        $entName  = $this->request()->getRequestParam('entName');
-        $page     = $this->request()->getRequestParam('page') ?? 1;
+        $entName = $this->request()->getRequestParam('entName');
+        $page = $this->request()->getRequestParam('page') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         $postData = [
             'searchKey' => $entName,
             'pageIndex' => $page,
-            'pageSize'  => $pageSize,
+            'pageSize' => $pageSize,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
@@ -173,13 +173,13 @@ class LongDunController extends ProvideBase
     function tenderSearch()
     {
         $entName = $this->getRequestData('entName');
-        $page      = $this->getRequestData('page', 1);
-        $pageSize  = $this->getRequestData('pageSize', 10);
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
 
         $postData = [
             'searchKey' => $entName,
             'pageIndex' => $page,
-            'pageSize'  => $pageSize,
+            'pageSize' => $pageSize,
         ];
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new LongDunService())
@@ -191,6 +191,7 @@ class LongDunController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+
     //招投标详情
     function tenderSearchDetail()
     {
@@ -229,14 +230,14 @@ class LongDunController extends ProvideBase
     //行政许可
     function getAdministrativeLicenseList()
     {
-        $entName  = $this->request()->getRequestParam('entName');
-        $page     = $this->request()->getRequestParam('pageNo') ?? 1;
+        $entName = $this->request()->getRequestParam('entName');
+        $page = $this->request()->getRequestParam('pageNo') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         $postData = [
             'searchKey' => $entName,
             'pageIndex' => $page,
-            'pageSize'  => $pageSize,
+            'pageSize' => $pageSize,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
@@ -305,34 +306,44 @@ class LongDunController extends ProvideBase
         return $this->checkResponse($res);
 
 
-}
-    public function getSearchSoftwareCr(){
+    }
+
+    public function getSearchSoftwareCr()
+    {
 
     }
-    public function getSearchCopyRight(){
+
+    public function getSearchCopyRight()
+    {
 
     }
-    public function getSearchCertification(){
+
+    public function getSearchCertification()
+    {
 
     }
-    public function getTmSearch(){
+
+    public function getTmSearch()
+    {
 
     }
-    public function getPatentV4Search(){
+
+    public function getPatentV4Search()
+    {
 
     }
 
     //行政许可
     function EquityFreezeCheckGetList()
     {
-        $entName  = $this->request()->getRequestParam('entName');
-        $page     = $this->request()->getRequestParam('pageNo') ?? 1;
+        $entName = $this->request()->getRequestParam('entName');
+        $page = $this->request()->getRequestParam('pageNo') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         $postData = [
             'searchKey' => $entName,
             'pageIndex' => $page,
-            'pageSize'  => $pageSize,
+            'pageSize' => $pageSize,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
@@ -368,14 +379,14 @@ class LongDunController extends ProvideBase
     //限制高消费核查 https://api.qichacha.com/SumptuaryCheck/GetList
     function SumptuaryCheckGetList()
     {
-        $entName  = $this->request()->getRequestParam('entName');
-        $page     = $this->request()->getRequestParam('pageNo') ?? 1;
+        $entName = $this->request()->getRequestParam('entName');
+        $page = $this->request()->getRequestParam('pageNo') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
 
         $postData = [
             'searchKey' => $entName,
             'pageIndex' => $page,
-            'pageSize'  => $pageSize,
+            'pageSize' => $pageSize,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
@@ -410,15 +421,15 @@ class LongDunController extends ProvideBase
     //限制高消费核查
     function PersonSumptuaryCheckGetList()
     {
-        $entName  = $this->request()->getRequestParam('entName');
-        $page     = $this->request()->getRequestParam('pageNo') ?? 1;
+        $entName = $this->request()->getRequestParam('entName');
+        $page = $this->request()->getRequestParam('pageNo') ?? 1;
         $pageSize = $this->request()->getRequestParam('pageSize') ?? 10;
         //personName
 
         $postData = [
             'searchKey' => $entName,
             'pageIndex' => $page,
-            'pageSize'  => $pageSize,
+            'pageSize' => $pageSize,
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {

@@ -130,10 +130,10 @@ class jincai_api extends AbstractProcess
     protected function run($arg)
     {
         // $this->getInvOne();
-        // $this->addTask();
-        // $this->getInv();
+        // $this->addTaskSD();
+        $this->getInv();
         // $this->_sendToOSS();//
-        $this->sendToAnt();
+        // $this->sendToAnt();
     }
 
     function apiAddTask($socialCredit)
@@ -468,7 +468,7 @@ class jincai_api extends AbstractProcess
     {
         $start = 0;
         $step = 5;
-        $max_id = 228;//每次改
+        $max_id = 1;//每次改
 
         $csp = \App\Csp\Service\CspService::getInstance()->create();
 
@@ -827,11 +827,7 @@ class jincai_api extends AbstractProcess
     function addTaskSD()
     {
         $list = [
-            '山东三丰新材料有限公司 91371300328348377N',
-            '山东省临沂市三丰化工有限公司 913713006140090858',
-            '营口市向阳催化剂有限责任公司 91210800725501566A',
-            '青岛祥泰碳素有限公司 91370285773512075D',
-            '深圳市大恒数据安全科技有限责任公司 91440300MA5D92547C',
+            '北京东方鹏科技有限公司 91110108792138381M',
         ];
 
         foreach ($list as $one) {
@@ -850,7 +846,6 @@ class jincai_api extends AbstractProcess
 
             $province = $baidu['result']['province'];
             $city = $baidu['result']['city'];
-
 
             // 开票日期止
             $kprqz = Carbon::now()->subMonths(1)->endOfMonth()->timestamp;
@@ -895,9 +890,9 @@ class jincai_api extends AbstractProcess
                 'kprqz' => $kprqz,
             ])->save();
 
-            \co::sleep(18);
-
             echo $entname . PHP_EOL;
+
+            \co::sleep(18);
 
         }
 

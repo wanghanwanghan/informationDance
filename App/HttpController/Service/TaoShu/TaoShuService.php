@@ -6,6 +6,7 @@ use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
+use wanghanwanghan\someUtils\control;
 
 class TaoShuService extends ServiceBase
 {
@@ -84,7 +85,7 @@ class TaoShuService extends ServiceBase
         }
     }
 
-    private function quantumEncode($source, $key)
+    private function quantumEncode($source, $key): array
     {
         $result = [];
         $random = md5(time());
@@ -100,7 +101,7 @@ class TaoShuService extends ServiceBase
         return $result;
     }
 
-    private function quantumDecode($result, $key)
+    private function quantumDecode($result, $key): string
     {
         $_key = $result->key;
         $_value = $result->value;
@@ -117,7 +118,6 @@ class TaoShuService extends ServiceBase
     function post($body, $service)
     {
         $header = [];
-        CommonService::getInstance()->log4PHP([$body, $service], 'info', 'error_taoshu_http_return_data');
 
         $postBody = [
             'uid' => $this->uid,
@@ -136,19 +136,57 @@ class TaoShuService extends ServiceBase
             'useThisKey' => $this->useThisKey($body, $service)
         ];
 
-        $data = (new CoHttpClient())->useCache(false)->needJsonDecode(false)->send($this->url, $p_arr, $header, $options, 'post');
+        $data = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(false)
+            ->send($this->url, $p_arr, $header, $options, 'post');
 
         $data = urldecode($data);
 
         $rs = $this->quantumDecode(json_decode($data), $this->taoshuPEM);
 
         $rs = jsonDecode($rs);
-        CommonService::getInstance()->log4PHP([$postBody,$data,$rs],'info','taoshu_post_ret');
 
         return $this->checkRespFlag ? $this->checkResp($rs) : $rs;
     }
 
-    private function checkResp($res)
+    // 店铺受益人专用
+    function getBeneficiaryInfo(array $data)
+    {
+        $url = 'http://open.caifbigdata.com/api/ht/getBeneficiaryInfo?v=1';
+
+        $appKey = CreateConf::getInstance()->getConf('taoshu.longdun_appk');
+        $appSecret = CreateConf::getInstance()->getConf('taoshu.longdun_apps');
+        $ticket = control::getUuid();
+        $timestamp = microTimeNew() - 0;
+        $version = '1';
+
+        $sign = sprintf(
+            'appKey=%s&appSecret=%s&ticket=%s&timestamp=%s&version=%s',
+            $appKey, $appSecret, $ticket, $timestamp, $version
+        );
+
+        $post = [
+            'appKey' => $appKey,
+            'body' => $data,
+            'sign' => strtoupper(md5($sign)),
+            'timestamp' => $timestamp,
+            'version' => $version,
+        ];
+
+        CommonService::getInstance()->log4PHP($post, 'info', 'getBeneficiaryInfo');
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($url, $post, [], [], 'postjson');
+
+        CommonService::getInstance()->log4PHP($res, 'info', 'getBeneficiaryInfo');
+
+
+
+    }
+
+    private function checkResp($res): array
     {
         if (isset($res['PAGEINFO']) && isset($res['PAGEINFO']['TOTAL_COUNT']) && isset($res['PAGEINFO']['TOTAL_PAGE']) && isset($res['PAGEINFO']['CURRENT_PAGE'])) {
             $res['Paging'] = [

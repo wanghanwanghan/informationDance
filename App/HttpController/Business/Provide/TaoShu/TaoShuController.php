@@ -41,6 +41,26 @@ class TaoShuController extends ProvideBase
         return true;
     }
 
+    // 企业受益路径
+    function getBeneficiaryInfo(): bool
+    {
+        $entName = $this->getRequestData('entName', '');
+
+        $postData = [
+            'entName' => $entName,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new TaoShuService())
+                ->setCheckRespFlag(true)
+                ->getBeneficiaryInfo($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     function lawPersonInvestmentInfo(): bool
     {
         $entName = $this->getRequestData('entName', '');
@@ -90,7 +110,6 @@ class TaoShuController extends ProvideBase
     //企业分支机构
     function getBranchInfo(): bool
     {
-
         $entName = $this->getRequestData('entName', '');
         $pageNo = $this->getRequestData('pageNo', 1);
         $pageSize = $this->getRequestData('pageSize', 10);
@@ -101,7 +120,7 @@ class TaoShuController extends ProvideBase
             'pageSize' => $pageSize,
         ];
 
-        CommonService::getInstance()->log4PHP($postData,'info','getBranchInfo');
+        CommonService::getInstance()->log4PHP($postData, 'info', 'getBranchInfo');
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new TaoShuService())
                 ->setCheckRespFlag(true)
@@ -124,7 +143,7 @@ class TaoShuController extends ProvideBase
             'pageNo' => $page,
             'pageSize' => $pageSize,
         ];
-        CommonService::getInstance()->log4PHP($postData,'info','getLawPersontoOtherInfo');
+        CommonService::getInstance()->log4PHP($postData, 'info', 'getLawPersontoOtherInfo');
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new TaoShuService())
                 ->setCheckRespFlag(true)
@@ -145,18 +164,18 @@ class TaoShuController extends ProvideBase
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-             $data = (new TaoShuService())
+            $data = (new TaoShuService())
                 ->setCheckRespFlag(true)
                 ->post($postData, 'getRegisterInfo');
-            $info = CompanyBasic::create()->where(['UNISCID'=>$data['result']['0']['SHXYDM']])->get();
+            $info = CompanyBasic::create()->where(['UNISCID' => $data['result']['0']['SHXYDM']])->get();
             $data['result']['0']['RECCAP'] = $info->getAttr('RECCAP');//实收注册资金
 //            $data['result']['0']['ENTTYPE'] = $info->getAttr('ENTTYPE');//公司类型编码
-            CommonService::getInstance()->log4PHP([$data,$info],'info','taoshu_post_ret_wai');
+            CommonService::getInstance()->log4PHP([$data, $info], 'info', 'taoshu_post_ret_wai');
             return $data;
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-        CommonService::getInstance()->log4PHP($res,'info','taoshu_post_ret_wai2');
+        CommonService::getInstance()->log4PHP($res, 'info', 'taoshu_post_ret_wai2');
         return $this->checkResponse($res);
     }
 
@@ -886,6 +905,7 @@ class TaoShuController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+
     //企业变更信息
     function getRegisterChangeInfo()
     {
@@ -932,6 +952,7 @@ class TaoShuController extends ProvideBase
 
         return $this->checkResponse($res);
     }
+
     //动产抵押
     function dongChanDiYa()
     {
@@ -946,7 +967,7 @@ class TaoShuController extends ProvideBase
         $this->csp->add($this->cspKey, function () use ($postData) {
             $res = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getChattelMortgageInfo');
 
-            return  $res;
+            return $res;
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
@@ -962,11 +983,12 @@ class TaoShuController extends ProvideBase
         $this->csp->add($this->cspKey, function () use ($postData) {
             $res = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getOperatingExceptionRota');
 
-            return  $res;
+            return $res;
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //企业股权出质详情
     function getEquityPledgedDetailInfo()
     {
@@ -979,11 +1001,12 @@ class TaoShuController extends ProvideBase
         $this->csp->add($this->cspKey, function () use ($postData) {
             $res = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getEquityPledgedDetailInfo');
 
-            return  $res;
+            return $res;
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //企业股权出质列表
     function getEquityPledgedInfo()
     {
@@ -1000,11 +1023,12 @@ class TaoShuController extends ProvideBase
         $this->csp->add($this->cspKey, function () use ($postData) {
             $res = (new TaoShuService())->setCheckRespFlag(true)->post($postData, 'getEquityPledgedInfo');
 
-            return  $res;
+            return $res;
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //企业动产抵押详情
     function getChattelMortgageDetailInfo()
     {
@@ -1020,6 +1044,7 @@ class TaoShuController extends ProvideBase
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
         return $this->checkResponse($res);
     }
+
     //企业动产抵押列表
     function getChattelMortgageInfo()
     {
