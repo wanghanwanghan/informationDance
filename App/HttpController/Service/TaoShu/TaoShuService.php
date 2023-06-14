@@ -151,7 +151,7 @@ class TaoShuService extends ServiceBase
     }
 
     // 店铺受益人专用
-    function getBeneficiaryInfo(array $data): array
+    function getBeneficiaryInfo(array $data)
     {
         $url = 'http://open.caifbigdata.com/api/ht/getBeneficiaryInfo?v=1';
 
@@ -184,11 +184,14 @@ class TaoShuService extends ServiceBase
 
         CommonService::getInstance()->log4PHP($res, 'info', 'getBeneficiaryInfo');
 
-        $resp = jsonDecode($res)['body'];
-        $resp['paging'] = null;
-        $resp['result'] = $resp['data'] ?? '';
+        $res = jsonDecode($res);
 
-        return $resp;
+        return [
+            'code' => $res['body']['data']['ISUSUAL'] === '1' ? 200 : $res['code'] ?? 600,
+            'paging' => null,
+            'result' => $res['body']['data']['RESULTDATA'] ?? [],
+            'msg' => $res['body']['msg'] ?? $res['msg'],
+        ];
     }
 
     private function checkResp($res): array
