@@ -182,8 +182,7 @@ class TaoShuService extends ServiceBase
 
         CommonService::getInstance()->log4PHP($res, 'info', 'getBeneficiaryInfo');
 
-
-
+        return [];
     }
 
     private function checkResp($res): array
