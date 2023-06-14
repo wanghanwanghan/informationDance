@@ -176,13 +176,17 @@ class TaoShuService extends ServiceBase
             'version' => $version,
         ];
 
-        CommonService::getInstance()->log4PHP($post, 'info', 'getBeneficiaryInfo');
-
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($url, $post, [], [], 'postjson');
 
-        CommonService::getInstance()->log4PHP($res, 'info', 'getBeneficiaryInfo');
+        if (is_string($res)) {
+            CommonService::getInstance()->log4PHP('字符串', 'info', 'getBeneficiaryInfo');
+        } elseif (is_array($res)) {
+            CommonService::getInstance()->log4PHP('数组', 'info', 'getBeneficiaryInfo');
+        } else {
+            CommonService::getInstance()->log4PHP('其他', 'info', 'getBeneficiaryInfo');
+        }
 
         $res = jsonDecode($res);
 
