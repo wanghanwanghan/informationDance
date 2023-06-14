@@ -171,6 +171,7 @@ class TaoShuService extends ServiceBase
             'appKey' => $appKey,
             'body' => $data,
             'sign' => strtoupper(md5($sign)),
+            'ticket' => $ticket,
             'timestamp' => $timestamp,
             'version' => $version,
         ];
