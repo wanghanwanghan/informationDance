@@ -175,8 +175,6 @@ class TaoShuService extends ServiceBase
             'version' => $version,
         ];
 
-        CommonService::getInstance()->log4PHP($post, 'info', 'getBeneficiaryInfo');
-
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($url, $post, [], [], 'postjson');
