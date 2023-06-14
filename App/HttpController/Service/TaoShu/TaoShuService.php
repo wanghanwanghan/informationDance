@@ -158,7 +158,7 @@ class TaoShuService extends ServiceBase
         $appKey = CreateConf::getInstance()->getConf('taoshu.longdun_appk');
         $appSecret = CreateConf::getInstance()->getConf('taoshu.longdun_apps');
         $ticket = strtoupper(control::getUuid());
-        $ticket = control::insertSomething($ticket, [8, 12, 16, 20]);
+        $ticket = control::insertSomething($ticket, [8, 12, 16, 20], '-');
         $timestamp = microTimeNew() - 0;
         $version = '1';
 
