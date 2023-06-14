@@ -180,21 +180,11 @@ class TaoShuService extends ServiceBase
             ->useCache(false)
             ->send($url, $post, [], [], 'postjson');
 
-        if (is_string($res)) {
-            CommonService::getInstance()->log4PHP('字符串', 'info', 'getBeneficiaryInfo');
-        } elseif (is_array($res)) {
-            CommonService::getInstance()->log4PHP('数组', 'info', 'getBeneficiaryInfo');
-        } else {
-            CommonService::getInstance()->log4PHP('其他', 'info', 'getBeneficiaryInfo');
-        }
-
-        !is_string($res) ?: $res = jsonDecode($res);
-
         return [
-            'code' => $res['body']['data']['ISUSUAL'] === '1' ? 200 : $res['code'] ?? 600,
+            'code' => 200,
             'paging' => null,
-            'result' => $res['body']['data']['RESULTDATA']['PATH'] ?? [],
-            'msg' => !empty($res['body']['msg']) ? $res['body']['msg'] : $res['msg'] ?? '',
+            'result' => jsonEncode($res, false),
+            'msg' => '',
         ];
     }
 
