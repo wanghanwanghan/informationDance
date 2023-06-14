@@ -184,7 +184,7 @@ class TaoShuService extends ServiceBase
 
         CommonService::getInstance()->log4PHP($res, 'info', 'getBeneficiaryInfo');
 
-        $resp = jsonDecode($res);
+        $resp = jsonDecode($res)['body'];
         $resp['paging'] = null;
         $resp['result'] = $resp['data'] ?? '';
 
