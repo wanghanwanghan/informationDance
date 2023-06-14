@@ -190,7 +190,7 @@ class TaoShuService extends ServiceBase
             'code' => $res['body']['data']['ISUSUAL'] === '1' ? 200 : $res['code'] ?? 600,
             'paging' => null,
             'result' => $res['body']['data']['RESULTDATA'] ?? [],
-            'msg' => $res['body']['msg'] ?? $res['msg'],
+            'msg' => !empty($res['body']['msg']) ? $res['body']['msg'] : $res['msg'] ?? '',
         ];
     }
 
