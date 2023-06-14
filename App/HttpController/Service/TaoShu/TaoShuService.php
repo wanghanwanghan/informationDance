@@ -187,7 +187,9 @@ class TaoShuService extends ServiceBase
             'msg' => '',
         ];
 
-        return $this->checkResp($res['data']);
+        CommonService::getInstance()->log4PHP($resp, 'info', 'getBeneficiaryInfo');
+
+        return $this->checkResp($res['body']['data']);
     }
 
     private function checkResp($res): array
