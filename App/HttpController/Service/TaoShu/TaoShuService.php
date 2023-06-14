@@ -180,12 +180,14 @@ class TaoShuService extends ServiceBase
             ->useCache(false)
             ->send($url, $post, [], [], 'postjson');
 
-        return [
+        $resp = [
             'code' => 200,
             'paging' => null,
             'result' => jsonEncode($res, false),
             'msg' => '',
         ];
+
+        return $this->checkResp($res['data']);
     }
 
     private function checkResp($res): array
