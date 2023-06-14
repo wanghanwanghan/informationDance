@@ -193,7 +193,7 @@ class TaoShuService extends ServiceBase
         return [
             'code' => $res['body']['data']['ISUSUAL'] === '1' ? 200 : $res['code'] ?? 600,
             'paging' => null,
-            'result' => $res['body']['data']['RESULTDATA'] ?? [],
+            'result' => $res['body']['data']['RESULTDATA']['PATH'] ?? [],
             'msg' => !empty($res['body']['msg']) ? $res['body']['msg'] : $res['msg'] ?? '',
         ];
     }
