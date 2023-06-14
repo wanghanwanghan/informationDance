@@ -48,6 +48,7 @@ class TaoShuController extends ProvideBase
 
         CommonService::getInstance()->log4PHP($entName, 'info', 'getBeneficiaryInfo');
         CommonService::getInstance()->log4PHP($entName, 'info', 'getBeneficiaryInfo');
+        CommonService::getInstance()->log4PHP($entName, 'info', 'getBeneficiaryInfo');
 
         $postData = [
             'entName' => $entName,
