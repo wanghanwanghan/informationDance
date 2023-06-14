@@ -188,7 +188,7 @@ class TaoShuService extends ServiceBase
             CommonService::getInstance()->log4PHP('其他', 'info', 'getBeneficiaryInfo');
         }
 
-        $res = jsonDecode($res);
+        !is_string($res) ?: $res = jsonDecode($res);
 
         return [
             'code' => $res['body']['data']['ISUSUAL'] === '1' ? 200 : $res['code'] ?? 600,
