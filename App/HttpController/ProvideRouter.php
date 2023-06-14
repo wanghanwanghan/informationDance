@@ -153,6 +153,7 @@ class ProvideRouter
         $prefix = '/Business/Provide/TaoShu/TaoShuController/';
 
         $routeCollector->addGroup('/ts', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getBeneficiaryInfo', $prefix . 'getBeneficiaryInfo');//受益人
             $routeCollector->addRoute(['GET', 'POST'], '/lawPersonInvestmentInfo', $prefix . 'lawPersonInvestmentInfo');//法人对外投资
             $routeCollector->addRoute(['GET', 'POST'], '/getInvestmentAbroadInfo', $prefix . 'getInvestmentAbroadInfo');//企业对外投资
             $routeCollector->addRoute(['GET', 'POST'], '/getBranchInfo', $prefix . 'getBranchInfo');//企业分支机构
