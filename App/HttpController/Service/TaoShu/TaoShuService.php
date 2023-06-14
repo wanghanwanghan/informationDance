@@ -151,7 +151,7 @@ class TaoShuService extends ServiceBase
     }
 
     // 店铺受益人专用
-    function getBeneficiaryInfo(array $data)
+    function getBeneficiaryInfo(array $data): array
     {
         $url = 'http://open.caifbigdata.com/api/ht/getBeneficiaryInfo?v=1';
 
