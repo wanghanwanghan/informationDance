@@ -29,7 +29,7 @@ class DaTongService extends ServiceBase
     function getList(array $data)
     {
         $randomStr = control::getUuid();
-        $time = time() . '000';
+        $time = microTimeNew();
 
         $sign = md5($this->accessKey . $time . $randomStr . $this->secretKey);
 
