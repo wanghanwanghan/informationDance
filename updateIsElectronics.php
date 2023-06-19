@@ -37,8 +37,8 @@ class updateIsElectronics extends AbstractProcess
 {
     protected function run($arg)
     {
-        $this->runOne();
-        // $this->runAll();
+        // $this->runOne();
+        $this->runAll();
     }
 
     function runOne()

@@ -129,6 +129,7 @@ class jincai_api extends AbstractProcess
     //启动
     protected function run($arg)
     {
+        // $this->addTask();
         // $this->getInvOne();
         // $this->addTaskSD();
         $this->getInv();
@@ -727,7 +728,6 @@ class jincai_api extends AbstractProcess
             $list = AntAuthList::create()
                 ->where('getDataSource', 2)
                 ->where('belong', 41)
-                ->where('id', 1761, '<=')// 这个数字要改
                 ->where("isElectronics LIKE '%属%成功%' OR isElectronics LIKE '%非一般%'")
                 ->all();
         } else {
