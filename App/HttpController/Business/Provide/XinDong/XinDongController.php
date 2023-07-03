@@ -74,13 +74,14 @@ class XinDongController extends ProvideBase
         $name = $this->getRequestData('name');
         $code = $this->getRequestData('code');
         $remark = $this->getRequestData('remark');
+        $type = $this->getRequestData('type');
 
-        $this->csp->add($this->cspKey, function () use ($name, $code, $remark) {
+        $this->csp->add($this->cspKey, function () use ($name, $code, $remark, $type) {
             try {
                 NeoCrmPendingEnt::create()->data([
                     'name' => trim($name),
                     'code' => trim($code),
-                    'type' => 10,
+                    'type' => $type - 0,
                     'sended' => 0,
                     'repaired' => 0,
                     'remark' => trim($remark),
