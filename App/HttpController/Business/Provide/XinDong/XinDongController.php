@@ -78,6 +78,22 @@ class XinDongController extends ProvideBase
 
         $this->csp->add($this->cspKey, function () use ($name, $code, $remark, $type) {
             try {
+                $obj = NeoCrmPendingEnt::create();
+                if (!empty($name)) {
+                    $obj->where('name', $name);
+                } elseif (!empty($code)) {
+                    $obj->where('code', $code);
+                } else {
+                    return null;
+                }
+                $res = $obj->where('created_at', strtotime('-7 day'), '>=')->all();
+                if (!empty($res)) {
+                    // 7天内只能提交一次
+                    return null;
+                }
+            } catch (\Throwable $exception) {
+            }
+            try {
                 NeoCrmPendingEnt::create()->data([
                     'name' => trim($name),
                     'code' => trim($code),
@@ -89,7 +105,6 @@ class XinDongController extends ProvideBase
                     'updated_at' => time(),
                 ])->save();
             } catch (\Throwable $exception) {
-
             }
             return null;
         });
