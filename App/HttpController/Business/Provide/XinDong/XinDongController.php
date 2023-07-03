@@ -73,8 +73,8 @@ class XinDongController extends ProvideBase
     {
         $name = $this->getRequestData('name');
         $code = $this->getRequestData('code');
-        $remark = $this->getRequestData('remark');
         $type = $this->getRequestData('type');
+        $remark = $this->getRequestData('remark');
 
         $this->csp->add($this->cspKey, function () use ($name, $code, $remark, $type) {
             try {
