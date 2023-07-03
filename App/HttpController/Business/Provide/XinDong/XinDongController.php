@@ -80,7 +80,7 @@ class XinDongController extends ProvideBase
                 NeoCrmPendingEnt::create()->data([
                     'name' => trim($name),
                     'code' => trim($code),
-                    'type' => 0,
+                    'type' => 10,
                     'sended' => 0,
                     'repaired' => 0,
                     'remark' => trim($remark),
