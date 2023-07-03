@@ -71,31 +71,24 @@ class XinDongController extends ProvideBase
     //销售易传过来的有问题企业
     function pendingEnt(): bool
     {
-        $entNameString = $this->getRequestData('entNameString');
-        $urgency = $this->getRequestData('urgency');//1-100
-        $remark = $this->getRequestData('remark');//250个字最多
-        $type = $this->getRequestData('type');//gs nacao
+        $name = $this->getRequestData('name');
+        $code = $this->getRequestData('code');
+        $remark = $this->getRequestData('remark');
 
-        $this->csp->add($this->cspKey, function () use ($entNameString, $urgency, $remark, $type) {
-            if (!empty($entNameString)) {
-                $entName_arr = explode('|', trim($entNameString));
-                if (!is_numeric($urgency) || $urgency - 0 < 1 || $urgency - 0 > 100) {
-                    $urgency = 50;
-                }
-                $insert = [];
-                foreach ($entName_arr as $one) {
-                    $insert[] = [
-                        'entname' => trim($one),
-                        'urgency' => $urgency - 0,
-                        'remark' => trim($remark),
-                        'type' => trim(strtolower($type))
-                    ];
-                }
-                try {
-                    NeoCrmPendingEnt::create()->data($insert)->saveAll($insert, false, false);
-                } catch (\Throwable $exception) {
+        $this->csp->add($this->cspKey, function () use ($name, $code, $remark) {
+            try {
+                NeoCrmPendingEnt::create()->data([
+                    'name' => trim($name),
+                    'code' => trim($code),
+                    'type' => 0,
+                    'sended' => 0,
+                    'repaired' => 0,
+                    'remark' => trim($remark),
+                    'created_at' => time(),
+                    'updated_at' => time(),
+                ])->save();
+            } catch (\Throwable $exception) {
 
-                }
             }
             return null;
         });
@@ -1760,37 +1753,37 @@ class XinDongController extends ProvideBase
         $endTime = $this->getRequestData('endTime');
         $pageNo = $this->getRequestData('pageNo');
 
-        $this->csp->add($this->cspKey, function () use ($isDetail,  $nsrsbh,  $startTime,  $endTime,  $pageNo) {
-            return (new JinCaiShuKeService())->setCheckRespFlag(true)->obtainFpInfoNew( $isDetail,  $nsrsbh,  $startTime,  $endTime,  $pageNo);
+        $this->csp->add($this->cspKey, function () use ($isDetail, $nsrsbh, $startTime, $endTime, $pageNo) {
+            return (new JinCaiShuKeService())->setCheckRespFlag(true)->obtainFpInfoNew($isDetail, $nsrsbh, $startTime, $endTime, $pageNo);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
-        $formatedReturnRes =  [
-            'result' => isset($res[$this->cspKey]['result']['data']['content']) && $res[$this->cspKey]['result']['success'] == true ?$res[$this->cspKey]['result']['data']['content']:[] ,
-            'code' => $res[$this->cspKey]['result']['success'] == true ? 200:210,
+        $formatedReturnRes = [
+            'result' => isset($res[$this->cspKey]['result']['data']['content']) && $res[$this->cspKey]['result']['success'] == true ? $res[$this->cspKey]['result']['data']['content'] : [],
+            'code' => $res[$this->cspKey]['result']['success'] == true ? 200 : 210,
             'msg' => $res[$this->cspKey]['result']['msg'],
-            'paging' => $res[$this->cspKey]['result']['success'] == true ? ['pageSize'=>1000,'totalPages'=>$res[$this->cspKey]['result']['data']['totalPages']] :[],
+            'paging' => $res[$this->cspKey]['result']['success'] == true ? ['pageSize' => 1000, 'totalPages' => $res[$this->cspKey]['result']['data']['totalPages']] : [],
         ];
 
         CommonService::getInstance()->log4PHP(
             json_encode([
                 '参数' => [
-                   '$isDetail'=>$isDetail,
-                   '$nsrsbh'=>$nsrsbh,
-                   '$startTime'=>$startTime,
-                   '$endTime'=>$endTime,
-                   '$pageNo'=>$pageNo,
+                    '$isDetail' => $isDetail,
+                    '$nsrsbh' => $nsrsbh,
+                    '$startTime' => $startTime,
+                    '$endTime' => $endTime,
+                    '$pageNo' => $pageNo,
                 ],
-                '原始返回'=>[
-                    'content' =>$res[$this->cspKey]['result']['data']['content'],
-                    'code' =>$res[$this->cspKey]['result']['code'],
-                    'msg' =>$res[$this->cspKey]['result']['msg'],
-                    'success' =>$res[$this->cspKey]['result']['success'],
-                    'totalPages' =>$res[$this->cspKey]['result']['data']['totalPages'],
+                '原始返回' => [
+                    'content' => $res[$this->cspKey]['result']['data']['content'],
+                    'code' => $res[$this->cspKey]['result']['code'],
+                    'msg' => $res[$this->cspKey]['result']['msg'],
+                    'success' => $res[$this->cspKey]['result']['success'],
+                    'totalPages' => $res[$this->cspKey]['result']['data']['totalPages'],
                 ],
-                '格式化后的结果'=>$formatedReturnRes,
-            ],JSON_UNESCAPED_UNICODE),'info','发票_授权取数'.date("Ymd").'.log');
+                '格式化后的结果' => $formatedReturnRes,
+            ], JSON_UNESCAPED_UNICODE), 'info', '发票_授权取数' . date("Ymd") . '.log');
 
         return $this->writeJson($formatedReturnRes['code'],
             $formatedReturnRes['paging'], $formatedReturnRes['result'], $formatedReturnRes['msg']);
