@@ -26,6 +26,39 @@ class co_test extends AbstractProcess
     //启动
     protected function run($arg)
     {
+        $fr = fopen('renjiaochuzi.txt', 'r');
+
+        while (feof($fr) === false) {
+
+            $str = trim(fgets($fr));
+
+            if (empty($str)) continue;
+
+            $arr = explode("\t", $str);
+
+            $sql = <<<EOF
+SELECT
+	ANCHEYEAR,
+	INV,
+	SUBCONDATE 
+FROM
+	company_ar_capital 
+WHERE
+	companyid = ( SELECT companyid FROM company_basic WHERE UNISCID = '{$arr[2]}' ORDER BY updated DESC LIMIT 1 ) 
+ORDER BY
+	ANCHEYEAR;
+EOF;
+            $res = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_hd_saic'));
+
+            dd($res);
+
+
+        }
+
+    }
+
+    protected function biaoxun()
+    {
         $url = 'https://api.biaoxun.cn/api/search/find';
 
         $key = '1c05d3aaa53e4cb19f62002c56c06602';
@@ -87,7 +120,6 @@ class co_test extends AbstractProcess
         }
 
         dd('onver');
-
     }
 
     protected function onShutDown()
