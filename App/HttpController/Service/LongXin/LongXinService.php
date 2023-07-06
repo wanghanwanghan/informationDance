@@ -137,7 +137,7 @@ class LongXinService extends ServiceBase
             $entid = null;
         }
 
-        return $entid;
+        return empty($entid) ? $entid : last(explode(',', $entid));
     }
 
     //整理请求结果
