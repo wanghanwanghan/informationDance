@@ -426,8 +426,10 @@ class LongXinService extends ServiceBase
         $this->sendHeaders['authorization'] = $this->createToken($arr);
 
         $res = (new CoHttpClient())
-            ->useCache(true)
+            ->useCache(false)
             ->send($this->baseUrl . 'ar_caiwu/', $arr, $this->sendHeaders);
+
+        CommonService::getInstance()->log4PHP([$arr, $res]);
 
         $this->recodeSourceCurl([
             'sourceName' => $this->sourceName,
@@ -1124,14 +1126,12 @@ class LongXinService extends ServiceBase
     }
 
 
-
     static function getLianXiByNameV2($entName)
     {
         $companyDataObj = CompanyBasic::findByName($entName);
 
         //ES里的基本信息
-        $res = (new XinDongService())->getEsBasicInfoV2($companyDataObj->companyid);
-         ;
+        $res = (new XinDongService())->getEsBasicInfoV2($companyDataObj->companyid);;
 
         $returnData = [];
 
@@ -1150,22 +1150,22 @@ class LongXinService extends ServiceBase
 
         foreach ($allManages as $Manage) {
             //没有名字得不要
-            if(empty($Manage['NAME'])){
-               continue;
+            if (empty($Manage['NAME'])) {
+                continue;
             }
 
             //检测出来是法人
             if (
                 !empty($res['NAME']) &&
                 trim($res['NAME']) == trim($Manage['NAME'])
-            ){
-                $Manage['POSITION'] = $Manage['POSITION']."(法人)";
+            ) {
+                $Manage['POSITION'] = $Manage['POSITION'] . "(法人)";
                 $returnData[$Manage['NAME']] = $Manage;
                 continue;
             }
 
             //其他得
-            if (!empty($Manage['POSITION']) ) {
+            if (!empty($Manage['POSITION'])) {
                 $returnData[$Manage['NAME']] = $Manage;
             }
         }
