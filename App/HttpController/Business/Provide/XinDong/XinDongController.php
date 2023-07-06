@@ -410,6 +410,101 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    //狮桥
+    function getFinanceBaseDataSQ20230706(): bool
+    {
+        date('m') - 0 >= 6 ? $b_year = date('Y') - 1 : $b_year = date('Y') - 2;
+
+        $postData = [
+            'entName' => $this->getRequestData('entName', ''),
+            'code' => $this->getRequestData('code', ''),
+            'beginYear' => $b_year,
+            'dataCount' => 1,
+        ];
+
+        $page = 1;
+        $gived = false;
+
+        while (true) {
+            $recode_info = RequestRecode::create()->addSuffix(date('Y'))->where([
+                'userId' => $this->userId,
+                'requestUrl' => '/provide/v1/xd/getFinanceBaseDataSQ20230706',
+                'responseCode' => 200,
+            ])->page($page, 100)->field(['requestData', 'responseData'])->all();
+            if (empty($recode_info)) break;
+            foreach ($recode_info as $one) {
+                $requestData = jsonDecode($one->getAttr('requestData'));
+                $responseData = jsonDecode($one->getAttr('responseData'));
+                if (!empty($requestData) && !empty($responseData)) {
+                    // 找到当前企业的这条
+                    if (isset($requestData['entName']) && $requestData['entName'] === $postData['entName']) {
+                        foreach ($responseData as $year => $vals) {
+                            if ($year - 0 === $b_year) {
+                                $gived = true;
+                            }
+                        }
+                    }
+                }
+            }
+            $page++;
+        }
+
+        if ($gived) {
+            $this->spendMoney = 0;
+        }
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->setCal(false)
+                ->getFinanceData($postData, false);
+        });
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        if ($res[$this->cspKey]['code'] === 200 && !empty($res[$this->cspKey]['result'])) {
+            $indexTable = [
+                '0' => 'O',
+                '1' => 'C',
+                '2' => 'E',
+                '3' => 'I',
+                '4' => 'G',
+                '5' => 'A',
+                '6' => 'H',
+                '7' => 'F',
+                '8' => 'D',
+                '9' => 'B',
+                '.' => '*',
+                '-' => 'J',
+            ];
+            foreach ($res[$this->cspKey]['result'] as $year => $oneYearData) {
+                foreach ($oneYearData as $field => $num) {
+                    if ($field === 'ispublic' || $field === 'SOCNUM' || $field === 'ANCHEYEAR') {
+                        unset($res[$this->cspKey]['result'][$year][$field]);
+                        continue;
+                    }
+                    $tmp = strtr($num, $indexTable);
+                    $tmp = current(explode('*', $tmp));
+                    if ($tmp[0] === 'J') {
+                        //负数
+                        if (strlen($tmp) >= 3) {
+                            $tmp = substr($tmp, 0, -1);
+                            $tmp = 'X' . $tmp;//有X说明要末尾补0
+                        }
+                    } else {
+                        //正数
+                        if (strlen($tmp) >= 2) {
+                            $tmp = substr($tmp, 0, -1);
+                            $tmp = 'X' . $tmp;//有X说明要末尾补0
+                        }
+                    }
+                    $res[$this->cspKey]['result'][$year][$field] = $tmp;
+                }
+            }
+        }
+
+        return $this->checkResponse($res);
+    }
+
     /**
      * 每日查询上限
      */
