@@ -413,12 +413,16 @@ class XinDongController extends ProvideBase
     //狮桥
     function getFinanceBaseDataSQ20230706(): bool
     {
-        date('m') - 0 >= 6 ? $b_year = date('Y') - 1 : $b_year = date('Y') - 2;
+        $beginYear = $this->getRequestData('year', '');
+
+        if (!is_numeric($beginYear) || substr($beginYear, 0, 2) !== '20') {
+            $beginYear = 2022;
+        }
 
         $postData = [
             'entName' => $this->getRequestData('entName', ''),
             'code' => $this->getRequestData('code', ''),
-            'beginYear' => $b_year,
+            'beginYear' => $beginYear - 0,
             'dataCount' => 1,
         ];
 
@@ -439,7 +443,7 @@ class XinDongController extends ProvideBase
                     // 找到当前企业的这条
                     if (isset($requestData['entName']) && $requestData['entName'] === $postData['entName']) {
                         foreach ($responseData as $year => $vals) {
-                            if ($year - 0 === $b_year) {
+                            if ($year - 0 === $beginYear) {
                                 $gived = true;
                             }
                         }
@@ -499,7 +503,7 @@ class XinDongController extends ProvideBase
         }
 
 
-        if ($gived || empty(array_filter($res[$this->cspKey]['result'][$b_year]))) {
+        if ($gived || empty(array_filter($res[$this->cspKey]['result'][$beginYear]))) {
             $this->spendMoney = 0;
         }
 
