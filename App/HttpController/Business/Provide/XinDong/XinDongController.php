@@ -422,6 +422,8 @@ class XinDongController extends ProvideBase
             'dataCount' => 1,
         ];
 
+        CommonService::getInstance()->log4PHP($postData);
+
         $page = 1;
         $gived = false;
 
@@ -460,6 +462,8 @@ class XinDongController extends ProvideBase
                 ->getFinanceData($postData, false);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        CommonService::getInstance()->log4PHP($res);
 
         if ($res[$this->cspKey]['code'] === 200 && !empty($res[$this->cspKey]['result'])) {
             $indexTable = [
@@ -501,6 +505,8 @@ class XinDongController extends ProvideBase
                 }
             }
         }
+
+        CommonService::getInstance()->log4PHP($res);
 
         return $this->checkResponse($res);
     }
