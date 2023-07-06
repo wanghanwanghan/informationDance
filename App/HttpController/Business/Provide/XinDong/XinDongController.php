@@ -422,8 +422,6 @@ class XinDongController extends ProvideBase
             'dataCount' => 1,
         ];
 
-        CommonService::getInstance()->log4PHP($postData);
-
         $page = 1;
         $gived = false;
 
@@ -451,10 +449,6 @@ class XinDongController extends ProvideBase
             $page++;
         }
 
-        if ($gived) {
-            $this->spendMoney = 0;
-        }
-
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new LongXinService())
                 ->setCheckRespFlag(true)
@@ -462,8 +456,6 @@ class XinDongController extends ProvideBase
                 ->getFinanceData($postData, false);
         });
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-
-        CommonService::getInstance()->log4PHP($res);
 
         if ($res[$this->cspKey]['code'] === 200 && !empty($res[$this->cspKey]['result'])) {
             $indexTable = [
@@ -506,7 +498,10 @@ class XinDongController extends ProvideBase
             }
         }
 
-        CommonService::getInstance()->log4PHP($res);
+
+        if ($gived || empty(array_filter($res[$this->cspKey]['result'][$b_year]))) {
+            $this->spendMoney = 0;
+        }
 
         return $this->checkResponse($res);
     }
