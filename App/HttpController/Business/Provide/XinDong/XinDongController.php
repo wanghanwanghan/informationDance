@@ -426,6 +426,8 @@ class XinDongController extends ProvideBase
             'dataCount' => 1,
         ];
 
+        CommonService::getInstance()->log4PHP($postData);
+
         $page = 1;
         $gived = false;
 
