@@ -48,6 +48,8 @@ class ZhaoTouBiaoService extends ServiceBase
             ->useCache(false)
             ->send($this->base_url . $url, $data, [], [], 'postjson');
 
+        CommonService::getInstance()->log4PHP([$data, $res], 'info', 'ztb');
+
         return jsonDecode($res);
     }
 
