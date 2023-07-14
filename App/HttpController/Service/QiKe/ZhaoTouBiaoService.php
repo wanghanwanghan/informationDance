@@ -25,16 +25,14 @@ class ZhaoTouBiaoService extends ServiceBase
     {
         $res = jsonDecode($res);
 
-        $res['code'] = 200;
-        $res['msg'] = '成功';
-        $res['pag'] = [
-            'totalPage' => $res['pages'] ?? '',
-            'total' => $res['total'] ?? ''
-        ];
+        $resp = [];
+        $resp['code'] = 200;
+        $resp['msg'] = '成功';
+        $resp['paging']['totalPage'] = $res['pages'] ?? '';
+        $resp['paging']['total'] = $res['total'] ?? '';
+        $resp['result'] = $res['records'] ?? $res;
 
-        $res['rrrres'] = $res['records'] ?? $res;
-
-        return $this->createReturn($res['code'], $res['pag'], $res['rrrres'], $res['msg']);
+        return $this->createReturn($resp['code'], $resp['paging'], $resp['result'], $resp['msg']);
     }
 
     private function getToken()
@@ -46,21 +44,15 @@ class ZhaoTouBiaoService extends ServiceBase
             'secretKey' => $this->secretKey
         ];
 
-        CommonService::getInstance()->log4PHP(['getToken', $data], 'info', 'ztb101');
-
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($this->base_url . $url, $data, [], [], 'postjson');
-
-        CommonService::getInstance()->log4PHP(['getToken', $res], 'info', 'ztb101');
 
         return jsonDecode($res);
     }
 
     function getList(string $keyword, int $page = 1, int $size = 50)
     {
-        CommonService::getInstance()->log4PHP(['参数', [$keyword, $page, $size]], 'info', 'ztb101');
-
         $info = $this->getToken();
 
         $url = 'open/data/bidding/list?access_token=' . $info['msg'];
@@ -71,13 +63,9 @@ class ZhaoTouBiaoService extends ServiceBase
             'size' => min($size, 100)
         ];
 
-        CommonService::getInstance()->log4PHP([2, $data], 'info', 'ztb101');
-
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($this->base_url . $url, $data, [], [], 'postjson');
-
-        CommonService::getInstance()->log4PHP([3, $res], 'info', 'ztb101');
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
