@@ -59,9 +59,9 @@ class ZhaoTouBiaoService extends ServiceBase
 
     function getList(string $keyword, int $page = 1, int $size = 50)
     {
-        $info = $this->getToken();
-
         CommonService::getInstance()->log4PHP(['参数', [$keyword, $page, $size]], 'info', 'ztb101');
+
+        $info = $this->getToken();
 
         $url = 'open/data/bidding/list?access_token=' . $info['msg'];
 
