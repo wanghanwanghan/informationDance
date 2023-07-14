@@ -63,6 +63,8 @@ class ZhaoTouBiaoService extends ServiceBase
             'size' => min($size, 100)
         ];
 
+        CommonService::getInstance()->log4PHP([$info, $data], 'info', 'ztb');
+
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($this->base_url . $url, $data, [], [], 'postjson');
