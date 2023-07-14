@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\QiKe;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -64,9 +65,13 @@ class ZhaoTouBiaoService extends ServiceBase
             'size' => min($size, 100)
         ];
 
+        CommonService::getInstance()->log4PHP([2, $data], 'info', 'ztb101');
+
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($this->base_url . $url, $data, [], [], 'postjson');
+
+        CommonService::getInstance()->log4PHP([3, $res], 'info', 'ztb101');
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }

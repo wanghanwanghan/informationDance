@@ -74,6 +74,8 @@ class XinDongController extends ProvideBase
             'size' => $pageSize,
         ];
 
+        CommonService::getInstance()->log4PHP([1, $postData], 'info', 'ztb101');
+
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new ZhaoTouBiaoService())
                 ->setCheckRespFlag(true)
@@ -81,6 +83,8 @@ class XinDongController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        CommonService::getInstance()->log4PHP([4, $res], 'info', 'ztb101');
 
         return $this->checkResponse($res);
     }
