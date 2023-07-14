@@ -255,8 +255,8 @@ class ProvideRouter
         $prefix = '/Business/Provide/XinDong/XinDongController/';
 
         $routeCollector->addGroup('/xd', function (RouteCollector $routeCollector) use ($prefix) {
-            $routeCollector->addRoute(['GET', 'POST'], '/ztbList101', $prefix . 'ztbList101');//启客招投标列表
-            $routeCollector->addRoute(['GET', 'POST'], '/ztbDetail101', $prefix . 'ztbDetail101');//启客招投标详情
+            $routeCollector->addRoute(['GET', 'POST'], '/ztbListq', $prefix . 'ztbListq');//启客招投标列表
+            $routeCollector->addRoute(['GET', 'POST'], '/ztbDetailq', $prefix . 'ztbDetailq');//启客招投标详情
             $routeCollector->addRoute(['GET', 'POST'], '/pendingEnt', $prefix . 'pendingEnt');
             $routeCollector->addRoute(['GET', 'POST'], '/sendSms', $prefix . 'sendSms');
             $routeCollector->addRoute(['GET', 'POST'], '/getBankInfo', $prefix . 'getBankInfo');

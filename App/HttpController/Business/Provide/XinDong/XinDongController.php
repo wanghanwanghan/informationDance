@@ -62,7 +62,7 @@ class XinDongController extends ProvideBase
     }
 
     //启客招投标接口
-    function ztbList101(): bool
+    function ztbListq(): bool
     {
         $keyword = $this->getRequestData('keyword', '');
         $page = $this->getRequestData('page', 1);
@@ -77,8 +77,7 @@ class XinDongController extends ProvideBase
         CommonService::getInstance()->log4PHP([1, $postData], 'info', 'ztb101');
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new ZhaoTouBiaoService())
-                ->setCheckRespFlag(true)
+            return (new ZhaoTouBiaoService())->setCheckRespFlag(true)
                 ->getList($postData['keyword'], $postData['page'], $postData['pageSize']);
         });
 
@@ -90,7 +89,7 @@ class XinDongController extends ProvideBase
     }
 
     //启客招投标接口
-    function ztbDetail101(): bool
+    function ztbDetailq(): bool
     {
         $mid = $this->getRequestData('mid', '');
 
