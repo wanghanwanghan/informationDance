@@ -48,8 +48,6 @@ class ZhaoTouBiaoService extends ServiceBase
             ->useCache(false)
             ->send($this->base_url . $url, $data, [], [], 'postjson');
 
-        CommonService::getInstance()->log4PHP([$data, $res], 'info', 'ztb');
-
         return is_array($res) ? $res : jsonDecode($res);
     }
 
@@ -65,13 +63,9 @@ class ZhaoTouBiaoService extends ServiceBase
             'size' => min($size, 100)
         ];
 
-        CommonService::getInstance()->log4PHP([$info, $data], 'info', 'ztb');
-
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($this->base_url . $url, $data, [], [], 'postjson');
-
-        CommonService::getInstance()->log4PHP($res, 'info', 'ztb');
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
@@ -89,8 +83,6 @@ class ZhaoTouBiaoService extends ServiceBase
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($this->base_url . $url, $data, [], [], 'postjson');
-
-        CommonService::getInstance()->log4PHP($res, 'info', 'ztb');
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
