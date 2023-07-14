@@ -3,7 +3,6 @@
 namespace App\HttpController\Business\Provide\XinDong;
 
 use App\Csp\Service\CspService;
-use App\HttpController\Business\Provide\JingZhun\JingZhunController;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Models\Api\NeoCrmPendingEnt;
 use App\HttpController\Models\EntDb\EntDbEnt;
@@ -13,11 +12,8 @@ use App\HttpController\Models\Provide\RequestRecode;
 use App\HttpController\Models\Provide\RequestUserInfo;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
-use App\HttpController\Models\RDS3\HdSaicExtension\AggreListedH;
-use App\HttpController\Models\RDS3\HdSaicExtension\AqsiqAnccH;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
-use App\HttpController\Service\DaXiang\DaXiangService;
 use App\HttpController\Service\Export\Report\Word\ReportWordService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use App\HttpController\Service\JingZhun\JingZhunService;
@@ -25,16 +21,13 @@ use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\FinanceRange;
 use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\MaYi\MaYiService;
+use App\HttpController\Service\QiKe\ZhaoTouBiaoService;
 use App\HttpController\Service\Sms\SmsService;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\Score\FenShuService;
-use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongService;
 use Carbon\Carbon;
-use EasySwoole\Redis\Redis;
 use wanghanwanghan\someUtils\control;
-use EasySwoole\Component\Csp;
-use wanghanwanghan\someUtils\moudles\resp\create;
 
 class XinDongController extends ProvideBase
 {
@@ -66,6 +59,46 @@ class XinDongController extends ProvideBase
         }
 
         return true;
+    }
+
+    //启客招投标接口
+    function ztbList101(): bool
+    {
+        $keyword = $this->getRequestData('keyword', '');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
+
+        $postData = [
+            'keyword' => $keyword,
+            'page' => $page,
+            'size' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new ZhaoTouBiaoService())
+                ->setCheckRespFlag(true)
+                ->getList(...$postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    //启客招投标接口
+    function ztbDetail101(): bool
+    {
+        $mid = $this->getRequestData('mid', '');
+
+        $this->csp->add($this->cspKey, function () use ($mid) {
+            return (new ZhaoTouBiaoService())
+                ->setCheckRespFlag(true)
+                ->getDetail($mid);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
     }
 
     //销售易传过来的有问题企业
