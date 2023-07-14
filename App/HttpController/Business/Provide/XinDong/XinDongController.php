@@ -79,7 +79,7 @@ class XinDongController extends ProvideBase
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new ZhaoTouBiaoService())
                 ->setCheckRespFlag(true)
-                ->getList(...$postData);
+                ->getList($postData['keyword'], $postData['page'], $postData['pageSize']);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
