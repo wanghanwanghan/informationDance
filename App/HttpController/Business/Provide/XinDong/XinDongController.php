@@ -70,8 +70,8 @@ class XinDongController extends ProvideBase
 
         $postData = [
             'keyword' => $keyword,
-            'page' => $page,
-            'size' => $pageSize,
+            'page' => $page - 0,
+            'size' => $pageSize - 0,
         ];
 
         CommonService::getInstance()->log4PHP([1, $postData], 'info', 'ztb101');

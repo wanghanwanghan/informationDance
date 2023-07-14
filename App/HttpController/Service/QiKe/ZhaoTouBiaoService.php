@@ -46,9 +46,13 @@ class ZhaoTouBiaoService extends ServiceBase
             'secretKey' => $this->secretKey
         ];
 
+        CommonService::getInstance()->log4PHP(['getToken', $data], 'info', 'ztb101');
+
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($this->base_url . $url, $data, [], [], 'postjson');
+
+        CommonService::getInstance()->log4PHP(['getToken', $res], 'info', 'ztb101');
 
         return jsonDecode($res);
     }
