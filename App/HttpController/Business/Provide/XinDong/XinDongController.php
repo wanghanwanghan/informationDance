@@ -74,8 +74,6 @@ class XinDongController extends ProvideBase
             'pageSize' => $pageSize - 0,
         ];
 
-        CommonService::getInstance()->log4PHP([1, $postData], 'info', 'ztb101');
-
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new ZhaoTouBiaoService())->setCheckRespFlag(true)
                 ->getList($postData['keyword'], $postData['page'], $postData['pageSize']);
