@@ -23,7 +23,7 @@ class ZhaoTouBiaoService extends ServiceBase
 
     private function checkResp($res): array
     {
-        $res = jsonDecode($res);
+        is_array($res) ?: $res = jsonDecode($res);
 
         $resp = [];
         $resp['code'] = 200;
