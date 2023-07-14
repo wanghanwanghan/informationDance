@@ -50,7 +50,7 @@ class ZhaoTouBiaoService extends ServiceBase
 
         CommonService::getInstance()->log4PHP([$data, $res], 'info', 'ztb');
 
-        return jsonDecode($res);
+        return is_array($res) ? $res : jsonDecode($res);
     }
 
     function getList(string $keyword, int $page = 1, int $size = 50)
