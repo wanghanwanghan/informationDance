@@ -135,6 +135,22 @@ class XinDongController extends XinDongBase
         $gsnsyhm = $this->request()->getRequestParam('gsnsyhm');//登录账号
         $bsryxz = $this->request()->getRequestParam('bsryxz');//办税人员姓名
 
+        CommonService::getInstance()->log4PHP([
+            'nsrsbh' => $nsrsbh,
+            'loginType' => $loginType,
+            'nsrdq' => $nsrdq,
+            'traceno' => $traceno,
+            'callback' => $callback,
+            'qd' => $qd,
+            'dlsf' => $dlsf,
+            'dlsfmm' => $dlsfmm,
+            'zjh' => $zjh,
+            'gsnsmm' => $gsnsmm,
+            'sfzjhm' => $sfzjhm,
+            'gsnsyhm' => $gsnsyhm,
+            'bsryxz' => $bsryxz,
+        ]);
+
         $res = (new JinCaiShuKeService())->eleLogin([
             'nsrsbh' => $nsrsbh,
             'loginType' => $loginType,
