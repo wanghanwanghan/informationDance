@@ -356,5 +356,14 @@ class NotifyController extends BusinessBase
         return $this->response()->write(jsonEncode(['code' => 0, 'msg' => '成功', 'data' => null], false));
     }
 
+    //金财的发票账号密码授权用 callback
+    function isElectronicsLogin(): bool
+    {
+        $res = $this->getRequestData();
+
+        CommonService::getInstance()->log4PHP($res, 'info', 'isElectronicsLoginCallback');
+
+        return $this->response()->write(jsonEncode(['code' => 0, 'msg' => '成功', 'data' => null], false));
+    }
 
 }

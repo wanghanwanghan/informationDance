@@ -189,6 +189,8 @@ class Router extends AbstractRouter
         $prefix = '/Business/Api/XinDong/XinDongController/';
 
         $routeCollector->addGroup('/xd', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/el/isElectronicsLogin', $prefix . 'isElectronicsLogin');// 金财的发票账号密码授权用 https://api.meirixindong.com/api/v1/xd/el/
+            $routeCollector->addRoute(['GET', 'POST'], '/el/isElectronicsSmsAuth', $prefix . 'isElectronicsSmsAuth');// 金财的发票账号密码授权用 https://api.meirixindong.com/api/v1/xd/el/
             $routeCollector->addRoute(['GET', 'POST'], '/getCorporateShareholderRisk', $prefix . 'getCorporateShareholderRisk');//控股法人股东的司法风险
             $routeCollector->addRoute(['GET', 'POST'], '/getProductStandard', $prefix . 'getProductStandard');//产品标准
             $routeCollector->addRoute(['GET', 'POST'], '/getAssetLeads', $prefix . 'getAssetLeads');//资产线索
@@ -580,6 +582,8 @@ class Router extends AbstractRouter
             $routeCollector->addRoute(['GET', 'POST'], '/wx_wh', $prefix . 'wxNotify_wh');//微信小程序通知 伟衡
             $routeCollector->addRoute(['GET', 'POST'], '/wx/scan', $prefix . 'wxNotifyScan');//微信扫码通知
             $routeCollector->addRoute(['GET', 'POST'], '/ali/scan', $prefix . 'aliNotifyScan');//支付宝扫码通知
+
+            $routeCollector->addRoute(['GET', 'POST'], '/el/login', $prefix . 'isElectronicsLogin');//金财的发票账号密码授权用
         });
 
         return true;

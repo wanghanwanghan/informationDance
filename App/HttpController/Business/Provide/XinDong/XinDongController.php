@@ -62,6 +62,8 @@ class XinDongController extends ProvideBase
     }
 
     //启客招投标接口
+    //招投标列表是传入【企业全称/注册号/统一信用代码】查对应企业下的所有标讯 这里的企业不支持输入简称，只支持全称
+    //垂搜是搜正文和标题里有的字符
     function ztbListq(): bool
     {
         $keyword = $this->getRequestData('keyword', '');

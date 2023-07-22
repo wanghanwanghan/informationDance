@@ -137,6 +137,53 @@ class JinCaiShuKeService extends ServiceBase
             ));
     }
 
+    function eleLogin(array $arr)
+    {
+        $url = 'http://221.222.184.98:8880/login/getLogin2';
+
+        $post_data = [
+            'nsrsbh' => $arr['nsrsbh'] ?? '',
+            'loginType' => $arr['loginType'] ?? '',
+            'nsrdq' => $arr['nsrdq'] ?? '',
+            'traceno' => $arr['traceno'] ?? '',
+            'callback' => $arr['callback'] ?? '',
+            'qd' => $arr['qd'] ?? '',
+            'nsrInfo' => [
+                'dlsf' => $arr['dlsf'] ?? '',
+                'dlsfmm' => $arr['dlsfmm'] ?? '',
+                'zjh' => $arr['zjh'] ?? '',
+                'gsnsmm' => $arr['gsnsmm'] ?? '',
+                'sfzjhm' => $arr['sfzjhm'] ?? '',
+                'gsnsyhm' => $arr['gsnsyhm'] ?? '',
+                'bsryxz' => $arr['bsryxz'] ?? '',
+            ]
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($url, $post_data, [], ['enableSSL' => true], 'postjson');
+
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
+    }
+
+    function eleSms(array $arr)
+    {
+        $url = 'http://221.222.184.98:8880/login/submitSms';
+
+        $post_data = [
+            'traceno' => $arr['traceno'] ?? '',
+            'nsrsbh' => $arr['nsrsbh'] ?? '',
+            'smsCode' => $arr['smsCode'] ?? '',
+            'zjh' => $arr['zjh'] ?? '',
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($url, $post_data, [], ['enableSSL' => true], 'postjson');
+
+        return $this->checkRespFlag ? $this->checkResp($res) : $res;
+    }
+
     function getRwhData()
     {
         $time = time() - 86400;

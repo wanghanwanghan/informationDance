@@ -8,6 +8,7 @@ use App\Crontab\CrontabList\RunDealApiSouKe;
 use App\Crontab\CrontabList\RunDealBussinessOpportunity;
 use App\Crontab\CrontabList\RunDealCarInsuranceInstallment;
 use App\Crontab\CrontabList\RunDealEmailReceiver;
+
 //use App\Crontab\CrontabList\RunDealFinanceCompanyData;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNew;
 use App\Crontab\CrontabList\RunDealFinanceCompanyDataNewV2;
@@ -47,6 +48,7 @@ use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
 use App\HttpController\Models\RDS3\HdSaic\CompanyHistoryName;
 use App\HttpController\Models\RDS3\HdSaic\CompanyInv;
 use App\HttpController\Models\RDS3\HdSaic\CompanyLiquidation;
+
 //use App\HttpController\Models\RDS3\HdSaic\ZhaoTouBiaoAll;
 use App\HttpController\Models\RDS3\HdSaic\CompanyManager;
 use App\HttpController\Models\RDS3\HdSaicExtension\CncaRzGltxH;
@@ -60,6 +62,7 @@ use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\Export\Excel\ExportExcelService;
 use App\HttpController\Service\GuoPiao\GuoPiaoService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
+
 //use App\HttpController\Service\LongDun\BaoYaService;
 use App\HttpController\Service\LongDun\LongDunService;
 use App\HttpController\Service\LongXin\LongXinService;
@@ -70,6 +73,7 @@ use App\HttpController\Service\XinDong\Score\FenShuService;
 use App\HttpController\Service\XinDong\Score\xds;
 use App\HttpController\Service\XinDong\XinDongKeDongService;
 use App\HttpController\Service\XinDong\XinDongService;
+
 // use App\HttpController\Models\RDS3\Company;
 use App\Process\ProcessList\MatchSimilarEnterprisesProccess;
 use App\Task\TaskList\MatchSimilarEnterprises;
@@ -90,6 +94,7 @@ use App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Service\GuangZhouYinLian\GuangZhouYinLianService;
 use Vtiful\Kernel\Format;
+
 class XinDongController extends XinDongBase
 {
     private $ldUrl;
@@ -97,7 +102,7 @@ class XinDongController extends XinDongBase
     function onRequest(?string $action): ?bool
     {
         $this->ldUrl = CreateConf::getInstance()->getConf('longdun.baseUrl');
-        
+
         return parent::onRequest($action);
     }
 
@@ -111,6 +116,72 @@ class XinDongController extends XinDongBase
     private function checkResponse($res): bool
     {
         return $this->writeJson((int)$res['code'], $res['paging'], $res['result'], $res['msg'] ?? null);
+    }
+
+    //金财的全电授权 登录
+    function isElectronicsLogin(): bool
+    {
+        $nsrsbh = $this->request()->getRequestParam('nsrsbh');
+        $loginType = $this->request()->getRequestParam('loginType') ?? '1';//登录类型，1账密（短信验证码）登录，2扫码登录
+        $nsrdq = $this->request()->getRequestParam('nsrdq');//省份全拼，陕西为shaanxi
+        $traceno = control::getUuid();
+        $callback = 'https://api.meirixindong.com/api/v1/notify/el/login';
+        $qd = 'true';//是否全电登录，默认true
+        $dlsf = $this->request()->getRequestParam('dlsf');//登录身份，参考身份字典
+        $dlsfmm = $this->request()->getRequestParam('dlsfmm');//登录身份密码
+        $zjh = $this->request()->getRequestParam('zjh');//中间号或接收短信的手机号，涉及到短信验证码的省份必填
+        $gsnsmm = $this->request()->getRequestParam('gsnsmm');//登录密码
+        $sfzjhm = $this->request()->getRequestParam('sfzjhm');//身份证件号码
+        $gsnsyhm = $this->request()->getRequestParam('gsnsyhm');//登录账号
+        $bsryxz = $this->request()->getRequestParam('bsryxz');//办税人员姓名
+
+        $res = (new JinCaiShuKeService())->eleLogin([
+            'nsrsbh' => $nsrsbh,
+            'loginType' => $loginType,
+            'nsrdq' => $nsrdq,
+            'traceno' => $traceno,
+            'callback' => $callback,
+            'qd' => $qd,
+            'dlsf' => $dlsf,
+            'dlsfmm' => $dlsfmm,
+            'zjh' => $zjh,
+            'gsnsmm' => $gsnsmm,
+            'sfzjhm' => $sfzjhm,
+            'gsnsyhm' => $gsnsyhm,
+            'bsryxz' => $bsryxz,
+        ]);
+
+        $temp = [];
+        $temp['code'] = 200;
+        $temp['paging'] = null;
+        $temp['result'] = $res;
+        $temp['msg'] = null;
+
+        return $this->checkResponse($temp);
+    }
+
+    //金财的全电授权 短信验证码
+    function isElectronicsSmsAuth(): bool
+    {
+        $traceno = $this->request()->getRequestParam('traceno');
+        $nsrsbh = $this->request()->getRequestParam('nsrsbh');
+        $smsCode = $this->request()->getRequestParam('smsCode');
+        $zjh = $this->request()->getRequestParam('zjh');
+
+        $res = (new JinCaiShuKeService())->eleSms([
+            'traceno' => $traceno,
+            'nsrsbh' => $nsrsbh,
+            'smsCode' => $smsCode,
+            'zjh' => $zjh,
+        ]);
+
+        $temp = [];
+        $temp['code'] = 200;
+        $temp['paging'] = null;
+        $temp['result'] = $res;
+        $temp['msg'] = null;
+
+        return $this->checkResponse($temp);
     }
 
     //控股法人股东的司法风险
@@ -751,38 +822,38 @@ eof;
     }
 
     /**
-      * 
-      * 支持的搜索条件 
-       https://api.meirixindong.com/api/v1/xd/getSearchOption?phone=18201611816
-      * 
-      * 
+     *
+     * 支持的搜索条件
+     * https://api.meirixindong.com/api/v1/xd/getSearchOption?phone=18201611816
+     *
+     *
      */
     function getSearchOption(): bool
-    { 
+    {
         $searchOptionArr = (new XinDongService())->getSearchOption([]);
 
         return $this->writeJson(200, null, $searchOptionArr, '成功', false, []);
     }
 
     /**
-      * 
-      * 高级搜索 | 
-        https://api.meirixindong.com/api/v1/xd/advancedSearch 
-      * 
-      * 
+     *
+     * 高级搜索 |
+     * https://api.meirixindong.com/api/v1/xd/advancedSearch
+     *
+     *
      */
     function advancedSearch(): bool
     {
-        $requestData =  $this->getRequestData();
-        if(substr($requestData['basic_nicid'], -1) == ','){
+        $requestData = $this->getRequestData();
+        if (substr($requestData['basic_nicid'], -1) == ',') {
             $requestData['basic_nicid'] = rtrim($requestData['basic_nicid'], ",");
         }
 
-        if(substr($requestData['basic_regionid'], -1) == ','){
+        if (substr($requestData['basic_regionid'], -1) == ',') {
             $requestData['basic_regionid'] = rtrim($requestData['basic_regionid'], ",");
         }
 
-        if(substr($requestData['basic_jlxxcyid'], -1) == ','){
+        if (substr($requestData['basic_jlxxcyid'], -1) == ',') {
             $requestData['basic_jlxxcyid'] = rtrim($requestData['basic_jlxxcyid'], ",");
         }
 
@@ -790,41 +861,41 @@ eof;
         $companyEsModel = new \App\ElasticSearch\Model\Company();
 
         //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
-        $searchOptionStr =  trim($this->request()->getRequestParam('searchOption'));
+        $searchOptionStr = trim($this->request()->getRequestParam('searchOption'));
         $searchOptionArr = json_decode($searchOptionStr, true);
 
-        $size = $this->request()->getRequestParam('size')??20;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;
+        $size = $this->request()->getRequestParam('size') ?? 20;
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $offset = ($page - 1) * $size;
 
         //区域搜索
-        $areas_arr  = json_decode($requestData['areas'],true) ;
-        if(!empty($areas_arr)){
+        $areas_arr = json_decode($requestData['areas'], true);
+        if (!empty($areas_arr)) {
 
             //区域多边形搜索：要闭合：即最后一个点要和最后一个点重合
             $first = $areas_arr[0];;
-            $last =  end($areas_arr);
-            if(
-                strval($first[0])!= strval($last[0]) ||
-                strval($first[1])!= strval($last[1])
-            ){
+            $last = end($areas_arr);
+            if (
+                strval($first[0]) != strval($last[0]) ||
+                strval($first[1]) != strval($last[1])
+            ) {
                 $areas_arr[] = $first;
             }
         }
         $companyEsModel
             //经营范围
-            ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')),"OPSCOPE")
+            ->SetQueryByBusinessScope(trim($this->request()->getRequestParam('basic_opscope')), "OPSCOPE")
             //数字经济及其核心产业
             ->SetQueryByBasicSzjjid(trim($this->request()->getRequestParam('basic_szjjid')))
             // 搜索文案 智能搜索
-            ->SetQueryBySearchTextV2( trim($this->request()->getRequestParam('searchText')))
+            ->SetQueryBySearchTextV2(trim($this->request()->getRequestParam('searchText')))
             // 搜索战略新兴产业
             ->SetQueryByBasicJlxxcyid(trim($this->request()->getRequestParam('basic_jlxxcyid')))
             // 搜索shang_pin_data 商品信息 appStr:五香;农庄
-            ->SetQueryByShangPinData( trim($this->request()->getRequestParam('appStr')))
+            ->SetQueryByShangPinData(trim($this->request()->getRequestParam('appStr')))
             //必须存在官网
             ->SetQueryByWeb($searchOptionArr)
-            ->SetAreaQueryV5($areas_arr,$requestData['areas_type']?:1)
+            ->SetAreaQueryV5($areas_arr, $requestData['areas_type'] ?: 1)
             //必须存在APP
             ->SetQueryByApp($searchOptionArr)
             //必须是物流企业
@@ -855,27 +926,26 @@ eof;
             //设置默认值 不传任何条件 搜全部
             ->setDefault()
             //按照营收排序
-            ->addSortV2('li_run_gui_mo_2021',$searchOptionArr)
+            ->addSortV2('li_run_gui_mo_2021', $searchOptionArr)
             ->searchFromEs('company_202303')
             // 格式化下日期和时间
             ->formatEsDate()
             // 格式化下金额
-            ->formatEsMoney('REGCAP')
-        ;
+            ->formatEsMoney('REGCAP');
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'hits_count' =>  count($companyEsModel->return_data['hits']['hits'])
+                __CLASS__ . __FUNCTION__ . __LINE__,
+                'hits_count' => count($companyEsModel->return_data['hits']['hits'])
             ])
         );
 
 
-        foreach($companyEsModel->return_data['hits']['hits'] as &$dataItem){
-            $dataItem['_source']['short_name'] =  CompanyBasic::findBriefName($dataItem['_source']['ENTNAME']);
+        foreach ($companyEsModel->return_data['hits']['hits'] as &$dataItem) {
+            $dataItem['_source']['short_name'] = CompanyBasic::findBriefName($dataItem['_source']['ENTNAME']);
             $addresAndEmailData = (new XinDongService())->getLastPostalAddressAndEmailV2($dataItem);
             $dataItem['_source']['LAST_DOM'] = $addresAndEmailData['LAST_DOM'];
             $dataItem['_source']['LAST_EMAIL'] = $addresAndEmailData['LAST_EMAIL'];
-            $dataItem['_source']['logo'] =  (new XinDongService())->getLogoByEntIdV2($dataItem['_source']['companyid']);
+            $dataItem['_source']['logo'] = (new XinDongService())->getLogoByEntIdV2($dataItem['_source']['companyid']);
 
             // 添加tag
             $dataItem['_source']['tags'] = array_values(
@@ -884,13 +954,13 @@ eof;
                 )
             );
 
-            $dataItem['_source']['ENTTYPE_CNAME'] =   '';
-            $dataItem['_source']['ENTSTATUS_CNAME'] =  '';
-            if($dataItem['_source']['ENTTYPE']){
-                $dataItem['_source']['ENTTYPE_CNAME'] =   CodeCa16::findByCode($dataItem['_source']['ENTTYPE']);
+            $dataItem['_source']['ENTTYPE_CNAME'] = '';
+            $dataItem['_source']['ENTSTATUS_CNAME'] = '';
+            if ($dataItem['_source']['ENTTYPE']) {
+                $dataItem['_source']['ENTTYPE_CNAME'] = CodeCa16::findByCode($dataItem['_source']['ENTTYPE']);
             }
-            if($dataItem['_source']['ENTSTATUS']){
-                $dataItem['_source']['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($dataItem['_source']['ENTSTATUS']);
+            if ($dataItem['_source']['ENTSTATUS']) {
+                $dataItem['_source']['ENTSTATUS_CNAME'] = CodeEx02::findByCode($dataItem['_source']['ENTSTATUS']);
             }
 
 
@@ -898,7 +968,7 @@ eof;
             $tmpArr = explode('&&&', trim($dataItem['_source']['gong_si_jian_jie']));
             array_pop($tmpArr);
             $dataItem['_source']['gong_si_jian_jie_data_arr'] = [];
-            foreach($tmpArr as $tmpItem_){
+            foreach ($tmpArr as $tmpItem_) {
                 // $dataItem['_source']['gong_si_jian_jie_data_arr'][] = [$tmpItem_];
                 $dataItem['_source']['gong_si_jian_jie_data_arr'][] = $tmpItem_;
             }
@@ -906,7 +976,7 @@ eof;
 
             // 官网
             $webStr = trim($dataItem['_source']['web']);
-            if(!$webStr){
+            if (!$webStr) {
                 continue;
             }
             $webArr = explode('&&&', $webStr);
@@ -916,9 +986,9 @@ eof;
         return $this->writeJson(200,
             [
                 'page' => $page,
-                'pageSize' =>$size,
+                'pageSize' => $size,
                 'total' => intval($companyEsModel->return_data['hits']['total']['value']),
-                'totalPage' => (int)floor(intval($companyEsModel->return_data['hits']['total']['value'])/
+                'totalPage' => (int)floor(intval($companyEsModel->return_data['hits']['total']['value']) /
                     ($size)),
 
             ]
@@ -928,32 +998,32 @@ eof;
     function advancedSearchOption(): bool
     {
         return $this->writeJson(200,
-            [  ]
+            []
             , (new XinDongService())->getSearchOption(), '成功', true, []);
 
     }
 
 
     // 保存搜索历史
-     function saveSearchHistroy(): bool
-     { 
+    function saveSearchHistroy(): bool
+    {
         $queryName = trim($this->request()->getRequestParam('query_name'));
-        if(!$queryName){
-            return  $this->writeJson(201, null, null, '参数缺失（搜索历史名称）');
+        if (!$queryName) {
+            return $this->writeJson(201, null, null, '参数缺失（搜索历史名称）');
         }
-         // 记录搜索历史
-         $res = (new XinDongService())->saveSearchHistory(
-             $this->loginUserinfo['id'],  
-             json_encode($this->request()->getRequestParam()),
-             $queryName
-         );
+        // 记录搜索历史
+        $res = (new XinDongService())->saveSearchHistory(
+            $this->loginUserinfo['id'],
+            json_encode($this->request()->getRequestParam()),
+            $queryName
+        );
 
-         if(!$res){
-            return  $this->writeJson(201, null, null, '保存失败，请联系管理员');
-         }
+        if (!$res) {
+            return $this->writeJson(201, null, null, '保存失败，请联系管理员');
+        }
 
-         return $this->writeJson(200, ['total' => 1], [], '成功', true, []);
-     }
+        return $this->writeJson(200, ['total' => 1], [], '成功', true, []);
+    }
     //  function advancedSearchOld(): bool
     // { 
     //     $ElasticSearchService = new ElasticSearchService(); 
@@ -980,7 +1050,7 @@ eof;
 
     //         $list = sqlRaw($sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_nic_code'));
     //         $nicIds = array_column($list, 'nic_id');
-            
+
     //         CommonService::getInstance()->log4PHP($sql);
     //         CommonService::getInstance()->log4PHP($list);
     //         CommonService::getInstance()->log4PHP($nicIds); 
@@ -1008,10 +1078,9 @@ eof;
     //         ];
     //         $ElasticSearchService->addMustShouldPhraseQueryV2($matchedCnames) ;  
     //     }
-       
 
 
-    //     // 需要按文本搜索的  
+    //     // 需要按文本搜索的
     //     $addMustMatchPhraseQueryMap = [
     //         // 名称  name  全名匹配 
     //         // 'name' =>trim($this->request()->getRequestParam('searchText')),
@@ -1034,18 +1103,18 @@ eof;
     //         $matchedCnames = array_column($siJiFenLeiDatas, 'nic_id');
     //        $ElasticSearchService
     //             ->addMustShouldPhraseQuery( 'si_ji_fen_lei_code' , $matchedCnames) ; 
-    
+
     //     }
 
     //     // 搜索shang_pin_data 商品信息 appStr:五香;农庄
     //     $appStr =   trim($this->request()->getRequestParam('appStr')); 
     //     $appStr && $appStrDatas = explode(';', $appStr);
     //     !empty($appStrDatas) && $ElasticSearchService->addMustShouldPhraseQuery( 'shang_pin_data.name' , $appStrDatas) ;
-    
+
     //     //传过来的searchOption 例子 [{"type":20,"value":["5","10","2"]},{"type":30,"value":["15","5"]}]
     //     $searchOptionStr =  trim($this->request()->getRequestParam('searchOption'));
     //     $searchOptionArr = json_decode($searchOptionStr, true);
-        
+
     //     // 把具体需要搜索的各项摘出来
     //     $org_type_values = [];  // 企业类型  
     //     $estiblish_time_values = [];  // 成立年限  
@@ -1059,19 +1128,19 @@ eof;
     //         if($item['pid'] == 10){
     //             $org_type_values = $item['value'];  
     //         }
- 
+
     //         if($item['pid'] == 20){ 
     //             $estiblish_time_values = $item['value']; 
     //         }
-   
+
     //         if($item['pid'] == 30){
     //             $reg_status_values = $item['value']; 
     //         }
- 
+
     //         if($item['pid'] == 40){ 
     //             $reg_capital_values = $item['value']; 
     //         }
-  
+
     //         if($item['pid'] == 50){ 
     //             $ying_shou_gui_mo_values = $item['value']; 
     //         }
@@ -1091,7 +1160,7 @@ eof;
     //         if($value){
     //             // $ElasticSearchService->addMustExistsQuery( 'web') ; 
     //             $ElasticSearchService->addMustRegexpQuery( 'web', ".+") ; 
-                
+
     //             break;
     //         }
     //     }
@@ -1110,7 +1179,7 @@ eof;
     //         $orgType && $matchedCnames[] = (new XinDongService())->getCompanyOrgType()[$orgType]; 
     //     }
     //     (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldPhraseQuery( 'company_org_type' , $matchedCnames) ;
-    
+
     //     // 成立年限  ：传过来的是 10  20 30 转换成最小值最大值范围后 再去搜索
     //     $matchedCnames = [];
     //     $map = [
@@ -1131,16 +1200,16 @@ eof;
     //         $item && $matchedCnames[] = $map[$item]; 
     //     } 
     //     (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldRangeQuery( 'estiblish_time' , $matchedCnames) ; 
-    
+
     //     // 营业状态   传过来的是 10  20  转换成文案后 去匹配  
     //     $matchedCnames = [];
     //     foreach($reg_status_values as $item){
     //         $item && $matchedCnames[] = (new XinDongService())->getRegStatus()[$item]; 
     //     }
     //     (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldPhraseQuery( 'reg_status' , $matchedCnames) ; 
-    
+
     //     // 注册资本 传过来的是 10 20 转换成最大最小范围后 再去搜索
-        
+
     //     $map = XinDongService::getZhuCeZiBenMap();
     //     foreach($reg_capital_values as $item){
     //         $tmp = $map[$item]['epreg']; 
@@ -1156,7 +1225,7 @@ eof;
     //     // 团队人数 传过来的是 10 20 转换成最大最小范围后 再去搜索
     //     $map =  (new XinDongService())::getTuanDuiGuiMoMap();
     //     $matchedCnames = [];
-        
+
     //     foreach($tuan_dui_ren_shu_values as $item){
     //         $tmp = $map[$item]['epreg']; 
     //         foreach($tmp as $tmp_item){
@@ -1166,7 +1235,6 @@ eof;
     //     (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldRegexpQuery( 
     //         'tuan_dui_ren_shu' , $matchedCnames
     //     ) ;
-       
 
 
     //     // 营收规模  传过来的是 10 20 转换成对应文案后再去匹配
@@ -1198,7 +1266,6 @@ eof;
     //     }
 
     //     (!empty($matchedCnames)) && $ElasticSearchService->addMustShouldPhraseQuery( 'ying_shou_gui_mo' , $matchedCnames) ;  
-        
 
 
     //     //四级分类 basic_nicid: A0111,A0112,A0113,
@@ -1262,7 +1329,7 @@ eof;
     //         $webArr = explode('&&&', $webStr);
     //         !empty($webArr) && $dataItem['_source']['web'] = end($webArr); 
     //     }
-    
+
     //     return $this->writeJson(200, 
     //       [
     //         'page' => $page,
@@ -1270,42 +1337,43 @@ eof;
     //         'total' => intval($responseArr['hits']['total']['value']),
     //         'totalPage' => (int)floor(intval($responseArr['hits']['total']['value'])/
     //         ($size)),
-         
+
     //     ] 
     //    , $hits, '成功', true, []);
     // }
 
     /**
-      * 
-      * 基本信息 
-        https://api.meirixindong.com/api/v1/xd/getCompanyBasicInfo 
-      * 
-      * 
+     *
+     * 基本信息
+     * https://api.meirixindong.com/api/v1/xd/getCompanyBasicInfo
+     *
+     *
      */
     function getCompanyBasicInfo(): bool
     {
         $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业ID)');
+            return $this->writeJson(201, null, null, '参数缺失(企业ID)');
         }
 
         $res = (new XinDongService())->getEsBasicInfoV2($companyId);
-        $res['ENTTYPE_CNAME'] =   '';
-        $res['ENTTYPE'] && $res['ENTTYPE_CNAME'] =   CodeCa16::findByCode($res['ENTTYPE']);
-        $res['ENTSTATUS_CNAME'] =   '';
-        $res['ENTSTATUS'] && $res['ENTSTATUS_CNAME'] =   CodeEx02::findByCode($res['ENTSTATUS']);
+        $res['ENTTYPE_CNAME'] = '';
+        $res['ENTTYPE'] && $res['ENTTYPE_CNAME'] = CodeCa16::findByCode($res['ENTTYPE']);
+        $res['ENTSTATUS_CNAME'] = '';
+        $res['ENTSTATUS'] && $res['ENTSTATUS_CNAME'] = CodeEx02::findByCode($res['ENTSTATUS']);
 //        $retData['LAST_DOM'] = $res['LAST_DOM'];
 //        $retData['LAST_EMAIL'] = $res['LAST_EMAIL'];
         return $this->writeJson(200, ['total' => 1], $res, '成功', true, []);
     }
+
     function getCompanyBasicInfoOld(): bool
-    {  
-        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+    {
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业ID)');
+            return $this->writeJson(201, null, null, '参数缺失(企业ID)');
         }
-        
-        $retData  = Company::create()->where('id', $companyId)->get();
+
+        $retData = Company::create()->where('id', $companyId)->get();
         $retData = (new XinDongService())::formatObjDate(
             $retData,
             [
@@ -1319,30 +1387,30 @@ eof;
             $retData,
             [
                 'reg_capital',
-                'actual_capital', 
+                'actual_capital',
             ]
         );
-         
-        $retData['logo'] =  (new XinDongService())->getLogoByEntId($retData['id']);
-        $res = (new XinDongService())->getEsBasicInfo($companyId); 
+
+        $retData['logo'] = (new XinDongService())->getLogoByEntId($retData['id']);
+        $res = (new XinDongService())->getEsBasicInfo($companyId);
         $retData['last_postal_address'] = $res['last_postal_address'];
         $retData['last_email'] = $res['last_email'];
         return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
     }
 
-     /**
-      * 
-      * 高级搜索 
-        https://api.meirixindong.com/api/v1/xd/getCpwsList 
-      * 
-      * 
+    /**
+     *
+     * 高级搜索
+     * https://api.meirixindong.com/api/v1/xd/getCpwsList
+     *
+     *
      */
     function getCpwsList(): bool
     {
         $page = $this->getRequestData('page');
-        $page = $page > 0? $page :1;
+        $page = $page > 0 ? $page : 1;
         $pageSize = $this->getRequestData('size');
-        $pageSize = $pageSize > 0? $pageSize :10;
+        $pageSize = $pageSize > 0 ? $pageSize : 10;
         $postData = [
             'entName' => trim($this->getRequestData('entName')),
             'page' => $page,
@@ -1354,15 +1422,15 @@ eof;
         }
 
         $res = (new LongXinService())->setCheckRespFlag(true)->getCpwsList($postData);
-        return   $this->writeJson(200,  $res['paging'],  $res['result'], '成功', true, []);  
+        return $this->writeJson(200, $res['paging'], $res['result'], '成功', true, []);
     }
 
-     /**
-      * 
-      *  
-        https://api.meirixindong.com/api/v1/xd/getCpwsDetail 
-      * 
-      * 
+    /**
+     *
+     *
+     * https://api.meirixindong.com/api/v1/xd/getCpwsDetail
+     *
+     *
      */
     function getCpwsDetail(): bool
     {
@@ -1370,25 +1438,25 @@ eof;
             'mid' => $this->getRequestData('mid'),
         ];
 
-        $res = (new LongXinService())->setCheckRespFlag(true)->getCpwsDetail($postData); 
+        $res = (new LongXinService())->setCheckRespFlag(true)->getCpwsDetail($postData);
 
-        return   $this->writeJson(200,  ['total' => 1],  $res['result'], '成功', true, []);  
+        return $this->writeJson(200, ['total' => 1], $res['result'], '成功', true, []);
         // return $this->checkResponse($res);
     }
 
     /**
-      * 
-      *  
-        https://api.meirixindong.com/api/v1/xd/getKtggList 
-      * 
-      * 
+     *
+     *
+     * https://api.meirixindong.com/api/v1/xd/getKtggList
+     *
+     *
      */
     function getKtggList(): bool
     {
         $page = $this->getRequestData('page');
-        $page = $page > 0? $page :1;
+        $page = $page > 0 ? $page : 1;
         $pageSize = $this->getRequestData('size');
-        $pageSize = $pageSize > 0? $pageSize :10;
+        $pageSize = $pageSize > 0 ? $pageSize : 10;
 
         $postData = [
             'entName' => $this->getRequestData('entName'),
@@ -1396,9 +1464,9 @@ eof;
             'pageSize' => $pageSize,
         ];
 
-         $res = (new LongXinService())->setCheckRespFlag(true)->getKtggList($postData);
+        $res = (new LongXinService())->setCheckRespFlag(true)->getKtggList($postData);
 
-         return   $this->writeJson(200,  $res['paging'],  $res['result'], '成功', true, []);  
+        return $this->writeJson(200, $res['paging'], $res['result'], '成功', true, []);
         // return $this->checkResponse($res); 
     }
 
@@ -1409,106 +1477,107 @@ eof;
         ];
 
         $res = (new LongXinService())->setCheckRespFlag(true)->getKtggDetail($postData);
-        
-        return   $this->writeJson(200,   ['total' => 1], $res['result'], '成功', true, []);  
+
+        return $this->writeJson(200, ['total' => 1], $res['result'], '成功', true, []);
         // return $this->checkResponse($res); 
     }
 
     /**
-      * 
-      * 专业资质 荣誉称号  
-        https://api.meirixindong.com/api/v1/xd/getHighTecQualifications 
-      * 
-      * 
+     *
+     * 专业资质 荣誉称号
+     * https://api.meirixindong.com/api/v1/xd/getHighTecQualifications
+     *
+     *
      */
     function getHighTecQualifications(): bool
     {
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?$page:1;
+        $page = $page > 0 ? $page : 1;
         $size = intval($this->request()->getRequestParam('size'));
-        $size = $size>0 ?$size:10;
-        $offset = ($page-1)*$size;
+        $size = $size > 0 ? $size : 10;
+        $offset = ($page - 1) * $size;
 
         $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
 
         $res = MostTorchHightechH::findByConditionV3(
             [
-                ['field'=>'companyid','value'=>$companyId,'operate'=>'=']
+                ['field' => 'companyid', 'value' => $companyId, 'operate' => '=']
             ]
         );
         return $this->writeJson(200,
-            ['total' => $res['total'],'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($res['total']/$size)],
+            ['total' => $res['total'], 'page' => $page, 'pageSize' => $size, 'totalPage' => floor($res['total'] / $size)],
             $res['data'], '成功', true, []
         );
     }
-    function getHighTecQualificationsOld(): bool
-    {  
-        $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?$page:1; 
-        $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?$size:10; 
-        $offset = ($page-1)*$size;  
 
-        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+    function getHighTecQualificationsOld(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page > 0 ? $page : 1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size > 0 ? $size : 10;
+        $offset = ($page - 1) * $size;
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
- 
+
         $model = \App\HttpController\Models\RDS3\XdHighTec::create()
             ->where('xd_id', $companyId)->page($page)->withTotalCount();
-        $retData = $model->all(); 
-        $total = $model->lastQueryResult()->getTotalCount(); 
-        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount();
+        return $this->writeJson(200, ['total' => $total, 'page' => $page, 'pageSize' => $size, 'totalPage' => floor($total / $size)], $retData, '成功', true, []);
     }
 
     /**
-      * 
-      * 专业资质 荣誉称号 （瞪羚） 
-        https://api.meirixindong.com/api/v1/xd/getDengLingQualifications 
-      * 
-      * 
+     *
+     * 专业资质 荣誉称号 （瞪羚）
+     * https://api.meirixindong.com/api/v1/xd/getDengLingQualifications
+     *
+     *
      */
     function getDengLingQualifications(): bool
-    {  
+    {
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?$page:1; 
-        $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?$size:10; 
-        $offset = ($page-1)*$size;  
+        $page = $page > 0 ? $page : 1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size > 0 ? $size : 10;
+        $offset = ($page - 1) * $size;
 
-        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
- 
+
         $model = \App\HttpController\Models\RDS3\XdDl::create()
             ->where('xd_id', $companyId)->page($page)->withTotalCount();
         $retData = $model->all();
-        $total = $model->lastQueryResult()->getTotalCount(); 
-        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+        $total = $model->lastQueryResult()->getTotalCount();
+        return $this->writeJson(200, ['total' => $total, 'page' => $page, 'pageSize' => $size, 'totalPage' => floor($total / $size)], $retData, '成功', true, []);
     }
 
     /**
-      * 
-      * 专业资质 荣誉称号 (Iso) 
-        https://api.meirixindong.com/api/v1/xd/getIsoQualifications 
-      * 
-      * 
+     *
+     * 专业资质 荣誉称号 (Iso)
+     * https://api.meirixindong.com/api/v1/xd/getIsoQualifications
+     *
+     *
      */
     function getIsoQualifications(): bool
     {
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?$page:1;
+        $page = $page > 0 ? $page : 1;
         $size = intval($this->request()->getRequestParam('size'));
-        $size = $size>0 ?$size:10;
-        $offset = ($page-1)*$size;
+        $size = $size > 0 ? $size : 10;
+        $offset = ($page - 1) * $size;
 
         $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
 
         $res = CncaRzGltxH::findByConditionV3(
@@ -1524,123 +1593,90 @@ eof;
         $total = $res['total'];
 
         return $this->writeJson(200,
-            ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
+            ['total' => $total, 'page' => $page, 'pageSize' => $size, 'totalPage' => floor($total / $size)],
             $res['data'], '成功', true, []
         );
 
     }
+
     function getIsoQualificationsOld(): bool
-    {  
+    {
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?$page:1; 
-        $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?$size:10; 
-        $offset = ($page-1)*$size;  
-        
-        $companyId = intval($this->request()->getRequestParam('xd_id')); 
-        if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
-        }
- 
-        $model = \App\HttpController\Models\RDS3\XdDlRzGlTx::create()
-            ->where('xd_id', $companyId)->page($page)->withTotalCount();
-        $retData = $model->all();
-        $total = $model->lastQueryResult()->getTotalCount(); 
-        
-        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
-    
-    }
+        $page = $page > 0 ? $page : 1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size > 0 ? $size : 10;
+        $offset = ($page - 1) * $size;
 
-    /**
-      * 
-      * 获取企业的人员规模信息  
-        https://api.meirixindong.com/api/v1/xd/getEmploymenInfo 
-      * 
-      * 
-     */
-    function getEmploymenInfo(): bool
-    {  
-        $companyId = intval($this->request()->getRequestParam('xd_id')); 
-        if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
-        }
-        
-        $retData  =\App\HttpController\Models\RDS3\TuanDuiGuiMo::create()->where('xd_id', $companyId)->get();
-        
-        return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
-    }
-
-     /**
-      * 
-      * 获取企业的营收规模  
-        https://api.meirixindong.com/api/v1/xd/getBusinessScaleInfo 
-      * 
-      * 
-     */
-    function getBusinessScaleInfo(): bool
-    {  
-        $entname = trim($this->request()->getRequestParam('entname')); 
-        if (!$entname) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业名称)');
-        }
-        
-        $retData  =\App\HttpController\Models\RDS3\ArLable::create()->where('entname', $entname)->get();
-        
-        return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
-    }
-
-    /**
-      * 
-      * 获取主营产品
-        https://api.meirixindong.com/api/v1/xd/getMainProducts 
-      * 
-      * 
-     */
-    function getMainProductsOld(): bool
-    {  
-        $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?$page:1; 
-        $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?$size:10; 
-        $offset = ($page-1)*$size;  
-
-        $type = trim($this->request()->getRequestParam('type')); 
-        if (!in_array($type,['ios', 'andoriod'])) {
-            return  $this->writeJson(201, null, null, '参数缺失(类型)');
-        }
-
-        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
             return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
 
-        if($type == 'ios'){  
-            $model = \App\HttpController\Models\RDS3\XdAppIos::create()
+        $model = \App\HttpController\Models\RDS3\XdDlRzGlTx::create()
             ->where('xd_id', $companyId)->page($page)->withTotalCount();
-            $retData = $model->all();
-            $total = $model->lastQueryResult()->getTotalCount(); 
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount();
+
+        return $this->writeJson(200, ['total' => $total, 'page' => $page, 'pageSize' => $size, 'totalPage' => floor($total / $size)], $retData, '成功', true, []);
+
+    }
+
+    /**
+     *
+     * 获取企业的人员规模信息
+     * https://api.meirixindong.com/api/v1/xd/getEmploymenInfo
+     *
+     *
+     */
+    function getEmploymenInfo(): bool
+    {
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
 
-        if($type == 'andoriod'){
-            $model = \App\HttpController\Models\RDS3\XdAppAndroid::create()
-            ->where('xd_id', $companyId)->page($page)->withTotalCount();
-            $retData = $model->all();
-            $total = $model->lastQueryResult()->getTotalCount();  
-        } 
- 
-        return $this->writeJson(200,  ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+        $retData = \App\HttpController\Models\RDS3\TuanDuiGuiMo::create()->where('xd_id', $companyId)->get();
+
+        return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
     }
-    function getMainProducts(): bool
+
+    /**
+     *
+     * 获取企业的营收规模
+     * https://api.meirixindong.com/api/v1/xd/getBusinessScaleInfo
+     *
+     *
+     */
+    function getBusinessScaleInfo(): bool
+    {
+        $entname = trim($this->request()->getRequestParam('entname'));
+        if (!$entname) {
+            return $this->writeJson(201, null, null, '参数缺失(企业名称)');
+        }
+
+        $retData = \App\HttpController\Models\RDS3\ArLable::create()->where('entname', $entname)->get();
+
+        return $this->writeJson(200, ['total' => 1], $retData, '成功', true, []);
+    }
+
+    /**
+     *
+     * 获取主营产品
+     * https://api.meirixindong.com/api/v1/xd/getMainProducts
+     *
+     *
+     */
+    function getMainProductsOld(): bool
     {
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?$page:1;
+        $page = $page > 0 ? $page : 1;
         $size = intval($this->request()->getRequestParam('size'));
-        $size = $size>0 ?$size:10;
-        $offset = ($page-1)*$size;
+        $size = $size > 0 ? $size : 10;
+        $offset = ($page - 1) * $size;
 
         $type = trim($this->request()->getRequestParam('type'));
-        if (!in_array($type,['ios', 'andoriod'])) {
-            return  $this->writeJson(201, null, null, '参数缺失(类型)');
+        if (!in_array($type, ['ios', 'andoriod'])) {
+            return $this->writeJson(201, null, null, '参数缺失(类型)');
         }
 
         $companyId = intval($this->request()->getRequestParam('xd_id'));
@@ -1648,26 +1684,61 @@ eof;
             return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
 
-        if($type == 'ios'){
+        if ($type == 'ios') {
+            $model = \App\HttpController\Models\RDS3\XdAppIos::create()
+                ->where('xd_id', $companyId)->page($page)->withTotalCount();
+            $retData = $model->all();
+            $total = $model->lastQueryResult()->getTotalCount();
+        }
+
+        if ($type == 'andoriod') {
+            $model = \App\HttpController\Models\RDS3\XdAppAndroid::create()
+                ->where('xd_id', $companyId)->page($page)->withTotalCount();
+            $retData = $model->all();
+            $total = $model->lastQueryResult()->getTotalCount();
+        }
+
+        return $this->writeJson(200, ['total' => $total, 'page' => $page, 'pageSize' => $size, 'totalPage' => floor($total / $size)], $retData, '成功', true, []);
+    }
+
+    function getMainProducts(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page > 0 ? $page : 1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size > 0 ? $size : 10;
+        $offset = ($page - 1) * $size;
+
+        $type = trim($this->request()->getRequestParam('type'));
+        if (!in_array($type, ['ios', 'andoriod'])) {
+            return $this->writeJson(201, null, null, '参数缺失(类型)');
+        }
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        if ($type == 'ios') {
             $res = DataplusAppIosH::findByConditionV3(
                 [
                     [
-                        'value'=>$companyId,
-                        'field'=>'companyid',
-                        'operate'=>'=',
+                        'value' => $companyId,
+                        'field' => 'companyid',
+                        'operate' => '=',
                     ]
                 ]
             );
             $total = $res['total'];
         }
 
-        if($type == 'andoriod'){
+        if ($type == 'andoriod') {
             $res = DataplusAppAndroidH::findByConditionV3(
                 [
                     [
-                        'value'=>$companyId,
-                        'field'=>'companyid',
-                        'operate'=>'=',
+                        'value' => $companyId,
+                        'field' => 'companyid',
+                        'operate' => '=',
                     ]
                 ]
             );
@@ -1675,91 +1746,93 @@ eof;
         }
 
         return $this->writeJson(200,
-            ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)],
+            ['total' => $total, 'page' => $page, 'pageSize' => $size, 'totalPage' => floor($total / $size)],
             $res['data'], '成功', true, []);
     }
-    function getCountInfoOld(): bool
-    {  
-        $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?$page:1; 
-        $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?$size:10; 
-        $offset = ($page-1)*$size;  
 
-        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+    function getCountInfoOld(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page > 0 ? $page : 1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size > 0 ? $size : 10;
+        $offset = ($page - 1) * $size;
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(类型)');
+            return $this->writeJson(201, null, null, '参数缺失(类型)');
         }
 
-       
+
         $highTecCount = \App\HttpController\Models\RDS3\XdHighTec::create()
-                ->where('xd_id', $companyId)->count();
+            ->where('xd_id', $companyId)->count();
 
         $isoCount = \App\HttpController\Models\RDS3\XdDlRzGlTx::create()
-                ->where('xd_id', $companyId)->count();
+            ->where('xd_id', $companyId)->count();
 
 
         $iosCount = \App\HttpController\Models\RDS3\XdAppIos::create()
-                ->where('xd_id', $companyId)->count();
+            ->where('xd_id', $companyId)->count();
         $andoriodCount = \App\HttpController\Models\RDS3\XdAppAndroid::create()
-                ->where('xd_id', $companyId)->count();      
+            ->where('xd_id', $companyId)->count();
 
         $guDongCount = \App\HttpController\Models\RDS3\CompanyInvestor::create()
-                ->where('company_id', $companyId)->count();
+            ->where('company_id', $companyId)->count();
         // 没有工商股东信息 从企业自发查
-        if(!$guDongCount){
-                $guDongCount = \App\HttpController\Models\RDS3\CompanyInvestorEntPub::create()
-                    ->where('company_id', $companyId)->count();
-        } 
+        if (!$guDongCount) {
+            $guDongCount = \App\HttpController\Models\RDS3\CompanyInvestorEntPub::create()
+                ->where('company_id', $companyId)->count();
+        }
 
         $employeeCount = \App\HttpController\Models\RDS3\CompanyStaff::create()
-                    ->where('company_id', $companyId)->count();   
+            ->where('company_id', $companyId)->count();
 
 
         // 商品信息
-        $ElasticSearchService = new ElasticSearchService();  
-        $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;   
-        $ElasticSearchService->addSize(1) ;
-        $ElasticSearchService->addFrom(0) ; 
-            
+        $ElasticSearchService = new ElasticSearchService();
+        $ElasticSearchService->addMustMatchQuery('xd_id', $companyId);
+        $ElasticSearchService->addSize(1);
+        $ElasticSearchService->addFrom(0);
+
         $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
-        $responseArr = @json_decode($responseJson,true);  
+        $responseArr = @json_decode($responseJson, true);
         // 格式化下日期和时间
         $hits = $responseArr['hits']['hits'];
         $hits = (new XinDongService())::formatEsMoney($hits, [
-            'reg_capital', 
-        ]); 
-            
-        foreach($hits as $dataItem){
+            'reg_capital',
+        ]);
+
+        foreach ($hits as $dataItem) {
             $retData = $dataItem['_source']['shang_pin_data'];
             break;
-        }           
-        $shangPinTotal =  count($retData); //total items in array     
-        
+        }
+        $shangPinTotal = count($retData); //total items in array
+
         $retData = [
             // 股东+人员
             'gong_shang' => intval($employeeCount + $guDongCount),
             // 商品
             'shang_pin' => $shangPinTotal,
             //专业资质 iso+高新
-            'rong_yu' =>  intval($highTecCount + $isoCount),
+            'rong_yu' => intval($highTecCount + $isoCount),
             //ios +andoriod
-            'app' => intval($iosCount+$andoriodCount),
-        ];    
- 
-        return $this->writeJson(200,  [  ], $retData, '成功', true, []);
+            'app' => intval($iosCount + $andoriodCount),
+        ];
+
+        return $this->writeJson(200, [], $retData, '成功', true, []);
     }
+
     function getCountInfo(): bool
     {
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?$page:1;
+        $page = $page > 0 ? $page : 1;
         $size = intval($this->request()->getRequestParam('size'));
-        $size = $size>0 ?$size:10;
-        $offset = ($page-1)*$size;
+        $size = $size > 0 ? $size : 10;
+        $offset = ($page - 1) * $size;
 
         $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(类型)');
+            return $this->writeJson(201, null, null, '参数缺失(类型)');
         }
 
 
@@ -1784,23 +1857,23 @@ eof;
 
         // 商品信息
         $ElasticSearchService = new ElasticSearchService();
-        $ElasticSearchService->addMustMatchQuery( 'companyid' , $companyId) ;
-        $ElasticSearchService->addSize(1) ;
-        $ElasticSearchService->addFrom(0) ;
+        $ElasticSearchService->addMustMatchQuery('companyid', $companyId);
+        $ElasticSearchService->addSize(1);
+        $ElasticSearchService->addFrom(0);
 
         $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
-        $responseArr = @json_decode($responseJson,true);
+        $responseArr = @json_decode($responseJson, true);
         // 格式化下日期和时间
         $hits = $responseArr['hits']['hits'];
         $hits = (new XinDongService())::formatEsMoney($hits, [
             'reg_capital',
         ]);
 
-        foreach($hits as $dataItem){
+        foreach ($hits as $dataItem) {
             $retData = $dataItem['_source']['shang_pin_data'];
             break;
         }
-        $shangPinTotal =  count($retData); //total items in array
+        $shangPinTotal = count($retData); //total items in array
 
         $retData = [
             // 股东+人员
@@ -1808,227 +1881,229 @@ eof;
             // 商品
             'shang_pin' => $shangPinTotal,
             //专业资质 iso+高新
-            'rong_yu' =>  intval($highTecCount + $isoCount),
+            'rong_yu' => intval($highTecCount + $isoCount),
             //ios +andoriod
-            'app' => intval($iosCount+$andoriodCount),
+            'app' => intval($iosCount + $andoriodCount),
         ];
 
-        return $this->writeJson(200,  [  ], $retData, '成功', true, []);
+        return $this->writeJson(200, [], $retData, '成功', true, []);
     }
-     /**
-      * 
-      * 获取企业标签
-        https://api.meirixindong.com/api/v1/xd/getTagInfo 
-      * 
-      * 
+
+    /**
+     *
+     * 获取企业标签
+     * https://api.meirixindong.com/api/v1/xd/getTagInfo
+     *
+     *
      */
     function getTagInfo(): bool
-    {   
-        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+    {
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
             return $this->writeJson(201, null, null, '参数缺失(企业id)');
-        } 
+        }
 
-        $companyData  =\App\HttpController\Models\RDS3\Company::create()->where('id', $companyId)->get();
-        if(!$companyData){
+        $companyData = \App\HttpController\Models\RDS3\Company::create()->where('id', $companyId)->get();
+        if (!$companyData) {
             return $this->writeJson(201, null, null, '没有该企业');
         }
 
-        $ElasticSearchService = new ElasticSearchService(); 
-        
-        $ElasticSearchService->addMustMatchQuery( 'xd_id' , $companyId) ;  
- 
-        $ElasticSearchService->addSize(1) ;
-        $ElasticSearchService->addFrom(0) ; 
+        $ElasticSearchService = new ElasticSearchService();
+
+        $ElasticSearchService->addMustMatchQuery('xd_id', $companyId);
+
+        $ElasticSearchService->addSize(1);
+        $ElasticSearchService->addFrom(0);
 
         $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService);
-        $responseArr = @json_decode($responseJson,true); 
+        $responseArr = @json_decode($responseJson, true);
 
-        return $this->writeJson(200, ['total' => 1], 
-        XinDongService::getAllTagesByData($responseArr['hits']['hits'][0]['_source']), 
-        '成功', true, []);
+        return $this->writeJson(200, ['total' => 1],
+            XinDongService::getAllTagesByData($responseArr['hits']['hits'][0]['_source']),
+            '成功', true, []);
     }
 
-     /**
-      * 
-      * 获取主营产品
-        https://api.meirixindong.com/api/v1/xd/getSearchHistory 
-      * 
-      * 
+    /**
+     *
+     * 获取主营产品
+     * https://api.meirixindong.com/api/v1/xd/getSearchHistory
+     *
+     *
      */
     function getSearchHistory(): bool
-    {  
+    {
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?$page:1; 
-        $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?$size:10; 
-        $offset = ($page-1)*$size;  
+        $page = $page > 0 ? $page : 1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size > 0 ? $size : 10;
+        $offset = ($page - 1) * $size;
 
-        $model =  UserSearchHistory::create()
+        $model = UserSearchHistory::create()
             ->where('userId', $this->loginUserinfo['id'])
             ->order('id', 'DESC')
             ->page($page)->withTotalCount();
         $retData = $model->all();
-        $total = $model->lastQueryResult()->getTotalCount(); 
-        
-        foreach($retData as &$dataitem){
-           $dataitem['post_data_arr'] = json_decode($dataitem['post_data'], true); 
+        $total = $model->lastQueryResult()->getTotalCount();
+
+        foreach ($retData as &$dataitem) {
+            $dataitem['post_data_arr'] = json_decode($dataitem['post_data'], true);
         }
- 
-        return $this->writeJson(200,  ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
+
+        return $this->writeJson(200, ['total' => $total, 'page' => $page, 'pageSize' => $size, 'totalPage' => floor($total / $size)], $retData, '成功', true, []);
     }
 
     /**
-      * 
-      * 删除搜索历史
-        https://api.meirixindong.com/api/v1/xd/delSearchHistory 
-      * 
-      * 
+     *
+     * 删除搜索历史
+     * https://api.meirixindong.com/api/v1/xd/delSearchHistory
+     *
+     *
      */
     function delSearchHistory(): bool
-    {  
-        $id = intval($this->request()->getRequestParam('id')); 
+    {
+        $id = intval($this->request()->getRequestParam('id'));
         if (!$id) {
             return $this->writeJson(201, null, null, '参数缺失');
-        }   
-        
-        if(
-           !UserSearchHistory::create()->where('id', $id)->where('userId' , $this->loginUserinfo['id'])->get()
-        ){
+        }
+
+        if (
+            !UserSearchHistory::create()->where('id', $id)->where('userId', $this->loginUserinfo['id'])->get()
+        ) {
             return $this->writeJson(203, null, null, '没有该数据');
-        } 
+        }
 
         try {
             $res = UserSearchHistory::create()->destroy(function (QueryBuilder $builder) use ($id) {
-                $builder->where('id', $id)->where('userId' , $this->loginUserinfo['id']);
-            }); 
+                $builder->where('id', $id)->where('userId', $this->loginUserinfo['id']);
+            });
         } catch (\Throwable $e) {
             CommonService::getInstance()->log4PHP($e->getMessage());
         }
 
-        if(!$res){
+        if (!$res) {
             return $this->writeJson(204, null, null, '删除失败');
         }
 
-        return $this->writeJson(200,  [], [], '成功', true, []);
+        return $this->writeJson(200, [], [], '成功', true, []);
     }
 
     /**
-      * 
-      * 股东信息
-        https://api.meirixindong.com/api/v1/xd/getInvestorInfo 
-      * 
-      * 
+     *
+     * 股东信息
+     * https://api.meirixindong.com/api/v1/xd/getInvestorInfo
+     *
+     *
      */
     function getInvestorInfo(): bool
     {
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?$page:1;
+        $page = $page > 0 ? $page : 1;
         $size = intval($this->request()->getRequestParam('size'));
-        $size = $size>0 ?$size:10;
-        $offset = ($page-1)*$size;
+        $size = $size > 0 ? $size : 10;
+        $offset = ($page - 1) * $size;
 
         $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
 
         $res = CompanyInv::findByCompanyId($companyId);
 
         return $this->writeJson(200,
-            ['total' => count($res),'page' => $page, 'pageSize' => $size, 'totalPage'=> floor(count($res)/$size)],
+            ['total' => count($res), 'page' => $page, 'pageSize' => $size, 'totalPage' => floor(count($res) / $size)],
             $res, '成功', true, []
         );
     }
+
     function getInvestorInfoOld(): bool
-    {  
+    {
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?$page:1; 
-        $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?$size:10; 
-        $offset = ($page-1)*$size;  
-        
-        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        $page = $page > 0 ? $page : 1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size > 0 ? $size : 10;
+        $offset = ($page - 1) * $size;
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
-        
+
         //优先从工商股东信息取
         $model = \App\HttpController\Models\RDS3\CompanyInvestor::create()
             ->where('company_id', $companyId)->page($page)->withTotalCount();
         // 没有工商股东信息 从企业自发查
-        if(!$model){
+        if (!$model) {
             $model = \App\HttpController\Models\RDS3\CompanyInvestorEntPub::create()
                 ->where('company_id', $companyId)->page($page)->withTotalCount();
         }
         $retData = $model->all();
-        $total = $model->lastQueryResult()->getTotalCount(); 
-        
-        foreach($retData as &$dataItem){
-            if(
-                $dataItem['investor_type'] == 2 
-            ){
+        $total = $model->lastQueryResult()->getTotalCount();
+
+        foreach ($retData as &$dataItem) {
+            if (
+                $dataItem['investor_type'] == 2
+            ) {
                 $companyModel = \App\HttpController\Models\RDS3\Company::create()
                     ->where('id', $dataItem['investor_id'])->get();
-                $dataItem['name'] = $companyModel->name; 
-                if(XinDongService::isJson($dataItem['capital'])){
-                    $dataItem['capitalData'] = @json_decode($dataItem['capital'],true);
-                }else{
-                    $dataItem['capitalData'] = [['amomon'=>$dataItem['capital'],'time'=>'','paymet'=>'']];
+                $dataItem['name'] = $companyModel->name;
+                if (XinDongService::isJson($dataItem['capital'])) {
+                    $dataItem['capitalData'] = @json_decode($dataItem['capital'], true);
+                } else {
+                    $dataItem['capitalData'] = [['amomon' => $dataItem['capital'], 'time' => '', 'paymet' => '']];
                 }
-                if(XinDongService::isJson($dataItem['capitalActl'])){
-                    $dataItem['capitalActlData'] = @json_decode($dataItem['capitalActl'],true);
-                }else{
-                    $dataItem['capitalActlData'] = [['amomon'=>$dataItem['capitalActl'],'time'=>'','paymet'=>'']];
-                } 
-                
+                if (XinDongService::isJson($dataItem['capitalActl'])) {
+                    $dataItem['capitalActlData'] = @json_decode($dataItem['capitalActl'], true);
+                } else {
+                    $dataItem['capitalActlData'] = [['amomon' => $dataItem['capitalActl'], 'time' => '', 'paymet' => '']];
+                }
+
             }
 
-            if(
-                $dataItem['investor_type'] == 1 
-            ){
+            if (
+                $dataItem['investor_type'] == 1
+            ) {
                 $humanModel = \App\HttpController\Models\RDS3\Human::create()
                     ->where('id', $dataItem['investor_id'])->get();
                 $dataItem['name'] = $humanModel->name;
-                if(XinDongService::isJson($dataItem['capital'])){
-                    $dataItem['capitalData'] = @json_decode($dataItem['capital'],true);
-                }else{
-                    $dataItem['capitalData'] = [['amomon'=>$dataItem['capital'],'time'=>'','paymet'=>'']];
+                if (XinDongService::isJson($dataItem['capital'])) {
+                    $dataItem['capitalData'] = @json_decode($dataItem['capital'], true);
+                } else {
+                    $dataItem['capitalData'] = [['amomon' => $dataItem['capital'], 'time' => '', 'paymet' => '']];
                 }
-                if(XinDongService::isJson($dataItem['capitalActl'])){
-                    $dataItem['capitalActlData'] = @json_decode($dataItem['capitalActl'],true);
-                }else{
-                    $dataItem['capitalActlData'] = [['amomon'=>$dataItem['capitalActl'],'time'=>'','paymet'=>'']];
+                if (XinDongService::isJson($dataItem['capitalActl'])) {
+                    $dataItem['capitalActlData'] = @json_decode($dataItem['capitalActl'], true);
+                } else {
+                    $dataItem['capitalActlData'] = [['amomon' => $dataItem['capitalActl'], 'time' => '', 'paymet' => '']];
                 }
-            } 
+            }
         }
 
-        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
-    
+        return $this->writeJson(200, ['total' => $total, 'page' => $page, 'pageSize' => $size, 'totalPage' => floor($total / $size)], $retData, '成功', true, []);
+
     }
 
     /**
-      * 
-      * 人员信息
-        https://api.meirixindong.com/api/v1/xd/getStaffInfo 
-      * 
-      * 
+     *
+     * 人员信息
+     * https://api.meirixindong.com/api/v1/xd/getStaffInfo
+     *
+     *
      */
     function getStaffInfo(): bool
     {
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?$page:1;
+        $page = $page > 0 ? $page : 1;
         $size = intval($this->request()->getRequestParam('size'));
-        $size = $size>0 ?$size:10;
-        $offset = ($page-1)*$size;
+        $size = $size > 0 ? $size : 10;
+        $offset = ($page - 1) * $size;
 
         $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
         $dataRes = CompanyManager::findByConditionV2(
             [
-                ['field' => 'companyid', 'value' => $companyId ,'operate'=> '=']
+                ['field' => 'companyid', 'value' => $companyId, 'operate' => '=']
             ],
             $page
         );
@@ -2036,49 +2111,50 @@ eof;
             'total' => $dataRes['total'],
             'page' => $page,
             'pageSize' => $size,
-            'totalPage'=> floor($dataRes['total']/$size)],
+            'totalPage' => floor($dataRes['total'] / $size)],
             $dataRes['data'], '成功', true, []);
 
     }
-    function getStaffInfoOld(): bool
-    {  
-        $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?$page:1; 
-        $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?$size:10; 
-        $offset = ($page-1)*$size;  
-        
-        $companyId = intval($this->request()->getRequestParam('xd_id')); 
-        if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
-        }
-        
-        $model = \App\HttpController\Models\RDS3\CompanyStaff::create()
-            ->where('company_id', $companyId)->page($page)->withTotalCount(); 
-        $retData = $model->all();
-        $total = $model->lastQueryResult()->getTotalCount(); 
 
-        foreach($retData as &$dataItem){
+    function getStaffInfoOld(): bool
+    {
+        $page = intval($this->request()->getRequestParam('page'));
+        $page = $page > 0 ? $page : 1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size > 0 ? $size : 10;
+        $offset = ($page - 1) * $size;
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
+        if (!$companyId) {
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
+        }
+
+        $model = \App\HttpController\Models\RDS3\CompanyStaff::create()
+            ->where('company_id', $companyId)->page($page)->withTotalCount();
+        $retData = $model->all();
+        $total = $model->lastQueryResult()->getTotalCount();
+
+        foreach ($retData as &$dataItem) {
             $humanModel = \App\HttpController\Models\RDS3\Human::create()
                 ->where('id', $dataItem['staff_id'])->get();
             $dataItem['name'] = $humanModel->name;
         }
-        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
-    
+        return $this->writeJson(200, ['total' => $total, 'page' => $page, 'pageSize' => $size, 'totalPage' => floor($total / $size)], $retData, '成功', true, []);
+
     }
 
     /**
-      * 
-      * 曾用名
-        https://api.meirixindong.com/api/v1/xd/getNamesInfo 
-      * 
-      * 
+     *
+     * 曾用名
+     * https://api.meirixindong.com/api/v1/xd/getNamesInfo
+     *
+     *
      */
     function getNamesInfo(): bool
     {
         $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
 
         $names = CompanyHistoryName::findByCompanyId($companyId);
@@ -2086,25 +2162,26 @@ eof;
         return $this->writeJson(200, [], $names, '成功', true, []);
 
     }
+
     function getNamesInfoOld(): bool
-    {  
+    {
         // $page = intval($this->request()->getRequestParam('page'));
         // $page = $page>0 ?$page:1; 
         // $size = intval($this->request()->getRequestParam('size')); 
         // $size = $size>0 ?$size:10; 
         // $offset = ($page-1)*$size;  
-        
-        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
-        
+
         $model = Company::create()
-                    // ->field(['id','name','property2'])
-                ->where('id', $companyId)
-                ->get(); 
-        if(!$model){
-            return  $this->writeJson(201, null, null, '数据缺失(企业id)');
+            // ->field(['id','name','property2'])
+            ->where('id', $companyId)
+            ->get();
+        if (!$model) {
+            return $this->writeJson(201, null, null, '数据缺失(企业id)');
         }
 
         $names = (new XinDongService())::getAllUsedNames(
@@ -2114,17 +2191,17 @@ eof;
                 'property2' => $model->property2,
             ]
         );
-       
+
         return $this->writeJson(200, [], $names, '成功', true, []);
-    
-    } 
-    
+
+    }
+
     // 上传商机
     function uploadBusinessOpportunity(): bool
     {
         $files = $this->request()->getUploadedFiles();
         CommonService::getInstance()->log4PHP(
-            '[souKe]-uploadEntList files['.json_encode($files).']'
+            '[souKe]-uploadEntList files[' . json_encode($files) . ']'
         );
         $y = Carbon::now()->format('Y');
         $m = Carbon::now()->format('m');
@@ -2137,22 +2214,20 @@ eof;
         foreach ($files as $key => $oneFile) {
             if ($oneFile instanceof UploadFile) {
                 try {
-                    $fileName = $path .  $this->loginUserinfo['id'] . '_' . $oneFile->getClientFilename();
-                    if (!file_exists($fileName)){
+                    $fileName = $path . $this->loginUserinfo['id'] . '_' . $oneFile->getClientFilename();
+                    if (!file_exists($fileName)) {
                         $oneFile->moveTo($fileName);
-                    } else
-                    {
+                    } else {
                         CommonService::getInstance()->log4PHP(
-                            '[souKe]-uploadEntList 文件已存在['.$fileName.']'
+                            '[souKe]-uploadEntList 文件已存在[' . $fileName . ']'
                         );
                     }
                 } catch (\Throwable $e) {
                     return $this->writeJson(202);
                 }
-            }
-            else{
+            } else {
                 CommonService::getInstance()->log4PHP(
-                    '[souKe]-uploadEntList 不是实例['.json_encode($oneFile).']'
+                    '[souKe]-uploadEntList 不是实例[' . json_encode($oneFile) . ']'
                 );
             }
         }
@@ -2165,26 +2240,27 @@ eof;
     {
         $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
 
         $res = (new XinDongService())->getEsBasicInfoV2($companyId);
         return $this->writeJson(200,
-            [ ]
+            []
             , $res, '成功', true, []);
     }
+
     function getEsBasicInfoOld(): bool
     {
-        $companyId = intval($this->request()->getRequestParam('xd_id')); 
+        $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
 
-        $res = (new XinDongService())->getEsBasicInfo($companyId); 
-    
-        return $this->writeJson(200, 
-          [ ] 
-       , $res, '成功', true, []);
+        $res = (new XinDongService())->getEsBasicInfo($companyId);
+
+        return $this->writeJson(200,
+            []
+            , $res, '成功', true, []);
     }
 
     //
@@ -2192,21 +2268,21 @@ eof;
     {
         $companyId = intval($this->request()->getRequestParam('xd_id'));
         if (!$companyId) {
-            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
 
         $ElasticSearchService = new ElasticSearchService();
-        $ElasticSearchService->addMustMatchQuery( 'companyid' , $companyId) ;
+        $ElasticSearchService->addMustMatchQuery('companyid', $companyId);
 
-        $size = $this->request()->getRequestParam('size')??10;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;
-        $ElasticSearchService->addSize(1) ;
-        $ElasticSearchService->addFrom(0) ;
+        $size = $this->request()->getRequestParam('size') ?? 10;
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $offset = ($page - 1) * $size;
+        $ElasticSearchService->addSize(1);
+        $ElasticSearchService->addFrom(0);
 
-        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService,'company_202303');
-        $responseArr = @json_decode($responseJson,true);
-        CommonService::getInstance()->log4PHP('advancedSearch-Es '.@json_encode(
+        $responseJson = (new XinDongService())->advancedSearch($ElasticSearchService, 'company_202303');
+        $responseArr = @json_decode($responseJson, true);
+        CommonService::getInstance()->log4PHP('advancedSearch-Es ' . @json_encode(
                 [
                     'es_query' => $ElasticSearchService->query,
                     'post_data' => $this->request()->getRequestParam(),
@@ -2225,26 +2301,26 @@ eof;
         ]);
 
 
-        foreach($hits as $dataItem){
+        foreach ($hits as $dataItem) {
             $retData = $dataItem['_source']['shang_pin_data'];
             break;
         }
 
 
-        $total =  count($retData); //total items in array
-        $totalPages = ceil( $total/ $size ); //calculate total pages
+        $total = count($retData); //total items in array
+        $totalPages = ceil($total / $size); //calculate total pages
         $page = max($page, 1); //get 1 page when $_GET['page'] <= 0
         // $page = min($page, $totalPages); //get last page when $_GET['page'] > $totalPages
         $offset = ($page - 1) * $size;
-        if( $offset < 0 ) $offset = 0;
+        if ($offset < 0) $offset = 0;
 
-        $retData = array_slice( $retData, $offset, $size );
+        $retData = array_slice($retData, $offset, $size);
 
 
         return $this->writeJson(200,
             [
                 'page' => $page,
-                'pageSize' =>$size,
+                'pageSize' => $size,
                 'total' => $total,
                 'totalPage' => $totalPages,
             ]
@@ -2264,12 +2340,12 @@ eof;
 
         $excel = new \Vtiful\Kernel\Excel($config);
 
-        $filename = 'souke_'.control::getUuid(8) . '.xlsx';
+        $filename = 'souke_' . control::getUuid(8) . '.xlsx';
 
         $header = [
             '序号',
             '企业名称',
-            '监控类别', 
+            '监控类别',
         ];
 
         try {
@@ -2280,8 +2356,8 @@ eof;
                 ->all();
             $data = [];
             $i = 1;
-            foreach ($list as $one) { 
-                
+            foreach ($list as $one) {
+
                 array_push($data, [
                     $one['name'],
                     $one['code'],
@@ -2316,15 +2392,14 @@ eof;
             ->header($header)
             ->defaultFormat($alignStyle)
             ->data($data)
-            ->setColumn('B:B', 50)
-        ;
+            ->setColumn('B:B', 50);
 
         $format = new Format($fileHandle);
         //单元格有\n解析成换行
         $wrapStyle = $format
             ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
             ->wrap()
-            ->toResource(); 
+            ->toResource();
 
         $res = $fileObject->output();
 
@@ -2333,42 +2408,42 @@ eof;
 
     // 获取上传列表
     function getUploadOpportunityLists(): bool
-    {  
+    {
         $page = intval($this->request()->getRequestParam('page'));
-        $page = $page>0 ?$page:1; 
-        $size = intval($this->request()->getRequestParam('size')); 
-        $size = $size>0 ?$size:10; 
-        $offset = ($page-1)*$size;   
-        
+        $page = $page > 0 ? $page : 1;
+        $size = intval($this->request()->getRequestParam('size'));
+        $size = $size > 0 ? $size : 10;
+        $offset = ($page - 1) * $size;
+
         $model = UserBusinessOpportunityBatch::create()
-            ->where('userId', $this->loginUserinfo['id'])->page($page)->withTotalCount(); 
+            ->where('userId', $this->loginUserinfo['id'])->page($page)->withTotalCount();
         $retData = $model->all();
-        $total = $model->lastQueryResult()->getTotalCount(); 
+        $total = $model->lastQueryResult()->getTotalCount();
 
         // foreach($retData as &$dataItem){
         //     $humanModel = \App\HttpController\Models\RDS3\Human::create()
         //         ->where('id', $dataItem['staff_id'])->get();
         //     $dataItem['name'] = $humanModel->name;
         // }
-        return $this->writeJson(200, ['total' => $total,'page' => $page, 'pageSize' => $size, 'totalPage'=> floor($total/$size)], $retData, '成功', true, []);
-    
+        return $this->writeJson(200, ['total' => $total, 'page' => $page, 'pageSize' => $size, 'totalPage' => floor($total / $size)], $retData, '成功', true, []);
+
     }
 
-     // 领取商机
-     function saveOpportunity(): bool
-     {  
+    // 领取商机
+    function saveOpportunity(): bool
+    {
         $xdIdsStr = $this->request()->getRequestParam('xd_ids');
-        if(!$xdIdsStr){
-            return  $this->writeJson(201, null, null, '参数缺失(企业id)');
+        if (!$xdIdsStr) {
+            return $this->writeJson(201, null, null, '参数缺失(企业id)');
         }
         $xdIdsArr = explode(',', $xdIdsStr);
         $companyDatas = Company::create()
             ->where('id', $xdIdsArr, 'IN')
             ->all();
-        foreach($companyDatas as $companyDataItem){
+        foreach ($companyDatas as $companyDataItem) {
             XinDongService::saveOpportunity(
                 [
-                    'userId' => $this->loginUserinfo['id'], 
+                    'userId' => $this->loginUserinfo['id'],
                     'name' => $companyDataItem['name'],
                     'code' => $companyDataItem['property1'],
                     'batchId' => 0,
@@ -2376,139 +2451,139 @@ eof;
                 ]
             );
         }
-        
-        
-         return $this->writeJson(200, [], [], '成功', true, []);
-     
-     }
 
-     //企业联系方式
+
+        return $this->writeJson(200, [], [], '成功', true, []);
+
+    }
+
+    //企业联系方式
     function getEntLianXi(): bool
     {
         $postData = [
             'entName' => $this->getRequestData('entName', ''),
-        ]; 
+        ];
 
-        $retData =  (new LongXinService())
-        ->setCheckRespFlag(true)
-        ->getEntLianXi($postData);
+        $retData = (new LongXinService())
+            ->setCheckRespFlag(true)
+            ->getEntLianXi($postData);
 
-        $size = $this->request()->getRequestParam('size')??10;
-        $page = $this->request()->getRequestParam('page')??1;
-        $offset  =  ($page-1)*$size;  
-         
+        $size = $this->request()->getRequestParam('size') ?? 10;
+        $page = $this->request()->getRequestParam('page') ?? 1;
+        $offset = ($page - 1) * $size;
+
         $retData = $retData['result'];
-        $total =  count($retData); //total items in array       
-        $totalPages = ceil( $total/ $size ); //calculate total pages
+        $total = count($retData); //total items in array
+        $totalPages = ceil($total / $size); //calculate total pages
         $page = max($page, 1); //get 1 page when $_GET['page'] <= 0
         // $page = min($page, $totalPages); //get last page when $_GET['page'] > $totalPages
         $offset = ($page - 1) * $size;
-        if( $offset < 0 ) $offset = 0;
+        if ($offset < 0) $offset = 0;
 
-        $retData = array_slice( $retData, $offset, $size ); 
+        $retData = array_slice($retData, $offset, $size);
         // CommonService::getInstance()->log4PHP(
         //     'getEntLianXi '.json_encode(
         //         $retData
         //     )
         // );
         $retData = LongXinService::complementEntLianXiMobileState($retData);
-        $retData = LongXinService::complementEntLianXiPosition($retData, $postData['entName']); 
-        
-        return $this->writeJson(200, 
-          [
-            'page' => $page,
-            'pageSize' =>$size,
-            'total' => $total,
-            'totalPage' => $totalPages, 
-        ] 
-       , $retData, '成功', true, []); 
-    } 
+        $retData = LongXinService::complementEntLianXiPosition($retData, $postData['entName']);
+
+        return $this->writeJson(200,
+            [
+                'page' => $page,
+                'pageSize' => $size,
+                'total' => $total,
+                'totalPage' => $totalPages,
+            ]
+            , $retData, '成功', true, []);
+    }
 
     function matchFuzzyNameByLanguageMode(): bool
     {
-        $timeStart = microtime(true);  
+        $timeStart = microtime(true);
         $entName = $this->getRequestData('entName', '');
 
-        $retData =  (new XinDongService())
-                    ->matchAainstEntName($entName ); 
+        $retData = (new XinDongService())
+            ->matchAainstEntName($entName);
 
-        $timeEnd = microtime(true); 
-        $execution_time1 = ($timeEnd - $timeStart); 
-        CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode Total Execution Time'.$execution_time1.'秒'); 
+        $timeEnd = microtime(true);
+        $execution_time1 = ($timeEnd - $timeStart);
+        CommonService::getInstance()->log4PHP('matchFuzzyNameByLanguageMode Total Execution Time' . $execution_time1 . '秒');
 
-        return $this->writeJson(200, [ ] , 
+        return $this->writeJson(200, [],
             [
-                'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |'.$execution_time2. '分',
+                'Time' => 'Total Execution Time:' . $execution_time1 . ' 秒  |' . $execution_time2 . '分',
                 'data' => $retData,
             ], '成功', true, []
-        ); 
-    } 
+        );
+    }
 
     function matchFuzzyNameByBooleanMode(): bool
     {
-        $timeStart = microtime(true);  
+        $timeStart = microtime(true);
         $entName = $this->getRequestData('entName', '');
         $matchStr = (new XinDongService())->splitChineseNameForMatchAgainst($entName);
-        $retData =  (new XinDongService())
-                    ->matchAainstEntName($matchStr," IN BOOLEAN MODE " ); 
+        $retData = (new XinDongService())
+            ->matchAainstEntName($matchStr, " IN BOOLEAN MODE ");
 
-        $timeEnd = microtime(true); 
+        $timeEnd = microtime(true);
         $execution_time1 = ($timeEnd - $timeStart);
-        CommonService::getInstance()->log4PHP('matchFuzzyNameByBooleanMode Total Execution Time'.$execution_time1.'秒'); 
-        return $this->writeJson(200, [] , 
-        [
-           'Time' => 'Total Execution Time:'.$execution_time1.' 秒  |',
-           'data' => $retData,
-       ], '成功', true, []); 
+        CommonService::getInstance()->log4PHP('matchFuzzyNameByBooleanMode Total Execution Time' . $execution_time1 . '秒');
+        return $this->writeJson(200, [],
+            [
+                'Time' => 'Total Execution Time:' . $execution_time1 . ' 秒  |',
+                'data' => $retData,
+            ], '成功', true, []);
     }
-    
+
     function matchEntByName(): bool
     {
-        
+
         $entName = $this->getRequestData('entName', '');
         $type = $this->getRequestData('type', '1');
         $timeout = $this->getRequestData('timeout', '3');
-        if($this->getRequestData('new')){
-            $retData = (new XinDongService())->matchEntByName2($entName,$type,$timeout);
-        }
-        else{
-            $retData = (new XinDongService())->matchEntByName($entName,$type,$timeout);
+        if ($this->getRequestData('new')) {
+            $retData = (new XinDongService())->matchEntByName2($entName, $type, $timeout);
+        } else {
+            $retData = (new XinDongService())->matchEntByName($entName, $type, $timeout);
         }
 
         // CommonService::getInstance()->log4PHP('matchEntByName '.$execution_time1.'秒'); 
-        return $this->writeJson(200, [] ,   $retData, '成功', true, []); 
+        return $this->writeJson(200, [], $retData, '成功', true, []);
     }
 
     function matchNames(): bool
     {
-        
+
         $toBeMatch = $this->getRequestData('toBeMatch', '');
-        $target = $this->getRequestData('target', ''); 
-        $percentage1 = $this->getRequestData('percentage1', '60'); 
-        $percentage2 = $this->getRequestData('percentage2', '60'); 
-       
-        $retData = (new XinDongService())->matchNames($toBeMatch,$target,
-        [
-            'matchNamesByEqual' => true,
-            'matchNamesByContain' => true,
-            'matchNamesByToBeContain' => true,
-            'matchNamesBySimilarPercentage' => true,
-            'matchNamesBySimilarPercentageValue' => $percentage1,
-            'matchNamesByPinYinSimilarPercentage' => true,
-            'matchNamesByPinYinSimilarPercentageValue' => $percentage2,
-        ]);
-        $retData2 = (new XinDongService())->matchNamesV2($toBeMatch,$target);
+        $target = $this->getRequestData('target', '');
+        $percentage1 = $this->getRequestData('percentage1', '60');
+        $percentage2 = $this->getRequestData('percentage2', '60');
+
+        $retData = (new XinDongService())->matchNames($toBeMatch, $target,
+            [
+                'matchNamesByEqual' => true,
+                'matchNamesByContain' => true,
+                'matchNamesByToBeContain' => true,
+                'matchNamesBySimilarPercentage' => true,
+                'matchNamesBySimilarPercentageValue' => $percentage1,
+                'matchNamesByPinYinSimilarPercentage' => true,
+                'matchNamesByPinYinSimilarPercentageValue' => $percentage2,
+            ]);
+        $retData2 = (new XinDongService())->matchNamesV2($toBeMatch, $target);
 
         // CommonService::getInstance()->log4PHP('matchEntByName '.$execution_time1.'秒'); 
-        return $this->writeJson(200, [] ,  [ $retData,$retData2], '成功', true, []);
+        return $this->writeJson(200, [], [$retData, $retData2], '成功', true, []);
     }
 
     //添加车险授权书认证书信息
-    function addCarInsuranceInfo(){  
+    function addCarInsuranceInfo()
+    {
         $entId = $this->getRequestData('entId');
-        if($entId <= 0){
-            return $this->writeJson(206, [] ,   [], '缺少必要参数', true, []); 
-        } 
+        if ($entId <= 0) {
+            return $this->writeJson(206, [], [], '缺少必要参数', true, []);
+        }
 
         $files = $this->request()->getUploadedFiles();
         $path = $fileName = '';
@@ -2520,15 +2595,15 @@ eof;
                     json_encode([
                         'not instanceof UploadFile ',
                     ])
-                ); 
-                    continue;
+                );
+                continue;
             }
 
             try {
                 $fileName = $oneFile->getClientFilename();
                 $path = TEMP_FILE_PATH . $fileName;
-                $oneFile->moveTo($path); 
-                
+                $oneFile->moveTo($path);
+
                 $excel_read = new \Vtiful\Kernel\Excel(
                     [
                         'path' => TEMP_FILE_PATH // xlsx文件保存路径
@@ -2537,27 +2612,27 @@ eof;
                 $excel_read->openFile($fileName)->openSheet();
                 $excel_read->nextRow([]);
 
-                $data = []; 
+                $data = [];
                 $batchNum = control::getUuid();
-                while ($one = $excel_read->nextRow([])) { 
+                while ($one = $excel_read->nextRow([])) {
                     $vin = trim($one['0']);
                     $legalPerson = trim($one['1']);
                     $idCard = trim($one['2']);
-                    
-                    if(
+
+                    if (
                         !$vin ||
                         !$legalPerson ||
-                        !$idCard 
-                    ){
+                        !$idCard
+                    ) {
                         CommonService::getInstance()->log4PHP(
                             json_encode([
                                 'addCarInsuranceInfo 该行缺数据 continue',
                                 'entId' => $entId,
-                                'vin' => $vin, 
+                                'vin' => $vin,
                                 'legalPerson' => $legalPerson,
                                 'idCard' => $idCard,
                             ])
-                        ); 
+                        );
                         continue;
                     }
 
@@ -2565,7 +2640,7 @@ eof;
                     $carInsuranceInfoId = (new XinDongService())->addCarInsuranceInfo(
                         [
                             'entId' => $entId,
-                            'vin' => $vin, 
+                            'vin' => $vin,
                             'legalPerson' => $legalPerson,
                             'idCard' => $idCard,
                         ]
@@ -2574,23 +2649,23 @@ eof;
                         json_encode([
                             'addCarInsuranceInfo carInsuranceInfo ',
                             'entId' => $entId,
-                            'vin' => $vin, 
+                            'vin' => $vin,
                             'legalPerson' => $legalPerson,
                             'idCard' => $idCard,
                             'carInsuranceInfo' => $carInsuranceInfoId,
                         ])
-                    ); 
-                    if(!$carInsuranceInfoId){ 
+                    );
+                    if (!$carInsuranceInfoId) {
                         CommonService::getInstance()->log4PHP(
                             json_encode([
                                 'addCarInsuranceInfo carInsuranceInfo continue',
                                 'entId' => $entId,
-                                'vin' => $vin, 
+                                'vin' => $vin,
                                 'legalPerson' => $legalPerson,
                                 'idCard' => $idCard,
                                 'carInsuranceInfo' => $carInsuranceInfoId,
                             ])
-                        ); 
+                        );
                         continue;
                     }
 
@@ -2598,7 +2673,7 @@ eof;
                     $userCarsRelationId = (new XinDongService())->addUserCarsRelation(
                         [
                             'user_id' => $this->loginUserinfo['id'],
-                            'car_insurance_id' => $carInsuranceInfoId, 
+                            'car_insurance_id' => $carInsuranceInfoId,
                             'legalPerson' => $legalPerson,
                             'idCard' => $idCard,
                         ]
@@ -2607,62 +2682,63 @@ eof;
                         json_encode([
                             'addCarInsuranceInfo userCarsRelation ',
                             'user_id' => $this->loginUserinfo['id'],
-                            'car_insurance_id' => $carInsuranceInfoId, 
+                            'car_insurance_id' => $carInsuranceInfoId,
                             'legalPerson' => $legalPerson,
                             'idCard' => $idCard,
                             'userCarsRelation' => $userCarsRelationId,
                         ])
-                    ); 
-                    if(!$userCarsRelationId){
+                    );
+                    if (!$userCarsRelationId) {
                         CommonService::getInstance()->log4PHP(
                             json_encode([
                                 'addCarInsuranceInfo userCarsRelation continue',
                                 'user_id' => $this->loginUserinfo['id'],
-                                'car_insurance_id' => $carInsuranceInfoId, 
+                                'car_insurance_id' => $carInsuranceInfoId,
                                 'legalPerson' => $legalPerson,
                                 'idCard' => $idCard,
                             ])
-                        ); 
+                        );
                         continue;
                     }
-                    $succeedNums ++;
-                }                
-                
+                    $succeedNums++;
+                }
+
             } catch (\Throwable $e) {
                 CommonService::getInstance()->log4PHP(
                     json_encode([
                         'addCarInsuranceInfo Throwable continue',
                         $e->getMessage(),
                     ])
-                ); 
+                );
                 return $this->writeErr($e, __FUNCTION__);
-            } 
-        } 
+            }
+        }
 
-        if($succeedNums>0){
+        if ($succeedNums > 0) {
             // 企业车险状态
-            $companyCarInsuranceStatusInfoId =(new XinDongService())->addCompanyCarInsuranceStatusInfo(
+            $companyCarInsuranceStatusInfoId = (new XinDongService())->addCompanyCarInsuranceStatusInfo(
                 [
                     'entId' => $entId,
                 ]
             );
         }
 
-        return $this->writeJson(200, null, $batchNum,'导入成功 入库数量:'.$succeedNums);
+        return $this->writeJson(200, null, $batchNum, '导入成功 入库数量:' . $succeedNums);
     }
 
-    function getCarsInsurance(){
-        $entId             = $this->getRequestData('entId');
-        $page             = $this->getRequestData('page');
-        $postData         = [
+    function getCarsInsurance()
+    {
+        $entId = $this->getRequestData('entId');
+        $page = $this->getRequestData('page');
+        $postData = [
             'entId' => $entId,
             'page' => $page
         ];
 
-        list($paging,$tmp) = (new GuangZhouYinLianService())
+        list($paging, $tmp) = (new GuangZhouYinLianService())
             ->setCheckRespFlag(true)
             ->getCarsInsuranceV2($postData);
-        CommonService::getInstance()->log4PHP('getCarsInsurance '.json_encode($tmp));
+        CommonService::getInstance()->log4PHP('getCarsInsurance ' . json_encode($tmp));
 
         return $this->writeJson(200, $paging, $tmp, '查询成功');
     }
@@ -2670,94 +2746,96 @@ eof;
     function queryVehicleCount(): bool
     {
         $postData = [];
-        $csp = new \EasySwoole\Component\Csp(); 
+        $csp = new \EasySwoole\Component\Csp();
         $csp->add('queryVehicleCount', function () use ($postData) {
             return (new GuangZhouYinLianService())
-            ->setCheckRespFlag(true)
-            ->queryVehicleCount($postData);
-        });  
-        $res = ($csp->exec(5)); 
-        CommonService::getInstance()->log4PHP('  res'.
-            json_encode( $res) 
-        ); 
+                ->setCheckRespFlag(true)
+                ->queryVehicleCount($postData);
+        });
+        $res = ($csp->exec(5));
+        CommonService::getInstance()->log4PHP('  res' .
+            json_encode($res)
+        );
 
-        return $this->writeJson(200, [], $res, '查询成功'); 
+        return $this->writeJson(200, [], $res, '查询成功');
 
     }
 
     function queryUsedVehicleInfo(): bool
     {
-        $userNo           = $this->getRequestData('userNo');
-        $licenseNoType    = $this->getRequestData('licenseNoType');
-        $vin              = $this->getRequestData('vin');
-        $licenseNo        = $this->getRequestData('licenseNo');
-        $postData         = [
-            'userNo'           => $userNo,
-            'vin'              => $vin,
-            'licenseNo'        => $licenseNo,
-            'licenseNoType'    => $licenseNoType,
+        $userNo = $this->getRequestData('userNo');
+        $licenseNoType = $this->getRequestData('licenseNoType');
+        $vin = $this->getRequestData('vin');
+        $licenseNo = $this->getRequestData('licenseNo');
+        $postData = [
+            'userNo' => $userNo,
+            'vin' => $vin,
+            'licenseNo' => $licenseNo,
+            'licenseNoType' => $licenseNoType,
         ];
-        $csp = new \EasySwoole\Component\Csp(); 
+        $csp = new \EasySwoole\Component\Csp();
         $csp->add('queryVehicleCount', function () use ($postData) {
-            return 
+            return
                 (new GuangZhouYinLianService())
-                ->setCheckRespFlag(true)
-                ->queryUsedVehicleInfo($postData);
+                    ->setCheckRespFlag(true)
+                    ->queryUsedVehicleInfo($postData);
 
-        });  
-        $res = ($csp->exec(5));  
+        });
+        $res = ($csp->exec(5));
 
         return $this->writeJson(200, [], $res, '查询成功');
     }
 
     function queryInancialBank(): bool
     {
-        $name             = $this->getRequestData('name');
-        $userNo           = $this->getRequestData('userNo');
-        $certType         = $this->getRequestData('certType');
-        $certNo           = $this->getRequestData('certNo');
-        $vin              = $this->getRequestData('vin');
-        $licenseNo        = $this->getRequestData('licenseNo');
-        $bizFunc          = $this->getRequestData('bizFunc');
+        $name = $this->getRequestData('name');
+        $userNo = $this->getRequestData('userNo');
+        $certType = $this->getRequestData('certType');
+        $certNo = $this->getRequestData('certNo');
+        $vin = $this->getRequestData('vin');
+        $licenseNo = $this->getRequestData('licenseNo');
+        $bizFunc = $this->getRequestData('bizFunc');
         $firstBeneficiary = $this->getRequestData('firstBeneficiary');
-        $areaNo           = $this->getRequestData('areaNo'); 
+        $areaNo = $this->getRequestData('areaNo');
 
 
-        $postData         = [
-            'name'             => $name,
-            'userNo'           => $userNo,
-            'certType'         => $certType,
-            'certNo'           => $certNo,
-            'vin'              => $vin,
-            'licenseNo'        => $licenseNo,
-            'areaNo'           => $areaNo,
+        $postData = [
+            'name' => $name,
+            'userNo' => $userNo,
+            'certType' => $certType,
+            'certNo' => $certNo,
+            'vin' => $vin,
+            'licenseNo' => $licenseNo,
+            'areaNo' => $areaNo,
             'firstBeneficiary' => $firstBeneficiary,
-            'bizFunc'          => $bizFunc
+            'bizFunc' => $bizFunc
         ];
-        
-        $csp = new \EasySwoole\Component\Csp(); 
+
+        $csp = new \EasySwoole\Component\Csp();
         $csp->add('queryVehicleCount', function () use ($postData) {
             return (new GuangZhouYinLianService())
                 ->setCheckRespFlag(true)
                 ->queryInancialBank($postData);
-        });  
- 
-        $res = ($csp->exec(5)); 
+        });
+
+        $res = ($csp->exec(5));
         return $this->writeJson(200, [], $res, '查询成功');
     }
 
-    function getYieldData(){
+    function getYieldData()
+    {
         $data = [];
-        for($i=1; $i<=10 ; $i++){
+        for ($i = 1; $i <= 10; $i++) {
             yield $data[] = [
-               '福建裕兴果蔬食品开发有限公司',
-               '福建裕兴果蔬食品开发有限公司', 
+                '福建裕兴果蔬食品开发有限公司',
+                '福建裕兴果蔬食品开发有限公司',
             ];
         }
     }
 
 // Comparison function
-    function date_compare($element1, $element2) {
+    function date_compare($element1, $element2)
+    {
         $datetime1 = strtotime($element1['datetime']);
         $datetime2 = strtotime($element2['datetime']);
         return $datetime1 - $datetime2;
@@ -2780,7 +2858,8 @@ eof;
         return true;
     }
 
-    function get_string_between($string, $start, $end){
+    function get_string_between($string, $start, $end)
+    {
         $string = ' ' . $string;
         $ini = strpos($string, $start);
         if ($ini == 0) return '';
@@ -2793,28 +2872,27 @@ eof;
     {
 
 
-        $requestData =  $this->getRequestData();
+        $requestData = $this->getRequestData();
         //XXXXXXXXXX
 
-        if(
+        if (
             $this->getRequestData('buQuanZiDuanByTxt')
-        ){
+        ) {
             return $this->writeJson(200, null, [ToolsFileLists::buQuanZiDuanByTxt($this->getRequestData('buQuanZiDuanByTxt'))]);
         }
 
-         if(
-             $this->getRequestData('addStaticRecordByYear')
-         ){
-             InformationDanceRequestRecodeStatics::addStaticRecordByYear($this->getRequestData('addStaticRecordByYear'));
-             return $this->writeJson(200, null, []);
-         }
+        if (
+            $this->getRequestData('addStaticRecordByYear')
+        ) {
+            InformationDanceRequestRecodeStatics::addStaticRecordByYear($this->getRequestData('addStaticRecordByYear'));
+            return $this->writeJson(200, null, []);
+        }
 
 
-        if(
+        if (
             $this->getRequestData('copy_pingcode')
-        ){
+        ) {
             /***
-
              ***/
             //请求PingCode 取数据
             // Generated by curl-to-PHP: http://incarnate.github.io/curl-to-php/
@@ -2849,7 +2927,7 @@ eof;
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
             $result = curl_exec($ch);
-            $result = json_decode($result,true);
+            $result = json_decode($result, true);
             curl_close($ch);
 
             $references_arr = $result['data']['references'];
@@ -2858,50 +2936,50 @@ eof;
             //优先级
             $you_xian_ji = $references_arr['properties'][24]['options'];
             $you_xian_ji2 = [];
-            foreach ($you_xian_ji as $item){
+            foreach ($you_xian_ji as $item) {
                 $you_xian_ji2[$item['_id']] = $item['text'];
             }
 
             //风险
             $feng_xian = $references_arr['properties'][26]['options'];
             $feng_xian2 = [];
-            foreach ($feng_xian as $item){
+            foreach ($feng_xian as $item) {
                 $feng_xian2[$item['_id']] = $item['text'];
             }
 
             // lookups  states   状态
             $states = $references_arr['lookups']['states'];
             $states2 = [];
-            foreach ($states as $item){
+            foreach ($states as $item) {
                 $states2[$item['_id']] = $item['name'];
             }
 
             //lookups  members   状态 display_name   uid
             $members = $references_arr['lookups']['members'];
             $members2 = [];
-            foreach ($members as $item){
+            foreach ($members as $item) {
                 $members2[$item['uid']] = $item['display_name'];
             }
 
             // lookups  parents       [_id] => 6333f25122541456bbb794ce  [title] => 四、前台售前支持
             $parents = $references_arr['lookups']['parents'];
-            $parents2  = [];
-            foreach ($parents as $item){
+            $parents2 = [];
+            foreach ($parents as $item) {
                 $parents2[$item['_id']] = $item['title'];
             }
 
 
             // projects
             $projects = $references_arr['projects'];
-            $projects2  = [];
-            foreach ($projects as $item){
+            $projects2 = [];
+            foreach ($projects as $item) {
                 $projects2[$item['_id']] = $item['name'];
             }
 
             // tags
             $tags = $references_arr['lookups']['tags'];
-            $tags2  = [];
-            foreach ($tags as $item){
+            $tags2 = [];
+            foreach ($tags as $item) {
                 $tags2[$item['_id']] = $item['name'];
             }
 
@@ -2912,71 +2990,71 @@ eof;
                 "四、前台售前支持",
             ];
             $datas_arr2 = [];
-            foreach ($datas_arr as $item){
+            foreach ($datas_arr as $item) {
                 $participants = "";
-                foreach ($item["participants"] as $p_item){
-                    $participants .=  $members2[$p_item['uid']].";";
+                foreach ($item["participants"] as $p_item) {
+                    $participants .= $members2[$p_item['uid']] . ";";
                 }
 
                 $tagsXX = [];
-                foreach ($item["tags"] as $p_item){
-                    $tagsXX[]=  $tags2[$p_item];
+                foreach ($item["tags"] as $p_item) {
+                    $tagsXX[] = $tags2[$p_item];
                 }
                 $datas_arr2[$item['_id']] = [
-                    'project' => $projects2[$item['project_id']] ,
-                    'title' => $item['title'] ,
-                    'type' => $item['type'] ,
-                    'assignee' => $members2[$item['assignee']]?:$members2[$item['created_by']]  ,
-                    'state' => $states2[$item['state_id']] ,
-                    'created_at' =>  $item['created_at'] ,
+                    'project' => $projects2[$item['project_id']],
+                    'title' => $item['title'],
+                    'type' => $item['type'],
+                    'assignee' => $members2[$item['assignee']] ?: $members2[$item['created_by']],
+                    'state' => $states2[$item['state_id']],
+                    'created_at' => $item['created_at'],
                     //'created_at' =>  date("Y-m-d H:i:s",$item['created_at']) ,
-                    'created_by' =>  $members2[$item['created_by']] ,
-                    'participants' =>  $participants ,
-                    'parent' =>  $parents2[$item['parent_id']] ,
-                    'is_deleted' =>  $item['is_deleted'],
-                    'description' =>  $item['description'],
-                    'priority' =>  $you_xian_ji2[$item['priority']],
-                    'tags' =>  $tagsXX,
+                    'created_by' => $members2[$item['created_by']],
+                    'participants' => $participants,
+                    'parent' => $parents2[$item['parent_id']],
+                    'is_deleted' => $item['is_deleted'],
+                    'description' => $item['description'],
+                    'priority' => $you_xian_ji2[$item['priority']],
+                    'tags' => $tagsXX,
                 ];
             }
 
             $datas_arr3 = [];
             $state_maps = ShangJiStage::stateMaps();
-            foreach ($datas_arr2 as $data_arr2){
-                if(empty($data_arr2['parent'])){
+            foreach ($datas_arr2 as $data_arr2) {
+                if (empty($data_arr2['parent'])) {
                     continue;
                 }
 
-                if($data_arr2['type'] != 3){
+                if ($data_arr2['type'] != 3) {
                     continue;
                 }
 
                 $remars = [];
                 $companyName = $data_arr2['parent'];
-                $remark = $this->get_string_between($companyName,"（","）");
-                if(!empty($remark)){
+                $remark = $this->get_string_between($companyName, "（", "）");
+                if (!empty($remark)) {
                     $remars[] = $remark;
-                    $companyName = str_replace($remark,"",$companyName);
-                    $companyName = str_replace("（","",$companyName);
-                    $companyName = str_replace("）","",$companyName);
+                    $companyName = str_replace($remark, "", $companyName);
+                    $companyName = str_replace("（", "", $companyName);
+                    $companyName = str_replace("）", "", $companyName);
                 }
-                if(
+                if (
                     in_array(
                         $data_arr2['parent'],
                         $no_nees_titles
                     )
-                ){
+                ) {
                     $companyName = $data_arr2['title'];
-                }else{
+                } else {
                     $remars[] = $data_arr2['title'];
                 }
 
-                if(
+                if (
                     in_array(
                         $companyName,
                         $no_nees_titles
                     )
-                ){
+                ) {
                     continue;
                 }
 
@@ -2996,38 +3074,38 @@ eof;
 
             }
 
-            foreach ($datas_arr2 as $data_arr2){
-                if(empty($data_arr2['parent'])){
+            foreach ($datas_arr2 as $data_arr2) {
+                if (empty($data_arr2['parent'])) {
                     continue;
                 }
 
-                if($data_arr2['type'] != 2){
+                if ($data_arr2['type'] != 2) {
                     continue;
                 }
 
                 $remars = [];
                 $companyName = $data_arr2['parent'];
-                $remark = $this->get_string_between($companyName,"（","）");
-                if(!empty($remark)){
+                $remark = $this->get_string_between($companyName, "（", "）");
+                if (!empty($remark)) {
                     $remars[] = $remark;
-                    $companyName = str_replace($remark,"",$companyName);
-                    $companyName = str_replace("（","",$companyName);
-                    $companyName = str_replace("）","",$companyName);
+                    $companyName = str_replace($remark, "", $companyName);
+                    $companyName = str_replace("（", "", $companyName);
+                    $companyName = str_replace("）", "", $companyName);
                 }
-                if(
+                if (
                     in_array(
                         $data_arr2['parent'],
                         $no_nees_titles
                     )
-                ){
+                ) {
                     $companyName = $data_arr2['title'];
                 }
-                if(
+                if (
                     in_array(
                         $companyName,
                         $no_nees_titles
                     )
-                ){
+                ) {
                     continue;
                 }
 
@@ -3037,25 +3115,24 @@ eof;
                 $datas_arr3[$companyName]['priority'] = $data_arr2['priority'];
             }
 
-            foreach ($datas_arr3 as $data_arr3){
+            foreach ($datas_arr3 as $data_arr3) {
                 $tmpRes = ShangJi::findByName($data_arr3['company_name']);
                 $tmpDatas = [
-                    "created_at"=>$data_arr3['created_at'],
-                    "updated_at"=>$data_arr3['created_at'],
-                    "shang_ji_ming_cheng"=>$data_arr3['company_name'],
-                    "shang_ji_jie_duan"=>$data_arr3['state'],
-                    "suo_shu_qu_yu"=>"",
-                    "remark"=> json_encode($data_arr3["remarks"],JSON_UNESCAPED_UNICODE),
-                    "gong_si_wang_zhan"=> "",
-                    "he_xin_ye_wu"=> "",
-                    "fu_ze_ren"=> $data_arr3['assignee'],
-                    "gong_si_jian_jie"=> $data_arr3['description'],
-                    "biao_qian"=>json_encode($data_arr3["tags"],JSON_UNESCAPED_UNICODE),
+                    "created_at" => $data_arr3['created_at'],
+                    "updated_at" => $data_arr3['created_at'],
+                    "shang_ji_ming_cheng" => $data_arr3['company_name'],
+                    "shang_ji_jie_duan" => $data_arr3['state'],
+                    "suo_shu_qu_yu" => "",
+                    "remark" => json_encode($data_arr3["remarks"], JSON_UNESCAPED_UNICODE),
+                    "gong_si_wang_zhan" => "",
+                    "he_xin_ye_wu" => "",
+                    "fu_ze_ren" => $data_arr3['assignee'],
+                    "gong_si_jian_jie" => $data_arr3['description'],
+                    "biao_qian" => json_encode($data_arr3["tags"], JSON_UNESCAPED_UNICODE),
                 ];
-                if($tmpRes){
-                    ShangJi::updateById($tmpRes->id,$tmpDatas);
-                }
-                else{
+                if ($tmpRes) {
+                    ShangJi::updateById($tmpRes->id, $tmpDatas);
+                } else {
                     ShangJi::addRecordV2($tmpDatas);
                 }
 //                break;
@@ -3064,9 +3141,9 @@ eof;
             return $this->writeJson(200, null, $datas_arr3);
         }
 
-        if(
+        if (
             $this->getRequestData('copy_pingcode2')
-        ){
+        ) {
 
             //请求PingCode 取数据
             // Generated by curl-to-PHP: http://incarnate.github.io/curl-to-php/
@@ -3101,7 +3178,7 @@ eof;
             curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
             $result = curl_exec($ch);
-            $result = json_decode($result,true);
+            $result = json_decode($result, true);
             curl_close($ch);
 
             $references_arr = $result['data']['references'];
@@ -3110,50 +3187,50 @@ eof;
             //优先级
             $you_xian_ji = $references_arr['properties'][24]['options'];
             $you_xian_ji2 = [];
-            foreach ($you_xian_ji as $item){
+            foreach ($you_xian_ji as $item) {
                 $you_xian_ji2[$item['_id']] = $item['text'];
             }
 
             //风险
             $feng_xian = $references_arr['properties'][26]['options'];
             $feng_xian2 = [];
-            foreach ($feng_xian as $item){
+            foreach ($feng_xian as $item) {
                 $feng_xian2[$item['_id']] = $item['text'];
             }
 
             // lookups  states   状态
             $states = $references_arr['lookups']['states'];
             $states2 = [];
-            foreach ($states as $item){
+            foreach ($states as $item) {
                 $states2[$item['_id']] = $item['name'];
             }
 
             //lookups  members   状态 display_name   uid
             $members = $references_arr['lookups']['members'];
             $members2 = [];
-            foreach ($members as $item){
+            foreach ($members as $item) {
                 $members2[$item['uid']] = $item['display_name'];
             }
 
             // lookups  parents       [_id] => 6333f25122541456bbb794ce  [title] => 四、前台售前支持
             $parents = $references_arr['lookups']['parents'];
-            $parents2  = [];
-            foreach ($parents as $item){
+            $parents2 = [];
+            foreach ($parents as $item) {
                 $parents2[$item['_id']] = $item['title'];
             }
 
 
             // projects
             $projects = $references_arr['projects'];
-            $projects2  = [];
-            foreach ($projects as $item){
+            $projects2 = [];
+            foreach ($projects as $item) {
                 $projects2[$item['_id']] = $item['name'];
             }
 
             // tags
             $tags = $references_arr['lookups']['tags'];
-            $tags2  = [];
-            foreach ($tags as $item){
+            $tags2 = [];
+            foreach ($tags as $item) {
                 $tags2[$item['_id']] = $item['name'];
             }
 
@@ -3164,71 +3241,71 @@ eof;
                 "四、前台售前支持",
             ];
             $datas_arr2 = [];
-            foreach ($datas_arr as $item){
+            foreach ($datas_arr as $item) {
                 $participants = "";
-                foreach ($item["participants"] as $p_item){
-                    $participants .=  $members2[$p_item['uid']].";";
+                foreach ($item["participants"] as $p_item) {
+                    $participants .= $members2[$p_item['uid']] . ";";
                 }
 
                 $tagsXX = [];
-                foreach ($item["tags"] as $p_item){
-                    $tagsXX[]=  $tags2[$p_item];
+                foreach ($item["tags"] as $p_item) {
+                    $tagsXX[] = $tags2[$p_item];
                 }
                 $datas_arr2[$item['_id']] = [
-                    'project' => $projects2[$item['project_id']] ,
-                    'title' => $item['title'] ,
-                    'type' => $item['type'] ,
-                    'assignee' => $members2[$item['assignee']]?:$members2[$item['created_by']]  ,
-                    'state' => $states2[$item['state_id']] ,
-                    'created_at' =>  $item['created_at'] ,
+                    'project' => $projects2[$item['project_id']],
+                    'title' => $item['title'],
+                    'type' => $item['type'],
+                    'assignee' => $members2[$item['assignee']] ?: $members2[$item['created_by']],
+                    'state' => $states2[$item['state_id']],
+                    'created_at' => $item['created_at'],
                     //'created_at' =>  date("Y-m-d H:i:s",$item['created_at']) ,
-                    'created_by' =>  $members2[$item['created_by']] ,
-                    'participants' =>  $participants ,
-                    'parent' =>  $parents2[$item['parent_id']] ,
-                    'is_deleted' =>  $item['is_deleted'],
-                    'description' =>  $item['description'],
-                    'priority' =>  $you_xian_ji2[$item['priority']],
-                    'tags' =>  $tagsXX,
+                    'created_by' => $members2[$item['created_by']],
+                    'participants' => $participants,
+                    'parent' => $parents2[$item['parent_id']],
+                    'is_deleted' => $item['is_deleted'],
+                    'description' => $item['description'],
+                    'priority' => $you_xian_ji2[$item['priority']],
+                    'tags' => $tagsXX,
                 ];
             }
 
             $datas_arr3 = [];
             $state_maps = ShangJiStage::stateMaps();
-            foreach ($datas_arr2 as $data_arr2){
-                if(empty($data_arr2['parent'])){
+            foreach ($datas_arr2 as $data_arr2) {
+                if (empty($data_arr2['parent'])) {
                     continue;
                 }
 
-                if($data_arr2['type'] != 3){
+                if ($data_arr2['type'] != 3) {
                     continue;
                 }
 
                 $remars = [];
                 $companyName = $data_arr2['parent'];
-                $remark = $this->get_string_between($companyName,"（","）");
-                if(!empty($remark)){
+                $remark = $this->get_string_between($companyName, "（", "）");
+                if (!empty($remark)) {
                     $remars[] = $remark;
-                    $companyName = str_replace($remark,"",$companyName);
-                    $companyName = str_replace("（","",$companyName);
-                    $companyName = str_replace("）","",$companyName);
+                    $companyName = str_replace($remark, "", $companyName);
+                    $companyName = str_replace("（", "", $companyName);
+                    $companyName = str_replace("）", "", $companyName);
                 }
-                if(
+                if (
                     in_array(
                         $data_arr2['parent'],
                         $no_nees_titles
                     )
-                ){
+                ) {
                     $companyName = $data_arr2['title'];
-                }else{
+                } else {
                     $remars[] = $data_arr2['title'];
                 }
 
-                if(
+                if (
                     in_array(
                         $companyName,
                         $no_nees_titles
                     )
-                ){
+                ) {
                     continue;
                 }
 
@@ -3248,38 +3325,38 @@ eof;
 
             }
 
-            foreach ($datas_arr2 as $data_arr2){
-                if(empty($data_arr2['parent'])){
+            foreach ($datas_arr2 as $data_arr2) {
+                if (empty($data_arr2['parent'])) {
                     continue;
                 }
 
-                if($data_arr2['type'] != 2){
+                if ($data_arr2['type'] != 2) {
                     continue;
                 }
 
                 $remars = [];
                 $companyName = $data_arr2['parent'];
-                $remark = $this->get_string_between($companyName,"（","）");
-                if(!empty($remark)){
+                $remark = $this->get_string_between($companyName, "（", "）");
+                if (!empty($remark)) {
                     $remars[] = $remark;
-                    $companyName = str_replace($remark,"",$companyName);
-                    $companyName = str_replace("（","",$companyName);
-                    $companyName = str_replace("）","",$companyName);
+                    $companyName = str_replace($remark, "", $companyName);
+                    $companyName = str_replace("（", "", $companyName);
+                    $companyName = str_replace("）", "", $companyName);
                 }
-                if(
+                if (
                     in_array(
                         $data_arr2['parent'],
                         $no_nees_titles
                     )
-                ){
+                ) {
                     $companyName = $data_arr2['title'];
                 }
-                if(
+                if (
                     in_array(
                         $companyName,
                         $no_nees_titles
                     )
-                ){
+                ) {
                     continue;
                 }
 
@@ -3289,25 +3366,24 @@ eof;
                 $datas_arr3[$companyName]['priority'] = $data_arr2['priority'];
             }
 
-            foreach ($datas_arr3 as $data_arr3){
+            foreach ($datas_arr3 as $data_arr3) {
                 $tmpRes = ShangJi::findByName($data_arr3['company_name']);
                 $tmpDatas = [
-                    "created_at"=>$data_arr3['created_at'],
-                    "updated_at"=>$data_arr3['created_at'],
-                    "shang_ji_ming_cheng"=>$data_arr3['company_name'],
-                    "shang_ji_jie_duan"=>$data_arr3['state'],
-                    "suo_shu_qu_yu"=>"",
-                    "remark"=> json_encode($data_arr3["remarks"],JSON_UNESCAPED_UNICODE),
-                    "gong_si_wang_zhan"=> "",
-                    "he_xin_ye_wu"=> "",
-                    "fu_ze_ren"=> $data_arr3['assignee'],
-                    "gong_si_jian_jie"=> $data_arr3['description'],
-                    "biao_qian"=>json_encode($data_arr3["tags"],JSON_UNESCAPED_UNICODE),
+                    "created_at" => $data_arr3['created_at'],
+                    "updated_at" => $data_arr3['created_at'],
+                    "shang_ji_ming_cheng" => $data_arr3['company_name'],
+                    "shang_ji_jie_duan" => $data_arr3['state'],
+                    "suo_shu_qu_yu" => "",
+                    "remark" => json_encode($data_arr3["remarks"], JSON_UNESCAPED_UNICODE),
+                    "gong_si_wang_zhan" => "",
+                    "he_xin_ye_wu" => "",
+                    "fu_ze_ren" => $data_arr3['assignee'],
+                    "gong_si_jian_jie" => $data_arr3['description'],
+                    "biao_qian" => json_encode($data_arr3["tags"], JSON_UNESCAPED_UNICODE),
                 ];
-                if($tmpRes){
-                    ShangJi::updateById($tmpRes->id,$tmpDatas);
-                }
-                else{
+                if ($tmpRes) {
+                    ShangJi::updateById($tmpRes->id, $tmpDatas);
+                } else {
                     ShangJi::addRecordV2($tmpDatas);
                 }
 //                break;
@@ -3316,38 +3392,37 @@ eof;
             return $this->writeJson(200, null, $datas_arr3);
         }
 
-        $requestData =  $this->getRequestData();
-        if(
+        $requestData = $this->getRequestData();
+        if (
             $this->getRequestData('buQuanZiDuan')
-        ){
+        ) {
             ToolsFileLists::buQuanZiDuan([]);
             return $this->writeJson(200, null, $res);
         }
 
-        if(
+        if (
             $this->getRequestData('pullGongKaiContacts')
-        ){
+        ) {
             ToolsFileLists::pullGongKaiContacts([]);
             return $this->writeJson(200, null, $res);
         }
 
-        if(
+        if (
             $this->getRequestData('pullFeiGongKaiContacts')
-        ){
+        ) {
             ToolsFileLists::pullFeiGongKaiContacts([]);
             return $this->writeJson(200, null, $res);
         }
 
 
-
-        if(
+        if (
             $this->getRequestData('sendEmailV4')
-        ){
+        ) {
 
 
             return $this->writeJson(200, null, RunDealZhaoTouBiao::sendEmailV4(
                 $requestData['day']
-                ,[
+                , [
                 'tianyongshan@meirixindong.com',
                 'minglongoc@me.com',
                 'zhengmeng@meirixindong.com',
@@ -3355,9 +3430,9 @@ eof;
         }
 
 
-        if(
+        if (
             $this->getRequestData('recheck_chuangLian_num')
-        ){
+        ) {
 
             $res2 = MobileCheckInfo::reCheckV2($this->getRequestData('recheck_chuangLian_num'));
 
@@ -3366,9 +3441,9 @@ eof;
             ]);
         }
 
-        if(
+        if (
             $this->getRequestData('chuangLian')
-        ){
+        ) {
             $mobileStr = '13269706193,13269706194';
             $mobileStr = $this->getRequestData('chuangLian');
 //            $res = (new ChuangLanService())->getCheckPhoneStatus([
@@ -3386,9 +3461,9 @@ eof;
 //                $res3
             ]);
         }
-        if(
+        if (
             $this->getRequestData('traverseMenu')
-        ){
+        ) {
 
             $menu = [
                 ['code' => 1, 'parent' => 0, 'label' => '您要查询哪个行业？'],
@@ -3409,7 +3484,7 @@ eof;
             ];
 
             $res = [];
-            $Sql = "select id,`code`,name,parent,`level` from code_ca16 " ;
+            $Sql = "select id,`code`,name,parent,`level` from code_ca16 ";
             $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_hd_saic'));
 
             self::traverseMenu($data, $res, '');
@@ -3417,54 +3492,54 @@ eof;
             return $this->writeJson(200, null, $res);
         }
 
-        if(
+        if (
             $this->getRequestData('matchContactNameByWeiXinNameV2')
-        ){
+        ) {
             $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2(
-                $this->getRequestData('ENTNAME') ,
+                $this->getRequestData('ENTNAME'),
                 $this->getRequestData('nickname')
             );
-            return $this->writeJson(200,[ ] , $tmpRes, '成功', true, []);
+            return $this->writeJson(200, [], $tmpRes, '成功', true, []);
         }
 
-        if(
+        if (
             $this->getRequestData('SearchAfterV3')
-        ){
+        ) {
             $maxTimes = 10;
-            $esRequestData =  [
-                'searchOption' =>  '[]',
-                'basic_nicid' =>'F5',
+            $esRequestData = [
+                'searchOption' => '[]',
+                'basic_nicid' => 'F5',
             ];
 
             $companys = \App\ElasticSearch\Model\Company::SearchAfterV3(
                 $maxTimes,
                 $esRequestData
             );
-            foreach ($companys as $item){
-                return $this->writeJson(200,[ ] , $item, '成功', true, []);
+            foreach ($companys as $item) {
+                return $this->writeJson(200, [], $item, '成功', true, []);
             }
-            return $this->writeJson(200,[ ] , MatchSimilarEnterprisesProccess::calScore(), '成功', true, []);
+            return $this->writeJson(200, [], MatchSimilarEnterprisesProccess::calScore(), '成功', true, []);
         }
 
 
-        if(
+        if (
             $this->getRequestData('MatchSimilarEnterprisesProccess')
-        ){
+        ) {
 
-            return $this->writeJson(200,[ ] , MatchSimilarEnterprisesProccess::calScore(), '成功', true, []);
+            return $this->writeJson(200, [], MatchSimilarEnterprisesProccess::calScore(), '成功', true, []);
         }
 
 
-        if(
+        if (
             $this->getRequestData('checkEnv')
-        ){
-            return $this->writeJson(200,[ ] , EasySwooleEvent::IsProductionEnv(), '成功', true, []);
+        ) {
+            return $this->writeJson(200, [], EasySwooleEvent::IsProductionEnv(), '成功', true, []);
         }
 
 
-        if(
+        if (
             $this->getRequestData('searchFromEs11')
-        ){
+        ) {
 
             $featureslists = XinDongKeDongAnalyzeList::searchFromEs(
                 [
@@ -3475,8 +3550,8 @@ eof;
             );
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
-                    'startAnalysis'=>json_encode(
+                    __CLASS__ . __FUNCTION__ . __LINE__,
+                    'startAnalysis' => json_encode(
                         [
 //                        'msg'=>
                         ]
@@ -3484,69 +3559,69 @@ eof;
                 ])
             );
             //开始分析
-            return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
+            return $this->writeJson(200, [], $featureslists, '成功', true, []);
 
         }
 
-        if(
+        if (
             $this->getRequestData('runQueue')
-        ){ //300
-           $res =  QueueLists::findById($this->getRequestData('runQueue'));
+        ) { //300
+            $res = QueueLists::findById($this->getRequestData('runQueue'));
             $res = $res->toArray();
 
             // 20220922161425_测试下上传
-            return $this->writeJson(200,[ ] ,
-                RunDealQueueLists::runByItem($res,true)
+            return $this->writeJson(200, [],
+                RunDealQueueLists::runByItem($res, true)
                 , '成功', true, []);
         }
 
-        if(
+        if (
             $this->getRequestData('getAllContactByCode')
-        ){
-            $all =   CompanyClue::getAllContactByCode($this->getRequestData('getAllContactByCode'));
-            return $this->writeJson(200,[ ] ,
+        ) {
+            $all = CompanyClue::getAllContactByCode($this->getRequestData('getAllContactByCode'));
+            return $this->writeJson(200, [],
                 $all
                 , '成功', true, []);
         }
 
-        if(
+        if (
             $this->getRequestData('getLianXiByNameV2')
-        ){
+        ) {
 
             //获取所有联系人
             $staffsDatas = LongXinService::getLianXiByNameV2($this->getRequestData('getLianXiByNameV2'));
 
-            return $this->writeJson(200,[ ] ,
+            return $this->writeJson(200, [],
                 $staffsDatas
                 , '成功', true, []);
         }
 
 
-        if(
+        if (
             $this->getRequestData('calScore')
-        ){
+        ) {
 
-            return $this->writeJson(200,[ ] ,
+            return $this->writeJson(200, [],
                 MatchSimilarEnterprisesProccess::calScore(
                     [
                         'base' => [
-                            'A10','F5147','2-5','110108'
+                            'A10', 'F5147', '2-5', '110108'
                         ],
-                        'ys_label'=> 'A10',
-                        'NIC_ID'=> 'F5147',
-                        'ESDATE'=> '2019-12-18',
-                        'DOMDISTRICT'=> '110108',
+                        'ys_label' => 'A10',
+                        'NIC_ID' => 'F5147',
+                        'ESDATE' => '2019-12-18',
+                        'DOMDISTRICT' => '110108',
                     ]
                 )
                 , '成功', true, []);
         }
 
-        if(
+        if (
             $this->getRequestData('extractFeatureV2')
-        ){
+        ) {
 
             //$featureslists = XinDongKeDongAnalyzeList::extractFeatureV2($this->loginUserinfo['id'],false);
-            $featureslists= [
+            $featureslists = [
                 'ying_shou_gui_mo' => 'A10',
                 'NIC_ID' => 'F5147',
                 'OPFROM' => '2-5',
@@ -3569,7 +3644,7 @@ eof;
 
             return $this->writeJson(
                 200,
-                [ ] ,
+                [],
                 [
 //                    $featureslists,
 //                    XinDongKeDongAnalyzeList::getFeatrueArray(2),
@@ -3582,10 +3657,10 @@ eof;
         }
 
 
-        if(
+        if (
             $this->getRequestData('getNamesByText')
-        ){
-            return $this->writeJson(200,[ ] ,  \App\ElasticSearch\Model\Company::getNamesByText(
+        ) {
+            return $this->writeJson(200, [], \App\ElasticSearch\Model\Company::getNamesByText(
                 1,
                 5,
                 trim($requestData['getNamesByText'])
@@ -3593,32 +3668,31 @@ eof;
         }
 
 
-        if(
+        if (
             $this->getRequestData('updateListsByUser')
-        ){
+        ) {
             // 北京每日信动科技有限公司
-            XinDongKeDongAnalyzeList::updateListsByUser($requestData,$requestData['user_id']);
+            XinDongKeDongAnalyzeList::updateListsByUser($requestData, $requestData['user_id']);
 
-            return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+            return $this->writeJson(200, [], [], '添加成功', true, []);
         }
 
 
-        if(
+        if (
             $this->getRequestData('updateListsByUser')
-        ){
+        ) {
             // 北京每日信动科技有限公司
-            XinDongKeDongAnalyzeList::updateListsByUser($requestData,$requestData['user_id']);
+            XinDongKeDongAnalyzeList::updateListsByUser($requestData, $requestData['user_id']);
 
-            return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+            return $this->writeJson(200, [], [], '添加成功', true, []);
         }
 
 
-
-        if(
+        if (
             $this->getRequestData('serachFromEs')
-        ){
+        ) {
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 \App\ElasticSearch\Model\Company::serachFromEs(
                     [
@@ -3634,9 +3708,9 @@ eof;
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('test_gao_feng')
-        ){
+        ) {
             $res = QueueLists::addRecord(
                 [
                     'name' => '',
@@ -3644,35 +3718,35 @@ eof;
                     'func_info_json' => json_encode(
                         [
                             'class' => '\App\HttpController\Service\CompanyRiskService',
-                            'static_func'=> 'getDatas',
+                            'static_func' => 'getDatas',
                         ]
                     ),
                     'params_json' => json_encode([
-                              '北京华锐怡贤艺苑商场',
-                              '北京市门头沟区三建公司苇子水建筑队',
-                              '北京市天龙世纪精密机电配件厂新技术开发部',
-                              '北京中商联物贸发展公司',
-                              '北京美康科技贸易发展公司',
-                              '北京京煤集团有限责任公司',
-                              '北京印刷集团有限责任公司胶印二厂',
-                              '北京航星机器制造有限公司',
-                              '北京市北京饭店有限责任公司',
-                              '北京市电影股份有限公司',
-                              '北京华夏永信商贸有限公司',
-                              '北京巨阵星空科技有限公司',
-                              '北京云辰科技有限公司',
-                              '北京恒聚科技有限公司',
-                              '北京捷龙科技有限公司',
-                              '北京华夏永信商贸有限公司',
-                              '北京巨阵星空科技有限公司',
-                              '北京恒生源科技有限公司',
-                              '北京盛世辉煌商贸有限公司',
-                              '北京云辰科技有限公司',
-                              '北京大栅栏五联宾馆有限责任公司',
-                              '北京怀柔燕北医药有限公司',
-                              '北京市平谷区马昌营供销合作社',
-                              '北京奥士凯宝龙商场有限责任公司',
-                              '北京市海佳利企业管理有限责任公司',
+                        '北京华锐怡贤艺苑商场',
+                        '北京市门头沟区三建公司苇子水建筑队',
+                        '北京市天龙世纪精密机电配件厂新技术开发部',
+                        '北京中商联物贸发展公司',
+                        '北京美康科技贸易发展公司',
+                        '北京京煤集团有限责任公司',
+                        '北京印刷集团有限责任公司胶印二厂',
+                        '北京航星机器制造有限公司',
+                        '北京市北京饭店有限责任公司',
+                        '北京市电影股份有限公司',
+                        '北京华夏永信商贸有限公司',
+                        '北京巨阵星空科技有限公司',
+                        '北京云辰科技有限公司',
+                        '北京恒聚科技有限公司',
+                        '北京捷龙科技有限公司',
+                        '北京华夏永信商贸有限公司',
+                        '北京巨阵星空科技有限公司',
+                        '北京恒生源科技有限公司',
+                        '北京盛世辉煌商贸有限公司',
+                        '北京云辰科技有限公司',
+                        '北京大栅栏五联宾馆有限责任公司',
+                        '北京怀柔燕北医药有限公司',
+                        '北京市平谷区马昌营供销合作社',
+                        '北京奥士凯宝龙商场有限责任公司',
+                        '北京市海佳利企业管理有限责任公司',
                     ]),
                     'type' => QueueLists::$typle_finance,
                     'remark' => '',
@@ -3711,7 +3785,7 @@ eof;
 //              ]
 //            );
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 $res,
                 '成功1',
@@ -3720,9 +3794,9 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('add_queue')
-        ){
+        ) {
             $res = QueueLists::addRecord(
                 [
                     'name' => '',
@@ -3730,11 +3804,11 @@ eof;
                     'func_info_json' => json_encode(
                         [
                             'class' => $this->getRequestData('class'),
-                            'static_func'=> $this->getRequestData('static_func'),
+                            'static_func' => $this->getRequestData('static_func'),
                         ]
                     ),
                     'params_json' => json_encode([
-                        'data_id'=>'1111'
+                        'data_id' => '1111'
                     ]),
                     'type' => QueueLists::$typle_finance,
                     'remark' => '',
@@ -3744,7 +3818,7 @@ eof;
                 ]
             );
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 $res,
                 '成功1',
@@ -3753,14 +3827,14 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('test_call')
-        ){
+        ) {
             $str1 = '\App\HttpController\Models\AdminV2\AdminNewUser';
             $str2 = 'testtest';
-            $obj =  $str1::$str2();
+            $obj = $str1::$str2();
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 $obj,
                 '成功1',
@@ -3768,13 +3842,13 @@ eof;
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('export_wechat')
-        ){
+        ) {
 
-            $fileName = date('YmdHis').'_'.'export_wechat.csv';
-            $f = fopen(TEMP_FILE_PATH.$fileName, "w");
-            fwrite($f,chr(0xEF).chr(0xBB).chr(0xBF));
+            $fileName = date('YmdHis') . '_' . 'export_wechat.csv';
+            $f = fopen(TEMP_FILE_PATH . $fileName, "w");
+            fwrite($f, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
             fputcsv($f, [
                 '企业名',
@@ -3788,17 +3862,17 @@ eof;
                 '微信匹配得分',
             ]);
 
-            $Sql = " select *  from     `wechat_info`  WHERE `code` LIKE  '9144%'  limit 2000  " ;
+            $Sql = " select *  from     `wechat_info`  WHERE `code` LIKE  '9144%'  limit 2000  ";
             $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3'));
-            foreach ($data as $dataItem){
-                if($dataItem['code']){
+            foreach ($data as $dataItem) {
+                if ($dataItem['code']) {
                     $companyRes = CompanyBasic::findByCode($dataItem['code']);
-                    $companyRes = $companyRes?$companyRes->toArray():[];
+                    $companyRes = $companyRes ? $companyRes->toArray() : [];
                 }
                 //$dataItem['phone_md5'];
                 //$dataItem['phone'];
                 $phone_res = \wanghanwanghan\someUtils\control::aesDecode($dataItem['phone'], $dataItem['created_at']);
-                $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($companyRes['ENTNAME'],$dataItem['nickname']);
+                $tmpRes = (new XinDongService())->matchContactNameByWeiXinNameV2($companyRes['ENTNAME'], $dataItem['nickname']);
 //                return $this->writeJson(
 //                    200,[] ,
 //                    //CommonService::ClearHtml($res['body']),
@@ -3830,7 +3904,7 @@ eof;
                 ]);
             }
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 $fileName,
                 '成功',
@@ -3839,35 +3913,35 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('jieba')
-        ){
+        ) {
 
 //            $jieba0 = jieba($this->getRequestData('jieba'), 0);
 //            $jieba1 = jieba($this->getRequestData('jieba'), 1);
 //            $jieba2 = jieba($this->getRequestData('jieba'), 2);
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
-               [
-                   CompanyBasic::findBriefName($this->getRequestData('jieba')),
-                   jieba($this->getRequestData('jieba'), 0),
-                   jieba($this->getRequestData('jieba'), 1),
-               ],
+                [
+                    CompanyBasic::findBriefName($this->getRequestData('jieba')),
+                    jieba($this->getRequestData('jieba'), 0),
+                    jieba($this->getRequestData('jieba'), 1),
+                ],
                 '成功',
                 true,
                 []
             );
         }
 
-        if(
+        if (
             $this->getRequestData('code_region')
-        ){
+        ) {
 
-            $Sql = "SELECT * FROM code_region  WHERE `code` = '110000' " ;
+            $Sql = "SELECT * FROM code_region  WHERE `code` = '110000' ";
             $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_hd_saic'));
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 $data,
                 '成功',
@@ -3876,11 +3950,11 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('generateNewFile')
-        ){
+        ) {
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 RunDealBussinessOpportunity::generateNewFile(),
                 '成功',
@@ -3891,11 +3965,11 @@ eof;
 
 
         //将微信信息入库
-        if(
+        if (
             $this->getRequestData('addWeChatInfo')
-        ){
+        ) {
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 RunDealBussinessOpportunity::addWeChatInfo(),
                 '成功',
                 true,
@@ -3903,12 +3977,12 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('delEmptyMobile')
-        ){
+        ) {
 
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 RunDealBussinessOpportunity::delEmptyMobile(),
                 '成功',
@@ -3917,12 +3991,12 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('withoutOverlappingV2')
-        ){
+        ) {
 
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 CrontabBase::withoutOverlappingV2($this->getRequestData('withoutOverlappingV2')),
                 '成功',
@@ -3930,11 +4004,11 @@ eof;
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('removeOverlappingKeyV2')
-        ){
+        ) {
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 CrontabBase::removeOverlappingKeyV2($this->getRequestData('removeOverlappingKeyV2')),
                 '成功',
@@ -3942,14 +4016,14 @@ eof;
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('testNewSms')
-        ){
+        ) {
             SmsService::getInstance()->sendByTemplete(
-                $this->getRequestData('testNewSms'), 'SMS_249280572',[]);
+                $this->getRequestData('testNewSms'), 'SMS_249280572', []);
 
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 [],
                 '成功',
@@ -3960,14 +4034,14 @@ eof;
 
 
         // 测试添加sheet
-        if(
+        if (
             $this->getRequestData('addNewSheet2')
-        ){
-           RunDealBussinessOpportunity::splitByMobile();
+        ) {
+            RunDealBussinessOpportunity::splitByMobile();
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
-               [],
+                [],
                 '成功',
                 true,
                 []
@@ -3975,11 +4049,11 @@ eof;
         }
 
 
-        if(
+        if (
             $this->getRequestData('resetMatchRes')
-        ){
+        ) {
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 RunDealCarInsuranceInstallment::resetMatchRes($this->getRequestData('resetMatchRes')),
                 '成功',
@@ -3988,24 +4062,24 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('runMatchXXX')
-        ){
+        ) {
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
-               RunDealCarInsuranceInstallment::runMatch(),
+                RunDealCarInsuranceInstallment::runMatch(),
                 '成功',
                 true,
                 []
             );
         }
 
-        if(
+        if (
             $this->getRequestData('online_goods_user')
-        ){
+        ) {
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 OnlineGoodsUser::findBySql(""),
                 '成功',
@@ -4014,11 +4088,11 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('insurance_datas')
-        ){
+        ) {
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 InsuranceData::findBySql(" ORDER BY id  desc  limit 5"),
                 '成功',
@@ -4026,14 +4100,14 @@ eof;
                 []
             );
         }
-            if(
-                $this->getRequestData('getFinanceIncomeStatement')
+        if (
+            $this->getRequestData('getFinanceIncomeStatement')
         ) {
             $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceIncomeStatement(
                 $this->getRequestData('getFinanceIncomeStatement')
             );
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 $res,
                 '成功',
@@ -4041,14 +4115,14 @@ eof;
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('getFinanceBalanceSheet')
         ) {
             $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheet(
                 $this->getRequestData('getFinanceBalanceSheet')
             );
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 $res,
                 '成功',
@@ -4056,14 +4130,14 @@ eof;
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('getFinanceBalanceSheetAnnual')
-        ){
+        ) {
             $res = (new GuoPiaoService())->setCheckRespFlag(true)->getFinanceBalanceSheetAnnual(
                 $this->getRequestData('getFinanceBalanceSheetAnnual')
             );
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 $res,
                 '成功',
@@ -4071,12 +4145,12 @@ eof;
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('yhzwsc')
-        ){
+        ) {
             $res = (new ChuangLanService())->yhzwsc($this->getRequestData('yhzwsc'));
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 $res,
                 '成功',
@@ -4084,12 +4158,12 @@ eof;
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('getEssential')
         ) {
             $res = (new GuoPiaoService())->getEssential($this->getRequestData('getEssential'));
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 $res,
                 '成功',
@@ -4098,36 +4172,36 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('getQuarterTaxInfo')
-        ){
+        ) {
             $res = (new CarInsuranceInstallment())
-                    ->getQuarterTaxInfo($this->getRequestData('getQuarterTaxInfo'));
+                ->getQuarterTaxInfo($this->getRequestData('getQuarterTaxInfo'));
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
-               // [$res,$length],
+                // [$res,$length],
                 $res,
                 '成功',
                 true,
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('getVatReturn')
-        ){
+        ) {
             $res = (new GuoPiaoService())->getVatReturn(
                 $this->getRequestData('getVatReturn')
             );
             $data = jsonDecode($res['data']);
             $returnArr = [];
-            foreach ($data as $dataItem){
-                if(in_array($dataItem['columnSequence'],[34,39,40,41]) ){
-                    $retrunData['所得税'][] =  $dataItem;
+            foreach ($data as $dataItem) {
+                if (in_array($dataItem['columnSequence'], [34, 39, 40, 41])) {
+                    $retrunData['所得税'][] = $dataItem;
                 }
             }
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 $retrunData,
                 '成功',
@@ -4135,55 +4209,55 @@ eof;
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('runMatchSuNing')
-        ){
+        ) {
 
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
-                CarInsuranceInstallment::runMatchSuNing( $this->getRequestData('runMatchSuNing')),
+                CarInsuranceInstallment::runMatchSuNing($this->getRequestData('runMatchSuNing')),
                 '成功',
                 true,
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('runMatchPuFa')
-        ){
+        ) {
 
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
-                CarInsuranceInstallment::runMatchPuFa( $this->getRequestData('runMatchPuFa')),
+                CarInsuranceInstallment::runMatchPuFa($this->getRequestData('runMatchPuFa')),
                 '成功',
                 true,
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('runMatchJinCheng')
-        ){
+        ) {
 
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
-                CarInsuranceInstallment::runMatchJinCheng( $this->getRequestData('runMatchJinCheng')),
+                CarInsuranceInstallment::runMatchJinCheng($this->getRequestData('runMatchJinCheng')),
                 '成功',
                 true,
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('getIncometaxMonthlyDeclaration')
-        ){
+        ) {
             $res = (new GuoPiaoService())->getIncometaxMonthlyDeclaration(
                 $this->getRequestData('getIncometaxMonthlyDeclaration')
             );
             $data = jsonDecode($res['data']);
-            $tmpData =[];
-            foreach ($data as $dataItem){
-                if($dataItem['columnSequence'] == 16){
+            $tmpData = [];
+            foreach ($data as $dataItem) {
+                if ($dataItem['columnSequence'] == 16) {
                     $tmpData[] = $dataItem;
                 }
             }
@@ -4202,24 +4276,24 @@ eof;
                     $lastDate = $beginDate;
                     CommonService::getInstance()->log4PHP(json_encode(
                         [
-                            __CLASS__ ,
-                            'times'=>$i,
-                            'item date'=>$beginDate,
-                            'last cal date'=>$lastDate,
+                            __CLASS__,
+                            'times' => $i,
+                            'item date' => $beginDate,
+                            'last cal date' => $lastDate,
                         ]
                     ));
-                    $i ++;
+                    $i++;
                     continue;
                 }
 
                 $nextDate = date("Y-m-d", strtotime("-3 months", strtotime($lastDate)));
                 CommonService::getInstance()->log4PHP(json_encode(
                     [
-                        __CLASS__ ,
-                        'times'=>$i,
-                        'item date'=>$beginDate,
-                        'last cal date'=>$lastDate,
-                        'next cal date'=>$nextDate,
+                        __CLASS__,
+                        'times' => $i,
+                        'item date' => $beginDate,
+                        'last cal date' => $lastDate,
+                        'next cal date' => $nextDate,
                     ]
                 ));
                 //如果连续了
@@ -4230,26 +4304,26 @@ eof;
                     $length++;
                     CommonService::getInstance()->log4PHP(json_encode(
                         [
-                            __CLASS__ ,
-                            'times'=>$i,
-                            'item date'=>$beginDate,
-                            'last cal date'=>$lastDate,
-                            'next cal date'=>$nextDate,
-                            'ok'=>1,
-                            '$length'=>$length,
+                            __CLASS__,
+                            'times' => $i,
+                            'item date' => $beginDate,
+                            'last cal date' => $lastDate,
+                            'next cal date' => $nextDate,
+                            'ok' => 1,
+                            '$length' => $length,
                         ]
                     ));
                 } else {
                     $length = 1;
                     CommonService::getInstance()->log4PHP(json_encode(
                         [
-                            __CLASS__ ,
-                            'times'=>$i,
-                            'item date'=>$beginDate,
-                            'last cal date'=>$lastDate,
-                            'next cal date'=>$nextDate,
-                            'ok'=>0,
-                            '$length'=>$length,
+                            __CLASS__,
+                            'times' => $i,
+                            'item date' => $beginDate,
+                            'last cal date' => $lastDate,
+                            'next cal date' => $nextDate,
+                            'ok' => 0,
+                            '$length' => $length,
                         ]
                     ));
                 }
@@ -4260,7 +4334,7 @@ eof;
             }
 
             return $this->writeJson(
-                200,[] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 $length,
                 '成功',
@@ -4268,9 +4342,9 @@ eof;
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('getAuthentication1')
-        ){
+        ) {
 
 
             $callback = $this->getRequestData('callback', 'https://pc.meirixindong.com/');
@@ -4281,7 +4355,7 @@ eof;
 
             $res = jsonDecode($res);
             return $this->writeJson(
-                200,[  ] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 $res,
                 '成功',
@@ -4290,21 +4364,21 @@ eof;
             );
         }
         //
-        if(
+        if (
             $this->getRequestData('addRecordV3')
-        ){
+        ) {
             $res = NewFinanceData::addRecordV3(
                 [
-                    'entName'=>'测试一下',
-                    'year'=>2000,
-                    'VENDINC'=>null,
-                    'C_ASSGROL'=>'',
-                    'A_ASSGROL'=>'0',
-                    'CA_ASSGRO'=>0,
+                    'entName' => '测试一下',
+                    'year' => 2000,
+                    'VENDINC' => null,
+                    'C_ASSGROL' => '',
+                    'A_ASSGROL' => '0',
+                    'CA_ASSGRO' => 0,
                 ]
             );
             return $this->writeJson(
-                200,[  ] ,
+                200, [],
                 //CommonService::ClearHtml($res['body']),
                 $res,
                 '成功',
@@ -4312,22 +4386,22 @@ eof;
                 []
             );
         }
-            if(
+        if (
             $this->getRequestData('gteLists22')
         ) {
-            $res =  InsuranceDataHuiZhong::gteLists(
+            $res = InsuranceDataHuiZhong::gteLists(
                 [
-                    ['field'=>'user_id','value'=>11,'operate'=>'=']
-                ],1
+                    ['field' => 'user_id', 'value' => 11, 'operate' => '=']
+                ], 1
             );
 
             return $this->writeJson(
-                200,[
+                200, [
                 'page' => 1,
                 'pageSize' => 10,
                 'total' => $res['total'],
-                'totalPage' => ceil($res['total']/10) ,
-            ] ,
+                'totalPage' => ceil($res['total'] / 10),
+            ],
                 //CommonService::ClearHtml($res['body']),
                 $res['data'],
                 '成功',
@@ -4336,13 +4410,13 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('getBaoYaProducts')
         ) {
             $allProducts = (new \App\HttpController\Service\BaoYa\BaoYaService())->getProducts();
 
             return $this->writeJson(
-                200,[ ] ,$allProducts,
+                200, [], $allProducts,
                 '成功',
                 true,
                 []
@@ -4350,28 +4424,28 @@ eof;
         }
 
 
-        if(
+        if (
             $this->getRequestData('testSheet')
         ) {
             $res = InsuranceData::getDataLists(
                 [
-                    ['field'=>'user_id','value'=>1,'operate'=>'=']
+                    ['field' => 'user_id', 'value' => 1, 'operate' => '=']
                 ],
                 1
             );
 
             return $this->writeJson(
-                200,[ ] ,
+                200, [],
                 $res,
                 '成功',
                 true,
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('testReadMultiSheet')
-        ){
-            $excel = new \Vtiful\Kernel\Excel(['path' =>  TEMP_FILE_PATH]);
+        ) {
+            $excel = new \Vtiful\Kernel\Excel(['path' => TEMP_FILE_PATH]);
             // 打开示例文件
             $sheetList = $excel->openFile('测试多sheet.xlsx')
                 ->sheetList();
@@ -4382,11 +4456,11 @@ eof;
                     ->openSheet($sheetName);// ->getSheetData();
 
                 $tmpRes = RunDealBussinessOpportunity::getYieldDataBySheet($excel);
-                foreach ($tmpRes as $tmp){
+                foreach ($tmpRes as $tmp) {
                     $datas[$sheetName][] = $tmp;
                     CommonService::getInstance()->log4PHP(
                         json_encode([
-                            __CLASS__.__FUNCTION__ .__LINE__,
+                            __CLASS__ . __FUNCTION__ . __LINE__,
                             '$sheetName' => $sheetName,
                             '$tmp' => $tmp,
                         ])
@@ -4394,16 +4468,16 @@ eof;
                 }
             }
             return $this->writeJson(
-                200,[ ] ,
+                200, [],
                 $sheetName,
                 '成功',
                 true,
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('fixNewFinancdeData')
-        ){
+        ) {
 
             $all = NewFinanceData::findBySql(" WHERE VENDINC = '' 
 	AND ASSGRO = '' 
@@ -4418,8 +4492,8 @@ eof;
 	AND `year` <> 2022
 	ORDER BY id  desc  ");
             $nums = 0;
-            foreach ($all as $item){
-                if(
+            foreach ($all as $item) {
+                if (
                     (
                         $item['ASSGRO'] === '' ||
                         $item['ASSGRO'] === NULL
@@ -4456,12 +4530,12 @@ eof;
                         $item['EMPNUM'] === '0' ||
                         $item['EMPNUM'] === 0
                     )
-                ){
+                ) {
                     NewFinanceData::changeById(
                         $item['id'],
                         [
-                            'SOCNUM' =>'',
-                            'EMPNUM' =>'',
+                            'SOCNUM' => '',
+                            'EMPNUM' => '',
                         ]
                     );
 //                    return $this->writeJson(
@@ -4471,24 +4545,24 @@ eof;
 //                        true,
 //                        []
 //                    );
-                    $nums  ++;
+                    $nums++;
                 }
             }
             return $this->writeJson(
-                200,[ ] ,
+                200, [],
                 $nums,
                 '成功',
                 true,
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('sRemNeedCheck')
-        ){
+        ) {
 
-            $sdd1 = ConfigInfo::sRem($this->getRequestData('sRemNeedCheck'),'online_needs_login');
+            $sdd1 = ConfigInfo::sRem($this->getRequestData('sRemNeedCheck'), 'online_needs_login');
             return $this->writeJson(
-                200,[ ] ,
+                200, [],
                 $sdd1,
                 '成功',
                 true,
@@ -4496,13 +4570,13 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('encodeIdToInvitationCode')
-        ){
+        ) {
 
 
             return $this->writeJson(
-                200,[ ] ,
+                200, [],
                 CommonService::encodeIdToInvitationCode($this->getRequestData('encodeIdToInvitationCode')),
                 '成功',
                 true,
@@ -4510,26 +4584,26 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('sMembers')
-        ){
+        ) {
 
             $sdd1 = ConfigInfo::sMembers('online_needs_login');
             return $this->writeJson(
-                200,[ ] ,
+                200, [],
                 $sdd1,
                 '成功',
                 true,
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('sAddNeedCheck')
-        ){
+        ) {
 
-            $sdd1 = ConfigInfo::sAdd($this->getRequestData('sAddNeedCheck'),'online_needs_login');
+            $sdd1 = ConfigInfo::sAdd($this->getRequestData('sAddNeedCheck'), 'online_needs_login');
             return $this->writeJson(
-                200,[ ] ,
+                200, [],
                 $sdd1,
                 '成功',
                 true,
@@ -4537,38 +4611,38 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('addRedisSet')
-        ){
+        ) {
 
             $set1 = ConfigInfo::sMembers('online_needs_login');
 
-            $sdd1 = ConfigInfo::sAdd('consultProduct','online_needs_login');
-            $set2 =  ConfigInfo::sMembers('online_needs_login');
-            $exists1 = ConfigInfo::Sismember('login','online_needs_login');
-            $exists2 = ConfigInfo::Sismember('consultProduct','online_needs_login');
+            $sdd1 = ConfigInfo::sAdd('consultProduct', 'online_needs_login');
+            $set2 = ConfigInfo::sMembers('online_needs_login');
+            $exists1 = ConfigInfo::Sismember('login', 'online_needs_login');
+            $exists2 = ConfigInfo::Sismember('consultProduct', 'online_needs_login');
             return $this->writeJson(
-                200,[ ] ,
-                 [
-                     $set1,
-                     $sdd1,
-                     $set2,
-                     $exists1,
-                     $exists2
-                 ],
+                200, [],
+                [
+                    $set1,
+                    $sdd1,
+                    $set2,
+                    $exists1,
+                    $exists2
+                ],
                 '成功',
                 true,
                 []
             );
         }
 
-        if(
+        if (
             $this->getRequestData('collectInvoice4')
-        ){
+        ) {
             //
             $code = '911101143355687304';
             return $this->writeJson(
-                200,[ ] ,
+                200, [],
                 XinDongService::exportInvoiceV2($code),
                 '成功',
                 true,
@@ -4576,28 +4650,27 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('collectInvoice3')
-        ){
+        ) {
             //
             $code = '911101143355687304';
             return $this->writeJson(
-                200,[ ] ,
+                200, [],
                 XinDongService::exportInvoice($code),
                 '成功',
                 true,
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('collectInvoice2')
-        )
-        {
+        ) {
             $code = '911101143355687304';
             $res = XinDongService::pullInvoice($code);
 
             return $this->writeJson(
-                200,[ ] ,
+                200, [],
                 $res,
                 '成功',
                 true,
@@ -4605,17 +4678,16 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('collectInvoice')
-        )
-        {
-            $date ="2022-07";
+        ) {
+            $date = "2022-07";
             $monthsNums = 24;
             $code = '911101143355687304';
-            XinDongService::collectInvoice($date,$monthsNums,$code);
+            XinDongService::collectInvoice($date, $monthsNums, $code);
 
             return $this->writeJson(
-                200,[ ] ,
+                200, [],
                 [
 
                 ],
@@ -4625,13 +4697,12 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('sendXunJiaEmail')
-        )
-        {
+        ) {
             RunDealEmailReceiver::sendEmail();
             return $this->writeJson(
-                200,[ ] ,
+                200, [],
                 [
 
                 ],
@@ -4640,13 +4711,12 @@ eof;
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('sendEmailHuiZhong')
-        )
-        {
+        ) {
             RunDealEmailReceiver::sendEmailHuiZhong();
             return $this->writeJson(
-                200,[ ] ,
+                200, [],
                 [
 
                 ],
@@ -4655,85 +4725,84 @@ eof;
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('testToken')
-        )
-        {
+        ) {
             $params = $this->request()->getRequestParam();
-            $token  = CommonService::generateTokenByParam($params);
+            $token = CommonService::generateTokenByParam($params);
             return $this->writeJson(
-                200,[ ] ,
+                200, [],
                 [
-                    '$params'=>$params,
-                    '$token' =>$token
+                    '$params' => $params,
+                    '$token' => $token
                 ],
                 '成功',
                 true,
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('testMenu')
-        ){
+        ) {
             //营业状态
-            $Sql = "SET @pv = 'A'" ;
+            $Sql = "SET @pv = 'A'";
             $data = sqlRawV2($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_hd_saic'));
             $Sql = "select id,`code`,name,parent,`level` from code_ca16
-                    where FIND_IN_SET(parent,@pv) and !isnull(@pv:= concat(@pv, ',', code));" ;
+                    where FIND_IN_SET(parent,@pv) and !isnull(@pv:= concat(@pv, ',', code));";
             $data = sqlRaw($Sql, CreateConf::getInstance()->getConf('env.mysqlDatabaseRDS_3_hd_saic'));
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    __CLASS__.__FUNCTION__ .__LINE__,
+                    __CLASS__ . __FUNCTION__ . __LINE__,
                     '$Sql' => $Sql,
-                    '$data '=> $data
+                    '$data ' => $data
                 ])
             );
             return $this->writeJson(
-                200,[ ] ,
+                200, [],
                 $data,
                 '成功',
                 true,
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('baoya2')
-        ){
+        ) {
 //            new BaoYaService();
             return $this->writeJson(
-                200,[ ] ,(new \App\HttpController\Service\BaoYa\BaoYaService())->getProductDetail($this->getRequestData('baoya2')),
+                200, [], (new \App\HttpController\Service\BaoYa\BaoYaService())->getProductDetail($this->getRequestData('baoya2')),
                 '成功',
                 true,
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('baoya1')
-        ){
+        ) {
 
             return $this->writeJson(
-                200,[ ] ,(new \App\HttpController\Service\BaoYa\BaoYaService())->getProducts(),
+                200, [], (new \App\HttpController\Service\BaoYa\BaoYaService())->getProducts(),
                 '成功',
                 true,
                 []
             );
         }
 
-        if(
+        if (
             $this->getRequestData('testEmailReceiver')
-        ){
+        ) {
             RunDealEmailReceiver::pullEmail(1);
             RunDealEmailReceiver::dealMail($this->getRequestData('testEmailReceiver'));
             return $this->writeJson(
-                200,[ ] ,[],
+                200, [], [],
                 '成功',
                 true,
                 []
             );
         }
-        if(
+        if (
             $this->getRequestData('testTransaction')
-        ){
+        ) {
 
 //            \App\HttpController\Models\AdminV2\AdminNewUser::updateMoney2(100,1);
 //
@@ -4757,18 +4826,18 @@ eof;
                     [
                         'user_id' => 1,
                         'msg' => "测试扣费10元",
-                        'details' =>json_encode( XinDongService::trace()),
+                        'details' => json_encode(XinDongService::trace()),
                         'type_cname' => '测试扣费',
                     ]
                 );
 
                 DbManager::getInstance()->commit('mrxd');
 
-            }catch (\Throwable $e) {
+            } catch (\Throwable $e) {
                 DbManager::getInstance()->rollback('mrxd');
                 CommonService::getInstance()->log4PHP(
                     json_encode([
-                        __CLASS__.__FUNCTION__ .__LINE__,
+                        __CLASS__ . __FUNCTION__ . __LINE__,
                         '$e getMessage' => $e->getMessage()
                     ])
                 );
@@ -4776,16 +4845,16 @@ eof;
 
             return $this->writeJson(
                 200,
-                [ ] ,[] ,
+                [], [],
                 '成功',
                 true,
                 []
             );
         }
 
-        if(
+        if (
             $this->getRequestData('getAllBySiji')
-        ){
+        ) {
 
             $allSijiFenLeis = RunDealApiSouKe::testYield(
                 $this->getRequestData('getAllBySiji')
@@ -4793,16 +4862,16 @@ eof;
 
             return $this->writeJson(
                 200,
-                [ ] ,$allSijiFenLeis ,
+                [], $allSijiFenLeis,
                 '成功',
                 true,
                 []
             );
         }
 
-        if(
+        if (
             $this->getRequestData('fengxian')
-        ){
+        ) {
             $html = CompanyBasic::createRiskLevelHtmlData([
                 '北京华锐怡贤艺苑商场',
                 '北京市门头沟区三建公司苇子水建筑队',
@@ -4832,7 +4901,7 @@ eof;
             ]);
             return $this->writeJson(
                 200,
-                [ ] ,
+                [],
                 $html,
                 '成功',
                 true,
@@ -4841,13 +4910,13 @@ eof;
         }
 
 
-        if(
+        if (
             $this->getRequestData('CompanyLiquidation')
-        ){
+        ) {
 
             return $this->writeJson(
                 200,
-                [ ] ,
+                [],
                 CompanyLiquidation::findByCompanyId(intval($this->getRequestData('CompanyLiquidation'))),
                 '成功',
                 true,
@@ -4855,13 +4924,13 @@ eof;
             );
         }
 
-        if(
+        if (
             $this->getRequestData('findCancelDateByCode')
-        ){
+        ) {
 
             return $this->writeJson(
                 200,
-                [ ] ,
+                [],
                 CompanyBasic::findCancelDateByCode($this->getRequestData('findCancelDateByCode')),
                 '成功',
                 true,
@@ -4871,13 +4940,13 @@ eof;
 
 
         //失信被执行人
-        if(
+        if (
             $this->getRequestData('C1')
-        ){
+        ) {
 
             $postData = [
                 'entName' => trim($this->getRequestData('C1')),
-                'version' => 'C1' ,
+                'version' => 'C1',
             ];
 
 
@@ -4885,17 +4954,17 @@ eof;
                 ->setCheckRespFlag(true)
                 ->getEntDetail($postData);
 
-            return $this->writeJson(200, [ ] ,  $res, '成功', true, []);
+            return $this->writeJson(200, [], $res, '成功', true, []);
 
         }
 
-        if(
+        if (
             $this->getRequestData('C10')
-        ){
+        ) {
 
             $postData = [
                 'entName' => trim($this->getRequestData('C10')),
-                'version' => 'C10' ,
+                'version' => 'C10',
             ];
 
 
@@ -4903,26 +4972,26 @@ eof;
                 ->setCheckRespFlag(true)
                 ->getEntDetail($postData);
 
-            return $this->writeJson(200, [ ] ,  $res, '成功', true, []);
+            return $this->writeJson(200, [], $res, '成功', true, []);
 
         }
 
-        if(
+        if (
             $this->getRequestData('getBankruptcyCheck')
-        ){
+        ) {
 
-            return $this->writeJson(200, [ ] ,  [
+            return $this->writeJson(200, [], [
                 (new XinDongService())->getBankruptcyCheck(
                     $this->getRequestData('getBankruptcyCheck')
                 )
             ], '成功', true, []);
 
         }
-        if(
+        if (
             $this->getRequestData('getBankruptcyTs')
-        ){
+        ) {
 
-            return $this->writeJson(200, [ ] ,  [
+            return $this->writeJson(200, [], [
                 (new XinDongService())->getBankruptcyTs(
                     $this->getRequestData('getBankruptcyTs')
                 )
@@ -4930,11 +4999,11 @@ eof;
 
         }
 
-        if(
+        if (
             $this->getRequestData('generateFileV2')
-        ){
+        ) {
 
-            return $this->writeJson(200, [ ] ,  [
+            return $this->writeJson(200, [], [
                 RunDealZhaoTouBiao::sendEmail(
                     $this->getRequestData('generateFileV2')
                 )
@@ -4942,16 +5011,16 @@ eof;
 
         }
 
-        if(
+        if (
             $this->getRequestData('generateFile')
-        ){
+        ) {
             $config = [
                 'path' => TEMP_FILE_PATH // xlsx文件保存路径
             ];
-            $filename = 'XXXX'.date('YmdHis').'.xlsx';
+            $filename = 'XXXX' . date('YmdHis') . '.xlsx';
             $excel = new \Vtiful\Kernel\Excel($config);
 
-            $exportData = [['XXXXX','XXXXXXXXXXXX','XXXXXXXXXXX']];
+            $exportData = [['XXXXX', 'XXXXXXXXXXXX', 'XXXXXXXXXXX']];
             //=======================================================
             $fileObject = $excel->fileName($filename, '1');
             $fileHandle = $fileObject->getHandle();
@@ -4969,12 +5038,11 @@ eof;
                 ->align(Format::FORMAT_ALIGN_CENTER, Format::FORMAT_ALIGN_VERTICAL_CENTER)
                 ->toResource();
 
-            $file =  $fileObject
+            $file = $fileObject
                 ->defaultFormat($colorStyle)
-                ->header(['XXX','XXXXX'])
+                ->header(['XXX', 'XXXXX'])
                 ->defaultFormat($alignStyle)
-                ->data($exportData)
-                // ->setColumn('B:B', 50)
+                ->data($exportData)// ->setColumn('B:B', 50)
             ;
 
             //==============================================
@@ -4997,56 +5065,56 @@ eof;
 
             $file->output();
 
-            return $this->writeJson(200, [ ] ,  [$filename], '成功', true, []);
+            return $this->writeJson(200, [], [$filename], '成功', true, []);
         }
 
 
-        if(
+        if (
             $this->getRequestData('sendEmail')
-        ){
+        ) {
 
             //ZhaoTouBiaoAll::findBySql(" WHERE ");
 
-            return $this->writeJson(200, [ ] ,  CommonService::getInstance()->sendEmailV2(
+            return $this->writeJson(200, [], CommonService::getInstance()->sendEmailV2(
                 'tianyongshan@meirixindong.com',
                 '测试下发送邮件',
                 '<h1>xxx</h1>',
                 [TEMP_FILE_PATH . '搜客导出_20220707155131.xlsx']
-                //'01',
-                //['entName' => '测试公司']
+            //'01',
+            //['entName' => '测试公司']
             ), '成功', true, []);
         }
 
 
-        if(
+        if (
             $this->getRequestData('CompanyBasic')
-        ){
-             $res = CompanyBasic::findById(16);
+        ) {
+            $res = CompanyBasic::findById(16);
             $res = $res->toArray();
-            return $this->writeJson(200, [ ] ,$res, '成功', true, []);
+            return $this->writeJson(200, [], $res, '成功', true, []);
         }
 
-        if(
+        if (
             $this->getRequestData('getMarjetShare')
-        ){
+        ) {
             XinDongService::getMarjetShare($this->getRequestData('getMarjetShare'));
-            return $this->writeJson(200, [ ] ,XinDongService::getMarjetShare($this->getRequestData('getMarjetShare')), '成功', true, []);
+            return $this->writeJson(200, [], XinDongService::getMarjetShare($this->getRequestData('getMarjetShare')), '成功', true, []);
         }
 
-        if(
+        if (
             $this->getRequestData('lastSql')
-        ){
+        ) {
 
             $model = AdminUserFinanceData::create()
                 ->where(['id' => 481])
                 //->page(1,2)
-                ->order('id', 'DESC') ;
+                ->order('id', 'DESC');
             $res = $model->all();
             return $this->writeJson(200, null, $model->builder->getLastPrepareQuery(), null, true, []);
         }
-        if(
+        if (
             $this->getRequestData('encode')
-        ){
+        ) {
 
             return $this->writeJson(200, null, AdminNewUser::aesEncode(
                 $this->getRequestData('encode')
@@ -5054,96 +5122,96 @@ eof;
 
         }
 
-        if(
+        if (
             $this->getRequestData('decode')
-        ){
+        ) {
             return $this->writeJson(200, null, AdminNewUser::aesDecode($this->getRequestData('decode')), null, true, []);
 
         }
 
 
-        if(
+        if (
             $this->getRequestData('ToolsGenerateFile')
-        ){
+        ) {
             RunDealToolsFile::generateFile(1);
         }
         //
-        if(
+        if (
             $this->getRequestData('generateFileCsv')
-        ){
+        ) {
             RunDealApiSouKe::generateFileCsvV2(1);
         }
 
 
-        if(
+        if (
             $this->getRequestData('generateFileExcelV2')
-        ){
+        ) {
             RunDealApiSouKe::generateFileExcelV2(1);
         }
 
 
         //确认交付
-        if(
+        if (
             $this->getRequestData('deliver')
-        ){
+        ) {
             RunDealApiSouKe::deliver(1);
         }
 
-        if(
+        if (
             $this->getRequestData('parseDataToDb')
-        ){
+        ) {
             RunDealFinanceCompanyDataNewV2::parseCompanyDataToDb(1);
         }
-        if(
+        if (
             $this->getRequestData('sendSmsWhenBalanceIsNotEnough')
-        ){
+        ) {
             RunDealFinanceCompanyDataNewV2::sendSmsWhenBalanceIsNotEnough(1);
         }
-        if(
+        if (
             $this->getRequestData('calculatePrice')
-        ){
+        ) {
             RunDealFinanceCompanyDataNewV2::calcluteFinancePrice(1);
         }
 
-        if(
+        if (
             $this->getRequestData('pullFinanceDataV2')
-        ){
+        ) {
             RunDealFinanceCompanyDataNewV2::pullFinanceDataV2(1);
         }
 
-        if(
+        if (
             $this->getRequestData('pullFinanceDataV3')
-        ){
+        ) {
             RunDealFinanceCompanyDataNewV2::pullFinanceDataV3(1);
         }
 
-        if(
+        if (
             $this->getRequestData('checkConfirmV2')
-        ){
+        ) {
             RunDealFinanceCompanyDataNewV2::checkConfirmV2(1);
         }
 
-        if(
+        if (
             $this->getRequestData('exportFinanceDataV4')
-        ){
+        ) {
             RunDealFinanceCompanyDataNewV2::exportFinanceDataV4(1);
         }
-        if(
+        if (
             $this->getRequestData('getFinanceDataXX')
-        ){
+        ) {
             $res = (new LongXinService())->getFinanceData([
-                        "entName"=>$this->getRequestData('getFinanceDataXX'),
-                        "code"=> "",
-                        'beginYear' => date('Y'),
-                        'dataCount' => 10,//取最近几年的
+                "entName" => $this->getRequestData('getFinanceDataXX'),
+                "code" => "",
+                'beginYear' => date('Y'),
+                'dataCount' => 10,//取最近几年的
             ], false);
             return $this->writeJson(200, null, $res, null, true, []);
         }
 
 
-        if(
+        if (
             $this->getRequestData('matchByName')
-        ){
+        ) {
             $datas = XinDongService::fuzzyMatchEntName($this->getRequestData('matchByName'));
 
             return $this->writeJson(200, null, $datas, null, true, []);
@@ -5153,13 +5221,12 @@ eof;
     }
 
 
-
     function fuzzyMatchEntName(): bool
     {
         //
-        $requestData =  $this->getRequestData();
+        $requestData = $this->getRequestData();
         $name = trim($requestData['name']);
-        if(empty($name)){
+        if (empty($name)) {
             return $this->writeJson(201, null, [], '参数错误', true, []);
         }
 
@@ -5173,40 +5240,41 @@ eof;
     function getCompanyInvestor(): bool
     {
         //
-        $requestData =  $this->getRequestData();
+        $requestData = $this->getRequestData();
         $res = CompanyInv::findByCompanyId(
             $requestData['company_id']
         );
-        foreach ($res as &$data){
+        foreach ($res as &$data) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'getCompanyInvestor_data_item'=>$data
+                    'getCompanyInvestor_data_item' => $data
                 ])
             );
         }
         return $this->writeJson(200, null, $res, '成功', false, []);
 
     }
+
     function getCompanyInvestorOld(): bool
     {
         //
-        $requestData =  $this->getRequestData();
+        $requestData = $this->getRequestData();
         CommonService::getInstance()->log4PHP(
             json_encode([
-                'getCompanyInvestor $requestData '=>$requestData
+                'getCompanyInvestor $requestData ' => $requestData
             ])
         );
 
         $res = CompanyInvestor::findByCompanyId(
             $requestData['company_id']
         );
-        foreach ($res as &$data){
+        foreach ($res as &$data) {
             CommonService::getInstance()->log4PHP(
                 json_encode([
-                    'getCompanyInvestor_data_item'=>$data
+                    'getCompanyInvestor_data_item' => $data
                 ])
             );
-            $name = CompanyInvestor::getInvestorName( $data['investor_id'], $data['investor_type']);
+            $name = CompanyInvestor::getInvestorName($data['investor_id'], $data['investor_type']);
             $data['name'] = $name;
         }
 
@@ -5216,7 +5284,7 @@ eof;
     //市场占有率查询
     function calMarketShare(): bool
     {
-        $requestData =  $this->getRequestData();
+        $requestData = $this->getRequestData();
         $checkRes = DataModelExample::checkField(
             [
 
@@ -5228,52 +5296,52 @@ eof;
             ],
             $requestData
         );
-        if(
+        if (
             !$checkRes['res']
-        ){
-            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        ) {
+            return $this->writeJson(203, [], [], $checkRes['msgs'], true, []);
         }
 
         //XinDongService::getMarjetShare($requestData['xd_id']);
-        return $this->writeJson(200, [ ] ,XinDongService::getMarjetShare($requestData['xd_id']), '成功', true, []);
-    } 
+        return $this->writeJson(200, [], XinDongService::getMarjetShare($requestData['xd_id']), '成功', true, []);
+    }
 
     //增删改 全部一起
     function addCompanyToAnalyzeListsV2(): bool
     {
-        $requestData =  $this->getRequestData();
+        $requestData = $this->getRequestData();
 
-        XinDongKeDongFrontEndAnalyzeList::updateListsByUser($requestData,$this->loginUserinfo['id']);
+        XinDongKeDongFrontEndAnalyzeList::updateListsByUser($requestData, $this->loginUserinfo['id']);
 
-        return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+        return $this->writeJson(200, [], [], '添加成功', true, []);
     }
 
 
-     //搜索企业
-     function serachCompanyByName(): bool
-     {
-         //====================== 分割线
-         $requestData =  $this->getRequestData();
-         $size = $requestData['size']??20;
-         $page = $requestData['page']??1;
+    //搜索企业
+    function serachCompanyByName(): bool
+    {
+        //====================== 分割线
+        $requestData = $this->getRequestData();
+        $size = $requestData['size'] ?? 20;
+        $page = $requestData['page'] ?? 1;
 
-         return $this->writeJson(200,
-             [
-             ]
-             ,  \App\ElasticSearch\Model\Company::getNamesByText($page,$size,trim($requestData['searchText'])),
-             '成功',
-             true,
-             []
-         );
-     }
+        return $this->writeJson(200,
+            [
+            ]
+            , \App\ElasticSearch\Model\Company::getNamesByText($page, $size, trim($requestData['searchText'])),
+            '成功',
+            true,
+            []
+        );
+    }
 
-     //按文件传输
+    //按文件传输
     function addCompanyToAnalyzeListsByFile(): bool
     {
-        $requestData =  $this->getRequestData();
+        $requestData = $this->getRequestData();
         $fileUplaodRes = DataModelExample::dealUploadFiles($this->request()->getUploadedFiles());
 
-        foreach ($fileUplaodRes['fileNames'] as  $fileName){
+        foreach ($fileUplaodRes['fileNames'] as $fileName) {
             $res = QueueLists::addRecord(
                 [
                     'name' => '',
@@ -5281,15 +5349,15 @@ eof;
                     'func_info_json' => json_encode(
                         [
                             'class' => '\App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList',
-                            'static_func'=> 'addRecordByFile',
+                            'static_func' => 'addRecordByFile',
                         ]
                     ),
                     'params_json' => json_encode([
-                        'file'=>$fileName,
+                        'file' => $fileName,
                         'user_id' => $this->loginUserinfo['id'],
-                        'name' => $requestData['name']?:'',
-                        'ent_name' => $requestData['ent_name']?:'',
-                        'remark' => $requestData['remark']?:'',
+                        'name' => $requestData['name'] ?: '',
+                        'ent_name' => $requestData['ent_name'] ?: '',
+                        'remark' => $requestData['remark'] ?: '',
                     ]),
                     'type' => QueueLists::$typle_finance,
                     'remark' => '',
@@ -5299,43 +5367,43 @@ eof;
                 ]
             );
         }
-        return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+        return $this->writeJson(200, [], [], '添加成功', true, []);
     }
 
     /**
-    开始分析具体特征
+     * 开始分析具体特征
      */
     function startAnalysis(): bool
     {
-        $requestData =  $this->getRequestData();
+        $requestData = $this->getRequestData();
 
         //最少5家
-        if(
+        if (
             count(XinDongKeDongFrontEndAnalyzeList::findAllByUserId($this->loginUserinfo['id'])) <= 4
-        ){
-            return $this->writeJson(202,[ ] , [], '请最少上传5家企业再进行分析', true, []);
+        ) {
+            return $this->writeJson(202, [], [], '请最少上传5家企业再进行分析', true, []);
         }
 
         //提取特征
-        $featureslists = XinDongKeDongFrontEndAnalyzeList::extractFeatureV2($this->loginUserinfo['id'],false);
+        $featureslists = XinDongKeDongFrontEndAnalyzeList::extractFeatureV2($this->loginUserinfo['id'], false);
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'startAnalysis_$featureslists'=> $featureslists
+                __CLASS__ . __FUNCTION__ . __LINE__,
+                'startAnalysis_$featureslists' => $featureslists
             ])
         );
 
         $analiyLists = XinDongKeDongFrontEndAnalyzeList::findAllByUserIdV2($this->loginUserinfo['id']);
-        $companyIdsArr = array_column($analiyLists,'companyid');
+        $companyIdsArr = array_column($analiyLists, 'companyid');
         \App\HttpController\Models\MRXD\XinDongKeDongFrontEndAnalyzeHistory::addRecord(
             [
                 'user_id' => $this->loginUserinfo['id'],
                 'company_nums' => count($companyIdsArr),
-                'company_ids' => join(',',$companyIdsArr),
+                'company_ids' => join(',', $companyIdsArr),
                 'feature_json' => json_encode($featureslists),
                 'status' => intval($requestData['status']),
-                'name' => $requestData['name']?:'',
-                'remark' => $requestData['remark']?:'',
+                'name' => $requestData['name'] ?: '',
+                'remark' => $requestData['remark'] ?: '',
                 'created_at' => time(),
                 'updated_at' => time(),
             ]
@@ -5344,22 +5412,22 @@ eof;
 
         (new XinDongKeDongService())->MatchSimilarEnterprises(
             $this->loginUserinfo['id'],
-            $featureslists['ying_shou_gui_mo']?:'',
-            $featureslists['NIC_ID']?:'',
-            $featureslists['OPFROM']?:'',
-            $featureslists['DOMDISTRICT']?:'',
+            $featureslists['ying_shou_gui_mo'] ?: '',
+            $featureslists['NIC_ID'] ?: '',
+            $featureslists['OPFROM'] ?: '',
+            $featureslists['DOMDISTRICT'] ?: '',
             XinDongKeDongService::$type_Backend
         );
 
         //开始分析
-        return $this->writeJson(200,[ ] , $featureslists, '成功', true, []);
+        return $this->writeJson(200, [], $featureslists, '成功', true, []);
     }
 
     //删除名单
     function delCompanyToAnalyzeLists(): bool
     {
 
-        $requestData =  $this->getRequestData();
+        $requestData = $this->getRequestData();
         $checkRes = DataModelExample::checkField(
             [
 
@@ -5371,15 +5439,15 @@ eof;
             ],
             $requestData
         );
-        if(
+        if (
             !$checkRes['res']
-        ){
-            return $this->writeJson(203,[ ] , [], $checkRes['msgs'], true, []);
+        ) {
+            return $this->writeJson(203, [], [], $checkRes['msgs'], true, []);
         }
 
-        $res = XinDongKeDongFrontEndAnalyzeList::findByEntNameV2($this->loginUserinfo['id'],$requestData['ent_name']);
-        if(empty($res)){
-            return $this->writeJson(203,[ ] , [], '企业不存在', true, []);
+        $res = XinDongKeDongFrontEndAnalyzeList::findByEntNameV2($this->loginUserinfo['id'], $requestData['ent_name']);
+        if (empty($res)) {
+            return $this->writeJson(203, [], [], '企业不存在', true, []);
         }
 
         XinDongKeDongFrontEndAnalyzeList::updateById(
@@ -5389,105 +5457,105 @@ eof;
             ]
         );
 
-        return $this->writeJson(200,[ ] , [], '添加成功', true, []);
+        return $this->writeJson(200, [], [], '添加成功', true, []);
     }
 
     function getKeDongFeature(): bool
     {
-        $requestData =  $this->getRequestData();
+        $requestData = $this->getRequestData();
         //历史提取
-        if($requestData['history_id']){
+        if ($requestData['history_id']) {
 
         }
-            
+
         //正常提取特征
         $featureslists = XinDongKeDongFrontEndAnalyzeList::getFeatrueArray($this->loginUserinfo['id']);
         CommonService::getInstance()->log4PHP(
             json_encode([
-                __CLASS__.__FUNCTION__ .__LINE__,
-                'getKeDongFeature'=>json_encode(
+                __CLASS__ . __FUNCTION__ . __LINE__,
+                'getKeDongFeature' => json_encode(
                     [
-                        'getKeDongFeature_$featureslists'=>$featureslists
+                        'getKeDongFeature_$featureslists' => $featureslists
                     ]
                 )
             ])
         );
         $mapedData = [];
-        foreach ($featureslists['nicX'] as $value){
+        foreach ($featureslists['nicX'] as $value) {
             $nicRes = NicCode::findNICID($value);
-            $mapedData['nicX'][] =  $nicRes['industry'];
+            $mapedData['nicX'][] = $nicRes['industry'];
         }
-        foreach ($featureslists['nicY'] as $value){
+        foreach ($featureslists['nicY'] as $value) {
 //            $mapedData['nicY'][] =  $value.'%';
-            $mapedData['nicY'][] =  $value;
+            $mapedData['nicY'][] = $value;
         }
 
-        $nicArr = array_combine($mapedData['nicX'],$mapedData['nicY']);
+        $nicArr = array_combine($mapedData['nicX'], $mapedData['nicY']);
         arsort($nicArr);
 
-        foreach ($featureslists['openFromX'] as $value){
-           // $value
-            if(strpos($value,'年') !== false){
-                $mapedData['openFromX'][] =  $value;
-            }
-            else{
-                $mapedData['openFromX'][] =  $value.'年';
+        foreach ($featureslists['openFromX'] as $value) {
+            // $value
+            if (strpos($value, '年') !== false) {
+                $mapedData['openFromX'][] = $value;
+            } else {
+                $mapedData['openFromX'][] = $value . '年';
             }
         }
 
-        foreach ($featureslists['openFromY'] as $value){
+        foreach ($featureslists['openFromY'] as $value) {
 //            $mapedData['openFromY'][] =  $value.'%';
-            $mapedData['openFromY'][] =  $value;
+            $mapedData['openFromY'][] = $value;
         }
 
-        $openFormArr = array_combine($mapedData['openFromX'],$mapedData['openFromY']);
+        $openFormArr = array_combine($mapedData['openFromX'], $mapedData['openFromY']);
         arsort($openFormArr);
 
         $maps = XinDongService::getYingShouGuiMoMapV2();
-        foreach ($featureslists['YingShouX'] as $value){
-            $mapedData['YingShouX'][] =   $maps[$value]['min'].'万-'.$maps[$value]['max'].'万';
+        foreach ($featureslists['YingShouX'] as $value) {
+            $mapedData['YingShouX'][] = $maps[$value]['min'] . '万-' . $maps[$value]['max'] . '万';
         }
 
-        foreach ($featureslists['YingShouY'] as $value){
+        foreach ($featureslists['YingShouY'] as $value) {
 //            $mapedData['YingShouY'][] =   $value.'%';
-            $mapedData['YingShouY'][] =   $value;
+            $mapedData['YingShouY'][] = $value;
         }
 
-        $yingShouArr = array_combine($mapedData['YingShouX'],$mapedData['YingShouY']);
+        $yingShouArr = array_combine($mapedData['YingShouX'], $mapedData['YingShouY']);
         arsort($yingShouArr);
 
 
-        foreach ($featureslists['areaX'] as $value){
-            $mapedData['areaX'][] =   CompanyBasic::findRegion($value)['name'];
+        foreach ($featureslists['areaX'] as $value) {
+            $mapedData['areaX'][] = CompanyBasic::findRegion($value)['name'];
         }
-        foreach ($featureslists['areaY'] as $value){
+        foreach ($featureslists['areaY'] as $value) {
 //            $mapedData['areaY'][] =     $value.'%';
-            $mapedData['areaY'][] =     $value;
+            $mapedData['areaY'][] = $value;
         }
 
-        $areaArr = array_combine($mapedData['areaX'],$mapedData['areaY']);
+        $areaArr = array_combine($mapedData['areaX'], $mapedData['areaY']);
         arsort($areaArr);
 
         //开始分析
-        return $this->writeJson(200,[ ] , [
-            'nicX'=> array_keys($nicArr),
-            'nicY'=> array_values($nicArr),
-            'openFromX'=> array_keys($openFormArr),
-            'openFromY'=> array_values($openFormArr),
-            'YingShouX'=> array_keys($yingShouArr),
-            'YingShouY'=> array_values($yingShouArr),
-            'areaX'=> array_keys($areaArr),
-            'areaY'=> array_values($areaArr),
+        return $this->writeJson(200, [], [
+            'nicX' => array_keys($nicArr),
+            'nicY' => array_values($nicArr),
+            'openFromX' => array_keys($openFormArr),
+            'openFromY' => array_values($openFormArr),
+            'YingShouX' => array_keys($yingShouArr),
+            'YingShouY' => array_values($yingShouArr),
+            'areaX' => array_keys($areaArr),
+            'areaY' => array_values($areaArr),
         ], '成功', true, []);
     }
 
     //获取企业的风险分
-    function getFengXian(){
+    function getFengXian()
+    {
         $entName = $this->getRequestData('entName', '');
         if (empty($entName)) {
             return $this->writeJson(201, null, null, '参数entName不可以都为空');
         }
-        $datas         = (new FenShuService())->getFengXian($entName);
+        $datas = (new FenShuService())->getFengXian($entName);
         return $this->writeJson(200, null, $datas, null, true, []);
     }
 }
