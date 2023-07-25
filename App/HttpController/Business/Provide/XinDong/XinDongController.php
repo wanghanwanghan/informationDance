@@ -761,7 +761,7 @@ class XinDongController extends ProvideBase
         $year = $this->getRequestData('year', '');
         $userInputYear = explode(',', trim($year, ','));
 
-        $beginYear = 2021;
+        $beginYear = 2022;
         $dataCount = 3;
 
         $this->spendMoney = 1;
@@ -783,50 +783,14 @@ class XinDongController extends ProvideBase
             'dataCount' => $dataCount,
         ];
 
-        $check = EntDbEnt::create()->where('name', $entName)->get();
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->setCal(false)
+                ->getFinanceData($postData, false);
+        });
 
-        if (empty($check)) {
-            $f_info = [];
-        } else {
-            $f_info = EntDbFinance::create()
-                ->where('cid', $check->getAttr('id'))
-                ->where('ANCHEYEAR', [2021, 2020, 2019], 'IN')
-                ->field([
-                    'ASSGRO',
-                    'LIAGRO',
-                    'MAIBUSINC',
-                    'NETINC',
-                    'PROGRO',
-                    'RATGRO',
-                    'TOTEQU',
-                    'VENDINC',
-                    'ANCHEYEAR',
-                ])->all();
-        }
-
-        if (!empty($f_info)) {
-            $tmp = [];
-            foreach ($f_info as $one) {
-                //只能是year里的年份
-                if (in_array($one->ANCHEYEAR . '', $userInputYear, true)) {
-                    $tmp[$one->ANCHEYEAR . ''] = obj2Arr($one);
-                }
-            }
-            $res = [$this->cspKey => [
-                'code' => 200,
-                'paging' => null,
-                'result' => $tmp,
-                'msg' => null,
-            ]];
-        } else {
-            $this->csp->add($this->cspKey, function () use ($postData) {
-                return (new LongXinService())
-                    ->setCheckRespFlag(true)
-                    ->setCal(false)
-                    ->getFinanceData($postData, false);
-            });
-            $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-        }
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
 
         if ($res[$this->cspKey]['code'] === 200 && !empty($res[$this->cspKey]['result'])) {
             $indexTable = [
