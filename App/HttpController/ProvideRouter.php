@@ -120,6 +120,7 @@ class ProvideRouter
         $prefix = '/Business/Provide/LongDun/LongDunController/';
 
         $routeCollector->addGroup('/qcc', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getECISeniorPerson', $prefix . 'getECISeniorPerson');
             $routeCollector->addRoute(['GET', 'POST'], '/getIPOGuarantee', $prefix . 'getIPOGuarantee');
             $routeCollector->addRoute(['GET', 'POST'], '/getProjectProductCheck', $prefix . 'getProjectProductCheck');
             $routeCollector->addRoute(['GET', 'POST'], '/getCompatProductRecommend', $prefix . 'getCompatProductRecommend');

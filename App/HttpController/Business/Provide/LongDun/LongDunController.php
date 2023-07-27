@@ -46,6 +46,33 @@ class LongDunController extends ProvideBase
         return true;
     }
 
+    //企业人员董监高信息 有对外投资信息
+    function getECISeniorPerson(): bool
+    {
+        $entName = $this->request()->getRequestParam('entName');
+        $personName = $this->request()->getRequestParam('personName');
+        $type = $this->request()->getRequestParam('type');
+
+        $postData = [
+            'searchKey' => $entName,// 搜索关键字（企业名称、统一社会信用代码、注册号）
+            'personName' => $personName,// 人员姓名
+            'type' => trim($type),// 0：担任法定代表人；1：对外投资；2：在外任职
+            'pageIndex' => '1',
+            'pageSize' => '100',
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())->setCheckRespFlag(true)
+                ->get($this->ldListUrl . 'ECISeniorPerson/GetList', $postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        CommonService::getInstance()->log4PHP($res, 'info', 'ECISeniorPerson_dongjiangao');
+
+        return $this->checkResponse($res);
+    }
+
     //实际控制人和控制路径
     function getBeneficiary()
     {
