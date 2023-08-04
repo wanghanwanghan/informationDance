@@ -123,9 +123,15 @@ class XinDongController extends XinDongBase
     {
         $files = $this->request()->getUploadedFiles();
 
+        $res = [];
+
         foreach ($files as $key => $oneFile) {
             if ($oneFile instanceof UploadFile) {
-                $res = jsonEncode($oneFile, false);
+                $res[] = $oneFile->getTempName();
+                $res[] = $oneFile->getSize();
+                $res[] = $oneFile->getError();
+                $res[] = $oneFile->getClientFilename();
+                $res[] = $oneFile->getClientMediaType();
             }
         }
 
