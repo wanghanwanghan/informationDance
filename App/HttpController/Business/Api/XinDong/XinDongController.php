@@ -133,7 +133,7 @@ class XinDongController extends XinDongBase
                     $url[] = (new QrReader($oneFile->getTempName()))->text();
                 } catch (\Throwable $e) {
                     $url[] = '';
-                    $msg = $e->getTraceAsString();
+                    $msg = '未识别到二维码';
                 }
             }
         }
