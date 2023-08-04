@@ -94,6 +94,7 @@ use App\HttpController\Models\MRXD\XinDongKeDongAnalyzeList;
 use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Service\GuangZhouYinLian\GuangZhouYinLianService;
 use Vtiful\Kernel\Format;
+use Zxing\QrReader;
 
 class XinDongController extends XinDongBase
 {
@@ -123,19 +124,21 @@ class XinDongController extends XinDongBase
     {
         $files = $this->request()->getUploadedFiles();
 
-        $res = [];
+        $url = [];
+        $msg = '';
 
         foreach ($files as $key => $oneFile) {
             if ($oneFile instanceof UploadFile) {
-                $res[] = $oneFile->getTempName();
-                $res[] = $oneFile->getSize();
-                $res[] = $oneFile->getError();
-                $res[] = $oneFile->getClientFilename();
-                $res[] = $oneFile->getClientMediaType();
+                try {
+                    $url[] = (new QrReader($oneFile->getTempName()))->text();
+                } catch (\Throwable $e) {
+                    $url[] = '';
+                    $msg = $e->getTraceAsString();
+                }
             }
         }
 
-        return $this->writeJson(200, null, $res, 'chenggong');
+        return $this->writeJson(200, null, $url, $msg);
     }
 
     //金财的全电授权 登录
