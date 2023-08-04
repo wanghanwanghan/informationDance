@@ -129,12 +129,13 @@ class jincai_api extends AbstractProcess
     //启动
     protected function run($arg)
     {
+        $this->addTaskSD();
         // $this->addTask();
         // $this->getInvOne();
         // $this->addTaskSD();
         // $this->getInv();
         // $this->_sendToOSS();//
-        $this->sendToAnt();
+        // $this->sendToAnt();
     }
 
     function apiAddTask($socialCredit)
@@ -828,7 +829,7 @@ class jincai_api extends AbstractProcess
     function addTaskSD()
     {
         $list = [
-            '北京东方鹏科技有限公司 91110108792138381M',
+            '上海治吉信息科技有限公司 91310105MA1FWQXH7B',
         ];
 
         foreach ($list as $one) {
@@ -850,7 +851,7 @@ class jincai_api extends AbstractProcess
 
             // 开票日期止
             $kprqz = Carbon::now()->subMonths(1)->endOfMonth()->timestamp;
-            $kprqq = Carbon::now()->subMonths(23)->startOfMonth()->timestamp;
+            $kprqq = Carbon::now()->subMonths(35)->startOfMonth()->timestamp;
 
             $ywBody = [
                 'kprqq' => date('Y-m-d', $kprqq),// 开票日期起
@@ -859,7 +860,7 @@ class jincai_api extends AbstractProcess
             ];
 
             $addTaskInfo = (new JinCaiShuKeService())->addTaskNew(
-                $code, $province, $city, $ywBody
+                $code, $province, $city, $ywBody,
             );
 
             $p_traceNo = '';
@@ -893,10 +894,7 @@ class jincai_api extends AbstractProcess
 
             echo $entname . PHP_EOL;
 
-            \co::sleep(18);
-
         }
-
 
     }
 

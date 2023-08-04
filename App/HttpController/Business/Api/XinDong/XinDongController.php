@@ -118,6 +118,20 @@ class XinDongController extends XinDongBase
         return $this->writeJson((int)$res['code'], $res['paging'], $res['result'], $res['msg'] ?? null);
     }
 
+    //php识别二维码贷款的那个需求
+    function uploadqrcode(): bool
+    {
+        $files = $this->request()->getUploadedFiles();
+
+        foreach ($files as $key => $oneFile) {
+            if ($oneFile instanceof UploadFile) {
+                $res = jsonEncode($oneFile, false);
+            }
+        }
+
+        return $this->writeJson(200, null, $res);
+    }
+
     //金财的全电授权 登录
     function isElectronicsLogin(): bool
     {
