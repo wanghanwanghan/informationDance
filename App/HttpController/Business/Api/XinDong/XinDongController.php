@@ -135,7 +135,7 @@ class XinDongController extends XinDongBase
             }
         }
 
-        return $this->writeJson(200, null, $res);
+        return $this->writeJson(200, null, $res, 'chenggong');
     }
 
     //金财的全电授权 登录
