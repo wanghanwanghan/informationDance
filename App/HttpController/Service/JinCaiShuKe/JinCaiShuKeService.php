@@ -12,7 +12,6 @@ use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\XinDong\XinDongService;
 use wanghanwanghan\someUtils\control;
-use wanghanwanghan\someUtils\moudles\resp\create;
 
 class JinCaiShuKeService extends ServiceBase
 {
@@ -142,9 +141,9 @@ class JinCaiShuKeService extends ServiceBase
         $url = 'http://221.222.184.98:8880/login/getLogin2';
 
         $post_data = [
-            'nsrsbh' => $arr['nsrsbh'] ?? '',
-            'loginType' => $arr['loginType'] ?? '',
-            'nsrdq' => $arr['nsrdq'] ?? '',
+            'nsrsbh' => $arr['nsrsbh'] ?? '',//税号
+            'loginType' => $arr['loginType'] ?? '',//登录方式
+            'nsrdq' => $arr['nsrdq'] ?? '',//地区
             'traceno' => $arr['traceno'] ?? '',
             'callback' => $arr['callback'] ?? '',
             'qd' => $arr['qd'] ?? '',

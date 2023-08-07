@@ -95,6 +95,10 @@ use App\HttpController\Models\RDS3\Company;
 use App\HttpController\Service\GuangZhouYinLian\GuangZhouYinLianService;
 use Vtiful\Kernel\Format;
 use Zxing\QrReader;
+use Endroid\QrCode\ErrorCorrectionLevel;
+use Endroid\QrCode\LabelAlignment;
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Response\QrCodeResponse;
 
 class XinDongController extends XinDongBase
 {
@@ -120,7 +124,7 @@ class XinDongController extends XinDongBase
     }
 
     //php识别二维码贷款的那个需求
-    function uploadqrcode(): bool
+    function uploadQRcode(): bool
     {
         $files = $this->request()->getUploadedFiles();
 
@@ -141,22 +145,56 @@ class XinDongController extends XinDongBase
         return $this->writeJson(200, null, $url, $msg);
     }
 
+    //php识别二维码贷款的那个需求
+    function getQRcode(): bool
+    {
+        try {
+            $url = (new QrReader('/home/wwwroot/informationDance/Static/Image/Image/wbh.jpg'))->text();
+            $msg = '识别成功';
+        } catch (\Throwable $e) {
+            $url = '';
+            $msg = '未识别到二维码';
+        }
+
+        // Create a basic QR code
+        $qrCode = new QrCode($url);
+        $qrCode->setSize(300);
+        $qrCode->setMargin(5);
+
+        $qrCode->setWriterByName('png');
+        $qrCode->setEncoding('UTF-8');
+        $qrCode->setErrorCorrectionLevel(ErrorCorrectionLevel::HIGH());
+        $qrCode->setForegroundColor(['r' => 0, 'g' => 0, 'b' => 0, 'a' => 0]);
+        $qrCode->setBackgroundColor(['r' => 255, 'g' => 255, 'b' => 255, 'a' => 0]);
+        $qrCode->setValidateResult(false);
+
+        $qrCode->setRoundBlockSize(true, QrCode::ROUND_BLOCK_SIZE_MODE_MARGIN); // The size of the qr code is shrinked, if necessary, but the size of the final image remains unchanged due to additional margin being added (default)
+        $qrCode->setRoundBlockSize(true, QrCode::ROUND_BLOCK_SIZE_MODE_ENLARGE); // The size of the qr code and the final image is enlarged, if necessary
+        $qrCode->setRoundBlockSize(true, QrCode::ROUND_BLOCK_SIZE_MODE_SHRINK); // The size of the qr code and the final image is shrinked, if necessary
+
+        $this->response()->withHeader('Content-Type', $qrCode->getContentType());
+
+        return $this->response()->write($qrCode->writeString());
+    }
+
     //金财的全电授权 登录
     function isElectronicsLogin(): bool
     {
         $nsrsbh = $this->request()->getRequestParam('nsrsbh');
-        $loginType = $this->request()->getRequestParam('loginType') ?? '1';//登录类型，1账密（短信验证码）登录，2扫码登录
         $nsrdq = $this->request()->getRequestParam('nsrdq');//省份全拼，陕西为shaanxi
+        $loginType = '1';//登录类型，1账密（短信验证码）登录，2扫码登录
+        $gsnsyhm = $this->request()->getRequestParam('gsnsyhm');//登录账号，身份证，手机号，用户名
+        $sfzjhm = $this->request()->getRequestParam('sfzjhm');//身份证件号码
+        $zjh = $this->request()->getRequestParam('zjh');//中间号或接收短信的手机号，涉及到短信验证码的省份必填
+        $gsnsmm = $this->request()->getRequestParam('gsnsmm');//登录密码
+        $dlsf = $this->request()->getRequestParam('dlsf');//登录身份，财务负责人-1，法定代表人-2，办税员-3，开票员-7
+
+        $dlsfmm = $this->request()->getRequestParam('dlsfmm');//登录身份密码
+        $bsryxz = $this->request()->getRequestParam('bsryxz');//办税人员姓名
+
         $traceno = control::getUuid();
         $callback = 'https://api.meirixindong.com/api/v1/notify/el/login';
         $qd = 'true';//是否全电登录，默认true
-        $dlsf = $this->request()->getRequestParam('dlsf');//登录身份，参考身份字典
-        $dlsfmm = $this->request()->getRequestParam('dlsfmm');//登录身份密码
-        $zjh = $this->request()->getRequestParam('zjh');//中间号或接收短信的手机号，涉及到短信验证码的省份必填
-        $gsnsmm = $this->request()->getRequestParam('gsnsmm');//登录密码
-        $sfzjhm = $this->request()->getRequestParam('sfzjhm');//身份证件号码
-        $gsnsyhm = $this->request()->getRequestParam('gsnsyhm');//登录账号
-        $bsryxz = $this->request()->getRequestParam('bsryxz');//办税人员姓名
 
         CommonService::getInstance()->log4PHP([
             'nsrsbh' => $nsrsbh,
