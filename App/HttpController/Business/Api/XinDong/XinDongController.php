@@ -230,8 +230,7 @@ class XinDongController extends XinDongBase
         ])->save();
 
         TaskService::getInstance()->create(function () use ($nsrsbh, $loginType, $nsrdq, $traceno, $callback, $qd, $dlsf, $dlsfmm, $zjh, $gsnsmm, $sfzjhm, $gsnsyhm, $bsryxz) {
-            CommonService::getInstance()->log4PHP('taskstart:' . time(), 'info', 'wanghan123.log');
-            (new JinCaiShuKeService())->eleLogin([
+            return (new JinCaiShuKeService())->eleLogin([
                 'nsrsbh' => $nsrsbh,
                 'loginType' => $loginType,
                 'nsrdq' => $nsrdq,
@@ -246,7 +245,6 @@ class XinDongController extends XinDongBase
                 'gsnsyhm' => $gsnsyhm,
                 'bsryxz' => $bsryxz,
             ]);
-            return CommonService::getInstance()->log4PHP('taskstop:' . time(), 'info', 'wanghan123.log');
         });
 
         return $this->checkResponse($temp);
