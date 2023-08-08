@@ -15,6 +15,7 @@ use \EasySwoole\EasySwoole\Core;
 use App\HttpController\Service\CreateDefine;
 use \EasySwoole\Component\Process\Config;
 use \EasySwoole\Component\Process\AbstractProcess;
+use EasySwoole\HttpClient\HttpClient;
 
 require_once './vendor/autoload.php';
 require_once './bootstrap.php';
@@ -26,7 +27,6 @@ class co_test extends AbstractProcess
     //启动
     protected function run($arg)
     {
-
     }
 
     protected function onShutDown()

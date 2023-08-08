@@ -162,7 +162,7 @@ class JinCaiShuKeService extends ServiceBase
 
         $res = (new CoHttpClient())
             ->useCache(false)
-            ->send($url, $post_data, [], ['enableSSL' => true], 'postjson');
+            ->send($url, $post_data, [], [], 'postjson');
 
         CommonService::getInstance()->log4PHP('sendstop:' . time(), 'info', 'wanghan123.log');
 
