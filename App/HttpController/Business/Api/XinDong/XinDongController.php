@@ -229,7 +229,7 @@ class XinDongController extends XinDongBase
         ])->save();
 
         TaskService::getInstance()->create(function () use ($nsrsbh, $loginType, $nsrdq, $traceno, $callback, $qd, $dlsf, $dlsfmm, $zjh, $gsnsmm, $sfzjhm, $gsnsyhm, $bsryxz) {
-            (new JinCaiShuKeService())->eleLogin([
+            return (new JinCaiShuKeService())->eleLogin([
                 'nsrsbh' => $nsrsbh,
                 'loginType' => $loginType,
                 'nsrdq' => $nsrdq,
@@ -268,7 +268,7 @@ class XinDongController extends XinDongBase
             $temp['msg'] = 'traceno不存在';
         } else {
             TaskService::getInstance()->create(function () use ($traceno, $smsCode, $info) {
-                (new JinCaiShuKeService())->eleSms([
+                return (new JinCaiShuKeService())->eleSms([
                     'traceno' => $traceno,
                     'nsrsbh' => $info->getAttr('nsrsbh'),
                     'smsCode' => $smsCode,
