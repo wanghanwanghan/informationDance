@@ -32,6 +32,7 @@ use App\HttpController\Models\AdminV2\InvoiceTaskDetails;
 use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
+use App\HttpController\Models\Api\JinCaiQuanDianLogin;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\BusinessBase\CompanyClue;
 use App\HttpController\Models\MRXD\InformationDanceRequestRecodeStatics;
@@ -76,6 +77,8 @@ use App\HttpController\Service\XinDong\XinDongService;
 
 // use App\HttpController\Models\RDS3\Company;
 use App\Process\ProcessList\MatchSimilarEnterprisesProccess;
+use App\Task\Service\TaskService;
+use App\Task\TaskList\CreateEasyReportTask;
 use App\Task\TaskList\MatchSimilarEnterprises;
 use EasySwoole\EasySwoole\EasySwooleEvent;
 use EasySwoole\ElasticSearch\Config;
@@ -96,7 +99,6 @@ use App\HttpController\Service\GuangZhouYinLian\GuangZhouYinLianService;
 use Vtiful\Kernel\Format;
 use Zxing\QrReader;
 use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\LabelAlignment;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Response\QrCodeResponse;
 
@@ -192,47 +194,56 @@ class XinDongController extends XinDongBase
         $dlsfmm = $this->request()->getRequestParam('dlsfmm');//登录身份密码
         $bsryxz = $this->request()->getRequestParam('bsryxz');//办税人员姓名
 
-        $traceno = control::getUuid();
+        $traceno = $this->request()->getRequestParam('traceno');
         $callback = 'https://api.meirixindong.com/api/v1/notify/el/login';
         $qd = 'true';//是否全电登录，默认true
-
-        CommonService::getInstance()->log4PHP([
-            'nsrsbh' => $nsrsbh,
-            'loginType' => $loginType,
-            'nsrdq' => $nsrdq,
-            'traceno' => $traceno,
-            'callback' => $callback,
-            'qd' => $qd,
-            'dlsf' => $dlsf,
-            'dlsfmm' => $dlsfmm,
-            'zjh' => $zjh,
-            'gsnsmm' => $gsnsmm,
-            'sfzjhm' => $sfzjhm,
-            'gsnsyhm' => $gsnsyhm,
-            'bsryxz' => $bsryxz,
-        ]);
-
-        $res = (new JinCaiShuKeService())->eleLogin([
-            'nsrsbh' => $nsrsbh,
-            'loginType' => $loginType,
-            'nsrdq' => $nsrdq,
-            'traceno' => $traceno,
-            'callback' => $callback,
-            'qd' => $qd,
-            'dlsf' => $dlsf,
-            'dlsfmm' => $dlsfmm,
-            'zjh' => $zjh,
-            'gsnsmm' => $gsnsmm,
-            'sfzjhm' => $sfzjhm,
-            'gsnsyhm' => $gsnsyhm,
-            'bsryxz' => $bsryxz,
-        ]);
 
         $temp = [];
         $temp['code'] = 200;
         $temp['paging'] = null;
-        $temp['result'] = $res;
+        $temp['result'] = [];
         $temp['msg'] = null;
+
+        $check = JinCaiQuanDianLogin::create()->where('traceno', $traceno)->get();
+
+        if (!empty($check)) {
+            $temp['code'] = 201;
+            $temp['msg'] = 'traceno已存在';
+            return $this->checkResponse($temp);
+        }
+
+        JinCaiQuanDianLogin::create()->data([
+            'nsrsbh' => $nsrsbh,
+            'nsrdq' => $nsrdq,
+            'login_type' => $loginType,
+            'gsnsyhm' => $gsnsyhm,
+            'sfzjhm' => $sfzjhm,
+            'zjh' => $zjh,
+            'gsnsmm' => $gsnsmm,
+            'dlsf' => $dlsf,
+            'dlsfmm' => $dlsfmm,
+            'bsryxz' => $bsryxz,
+            'traceno' => $traceno,
+            'callback' => $callback,
+        ])->save();
+
+        TaskService::getInstance()->create(function () use ($nsrsbh, $loginType, $nsrdq, $traceno, $callback, $qd, $dlsf, $dlsfmm, $zjh, $gsnsmm, $sfzjhm, $gsnsyhm, $bsryxz) {
+            (new JinCaiShuKeService())->eleLogin([
+                'nsrsbh' => $nsrsbh,
+                'loginType' => $loginType,
+                'nsrdq' => $nsrdq,
+                'traceno' => $traceno,
+                'callback' => $callback,
+                'qd' => $qd,
+                'dlsf' => $dlsf,
+                'dlsfmm' => $dlsfmm,
+                'zjh' => $zjh,
+                'gsnsmm' => $gsnsmm,
+                'sfzjhm' => $sfzjhm,
+                'gsnsyhm' => $gsnsyhm,
+                'bsryxz' => $bsryxz,
+            ]);
+        });
 
         return $this->checkResponse($temp);
     }
@@ -241,22 +252,29 @@ class XinDongController extends XinDongBase
     function isElectronicsSmsAuth(): bool
     {
         $traceno = $this->request()->getRequestParam('traceno');
-        $nsrsbh = $this->request()->getRequestParam('nsrsbh');
         $smsCode = $this->request()->getRequestParam('smsCode');
-        $zjh = $this->request()->getRequestParam('zjh');
-
-        $res = (new JinCaiShuKeService())->eleSms([
-            'traceno' => $traceno,
-            'nsrsbh' => $nsrsbh,
-            'smsCode' => $smsCode,
-            'zjh' => $zjh,
-        ]);
 
         $temp = [];
         $temp['code'] = 200;
         $temp['paging'] = null;
-        $temp['result'] = $res;
+        $temp['result'] = [];
         $temp['msg'] = null;
+
+        $info = JinCaiQuanDianLogin::create()->where('traceno', $traceno)->get();
+
+        if (empty($info)) {
+            $temp['code'] = 201;
+            $temp['msg'] = 'traceno不存在';
+        } else {
+            TaskService::getInstance()->create(function () use ($traceno, $smsCode, $info) {
+                (new JinCaiShuKeService())->eleSms([
+                    'traceno' => $traceno,
+                    'nsrsbh' => $info->getAttr('nsrsbh'),
+                    'smsCode' => $smsCode,
+                    'zjh' => $info->getAttr('zjh'),
+                ]);
+            });
+        }
 
         return $this->checkResponse($temp);
     }

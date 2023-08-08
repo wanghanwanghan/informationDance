@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Api\Notify;
 use App\HttpController\Business\BusinessBase;
 use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\Api\AuthBook;
+use App\HttpController\Models\Api\JinCaiQuanDianCB;
 use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\Wallet;
@@ -361,7 +362,15 @@ class NotifyController extends BusinessBase
     {
         $res = $this->getRequestData();
 
-        CommonService::getInstance()->log4PHP($res, 'info', 'isElectronicsLoginCallback');
+        is_array($res) ?: $res = jsonDecode($res);
+
+        JinCaiQuanDianCB::create()->data([
+            'traceno' => $res['trace'] ?? '',
+            'code' => $res['code'] ?? '',
+            'msg' => $res['msg'] ?? '',
+            'success' => $res['success'] ?? '',
+            'trace' => $res['trace'] ?? '',
+        ])->save();
 
         return $this->response()->write(jsonEncode(['code' => 0, 'msg' => '成功', 'data' => null], false));
     }
