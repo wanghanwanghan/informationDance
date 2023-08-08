@@ -368,7 +368,7 @@ class NotifyController extends BusinessBase
             'traceno' => $res['trace'] ?? '',
             'code' => $res['code'] ?? '',
             'msg' => $res['msg'] ?? '',
-            'success' => $res['success'] ?? '',
+            'success' => trim($res['success']) ?? '',
             'trace' => $res['trace'] ?? '',
         ])->save();
 
