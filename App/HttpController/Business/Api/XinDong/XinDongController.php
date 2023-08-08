@@ -82,6 +82,7 @@ use App\Task\Service\TaskService;
 use App\Task\TaskList\CreateEasyReportTask;
 use App\Task\TaskList\MatchSimilarEnterprises;
 use EasySwoole\EasySwoole\EasySwooleEvent;
+use EasySwoole\EasySwoole\Task\TaskManager;
 use EasySwoole\ElasticSearch\Config;
 use EasySwoole\ElasticSearch\ElasticSearch;
 use EasySwoole\ElasticSearch\RequestBean\Search;
@@ -228,7 +229,25 @@ class XinDongController extends XinDongBase
             'callback' => $callback,
         ])->save();
 
-        TaskService::getInstance()->create(function () use ($nsrsbh, $loginType, $nsrdq, $traceno, $callback, $qd, $dlsf, $dlsfmm, $zjh, $gsnsmm, $sfzjhm, $gsnsyhm, $bsryxz) {
+//        TaskService::getInstance()->create(function () use ($nsrsbh, $loginType, $nsrdq, $traceno, $callback, $qd, $dlsf, $dlsfmm, $zjh, $gsnsmm, $sfzjhm, $gsnsyhm, $bsryxz) {
+//            return (new JinCaiShuKeService())->eleLogin([
+//                'nsrsbh' => $nsrsbh,
+//                'loginType' => $loginType,
+//                'nsrdq' => $nsrdq,
+//                'traceno' => $traceno,
+//                'callback' => $callback,
+//                'qd' => $qd,
+//                'dlsf' => $dlsf,
+//                'dlsfmm' => $dlsfmm,
+//                'zjh' => $zjh,
+//                'gsnsmm' => $gsnsmm,
+//                'sfzjhm' => $sfzjhm,
+//                'gsnsyhm' => $gsnsyhm,
+//                'bsryxz' => $bsryxz,
+//            ]);
+//        });
+
+        TaskManager::getInstance()->async(function () use ($nsrsbh, $loginType, $nsrdq, $traceno, $callback, $qd, $dlsf, $dlsfmm, $zjh, $gsnsmm, $sfzjhm, $gsnsyhm, $bsryxz) {
             return (new JinCaiShuKeService())->eleLogin([
                 'nsrsbh' => $nsrsbh,
                 'loginType' => $loginType,
