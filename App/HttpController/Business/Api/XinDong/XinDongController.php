@@ -32,6 +32,7 @@ use App\HttpController\Models\AdminV2\InvoiceTaskDetails;
 use App\HttpController\Models\AdminV2\QueueLists;
 use App\HttpController\Models\AdminV2\ToolsUploadQueue;
 use App\HttpController\Models\Api\FinancesSearch;
+use App\HttpController\Models\Api\JinCaiQuanDianCB;
 use App\HttpController\Models\Api\JinCaiQuanDianLogin;
 use App\HttpController\Models\Api\User;
 use App\HttpController\Models\BusinessBase\CompanyClue;
@@ -274,6 +275,29 @@ class XinDongController extends XinDongBase
                     'zjh' => $info->getAttr('zjh'),
                 ]);
             });
+        }
+
+        return $this->checkResponse($temp);
+    }
+
+    //全电登录时候轮训
+    function getLoginStatus(): bool
+    {
+        $traceno = $this->request()->getRequestParam('traceno');
+
+        $temp = [];
+        $temp['code'] = 200;
+        $temp['paging'] = null;
+        $temp['result'] = [];
+        $temp['msg'] = null;
+
+        $res = JinCaiQuanDianCB::create()
+            ->where('traceno', $traceno)
+            ->order('created_at', 'DESC')
+            ->get();
+
+        if (!empty($res)) {
+            $temp['msg'] = $res->getAttr('msg');
         }
 
         return $this->checkResponse($temp);
