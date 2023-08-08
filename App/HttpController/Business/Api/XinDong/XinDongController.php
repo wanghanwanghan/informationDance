@@ -229,25 +229,7 @@ class XinDongController extends XinDongBase
             'callback' => $callback,
         ])->save();
 
-//        TaskService::getInstance()->create(function () use ($nsrsbh, $loginType, $nsrdq, $traceno, $callback, $qd, $dlsf, $dlsfmm, $zjh, $gsnsmm, $sfzjhm, $gsnsyhm, $bsryxz) {
-//            return (new JinCaiShuKeService())->eleLogin([
-//                'nsrsbh' => $nsrsbh,
-//                'loginType' => $loginType,
-//                'nsrdq' => $nsrdq,
-//                'traceno' => $traceno,
-//                'callback' => $callback,
-//                'qd' => $qd,
-//                'dlsf' => $dlsf,
-//                'dlsfmm' => $dlsfmm,
-//                'zjh' => $zjh,
-//                'gsnsmm' => $gsnsmm,
-//                'sfzjhm' => $sfzjhm,
-//                'gsnsyhm' => $gsnsyhm,
-//                'bsryxz' => $bsryxz,
-//            ]);
-//        });
-
-        TaskManager::getInstance()->async(function () use ($nsrsbh, $loginType, $nsrdq, $traceno, $callback, $qd, $dlsf, $dlsfmm, $zjh, $gsnsmm, $sfzjhm, $gsnsyhm, $bsryxz) {
+        TaskService::getInstance()->create(function () use ($nsrsbh, $loginType, $nsrdq, $traceno, $callback, $qd, $dlsf, $dlsfmm, $zjh, $gsnsmm, $sfzjhm, $gsnsyhm, $bsryxz) {
             return (new JinCaiShuKeService())->eleLogin([
                 'nsrsbh' => $nsrsbh,
                 'loginType' => $loginType,
