@@ -158,13 +158,13 @@ class JinCaiShuKeService extends ServiceBase
             ]
         ];
 
-        CommonService::getInstance()->log4PHP($post_data, 'iswanghan');
+        CommonService::getInstance()->log4PHP($post_data, 'info', 'iswanghan');
 
         $res = (new CoHttpClient())
             ->useCache(false)
             ->send($url, $post_data, [], ['enableSSL' => true], 'postjson');
 
-        CommonService::getInstance()->log4PHP($res, 'iswanghan');
+        CommonService::getInstance()->log4PHP($res, 'info', 'iswanghan');
 
         return $this->checkRespFlag ? $this->checkResp($res) : $res;
     }
