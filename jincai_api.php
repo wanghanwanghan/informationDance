@@ -471,12 +471,12 @@ class jincai_api extends AbstractProcess
     {
         $start = 0;
         $step = 5;
-        $max_id = 1;//每次改
+        $max_id = 160;//每次改
 
         $csp = \App\Csp\Service\CspService::getInstance()->create();
 
         //总共需要80个数据库链接
-        $p_total = 80;
+        $p_total = 10;
 
         for ($p_index = 0; $p_index < $p_total; $p_index++) {
             $csp->add('getInv' . $p_index, function () use ($max_id, $start, $p_total, $p_index, $step) {
