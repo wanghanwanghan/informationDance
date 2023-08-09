@@ -133,8 +133,8 @@ class jincai_api extends AbstractProcess
         // $this->addTask();
         // $this->getInvOne();
         // $this->addTaskSD();
-        $this->getInv();
-        // $this->_sendToOSS();//
+        // $this->getInv();
+        $this->_sendToOSS();//
         // $this->sendToAnt();
     }
 
