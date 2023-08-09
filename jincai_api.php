@@ -129,11 +129,11 @@ class jincai_api extends AbstractProcess
     //启动
     protected function run($arg)
     {
-        $this->addTaskSD();
+        // $this->addTaskSD();
         // $this->addTask();
         // $this->getInvOne();
         // $this->addTaskSD();
-        // $this->getInv();
+        $this->getInv();
         // $this->_sendToOSS();//
         // $this->sendToAnt();
     }
@@ -860,7 +860,7 @@ class jincai_api extends AbstractProcess
             ];
 
             $addTaskInfo = (new JinCaiShuKeService())->addTaskNew(
-                $code, $province, $city, $ywBody,
+                $code, $province, $city, $ywBody
             );
 
             $p_traceNo = '';
