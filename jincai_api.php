@@ -275,7 +275,7 @@ class jincai_api extends AbstractProcess
     }
 
     //上传到oss 发票已经入完mysql 这里要改成用阿里云内网
-    private function sendToOSS($NSRSBH, $kprqq, $kprqz): bool
+    private function sendToOSS($NSRSBH, $kprqq, $kprqz): void
     {
         //只有蚂蚁的税号才上传oss
         //蚂蚁区块链dev id 36
@@ -410,10 +410,10 @@ class jincai_api extends AbstractProcess
                             CommonService::getInstance()->log4PHP($content, 'sendToOSS', 'send_fapiao_err.log');
                         }
                     } else {
-//                        CommonService::getInstance()->log4PHP([$NSRSBH.'strpos失败'], 'info', 'upload_oss_error.log');
+                        CommonService::getInstance()->log4PHP([$NSRSBH . 'strpos失败'], 'info', 'upload_oss_error.log');
                     }
                 } else {
-//                    CommonService::getInstance()->log4PHP([$NSRSBH.'in_array失败'], 'info', 'upload_oss_error.log');
+                    CommonService::getInstance()->log4PHP([$NSRSBH . 'in_array失败'], 'info', 'upload_oss_error.log');
                 }
             }
 
@@ -432,11 +432,10 @@ class jincai_api extends AbstractProcess
                     'big_kprq' => $kprqz
                 ]);
         } else {
-//            CommonService::getInstance()->log4PHP([$NSRSBH.'打开文件失败'], 'info', 'upload_oss_error.log');
+            CommonService::getInstance()->log4PHP([$NSRSBH . '打开文件失败'], 'info', 'upload_oss_error.log');
         }
         closedir($dh);
-//        CommonService::getInstance()->log4PHP(['完成'], 'info', 'upload_oss.log');
-        return true;
+        CommonService::getInstance()->log4PHP(['完成'], 'info', 'upload_oss.log');
     }
 
     function getInvOne()
