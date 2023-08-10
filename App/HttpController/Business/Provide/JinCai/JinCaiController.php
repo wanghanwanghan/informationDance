@@ -4,8 +4,8 @@ namespace App\HttpController\Business\Provide\JinCai;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
-use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
+use Carbon\Carbon;
 
 class JinCaiController extends ProvideBase
 {
@@ -18,6 +18,7 @@ class JinCaiController extends ProvideBase
     {
         parent::afterAction($actionName);
     }
+
     function checkResponse($res): bool
     {
         if (empty($res[$this->cspKey])) {
@@ -37,22 +38,50 @@ class JinCaiController extends ProvideBase
 
         return true;
     }
-    function obtainFpInfoNew(): bool
+
+    // 无盘 创建任务
+    function addTask(): bool
     {
-        $isDetail = $this->getRequestData('isDetail');
         $nsrsbh = $this->getRequestData('nsrsbh');
-        $startTime = $this->getRequestData('startTime');
-        $endTime = $this->getRequestData('endTime');
-        $pageNo = $this->getRequestData('pageNo');
+        $province = $this->getRequestData('province');//北京
+        $city = $this->getRequestData('city');//北京
 
-        CommonService::getInstance()->log4PHP([$isDetail,  $nsrsbh,  $startTime,  $endTime,  $pageNo],'info','obtainFpInfoNew');
-        $this->csp->add($this->cspKey, function () use ($isDetail,  $nsrsbh,  $startTime,  $endTime,  $pageNo) {
+        $kprqq = Carbon::now()->subMonths(34)->startOfMonth()->timestamp;
+        $kprqz = Carbon::now()->subMonths(1)->startOfMonth()->timestamp;
 
-            return (new JinCaiShuKeService())->setCheckRespFlag(true)->obtainFpInfoNew( $isDetail,  $nsrsbh,  $startTime,  $endTime,  $pageNo);
+        // 拼task请求参数
+        $ywBody = [
+            'kprqq' => date('Y-m-d', $kprqq),// 开票日期起
+            'kprqz' => date('Y-m-d', $kprqz),// 开票日期止
+            'nsrsbh' => $nsrsbh,// 纳税人识别号
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($nsrsbh, $province, $city, $ywBody) {
+            return (new JinCaiShuKeService())->addTaskNew($nsrsbh, $province, $city, $ywBody);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-        CommonService::getInstance()->log4PHP($res,'info','obtainFpInfoNew');
+
         return $this->checkResponse($res);
     }
+
+    // 无盘 取票
+    function obtainFpInfoNew(): bool
+    {
+        $nsrsbh = $this->getRequestData('nsrsbh');
+        $kprqq = $this->getRequestData('kprqq');//Y-m-d
+        $kprqz = $this->getRequestData('kprqz');//Y-m-d
+        $page = $this->getRequestData('page');
+
+        $this->csp->add($this->cspKey, function () use ($nsrsbh, $kprqq, $kprqz, $page) {
+            return (new JinCaiShuKeService())->obtainFpInfoNew(
+                true, $nsrsbh, $kprqq, $kprqz, $page
+            );
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
 }
