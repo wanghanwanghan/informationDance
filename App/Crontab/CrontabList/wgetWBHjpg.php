@@ -44,7 +44,7 @@ class wgetWBHjpg extends AbstractCronTask
                     if (!empty($arr['result']['data']) && substr($arr['result']['data']['qrcode_base64'], 0, 15) === 'data:image/jpeg') {
                         $check = true;
                         $stream = str_replace('data:image/jpeg;base64,', '', $arr['result']['data']['qrcode_base64']);
-                        file_put_contents(IMAGE_PATH . 'wbj.jpg', base64_decode($stream));
+                        file_put_contents(IMAGE_PATH . 'wbh.jpg', base64_decode($stream));
                     }
                 }
             }
