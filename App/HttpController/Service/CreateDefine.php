@@ -29,6 +29,7 @@ class CreateDefine extends ServiceBase
         define('TEMP_FILE_PATH', STATIC_PATH . 'Temp' . DIRECTORY_SEPARATOR);
         define('RSA_KEY_PATH', STATIC_PATH . 'RsaKey' . DIRECTORY_SEPARATOR);
         define('INV_AUTH_PATH', STATIC_PATH . 'InvAuth' . DIRECTORY_SEPARATOR);
+        define('IMAGE_PATH', STATIC_PATH . 'Image' . DIRECTORY_SEPARATOR . 'Image' . DIRECTORY_SEPARATOR);
 
         define('REPORT_IMAGE_PATH', STATIC_PATH . 'Image' . DIRECTORY_SEPARATOR . 'ReportImage' . DIRECTORY_SEPARATOR);
         define('REPORT_IMAGE_TEMP_PATH', REPORT_IMAGE_PATH . 'Temp' . DIRECTORY_SEPARATOR);

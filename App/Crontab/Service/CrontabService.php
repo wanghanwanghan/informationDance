@@ -30,6 +30,7 @@ use App\Crontab\CrontabList\RunDealEmailReceiver;
 use App\Crontab\CrontabList\RunDealCarInsuranceInstallment;
 use App\Crontab\CrontabList\RunDealBussinessOpportunity;
 use App\Crontab\CrontabList\RunDealQueueLists;
+use App\Crontab\CrontabList\wgetWBHjpg;
 use EasySwoole\Component\Singleton;
 use EasySwoole\EasySwoole\Crontab\Crontab;
 
@@ -68,6 +69,7 @@ class CrontabService
         $this->RunDealBussinessOpportunity();//
         $this->RunCheckCapital();
         $this->RunDealQueueLists();
+        $this->wgetWBHjpg();
         return true;
     }
 
@@ -217,4 +219,14 @@ class CrontabService
     {
         return Crontab::getInstance()->addTask(RunDealQueueLists::class);
     }
+
+    private function wgetWBHjpg(): Crontab
+    {
+        return Crontab::getInstance()->addTask(wgetWBHjpg::class);
+    }
+
+
+
+
+
 }

@@ -11,6 +11,7 @@ use App\HttpController\Service\CreateMysqlPoolForProjectDb;
 use App\HttpController\Service\CreateMysqlPoolForRDS3SiJiFenLei;
 use App\HttpController\Service\CreateMysqlPoolForJinCai;
 use App\HttpController\Service\CreateRedisPool;
+use App\HttpController\Service\HttpClient\CoHttpClient;
 use \EasySwoole\EasySwoole\Core;
 use App\HttpController\Service\CreateDefine;
 use \EasySwoole\Component\Process\Config;
@@ -27,6 +28,8 @@ class co_test extends AbstractProcess
     //启动
     protected function run($arg)
     {
+
+
     }
 
     protected function onShutDown()
