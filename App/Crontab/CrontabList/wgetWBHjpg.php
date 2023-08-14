@@ -31,7 +31,7 @@ class wgetWBHjpg extends AbstractCronTask
     function run(int $taskId, int $workerIndex)
     {
         $openid = 'or9pL5Gl8PimHQRD7Ads2PojcDhw';
-        $cookie = '__jsluid_s=8bda3725657c9f951553cce03c3154de; sessionId=e8132020f74e4756b1a9c42681b5c0c5; token=dc873e73f6f747608752cb122e2367c2';
+        $cookie = '__jsluid_s=8bda3725657c9f951553cce03c3154de; sessionId=e8132020f74e4756b1a9c42681b5c0c5; token=28163214f4544bfda32f61ff1a2f728f';
 
         $info = $this->queryUserStatus($openid, $cookie);
 
@@ -59,6 +59,31 @@ class wgetWBHjpg extends AbstractCronTask
     function onException(\Throwable $throwable, int $taskId, int $workerIndex)
     {
 
+    }
+
+    function login(string $openid)
+    {
+        $url = 'https://wx.xwbank.com/api/ActivityMgm/queryUserStatus';
+        $data = ['operateType' => 'GM'];
+        $sendHeaders = [
+            'Host' => 'wx.xwbank.com',
+            'Channelid' => 'XWPTBTC',
+            'Mobile' => '',
+            'Content-Type' => 'application/json',
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 MicroMessenger/7.0.9.501 NetType/WIFI MiniProgramEnv/Windows WindowsWechat',
+            'Sessiontokenkey' => '',
+            'Openid' => $openid,
+            'Accept' => '*/*',
+            'Sec-Fetch-Site' => 'same-origin',
+            'Sec-Fetch-Mode' => 'cors',
+            'Sec-Fetch-Dest' => 'empty',
+            'Referer' => 'https://wx.xwbank.com/xwbank/partner/index.html?channelId=XWPTBTC&unionId=otb0Z1qb7hxrIXWzJTXRI6BCfOW4&openId=or9pL5Gl8PimHQRD7Ads2PojcDhw',
+            'Accept-Language' => 'en-us,en',
+            'Cookie' => '__jsluid_s=8bda3725657c9f951553cce03c3154de; sessionId=e8132020f74e4756b1a9c42681b5c0c5',
+        ];
+        return (new CoHttpClient())
+            ->useCache(false)
+            ->send($url, $data, $sendHeaders, [], 'postjson');
     }
 
     function saveJpg($openid, $cookie)
