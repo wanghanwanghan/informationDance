@@ -31,7 +31,7 @@ class wgetWBHjpg extends AbstractCronTask
     function run(int $taskId, int $workerIndex)
     {
         $openid = 'or9pL5Gl8PimHQRD7Ads2PojcDhw';
-        $cookie = '__jsluid_s=5462f832218427d58180f026c6048014; sessionId=6f08787d3a874beaaf7c20c4283f0922; token=28c3e8b1f7e3473e95bf3965c442ef85';
+        $cookie = '__jsluid_s=8bda3725657c9f951553cce03c3154de; sessionId=e8132020f74e4756b1a9c42681b5c0c5; token=dc873e73f6f747608752cb122e2367c2';
 
         $info = $this->queryUserStatus($openid, $cookie);
 
@@ -66,7 +66,7 @@ class wgetWBHjpg extends AbstractCronTask
         $url = 'https://wx.xwbank.com/api/ActivityMgm/partnerInviteQCode';
         $data = [
             'actId' => '1001049',
-            'openId' => '1139518591313113089',
+            'openId' => '1140594606763495424',
             'officialAccountAppid' => 'wxef424cc5a8cfb495',
             'customerSourceSceneId' => 'HG10035HQ',
         ];
