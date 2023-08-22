@@ -108,22 +108,60 @@ class XinDongController extends ProvideBase
             }
             $res = $res['hits']['hits'][0]['_source'];
             $code = $res['UNISCID'];
-
-
-            $getEntLianXi = (new LongXinService())->getEntLianXi(['entName' => $postData['entName']]);
-
-            $clue = CompanyClue::create()
+            $getEntLianXi = (new LongXinService())
+                ->getEntLianXi(['entName' => $postData['entName']]);
+            empty($getEntLianXi['data']) ? $lianxi = [] : $lianxi = $getEntLianXi['data'];
+            if (!empty($lianxi)) {
+                foreach ($lianxi as $one) {
+                    if (preg_match('/^[0-9]{11}$/', $one['lianxi'])) {
+                        $lianxi[] = $one['lianxi'];
+                    }
+                }
+            }
+            $clues = CompanyClue::create()
                 ->where('entname', $postData['entName'])
                 ->where('code', $code, '=', 'OR')
                 ->all();
+            $clue = [];
+            if (!empty($clues)) {
+                foreach ($clues as $one) {
+                    $pri = $one->getAttr('pri');
+                    if (!empty($pri) && strpos($pri, '@') !== false) {
+                        $_pri = explode(';', control::aesDecode(
+                            substr($pri, strpos($pri, '@') + 1), trim($one->getAttr('created_at')))
+                        );
+                        $clue = array_merge($clue, $_pri);
+                    }
+                    $prd = $one->getAttr('prd');
+                    if (!empty($prd) && strpos($prd, '@') !== false) {
+                        $_prd = explode(';', control::aesDecode(
+                            substr($prd, strpos($prd, '@') + 1), trim($one->getAttr('created_at')))
+                        );
+                        $clue = array_merge($clue, $_prd);
+                    }
+                }
+            }
 
-            CommonService::getInstance()->log4PHP([$getEntLianXi, $clue], 'info', 'getEntLianXi');
+            $phone = array_merge($clue, $lianxi);
+            $phone = array_values(array_unique($phone));
+
+            $indexTable = [];
+            if (!empty($phone)) {
+                for ($i = 10; $i--;) {
+                    $indexTable[$i] = chr(65 + $i);
+                }
+            }
+
+            foreach ($phone as &$one) {
+                $one = strtr($one, $indexTable);
+            }
+            unset($one);
 
 
             return [
                 'code' => 200,
                 'paging' => null,
-                'result' => [],
+                'result' => base64_encode(jsonEncode($phone, false)),
                 'msg' => null
             ];
 
