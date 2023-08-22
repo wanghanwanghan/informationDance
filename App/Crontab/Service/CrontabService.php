@@ -69,7 +69,7 @@ class CrontabService
         $this->RunDealBussinessOpportunity();//
         $this->RunCheckCapital();
         $this->RunDealQueueLists();
-        $this->wgetWBHjpg();
+        // $this->wgetWBHjpg();
         return true;
     }
 

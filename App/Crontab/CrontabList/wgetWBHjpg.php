@@ -61,10 +61,15 @@ class wgetWBHjpg extends AbstractCronTask
 
     }
 
-    function login(string $openid)
+    function login()
     {
-        $url = 'https://wx.xwbank.com/api/ActivityMgm/queryUserStatus';
-        $data = ['operateType' => 'GM'];
+        $url = 'https://wx.xwbank.com/api2.0/zyRegister/pwdLogin';
+        $data = [
+            'loginToken' => '',
+            'partnerUnionId' => 'otb0Z1qb7hxrIXWzJTXRI6BCfOW4',
+            'partnerOpenId' => 'or9pL5Gl8PimHQRD7Ads2PojcDhw',
+            'codeUrl' => 'https://wx.xwbank.com/xwbank/partner/index.html?channelId=XWPTBTC&unionId=otb0Z1qb7hxrIXWzJTXRI6BCfOW4&openId=or9pL5Gl8PimHQRD7Ads2PojcDhw#/',
+        ];
         $sendHeaders = [
             'Host' => 'wx.xwbank.com',
             'Channelid' => 'XWPTBTC',
@@ -72,7 +77,7 @@ class wgetWBHjpg extends AbstractCronTask
             'Content-Type' => 'application/json',
             'User-Agent' => 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36 MicroMessenger/7.0.9.501 NetType/WIFI MiniProgramEnv/Windows WindowsWechat',
             'Sessiontokenkey' => '',
-            'Openid' => $openid,
+            'Openid' => 'or9pL5Gl8PimHQRD7Ads2PojcDhw',
             'Accept' => '*/*',
             'Sec-Fetch-Site' => 'same-origin',
             'Sec-Fetch-Mode' => 'cors',
@@ -80,6 +85,31 @@ class wgetWBHjpg extends AbstractCronTask
             'Referer' => 'https://wx.xwbank.com/xwbank/partner/index.html?channelId=XWPTBTC&unionId=otb0Z1qb7hxrIXWzJTXRI6BCfOW4&openId=or9pL5Gl8PimHQRD7Ads2PojcDhw',
             'Accept-Language' => 'en-us,en',
             'Cookie' => '__jsluid_s=8bda3725657c9f951553cce03c3154de; sessionId=e8132020f74e4756b1a9c42681b5c0c5',
+        ];
+        return (new CoHttpClient())
+            ->useCache(false)
+            ->send($url, $data, $sendHeaders, [], 'postjson');
+    }
+
+    function fun2()
+    {
+        $url = '';
+        $data = [];
+        $sendHeaders = [
+            'Host' => 'wx.xwbank.com',
+            'Channelid' => '',
+            'Mobile' => '',
+            'Content-Type' => 'application/json',
+            'User-Agent' => '',
+            'Sessiontokenkey' => '',
+            'Openid' => '',
+            'Accept' => '*/*',
+            'Sec-Fetch-Site' => '',
+            'Sec-Fetch-Mode' => '',
+            'Sec-Fetch-Dest' => '',
+            'Referer' => '',
+            'Accept-Language' => '',
+            'Cookie' => '_',
         ];
         return (new CoHttpClient())
             ->useCache(false)

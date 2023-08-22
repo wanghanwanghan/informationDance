@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Provide\XinDong;
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Models\Api\NeoCrmPendingEnt;
+use App\HttpController\Models\BusinessBase\CompanyCluehk;
 use App\HttpController\Models\EntDb\EntDbEnt;
 use App\HttpController\Models\EntDb\EntDbFinance;
 use App\HttpController\Models\EntDb\EntDbTzList;
@@ -27,6 +28,9 @@ use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\Score\FenShuService;
 use App\HttpController\Service\XinDong\XinDongService;
 use Carbon\Carbon;
+use EasySwoole\ElasticSearch\Config;
+use EasySwoole\ElasticSearch\ElasticSearch;
+use EasySwoole\ElasticSearch\RequestBean\Search;
 use wanghanwanghan\someUtils\control;
 
 class XinDongController extends ProvideBase
@@ -59,6 +63,86 @@ class XinDongController extends ProvideBase
         }
 
         return true;
+    }
+
+    function selectPhone_hy(): bool
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName'),
+            'code' => $this->getRequestData('code'),
+            'phone' => $this->getRequestData('phone'),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            $bean_keyword = new Search();
+            $bean_keyword->setIndex('company_202303');
+            $bean_keyword->setType('_doc');
+            $bean_keyword->setBody([
+                'query' => [
+                    'match' => [
+                        'ENTNAME.keyword' => $postData['entName'],
+                    ]
+                ]
+            ]);
+            $bean_match = new Search();
+            $bean_match->setIndex('company_202303');
+            $bean_match->setType('_doc');
+            $bean_match->setBody([
+                'query' => [
+                    'match' => [
+                        'ENTNAME' => $postData['entName'],
+                    ]
+                ]
+            ]);
+            $config = new Config([
+                'host' => CreateConf::getInstance()->getConf('es.host'),
+                'port' => CreateConf::getInstance()->getConf('es.port') - 0,
+                'username' => CreateConf::getInstance()->getConf('es.username'),
+                'password' => CreateConf::getInstance()->getConf('es.password'),
+            ]);
+            $elasticsearch = new ElasticSearch($config);
+            $res = $elasticsearch->client()->search($bean_keyword)->getBody();
+            $res = jsonDecode($res);
+            if (empty($res['hits']['hits'])) {
+                $res = $elasticsearch->client()->search($bean_match)->getBody();
+                $res = jsonDecode($res);
+            }
+            $res = $res['hits']['hits'][0]['_source'];
+            $code = $res['UNISCID'];
+            if (strlen($code) !== 18) {
+                $check1 = CompanyCluehk::create()
+                    ->addSuffix('hk')
+                    ->where('entname', $postData['entName'])
+                    ->where('phone_md5', md5($postData['phone']))
+                    ->get();
+                $check2 = CompanyCluehk::create()
+                    ->addSuffix('gclh')
+                    ->where('entname', $postData['entName'])
+                    ->where('phone_md5', md5($postData['phone']))
+                    ->get();
+            } else {
+                $check1 = CompanyCluehk::create()
+                    ->addSuffix('hk')
+                    ->where('code', $code)
+                    ->where('phone_md5', md5($postData['phone']))
+                    ->get();
+                $check2 = CompanyCluehk::create()
+                    ->addSuffix('gclh')
+                    ->where('code', $code)
+                    ->where('phone_md5', md5($postData['phone']))
+                    ->get();
+            }
+            return [
+                'code' => 200,
+                'paging' => null,
+                'result' => ['check' => [$check1, $check2], 'match' => $res],
+                'msg' => null
+            ];
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
     }
 
     //启客招投标接口

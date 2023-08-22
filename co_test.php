@@ -28,8 +28,6 @@ class co_test extends AbstractProcess
     //启动
     protected function run($arg)
     {
-
-
     }
 
     protected function onShutDown()
