@@ -5,6 +5,7 @@ namespace App\HttpController\Business\Provide\XinDong;
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
 use App\HttpController\Models\Api\NeoCrmPendingEnt;
+use App\HttpController\Models\BusinessBase\CompanyClue;
 use App\HttpController\Models\BusinessBase\CompanyCluehk;
 use App\HttpController\Models\EntDb\EntDbEnt;
 use App\HttpController\Models\EntDb\EntDbFinance;
@@ -69,8 +70,6 @@ class XinDongController extends ProvideBase
     {
         $postData = [
             'entName' => $this->getRequestData('entName'),
-            'code' => $this->getRequestData('code'),
-            'phone' => $this->getRequestData('phone'),
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
@@ -109,6 +108,26 @@ class XinDongController extends ProvideBase
             }
             $res = $res['hits']['hits'][0]['_source'];
             $code = $res['UNISCID'];
+
+
+            $getEntLianXi = (new LongXinService())->getEntLianXi(['entName' => $postData['entName']]);
+
+            $clue = CompanyClue::create()
+                ->where('entname', $postData['entName'])
+                ->where('code', $code, '=', 'OR')
+                ->all();
+
+            CommonService::getInstance()->log4PHP([$getEntLianXi, $clue], 'info', 'getEntLianXi');
+
+
+            return [
+                'code' => 200,
+                'paging' => null,
+                'result' => [],
+                'msg' => null
+            ];
+
+
             if (strlen($code) !== 18) {
                 $check1 = CompanyCluehk::create()
                     ->addSuffix('hk')
@@ -132,10 +151,24 @@ class XinDongController extends ProvideBase
                     ->where('phone_md5', md5($postData['phone']))
                     ->get();
             }
+
+            $r_code = 200;
+            if (!empty($check1) || !empty($check2)) {
+                $r_code = 201;
+            }
+
+            CompanyCluehk::create()
+                ->addSuffix('hk')->data([
+                    'entname' => $postData['entName'],
+                    'code' => $postData['code'],
+                    'phone_md5' => md5($postData['phone']),
+                    'insert_date' => date('Ymd', time()),
+                ])->save();
+
             return [
-                'code' => 200,
+                'code' => $r_code,
                 'paging' => null,
-                'result' => ['check' => [$check1, $check2], 'match' => $res],
+                'result' => [],
                 'msg' => null
             ];
         });

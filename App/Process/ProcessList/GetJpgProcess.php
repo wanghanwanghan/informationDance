@@ -21,6 +21,11 @@ class GetJpgProcess extends ProcessBase
         //可以用来初始化
         parent::run($arg);
 
+        sleep(86400);
+        return;
+
+
+
         $smsCodeSend = $this->smsCodeSend();
 
         CommonService::getInstance()->log4PHP([$smsCodeSend, '发送登录验证码'], 'info', 'wgetWBHjpg.log');
