@@ -110,9 +110,9 @@ class XinDongController extends ProvideBase
             $code = $res['UNISCID'];
             $getEntLianXi = (new LongXinService())
                 ->getEntLianXi(['entName' => $postData['entName']]);
-            empty($getEntLianXi['data']) ? $lianxi = [] : $lianxi = $getEntLianXi['data'];
-            if (!empty($lianxi)) {
-                foreach ($lianxi as $one) {
+            $lianxi = [];
+            if (!empty($getEntLianXi)) {
+                foreach ($getEntLianXi as $one) {
                     if (preg_match('/^[0-9]{11}$/', $one['lianxi'])) {
                         $lianxi[] = $one['lianxi'];
                     }
@@ -130,20 +130,22 @@ class XinDongController extends ProvideBase
                         $_pri = explode(';', control::aesDecode(
                             substr($pri, strpos($pri, '@') + 1), trim($one->getAttr('created_at')))
                         );
-                        $clue = array_merge($clue, $_pri);
+                        !is_array($_pri) ?: $clue = array_merge($clue, $_pri);
                     }
                     $prd = $one->getAttr('prd');
                     if (!empty($prd) && strpos($prd, '@') !== false) {
                         $_prd = explode(';', control::aesDecode(
                             substr($prd, strpos($prd, '@') + 1), trim($one->getAttr('created_at')))
                         );
-                        $clue = array_merge($clue, $_prd);
+                        !is_array($prd) ?: $clue = array_merge($clue, $_prd);
                     }
                 }
             }
 
             $phone = array_merge($clue, $lianxi);
-            $phone = array_values(array_unique($phone));
+            $phone = array_values(array_filter(array_unique($phone)));
+
+            CommonService::getInstance()->log4PHP($phone, 'info', 'getlianxi');
 
             $f_phone = [];
             if (!empty($phone)) {
