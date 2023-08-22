@@ -178,7 +178,7 @@ class XinDongController extends ProvideBase
                     CompanyCluehk::create()
                         ->addSuffix('hk')->data([
                             'entname' => $postData['entName'],
-                            'code' => '',
+                            'code' => $code,
                             'phone_md5' => md5($one),
                             'insert_date' => date('Ymd', time()),
                         ])->save();
