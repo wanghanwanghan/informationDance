@@ -145,66 +145,61 @@ class XinDongController extends ProvideBase
             $phone = array_merge($clue, $lianxi);
             $phone = array_values(array_unique($phone));
 
-            $indexTable = [];
+            $f_phone = [];
             if (!empty($phone)) {
-                for ($i = 10; $i--;) {
-                    $indexTable[$i] = chr(65 + $i);
+                foreach ($phone as $one) {
+                    if (strlen($code) !== 18) {
+                        $check1 = CompanyCluehk::create()
+                            ->addSuffix('hk')
+                            ->where('entname', $postData['entName'])
+                            ->where('phone_md5', md5($one))
+                            ->get();
+                        $check2 = CompanyCluehk::create()
+                            ->addSuffix('gclh')
+                            ->where('entname', $postData['entName'])
+                            ->where('phone_md5', md5($one))
+                            ->get();
+                    } else {
+                        $check1 = CompanyCluehk::create()
+                            ->addSuffix('hk')
+                            ->where('code', $code)
+                            ->where('phone_md5', md5($one))
+                            ->get();
+                        $check2 = CompanyCluehk::create()
+                            ->addSuffix('gclh')
+                            ->where('code', $code)
+                            ->where('phone_md5', md5($one))
+                            ->get();
+                    }
+                    if (!empty($check1) || !empty($check2)) {
+                        continue;
+                    }
+                    $f_phone[] = $one;
+                    CompanyCluehk::create()
+                        ->addSuffix('hk')->data([
+                            'entname' => $postData['entName'],
+                            'code' => '',
+                            'phone_md5' => md5($one),
+                            'insert_date' => date('Ymd', time()),
+                        ])->save();
                 }
             }
 
-            foreach ($phone as &$one) {
-                $one = strtr($one, $indexTable);
+            $indexTable = [];
+            for ($i = 10; $i--;) {
+                $indexTable[$i] = chr(65 + $i);
             }
-            unset($one);
+            if (!empty($f_phone)) {
+                foreach ($f_phone as &$one) {
+                    $one = strtr($one, $indexTable);
+                }
+                unset($one);
+            }
 
             return [
                 'code' => 200,
                 'paging' => null,
-                'result' => base64_encode(jsonEncode($phone, false)),
-                'msg' => null
-            ];
-
-            if (strlen($code) !== 18) {
-                $check1 = CompanyCluehk::create()
-                    ->addSuffix('hk')
-                    ->where('entname', $postData['entName'])
-                    ->where('phone_md5', md5($postData['phone']))
-                    ->get();
-                $check2 = CompanyCluehk::create()
-                    ->addSuffix('gclh')
-                    ->where('entname', $postData['entName'])
-                    ->where('phone_md5', md5($postData['phone']))
-                    ->get();
-            } else {
-                $check1 = CompanyCluehk::create()
-                    ->addSuffix('hk')
-                    ->where('code', $code)
-                    ->where('phone_md5', md5($postData['phone']))
-                    ->get();
-                $check2 = CompanyCluehk::create()
-                    ->addSuffix('gclh')
-                    ->where('code', $code)
-                    ->where('phone_md5', md5($postData['phone']))
-                    ->get();
-            }
-
-            $r_code = 200;
-            if (!empty($check1) || !empty($check2)) {
-                $r_code = 201;
-            }
-
-            CompanyCluehk::create()
-                ->addSuffix('hk')->data([
-                    'entname' => $postData['entName'],
-                    'code' => $postData['code'],
-                    'phone_md5' => md5($postData['phone']),
-                    'insert_date' => date('Ymd', time()),
-                ])->save();
-
-            return [
-                'code' => $r_code,
-                'paging' => null,
-                'result' => [],
+                'result' => base64_encode(jsonEncode($f_phone, false)),
                 'msg' => null
             ];
         });
