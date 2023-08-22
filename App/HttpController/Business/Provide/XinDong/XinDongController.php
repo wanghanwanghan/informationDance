@@ -157,14 +157,12 @@ class XinDongController extends ProvideBase
             }
             unset($one);
 
-
             return [
                 'code' => 200,
                 'paging' => null,
                 'result' => base64_encode(jsonEncode($phone, false)),
                 'msg' => null
             ];
-
 
             if (strlen($code) !== 18) {
                 $check1 = CompanyCluehk::create()
