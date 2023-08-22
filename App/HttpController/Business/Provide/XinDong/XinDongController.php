@@ -145,8 +145,6 @@ class XinDongController extends ProvideBase
             $phone = array_merge($clue, $lianxi);
             $phone = array_values(array_filter(array_unique($phone)));
 
-            CommonService::getInstance()->log4PHP($phone, 'info', 'getlianxi');
-
             $f_phone = [];
             if (!empty($phone)) {
                 foreach ($phone as $one) {
