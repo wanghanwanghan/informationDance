@@ -113,8 +113,8 @@ class XinDongController extends ProvideBase
                 ->getEntLianXi(['entName' => $postData['entName']]);
             CommonService::getInstance()->log4PHP($getEntLianXi, 'url结果', 'select');
             $lianxi = [];
-            if (!empty($getEntLianXi)) {
-                foreach ($getEntLianXi as $one) {
+            if (!empty($getEntLianXi['data'])) {
+                foreach ($getEntLianXi['data'] as $one) {
                     if (preg_match('/^[0-9]{11}$/', $one['lianxi'])) {
                         $lianxi[] = $one['lianxi'];
                     }
@@ -124,7 +124,7 @@ class XinDongController extends ProvideBase
                 ->where('entname', $postData['entName'])
                 ->where('code', $code, '=', 'OR')
                 ->all();
-            CommonService::getInstance()->log4PHP($getEntLianXi, 'clues结果', 'select');
+            CommonService::getInstance()->log4PHP($clues, 'clues结果', 'select');
             $clue = [];
             if (!empty($clues)) {
                 foreach ($clues as $one) {
