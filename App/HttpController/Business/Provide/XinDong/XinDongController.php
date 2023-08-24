@@ -107,9 +107,11 @@ class XinDongController extends ProvideBase
                 $res = jsonDecode($res);
             }
             $res = $res['hits']['hits'][0]['_source'];
+            CommonService::getInstance()->log4PHP($res, 'es结果', 'select');
             $code = $res['UNISCID'];
             $getEntLianXi = (new LongXinService())
                 ->getEntLianXi(['entName' => $postData['entName']]);
+            CommonService::getInstance()->log4PHP($getEntLianXi, 'url结果', 'select');
             $lianxi = [];
             if (!empty($getEntLianXi)) {
                 foreach ($getEntLianXi as $one) {
@@ -122,6 +124,7 @@ class XinDongController extends ProvideBase
                 ->where('entname', $postData['entName'])
                 ->where('code', $code, '=', 'OR')
                 ->all();
+            CommonService::getInstance()->log4PHP($getEntLianXi, 'clues结果', 'select');
             $clue = [];
             if (!empty($clues)) {
                 foreach ($clues as $one) {
@@ -144,6 +147,8 @@ class XinDongController extends ProvideBase
 
             $phone = array_merge($clue, $lianxi);
             $phone = array_values(array_filter(array_unique($phone)));
+
+            CommonService::getInstance()->log4PHP($phone, '最终phone结果', 'select');
 
             $f_phone = [];
             if (!empty($phone)) {
