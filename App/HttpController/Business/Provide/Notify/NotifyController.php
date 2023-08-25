@@ -57,4 +57,22 @@ class NotifyController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function selectPhone_hy(): bool
+    {
+        $url = $this->getRequestData('url');
+
+        $this->csp->add($this->cspKey, function () use ($url) {
+            return [
+                'code' => 200,
+                'paging' => null,
+                'result' => $url,
+                'msg' => control::getUuid(),
+            ];
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
 }

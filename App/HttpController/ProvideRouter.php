@@ -612,6 +612,7 @@ class ProvideRouter
 
         $routeCollector->addGroup('/notify', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/creditAuthUrl', $prefix . 'creditAuthUrl');
+            $routeCollector->addRoute(['GET', 'POST'], '/selectPhone_hy', $prefix . 'selectPhone_hy');
         });
 
         return true;
