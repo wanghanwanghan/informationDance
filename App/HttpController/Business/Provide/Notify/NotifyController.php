@@ -64,7 +64,7 @@ class NotifyController extends ProvideBase
 
         $this->csp->add($this->cspKey, function () use ($url) {
             $stream = file_get_contents($url);
-            $filename = Carbon::now()->format('Ymd') . control::getUuid(8);
+            $filename = Carbon::now()->format('Ymd') . '_' . control::getUuid(8);
             file_put_contents(OTHER_FILE_PATH . date('Y') . '/' . $filename, $stream);
             return [
                 'code' => 200,
