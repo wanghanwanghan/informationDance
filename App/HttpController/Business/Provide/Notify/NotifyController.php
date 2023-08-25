@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\Notify;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use Carbon\Carbon;
 use wanghanwanghan\someUtils\control;
 
 class NotifyController extends ProvideBase
@@ -62,6 +63,9 @@ class NotifyController extends ProvideBase
         $url = $this->getRequestData('url');
 
         $this->csp->add($this->cspKey, function () use ($url) {
+            $stream = file_get_contents($url);
+            $filename = Carbon::now()->format('Ymd') . '_f';
+            file_put_contents(OTHER_FILE_PATH . date('Y') . '/' . $filename, $stream);
             return [
                 'code' => 200,
                 'paging' => null,
