@@ -118,10 +118,11 @@ class XinDongController extends ProvideBase
                     }
                 }
             }
-            $clues = CompanyClue::create()
-                ->where('entname', $postData['entName'])
-                ->where('code', $code, '=', 'OR')
-                ->all();
+            $clues = CompanyClue::create()->where('entname', $postData['entName']);
+            if (!empty($code)) {
+                $clues->where('code', $code, '=', 'OR');
+            }
+            $clues = $clues->all();
             $clue = [];
             if (!empty($clues)) {
                 foreach ($clues as $one) {
