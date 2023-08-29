@@ -52,7 +52,8 @@ class ShuMengController extends ProvideBase
 
         $this->csp->add($this->cspKey, function () use ($postData) {
             return ShuMengService::getInstance()
-                ->setCheckRespFlag(true)->getBidsResult_c($postData['entName'], $postData['page']);
+                ->setCheckRespFlag(true)
+                ->getBidsResult_c($postData['entName'], $postData['page']);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
@@ -72,7 +73,8 @@ class ShuMengController extends ProvideBase
 
         $this->csp->add($this->cspKey, function () use ($postData) {
             return ShuMengService::getInstance()
-                ->setCheckRespFlag(true)->getBidsResult_z($postData['entName'], $postData['page']);
+                ->setCheckRespFlag(true)
+                ->getBidsResult_z($postData['entName'], $postData['page']);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);

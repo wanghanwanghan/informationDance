@@ -54,12 +54,30 @@ class DaTongController extends ProvideBase
         //modifyBeginDate	String	否	"yyyy-MM-dd HH:mm:ss"	数据最近更新时间开始时间
         //modifyEndDate	String	否	"yyyy-MM-dd HH:mm:ss"	数据最近更新时间结束时间
 
-        $keywordArrayJson = $this->getRequestData('keywordArrayJson', []);
+        $data = [];
+        $data['keyword'] = $this->getRequestData('keyword');
+        $data['buyCompany'] = $this->getRequestData('buyCompany');
+        $data['winCompany'] = $this->getRequestData('winCompany');
 
-        $this->csp->add($this->cspKey, function () use ($keywordArrayJson) {
+        $data = array_map(function ($row) {
+            if (!empty($row)) {
+                $d = explode(',', trim($row, ','));
+                $row = '[';
+                foreach ($d as $one) {
+                    $row .= '"' . $one . '",';
+                }
+                $row = trim($row, ',') . ']';
+            }
+            return $row;
+        }, $data);
+
+        $data['beginDate'] = $this->getRequestData('beginDate');
+        $data['endDate'] = $this->getRequestData('endDate');
+
+        $this->csp->add($this->cspKey, function () use ($data) {
             return (new DaTongService())
                 ->setCheckRespFlag(true)
-                ->getList($keywordArrayJson);
+                ->getList(array_filter($data));
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
