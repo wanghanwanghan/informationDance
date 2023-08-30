@@ -42,7 +42,7 @@ class ProvideRouter
 
     private function DaTongV1(RouteCollector $routeCollector)
     {
-        $prefix = '/Business/Provide/dt/DaTongController/';
+        $prefix = '/Business/Provide/DaTong/DaTongController/';
         $routeCollector->addGroup('/dt', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getList', $prefix . 'getList');
         });
