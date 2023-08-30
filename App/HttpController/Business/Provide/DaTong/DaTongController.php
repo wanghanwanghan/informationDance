@@ -58,6 +58,7 @@ class DaTongController extends ProvideBase
         $data['keyword'] = $this->getRequestData('keyword');
         $data['buyCompany'] = $this->getRequestData('buyCompany');
         $data['winCompany'] = $this->getRequestData('winCompany');
+        $data['index'] = $this->getRequestData('index');
 
         $data = array_map(function ($row) {
             if (!empty($row)) {
