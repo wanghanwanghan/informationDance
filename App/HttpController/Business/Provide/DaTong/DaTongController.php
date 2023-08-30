@@ -58,22 +58,17 @@ class DaTongController extends ProvideBase
         $data['keyword'] = $this->getRequestData('keyword');
         $data['buyCompany'] = $this->getRequestData('buyCompany');
         $data['winCompany'] = $this->getRequestData('winCompany');
-        $data['index'] = $this->getRequestData('index');
 
         $data = array_map(function ($row) {
             if (!empty($row)) {
-                $d = explode(',', trim($row, ','));
-                $row = '[';
-                foreach ($d as $one) {
-                    $row .= '"' . $one . '",';
-                }
-                $row = trim($row, ',') . ']';
+                return explode(',', trim($row, ','));
             }
             return $row;
         }, $data);
 
         $data['beginDate'] = $this->getRequestData('beginDate');
         $data['endDate'] = $this->getRequestData('endDate');
+        $data['index'] = $this->getRequestData('index');
 
         $this->csp->add($this->cspKey, function () use ($data) {
             return (new DaTongService())
