@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\DaTong;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -43,6 +44,8 @@ class DaTongService extends ServiceBase
         $resp = (new CoHttpClient())
             ->useCache(false)
             ->send($this->base_url, $data, $header, [], 'postjson');
+
+        CommonService::getInstance()->log4PHP($resp);
 
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
