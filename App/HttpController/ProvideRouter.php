@@ -37,6 +37,16 @@ class ProvideRouter
         $this->ShenZhouYunHeV1($routeCollector);
         $this->JinCaiV1($routeCollector);
         $this->WhTest($routeCollector);
+        $this->DaTongV1($routeCollector);
+    }
+
+    private function DaTongV1(RouteCollector $routeCollector)
+    {
+        $prefix = '/Business/Provide/dt/DaTongController/';
+        $routeCollector->addGroup('/dt', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/getList', $prefix . 'getList');
+        });
+        return true;
     }
 
     private function WhTest(RouteCollector $routeCollector)
