@@ -45,6 +45,7 @@ class DaTongService extends ServiceBase
             ->useCache(false)
             ->send($this->base_url, $data, $header, [], 'postjson');
 
+        CommonService::getInstance()->log4PHP([$data, $header]);
         CommonService::getInstance()->log4PHP($resp);
 
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
