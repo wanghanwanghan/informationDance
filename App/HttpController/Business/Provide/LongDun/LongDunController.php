@@ -335,9 +335,30 @@ class LongDunController extends ProvideBase
 
     }
 
-    public function getSearchSoftwareCr()
+    function getSearchSoftwareCr(): bool
     {
+        $entName = $this->getRequestData('entName');
+        $page = $this->getRequestData('page', 1);
+        $pageSize = $this->getRequestData('pageSize', 10);
 
+        $postData = [
+            'searchKey' => $entName,
+            'pageIndex' => $page,
+            'pageSize' => $pageSize,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongDunService())
+                ->setCheckRespFlag(true)
+                ->get(
+                    CreateConf::getInstance()->getConf('longdun.baseUrl') . 'CopyRight/SearchSoftwareCr',
+                    $postData
+                );
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
     }
 
     public function getSearchCopyRight()
