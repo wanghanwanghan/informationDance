@@ -40,15 +40,10 @@ class LongDunService extends ServiceBase
 
         $url .= '?' . http_build_query($body);
 
-        $resp = (new CoHttpClient())->send($url, $body, $header, $ext, 'get');
-        OperatorLog::addRecord(
-            [
-                'user_id' => 0,
-                'msg' => "url:".@$url." 参数:".@json_encode($body)." 返回：".@json_encode($resp),
-                'details' =>json_encode( XinDongService::trace()),
-                'type_cname' => 'Get请求_LongDunService',
-            ]
-        );
+        $resp = (new CoHttpClient())
+            ->useCache(false)
+            ->send($url, $body, $header, $ext, 'get');
+
         return $this->checkRespFlag ? $this->checkResp($resp) : $resp;
     }
 
