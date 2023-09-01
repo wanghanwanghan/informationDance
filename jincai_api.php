@@ -133,9 +133,11 @@ class jincai_api extends AbstractProcess
         // $this->addTask();
         // $this->getInvOne();
         // $this->addTaskSD();
-        // $this->getInv();
+        $this->getInv();
         // $this->_sendToOSS();//
         // $this->sendToAnt();
+
+        dd(123123);
 
         $list = JinCaiTrace::create()
             ->where('id', 100, '<=')
@@ -154,7 +156,7 @@ class jincai_api extends AbstractProcess
 
             $main = jsonEncode(jsonDecode(jsonEncode($main, false)), false);
 
-            file_put_contents('zxy.txt',$main);
+            file_put_contents('zxy.txt', $main);
 
             dd(1111);
 

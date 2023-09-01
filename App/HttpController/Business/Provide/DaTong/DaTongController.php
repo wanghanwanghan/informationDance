@@ -74,7 +74,7 @@ class DaTongController extends ProvideBase
         $this->csp->add($this->cspKey, function () use ($data) {
             return (new DaTongService())
                 ->setCheckRespFlag(true)
-                ->getList(array_filter($data));
+                ->getList(array_filter($data), $this->userId);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
