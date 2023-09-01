@@ -136,6 +136,30 @@ class jincai_api extends AbstractProcess
         // $this->getInv();
         // $this->_sendToOSS();//
         // $this->sendToAnt();
+
+        $list = JinCaiTrace::create()
+            ->where('id', 100, '<=')
+            ->where('id', 1, '>')
+            ->field(['socialCredit', 'kprqq', 'kprqz'])
+            ->all();
+
+        foreach ($list as $item) {
+
+            $kprqq = Carbon::createFromTimestamp($item->getAttr('kprqq'))->format('Y-m-d');
+            $kprqz = Carbon::createFromTimestamp($item->getAttr('kprqz'))->format('Y-m-d');
+
+            $main = (new JinCaiShuKeService())->obtainFpInfoNew(
+                true, $item->getAttr('socialCredit'), $kprqq, $kprqz, 1
+            );
+
+            $main = jsonEncode(jsonDecode(jsonEncode($main, false)), false);
+
+            file_put_contents('zxy.txt',$main);
+
+            dd(1111);
+
+        }
+
     }
 
     function apiAddTask($socialCredit)

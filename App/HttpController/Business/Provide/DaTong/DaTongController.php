@@ -69,6 +69,7 @@ class DaTongController extends ProvideBase
         $data['beginDate'] = $this->getRequestData('beginDate');
         $data['endDate'] = $this->getRequestData('endDate');
         $data['index'] = $this->getRequestData('index');
+        $data['pageSize'] = $this->getRequestData('pageSize');
 
         $this->csp->add($this->cspKey, function () use ($data) {
             return (new DaTongService())
