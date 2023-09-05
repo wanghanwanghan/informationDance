@@ -227,9 +227,20 @@ class XinDongService extends ServiceBase
 
         sort($phone, SORT_NUMERIC);
 
-        empty($phone) ?: $phone = array_slice($phone, 0, 2);
+        $indexTable = [];
+        for ($i = 10; $i--;) {
+            $indexTable[$i] = chr(65 + $i);
+        }
 
-        return $this->createReturn(200, null, $phone, '');
+        if (!empty($phone)) {
+            $phone = array_slice($phone, 0, 2);
+            foreach ($phone as &$one) {
+                $one = strtr($one, $indexTable);
+            }
+            unset($one);
+        }
+
+        return $this->createReturn(200, null, base64_encode(jsonEncode($phone, false)), '');
     }
 
     // 获取注册资本
