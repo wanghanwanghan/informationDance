@@ -42,7 +42,7 @@ class DaTongService extends ServiceBase
                     ],
                     'bidsections' => [
                         'BID_OPENING_TM',
-                        'GAIN_BID_FILE_CLOSE_TM',
+                        'SUBMIT_CLOSE_TH',
                         'BIDDER_QUALIFICATIONS',
                         'EVAL_BID_METHOD',
                     ],
