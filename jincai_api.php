@@ -131,9 +131,9 @@ class jincai_api extends AbstractProcess
     {
         // $this->addTaskSD();
         // $this->addTask();
-        // $this->getInvOne();
+        $this->getInvOne();
         // $this->addTaskSD();
-        $this->getInv();
+        // $this->getInv();
         // $this->_sendToOSS();//
         // $this->sendToAnt();
 
@@ -467,12 +467,11 @@ class jincai_api extends AbstractProcess
     function getInvOne()
     {
         $list = [
-            '山东省临沂市三丰化工有限公司 913713006140090858',
-            '山东三丰新材料有限公司 91371300328348377N',
+            '上海治吉信息科技有限公司 91310105MA1FWQXH7B',
         ];
 
-        $kprqq = '2021-06-30';
-        $kprqz = '2023-04-30';
+        $kprqq = date('Y-m-d', 1601481600);
+        $kprqz = date('Y-m-d', 1693497599);
 
         foreach ($list as $socialCredit) {
             list($entname, $code) = explode(' ', $socialCredit);
@@ -884,9 +883,8 @@ class jincai_api extends AbstractProcess
                 'nsrsbh' => $code,// 纳税人识别号
             ];
 
-            $addTaskInfo = (new JinCaiShuKeService())->addTaskNew(
-                $code, $province, $city, $ywBody
-            );
+            $addTaskInfo = (new JinCaiShuKeService())
+                ->addTaskNew($code, $province, $city, $ywBody);
 
             $p_traceNo = '';
             $error = false;
