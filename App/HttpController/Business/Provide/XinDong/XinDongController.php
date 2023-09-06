@@ -113,7 +113,7 @@ class XinDongController extends ProvideBase
             $lianxi = [];
             if (!empty($getEntLianXi['data'])) {
                 foreach ($getEntLianXi['data'] as $one) {
-                    if (preg_match('/^[0-9]{11}$/', $one['lianxi'])) {
+                    if (preg_match('/^1[3456789][0-9]{9}$/', $one['lianxi'])) {
                         $lianxi[] = $one['lianxi'];
                     }
                 }
