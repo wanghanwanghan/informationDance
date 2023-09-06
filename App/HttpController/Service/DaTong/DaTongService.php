@@ -24,6 +24,7 @@ class DaTongService extends ServiceBase
 
     private function checkResp($res): array
     {
+        $res['code'] !== 0 ?: $res['code'] = 200;
         return $this->createReturn($res['code'], $res['data']['index'] ?? null, $res['data'], $res['msg']);
     }
 

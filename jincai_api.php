@@ -131,7 +131,7 @@ class jincai_api extends AbstractProcess
     {
         // $this->addTaskSD();
         // $this->addTask();
-        $this->getInvOne();
+         $this->getInvOne();
         // $this->addTaskSD();
         // $this->getInv();
         // $this->_sendToOSS();//
@@ -468,6 +468,7 @@ class jincai_api extends AbstractProcess
     {
         $list = [
             '上海治吉信息科技有限公司 91310105MA1FWQXH7B',
+//            '南京建瓴建筑工程有限公司 91320115339356743U',
         ];
 
         $kprqq = date('Y-m-d', 1601481600);
@@ -479,8 +480,10 @@ class jincai_api extends AbstractProcess
             while (true) {
                 $page++;
                 $main = (new JinCaiShuKeService())->obtainFpInfoNew(
-                    false, $code, $kprqq, $kprqz, $page
+                    true, $code, $kprqq, $kprqz, $page
                 );
+                file_put_contents('zhaoxianyunfp.txt', jsonEncode($main, false));
+                dd($main);
                 if (empty($main['result']['data']['content'])) {
                     dd('没了', $page);
                 } else {
@@ -854,6 +857,7 @@ class jincai_api extends AbstractProcess
     {
         $list = [
             '上海治吉信息科技有限公司 91310105MA1FWQXH7B',
+//            '北京每日信动科技有限公司 91110108MA01KPGK0L',
         ];
 
         foreach ($list as $one) {
