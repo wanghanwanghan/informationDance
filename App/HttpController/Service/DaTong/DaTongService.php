@@ -143,7 +143,7 @@ class DaTongService extends ServiceBase
             ->useCache(false)
             ->send($this->base_url, $data, $header, [], 'postjson');
 
-        // 根据不同userid给不同字段
+        // 根据不同userid给不同字段 字段筛选
         if (!empty($resp['data']['list'])) {
             $resp = $this->extractFields($resp, $userid);
         }
