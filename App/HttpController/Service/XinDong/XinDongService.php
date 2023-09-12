@@ -179,6 +179,8 @@ class XinDongService extends ServiceBase
 
     function getClue($entname, $code): array
     {
+        CommonService::getInstance()->log4PHP([$entname, $code], 'info', 'wwwww');
+
         if (!empty($entname) && !empty($code)) {
             $info = CompanyClue::create()
                 ->where('entname', trim($entname))
@@ -192,6 +194,8 @@ class XinDongService extends ServiceBase
         }
 
         $info = $info->all();
+
+        CommonService::getInstance()->log4PHP($info, 'info', 'wwwww');
 
         if (empty($info)) {
             return $this->createReturn(200, null, [], '未找到数据');
@@ -223,7 +227,11 @@ class XinDongService extends ServiceBase
 
         }
 
+        CommonService::getInstance()->log4PHP($phone, 'info', 'wwwww');
+
         $phone = array_values(array_unique(array_filter($phone)));
+
+        CommonService::getInstance()->log4PHP($phone, 'info', 'wwwww');
 
         sort($phone, SORT_NUMERIC);
 
@@ -239,6 +247,8 @@ class XinDongService extends ServiceBase
             }
             unset($one);
         }
+
+        CommonService::getInstance()->log4PHP($phone, 'info', 'wwwww');
 
         return $this->createReturn(200, null, base64_encode(jsonEncode($phone, false)), '');
     }
