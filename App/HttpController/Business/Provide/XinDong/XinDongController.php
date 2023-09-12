@@ -226,7 +226,7 @@ class XinDongController extends ProvideBase
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
-                ->getClue(...$postData);
+                ->getClue($postData['entname'], $postData['code']);
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
