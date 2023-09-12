@@ -221,8 +221,6 @@ class XinDongController extends ProvideBase
             'code' => $code,
         ];
 
-        CommonService::getInstance()->log4PHP($postData, 'info', 'wwwww');
-
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new XinDongService())
                 ->setCheckRespFlag(true)
