@@ -83,16 +83,16 @@ class XinDongController extends ProvideBase
                     ]
                 ]
             ]);
-            $bean_match = new Search();
-            $bean_match->setIndex('company_202303');
-            $bean_match->setType('_doc');
-            $bean_match->setBody([
-                'query' => [
-                    'match' => [
-                        'ENTNAME' => $postData['entName'],
-                    ]
-                ]
-            ]);
+//            $bean_match = new Search();
+//            $bean_match->setIndex('company_202303');
+//            $bean_match->setType('_doc');
+//            $bean_match->setBody([
+//                'query' => [
+//                    'match' => [
+//                        'ENTNAME' => $postData['entName'],
+//                    ]
+//                ]
+//            ]);
             $config = new Config([
                 'host' => CreateConf::getInstance()->getConf('es.host'),
                 'port' => CreateConf::getInstance()->getConf('es.port') - 0,
@@ -103,11 +103,11 @@ class XinDongController extends ProvideBase
             $res = $elasticsearch->client()->search($bean_keyword)->getBody();
             $res = jsonDecode($res);
             if (empty($res['hits']['hits'])) {
-                $res = $elasticsearch->client()->search($bean_match)->getBody();
-                $res = jsonDecode($res);
+//                $res = $elasticsearch->client()->search($bean_match)->getBody();
+//                $res = jsonDecode($res);
             }
-            $res = $res['hits']['hits'][0]['_source'];
-            $code = $res['UNISCID'];
+            $res = $res['hits']['hits'][0]['_source'] ?? [];
+            $code = $res['UNISCID'] ?? '';
             $getEntLianXi = (new LongXinService())
                 ->getEntLianXi(['entName' => $postData['entName']]);
             $lianxi = [];
