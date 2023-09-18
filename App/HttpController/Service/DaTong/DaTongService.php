@@ -2,6 +2,7 @@
 
 namespace App\HttpController\Service\DaTong;
 
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\HttpClient\CoHttpClient;
 use App\HttpController\Service\ServiceBase;
@@ -141,6 +142,9 @@ class DaTongService extends ServiceBase
         $resp = (new CoHttpClient())
             ->useCache(false)
             ->send($this->base_url, $data, $header, [], 'postjson');
+
+        CommonService::getInstance()->log4PHP($data, 'res', 'dt.log');
+        CommonService::getInstance()->log4PHP($resp, 'resp', 'dt.log');
 
         // 根据不同userid给不同字段 字段筛选
         if (!empty($resp['data']['list'])) {
