@@ -143,7 +143,8 @@ class DaTongService extends ServiceBase
             ->useCache(false)
             ->send($this->base_url, $data, $header, [], 'postjson');
 
-        CommonService::getInstance()->log4PHP($data, 'res', 'dt.log');
+        CommonService::getInstance()->log4PHP($data, 'data', 'dt.log');
+        CommonService::getInstance()->log4PHP($data, 'header', 'dt.log');
         CommonService::getInstance()->log4PHP($resp, 'resp', 'dt.log');
 
         // 根据不同userid给不同字段 字段筛选
