@@ -261,17 +261,12 @@ class XinDongService extends ServiceBase
             }
         }
 
-        CommonService::getInstance($phone_, 'fff', 'lxlxlxlx');
-
         $phone_ = [];
-
-        CommonService::getInstance($phone_, 'fff', 'lxlxlxlx');
 
         // 如果是空 调用url
         if (empty($phone_)) {
-            CommonService::getInstance(trim($entname), 'fff', 'lxlxlxlx');
             $lx_res = (new LongXinService())->getEntLianXi(['entName' => trim($entname)]);
-            CommonService::getInstance($lx_res, 'fff', 'lxlxlxlx');
+            CommonService::getInstance()->log4PHP($lx_res, 'fff', 'lxlxlxlx');
         }
 
         $indexTable = [];
