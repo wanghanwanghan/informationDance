@@ -62,7 +62,6 @@ use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\Score\xds;
-use EasySwoole\Component\Csp;
 use EasySwoole\Pool\Manager;
 use updc\utils\CommonUtil;
 use wanghanwanghan\someUtils\control;
@@ -249,10 +248,26 @@ class XinDongService extends ServiceBase
                     $num = 0;
                 }
             }
+            if ($num !== 0) {
+                $cl_res = CspService::getInstance()->exec($csp_t, 6);
+                foreach ($cl_res as $cl) {
+                    $tmp[] = $cl;
+                }
+            }
+            foreach ($tmp as $ttt) {
+                if (isset($ttt['data']['status']) && $ttt['data']['status'] === '1') {
+                    $phone_[] = $ttt['data']['mobile'];
+                }
+            }
         }
 
-        CommonService::getInstance()->log4PHP($tmp, 'iff', 'clcl');
+        $phone_ = [];
 
+        // 如果是空 调用url
+        if (empty($phone_)) {
+            $lx_res = (new LongXinService())->getEntLianXi(['entName' => trim($entname)]);
+            CommonService::getInstance($lx_res, 'fff', 'lxlxlxlx');
+        }
 
         $indexTable = [];
         for ($i = 10; $i--;) {
