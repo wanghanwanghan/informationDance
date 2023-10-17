@@ -261,6 +261,8 @@ class XinDongService extends ServiceBase
             }
         }
 
+        CommonService::getInstance($phone_, 'fff', 'lxlxlxlx');
+
         $phone_ = [];
 
         CommonService::getInstance($phone_, 'fff', 'lxlxlxlx');
