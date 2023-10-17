@@ -240,7 +240,7 @@ class XinDongService extends ServiceBase
                     return (new ChuangLanService())->getCheckPhoneStatusV2(['mobiles' => $one]);
                 });
                 $num++;
-                if ($num === 2) {
+                if ($num === 5) {
                     $cl_res = CspService::getInstance()->exec($csp_t, 6);
                     foreach ($cl_res as $cl) {
                         $tmp[] = $cl;
