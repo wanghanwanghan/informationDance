@@ -62,6 +62,7 @@ use App\HttpController\Service\LongXin\LongXinService;
 use App\HttpController\Service\ServiceBase;
 use App\HttpController\Service\TaoShu\TaoShuService;
 use App\HttpController\Service\XinDong\Score\xds;
+use EasySwoole\Component\Csp;
 use EasySwoole\Pool\Manager;
 use updc\utils\CommonUtil;
 use wanghanwanghan\someUtils\control;
@@ -199,7 +200,7 @@ class XinDongService extends ServiceBase
             return $this->createReturn(200, null, [], '未找到数据');
         }
 
-        $phone = [];
+        $phone = $phone_ = [];
 
         foreach ($info as $one) {
 
@@ -227,20 +228,31 @@ class XinDongService extends ServiceBase
 
         // 这是库里的
         $phone = array_values(array_unique(array_filter($phone)));
+        $phone = array_slice($phone, 0, 15);
 
         // 过完创蓝接口 如果都是空号 就取url
         if (!empty($phone)) {
-
-            foreach ($phone as $one) {
-
-                $cl_res = (new ChuangLanService())->getCheckPhoneStatusV2(['mobiles' => $one]);
-                CommonService::getInstance()->log4PHP($cl_res, 'info', 'clcl');
-
+            $tmp = [];// 用来接收创蓝返回
+            $num = 0;// 记录csp中入了几个
+            $csp_t = (new CspService())->create();
+            foreach ($phone as $key => $one) {
+                $csp_t->add($key, function () use ($one) {
+                    return (new ChuangLanService())->getCheckPhoneStatusV2(['mobiles' => $one]);
+                });
+                $num++;
+                if ($num === 2) {
+                    $cl_res = CspService::getInstance()->exec($csp_t, 6);
+                    foreach ($cl_res as $cl) {
+                        $tmp[] = $cl;
+                    }
+                    $csp_t = (new CspService())->create();
+                    $num = 0;
+                }
             }
-
         }
 
-        $phone_ = $phone;
+        CommonService::getInstance()->log4PHP($tmp, 'iff', 'clcl');
+
 
         $indexTable = [];
         for ($i = 10; $i--;) {
