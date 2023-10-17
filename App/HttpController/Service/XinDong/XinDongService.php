@@ -256,7 +256,6 @@ class XinDongService extends ServiceBase
                     $tmp[] = $cl;
                 }
             }
-            CommonService::getInstance()->log4PHP($tmp, 'url的返回结果', 'url_res');
             foreach ($tmp as $ttt) {
                 if (isset($ttt['data']['status']) && $ttt['data']['status'] === '1') {
                     $phone_[] = $ttt['data']['mobile'];
@@ -268,6 +267,7 @@ class XinDongService extends ServiceBase
         // 如果是空 调用url
         if (empty($phone_)) {
             $lx_res = (new LongXinService())->getEntLianXi(['entName' => trim($entname)]);
+            CommonService::getInstance()->log4PHP($lx_res, 'url的返回结果', 'url_res');
             if (!empty($lx_res['data'])) {
                 foreach ($lx_res['data'] as $item) {
                     if ($item['lianxitype'] === '手机') {
