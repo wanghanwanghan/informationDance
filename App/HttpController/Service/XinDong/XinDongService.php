@@ -303,6 +303,7 @@ class XinDongService extends ServiceBase
                             $tmp[] = $cl;
                         }
                     }
+                    CommonService::getInstance()->log4PHP($tmp, 'url的创蓝返回', 'cl_res');
                     foreach ($tmp as $ttt) {
                         if (isset($ttt['data']['status']) && $ttt['data']['status'] === '1') {
                             $phone_[] = $ttt['data']['mobile'];
