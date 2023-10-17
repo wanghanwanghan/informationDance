@@ -261,13 +261,53 @@ class XinDongService extends ServiceBase
             }
         }
 
-        $phone_ = [];
-
         // 如果是空 调用url
         if (empty($phone_)) {
             $lx_res = (new LongXinService())->getEntLianXi(['entName' => trim($entname)]);
-            CommonService::getInstance()->log4PHP($lx_res, 'fff', 'lxlxlxlx');
+            if (!empty($lx_res['data'])) {
+                foreach ($lx_res['data'] as $item) {
+                    if ($item['lianxitype'] === '手机') {
+                        $phone_[] = $item['lianxi'];
+                    }
+                }
+                if (!empty($phone_)) {
+                    $phone = array_values(array_unique(array_filter($phone_)));
+                    $phone = array_slice($phone, 0, 15);
+                    $phone_=[];
+                    // 过一遍创蓝
+                    $tmp = [];// 用来接收创蓝返回
+                    $num = 0;// 记录csp中入了几个
+                    $csp_t = (new CspService())->create();
+                    foreach ($phone as $key => $one) {
+                        $csp_t->add($key, function () use ($one) {
+                            return (new ChuangLanService())->getCheckPhoneStatusV2(['mobiles' => $one]);
+                        });
+                        $num++;
+                        if ($num === 5) {
+                            $cl_res = CspService::getInstance()->exec($csp_t, 6);
+                            foreach ($cl_res as $cl) {
+                                $tmp[] = $cl;
+                            }
+                            $csp_t = (new CspService())->create();
+                            $num = 0;
+                        }
+                    }
+                    if ($num !== 0) {
+                        $cl_res = CspService::getInstance()->exec($csp_t, 6);
+                        foreach ($cl_res as $cl) {
+                            $tmp[] = $cl;
+                        }
+                    }
+                    foreach ($tmp as $ttt) {
+                        if (isset($ttt['data']['status']) && $ttt['data']['status'] === '1') {
+                            $phone_[] = $ttt['data']['mobile'];
+                        }
+                    }
+                }
+            }
         }
+
+        $phone_ = array_values(array_unique(array_filter($phone_)));
 
         $indexTable = [];
         for ($i = 10; $i--;) {
