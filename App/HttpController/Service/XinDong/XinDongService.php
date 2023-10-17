@@ -234,6 +234,7 @@ class XinDongService extends ServiceBase
         }
 
         if (!empty($phone)) {
+            CommonService::getInstance()->log4PHP($phone);
             $phone = array_slice($phone, 0, 2);
             foreach ($phone as &$one) {
                 $one = strtr($one, $indexTable);
