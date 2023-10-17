@@ -177,6 +177,73 @@ class XinDongService extends ServiceBase
         return parent::__construct();
     }
 
+    // 要增加创蓝验证空号 和 url接口
+    function getClueNew($entname, $code): array
+    {
+        if (!empty($entname) && !empty($code)) {
+            $info = CompanyClue::create()
+                ->where('entname', trim($entname))
+                ->where('code', $code, '=', 'OR');
+        } elseif (!empty($code)) {
+            $info = CompanyClue::create()
+                ->where('code', trim($code));
+        } else {
+            $info = CompanyClue::create()
+                ->where('entname', trim($entname));
+        }
+
+        $info = $info->all();
+
+        if (empty($info)) {
+            return $this->createReturn(200, null, [], '未找到数据');
+        }
+
+        $phone = [];
+
+        foreach ($info as $one) {
+
+            //整理线索
+            if (strpos($one->pri, '@')) {
+                $_pri = explode(';', control::aesDecode(
+                    substr($one->pri, strpos($one->pri, '@') + 1), $one->created_at . ''
+                ));
+            } else {
+                $_pri = [];
+            }
+
+            if (strpos($one->prd, '@')) {
+                $_prd = explode(';', control::aesDecode(
+                    substr($one->prd, strpos($one->prd, '@') + 1), $one->created_at . ''
+                ));
+            } else {
+                $_prd = [];
+            }
+
+            $phone = array_merge($phone, $_pri);
+            $phone = array_merge($phone, $_prd);
+
+        }
+
+        $phone = array_values(array_unique(array_filter($phone)));
+
+        sort($phone, SORT_NUMERIC);
+
+        $indexTable = [];
+        for ($i = 10; $i--;) {
+            $indexTable[$i] = chr(65 + $i);
+        }
+
+        if (!empty($phone)) {
+            $phone = array_slice($phone, 0, 2);
+            foreach ($phone as &$one) {
+                $one = strtr($one, $indexTable);
+            }
+            unset($one);
+        }
+
+        return $this->createReturn(200, null, base64_encode(jsonEncode($phone, false)), 'new');
+    }
+
     function getClue($entname, $code): array
     {
         if (!empty($entname) && !empty($code)) {

@@ -232,6 +232,27 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    function getClueNew(): bool
+    {
+        $entname = $this->getRequestData('entname');
+        $code = $this->getRequestData('code');
+
+        $postData = [
+            'entname' => $entname,
+            'code' => $code,
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new XinDongService())
+                ->setCheckRespFlag(true)
+                ->getClueNew($postData['entname'], $postData['code']);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     //启客招投标接口
     //招投标列表是传入【企业全称/注册号/统一信用代码】查对应企业下的所有标讯 这里的企业不支持输入简称，只支持全称
     //垂搜是搜正文和标题里有的字符

@@ -268,6 +268,7 @@ class ProvideRouter
 
         $routeCollector->addGroup('/xd', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/getClue', $prefix . 'getClue');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getClueNew', $prefix . 'getClueNew');//
             $routeCollector->addRoute(['GET', 'POST'], '/selectPhone_hy', $prefix . 'selectPhone_hy');//
             $routeCollector->addRoute(['GET', 'POST'], '/ztbListq', $prefix . 'ztbListq');//启客招投标列表
             $routeCollector->addRoute(['GET', 'POST'], '/ztbDetailq', $prefix . 'ztbDetailq');//启客招投标详情

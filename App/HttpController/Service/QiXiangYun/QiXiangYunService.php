@@ -23,14 +23,8 @@ class QiXiangYunService extends ServiceBase
     function __construct()
     {
         $this->baseUrl = CreateConf::getInstance()->getConf('qixiangyun.baseUrl');
-        $this->testBaseUrl = CreateConf::getInstance()->getConf('qixiangyun.testBaseUrl');
-
         $this->appkey = CreateConf::getInstance()->getConf('qixiangyun.appkey');
-        $this->testAppkey = CreateConf::getInstance()->getConf('qixiangyun.testAppkey');
-
         $this->secret = CreateConf::getInstance()->getConf('qixiangyun.secret');
-        $this->testSecret = CreateConf::getInstance()->getConf('qixiangyun.testSecret');
-
         return parent::__construct();
     }
 
@@ -44,27 +38,113 @@ class QiXiangYunService extends ServiceBase
         ];
     }
 
-    private function createToken(): string
+    function createToken(): string
     {
-        $url = $this->baseUrl . 'AGG/oauth2/login';
+        $url = $this->baseUrl . 'public/oauth2/login';
 
         $data = [
             'grant_type' => 'client_credentials',
             'client_appkey' => $this->appkey,
             'client_secret' => md5($this->secret),
         ];
-        CommonService::getInstance()->log4PHP($this->secret, 'info', 'qixiangyun_createTokenParamSecret');
+
         $header = [
             'content-type' => 'application/json;charset=UTF-8'
         ];
-        CommonService::getInstance()->log4PHP([$url, $data, $header], 'info', 'qixiangyun_createTokenParam');
+
         $res = (new CoHttpClient())
-            ->useCache(false)->setEx(0.3)
+            ->useCache(false)
+            ->setEx(0.3)
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
-        CommonService::getInstance()->log4PHP($res, 'info', 'qixiangyun_createToken');
-        return $res['value']['access_token'];
+
+        return $res['data']['access_token'];
     }
+
+    //获取H5页面和授权
+    function authCollectUrl($nsrsbh, $nsrmc): array
+    {
+        $url = $this->baseUrl . 'public/web/getWebUrl';
+
+        $data = [
+            'showAll' => '194950',
+            'pageName' => 'ttk-tax-app-financialAggregation',
+            'nsrsbh' => trim($nsrsbh),
+            'nsrmc' => trim($nsrmc),
+        ];
+
+        $req_date = microTimeNew();
+
+        $token = $this->createToken();
+
+        $sign = base64_encode(md5(
+            'POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->secret
+        ));
+
+        $req_sign = "API-SV1:{$this->appkey}:" . $sign;
+
+        $header = [
+            'content-type' => 'application/json;charset=UTF-8',
+            'access_token' => $token,
+            'req_date' => $req_date,
+            'req_sign' => $req_sign,
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'postjson');
+
+        $data = $res['data'] ?? '';
+
+        return $this->check($data . "&nsrsbh={$nsrsbh}&nsrmc={$nsrmc}");
+    }
+
+    //获取发票数据
+    function getCollectTaskPageData($taskId, $nsrsbh, $page): array
+    {
+        $url = $this->baseUrl . 'collect/invoice/getCollectTaskPageData';
+
+        $data = [
+            'taskId' => $taskId - 0,
+            'nsrsbh' => trim($nsrsbh),
+            'page' => [
+                'pageSize' => 10,
+                'currentPage' => $page - 0,
+            ]
+        ];
+
+        $req_date = microTimeNew();
+
+        $token = $this->createToken();
+
+        $sign = base64_encode(md5(
+            'POST_' . md5(json_encode($data)) . '_' . $req_date . '_' . $token . '_' . $this->secret
+        ));
+
+        $req_sign = "API-SV1:{$this->appkey}:" . $sign;
+
+        $header = [
+            'access_token' => $token,
+            'req_date' => $req_date,
+            'req_sign' => $req_sign,
+        ];
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($url, $data, $header, [], 'postjson');
+
+        dd($res);
+
+        $data = $res['data'] ?? '';
+
+        return $this->check($data);
+    }
+
+    // === === === === === === === === === === === === === === === === === === === === === === === === ===
+    // === === === === === === === === === === === === === === === === === === === === === === === === ===
+    // === === === === === === === === === === === === === === === === === === === === === === === === ===
 
     //同步查验
     function cySync(string $fpdm, string $fphm, string $kprq, float $je, string $jym): array
@@ -189,7 +269,7 @@ class QiXiangYunService extends ServiceBase
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
 
-        CommonService::getInstance()->log4PHP([$url, $data, $header,$res],'info','getInv');
+        CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'getInv');
 
         return $this->check($res['value']);
     }
@@ -250,7 +330,7 @@ class QiXiangYunService extends ServiceBase
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
-        CommonService::getInstance()->log4PHP([$url, $data, $header,$res], 'info', 'createEnt_Param_res:q');
+        CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'createEnt_Param_res:q');
 
 //        CommonService::getInstance()->log4PHP($res);
 
@@ -309,7 +389,7 @@ class QiXiangYunService extends ServiceBase
             ->needJsonDecode(true)
             ->send($url, $data, $header, [], 'postjson');
 //        dingAlarm('actionGetFpxzStatusParam',['$url'=>json_encode($url), '$data'=>json_encode($data), '$header'=>json_encode($header),'$res'=>json_encode($res)]);
-        CommonService::getInstance()->log4PHP([$url, $data, $header,$res], 'info', 'actionGetFpxzStatusParam');
+        CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'actionGetFpxzStatusParam');
 //        CommonService::getInstance()->log4PHP($res);
     }
 
@@ -318,12 +398,12 @@ class QiXiangYunService extends ServiceBase
         $nsrsbh = $postData['nsrsbh'];
         $skssq = $postData['skssq'];
         $resData = [];
-        $fplxs = ['01', '03',  '08',   '14',  '17'];
+        $fplxs = ['01', '03', '08', '14', '17'];
         foreach ($fplxs as $fplx) {
             $res = $this->cjYgx($nsrsbh, $fplx, $skssq, 1);
             if ($res['result']['success']) {
                 $resData = array_merge($resData, $res['value']['list']);
-            } else{
+            } else {
                 dingAlarm('已勾选发票归集异常', ['$res' => json_encode($res)]);
             }
             if ($res['value']['page']['totalPage'] > 1) {
@@ -331,14 +411,14 @@ class QiXiangYunService extends ServiceBase
                     $res2 = $this->cjYgx($nsrsbh, $fplx, $skssq, $i);
                     if ($res2['result']['success']) {
                         $resData = array_merge($resData, $res2['value']['list']);
-                    }else{
+                    } else {
                         dingAlarm('已勾选发票归集异常', ['$res' => json_encode($res)]);
                     }
                 }
             }
 
         }
-        return ['code'=>200,'result'=>$resData];
+        return ['code' => 200, 'result' => $resData];
     }
 
     public function cjYgx($nsrsbh, $fplx, $skssq, $currentPage)
@@ -378,7 +458,8 @@ class QiXiangYunService extends ServiceBase
     /*
      * 获取已勾选发票归集任务状态
      */
-    public function getGxgxztStatus($postData){
+    public function getGxgxztStatus($postData)
+    {
         $url = $this->baseUrl . 'FP/getGxgxztStatus';
         $nsrsbh = $postData['nsrsbh'];
         $skssq = $postData['skssq'];
@@ -408,4 +489,6 @@ class QiXiangYunService extends ServiceBase
         CommonService::getInstance()->log4PHP([$url, $data, $header, $res], 'info', 'cjYgx_ret');
         return $res;
     }
+
+
 }
