@@ -263,6 +263,8 @@ class XinDongService extends ServiceBase
 
         $phone_ = [];
 
+        CommonService::getInstance($phone_, 'fff', 'lxlxlxlx');
+
         // 如果是空 调用url
         if (empty($phone_)) {
             CommonService::getInstance(trim($entname), 'fff', 'lxlxlxlx');
