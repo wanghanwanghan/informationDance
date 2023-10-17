@@ -52,6 +52,7 @@ use App\HttpController\Models\RDS3\HdSaicExtension\AqsiqAnccH;
 use App\HttpController\Models\RDS3\HdSaicExtension\ArLabel2021;
 use App\HttpController\Models\RDS3\HdSaicExtension\CncaRzGltxH;
 use App\HttpController\Models\RDS3\HdSaicExtension\WindData;
+use App\HttpController\Service\ChuangLan\ChuangLanService;
 use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\CreateConf;
 use App\HttpController\Service\FaYanYuan\FaYanYuanService;
@@ -224,25 +225,37 @@ class XinDongService extends ServiceBase
 
         }
 
+        // 这是库里的
         $phone = array_values(array_unique(array_filter($phone)));
 
-        sort($phone, SORT_NUMERIC);
+        // 过完创蓝接口 如果都是空号 就取url
+        if (!empty($phone)) {
+
+            foreach ($phone as $one) {
+
+                $cl_res = (new ChuangLanService())->getCheckPhoneStatusV2(['mobiles' => $one]);
+                CommonService::getInstance()->log4PHP($cl_res, 'info', 'clcl');
+
+            }
+
+        }
+
+        $phone_ = $phone;
 
         $indexTable = [];
         for ($i = 10; $i--;) {
             $indexTable[$i] = chr(65 + $i);
         }
 
-        if (!empty($phone)) {
-            CommonService::getInstance()->log4PHP($phone);
-            $phone = array_slice($phone, 0, 2);
-            foreach ($phone as &$one) {
-                $one = strtr($one, $indexTable);
-            }
-            unset($one);
-        }
+        sort($phone_, SORT_NUMERIC);
 
-        return $this->createReturn(200, null, base64_encode(jsonEncode($phone, false)), 'new');
+        $phone_ = array_slice($phone_, 0, 2);
+        foreach ($phone_ as &$one) {
+            $one = strtr($one, $indexTable);
+        }
+        unset($one);
+
+        return $this->createReturn(200, null, base64_encode(jsonEncode($phone_, false)), 'new');
     }
 
     function getClue($entname, $code): array
