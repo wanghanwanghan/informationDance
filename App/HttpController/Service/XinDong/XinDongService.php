@@ -257,8 +257,8 @@ class XinDongService extends ServiceBase
                 }
             }
             foreach ($tmp as $ttt) {
-                if (isset($ttt['data']['status']) && $ttt['data']['status'] === '1') {
-                    $phone_[] = $ttt['data']['mobile'];
+                if (isset($ttt['data'][0]['status']) && $ttt['data'][0]['status'] === '1') {
+                    $phone_[] = $ttt['data'][0]['mobile'];
                 }
             }
             CommonService::getInstance()->log4PHP($phone_, '库里的过完创蓝', 'getClueNew');
@@ -305,8 +305,8 @@ class XinDongService extends ServiceBase
                     }
                     CommonService::getInstance()->log4PHP($tmp, 'url的创蓝返回', 'cl_res');
                     foreach ($tmp as $ttt) {
-                        if (isset($ttt['data']['status']) && $ttt['data']['status'] === '1') {
-                            $phone_[] = $ttt['data']['mobile'];
+                        if (isset($ttt['data'][0]['status']) && $ttt['data'][0]['status'] === '1') {
+                            $phone_[] = $ttt['data'][0]['mobile'];
                         }
                     }
                     CommonService::getInstance()->log4PHP($phone_, 'url过完创蓝', 'getClueNew');
