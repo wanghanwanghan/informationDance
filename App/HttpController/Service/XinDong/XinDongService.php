@@ -195,10 +195,6 @@ class XinDongService extends ServiceBase
 
         $info = $info->all();
 
-        if (empty($info)) {
-            return $this->createReturn(200, null, [], '未找到数据');
-        }
-
         $phone = $phone_ = [];
 
         foreach ($info as $one) {
@@ -228,8 +224,6 @@ class XinDongService extends ServiceBase
         // 这是库里的
         $phone = array_values(array_unique(array_filter($phone)));
         $phone = array_slice($phone, 0, 15);
-
-        CommonService::getInstance()->log4PHP($phone, '库里的', 'getClueNew');
 
         // 过完创蓝接口 如果都是空号 就取url
         if (!empty($phone)) {
@@ -261,20 +255,17 @@ class XinDongService extends ServiceBase
                     $phone_[] = $ttt['data'][0]['mobile'];
                 }
             }
-            CommonService::getInstance()->log4PHP($phone_, '库里的过完创蓝', 'getClueNew');
         }
 
         // 如果是空 调用url
         if (empty($phone_)) {
             $lx_res = (new LongXinService())->getEntLianXi(['entName' => trim($entname)]);
-            CommonService::getInstance()->log4PHP($lx_res, 'url的返回结果', 'url_res');
             if (!empty($lx_res['data'])) {
                 foreach ($lx_res['data'] as $item) {
                     if ($item['lianxitype'] === '手机') {
                         $phone_[] = $item['lianxi'];
                     }
                 }
-                CommonService::getInstance()->log4PHP($phone_, 'url的', 'getClueNew');
                 if (!empty($phone_)) {
                     $phone = array_values(array_unique(array_filter($phone_)));
                     $phone = array_slice($phone, 0, 15);
@@ -303,13 +294,11 @@ class XinDongService extends ServiceBase
                             $tmp[] = $cl;
                         }
                     }
-                    CommonService::getInstance()->log4PHP($tmp, 'url的创蓝返回', 'cl_res');
                     foreach ($tmp as $ttt) {
                         if (isset($ttt['data'][0]['status']) && $ttt['data'][0]['status'] === '1') {
                             $phone_[] = $ttt['data'][0]['mobile'];
                         }
                     }
-                    CommonService::getInstance()->log4PHP($phone_, 'url过完创蓝', 'getClueNew');
                 }
             }
         }
@@ -322,8 +311,6 @@ class XinDongService extends ServiceBase
         }
 
         sort($phone_, SORT_NUMERIC);
-
-        CommonService::getInstance()->log4PHP($phone_, '最后交的', 'getClueNew');
 
         $phone_ = array_slice($phone_, 0, 2);
         foreach ($phone_ as &$one) {
