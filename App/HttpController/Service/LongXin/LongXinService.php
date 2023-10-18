@@ -131,6 +131,8 @@ class LongXinService extends ServiceBase
             ->useCache(false)
             ->send($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
 
+        CommonService::getInstance()->log4PHP($res, 'info', 'getEntid');
+
         if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
             $entid = $res['data'];
         } else {
