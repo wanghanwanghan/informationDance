@@ -1385,6 +1385,8 @@ class XinDongController extends ProvideBase
                 ->all();
         }
 
+        $f_info = [];
+
         if (!empty($f_info)) {
             $origin = [];
             foreach ($f_info as $one) {
