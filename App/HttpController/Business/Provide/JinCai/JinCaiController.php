@@ -46,7 +46,7 @@ class JinCaiController extends ProvideBase
         $province = $this->getRequestData('province');//北京
         $city = $this->getRequestData('city');//北京
 
-        $kprqq = Carbon::now()->subMonths(34)->startOfMonth()->timestamp;
+        $kprqq = Carbon::now()->subMonths(36)->startOfMonth()->timestamp;
         $kprqz = Carbon::now()->subMonths(1)->startOfMonth()->timestamp;
 
         // 拼task请求参数

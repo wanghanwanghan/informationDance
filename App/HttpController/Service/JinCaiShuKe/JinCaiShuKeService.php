@@ -660,7 +660,7 @@ class JinCaiShuKeService extends ServiceBase
             'endTime' => $endTime,
             'isDetail' => $isDetail,
             'pageNo' => $pageNo,
-            'pageSize' => 500,
+            'pageSize' => 100,
         ];
 
         $encryptStr = jsonEncode($post_data);
