@@ -93,4 +93,22 @@ class JinCaiController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    // 无盘 取税
+    function obtainAllTaxesInfo(): bool
+    {
+        $nsrsbh = $this->getRequestData('nsrsbh');
+        $skssqq = $this->getRequestData('skssqq');//Y-m-d
+        $skssqz = $this->getRequestData('skssqz');//Y-m-d
+
+        $this->csp->add($this->cspKey, function () use ($nsrsbh, $skssqq, $skssqz) {
+            return (new JinCaiShuKeService())->obtainAllTaxesInfo(
+                $nsrsbh, $skssqq, $skssqz
+            );
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
 }

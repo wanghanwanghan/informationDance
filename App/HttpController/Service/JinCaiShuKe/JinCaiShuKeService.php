@@ -777,6 +777,38 @@ class JinCaiShuKeService extends ServiceBase
         return $this->checkResp($res, 'wupan');
     }
 
+    //无盘 获取全部税种信息
+    function obtainAllTaxesInfo(string $nsrsbh, string $startTime, string $endTime): array
+    {
+        $url = 'distribute/api/' . __FUNCTION__;
+
+        $post_data = [
+            'nsrsbh' => $nsrsbh,
+            'skssqq' => $startTime,// YY-MM-DD
+            'skssqz' => $endTime,
+        ];
+
+        $encryptStr = jsonEncode($post_data);
+        $encryptStr = control::aesEncode($encryptStr, $this->appSecret_new);
+        $encryptStr = strtoupper($encryptStr);
+
+        $timestamp = microTimeNew();
+
+        $sign = md5($this->appKey_new . $this->appSecret_new . $encryptStr . $timestamp);
+
+        $url .= "?appKey={$this->appKey_new}&encryptStr={$encryptStr}&sign={$sign}&timestamp={$timestamp}";
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($this->wupan_url_new . $url, $post_data, [], ['cliTimeout' => 120], 'postjson');
+
+        CommonService::getInstance()->log4PHP($res, 'info', 'obtainAllTaxesInfo');
+
+        return $this->checkResp($res, 'wupan');
+    }
+
+
 }
 
 
