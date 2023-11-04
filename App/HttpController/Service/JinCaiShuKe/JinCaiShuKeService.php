@@ -555,6 +555,36 @@ class JinCaiShuKeService extends ServiceBase
         return $this->checkResp($res, 'wupan');
     }
 
+    //无盘 添加任务接口（通用提交采集任务报文）这是所有税务报表的采集
+    function addTaskSbr(string $nsrsbh, array $ywBody, string $taskCode = 'C001'): array
+    {
+        $url = 'distribute/task/addTask';
+
+        $post_data = [
+            'jtsh' => $this->jtnsrsbh,
+            'nsrsbh' => trim($nsrsbh),
+            'taskCode' => trim($taskCode),
+            'ywBody' => $ywBody,
+        ];
+
+        $encryptStr = jsonEncode($post_data);
+        $encryptStr = control::aesEncode($encryptStr, $this->appSecret_new);
+        $encryptStr = strtoupper($encryptStr);
+
+        $timestamp = microTimeNew();
+
+        $sign = md5($this->appKey_new . $this->appSecret_new . $encryptStr . $timestamp);
+
+        $url .= "?appKey={$this->appKey_new}&encryptStr={$encryptStr}&sign={$sign}&timestamp={$timestamp}";
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->needJsonDecode(true)
+            ->send($this->wupan_url_new . $url, $post_data, [], [], 'postjson');
+
+        return $this->checkResp($res, 'wupan');
+    }
+
     //无盘 获取采集任务状态
     function getTaskStatus(string $traceNo): array
     {

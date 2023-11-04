@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\JinCai;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Service\Common\CommonService;
 use App\HttpController\Service\JinCaiShuKe\JinCaiShuKeService;
 use Carbon\Carbon;
 
@@ -46,8 +47,8 @@ class JinCaiController extends ProvideBase
         $province = $this->getRequestData('province');//北京
         $city = $this->getRequestData('city');//北京
 
-        $kprqq = Carbon::now()->subMonths(36)->startOfMonth()->timestamp;
-        $kprqz = Carbon::now()->subMonths(1)->startOfMonth()->timestamp;
+        $kprqq = $sbrqq = Carbon::now()->subMonths(36)->startOfMonth()->timestamp;
+        $kprqz = $sbrqz = Carbon::now()->subMonths(1)->startOfMonth()->timestamp;
 
         // 拼task请求参数
         $ywBody = [
@@ -56,7 +57,15 @@ class JinCaiController extends ProvideBase
             'nsrsbh' => $nsrsbh,// 纳税人识别号
         ];
 
-        $this->csp->add($this->cspKey, function () use ($nsrsbh, $province, $city, $ywBody) {
+        $sbrBody = [
+            'sbrqq' => date('Y-m-d', $sbrqq),// 申报日期起
+            'sbrqz' => date('Y-m-d', $sbrqz),// 申报日期止
+            'nsrsbh' => $nsrsbh,// 纳税人识别号
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($nsrsbh, $province, $city, $ywBody, $sbrBody) {
+            $info = (new JinCaiShuKeService())->addTaskSbr($nsrsbh, $sbrBody);
+            CommonService::getInstance()->log4PHP($info, 'info', 'addTask');
             return (new JinCaiShuKeService())->addTaskNew($nsrsbh, $province, $city, $ywBody);
         });
 
