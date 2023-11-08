@@ -129,10 +129,9 @@ class jincai_api extends AbstractProcess
     //启动
     protected function run($arg)
     {
-        // $this->addTaskSD();
         // $this->addTask();
-         $this->getInvOne();
-        // $this->addTaskSD();
+        // $this->getInvOne();
+        $this->addTaskSD();
         // $this->getInv();
         // $this->_sendToOSS();//
         // $this->sendToAnt();
@@ -467,12 +466,11 @@ class jincai_api extends AbstractProcess
     function getInvOne()
     {
         $list = [
-            '上海治吉信息科技有限公司 91310105MA1FWQXH7B',
-//            '南京建瓴建筑工程有限公司 91320115339356743U',
+            '知藏（北京）数据技术有限公司 91110112MA01LRRQ0U',
         ];
 
-        $kprqq = date('Y-m-d', 1601481600);
-        $kprqz = date('Y-m-d', 1693497599);
+        $kprqq = date('Y-m-d', 1693411200);
+        $kprqz = date('Y-m-d', 1698681600);
 
         foreach ($list as $socialCredit) {
             list($entname, $code) = explode(' ', $socialCredit);
@@ -482,7 +480,6 @@ class jincai_api extends AbstractProcess
                 $main = (new JinCaiShuKeService())->obtainFpInfoNew(
                     true, $code, $kprqq, $kprqz, $page
                 );
-                file_put_contents('zhaoxianyunfp.txt', jsonEncode($main, false));
                 dd($main);
                 if (empty($main['result']['data']['content'])) {
                     dd('没了', $page);
@@ -856,8 +853,7 @@ class jincai_api extends AbstractProcess
     function addTaskSD()
     {
         $list = [
-            '上海治吉信息科技有限公司 91310105MA1FWQXH7B',
-//            '北京每日信动科技有限公司 91110108MA01KPGK0L',
+            '知藏（北京）数据技术有限公司 91110112MA01LRRQ0U',
         ];
 
         foreach ($list as $one) {
@@ -886,6 +882,16 @@ class jincai_api extends AbstractProcess
                 'kprqz' => date('Y-m-d', $kprqz),// 开票日期止
                 'nsrsbh' => $code,// 纳税人识别号
             ];
+
+            $addTaskInfo = (new JinCaiShuKeService())
+                ->addTaskSbr($code, $province, $city, [
+                    'sbrqq' => date('Y-m-d', $kprqq),
+                    'sbrqz' => date('Y-m-d', $kprqz),
+                    'nsrsbh' => $code
+                ]);
+
+            dd($addTaskInfo);
+
 
             $addTaskInfo = (new JinCaiShuKeService())
                 ->addTaskNew($code, $province, $city, $ywBody);

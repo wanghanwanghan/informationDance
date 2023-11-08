@@ -64,7 +64,7 @@ class JinCaiController extends ProvideBase
         ];
 
         $this->csp->add($this->cspKey, function () use ($nsrsbh, $province, $city, $ywBody, $sbrBody) {
-            $info = (new JinCaiShuKeService())->addTaskSbr($nsrsbh, $sbrBody);
+            $info = (new JinCaiShuKeService())->addTaskSbr($nsrsbh, $province, $city, $sbrBody);
             CommonService::getInstance()->log4PHP($info, 'info', 'addTask');
             return (new JinCaiShuKeService())->addTaskNew($nsrsbh, $province, $city, $ywBody);
         });

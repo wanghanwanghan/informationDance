@@ -556,13 +556,32 @@ class JinCaiShuKeService extends ServiceBase
     }
 
     //无盘 添加任务接口（通用提交采集任务报文）这是所有税务报表的采集
-    function addTaskSbr(string $nsrsbh, array $ywBody, string $taskCode = 'C001'): array
+    function addTaskSbr(string $nsrsbh, string $province, string $city, array $ywBody, string $taskCode = 'C001'): array
     {
         $url = 'distribute/task/addTask';
 
+        $province_tmp = '';
+
+        foreach (self::$province as $work => $py) {
+            if (is_numeric(mb_strpos($city, $work))) {
+                $province_tmp = $py;
+                break;
+            }
+        }
+
+        if (empty($province_tmp)) {
+            foreach (self::$province as $work => $py) {
+                if (is_numeric(mb_strpos($province, $work))) {
+                    $province_tmp = $py;
+                    break;
+                }
+            }
+        }
+
         $post_data = [
-            'jtsh' => $this->jtnsrsbh,
+            //'jtsh' => $this->jtnsrsbh,
             'nsrsbh' => trim($nsrsbh),
+            'province' => trim($province_tmp),
             'taskCode' => trim($taskCode),
             'ywBody' => $ywBody,
         ];
@@ -581,6 +600,8 @@ class JinCaiShuKeService extends ServiceBase
             ->useCache(false)
             ->needJsonDecode(true)
             ->send($this->wupan_url_new . $url, $post_data, [], [], 'postjson');
+
+        dd($res);
 
         return $this->checkResp($res, 'wupan');
     }
