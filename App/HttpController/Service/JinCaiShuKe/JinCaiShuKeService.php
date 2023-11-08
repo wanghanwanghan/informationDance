@@ -601,8 +601,6 @@ class JinCaiShuKeService extends ServiceBase
             ->needJsonDecode(true)
             ->send($this->wupan_url_new . $url, $post_data, [], [], 'postjson');
 
-        dd($res);
-
         return $this->checkResp($res, 'wupan');
     }
 
