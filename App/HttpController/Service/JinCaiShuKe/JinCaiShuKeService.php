@@ -530,7 +530,7 @@ class JinCaiShuKeService extends ServiceBase
         }
 
         $post_data = [
-            //'jtsh' => $this->jtnsrsbh,//自主授权不用穿 如果是托管过来就要
+            //'jtsh' => $this->jtnsrsbh,//自主授权不用穿 如果是托管过来就要 h5是自主授权
             'nsrsbh' => trim($nsrsbh),
             'province' => trim($province_tmp),
             'taskCode' => trim($taskCode),
