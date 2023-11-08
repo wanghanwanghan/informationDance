@@ -507,7 +507,7 @@ class JinCaiShuKeService extends ServiceBase
     }
 
     //无盘 添加任务接口（通用提交采集任务报文）
-    function addTaskNew(string $nsrsbh, string $province, string $city, array $ywBody, string $taskCode = 'A'): array
+    function addTaskNew(string $nsrsbh, string $province, string $city, array $ywBody, string $taskCode = 'A003'): array
     {
         $url = 'distribute/task/addTask';
 
