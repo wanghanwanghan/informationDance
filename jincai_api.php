@@ -65,8 +65,8 @@ class jincai_api extends AbstractProcess
     function do_select($type): \wanghanwanghan\someUtils\moudles\laravelDB\laravelDB
     {
         //内网
-        $in = 'rm-2ze1hvx2ot36cq7l2.mysql.rds.aliyuncs.com';
-        $out = 'rm-2ze1hvx2ot36cq7l2io.mysql.rds.aliyuncs.com';
+        $in = 'rm-2zeiipw1ih5908c27.mysql.rds.aliyuncs.com';
+        $out = 'rm-2zeiipw1ih5908c27eo.mysql.rds.aliyuncs.com';
 
         if ($type === 'out') {
             $host = $out;
@@ -891,7 +891,6 @@ class jincai_api extends AbstractProcess
                 ]);
 
             dd($addTaskInfo);
-
 
             $addTaskInfo = (new JinCaiShuKeService())
                 ->addTaskNew($code, $province, $city, $ywBody);
