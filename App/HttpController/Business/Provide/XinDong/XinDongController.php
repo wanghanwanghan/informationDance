@@ -66,6 +66,7 @@ class XinDongController extends ProvideBase
         return true;
     }
 
+    // 权大师用
     function getEntBasic(): bool
     {
         $companyName = $this->getRequestData('companyName', '');
