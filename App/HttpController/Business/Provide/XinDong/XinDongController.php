@@ -118,7 +118,6 @@ class XinDongController extends ProvideBase
                 'districtCode' => $info['result']['BASIC']['region_id'] ?? '',
                 'endDate' => $info['result']['BASIC']['REVDATE'] ?? '',
                 'econKindCode' => $info['result']['BASIC']['ENTTYPE_id'] ?? '',
-                'logo' => $info['result']['BASIC']['ent_log'] ?? '',
             ];
 
             $info['result']['BASIC'] = $content;
