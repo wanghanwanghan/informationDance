@@ -131,8 +131,6 @@ class LongXinService extends ServiceBase
             ->useCache(false)
             ->send($this->baseUrl . 'getentid/', $arr, $this->sendHeaders);
 
-        CommonService::getInstance()->log4PHP($res, 'info', 'getEntid');
-
         if (!empty($res) && isset($res['data']) && !empty($res['data'])) {
             $entid = $res['data'];
         } else {
@@ -1699,6 +1697,27 @@ class LongXinService extends ServiceBase
         return $this->checkResp($res);
     }
 
+    function getEntBasic(array $data): array
+    {
+        $entId = $this->getEntid($data['entName']);
+
+        if (empty($entId))
+            return ['code' => 102, 'msg' => 'entId是空', 'result' => [], 'paging' => null];
+
+        $arr = [
+            'entid' => $entId,
+            'version' => 'A1',
+            'usercode' => $this->usercode,
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
+
+        return $this->checkResp($res);
+    }
 
 
 

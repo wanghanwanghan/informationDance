@@ -66,6 +66,38 @@ class XinDongController extends ProvideBase
         return true;
     }
 
+    function getEntBasic(): bool
+    {
+        $companyName = $this->getRequestData('companyName', '');
+        $orgNo = $this->getRequestData('orgNo', '');
+        $regNo = $this->getRequestData('regNo', '');
+        $creditNo = $this->getRequestData('creditNo', '');
+
+        if (!empty($creditNo)) {
+            $entName = $creditNo;
+        } elseif (!empty($regNo)) {
+            $entName = $regNo;
+        } elseif (!empty($orgNo)) {
+            $entName = $orgNo;
+        } else {
+            $entName = $companyName;
+        }
+
+        $postData = [
+            'entName' => $entName
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getEntBasic($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     function selectPhone_hy(): bool
     {
         $postData = [

@@ -335,6 +335,7 @@ class ProvideRouter
             $routeCollector->addRoute(['GET', 'POST'], '/testCsp', $prefix . 'testCsp');//
             $routeCollector->addRoute(['GET', 'POST'], '/get24Month', $prefix . 'get24Month');//
             $routeCollector->addRoute(['GET', 'POST'], '/getEntAddress', $prefix . 'getEntAddress');//
+            $routeCollector->addRoute(['GET', 'POST'], '/getEntBasic', $prefix . 'getEntBasic');//
             $routeCollector->addRoute(['GET', 'POST'], '/getEnterprise', $prefix . 'getEnterprise');//
             $routeCollector->addRoute(['GET', 'POST'], '/getHistoricalEvolution', $prefix . 'getHistoricalEvolution');//历史沿革
             $routeCollector->addRoute(['GET', 'POST'], '/createEntReportE', $prefix . 'createEntReportE');//对外报告
