@@ -115,7 +115,9 @@ class XinDongController extends ProvideBase
                 'city' => $info['result']['BASIC']['city'] ?? '',
             ];
 
-            return $content;
+            $info['result']['BASIC'] = $content;
+
+            return $info;
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
