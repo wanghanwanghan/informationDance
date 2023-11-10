@@ -89,9 +89,33 @@ class XinDongController extends ProvideBase
         ];
 
         $this->csp->add($this->cspKey, function () use ($postData) {
-            return (new LongXinService())
+            $info = (new LongXinService())
                 ->setCheckRespFlag(true)
                 ->getEntBasic($postData);
+
+            $content = [
+                'companyName' => $info['result']['BASIC']['ENTNAME'] ?? '',
+                'creditNo' => $info['result']['BASIC']['UNISCID'] ?? '',
+                'orgNo' => $info['result']['BASIC']['NACAOID'] ?? '',
+                'regNo' => $info['result']['BASIC']['REGNO'] ?? '',
+                'termStart' => $info['result']['BASIC']['OPFROM'] ?? '',
+                'termEnd' => $info['result']['BASIC']['OPTO'] ?? '',
+                'econKind' => $info['result']['BASIC']['ENTTYPE'] ?? '',
+                'status' => $info['result']['BASIC']['ENTSTATUS'] ?? '',
+                'operName' => $info['result']['BASIC']['FRNAME'] ?? '',
+                'scope' => $info['result']['BASIC']['OPSCOPE'] ?? '',
+                'registerCapital' => $info['result']['BASIC']['REGCAPCN'] ?? '',
+                'regCap' => $info['result']['BASIC']['REGCAP'] ?? '',
+                'regCapCur' => $info['result']['BASIC']['REGCAPCUR'] ?? '',
+                'startDate' => $info['result']['BASIC']['ESDATE'] ?? '',
+                'address' => $info['result']['BASIC']['DOM'] ?? '',
+                'belongOrg' => $info['result']['BASIC']['REGORG'] ?? '',
+                'checkDate' => $info['result']['BASIC']['apprdate'] ?? '',
+                'province' => $info['result']['BASIC']['province'] ?? '',
+                'city' => $info['result']['BASIC']['city'] ?? '',
+            ];
+
+            return $content;
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
