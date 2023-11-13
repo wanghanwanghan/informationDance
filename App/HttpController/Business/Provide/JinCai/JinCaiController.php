@@ -76,25 +76,6 @@ class JinCaiController extends ProvideBase
         return $this->checkResponse($res);
     }
 
-    // 无盘 取票
-    function obtainFpInfoNew(): bool
-    {
-        $nsrsbh = $this->getRequestData('nsrsbh');
-        $kprqq = $this->getRequestData('kprqq');//Y-m-d
-        $kprqz = $this->getRequestData('kprqz');//Y-m-d
-        $page = $this->getRequestData('page');
-
-        $this->csp->add($this->cspKey, function () use ($nsrsbh, $kprqq, $kprqz, $page) {
-            return (new JinCaiShuKeService())->obtainFpInfoNew(
-                true, $nsrsbh, $kprqq, $kprqz, $page
-            );
-        });
-
-        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-
-        return $this->checkResponse($res);
-    }
-
     // 获取流水号集合
     function obtainFpTraceNoList(): bool
     {
@@ -116,6 +97,25 @@ class JinCaiController extends ProvideBase
 
         $this->csp->add($this->cspKey, function () use ($traceNo) {
             return (new JinCaiShuKeService())->obtainFpFile($traceNo);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
+    // 无盘 取票
+    function obtainFpInfoNew(): bool
+    {
+        $nsrsbh = $this->getRequestData('nsrsbh');
+        $kprqq = $this->getRequestData('kprqq');//Y-m-d
+        $kprqz = $this->getRequestData('kprqz');//Y-m-d
+        $page = $this->getRequestData('page');
+
+        $this->csp->add($this->cspKey, function () use ($nsrsbh, $kprqq, $kprqz, $page) {
+            return (new JinCaiShuKeService())->obtainFpInfoNew(
+                true, $nsrsbh, $kprqq, $kprqz, $page
+            );
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
