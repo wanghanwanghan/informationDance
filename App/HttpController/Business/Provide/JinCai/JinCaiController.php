@@ -98,7 +98,7 @@ class JinCaiController extends ProvideBase
     // 获取流水号集合
     function obtainFpTraceNoList(): bool
     {
-        $traceNo = $this->getRequestData('username');
+        $traceNo = $this->getRequestData('traceNo');
 
         $this->csp->add($this->cspKey, function () use ($traceNo) {
             return (new JinCaiShuKeService())->obtainFpTraceNoList($traceNo);
