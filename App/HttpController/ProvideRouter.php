@@ -64,6 +64,7 @@ class ProvideRouter
         $routeCollector->addGroup('/jc', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/obtainAllTaxesInfo', $prefix . 'obtainAllTaxesInfo');
             $routeCollector->addRoute(['GET', 'POST'], '/obtainFpInfoNew', $prefix . 'obtainFpInfoNew');
+            $routeCollector->addRoute(['GET', 'POST'], '/obtainFpTraceNoList', $prefix . 'obtainFpTraceNoList');
             $routeCollector->addRoute(['GET', 'POST'], '/obtainFpFile', $prefix . 'obtainFpFile');
             $routeCollector->addRoute(['GET', 'POST'], '/addTask', $prefix . 'addTask');
         });

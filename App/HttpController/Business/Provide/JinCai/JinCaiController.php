@@ -95,6 +95,20 @@ class JinCaiController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    // 获取流水号集合
+    function obtainFpTraceNoList(): bool
+    {
+        $traceNo = $this->getRequestData('username');
+
+        $this->csp->add($this->cspKey, function () use ($traceNo) {
+            return (new JinCaiShuKeService())->obtainFpTraceNoList($traceNo);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     // 发票文件
     function obtainFpFile(): bool
     {
@@ -105,8 +119,6 @@ class JinCaiController extends ProvideBase
         });
 
         $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
-
-        CommonService::getInstance()->log4PHP($res, 'info', 'obtainFpFile');
 
         return $this->checkResponse($res);
     }
