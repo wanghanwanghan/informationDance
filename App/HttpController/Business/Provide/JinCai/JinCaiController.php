@@ -95,6 +95,20 @@ class JinCaiController extends ProvideBase
         return $this->checkResponse($res);
     }
 
+    // 发票文件
+    function obtainFpFile(): bool
+    {
+        $traceNo = $this->getRequestData('traceNo');
+
+        $this->csp->add($this->cspKey, function () use ($traceNo) {
+            return (new JinCaiShuKeService())->obtainFpFile($traceNo);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     // 无盘 取税
     function obtainAllTaxesInfo(): bool
     {
