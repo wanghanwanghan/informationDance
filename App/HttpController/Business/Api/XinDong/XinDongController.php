@@ -190,14 +190,15 @@ class XinDongController extends XinDongBase
         $gsnsyhm = $this->request()->getRequestParam('gsnsyhm');//登录账号，身份证，手机号，用户名
         $sfzjhm = $this->request()->getRequestParam('sfzjhm');//身份证件号码
         $zjh = $this->request()->getRequestParam('zjh');//中间号或接收短信的手机号，涉及到短信验证码的省份必填
-        $gsnsmm = $this->request()->getRequestParam('gsnsmm');//登录密码
+        $gsnsmm = $this->request()->getRequestParam('gsnsmm');//登录密码 登录身份密码 两个传递一样就行
         $dlsf = $this->request()->getRequestParam('dlsf');//登录身份，财务负责人-1，法定代表人-2，办税员-3，开票员-7
 
-        $dlsfmm = $this->request()->getRequestParam('dlsfmm');//登录身份密码
+        $dlsfmm = $this->request()->getRequestParam('dlsfmm');//登录身份密码 登录密码 两个传递一样就行
         $bsryxz = $this->request()->getRequestParam('bsryxz');//办税人员姓名
 
         $traceno = $this->request()->getRequestParam('traceno');
-        $callback = 'https://api.meirixindong.com/api/v1/notify/el/login';
+        $callback = $this->request()->getRequestParam('callback');
+        $callback_xd = 'https://api.meirixindong.com/api/v1/notify/el/login';
         $qd = 'true';//是否全电登录，默认true
 
         $temp = [];
@@ -229,13 +230,13 @@ class XinDongController extends XinDongBase
             'callback' => $callback,
         ])->save();
 
-        TaskService::getInstance()->create(function () use ($nsrsbh, $loginType, $nsrdq, $traceno, $callback, $qd, $dlsf, $dlsfmm, $zjh, $gsnsmm, $sfzjhm, $gsnsyhm, $bsryxz) {
+        TaskService::getInstance()->create(function () use ($nsrsbh, $loginType, $nsrdq, $traceno, $callback_xd, $qd, $dlsf, $dlsfmm, $zjh, $gsnsmm, $sfzjhm, $gsnsyhm, $bsryxz) {
             return (new JinCaiShuKeService())->eleLogin([
                 'nsrsbh' => $nsrsbh,
                 'loginType' => $loginType,
                 'nsrdq' => $nsrdq,
                 'traceno' => $traceno,
-                'callback' => $callback,
+                'callback' => $callback_xd,
                 'qd' => $qd,
                 'dlsf' => $dlsf,
                 'dlsfmm' => $dlsfmm,
