@@ -270,6 +270,8 @@ class ProvideRouter
         $prefix = '/Business/Provide/XinDong/XinDongController/';
 
         $routeCollector->addGroup('/xd', function (RouteCollector $routeCollector) use ($prefix) {
+            $routeCollector->addRoute(['GET', 'POST'], '/el/isElectronicsLogin', $prefix . 'isElectronicsLogin');// 金财的发票账号密码授权用 https://api.meirixindong.com/api/v1/xd/el/
+            $routeCollector->addRoute(['GET', 'POST'], '/el/isElectronicsSmsAuth', $prefix . 'isElectronicsSmsAuth');// 金财的发票账号密码授权用 https://api.meirixindong.com/api/v1/xd/el/
             $routeCollector->addRoute(['GET', 'POST'], '/getClue', $prefix . 'getClue');//
             $routeCollector->addRoute(['GET', 'POST'], '/getClueNew', $prefix . 'getClueNew');//
             $routeCollector->addRoute(['GET', 'POST'], '/selectPhone_hy', $prefix . 'selectPhone_hy');//

@@ -191,9 +191,6 @@ class Router extends AbstractRouter
         $routeCollector->addGroup('/xd', function (RouteCollector $routeCollector) use ($prefix) {
             $routeCollector->addRoute(['GET', 'POST'], '/hezuo/uploadqrcode', $prefix . 'uploadQRcode');// php识别二维码贷款的那个需求
             $routeCollector->addRoute(['GET', 'POST'], '/hezuo/getqrcode', $prefix . 'getQRcode');// php识别二维码贷款的那个需求
-            $routeCollector->addRoute(['GET', 'POST'], '/el/isElectronicsLogin', $prefix . 'isElectronicsLogin');// 金财的发票账号密码授权用 https://api.meirixindong.com/api/v1/xd/el/
-            $routeCollector->addRoute(['GET', 'POST'], '/el/isElectronicsSmsAuth', $prefix . 'isElectronicsSmsAuth');// 金财的发票账号密码授权用 https://api.meirixindong.com/api/v1/xd/el/
-            $routeCollector->addRoute(['GET', 'POST'], '/el/getLoginStatus', $prefix . 'getLoginStatus');//
             $routeCollector->addRoute(['GET', 'POST'], '/getCorporateShareholderRisk', $prefix . 'getCorporateShareholderRisk');//控股法人股东的司法风险
             $routeCollector->addRoute(['GET', 'POST'], '/getProductStandard', $prefix . 'getProductStandard');//产品标准
             $routeCollector->addRoute(['GET', 'POST'], '/getAssetLeads', $prefix . 'getAssetLeads');//资产线索
