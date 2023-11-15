@@ -6,6 +6,7 @@ use App\HttpController\Business\BusinessBase;
 use App\HttpController\Models\AdminV2\OperatorLog;
 use App\HttpController\Models\Api\AuthBook;
 use App\HttpController\Models\Api\JinCaiQuanDianCB;
+use App\HttpController\Models\Api\JinCaiQuanDianLogin;
 use App\HttpController\Models\Api\PurchaseInfo;
 use App\HttpController\Models\Api\PurchaseList;
 use App\HttpController\Models\Api\Wallet;

@@ -169,6 +169,26 @@ class XinDongController extends ProvideBase
         return $this->checkResponse($temp);
     }
 
+    //根据traceNo查询授权结果
+    function isElectronicsGetStatus(): bool
+    {
+        $traceno = $this->request()->getRequestParam('traceno');
+
+        $this->csp->add($this->cspKey, function () use ($traceno) {
+            $info = JinCaiQuanDianLogin::create()->where('traceno', $traceno)->all();
+            return [
+                'code' => 200,
+                'paging' => 200,
+                'result' => empty($info) ? [] : obj2Arr($info),
+                'msg' => '',
+            ];
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     // 权大师用
     function getEntBasic(): bool
     {
