@@ -178,7 +178,7 @@ class XinDongController extends ProvideBase
             $info = JinCaiQuanDianLogin::create()->where('traceno', $traceno)->all();
             return [
                 'code' => 200,
-                'paging' => 200,
+                'paging' => null,
                 'result' => empty($info) ? [] : obj2Arr($info),
                 'msg' => '',
             ];
