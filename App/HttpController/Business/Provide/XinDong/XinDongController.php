@@ -4,6 +4,7 @@ namespace App\HttpController\Business\Provide\XinDong;
 
 use App\Csp\Service\CspService;
 use App\HttpController\Business\Provide\ProvideBase;
+use App\HttpController\Models\Api\JinCaiQuanDianCB;
 use App\HttpController\Models\Api\JinCaiQuanDianLogin;
 use App\HttpController\Models\Api\NeoCrmPendingEnt;
 use App\HttpController\Models\BusinessBase\CompanyClue;
@@ -175,7 +176,7 @@ class XinDongController extends ProvideBase
         $traceno = $this->request()->getRequestParam('traceno');
 
         $this->csp->add($this->cspKey, function () use ($traceno) {
-            $info = JinCaiQuanDianLogin::create()->where('traceno', $traceno)->all();
+            $info = JinCaiQuanDianCB::create()->where('traceno', $traceno)->all();
             return [
                 'code' => 200,
                 'paging' => null,
