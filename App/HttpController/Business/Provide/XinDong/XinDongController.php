@@ -90,7 +90,7 @@ class XinDongController extends ProvideBase
         $qd = 'true';//是否全电登录，默认true
 
         $temp = [];
-        $temp['code'] = 200;
+        $temp['code'] = 'S000';
         $temp['paging'] = null;
         $temp['result'] = [];
         $temp['msg'] = null;
@@ -100,7 +100,7 @@ class XinDongController extends ProvideBase
         if (!empty($check)) {
             $temp['code'] = 201;
             $temp['msg'] = 'traceno已存在';
-            return $this->checkResponse($temp);
+            return $this->checkResponse([$this->cspKey => $temp]);
         }
 
         JinCaiQuanDianLogin::create()->data([
@@ -136,7 +136,7 @@ class XinDongController extends ProvideBase
             ]);
         });
 
-        return $this->checkResponse($temp);
+        return $this->checkResponse([$this->cspKey => $temp]);
     }
 
     //金财的全电授权 短信验证码
@@ -146,7 +146,7 @@ class XinDongController extends ProvideBase
         $smsCode = $this->getRequestData('smsCode');
 
         $temp = [];
-        $temp['code'] = 200;
+        $temp['code'] = 'S000';
         $temp['paging'] = null;
         $temp['result'] = [];
         $temp['msg'] = null;
@@ -167,7 +167,7 @@ class XinDongController extends ProvideBase
             });
         }
 
-        return $this->checkResponse($temp);
+        return $this->checkResponse([$this->cspKey => $temp]);
     }
 
     //根据traceNo查询授权结果
@@ -178,7 +178,7 @@ class XinDongController extends ProvideBase
         $this->csp->add($this->cspKey, function () use ($traceno) {
             $info = JinCaiQuanDianCB::create()->where('traceno', $traceno)->all();
             return [
-                'code' => 200,
+                'code' => 'S000',
                 'paging' => null,
                 'result' => empty($info) ? [] : obj2Arr($info),
                 'msg' => '',
