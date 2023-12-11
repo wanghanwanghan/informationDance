@@ -32,8 +32,8 @@ class SnbFsofts
 
     }
 
-    // 上传文件流 一张一张传
-    function fileStreamUpload(string $filepath, string $no, string $name, string $type = 'Z201', string $channelSerialNo = '')
+    // 文件流上传 一张一张传 文件绝对路径 设置苏宁端新文件名 法人身份证 法人名称 文件类型(word) 自定义流水号和 serialNo 对应
+    function fileStreamUpload(string $filepath, string $newName, string $no, string $name, string $type, string $channelSerialNo)
     {
         $transCode = 'snb.fsofts.fileStream.upload';
         !empty($channelSerialNo) ?: $channelSerialNo = 'mrxd' . Helper::getInstance()->getMicroTime();
@@ -54,7 +54,7 @@ class SnbFsofts
         ];
 
         $public = [
-            'file_0' => new \CURLFile(realpath($filepath), '', 'test_yyzz_1.jpg'),
+            'file_0' => new \CURLFile(realpath($filepath), '', $newName),
             'channelSerialNo' => $channelSerialNo,// 流水号
             'transCode' => $transCode,
             'channelId' => $this->obj->channelId,
