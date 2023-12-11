@@ -36,7 +36,7 @@ class SnbFsofts
     function fileStreamUpload(string $filepath, string $newName, string $no, string $name, string $type, string $channelSerialNo)
     {
         $transCode = 'snb.fsofts.fileStream.upload';
-        !empty($channelSerialNo) ?: $channelSerialNo = 'mrxd' . Helper::getInstance()->getMicroTime();
+        !empty($channelSerialNo) ?: $channelSerialNo = 'xd' . Helper::getInstance()->getMicroTime();
 
         $file = file_get_contents($filepath);
 
