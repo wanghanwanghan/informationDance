@@ -2,6 +2,8 @@
 
 namespace AccountSystemXD\Suning;
 
+use AccountSystemXD\Helper\Helper;
+
 class SnbFsofts
 {
     private static $instance;
@@ -31,9 +33,10 @@ class SnbFsofts
     }
 
     // 上传文件流 一张一张传
-    function fileStreamUpload(string $filepath, string $no, string $name, string $type = 'Z201')
+    function fileStreamUpload(string $filepath, string $no, string $name, string $type = 'Z201', string $channelSerialNo = '')
     {
         $transCode = 'snb.fsofts.fileStream.upload';
+        !empty($channelSerialNo) ?: $channelSerialNo = 'mrxd' . Helper::getInstance()->getMicroTime();
 
         $file = file_get_contents($filepath);
 
@@ -52,7 +55,7 @@ class SnbFsofts
 
         $public = [
             'file_0' => new \CURLFile(realpath($filepath), '', 'test_yyzz_1.jpg'),
-            'channelSerialNo' => 'mrxd' . time(),// 流水号
+            'channelSerialNo' => $channelSerialNo,// 流水号
             'transCode' => $transCode,
             'channelId' => $this->obj->channelId,
         ];
