@@ -45,4 +45,7 @@ trait SuningBankT
         $this->urlBase = $url;
         return $this;
     }
+
+
+
 }

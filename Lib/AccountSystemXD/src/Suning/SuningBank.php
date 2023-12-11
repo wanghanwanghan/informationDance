@@ -22,6 +22,8 @@ class SuningBank
     private $urlBase = null;
 
     private $appCode = '91110108MA01KPGK0L0002';
+    private $merchantId = 'MRXD0002';
+    private $channelId = 'MRXD0001';
     private $algorithm = 'SHA256withRSA';
     private $ipAddress = '39.105.35.154';
     private $terminal = '1';
@@ -52,6 +54,15 @@ class SuningBank
         $publicKey = openssl_get_publickey($this->serAppPem);
         openssl_public_encrypt($ori, $encrypted, $publicKey);
         return ['ori' => $ori, 'secret' => bin2hex($encrypted)];
+    }
+
+    // 解密secretKey
+    private function decryptSecretKey(string $sk): string
+    {
+        $keyStr = $this->cliAppPem;
+        $privateKey = openssl_get_privatekey($keyStr);
+        openssl_private_decrypt(hex2bin($sk), $base, $privateKey);
+        return $base;
     }
 
     // 生成signature
@@ -114,16 +125,16 @@ class SuningBank
         return $this;
     }
 
-    // 发送http请求
+    // 发送http请求 回头改成coHttpCli
     function send(string $transCode): array
     {
         $url = trim($this->urlBase, '/') . "/{$this->appCode}/{$transCode}";
 
         $curl = curl_init(); //初始化
-        curl_setopt($curl, CURLOPT_URL, $url); //设置请求地址
+        curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_HTTPHEADER, $this->header); //设置请求header
-        curl_setopt($curl, CURLOPT_POST, true); //设置post方式请求
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5); //几秒后没链接上就自动断开
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 5); // 几秒后没链接上就自动断开
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);// 对认证证书来源的检查
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);// 从证书中检查SSL加密算法是否存在
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //返回值不直接显示
@@ -140,6 +151,24 @@ class SuningBank
         curl_close($curl);
 
         return ['result' => $res, 'error' => $error];
+    }
+
+    // 苏宁返回的报文解秘
+    function handlerPayload($result)
+    {
+        $info = is_array($result) ? $result : Helper::getInstance()->jsonDecode($result);
+
+        $secretKey = $this->decryptSecretKey($info['secretKey']);
+
+        // sm4解密
+        $payload = trim((new Sm4())->setKey($secretKey)->decryptData($info['payload']));
+
+        return Helper::getInstance()->jsonDecode($payload);
+    }
+
+    function __get(string $name)
+    {
+        return $this->$name;
     }
 
 }
