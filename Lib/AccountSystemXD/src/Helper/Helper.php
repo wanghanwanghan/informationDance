@@ -42,4 +42,11 @@ class Helper
         });
     }
 
+    // 写log 暂时用
+    function writeLog($content)
+    {
+        $file = getcwd() . '/' . date('Ymd', time()) . '.log';
+        !is_array($content) ?: $content = $this->jsonEncode($content);
+        return file_put_contents($file, trim($content) . PHP_EOL, FILE_APPEND);
+    }
 }

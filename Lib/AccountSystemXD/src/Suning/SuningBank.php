@@ -122,6 +122,8 @@ class SuningBank
         $sendData['signature'] = $signature;
         $this->sendData = array_merge($sendData, $public);
 
+        Helper::getInstance()->writeLog($this->sendData);
+
         return $this;
     }
 
@@ -149,6 +151,8 @@ class SuningBank
         $res = curl_exec($curl); //发送请求
         $error = curl_error($curl);
         curl_close($curl);
+
+        Helper::getInstance()->writeLog(['result' => $res, 'error' => $error]);
 
         return ['result' => $res, 'error' => $error];
     }
