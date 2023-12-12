@@ -102,6 +102,8 @@ class SuningBank
         // 去掉第一层空值
         $public = Helper::getInstance()->arrayFilter($public);
 
+        Helper::getInstance()->writeLog(array_merge($payload, $public));
+
         // 补全其他 公共参数
         $public['appCode'] = $this->appCode;
         $public['timestamp'] = date('Y-m-d H:i:s');

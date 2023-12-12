@@ -24,6 +24,33 @@ class SnbFsofts
         return $this;
     }
 
+    // 打款金额验证 妈的
+    function payCheck()
+    {
+        $version = '1.0';
+        $transCode = 'snb.steward.pay.check';
+        !empty($channelSerialNo) ?: $channelSerialNo = 'xd' . Helper::getInstance()->getMicroTime();
+
+        $payload = [
+            'merchantId' => $this->obj->merchantId,
+            'platformcd' => $this->obj->platformcd,
+            'orgReqDate' => 'xxx',// 原交易日期
+            'xxxxx' => 'xxx',// xxxxx
+            'xxxxx' => 'xxx',// xxxxx
+            'xxxxx' => 'xxx',// xxxxx
+            'xxxxx' => 'xxx',// xxxxx
+            'xxxxx' => 'xxx',// xxxxx
+        ];
+
+        $public = [
+            'channelSerialNo' => $channelSerialNo,// 流水号
+            'channelId' => $this->obj->channelId,
+            'transCode' => $transCode,
+        ];
+
+        return $this->obj->setParams($payload, $public)->setHeader($version)->send($transCode);
+    }
+
     // 企业绑卡开户 艹这么多参数
     function enterpriseOpen(array $arr)
     {
