@@ -29,12 +29,7 @@ class SuningBank
     private $ipAddress = '39.105.35.154';
     private $terminal = '1';
 
-    private $header = [
-        'charset: UTF-8',
-        'content-type: multipart/form-data',
-        'version: 1.0',
-        'appCode: 91110108MA01KPGK0L0002',
-    ];
+    private $header = [];
 
     private $sendData = null;
 
@@ -169,6 +164,18 @@ class SuningBank
         $payload = trim((new Sm4())->setKey($secretKey)->decryptData($info['payload']));
 
         return Helper::getInstance()->jsonDecode($payload);
+    }
+
+    // 什么破玩意
+    function setHeader(string $version): SuningBank
+    {
+        $this->header = [
+            'charset: UTF-8',
+            'content-type: multipart/form-data',
+            "version: {$version}",
+            'appCode: 91110108MA01KPGK0L0002',
+        ];
+        return $this;
     }
 
     function __get(string $name)

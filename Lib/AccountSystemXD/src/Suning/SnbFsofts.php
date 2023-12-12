@@ -27,6 +27,7 @@ class SnbFsofts
     // 企业绑卡开户 艹这么多参数
     function enterpriseOpen(array $arr)
     {
+        $version = '2.0';
         $transCode = 'snb.steward.account.enterprise.open';
         !empty($channelSerialNo) ?: $channelSerialNo = 'xd' . Helper::getInstance()->getMicroTime();
 
@@ -89,12 +90,13 @@ class SnbFsofts
             'transCode' => $transCode,
         ];
 
-        return $this->obj->setParams($payload, $public)->send($transCode);
+        return $this->obj->setParams($payload, $public)->setHeader($version)->send($transCode);
     }
 
-// 文件流上传 一张一张传 文件绝对路径 设置苏宁端新文件名 法人身份证 法人名称 文件类型(word) 自定义流水号和 serialNo 对应
+    // 文件流上传 一张一张传 文件绝对路径 设置苏宁端新文件名 法人身份证 法人名称 文件类型(word) 自定义流水号和 serialNo 对应
     function fileStreamUpload(string $filepath, string $newName, string $no, string $name, string $type, string $channelSerialNo)
     {
+        $version = '1.0';
         $transCode = 'snb.fsofts.fileStream.upload';
         !empty($channelSerialNo) ?: $channelSerialNo = 'xd' . Helper::getInstance()->getMicroTime();
 
@@ -120,6 +122,6 @@ class SnbFsofts
             'channelId' => $this->obj->channelId,
         ];
 
-        return $this->obj->setParams($payload, $public)->send($transCode);
+        return $this->obj->setParams($payload, $public)->setHeader($version)->send($transCode);
     }
 }
