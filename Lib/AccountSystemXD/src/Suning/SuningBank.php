@@ -24,6 +24,7 @@ class SuningBank
     private $appCode = '91110108MA01KPGK0L0002';
     private $merchantId = 'MRXD0002';
     private $channelId = 'MRXD0001';
+    private $platformcd = '80355';
     private $algorithm = 'SHA256withRSA';
     private $ipAddress = '39.105.35.154';
     private $terminal = '1';
