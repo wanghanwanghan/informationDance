@@ -24,22 +24,28 @@ class SnbFsofts
         return $this;
     }
 
-    // 打款金额验证 妈的
-    function payCheck()
+    // 账户提现
+    function accountWithdraw(
+        string $merUserId, string $acctNbr,
+        string $rcvAcctNbr, string $rcvAcctName, string $rcvBankName, string $rcvBankNo,
+        string $transAmt, string $memo, string $channelSerialNo
+    )
     {
         $version = '1.0';
-        $transCode = 'snb.steward.pay.check';
+        $transCode = 'snb.steward.account.withdraw';
         !empty($channelSerialNo) ?: $channelSerialNo = 'xd' . Helper::getInstance()->getMicroTime();
 
         $payload = [
             'merchantId' => $this->obj->merchantId,
             'platformcd' => $this->obj->platformcd,
-            'orgReqDate' => 'xxx',// 原交易日期
-            'xxxxx' => 'xxx',// xxxxx
-            'xxxxx' => 'xxx',// xxxxx
-            'xxxxx' => 'xxx',// xxxxx
-            'xxxxx' => 'xxx',// xxxxx
-            'xxxxx' => 'xxx',// xxxxx
+            'merUserId' => $merUserId,// 会员号
+            'acctNbr' => $acctNbr,// 子账号
+            'rcvAcctNbr' => $rcvAcctNbr,// 收款账号
+            'rcvAcctName' => $rcvAcctName,// 收款账户名称
+            'rcvBankName' => $rcvBankName,// 收款账户开户行名
+            'rcvBankNo' => $rcvBankNo,// 收款账户银行行号
+            'transAmt' => $transAmt,// 交易金额
+            'memo' => $memo,// 交易摘要
         ];
 
         $public = [
@@ -48,11 +54,142 @@ class SnbFsofts
             'transCode' => $transCode,
         ];
 
-        return $this->obj->setParams($payload, $public)->setHeader($version)->send($transCode);
+        return $this->obj->setParams($payload, $public)
+            ->setHeader($version)->send($transCode);
+    }
+
+    // 交易状态查询 艹要搞乱了
+    function payStatusQuery(string $orgChannelSerialNo, string $channelSerialNo)
+    {
+        $version = '1.0';
+        $transCode = 'snb.steward.pay.status.query';
+        !empty($channelSerialNo) ?: $channelSerialNo = 'xd' . Helper::getInstance()->getMicroTime();
+
+        $payload = [
+            'merchantId' => $this->obj->merchantId,
+            'platformcd' => $this->obj->platformcd,
+            'orgChannelSerialNo' => $orgChannelSerialNo,// 原流水号
+        ];
+
+        $public = [
+            'channelSerialNo' => $channelSerialNo,// 流水号
+            'channelId' => $this->obj->channelId,
+            'transCode' => $transCode,
+        ];
+
+        return $this->obj->setParams($payload, $public)
+            ->setHeader($version)->send($transCode);
+    }
+
+    // 账户交易明细查询
+    function payTransQuery(
+        string $merUserId, string $acctNbr,
+        string $startDate, string $endDate, string $page, string $pageSize, string $channelSerialNo
+    )
+    {
+        $version = '1.0';
+        $transCode = 'snb.steward.pay.trans.query';
+        !empty($channelSerialNo) ?: $channelSerialNo = 'xd' . Helper::getInstance()->getMicroTime();
+
+        $payload = [
+            'merchantId' => $this->obj->merchantId,
+            'platformcd' => $this->obj->platformcd,
+            'merUserId' => $merUserId,// 会员号
+            'acctNbr' => $acctNbr,// 子账号
+            'startDate' => $startDate,// yyyymmdd
+            'endDate' => $endDate,// yyyymmdd
+            'pageNum' => $page,// 默认1
+            'pageSize' => $pageSize,// 默认30，上限100
+        ];
+
+        $public = [
+            'channelSerialNo' => $channelSerialNo,// 流水号
+            'channelId' => $this->obj->channelId,
+            'transCode' => $transCode,
+        ];
+
+        return $this->obj->setParams($payload, $public)
+            ->setHeader($version)->send($transCode);
+    }
+
+    // 账户余额查询
+    function accountBalanceQuery(string $merUserId, string $acctNbr, string $channelSerialNo)
+    {
+        $version = '1.0';
+        $transCode = 'snb.steward.account.balance.query';
+        !empty($channelSerialNo) ?: $channelSerialNo = 'xd' . Helper::getInstance()->getMicroTime();
+
+        $payload = [
+            'merchantId' => $this->obj->merchantId,
+            'platformcd' => $this->obj->platformcd,
+            'list' => [
+                [
+                    'merUserId' => $merUserId,// 会员号
+                    'acctNbr' => $acctNbr,// 子账号
+                ]
+            ],
+        ];
+
+        $public = [
+            'channelSerialNo' => $channelSerialNo,// 流水号
+            'channelId' => $this->obj->channelId,
+            'transCode' => $transCode,
+        ];
+
+        return $this->obj->setParams($payload, $public)
+            ->setHeader($version)->send($transCode);
+    }
+
+    // 开户结果查询 艹
+    function accountOpenQuery(string $orgChannelSerialNo, string $channelSerialNo)
+    {
+        $version = '1.0';
+        $transCode = 'snb.steward.account.open.query';
+        !empty($channelSerialNo) ?: $channelSerialNo = 'xd' . Helper::getInstance()->getMicroTime();
+
+        $payload = [
+            'merchantId' => $this->obj->merchantId,
+            'platformcd' => $this->obj->platformcd,
+            'orgChannelSerialNo' => trim($orgChannelSerialNo),// 原请求流水号
+        ];
+
+        $public = [
+            'channelSerialNo' => $channelSerialNo,// 流水号
+            'channelId' => $this->obj->channelId,
+            'transCode' => $transCode,
+        ];
+
+        return $this->obj->setParams($payload, $public)
+            ->setHeader($version)->send($transCode);
+    }
+
+    // 打款金额验证 妈的
+    function payCheck(string $orgReqDate, string $orgChannelSerialNo, string $amount, string $channelSerialNo)
+    {
+        $version = '1.0';
+        $transCode = 'snb.steward.pay.check';
+        !empty($channelSerialNo) ?: $channelSerialNo = 'xd' . Helper::getInstance()->getMicroTime();
+
+        $payload = [
+            'merchantId' => $this->obj->merchantId,
+            'platformcd' => $this->obj->platformcd,
+            'orgReqDate' => trim($orgReqDate),// 原交易日期 yyyymmdd
+            'orgChannelSerialNo' => trim($orgChannelSerialNo),// 原请求流水号
+            'amount' => trim($amount),// 打款金额
+        ];
+
+        $public = [
+            'channelSerialNo' => $channelSerialNo,// 流水号
+            'channelId' => $this->obj->channelId,
+            'transCode' => $transCode,
+        ];
+
+        return $this->obj->setParams($payload, $public)
+            ->setHeader($version)->send($transCode);
     }
 
     // 企业绑卡开户 艹这么多参数
-    function enterpriseOpen(array $arr)
+    function enterpriseOpen(array $arr, string $channelSerialNo)
     {
         $version = '2.0';
         $transCode = 'snb.steward.account.enterprise.open';
@@ -61,7 +198,7 @@ class SnbFsofts
         $payload = [
             'merchantId' => $this->obj->merchantId,
             'platformcd' => $this->obj->platformcd,
-            'acctName' => trim($arr['acctName']),
+            'acctName' => trim($arr['acctName']),// 账户名称
             'corpType' => trim($arr['corpType']),// 1是公司 2是个体
             'isBearing' => '2',// 送2，这个功能在规划中，暂时不支持
             'corpName' => trim($arr['corpName']),
@@ -117,11 +254,14 @@ class SnbFsofts
             'transCode' => $transCode,
         ];
 
-        return $this->obj->setParams($payload, $public)->setHeader($version)->send($transCode);
+        return $this->obj->setParams($payload, $public)
+            ->setHeader($version)->send($transCode);
     }
 
     // 文件流上传 一张一张传 文件绝对路径 设置苏宁端新文件名 法人身份证 法人名称 文件类型(word) 自定义流水号和 serialNo 对应
-    function fileStreamUpload(string $filepath, string $newName, string $no, string $name, string $type, string $channelSerialNo)
+    function fileStreamUpload(
+        string $filepath, string $newName, string $no, string $name, string $type, string $channelSerialNo
+    )
     {
         $version = '1.0';
         $transCode = 'snb.fsofts.fileStream.upload';
@@ -149,6 +289,7 @@ class SnbFsofts
             'channelId' => $this->obj->channelId,
         ];
 
-        return $this->obj->setParams($payload, $public)->setHeader($version)->send($transCode);
+        return $this->obj->setParams($payload, $public)
+            ->setHeader($version, 'multipart/form-data')->send($transCode, false);
     }
 }

@@ -10,8 +10,6 @@ class SuningBank
 {
     use SuningBankT;
 
-    private static $instance;
-
     private $serAppPem = null;
     private $cliAppPem = null;
 
@@ -33,13 +31,30 @@ class SuningBank
 
     private $sendData = null;
 
-    static function getInstance(...$args): SuningBank
+    // 合并顺序 转换格式 urlencode 类型
+    private function formatParams($params)
     {
-        if (!isset(self::$instance)) {
-            self::$instance = new static(...$args);
+        foreach ($params as $key => $val) {
+            if (is_array($val)) {
+                // 如果 val 是数组 并且 val 的键都是数字
+                $keyCheck = implode('', array_keys($val));
+                $check = preg_match('/[0-9]/', $keyCheck);
+                if ($check) {
+                    $arr = [];
+                    foreach ($val as $once) {
+                        ksort($once);
+                        $arr[] = http_build_query($once);
+                    }
+                    $arr = implode('', $arr);
+                    $params[$key] = $arr;
+                } else {
+                    $this->formatParams($val);
+                    ksort($val);
+                    $params[$key] = http_build_query($val);
+                }
+            }
         }
-
-        return self::$instance;
+        return $params;
     }
 
     // 生成secretKey
@@ -68,17 +83,14 @@ class SuningBank
         unset($params['file_0'], $params['file_1'], $params['file_2'], $params['file_3']);
 
         // 合并顺序 转换格式 urlencode 类型 不参与签名
-        foreach ($params as $k => $v) {
-            if (is_array($v)) {
-                ksort($v);
-                $params[$k] = http_build_query($v);
-            }
-        }
+        $params = $this->formatParams($params);
 
         ksort($params);
 
         // 得到签名原始字符串 明文
         $ori = http_build_query($params);
+
+        Helper::getInstance()->writeLog('本次签名原文:' . $ori);
 
         // 签名私钥加密 输出16进制
         $pkeyid = openssl_pkey_get_private($this->cliAppPem);
@@ -126,9 +138,11 @@ class SuningBank
     }
 
     // 发送http请求 回头改成coHttpCli
-    function send(string $transCode): array
+    function send(string $transCode, bool $build = true): array
     {
         $url = trim($this->urlBase, '/') . "/{$this->appCode}/{$transCode}";
+
+        $build ? $sendData = http_build_query($this->sendData) : $sendData = $this->sendData;
 
         $curl = curl_init(); //初始化
         curl_setopt($curl, CURLOPT_URL, $url);
@@ -138,15 +152,15 @@ class SuningBank
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);// 对认证证书来源的检查
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);// 从证书中检查SSL加密算法是否存在
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); //返回值不直接显示
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $this->sendData); //提交的数据
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $sendData); //提交的数据
         curl_setopt($curl, CURLOPT_HEADER, false); //不输出响应头
         curl_setopt($curl, CURLOPT_SSLCERTTYPE, 'PEM'); // PHP的 CURL 只支持 PEM 方式
         curl_setopt($curl, CURLOPT_SSLCERT, $this->certPem); // cert.pem文件路径
-        curl_setopt($curl, CURLOPT_SSLCERTPASSWD, 'wanghan123'); // 证书密码
+        curl_setopt($curl, CURLOPT_SSLCERTPASSWD, $this->sslPwd); // 证书密码
         curl_setopt($curl, CURLOPT_SSLKEYTYPE, 'PEM'); // PHP的 CURL 只支持 PEM 方式
         curl_setopt($curl, CURLOPT_SSLKEY, $this->privatePem); // private.pem 文件路径
         curl_setopt($curl, CURLOPT_VERBOSE, false); // 输出详细调试信息
-        $res = curl_exec($curl); //发送请求
+        $res = curl_exec($curl);
         $error = curl_error($curl);
         curl_close($curl);
 
@@ -169,11 +183,11 @@ class SuningBank
     }
 
     // 什么破玩意
-    function setHeader(string $version): SuningBank
+    function setHeader(string $version, string $contentType = 'application/x-www-form-urlencoded'): SuningBank
     {
         $this->header = [
             'charset: UTF-8',
-            'content-type: multipart/form-data',
+            "Content-Type: {$contentType}",
             "version: {$version}",
             'appCode: 91110108MA01KPGK0L0002',
         ];
