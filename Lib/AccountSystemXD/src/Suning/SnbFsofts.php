@@ -24,6 +24,29 @@ class SnbFsofts
         return $this;
     }
 
+    // 批量入账查询
+    function batchEntryQuery(string $orgChannelSerialNo, string $channelSerialNo)
+    {
+        $version = '1.0';
+        $transCode = 'snb.steward.batch.entry.query';
+        !empty($channelSerialNo) ?: $channelSerialNo = 'xd' . Helper::getInstance()->getMicroTime();
+
+        $payload = [
+            'merchantId' => $this->obj->merchantId,
+            'platformcd' => $this->obj->platformcd,
+            'orgChannelSerialNo' => trim($orgChannelSerialNo),// 支付分账 接口的流水号
+        ];
+
+        $public = [
+            'channelSerialNo' => $channelSerialNo,// 流水号
+            'channelId' => $this->obj->channelId,
+            'transCode' => $transCode,
+        ];
+
+        return $this->obj->setParams($payload, $public)
+            ->setHeader($version)->send($transCode);
+    }
+
     // 企业账户信息变更
     function enterpriseUpdate(string $channelSerialNo)
     {
