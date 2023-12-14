@@ -957,7 +957,7 @@ class XinDongController extends ProvideBase
             return $this->writeJson(201, null, null, '只能最多请求三年的数据');
         }
         $beginYear = 2022;
-        $dataCount = 5;
+        $dataCount = 4;
 
         $this->spendMoney = 1;
 
