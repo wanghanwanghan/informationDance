@@ -34,36 +34,24 @@ class Sm4
         0x18, 0xf0, 0x7d, 0xec, 0x3a, 0xdc, 0x4d, 0x20, 0x79, 0xee, 0x5f, 0x3e, 0xd7, 0xcb, 0x39, 0x48
     ];
 
-    /**
-     * 系统参数
-     */
     public $SM4_FK = [0xA3B1BAC6, 0x56AA3350, 0x677D9197, 0xB27022DC];
 
-    private $key = [];//16个 HEXHEX格式的数组 16字节 128bits  为了操作方便,直接存成十进制
+    // 16个 HEXHEX格式的数组 16字节 128bits  为了操作方便,直接存成十进制
+    private $key = [];
 
-    private $skey = [];//记录每轮加密的秘钥 记录成十进制
+    // 记录每轮加密的秘钥 记录成十进制
+    private $skey = [];
 
     private $block_size = 32;
 
-    /**
-     * 字符串转16进制
-     * @param $str
-     * @return string
-     */
-    public function strToHex($str)
+    // 字符串转16进制
+    function strToHex($str): string
     {
         return bin2hex($str);
     }
 
-
-    /**设置加密秘钥
-     *
-     * @param $key 32个十六进制的字符
-     *
-     * @return $this
-     * @throws Exception
-     */
-    public function setKey($key)
+    // 设置加密秘钥
+    function setKey($key): Sm4
     {
         $key = $this->strToHex($key);
         $this->key = $this->preProcess($key);
@@ -72,9 +60,7 @@ class Sm4
         return $this;
     }
 
-    /**
-     * 计算每轮加密需要的秘钥
-     */
+    // 计算每轮加密需要的秘钥
     private function setSkey()
     {
         $skey = [];
@@ -84,40 +70,28 @@ class Sm4
         for ($k = 0; $k < 32; $k++) {
             $tmp = $skey[$k + 1] ^ $skey[$k + 2] ^ $skey[$k + 3] ^ $this->SM4_CK[$k];
 
-            //非线性化操作
+            // 非线性化操作
             $buf = ($this->SM4_Sbox[($tmp >> 24) & 0xff]) << 24 |
                 ($this->SM4_Sbox[($tmp >> 16) & 0xff]) << 16 |
                 ($this->SM4_Sbox[($tmp >> 8) & 0xff]) << 8 |
                 ($this->SM4_Sbox[$tmp & 0xff]);
-            //线性化操作
+            // 线性化操作
             $skey[] = $skey[$k] ^ ($buf ^ $this->sm4Rotl32($buf, 13) ^ $this->sm4Rotl32($buf, 23));
             $this->skey[] = $skey[$k + 4];
         }
     }
 
-
-    /**32比特的buffer中循环左移n位
-     *
-     * @param $buf int 可以传递进10进制 也可以是0b开头的二进制
-     * @param $n int 向左偏移n位
-     *
-     * @return int
-     * reference http://blog.csdn.net/w845695652/article/details/6522285
-     */
-    private function sm4Rotl32($buf, $n)
+    // 32比特的buffer中循环左移n位
+    // $buf int 可以传递进10进制 也可以是0b开头的二进制
+    // $n int 向左偏移n位
+    // http://blog.csdn.net/w845695652/article/details/6522285
+    private function sm4Rotl32($buf, $n): int
     {
         return (($buf << $n) & 0xffffffff) | ($buf >> (32 - $n));
     }
 
-    /**
-     * 对字符串加密
-     *
-     * @param $plainText
-     *
-     * @return string
-     * @throws Exception
-     */
-    public function encryptData($plainText)
+    // 对字符串加密
+    function encryptData($plainText): string
     {
         $bytes = bin2hex($plainText);
 
@@ -135,19 +109,12 @@ class Sm4
         }, $chunks)));
     }
 
-
-    /**SM4加密单个片段(128bit)
-     *
-     * @param $text string 32个十六进制字符串
-     *
-     * @return string
-     * @throws Exception
-     */
-    public function encrypt($text)
+    // SM4加密单个片段(128bit)
+    // $text string 32个十六进制字符串
+    function encrypt($text): string
     {
         $x = $re = [];
         $t = $this->preProcess($text);
-
 
         for ($i = 0; $i < 4; $i++) {
             $x[] = $t[$i * 4] << 24 |
@@ -158,12 +125,10 @@ class Sm4
 
         for ($k = 0; $k < 32; $k++) {
             $tmp = $x[$k + 1] ^ $x[$k + 2] ^ $x[$k + 3] ^ $this->skey[$k];
-
             $buf = $this->SM4_Sbox[($tmp >> 24) & 0xff] << 24 |
                 $this->SM4_Sbox[($tmp >> 16) & 0xff] << 16 |
                 $this->SM4_Sbox[($tmp >> 8) & 0xff] << 8 |
                 $this->SM4_Sbox[$tmp & 0xff];
-
             $x[$k + 4] = $x[$k] ^ $buf
                 ^ $this->sm4Rotl32($buf, 2)
                 ^ $this->sm4Rotl32($buf, 10)
@@ -178,21 +143,14 @@ class Sm4
         }
 
         return $this->wrapResult($re);
-
     }
 
-    /**预处理16字节长度的16进制字符串 返回10进制的数组 数组大小为16
-     *
-     * @param $text
-     *
-     * @return array
-     * @throws Exception
-     */
-    private function preProcess($text)
+    // 预处理16字节长度的16进制字符串 返回10进制的数组 数组大小为16
+    private function preProcess($text): array
     {
         preg_match('/[0-9a-f]{32}/', strtolower($text), $re);
         if (empty($re)) {
-            throw new WorkException('error input format!');
+            return [];
         }
         $key = $re[0];
         for ($i = 0; $i < 16; $i++) {
@@ -202,20 +160,16 @@ class Sm4
         return $result;
     }
 
-    /**将十进制结果包装成16进制字符串输出
-     *
-     * @param $result
-     *
-     * @return string
-     */
-    private function wrapResult($result)
+    // 将十进制结果包装成16进制字符串输出
+    private function wrapResult($result): string
     {
         $hex_str = '';
+
         foreach ($result as $v) {
             $tmp = dechex($v);
             $len = strlen($tmp);
-            if ($len == 1)//不足两位十六进制的数 在前面补一个0,保证输出也是32个16进制字符
-            {
+            // 不足两位十六进制的数 在前面补一个0,保证输出也是32个16进制字符
+            if ($len == 1) {
                 $hex_str .= '0';
             }
             $hex_str .= $tmp;
@@ -224,15 +178,9 @@ class Sm4
         return strtoupper($hex_str);
     }
 
-
-    /**SM4解密单个片段(128bits)
-     *
-     * @param $text string 32个16进制字符串
-     *
-     * @return string
-     * @throws Exception
-     */
-    public function decrypt($text)
+    // SM4解密单个片段(128bits)
+    // $text string 32个16进制字符串
+    function decrypt($text): string
     {
         $x = $re = [];
         $t = $this->preProcess($text);
@@ -265,7 +213,7 @@ class Sm4
         return $this->wrapResult($re);
     }
 
-    public function decryptData($cipherText)
+    function decryptData($cipherText)
     {
         $chunks = str_split($cipherText, $this->block_size);
         $decrypt_text_data = implode('', array_map(function ($chunk) {
