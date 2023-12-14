@@ -24,6 +24,105 @@ class SnbFsofts
         return $this;
     }
 
+    // 企业账户信息变更
+    function enterpriseUpdate(string $channelSerialNo)
+    {
+        $version = '2.0';
+        $transCode = 'snb.steward.enterprise.update';
+        !empty($channelSerialNo) ?: $channelSerialNo = 'xd' . Helper::getInstance()->getMicroTime();
+
+        //1、企业账户信息变更本接口支持两类变更操作，单次接口调用只许执行一类变更操作，非变更内容项为空：
+        //1）企业、账户信息变更；
+        //2）绑定卡变更。绑定卡变更时，原银行卡号、银行卡号、银行账户名、开户行行号、开户行行名必输，
+        //   其他非必输字段不赋值。一个用户允许变更绑卡次数上限为3次。
+        //2、涉及影像资料变更的，接口调用前，需在文件服务器（平台方提供）上传影像文件。文件支持jpg、jpeg、bmp、png等常见图片格式。
+        //3、会员名称、法人信息变更时，需上传“营业执照副本 url”。
+        //4、法人、经办人变更时，涉及影像需上传证件照。
+        //5、绑定卡变更时，受理成功后发起绑定卡打款
+        //  （会由行方转账一笔随机金额到绑定卡，用户登录绑定卡所在行网银查看打款金额）。
+        //   打款成功后，通过“打款金额验证”接口验证开户。
+        //6、通过开户结果查询获取该笔流水状态，进行后续操作。
+        //7、交易受理成功后，“交易状态”返回打款状态。
+
+        $payload = [
+            'merchantId' => $this->obj->merchantId,
+            'platformcd' => $this->obj->platformcd,
+        ];
+
+        $public = [
+            'channelSerialNo' => $channelSerialNo,// 流水号
+            'channelId' => $this->obj->channelId,
+            'transCode' => $transCode,
+        ];
+
+        return $this->obj->setParams($payload, $public)
+            ->setHeader($version)->send($transCode);
+    }
+
+    // 账户直接消费 虚拟户之间转账 A到B
+    function directConsumption(
+        string $payAcctNbr, string $rcvAcctNbr, string $transAmt, string $memo, string $channelSerialNo
+    )
+    {
+        $version = '1.0';
+        $transCode = 'snb.steward.direct.consumption';
+        !empty($channelSerialNo) ?: $channelSerialNo = 'xd' . Helper::getInstance()->getMicroTime();
+
+        $payload = [
+            'merchantId' => $this->obj->merchantId,
+            'platformcd' => $this->obj->platformcd,
+            'payAcctNbr' => trim($payAcctNbr),// 买家账户 出金账户
+            'rcvAcctNbr' => trim($rcvAcctNbr),// 卖家账户 入金账户
+            'transAmt' => trim($transAmt),// 金额100.00
+            'memo' => trim($memo),// 金额100.00
+        ];
+
+        $public = [
+            'channelSerialNo' => $channelSerialNo,// 流水号
+            'channelId' => $this->obj->channelId,
+            'transCode' => $transCode,
+        ];
+
+        return $this->obj->setParams($payload, $public)
+            ->setHeader($version)->send($transCode);
+    }
+
+    // 支付分账 虚拟户之间转账 A到BCDEF
+    function payTransfer(string $payAcctNbr, array $list, string $memo, string $channelSerialNo)
+    {
+        $version = '1.0';
+        $transCode = 'snb.steward.pay.transfer';
+        !empty($channelSerialNo) ?: $channelSerialNo = 'xd' . Helper::getInstance()->getMicroTime();
+
+        // $list = [
+        //     [
+        //         'rcvAcctNbr' => '入金账户1 虚拟号',
+        //         'transAmt' => '交易金额 100.00',
+        //     ],
+        //     [
+        //         'rcvAcctNbr' => '入金账户2 虚拟号',
+        //         'transAmt' => '交易金额 200.00',
+        //     ],
+        // ];
+
+        $payload = [
+            'merchantId' => $this->obj->merchantId,
+            'platformcd' => $this->obj->platformcd,
+            'payAcctNbr' => trim($payAcctNbr),// 出金账户 虚拟号
+            'list' => $list,
+            'memo' => trim($memo),// 摘要
+        ];
+
+        $public = [
+            'channelSerialNo' => $channelSerialNo,// 流水号
+            'channelId' => $this->obj->channelId,
+            'transCode' => $transCode,
+        ];
+
+        return $this->obj->setParams($payload, $public)
+            ->setHeader($version)->send($transCode);
+    }
+
     // 账户提现
     function accountWithdraw(
         string $merUserId, string $acctNbr,
