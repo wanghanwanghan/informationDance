@@ -90,8 +90,6 @@ class SuningBank
         // 得到签名原始字符串 明文
         $ori = http_build_query($params);
 
-        Helper::getInstance()->writeLog('本次签名原文:' . $ori);
-
         // 签名私钥加密 输出16进制
         $pkeyid = openssl_pkey_get_private($this->cliAppPem);
         openssl_sign($ori, $signature, $pkeyid, OPENSSL_ALGO_SHA256);
@@ -114,8 +112,6 @@ class SuningBank
         // 去掉第一层空值
         $public = Helper::getInstance()->arrayFilter($public);
 
-        Helper::getInstance()->writeLog(array_merge($payload, $public));
-
         // 补全其他 公共参数
         $public['appCode'] = $this->appCode;
         $public['timestamp'] = date('Y-m-d H:i:s');
@@ -131,8 +127,6 @@ class SuningBank
         $sendData['payload'] = $payloadSM4;
         $sendData['signature'] = $signature;
         $this->sendData = array_merge($sendData, $public);
-
-        Helper::getInstance()->writeLog($this->sendData);
 
         return $this;
     }
@@ -164,8 +158,6 @@ class SuningBank
         $error = curl_error($curl);
         curl_close($curl);
 
-        Helper::getInstance()->writeLog(['result' => $res, 'error' => $error]);
-
         return ['result' => $res, 'error' => $error];
     }
 
@@ -189,7 +181,7 @@ class SuningBank
             'charset: UTF-8',
             "Content-Type: {$contentType}",
             "version: {$version}",
-            'appCode: 91110108MA01KPGK0L0002',
+            "appCode: {$this->appCode}",
         ];
         return $this;
     }

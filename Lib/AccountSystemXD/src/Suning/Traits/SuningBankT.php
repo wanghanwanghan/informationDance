@@ -46,6 +46,40 @@ trait SuningBankT
         return $this;
     }
 
+    function setTerminal(string $terminal)
+    {
+        $this->terminal = $terminal;
+        return $this;
+    }
 
+    function setIpAddress(string $ipAddress)
+    {
+        $this->ipAddress = $ipAddress;
+        return $this;
+    }
+
+    function setPlatformcd(string $platformcd)
+    {
+        $this->platformcd = $platformcd;
+        return $this;
+    }
+
+    function setChannelId(string $channelId)
+    {
+        $this->channelId = $channelId;
+        return $this;
+    }
+
+    function setMerchantId(string $merchantId)
+    {
+        $this->merchantId = $merchantId;
+        return $this;
+    }
+
+    function setAppCode(string $appCode)
+    {
+        $this->appCode = $appCode;
+        return $this;
+    }
 
 }
