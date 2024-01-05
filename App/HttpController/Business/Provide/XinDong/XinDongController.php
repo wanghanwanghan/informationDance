@@ -637,13 +637,13 @@ class XinDongController extends ProvideBase
 
         //周伯通或者客一客，天创信用
         if ($this->userId === 35 || $this->userId === 51 || $this->userId === 54) {
-            if ($beginYear === 2022 && $dataCount <= 3) {
+            if ($beginYear === 2023 && $dataCount <= 3) {
+                $a = null;
+            } elseif ($beginYear === 2022 && $dataCount <= 2) {
                 $a = null;
             } elseif ($beginYear === 2021 && $dataCount <= 2) {
                 $a = null;
-            } elseif ($beginYear === 2020 && $dataCount <= 2) {
-                $a = null;
-            } elseif ($beginYear === 2019 && $dataCount === 1) {
+            } elseif ($beginYear === 2020 && $dataCount === 1) {
                 $a = null;
             } else {
                 return $this->writeJson(201, null, null, '参数错误');
