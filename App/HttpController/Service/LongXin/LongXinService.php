@@ -1719,6 +1719,31 @@ class LongXinService extends ServiceBase
         return $this->checkResp($res);
     }
 
+    function getForeignInvestment(array $data): array
+    {
+        $entId = $this->getEntid($data['entName']);
+
+        if (empty($entId))
+            return ['code' => 102, 'msg' => 'entId是空', 'result' => [], 'paging' => null];
+
+        // B2 法人对外投资信息 企业对外投资信息
+        // B3 股东高管对外投资信息
+        // E1 年报对外投资
+        $arr = [
+            'entid' => $entId,
+            'version' => $data['version'],
+            'usercode' => $this->usercode,
+        ];
+
+        $this->sendHeaders['authorization'] = $this->createToken($arr);
+
+        $res = (new CoHttpClient())
+            ->useCache(false)
+            ->send($this->baseUrl . 'company_detail/', $arr, $this->sendHeaders);
+
+        return $this->checkResp($res);
+    }
+
 
 
 

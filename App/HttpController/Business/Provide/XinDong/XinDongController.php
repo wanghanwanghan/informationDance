@@ -69,6 +69,25 @@ class XinDongController extends ProvideBase
         return true;
     }
 
+    // 龙非池 对外投资
+    function getForeignInvestment(): bool
+    {
+        $postData = [
+            'entName' => $this->getRequestData('entName'),
+            'version' => $this->getRequestData('version', 'B2'),
+        ];
+
+        $this->csp->add($this->cspKey, function () use ($postData) {
+            return (new LongXinService())
+                ->setCheckRespFlag(true)
+                ->getForeignInvestment($postData);
+        });
+
+        $res = CspService::getInstance()->exec($this->csp, $this->cspTimeout);
+
+        return $this->checkResponse($res);
+    }
+
     //金财的全电授权 登录
     function isElectronicsLogin(): bool
     {
