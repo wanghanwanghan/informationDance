@@ -77,6 +77,10 @@ class XinDongController extends ProvideBase
             'version' => $this->getRequestData('version', 'B2'),
         ];
 
+        if (!in_array($postData['version'], ['B2', 'B3', 'E1'], true)) {
+            $postData['version'] = 'B2';
+        }
+
         $this->csp->add($this->cspKey, function () use ($postData) {
             return (new LongXinService())
                 ->setCheckRespFlag(true)
