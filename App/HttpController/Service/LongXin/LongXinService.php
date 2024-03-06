@@ -1047,7 +1047,7 @@ class LongXinService extends ServiceBase
         $companyDataObj = CompanyBasic::findByName($entName);
 
         //ES里的基本信息
-        $res = (new XinDongService())->getEsBasicInfoV2($companyDataObj->companyid);;
+        // $res = (new XinDongService())->getEsBasicInfoV2($companyDataObj->companyid);;
 
         $returnData = [];
 
@@ -1072,8 +1072,8 @@ class LongXinService extends ServiceBase
 
             //检测出来是法人
             if (
-                !empty($res['NAME']) &&
-                trim($res['NAME']) == trim($Manage['NAME'])
+                !empty($companyDataObj->NAME) &&
+                trim($companyDataObj->NAME) == trim($Manage['NAME'])
             ) {
                 $Manage['POSITION'] = $Manage['POSITION'] . "(法人)";
                 $returnData[$Manage['NAME']] = $Manage;
