@@ -1205,7 +1205,7 @@ class RunDealToolsFile extends AbstractCronTask
                 $res = CompanySearchGuest202303::create()->where('UNISCID', $value1)->get();
                 // $res = (new XinDongService())->getEsBasicInfoV3($value1,'UNISCID');
             } else {
-                $res = CompanySearchGuest202303::create()->where('ENTNAME', $value1)->get();
+                $res = CompanySearchGuest202303::create()->where('ENTNAME', $value0)->get();
                 // $res = (new XinDongService())->getEsBasicInfoV3($value0,'ENTNAME');
             }
 
