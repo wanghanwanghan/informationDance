@@ -10,6 +10,7 @@ use App\HttpController\Models\BusinessBase\CompanyClue;
 use App\HttpController\Models\BusinessBase\WechatInfo;
 use App\HttpController\Models\BusinessBase\ZhifubaoInfo;
 use App\HttpController\Models\ModelBase;
+use App\HttpController\Models\RDS3\BusinessBase\CompanySearchGuest202303;
 use App\HttpController\Models\RDS3\HdSaic\CodeCa16;
 use App\HttpController\Models\RDS3\HdSaic\CodeEx02;
 use App\HttpController\Models\RDS3\HdSaic\CompanyBasic;
@@ -178,10 +179,12 @@ class ToolsFileLists extends ModelBase
     static function generateQuanZiDuan($allFields,$entName,$entCode){
         //需要补全字段
         if($entCode){
-            $res = (new XinDongService())->getEsBasicInfoV3($entCode,'UNISCID',[ ]);
+            $res = CompanySearchGuest202303::create()->where('UNISCID', $entCode)->get();
+            // $res = (new XinDongService())->getEsBasicInfoV3($entCode,'UNISCID',[ ]);
         }
         else{
-            $res = (new XinDongService())->getEsBasicInfoV3($entName,'ENTNAME',[ ]);
+            $res = CompanySearchGuest202303::create()->where('ENTNAME', $entName)->get();
+            // $res = (new XinDongService())->getEsBasicInfoV3($entName,'ENTNAME',[ ]);
         }
 
         $baseArr = [];
