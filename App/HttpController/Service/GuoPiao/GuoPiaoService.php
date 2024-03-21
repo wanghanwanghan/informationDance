@@ -49,6 +49,7 @@ class GuoPiaoService extends ServiceBase
 
     private function checkResp($res, $type)
     {
+        CommonService::getInstance()->log4PHP($res);
         if (isset($res['data']['total']) &&
             isset($res['data']['pageSize']) &&
             isset($res['data']['currentPage'])) {
@@ -64,9 +65,9 @@ class GuoPiaoService extends ServiceBase
         if (isset($res['coHttpErr'])) return $this->createReturn(500, $res['Paging'], [], 'co请求错误');
 
         $res['code'] - 0 === 0 ? $res['code'] = 200 : $res['code'] = 600;
-        if( in_array($type,['checkInvoice','realTimeRecognize']) ){
+        if (in_array($type, ['checkInvoice', 'realTimeRecognize'])) {
             $res['failCode'] - 0 === 0 ? $res['code'] = 200 : $res['code'] = 600;
-            $res['msg'] = $res['result']?:"success"  ;
+            $res['msg'] = $res['result'] ?: "success";
         }
 
         //拿结果
@@ -184,53 +185,56 @@ class GuoPiaoService extends ServiceBase
         return $this->checkRespFlag ? $this->checkResp($res, __FUNCTION__) : $res;
     }
 
-    static function  getGetRequestUrl($url,$data){
+    static function getGetRequestUrl($url, $data)
+    {
         $str = http_build_query($data);
-        $url = $url.'?'.$str;
+        $url = $url . '?' . $str;
         return $url;
     }
 
-    function  getGetRequestHeader($url){
-        $accept =  self::getHeaderAccepet();
-        $rand = strtolower(self::guid()) ;
+    function getGetRequestHeader($url)
+    {
+        $accept = self::getHeaderAccepet();
+        $rand = strtolower(self::guid());
         $date = self::getRequestDate();
 
         $customHeaderStr = "x-mars-api-version:20190618\nx-mars-signature-nonce:$rand\n";
         $httpHeaderStr = "GET\n$accept\nnull\nnull\n$date\n";
-        $stringToSign = $httpHeaderStr.$customHeaderStr.$url;
+        $stringToSign = $httpHeaderStr . $customHeaderStr . $url;
         $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true));
 
         $headers = [
             'date' => $date,
-            'signature' =>'mars '.$this->client_id.':'.$Signature,
+            'signature' => 'mars ' . $this->client_id . ':' . $Signature,
             'x-mars-api-version' => '20190618',
-            'x-mars-signature-nonce' =>$rand
+            'x-mars-signature-nonce' => $rand
         ];
 
         return $headers;
     }
 
-    function getPostRequestHeaders($url){
+    function getPostRequestHeaders($url)
+    {
 
         $date = self::getRequestDate();
         $rand = strtolower(self::guid());
 
-        $accept =  self::getHeaderAccepet();
-        $contentType= self::getContentType();
+        $accept = self::getHeaderAccepet();
+        $contentType = self::getContentType();
 
         $customHeaderStr = "x-mars-api-version:20190618\nx-mars-signature-nonce:$rand\n";
 
         //$ContentMD5 = base64_encode(md5(json_encode($data,JSON_UNESCAPED_UNICODE)));
         $httpHeaderStr = "POST\n$accept\nnull\n$contentType\n$date\n";
-        $stringToSign = $httpHeaderStr.$customHeaderStr.$url;
+        $stringToSign = $httpHeaderStr . $customHeaderStr . $url;
 
         $Signature = base64_encode(hash_hmac('sha256', $stringToSign, $this->client_secret, true));
 
         $headers = [
             'date' => $date,
-            'signature' => 'mars '.$this->client_id.':'.$Signature,
+            'signature' => 'mars ' . $this->client_id . ':' . $Signature,
             'x-mars-api-version' => '20190618',
-            'x-mars-signature-nonce'=>$rand,
+            'x-mars-signature-nonce' => $rand,
             'Content-Type' => $contentType
         ];
 
@@ -238,12 +242,12 @@ class GuoPiaoService extends ServiceBase
     }
 
     /***
-    参数 参数类型 参数说明 是否必填 备注
-    fileName String 文件名 否 支持常规图片、PDF格式以及ofd格式文件
-    base64Content String base64字符串 否 base64Content和imageUrl任选其一必填，如果二者均不为空，优先识别imageUrl。
-    imageUrl String 图片链接地址 否
+     * 参数 参数类型 参数说明 是否必填 备注
+     * fileName String 文件名 否 支持常规图片、PDF格式以及ofd格式文件
+     * base64Content String base64字符串 否 base64Content和imageUrl任选其一必填，如果二者均不为空，优先识别imageUrl。
+     * imageUrl String 图片链接地址 否
      ***/
-    function realTimeRecognize($fileName,$base64Content,$imageUrl,$showLog = true)
+    function realTimeRecognize($fileName, $base64Content, $imageUrl, $showLog = true)
     {
         $data = [
             "fileName" => $fileName,
@@ -251,20 +255,20 @@ class GuoPiaoService extends ServiceBase
             "imageUrl" => $imageUrl,
         ];
 
-        $url = $this->guopiao_url.'api/ocr/realTimeRecognize';
+        $url = $this->guopiao_url . 'api/ocr/realTimeRecognize';
         ksort($data);
-         
+
         $headers = $this->getPostRequestHeaders($url);
 
         $res = (new CoHttpClient())->useCache(false)->needJsonDecode(true)->send(
-            $url, $data,$headers,[],"POSTJSON"
+            $url, $data, $headers, [], "POSTJSON"
         );
         $newRes = $res;
-        if($this->checkRespFlag){
-            $newRes =  $this->checkResp($res, __FUNCTION__) ;
+        if ($this->checkRespFlag) {
+            $newRes = $this->checkResp($res, __FUNCTION__);
         }
 
-        $showLog &&  CommonService::getInstance()->log4PHP(
+        $showLog && CommonService::getInstance()->log4PHP(
             json_encode([
                 '国票-发起请求' => [
                     '文件名' => $fileName,
@@ -276,46 +280,50 @@ class GuoPiaoService extends ServiceBase
                     '返回' => $res,
                     'checkResp返回' => $newRes,
                 ]
-            ],JSON_UNESCAPED_UNICODE)
+            ], JSON_UNESCAPED_UNICODE)
         );
 
         return $newRes;
     }
 
-    static function getHeaderAccepet(){
+    static function getHeaderAccepet()
+    {
         return '*/*';
     }
 
-    static function getContentType(){
+    static function getContentType()
+    {
         return 'application/json; charset=utf-8';
     }
 
-    static function getRequestDate(){
-        return  gmdate('D, d M Y H:i:s', time()+3600 * 8)." GMT";
+    static function getRequestDate()
+    {
+        return gmdate('D, d M Y H:i:s', time() + 3600 * 8) . " GMT";
     }
 
     /***
-
-    名称 类 型 是否必填 说明 备注
-    flowId String 否 客户请求流水 推荐格式：YYYYMMDD+发票代码+发票号码+8位随机数
-    invoiceCode String 否 发票代码 10或12位的发票代码(发票类型非09或90不可为空,即非全电发票时)
-    invoiceNumber String 是 发票号码 8位数字的发票号码
-    billingDate String 是 开票日期 格式为YYYY-MM-DD
-    totalAmount String 否 发票金额 发票类型为 01、03、15、20时不可为空；01、03、20填写发票不含税金额；15填写发票车价合计
-    ；09、90填写发票价税合计
-    checkCode String 否 校验码 发票校验码后6位。发票类型为04、10、11、14时此项不可为空。
-    $data = [
-        "invoiceCode" =>$invoiceCode,
-        "invoiceNumber" => $invoiceNumber,
-        "billingDate" => $billingDate,
-        "totalAmount" => $totalAmount,
-        "checkCode" => $checkCode,
-        "flowId" => date("YYYYMMDD")."_".$invoiceCode.rand(10000000,99999999),
-    ];
+     *
+     * 名称 类 型 是否必填 说明 备注
+     * flowId String 否 客户请求流水 推荐格式：YYYYMMDD+发票代码+发票号码+8位随机数
+     * invoiceCode String 否 发票代码 10或12位的发票代码(发票类型非09或90不可为空,即非全电发票时)
+     * invoiceNumber String 是 发票号码 8位数字的发票号码
+     * billingDate String 是 开票日期 格式为YYYY-MM-DD
+     * totalAmount String 否 发票金额 发票类型为 01、03、15、20时不可为空；01、03、20填写发票不含税金额；15填写发票车价合计
+     * ；09、90填写发票价税合计
+     * checkCode String 否 校验码 发票校验码后6位。发票类型为04、10、11、14时此项不可为空。
+     * $data = [
+     * "invoiceCode" =>$invoiceCode,
+     * "invoiceNumber" => $invoiceNumber,
+     * "billingDate" => $billingDate,
+     * "totalAmount" => $totalAmount,
+     * "checkCode" => $checkCode,
+     * "flowId" => date("YYYYMMDD")."_".$invoiceCode.rand(10000000,99999999),
+     * ];
      ***/
 
 
-    function checkInvoice($invoiceCode,$invoiceNumber,$billingDate,$totalAmount,$checkCode,$showLog = true){
+    function checkInvoice($invoiceCode, $invoiceNumber, $billingDate, $totalAmount, $checkCode, $showLog = true)
+    {
 
         $data = [
             "invoiceCode" => $invoiceCode,
@@ -323,25 +331,25 @@ class GuoPiaoService extends ServiceBase
             "billingDate" => $billingDate,
             "totalAmount" => $totalAmount,
             "checkCode" => $checkCode,
-            "flowId" => date("YYYYMMDD")."_".$invoiceCode.rand(10000000,99999999),
+            "flowId" => date("YYYYMMDD") . "_" . $invoiceCode . rand(10000000, 99999999),
         ];
 
         ksort($data);
 
-        $url = self::getGetRequestUrl($this->guopiao_url.'api/check/invoice',$data) ;
+        $url = self::getGetRequestUrl($this->guopiao_url . 'api/check/invoice', $data);
 
-        $headers = self::getGetRequestHeader( $url);
+        $headers = self::getGetRequestHeader($url);
 
         $res = (new CoHttpClient())->useCache(false)->needJsonDecode(true)->send(
-            $url, [],$headers,[],"GET"
+            $url, [], $headers, [], "GET"
         );
 
         $newRes = $res;
-        if($this->checkRespFlag){
-            $newRes =  $this->checkResp($res, __FUNCTION__) ;
+        if ($this->checkRespFlag) {
+            $newRes = $this->checkResp($res, __FUNCTION__);
         }
 
-        $showLog &&  CommonService::getInstance()->log4PHP(
+        $showLog && CommonService::getInstance()->log4PHP(
             json_encode([
                 '国票-发起请求' => [
                     'url' => $url,
@@ -350,28 +358,29 @@ class GuoPiaoService extends ServiceBase
                     '返回' => $res,
                     'checkResp返回' => $newRes,
                 ]
-            ],JSON_UNESCAPED_UNICODE)
+            ], JSON_UNESCAPED_UNICODE)
         );
 
         return $newRes;
     }
+
     /**
      * uuid生成
      * @return string
      */
-    public static function guid(){
-        if (function_exists('com_create_guid')){
+    public static function guid()
+    {
+        if (function_exists('com_create_guid')) {
             return com_create_guid();
-        }else{
-            mt_srand((double)microtime()*10000);//optional for php 4.2.0 and up.
+        } else {
+            mt_srand((double)microtime() * 10000);//optional for php 4.2.0 and up.
             $charid = strtoupper(md5(uniqid(rand(), true)));
             $hyphen = chr(45);// "-"
-            $uuid =substr($charid, 0, 8).$hyphen
-                .substr($charid, 8, 4).$hyphen
-                .substr($charid,12, 4).$hyphen
-                .substr($charid,16, 4).$hyphen
-                .substr($charid,20,12)
-            ;
+            $uuid = substr($charid, 0, 8) . $hyphen
+                . substr($charid, 8, 4) . $hyphen
+                . substr($charid, 12, 4) . $hyphen
+                . substr($charid, 16, 4) . $hyphen
+                . substr($charid, 20, 12);
             return $uuid;
         }
     }
@@ -741,7 +750,6 @@ class GuoPiaoService extends ServiceBase
     {
 
 
-
     }
 
     private function readyToSendV2($api_path, $body, $isTest = false, $encryption = true, $zwUrl = false)
@@ -769,7 +777,7 @@ class GuoPiaoService extends ServiceBase
                         'body' => $body,
                         '返回' => $res,
                     ]
-                ],JSON_UNESCAPED_UNICODE)
+                ], JSON_UNESCAPED_UNICODE)
             );
 
             $res = base64_decode($res);
@@ -784,12 +792,13 @@ class GuoPiaoService extends ServiceBase
                         'body' => $body,
                         '返回' => $res,
                     ]
-                ],JSON_UNESCAPED_UNICODE)
+                ], JSON_UNESCAPED_UNICODE)
             );
 
             return $res;
         }
     }
+
     private function readyToSendV3($api_path, $body, $isTest = false, $encryption = true, $zwUrl = false)
     {
         if (preg_match('/^http/', $api_path)) {
@@ -819,7 +828,7 @@ class GuoPiaoService extends ServiceBase
                         'body' => $body,
                         '返回' => $res,
                     ]
-                ],JSON_UNESCAPED_UNICODE)
+                ], JSON_UNESCAPED_UNICODE)
             );
 
             $res = base64_decode($res);
@@ -834,19 +843,15 @@ class GuoPiaoService extends ServiceBase
                         'body' => $body,
                         '返回' => $res,
                     ]
-                ],JSON_UNESCAPED_UNICODE)
+                ], JSON_UNESCAPED_UNICODE)
             );
 
             return $res;
         }
     }
 
-    function getAuthenticationManage(
-        $entName,
-        $phone
-    ): bool
+    function getAuthenticationManage($entName, $phone): bool
     {
-
         if (empty($callback)) {
             $callback = "https://api.meirixindong.com/api/v1/user/addAuthEntName?entName={$entName}&phone={$phone}";
         }
