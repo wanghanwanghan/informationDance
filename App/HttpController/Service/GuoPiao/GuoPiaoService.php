@@ -49,7 +49,6 @@ class GuoPiaoService extends ServiceBase
 
     private function checkResp($res, $type)
     {
-        CommonService::getInstance()->log4PHP($res);
         if (isset($res['data']['total']) &&
             isset($res['data']['pageSize']) &&
             isset($res['data']['currentPage'])) {
