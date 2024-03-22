@@ -264,7 +264,7 @@ class JinCaiShuKeService extends ServiceBase
         }
     }
 
-    function get24Month($nsrsbh)
+    function get24Month($nsrsbh): array
     {
         for ($i = 1; $i <= 36; $i++) {
             $date = date('Y-m', strtotime('-' . $i . ' month'));
